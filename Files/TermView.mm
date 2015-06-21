@@ -58,7 +58,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     shared_ptr<FontCache> m_FontCache;
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
-    void          (^m_RawTaskFeed)(const void* _d, int _sz);
     
     int             m_LastScreenFSY;
     
@@ -110,9 +109,14 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     [self addCursorRect:self.frame cursor:[NSCursor IBeamCursor]];
 }
 
-- (FontCache*) FontCache
+- (TermParser *)parser
 {
-    return m_FontCache.get();
+    return m_Parser;
+}
+
+- (const FontCache&) fontCache
+{
+    return *m_FontCache;
 }
 
 - (void) AttachToScreen:(TermScreen*)_scr
@@ -123,11 +127,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (void) AttachToParser:(TermParser*)_par
 {
     m_Parser = _par;
-}
-
-- (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed
-{
-    m_RawTaskFeed = _feed;
 }
 
 - (void) reloadSettings
@@ -536,11 +535,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSString *text = [paste_board stringForType:NSStringPboardType];
     if(!text)
         return;
-    
-    const char* utf8str = [text UTF8String];
-    size_t sz = strlen(utf8str);
-    if(m_RawTaskFeed)
-        m_RawTaskFeed(utf8str, (int)sz);
+    m_Parser->PushRawTaskInput(text);
 }
 
 - (void)selectAll:(id)sender

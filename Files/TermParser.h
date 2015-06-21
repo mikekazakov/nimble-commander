@@ -20,16 +20,14 @@ public:
         Result_ChangedTitle = 0x0001
     };
     
-    
-    
-    TermParser(TermScreen *_scr, void (^_task_input)(const void* _d, int _sz));
-    
-//    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
+    TermParser(TermScreen &_scr, function<void(const void* _d, int _sz)> _task_input);
+    void SetTaskScreenResize( function<void(int,int)> _callback );
     
     void EatByte(unsigned char _byte, int &_result_flags);
     void Flush();
     void Resized();
-    
+
+    void PushRawTaskInput(NSString *_str);
     void ProcessKeyDown(NSEvent *_event);
     
 private:
@@ -53,8 +51,9 @@ private:
     static const unsigned char m_DefaultColor = 0x07;
     
     // data and linked objects
-    TermScreen             *m_Scr;
-    void                  (^m_TaskInput)(const void* _d, int _sz);
+    TermScreen             &m_Scr;
+    function<void(const void* _d, int _sz)> m_TaskInput;
+    function<void(int,int)> m_TaskScreenResizeCallback;
     int                     m_EscState;
     int                     m_Params[m_ParamsSize];
     int                     m_ParamsCnt;

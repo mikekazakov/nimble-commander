@@ -47,10 +47,10 @@
         
         m_Task.reset(new TermShellTask);
         auto task_ptr = m_Task.get();
-        m_Screen.reset(new TermScreen(floor(frameRect.size.width / [m_View FontCache]->Width()),
-                                      floor(frameRect.size.height / [m_View FontCache]->Height())));
-        m_Parser = make_unique<TermParser>(m_Screen.get(),
-                                           ^(const void* _d, int _sz){
+        m_Screen.reset(new TermScreen(floor(frameRect.size.width / m_View.fontCache.Width()),
+                                      floor(frameRect.size.height / m_View.fontCache.Height())));
+        m_Parser = make_unique<TermParser>(*m_Screen,
+                                           [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput(_d, _sz);
                                            });
         [m_View AttachToScreen:m_Screen.get()];
@@ -63,6 +63,21 @@
                                                  object:self];
         
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
+        
+        m_View.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:NSDictionaryOfVariableBindings(m_View)]];
+        [self addConstraint:
+         [NSLayoutConstraint constraintWithItem:m_View
+                                      attribute:NSLayoutAttributeHeight
+                                      relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                         toItem:self.contentView
+                                      attribute:NSLayoutAttributeHeight
+                                     multiplier:1
+                                       constant:0]];
     }
     return self;
 }
@@ -144,15 +159,6 @@
             [strongself UpdateTitle];
         }
     });
-  
-    m_View.rawTaskFeed = ^(const void* _d, int _sz){
-        if(MainWindowTerminalState *strongself = weakself) {
-            if(strongself->m_Task->State() == TermShellTask::StateDead ||
-               strongself->m_Task->State() == TermShellTask::StateInactive )
-                return;
-            strongself->m_Task->WriteChildInput(_d, (int)_sz);
-        }
-    };
     
     [self.window makeFirstResponder:m_View];
     [self UpdateTitle];
@@ -249,15 +255,8 @@
 
 - (void)frameDidChange
 {
-    if(self.frame.size.width != m_View.frame.size.width)
-    {
-        NSRect dr = m_View.frame;
-        dr.size.width = self.frame.size.width;
-        [m_View setFrame:dr];
-    }
-    
-    int sy = floor(self.frame.size.height / [m_View FontCache]->Height());
-    int sx = floor(m_View.frame.size.width / [m_View FontCache]->Width());
+    int sy = floor(self.frame.size.height / m_View.fontCache.Height());
+    int sx = floor(m_View.frame.size.width / m_View.fontCache.Width());
 
     m_Screen->ResizeScreen(sx, sy);
     m_Task->ResizeWindow(sx, sy);

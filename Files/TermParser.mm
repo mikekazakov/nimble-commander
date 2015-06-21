@@ -161,19 +161,17 @@ static const unichar translate_maps[4][256]={
     }
 };
 
-
-TermParser::TermParser(TermScreen *_scr, void (^_task_input)(const void* _d, int _sz)):
+TermParser::TermParser(TermScreen &_scr, function<void(const void* _d, int _sz)> _task_input):
     m_Scr(_scr),
-    m_TaskInput(_task_input)
+    m_TaskInput( move(_task_input) )
 {
-    assert(_task_input);
     Reset();
 }
 
 void TermParser::Reset()
 {
-    m_Height = m_Scr->Height();
-    m_Width = m_Scr->Width();
+    m_Height = m_Scr.Height();
+    m_Width = m_Scr.Width();
     
     memset(&m_State, 0, sizeof(m_State));
     m_State[0].fg_color = TermScreenColors::Default;
@@ -185,7 +183,7 @@ void TermParser::Reset()
     m_LineAbs = true;
     m_InsertMode = false;
     m_Top = 0;
-    m_Bottom = m_Scr->Height();
+    m_Bottom = m_Scr.Height();
     m_EscState = S_Normal;
     m_ParamsCnt = 0;
     m_QuestionFlag = false;
@@ -199,17 +197,22 @@ void TermParser::Reset()
     
     SetTranslate(LAT1_MAP);
     UpdateAttrs();
-    m_Scr->GoTo(0, 0);
+    m_Scr.GoTo(0, 0);
     EscSave();
 
     m_Title[m_TitleLen] = 0;
-    m_Scr->SetTitle(m_Title);
+    m_Scr.SetTitle(m_Title);
     
-    m_Scr->SetAlternateScreen(false);
+    m_Scr.SetAlternateScreen(false);
 
     m_TabStop[0]= 0x01010100;
     for(int i = 1; i < 16; ++i)
         m_TabStop[i] = 0x01010101;
+}
+
+void TermParser::SetTaskScreenResize( function<void(int,int)> _callback )
+{
+    m_TaskScreenResizeCallback = _callback;
 }
 
 void TermParser::Flush()
@@ -255,17 +258,17 @@ void TermParser::Flush()
             c = m_UTF16CharsStock[i];
         
         // TODO: if(wrapping_mode == ...) <- need to add this
-        if( m_Scr->CursorX() >= m_Scr->Width() && !oms::IsUnicodeCombiningCharacter(c) )
+        if( m_Scr.CursorX() >= m_Scr.Width() && !oms::IsUnicodeCombiningCharacter(c) )
         {
-            m_Scr->PutWrap();
+            m_Scr.PutWrap();
             CR();
             LF();
         }
 
         if(m_InsertMode)
-            m_Scr->DoShiftRowRight(oms::WCWidthMin1(c));
+            m_Scr.DoShiftRowRight(oms::WCWidthMin1(c));
         
-        m_Scr->PutCh(c);
+        m_Scr.PutCh(c);
     }
     
     m_UTF16CharsStockLen = 0;
@@ -283,14 +286,14 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
         case  7: if(m_EscState == S_TitleBuf)
                  {
                      m_Title[m_TitleLen] = 0;
-                     m_Scr->SetTitle(m_Title);
+                     m_Scr.SetTitle(m_Title);
                      m_EscState = S_Normal;
                      _result_flags |= TermParser::Result_ChangedTitle;
                      return;
                  }
                  NSBeep();
                  return;
-        case  8: m_Scr->DoCursorLeft(); return;
+        case  8: m_Scr.DoCursorLeft(); return;
         case  9: HT(); return;
         case 10:
         case 11:
@@ -506,39 +509,39 @@ void TermParser::SetTranslate(unsigned char _charset)
 
 void TermParser::CSI_J()
 {
-    m_Scr->DoEraseScreen(m_Params[0]);
+    m_Scr.DoEraseScreen(m_Params[0]);
 }
 
 void TermParser::CSI_A()
 {
-    m_Scr->DoCursorUp( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
+    m_Scr.DoCursorUp( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
 void TermParser::CSI_B()
 {
-    m_Scr->DoCursorDown( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
+    m_Scr.DoCursorDown( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
 void TermParser::CSI_C()
 {
-    m_Scr->DoCursorRight( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
+    m_Scr.DoCursorRight( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
 void TermParser::CSI_D()
 {
-    m_Scr->DoCursorLeft( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
+    m_Scr.DoCursorLeft( m_ParamsCnt >= 1 ? m_Params[0] : 1 );
 }
 
 void TermParser::CSI_G()
 {
     m_Params[0]--;
-    m_Scr->GoTo(m_Params[0], m_Scr->CursorY());
+    m_Scr.GoTo(m_Params[0], m_Scr.CursorY());
 }
 
 void TermParser::CSI_d()
 {
     m_Params[0]--;
-    DoGoTo(m_Scr->CursorX(), m_Params[0]);
+    DoGoTo(m_Scr.CursorX(), m_Params[0]);
 }
 
 void TermParser::CSI_H()
@@ -550,16 +553,16 @@ void TermParser::CSI_H()
 
 void TermParser::CSI_K()
 {
-    m_Scr->DoEraseInLine(m_Params[0]);
+    m_Scr.DoEraseInLine(m_Params[0]);
 }
 
 void TermParser::CSI_X()
 {
     if(m_Params[0] == 0)
         m_Params[0]++;
-    int pos = m_Scr->CursorX();
-    m_Scr->DoEraseCharacters(m_Params[0] + pos > m_Scr->Width() ?
-                             m_Scr->Width() - pos :
+    int pos = m_Scr.CursorX();
+    m_Scr.DoEraseCharacters(m_Params[0] + pos > m_Scr.Width() ?
+                             m_Scr.Width() - pos :
                              m_Params[0]
                              );
 }
@@ -567,11 +570,11 @@ void TermParser::CSI_X()
 void TermParser::CSI_M()
 {
     unsigned n = m_Params[0];
-    if(n > m_Scr->Height() - m_Scr->CursorY())
-        n = m_Scr->Height() - m_Scr->CursorY();
+    if(n > m_Scr.Height() - m_Scr.CursorY())
+        n = m_Scr.Height() - m_Scr.CursorY();
     else if(n == 0)
         n = 1;
-    m_Scr->DoScrollUp(m_Scr->CursorY(), m_Bottom, n);
+    m_Scr.DoScrollUp(m_Scr.CursorY(), m_Bottom, n);
 }
 
 void TermParser::CSI_c()
@@ -594,11 +597,11 @@ void TermParser::SetDefaultAttrs()
 
 void TermParser::UpdateAttrs()
 {
-    m_Scr->SetFgColor(m_State[0].fg_color);
-    m_Scr->SetBgColor(m_State[0].bg_color);
-    m_Scr->SetIntensity(m_State[0].intensity);
-    m_Scr->SetUnderline(m_State[0].underline);
-    m_Scr->SetReverse(m_State[0].reverse);
+    m_Scr.SetFgColor(m_State[0].fg_color);
+    m_Scr.SetBgColor(m_State[0].bg_color);
+    m_Scr.SetIntensity(m_State[0].intensity);
+    m_Scr.SetUnderline(m_State[0].underline);
+    m_Scr.SetReverse(m_State[0].reverse);
 }
 
 void TermParser::CSI_m()
@@ -613,30 +616,30 @@ void TermParser::CSI_m()
             case 0:  SetDefaultAttrs(); UpdateAttrs(); break;
 			case 1:
             case 21:
-            case 22: m_Scr->SetIntensity(m_State[0].intensity = true);  break;
-			case 2:  m_Scr->SetIntensity(m_State[0].intensity = false); break;
-			case 4:  m_Scr->SetUnderline(m_State[0].underline = true);  break;
-			case 24: m_Scr->SetUnderline(m_State[0].underline = false); break;
-            case 7:  m_Scr->SetReverse(m_State[0].reverse = true);      break;
-            case 27: m_Scr->SetReverse(m_State[0].reverse = false);     break;
-            case 30: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Black);   break;
-            case 31: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Red);     break;
-            case 32: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Green);   break;
-            case 33: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Yellow);  break;
-            case 34: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Blue);    break;
-            case 35: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Magenta); break;
-            case 36: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Cyan);    break;
-            case 37: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::White);   break;
-            case 40: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Black);   break;
-            case 41: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Red);     break;
-            case 42: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Green);   break;
-            case 43: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Yellow);  break;
-            case 44: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Blue);    break;
-            case 45: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Magenta); break;
-            case 46: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Cyan);    break;
-            case 47: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::White);   break;
-            case 39: m_Scr->SetFgColor(m_State[0].fg_color = TermScreenColors::Default); m_Scr->SetUnderline(m_State[0].underline = false); break;
-			case 49: m_Scr->SetBgColor(m_State[0].bg_color = TermScreenColors::Default); break;
+            case 22: m_Scr.SetIntensity(m_State[0].intensity = true);  break;
+			case 2:  m_Scr.SetIntensity(m_State[0].intensity = false); break;
+			case 4:  m_Scr.SetUnderline(m_State[0].underline = true);  break;
+			case 24: m_Scr.SetUnderline(m_State[0].underline = false); break;
+            case 7:  m_Scr.SetReverse(m_State[0].reverse = true);      break;
+            case 27: m_Scr.SetReverse(m_State[0].reverse = false);     break;
+            case 30: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Black);   break;
+            case 31: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Red);     break;
+            case 32: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Green);   break;
+            case 33: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Yellow);  break;
+            case 34: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Blue);    break;
+            case 35: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Magenta); break;
+            case 36: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Cyan);    break;
+            case 37: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::White);   break;
+            case 40: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Black);   break;
+            case 41: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Red);     break;
+            case 42: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Green);   break;
+            case 43: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Yellow);  break;
+            case 44: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Blue);    break;
+            case 45: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Magenta); break;
+            case 46: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Cyan);    break;
+            case 47: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::White);   break;
+            case 39: m_Scr.SetFgColor(m_State[0].fg_color = TermScreenColors::Default); m_Scr.SetUnderline(m_State[0].underline = false); break;
+			case 49: m_Scr.SetBgColor(m_State[0].bg_color = TermScreenColors::Default); break;
             case  5: break; /* Blink: Slow  - less than 150 per minute*/
             case  6: break; /* Blink: Rapid - MS-DOS ANSI.SYS; 150 per minute or more; not widely supported*/
             case 25: break; /* Blink: off */
@@ -701,17 +704,17 @@ void TermParser::CSI_DEC_PMS(bool _on)
 //                    [SCREEN showCursor: mode];
                     break;
 				case 47: // alternate screen buffer mode
-					if(_on) m_Scr->SaveScreen();
-					else    m_Scr->RestoreScreen();
-                    m_Scr->SetAlternateScreen(_on);
+					if(_on) m_Scr.SaveScreen();
+					else    m_Scr.RestoreScreen();
+                    m_Scr.SetAlternateScreen(_on);
 					break;
                 case 1048:
                     if(_on) {
-                        m_DECPMS_SavedCurX = m_Scr->CursorX();
-                        m_DECPMS_SavedCurY = m_Scr->CursorY();
+                        m_DECPMS_SavedCurX = m_Scr.CursorX();
+                        m_DECPMS_SavedCurY = m_Scr.CursorY();
                     }
                     else
-                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
+                        m_Scr.GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
                     break;
                 case 1049:
                     // NB!
@@ -721,15 +724,15 @@ void TermParser::CSI_DEC_PMS(bool _on)
 //                        m_DECPMS_SavedCurX = m_Scr->CursorX();
 //                        m_DECPMS_SavedCurY = m_Scr->CursorY();
                         EscSave();
-                        m_Scr->SaveScreen();
-                        m_Scr->DoEraseScreen(2);
+                        m_Scr.SaveScreen();
+                        m_Scr.DoEraseScreen(2);
                     }
                     else {
 //                        m_Scr->GoTo(m_DECPMS_SavedCurX, m_DECPMS_SavedCurY);
                         EscRestore();
-                        m_Scr->RestoreScreen();
+                        m_Scr.RestoreScreen();
                     }
-                    m_Scr->SetAlternateScreen(_on);
+                    m_Scr.SetAlternateScreen(_on);
                     break;
                     
                 case 1002:
@@ -778,6 +781,17 @@ l   Use Normal Screen Buffer
                 default:
                     printf("unhandled CSI_DEC_PMS: %d on:%d\n", m_Params[i], (int)_on);
             }
+}
+
+void TermParser::PushRawTaskInput(NSString *_str)
+{
+    if(!_str || _str.length == 0)
+        return;
+    
+    const char* utf8str = [_str UTF8String];
+    size_t sz = strlen(utf8str);
+
+    m_TaskInput(utf8str, (int)sz);
 }
 
 void TermParser::ProcessKeyDown(NSEvent *_event)
@@ -873,24 +887,24 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
 void TermParser::CSI_P()
 {
     int p = m_Params[0];
-    if(p > m_Scr->Width() - m_Scr->CursorX())
-        p = m_Scr->Width() - m_Scr->CursorX();
+    if(p > m_Scr.Width() - m_Scr.CursorX())
+        p = m_Scr.Width() - m_Scr.CursorX();
     else if(!p)
         p = 1;
-    m_Scr->DoShiftRowLeft(p);
+    m_Scr.DoShiftRowLeft(p);
 }
 
 void TermParser::EscSave()
 {
-    m_State[0].x = m_Scr->CursorX();
-    m_State[0].y = m_Scr->CursorY();
+    m_State[0].x = m_Scr.CursorX();
+    m_State[0].y = m_Scr.CursorY();
     memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
 }
 
 void TermParser::EscRestore()
 {
     memcpy(&m_State[0], &m_State[1], sizeof(m_State[0]));
-    m_Scr->GoTo(m_State[0].x, m_State[0].y);
+    m_Scr.GoTo(m_State[0].x, m_State[0].y);
     SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
     UpdateAttrs();
 }
@@ -900,10 +914,10 @@ void TermParser::CSI_r()
 //Esc[Line;Liner	Set top and bottom lines of a window	DECSTBM
 //    int a  =10;
     if(m_Params[0] == 0)  m_Params[0]++;
-    if(m_Params[1] == 0)  m_Params[1] = m_Scr->Height();
+    if(m_Params[1] == 0)  m_Params[1] = m_Scr.Height();
 
     // Minimum allowed region is 2 lines
-    if(m_Params[0] < m_Params[1] && m_Params[1] <= m_Scr->Height())
+    if(m_Params[0] < m_Params[1] && m_Params[1] <= m_Scr.Height())
     {
         m_Top       = m_Params[0] - 1;
         m_Bottom    = m_Params[1];
@@ -914,22 +928,22 @@ void TermParser::CSI_r()
 void TermParser::CSI_L()
 {
     int p = m_Params[0];
-    if(p > m_Scr->Height() - m_Scr->CursorY())
-        p = m_Scr->Height() - m_Scr->CursorY();
+    if(p > m_Scr.Height() - m_Scr.CursorY())
+        p = m_Scr.Height() - m_Scr.CursorY();
     else if(p == 0)
         p = 1;
-    m_Scr->DoScrollDown(m_Scr->CursorY(), m_Bottom, p);
+    m_Scr.DoScrollDown(m_Scr.CursorY(), m_Bottom, p);
 }
 
 void TermParser::CSI_At()
 {
     int p = m_Params[0];
-    if(p > m_Scr->Width() - m_Scr->CursorX())
-        p = m_Scr->Width() - m_Scr->CursorX();
+    if(p > m_Scr.Width() - m_Scr.CursorX())
+        p = m_Scr.Width() - m_Scr.CursorX();
     else if(p == 0)
         p = 1;
-    m_Scr->DoShiftRowRight(p);
-    m_Scr->DoEraseAt(m_Scr->CursorX(), m_Scr->CursorY(), p);
+    m_Scr.DoShiftRowRight(p);
+    m_Scr.DoEraseAt(m_Scr.CursorX(), m_Scr.CursorY(), p);
 }
 
 void TermParser::DoGoTo(int _x, int _y)
@@ -942,63 +956,67 @@ void TermParser::DoGoTo(int _x, int _y)
         else if(_y >= m_Bottom) _y = m_Bottom - 1;
     }
     
-    m_Scr->GoTo(_x, _y);
+    m_Scr.GoTo(_x, _y);
 }
 
 void TermParser::RI()
 {
-    if(m_Scr->CursorY() == m_Top)
-        m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
+    if(m_Scr.CursorY() == m_Top)
+        m_Scr.DoScrollDown(m_Top, m_Bottom, 1);
     else
-        m_Scr->DoCursorUp();
+        m_Scr.DoCursorUp();
 }
 
 void TermParser::LF()
 {
-    if(m_Scr->CursorY()+1 == m_Bottom)
-        m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
+    if(m_Scr.CursorY()+1 == m_Bottom)
+        m_Scr.DoScrollUp(m_Top, m_Bottom, 1);
     else
-        m_Scr->DoCursorDown();
+        m_Scr.DoCursorDown();
 }
 
 void TermParser::CR()
 {
-    m_Scr->GoTo(0, m_Scr->CursorY());
+    m_Scr.GoTo(0, m_Scr.CursorY());
 }
 
 void TermParser::HT()
 {
-    int x = m_Scr->CursorX();
-    while(x < m_Scr->Width() - 1) {
+    int x = m_Scr.CursorX();
+    while(x < m_Scr.Width() - 1) {
         ++x;
         if(m_TabStop[x >> 5] & (1 << (x & 31)))
             break;
     }
-    m_Scr->GoTo(x, m_Scr->CursorY());
+    m_Scr.GoTo(x, m_Scr.CursorY());
 }
 
 void TermParser::Resized()
 {
+    
+    
 //    int old_w = m_Width;
     int old_h = m_Height;
     
-    m_Height = m_Scr->Height();
-    m_Width = m_Scr->Width();
+    m_Height = m_Scr.Height();
+    m_Width = m_Scr.Width();
 
     if(m_Bottom == old_h)
         m_Bottom = m_Height;
     
     // any manipulations on cursor pos here?
+    if(m_TaskScreenResizeCallback)
+        m_TaskScreenResizeCallback(m_Width, m_Height);    
 }
 
 void TermParser::CSI_T()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
-    while(p--) m_Scr->DoScrollDown(m_Top, m_Bottom, 1);
+    while(p--) m_Scr.DoScrollDown(m_Top, m_Bottom, 1);
 }
 
 void TermParser::CSI_S()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
-    while(p--) m_Scr->DoScrollUp(m_Top, m_Bottom, 1);
+    while(p--) m_Scr.DoScrollUp(m_Top, m_Bottom, 1);
 }

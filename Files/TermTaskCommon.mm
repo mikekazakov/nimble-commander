@@ -49,6 +49,25 @@ int TermTask::SetupTermios(int _fd)
     return tcsetattr(_fd, /*TCSADRAIN*/TCSANOW, &term_sett);
 }
 
+void TermTask::SetupHandlesAndSID(int _slave_fd)
+{
+    // The slave side of the PTY becomes the standard input and outputs of the child process
+    close(0); // Close standard input (current terminal)
+    close(1); // Close standard output (current terminal)
+    close(2); // Close standard error (current terminal)
+    
+    dup(_slave_fd); // PTY becomes standard input (0)
+    dup(_slave_fd); // PTY becomes standard output (1)
+    dup(_slave_fd); // PTY becomes standard error (2)
+    
+    // Make the current process a new session leader
+    setsid();
+    
+    // As the child is a session leader, set the controlling terminal to be the slave side of the PTY
+    // (Mandatory for programs like the shell to make them manage correctly their outputs)
+    ioctl(0, TIOCSCTTY, 1);
+}
+
 static string GetLocale()
 {
 	// Keep a copy of the current locale setting for this process

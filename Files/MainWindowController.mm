@@ -178,9 +178,9 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
                 return false;
     
     if(m_Terminal != nil)
-            if(![m_Terminal WindowShouldClose:self])
-                return false;
-        
+        if(![m_Terminal WindowShouldClose:self])
+            return false;
+    
     return true;
 }
 
@@ -260,15 +260,16 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
     m_WindowState.push_back(_state);
-    self.window.contentView = self.topmostState.windowContentView;
-    [self.window makeFirstResponder:self.window.contentView];
-    
-    if([self.topmostState respondsToSelector:@selector(Assigned)])
-        [self.topmostState Assigned];
     
     [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
+    
+    self.window.contentView = self.topmostState.windowContentView;
+    [self.window makeFirstResponder:self.window.contentView];
+    
+    if([self.topmostState respondsToSelector:@selector(Assigned)])
+        [self.topmostState Assigned];    
 }
 
 - (OperationsController*) OperationsController

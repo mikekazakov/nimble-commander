@@ -23,13 +23,12 @@ enum class TermViewCursor
 @interface TermView : NSView
 
 @property (readonly) FPSLimitedDrawer *FPSDrawer;
-
-- (FontCache*) FontCache;
+@property (nonatomic, readonly) const FontCache &fontCache;
+@property (nonatomic, readonly) TermParser *parser; // may be nullptr
 
 - (void) reloadSettings;
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
-- (void) setRawTaskFeed:(void(^)(const void* _d, int _sz))_feed;
 
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;

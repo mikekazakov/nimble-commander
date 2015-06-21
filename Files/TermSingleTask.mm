@@ -116,22 +116,8 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
     { // slave/child
         TermTask::SetupTermios(slave_fd);
         TermTask::SetTermWindow(slave_fd, _sx, _sy);
+        TermTask::SetupHandlesAndSID(slave_fd);
         
-        // Make the current process a new session leader
-        setsid();
-        
-        // As the child is a session leader, set the controlling terminal to be the slave side of the PTY
-        // (Mandatory for programs like the shell to make them manage correctly their outputs)
-        ioctl(0, TIOCSCTTY, 1);
-        
-        // The slave side of the PTY becomes the standard input and outputs of the child process
-        close(0); // Close standard input (current terminal)
-        close(1); // Close standard output (current terminal)
-        close(2); // Close standard error (current terminal)
-        
-        dup(slave_fd); // PTY becomes standard input (0)
-        dup(slave_fd); // PTY becomes standard output (1)
-        dup(slave_fd); // PTY becomes standard error (2)
         
         // where should CWD be? let it be in home dir
         if(pw)

@@ -179,7 +179,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <scrollView ambiguous="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y2K-Vy-fyD">
+                                    <scrollView ambiguous="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y2K-Vy-fyD">
                                         <rect key="frame" x="17" y="126" width="401" height="138"/>
                                         <clipView key="contentView" ambiguous="YES" id="ApI-OF-Cih">
                                             <rect key="frame" x="1" y="1" width="166" height="79"/>
@@ -194,7 +194,7 @@
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="YUE-S1-e7F"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="138" id="i63-3r-g19"/>
                                         </constraints>
-                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="LoN-sC-Dw0">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="LoN-sC-Dw0">
                                             <rect key="frame" x="1" y="80" width="166" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>

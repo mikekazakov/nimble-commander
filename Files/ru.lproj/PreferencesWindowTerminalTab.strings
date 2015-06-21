@@ -91,3 +91,6 @@
 /* Class = "NSColorWell"; ibShadowedToolTip = "Blue (4)"; ObjectID = "zOX-2h-pbe"; */
 "zOX-2h-pbe.ibShadowedToolTip" = "Синий (4)";
 
+/* Class = "NSButtonCell"; title = "Hide scrollbar"; ObjectID = "zcL-oM-aS5"; */
+"zcL-oM-aS5.title" = "Скрыть полосу прокрутки";
+

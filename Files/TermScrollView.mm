@@ -28,6 +28,7 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         auto rc = self.contentView.bounds;
         
         m_View = [[TermView alloc] initWithFrame:rc];
+        m_View.translatesAutoresizingMaskIntoConstraints = NO;
         self.documentView = m_View;
         self.hasVerticalScroller = ![NSUserDefaults.standardUserDefaults boolForKey:g_HideScrollbarKey];
         self.borderType = NSNoBorder;
@@ -42,7 +43,6 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         
         [m_View AttachToScreen:m_Screen.get()];
         
-        m_View.translatesAutoresizingMaskIntoConstraints = NO;
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
                                                  options:0
@@ -62,7 +62,7 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
         
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];        
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
         
         [self frameDidChange];
         

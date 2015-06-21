@@ -72,6 +72,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     DoubleColor     m_CursorColor;
     TermViewCursor  m_CursorType;
     FPSLimitedDrawer *m_FPS;
+    NSSize          m_IntrinsicSize;
 }
 
 @synthesize FPSDrawer = m_FPS;
@@ -84,6 +85,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_HasSelection = false;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = [[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.FramesPerSecond"] intValue];
+        m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
         [self reloadSettings];
     }
     return self;
@@ -155,29 +157,39 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     [self scrollToBottom];
 }
 
+- (NSSize) intrinsicContentSize
+{
+    return m_IntrinsicSize;
+}
+
 - (void)adjustSizes:(bool)_mandatory
 {
     int fsy = m_Screen->Height() + m_Screen->ScrollBackLinesCount();
     if(fsy == m_LastScreenFSY && _mandatory == false)
         return;
     
-    m_LastScreenFSY = fsy;
-    
-    double sx = self.frame.size.width;
     double sy = fsy * m_FontCache->Height();
+    double rest = self.superview.frame.size.height -
+        floor(self.superview.frame.size.height / m_FontCache->Height()) * m_FontCache->Height();
+
+    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, sy + rest);
+    [self invalidateIntrinsicContentSize];
+    [self.enclosingScrollView layoutSubtreeIfNeeded];
     
-    double rest = [self.superview frame].size.height -
-        floor([self.superview frame].size.height / m_FontCache->Height()) * m_FontCache->Height();
-    
-    [self setFrame: NSMakeRect(0, 0, sx, sy + rest)];
     
     [self scrollToBottom];
 }
 
 - (void) scrollToBottom
 {
-    [((NSClipView*)self.superview) scrollToPoint:NSMakePoint(0,
-                                              self.frame.size.height - ((NSScrollView*)self.superview.superview).contentSize.height)];
+    
+    auto clipview = (NSClipView*)self.superview;
+    auto scrollview = self.enclosingScrollView;
+    
+    auto p = NSMakePoint(0, self.frame.size.height - scrollview.contentSize.height);
+
+    [clipview scrollToPoint:p];
+    [scrollview reflectScrolledClipView:clipview];
 }
 
 - (void)drawRect:(NSRect)dirtyRect

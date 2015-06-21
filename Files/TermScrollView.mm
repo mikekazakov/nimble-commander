@@ -106,10 +106,17 @@
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+    // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
     scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
     [(NSView *)self.documentView scrollRectToVisible:scrollRect];
+}
+
+- (void) setScrollerStyle:(NSScrollerStyle)scrollerStyle
+{
+    [super setScrollerStyle:scrollerStyle];
+    [self frameDidChange];
 }
 
 @end

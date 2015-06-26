@@ -17,7 +17,6 @@
 #import "MainWndGoToButton.h"
 #import "OperationsController.h"
 #import "OperationsSummaryViewController.h"
-#import "MessageBox.h"
 #import "QuickPreview.h"
 #import "MainWindowController.h"
 #import "VFS.h"
@@ -647,7 +646,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     if (m_OperationsController.OperationsCount == 0)
         return true;
     
-    MessageBox *dialog = [[MessageBox alloc] init];
+    NSAlert *dialog = [[NSAlert alloc] init];
     [dialog addButtonWithTitle:NSLocalizedString(@"Stop And Close", "User action to stop running actions and close window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     dialog.messageText = NSLocalizedString(@"Window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");

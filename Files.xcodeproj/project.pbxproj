@@ -352,7 +352,6 @@
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
-		CF6D9C6D196678010077B146 /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
@@ -393,7 +392,6 @@
 		CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CF7249AF1990AC2800583BC5 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
-		CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
 		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
@@ -680,7 +678,6 @@
 		CFF6F24F1A13567C00011177 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFF6F2501A13567C00011177 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFF6F2511A13567C00011177 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
-		CFF6F2541A13567C00011177 /* MessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73C59D16DE0D2900F3D44F /* MessageBox.mm */; };
 		CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
 		CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4342416E0E1E2001B0512 /* CreateDirectorySheetController.mm */; };
 		CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
@@ -1242,8 +1239,6 @@
 		CF7249AD1990AC2800583BC5 /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SheetController.mm; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		CF73A6221816B3C200F59016 /* libquarantine.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libquarantine.dylib; path = usr/lib/system/libquarantine.dylib; sourceTree = SDKROOT; };
-		CF73C59C16DE0D2900F3D44F /* MessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBox.h; sourceTree = "<group>"; };
-		CF73C59D16DE0D2900F3D44F /* MessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessageBox.mm; sourceTree = "<group>"; };
 		CF76B30417000C090066A49F /* filesysattr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysattr.mm; sourceTree = "<group>"; };
 		CF76B30517000C090066A49F /* filesysattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysattr.h; sourceTree = "<group>"; };
 		CF76B307170146240066A49F /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericOperationView.h; sourceTree = "<group>"; };
@@ -2608,8 +2603,6 @@
 				CFFE09C71B200CE40091ED4F /* Application.mm */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
-				CF73C59C16DE0D2900F3D44F /* MessageBox.h */,
-				CF73C59D16DE0D2900F3D44F /* MessageBox.mm */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
 				CFC5121B16C4BD3D00D247EE /* Supporting Files */,
 			);
@@ -3376,7 +3369,6 @@
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
-				CF6D9C6D196678010077B146 /* MessageBox.mm in Sources */,
 				CF6D9BD2196677CA0077B146 /* NSArray+SSYMutations.m in Sources */,
 				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
 				CF6D9BD3196677CA0077B146 /* NSDictionary+SimpleMutations.m in Sources */,
@@ -3421,7 +3413,6 @@
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF50B7281A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
-				CF73C59E16DE0D2900F3D44F /* MessageBox.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
@@ -3630,7 +3621,6 @@
 				CFF6F2511A13567C00011177 /* PanelController.mm in Sources */,
 				CF50B7031A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF50B72A1A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
-				CFF6F2541A13567C00011177 /* MessageBox.mm in Sources */,
 				CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */,
 				CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,

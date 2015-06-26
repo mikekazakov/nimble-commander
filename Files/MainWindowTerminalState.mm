@@ -12,7 +12,6 @@
 #import "TermParser.h"
 #import "TermView.h"
 #import "MainWindowController.h"
-#import "MessageBox.h"
 #import "FontCache.h"
 #import "ActionsShortcutsManager.h"
 #import "TermScrollView.h"
@@ -178,7 +177,7 @@
     if(children.empty())
         return true;
 
-    MessageBox *dialog = [[MessageBox alloc] init];
+    NSAlert *dialog = [[NSAlert alloc] init];
     dialog.messageText = NSLocalizedString(@"Do you want to close this window?", "Asking to close window with processes running");
     NSMutableString *cap = [NSMutableString new];
     [cap appendString:NSLocalizedString(@"Closing this window will terminate the running processes: ", "Informing when closing with running terminal processes")];

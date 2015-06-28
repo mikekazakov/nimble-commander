@@ -8,7 +8,9 @@
 
 #pragma once
 
-class TermSingleTask
+#import "TermTask.h"
+
+class TermSingleTask : public TermTask
 {
 public:
     TermSingleTask();

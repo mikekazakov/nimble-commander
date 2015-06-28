@@ -1,9 +1,9 @@
 //
-//  TermTaskCommon.cpp
+//  TermTask.cpp
 //  Files
 //
-//  Created by Michael G. Kazakov on 03.04.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
+//  Created by Michael G. Kazakov on 28/06/15.
+//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
 #include <sys/select.h>
@@ -16,7 +16,19 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
-#include "TermTaskCommon.h"
+#include "TermTask.h"
+
+TermTask::TermTask()
+{
+    
+}
+
+TermTask::~TermTask()
+{
+    
+    
+    
+}
 
 int TermTask::SetTermWindow(int _fd,
                             unsigned short _chars_width,
@@ -29,7 +41,7 @@ int TermTask::SetTermWindow(int _fd,
     winsize.ws_row = _chars_height;
     winsize.ws_xpixel = _pix_width;
     winsize.ws_ypixel = _pix_height;
-    return ioctl(_fd, TIOCSWINSZ, (char *)&winsize);    
+    return ioctl(_fd, TIOCSWINSZ, (char *)&winsize);
 }
 
 int TermTask::SetupTermios(int _fd)
@@ -70,11 +82,24 @@ void TermTask::SetupHandlesAndSID(int _slave_fd)
 
 static string GetLocale()
 {
-	// Keep a copy of the current locale setting for this process
-	char* backupLocale = setlocale(LC_CTYPE, NULL);
+    // Keep a copy of the current locale setting for this process
+    char* backupLocale = setlocale(LC_CTYPE, NULL);
     
-	// Start with the locale
-	string locale = [NSLocale.currentLocale localeIdentifier].UTF8String;
+    // Start with the locale
+    string locale = "en"; // en as a backup for any possible error
+    
+    CFLocaleRef loc = CFLocaleCopyCurrent();
+    CFStringRef ident = CFLocaleGetIdentifier( loc );
+    
+    if( auto l = CFStringGetCStringPtr(ident, kCFStringEncodingUTF8) )
+        locale = l;
+    else {
+        char buf[256];
+        if( CFStringGetCString(ident, buf, 255, kCFStringEncodingUTF8) )
+            locale = buf;
+    }
+    CFRelease(loc);
+    
     string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
     
     // check if locale + encoding is valid
@@ -82,16 +107,16 @@ static string GetLocale()
     if(NULL != setlocale(LC_CTYPE, test.c_str()))
         locale = test;
     
-	// Check the locale is valid
-	if(NULL == setlocale(LC_CTYPE, locale.c_str()))
-		locale = "";
+    // Check the locale is valid
+    if(NULL == setlocale(LC_CTYPE, locale.c_str()))
+        locale = "";
     
     // Restore locale and return
     setlocale(LC_CTYPE, backupLocale);
     return locale;
 }
 
-map<string, string> TermTask::BuildEnv()
+const map<string, string> &TermTask::BuildEnv()
 {
     static map<string, string> env;
     static once_flag once;
@@ -112,7 +137,7 @@ map<string, string> TermTask::BuildEnv()
         {
             env.emplace("LC_CTYPE", "UTF-8");
         }
-
+        
         env.emplace("TERM", "xterm-16color");
         env.emplace("TERM_PROGRAM", "Files.app");
     });

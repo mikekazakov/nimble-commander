@@ -19,7 +19,6 @@
 #include <string.h>
 #include <libproc.h>
 #include "TermShellTask.h"
-#include "TermTaskCommon.h"
 #include "Common.h"
 #include "sysinfo.h"
 
@@ -48,7 +47,7 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
     m_TermSY = _sy;
     
     // remember current locale and stuff
-    auto env = TermTask::BuildEnv();
+    auto env = BuildEnv();
     
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
@@ -72,20 +71,20 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
         SetState(StateShell);
         
         // TODO: consider using thread here, not a queue (mind maximum running queues issue)
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        dispatch_async(dispatch_get_global_queue(0, 0), [=]{
             ReadChildOutput();
         });
     }
     else
     { // slave/child
-        TermTask::SetupTermios(slave_fd);
-        TermTask::SetTermWindow(slave_fd, _sx, _sy);
-        TermTask::SetupHandlesAndSID(slave_fd);
+        SetupTermios(slave_fd);
+        SetTermWindow(slave_fd, _sx, _sy);
+        SetupHandlesAndSID(slave_fd);
         
         chdir(_work_dir);
         
         // put basic environment stuff
-        TermTask::SetEnv(env);
+        SetEnv(env);
         
         // setup piping for CWD prompt
         // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
@@ -135,11 +134,10 @@ void TermShellTask::ReadChildOutput()
         FD_ZERO(&fd_err);
         FD_SET(m_MasterFD, &fd_err);
         
-        int max_fd = m_MasterFD > m_CwdPipe[0] ? m_MasterFD : m_CwdPipe[0];
+        int max_fd = max((int)m_MasterFD, m_CwdPipe[0]);
         
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        if(rc < 0 || m_ShellPID < 0)
-        {
+        if(rc < 0 || m_ShellPID < 0) {
             // error on select(), let's think that shell has died
             // mb call ShellDied() here?
             goto end_of_all;
@@ -149,42 +147,23 @@ void TermShellTask::ReadChildOutput()
         if(FD_ISSET(m_MasterFD, &fd_in))
         {
             rc = (int)read(m_MasterFD, input, input_sz);
-            if (rc > 0)
-            {
-//                printf("has output\n");
+            if (rc > 0) {
                 if(m_OnChildOutput && !m_TemporarySuppressed)
                     m_OnChildOutput(input, rc);
             }
-            else
-            {
-                if (rc < 0)
-                {
-                    fprintf(stderr, "Error %d on read master PTY\n", errno);
-                    exit(1);
-                }
-            }
-                    /*
-                     if(bytesread < 0 && !(errno == EAGAIN || errno == EINTR)) {
-                     [self brokenPipe];
-                     return;
-                     }
-                     */
-//                    continue;
+            else if (rc < 0)
+                fprintf(stderr, "Error %d on read master PTY\n", errno);
         }
                 
         // check BASH_PROMPT output
-        if (FD_ISSET(m_CwdPipe[0], &fd_in))
-        {
+        if (FD_ISSET(m_CwdPipe[0], &fd_in)) {
             rc = (int)read(m_CwdPipe[0], input, input_sz);
             if(rc > 0)
-            {
                 ProcessBashPrompt(input, rc);
-            }
         }
                 
         // check if child process died
-        if(FD_ISSET(m_MasterFD, &fd_err))
-        {
+        if(FD_ISSET(m_MasterFD, &fd_err)) {
             ShellDied();
             goto end_of_all;
         }

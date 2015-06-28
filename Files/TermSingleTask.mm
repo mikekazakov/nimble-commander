@@ -24,7 +24,6 @@
 #include <util.h>
 #include <syslog.h>
 
-#include "TermTaskCommon.h"
 #include "TermSingleTask.h"
 
 static vector<string> SplitArgs(const char *_args)
@@ -89,7 +88,7 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
     m_TaskBinaryName = img_name;
     
     // remember current locale and stuff
-    auto env = TermTask::BuildEnv();
+    auto env = BuildEnv();
     
     m_MasterFD = posix_openpt(O_RDWR);
     assert(m_MasterFD >= 0);
@@ -108,15 +107,15 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
         close(slave_fd);
         
         // TODO: consider using single shared thread here, not a queue (mind maximum running queues issue)
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        dispatch_async(dispatch_get_global_queue(0, 0), [=]{
             ReadChildOutput();
         });
     }
     else
     { // slave/child
-        TermTask::SetupTermios(slave_fd);
-        TermTask::SetTermWindow(slave_fd, _sx, _sy);
-        TermTask::SetupHandlesAndSID(slave_fd);
+        SetupTermios(slave_fd);
+        SetTermWindow(slave_fd, _sx, _sy);
+        SetupHandlesAndSID(slave_fd);
         
         
         // where should CWD be? let it be in home dir
@@ -124,7 +123,7 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
             chdir(pw->pw_dir);
 
         // put basic environment stuff
-        TermTask::SetEnv(env);
+        SetEnv(env);
         
         // close all file descriptors except [0], [1], [2] and [g_PromptPipe]
         // implicitly closing m_MasterFD and slave_fd

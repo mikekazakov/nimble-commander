@@ -8,7 +8,9 @@
 
 #pragma once
 
-class TermShellTask
+#import "TermTask.h"
+
+class TermShellTask : public TermTask
 {
 public:
     ~TermShellTask();

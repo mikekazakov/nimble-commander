@@ -63,7 +63,7 @@
         
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
 
-        m_Task->SetOnChildOutput(^(const void* _d, int _sz){
+        m_Task->SetOnChildOutput([=](const void* _d, int _sz){
             if(MainWindowExternalTerminalEditorState *strongself = weakself) {
                 bool newtitle = false;
                 strongself->m_TermScrollView.screen.Lock();

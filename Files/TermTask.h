@@ -15,9 +15,15 @@ public:
     ~TermTask(); // NO virtual here
     
     
+    // calling this method from a callback itself will cause a guaranteed deadlock
+    void SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback );
     
     
 protected:
+    void DoCalloutOnChildOutput( const void *_d, size_t _sz  );
+    
+    
+    
     static int SetupTermios(int _fd);
     
     static int SetTermWindow(int _fd,
@@ -31,8 +37,9 @@ protected:
     static const map<string, string> &BuildEnv();
     static void SetEnv(const map<string, string>& _env);
     
-    
-private:
-    
+    mutable mutex m_Lock;
+private:    
+    function<void(const void *_d, size_t _sz)>  m_OnChildOutput;
+    mutex                                       m_OnChildOutputLock;
     
 };

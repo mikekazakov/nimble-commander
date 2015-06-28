@@ -154,7 +154,7 @@ void TermSingleTask::WriteChildInput(const void *_d, size_t _sz)
     if(m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0)
         return;
     
-    lock_guard<recursive_mutex> lock(m_Lock);
+    lock_guard<mutex> lock(m_Lock);
     write(m_MasterFD, _d, _sz);
 }
 
@@ -190,8 +190,7 @@ void TermSingleTask::ReadChildOutput()
             rc = (int)read(m_MasterFD, input, input_sz);
             if (rc > 0)
             {
-                if(m_OnChildOutput)
-                    m_OnChildOutput(input, rc);
+                DoCalloutOnChildOutput(input, rc);
             }
             else if(rc < 0)
             {
@@ -236,17 +235,17 @@ void TermSingleTask::ResizeWindow(int _sx, int _sy)
     if(m_TermSX == _sx && m_TermSY == _sy)
         return;
     
-    lock_guard<recursive_mutex> lock(m_Lock);
+    lock_guard<mutex> lock(m_Lock);
     
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
+    SetTermWindow(m_MasterFD, _sx, _sy);
 }
 
 void TermSingleTask::CleanUp()
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
+    lock_guard<mutex> lock(m_Lock);
     
     if(m_TaskPID > 0)
     {

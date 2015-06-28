@@ -21,7 +21,6 @@ public:
      */
     void Launch(const char *_full_binary_path, const char *_params, int _sx, int _sy);
     
-    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
     inline void SetOnChildDied(void (^_)()) { m_OnChildDied = _; };
     void WriteChildInput(const void *_d, size_t _sz);
     
@@ -33,9 +32,7 @@ public:
 private:
     void CleanUp();    
     void ReadChildOutput();
-    void (^m_OnChildOutput)(const void* _d, int _sz);
     void (^m_OnChildDied)();
-    recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
     volatile int    m_MasterFD = -1;
     volatile int    m_TaskPID  = -1;
     int             m_TermSX   = 0;

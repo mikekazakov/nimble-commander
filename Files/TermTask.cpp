@@ -30,6 +30,19 @@ TermTask::~TermTask()
     
 }
 
+void TermTask::SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback )
+{
+    lock_guard<mutex> lock(m_OnChildOutputLock);
+    m_OnChildOutput = move(_callback);
+}
+
+void TermTask::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
+{
+    lock_guard<mutex> lock(m_OnChildOutputLock);
+    if( m_OnChildOutput && _sz && _d )
+        m_OnChildOutput(_d, _sz);
+}
+
 int TermTask::SetTermWindow(int _fd,
                             unsigned short _chars_width,
                             unsigned short _chars_height,
@@ -54,8 +67,8 @@ int TermTask::SetupTermios(int _fd)
     term_sett.c_oflag = OPOST | ONLCR;
     term_sett.c_cflag = CREAD | CS8 | HUPCL;
     term_sett.c_lflag = ICANON | ISIG | IEXTEN | ECHO | ECHOE | ECHOK | ECHOKE | ECHOCTL;
-    term_sett.c_ispeed = /*B38400*/ B230400;
-    term_sett.c_ospeed = /*B38400*/ B230400;
+    term_sett.c_ispeed = B230400;
+    term_sett.c_ospeed = B230400;
     term_sett.c_cc [VINTR] = 3;   /* CTRL+C */
     term_sett.c_cc [VEOF] = 4;    /* CTRL+D */
     return tcsetattr(_fd, /*TCSADRAIN*/TCSANOW, &term_sett);
@@ -123,8 +136,7 @@ const map<string, string> &TermTask::BuildEnv()
     call_once(once, []{
         // do it once per app run
         string locale = GetLocale();
-        if(!locale.empty())
-        {
+        if(!locale.empty()) {
             env.emplace("LANG", locale);
             env.emplace("LC_COLLATE", locale);
             env.emplace("LC_CTYPE", locale);
@@ -133,8 +145,7 @@ const map<string, string> &TermTask::BuildEnv()
             env.emplace("LC_NUMERIC", locale);
             env.emplace("LC_TIME", locale);
         }
-        else
-        {
+        else {
             env.emplace("LC_CTYPE", "UTF-8");
         }
         

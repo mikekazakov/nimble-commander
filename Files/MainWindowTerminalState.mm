@@ -79,7 +79,7 @@
     
     __weak MainWindowTerminalState *weakself = self;
     
-    m_Task->SetOnChildOutput(^(const void* _d, int _sz){
+    m_Task->SetOnChildOutput([=](const void* _d, int _sz){
         if(MainWindowTerminalState *strongself = weakself) {
             bool newtitle = false;
             strongself->m_TermScrollView.screen.Lock();
@@ -130,9 +130,7 @@
     
     if(title == 0)
     {
-        m_Task->Lock();
         string cwd = m_Task->CWD();
-        m_Task->Unlock();
         
         if(!cwd.empty() && cwd.back() != '/')
             cwd += '/';

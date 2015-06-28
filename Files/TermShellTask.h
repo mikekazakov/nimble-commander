@@ -33,7 +33,6 @@ public:
         StateDead            = 4
     };
 
-    inline void SetOnChildOutput(void (^_)(const void* _d, int _sz)) { m_OnChildOutput = _; };
     inline void SetOnBashPrompt(void (^_)(const char*)) { m_OnBashPrompt = _; };
     
     // launches /bin/bash actually (hardcoded now)
@@ -67,7 +66,7 @@ public:
      * Current working directory. With trailing slash, in form: /Users/migun/.
      * Return string by value to minimize potential chance to get race condition.
      */
-    inline string CWD() const { return m_CWD; }
+    string CWD() const;
     
     /**
      * returns a list of children excluding topmost shell (ie bash).
@@ -76,8 +75,6 @@ public:
     
     
     
-    inline void Lock()      { m_Lock.lock();   }
-    inline void Unlock()    { m_Lock.unlock(); }
     
     /**
      * Returns number of characters filled in _escaped.
@@ -94,14 +91,12 @@ private:
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
-    void (^m_OnChildOutput)(const void* _d, int _sz) = nil;
     void (^m_OnBashPrompt)(const char *_cwd) = nil;
 
     volatile TermState m_State = StateInactive;
     volatile int m_MasterFD = -1;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
-    recursive_mutex m_Lock;         // will lock on WriteChildInput or on cleanup process
     volatile bool m_TemporarySuppressed = false; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX = 0;
     int m_TermSY = 0;

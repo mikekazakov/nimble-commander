@@ -148,8 +148,8 @@ void TermShellTask::ReadChildOutput()
         {
             rc = (int)read(m_MasterFD, input, input_sz);
             if (rc > 0) {
-                if(m_OnChildOutput && !m_TemporarySuppressed)
-                    m_OnChildOutput(input, rc);
+                if(!m_TemporarySuppressed)
+                    DoCalloutOnChildOutput(input, rc);
             }
             else if (rc < 0)
                 fprintf(stderr, "Error %d on read master PTY\n", errno);
@@ -174,41 +174,43 @@ end_of_all:
 
 void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
 {
-    m_Lock.lock();
-    
-    char tmp[1024];
-    memcpy(tmp, _d, _sz);
-    tmp[_sz] = 0;
-    while(strlen(tmp) > 0 && ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
-                              tmp[strlen(tmp)-1] == '\n' ||
-                              tmp[strlen(tmp)-1] == '\r' ))
-        tmp[strlen(tmp)-1] = 0;
-    
-    m_CWD = tmp;
-    if( m_CWD.empty() || m_CWD.back() != '/' )
-        m_CWD += '/';
+    string current_cwd;
+    bool do_nr_hack = false;
+
+    {
+        lock_guard<mutex> lock(m_Lock);
+        
+        char tmp[1024];
+        memcpy(tmp, _d, _sz);
+        tmp[_sz] = 0;
+        while(strlen(tmp) > 0 && ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
+                                  tmp[strlen(tmp)-1] == '\n' ||
+                                  tmp[strlen(tmp)-1] == '\r' ))
+            tmp[strlen(tmp)-1] = 0;
+        
+        m_CWD = tmp;
+        if( m_CWD.empty() || m_CWD.back() != '/' )
+            m_CWD += '/';
+        
+        current_cwd = m_CWD;
+        
+        if(m_State == TermState::StateProgramExternal ||
+           m_State == TermState::StateProgramInternal ) {
+            // shell just finished running something - let's back it to StateShell state
+            SetState(StateShell);
+        }
+        
+        if(m_TemporarySuppressed && m_RequestedCWD == tmp) {
+            m_TemporarySuppressed = false;
+            m_RequestedCWD = "";
+            do_nr_hack = true;
+        }
+    }
     
     if(m_OnBashPrompt)
-        m_OnBashPrompt(m_CWD.c_str());
-    
-    if(m_State == TermState::StateProgramExternal ||
-       m_State == TermState::StateProgramInternal )
-    {
-        // shell just finished running something - let's back it to StateShell state
-        SetState(StateShell);
-    }
-    
-    if(m_TemporarySuppressed && m_RequestedCWD == tmp)
-    {
-        m_TemporarySuppressed = false;
-        m_RequestedCWD = "";
-            
-        if(m_OnChildOutput)
-            m_OnChildOutput("\n\r", 2); // hack
-
-    }
-    
-    m_Lock.unlock();
+        m_OnBashPrompt(current_cwd.c_str());
+    if(do_nr_hack)
+        DoCalloutOnChildOutput("\n\r", 2);
 }
 
 void TermShellTask::WriteChildInput(const void *_d, int _sz)
@@ -219,29 +221,22 @@ void TermShellTask::WriteChildInput(const void *_d, int _sz)
     
     if(_sz <= 0)
         return;
-    
-    m_Lock.lock();
-    
+
+    lock_guard<mutex> lock(m_Lock);
     
     write(m_MasterFD, _d, _sz);
-    
     
     if( ((char*)_d)[_sz-1] == '\n' ||
         ((char*)_d)[_sz-1] == '\r' )
         if(m_State == StateShell)
-        {
             SetState(StateProgramInternal);
-        }
-    
-    m_Lock.unlock();
 }
 
 void TermShellTask::CleanUp()
 {
-    m_Lock.lock();
+    lock_guard<mutex> lock(m_Lock);
     
-    if(m_ShellPID > 0)
-    {
+    if(m_ShellPID > 0) {
         int pid = m_ShellPID;
         m_ShellPID = -1;
         kill(pid, SIGKILL);
@@ -256,14 +251,12 @@ void TermShellTask::CleanUp()
         waitpid(pid, &status, 0);
     }
     
-    if(m_MasterFD >= 0)
-    {
+    if(m_MasterFD >= 0) {
         close(m_MasterFD);
         m_MasterFD = -1;
     }
     
-    if(m_CwdPipe[0] >= 0)
-    {
+    if(m_CwdPipe[0] >= 0) {
         close(m_CwdPipe[0]);
         m_CwdPipe[0] = m_CwdPipe[1] = -1;
     }
@@ -273,8 +266,6 @@ void TermShellTask::CleanUp()
     m_CWD = "";
     
     SetState(StateInactive);
-    
-    m_Lock.unlock();
 }
 
 void TermShellTask::ShellDied()
@@ -476,6 +467,12 @@ again:  if(ppid == m_ShellPID)
     
     free(proc_list);
     return result;
+}
+
+string TermShellTask::CWD() const
+{
+    lock_guard<mutex> lock(m_Lock);
+    return m_CWD;
 }
 
 void TermShellTask::ResizeWindow(int _sx, int _sy)

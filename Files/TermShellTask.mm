@@ -144,17 +144,13 @@ void TermShellTask::ReadChildOutput()
         }
         
         // If data on master side of PTY (some child's output)
-        if(FD_ISSET(m_MasterFD, &fd_in))
-        {
-            rc = (int)read(m_MasterFD, input, input_sz);
-            if (rc > 0) {
-                if(!m_TemporarySuppressed)
-                    DoCalloutOnChildOutput(input, rc);
-            }
-            else if (rc < 0)
-                fprintf(stderr, "Error %d on read master PTY\n", errno);
+        if(FD_ISSET(m_MasterFD, &fd_in)) {
+            // try to read a bit more - wait 1usec to see if any additional data will come in
+            unsigned have_read = ReadInputAsMuchAsAvailable(m_MasterFD, input, input_sz);            
+            if(!m_TemporarySuppressed)
+                DoCalloutOnChildOutput(input, have_read);
         }
-                
+        
         // check BASH_PROMPT output
         if (FD_ISSET(m_CwdPipe[0], &fd_in)) {
             rc = (int)read(m_CwdPipe[0], input, input_sz);

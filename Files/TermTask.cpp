@@ -161,3 +161,26 @@ void TermTask::SetEnv(const map<string, string>& _env)
     for(auto &i: _env)
         setenv(i.first.c_str(), i.second.c_str(), 1);
 }
+
+unsigned TermTask::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz, int _usec_wait)
+{
+    fd_set fdset;
+    unsigned already_read = 0;
+    int rc = 0;
+    do {
+        rc = (int)read(_fd, (char*)_buf + already_read, _buf_sz - already_read);
+        if(rc <= 0)
+            break;
+        already_read += rc;
+        
+        FD_ZERO(&fdset);
+        FD_SET(_fd, &fdset);
+        timeval tt;
+        tt.tv_sec = 0;
+        tt.tv_usec = _usec_wait;
+        rc = select(_fd + 1, &fdset, NULL, NULL, &tt);
+    } while(rc >= 0 &&
+            FD_ISSET(_fd, &fdset) &&
+            already_read < _buf_sz);
+    return already_read;
+}

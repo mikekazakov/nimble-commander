@@ -37,6 +37,12 @@ protected:
     static const map<string, string> &BuildEnv();
     static void SetEnv(const map<string, string>& _env);
     
+    // assumes that some data is available already (call only after select()'ing)
+    // will block for _usec_wait usecs
+    // returns amount of bytes read
+    // no error return available
+    static unsigned ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz, int _usec_wait = 1);
+    
     mutable mutex m_Lock;
 private:    
     function<void(const void *_d, size_t _sz)>  m_OnChildOutput;

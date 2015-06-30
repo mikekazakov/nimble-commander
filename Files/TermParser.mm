@@ -274,6 +274,20 @@ void TermParser::Flush()
     m_UTF16CharsStockLen = 0;
 }
 
+int TermParser::EatBytes(const unsigned char *_bytes, unsigned _sz)
+{
+    int all_flags = 0;
+    for(int i = 0; i < _sz; ++i) {
+        int flags = 0;
+        
+        EatByte(_bytes[i], flags);
+
+        all_flags |= flags;
+    }
+    Flush();
+    return all_flags;
+}
+
 void TermParser::EatByte(unsigned char _byte, int &_result_flags)
 {
     unsigned char c = _byte;

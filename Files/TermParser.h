@@ -22,7 +22,7 @@ public:
     
     TermParser(TermScreen &_scr, function<void(const void* _d, int _sz)> _task_input);
     void SetTaskScreenResize( function<void(int,int)> _callback );
-    
+    int EatBytes(const unsigned char *_bytes, unsigned _sz);
     void EatByte(unsigned char _byte, int &_result_flags);
     void Flush();
     void Resized();

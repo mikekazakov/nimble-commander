@@ -81,24 +81,39 @@
     
     m_Task->SetOnChildOutput([=](const void* _d, int _sz){
         if(MainWindowTerminalState *strongself = weakself) {
+            MachTimeBenchmark mtb;
+            
             bool newtitle = false;
             strongself->m_TermScrollView.screen.Lock();
-            for(int i = 0; i < _sz; ++i) {
-                int flags = 0;
 
-                strongself->m_Parser->EatByte(((const char*)_d)[i], flags);
-
-                if(flags & TermParser::Result_ChangedTitle)
-                    newtitle = true;
-            }
+            int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
+            if(flags & TermParser::Result_ChangedTitle)
+                newtitle = true;
         
-            strongself->m_Parser->Flush();
             strongself->m_TermScrollView.screen.Unlock();
-        
+            
+            
+            auto nanos = mtb.Delta();
+//            auto nanos_pb = nanos.count() / _sz;
+//            printf( "parsing speed: %llu\n", nanos_pb );
+            
+            static nanoseconds nanos_total(0);
+            nanos_total += nanos;
+            static unsigned long bytes_total(0);
+            bytes_total += _sz;
+            
+            auto nanos_pb = nanos_total.count() / bytes_total;
+            printf( "parsing speed avg: %llu\n", nanos_pb );
+            
+            
             
             [strongself->m_TermScrollView.view.FPSDrawer invalidate];
             
-            //            tmb.Reset("Parsed in: ");
+//            mtb.ResetNano("Parsed in: ");
+//            printf("(data size: %d)\n", _sz);
+
+            
+        
             dispatch_to_main_queue( [=]{
                 [strongself->m_TermScrollView.view adjustSizes:false];
                 if(newtitle)

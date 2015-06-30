@@ -351,21 +351,21 @@ nanoseconds MachTimeBenchmark::Delta() const
 void MachTimeBenchmark::ResetNano(const char *_msg)
 {
     auto now = machtime();
-    NSLog(@"%s%llu\n", _msg, (now - last).count());
+    printf("%s%llu\n", _msg, (now - last).count());
     last = now;
 }
 
 void MachTimeBenchmark::ResetMicro(const char *_msg)
 {
     auto now = machtime();
-    NSLog(@"%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
+    printf("%s%llu\n", _msg, duration_cast<microseconds>(now - last).count());
     last = now;
 }
 
 void MachTimeBenchmark::ResetMilli(const char *_msg)
 {
     auto now = machtime();
-    NSLog(@"%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
+    printf("%s%llu\n", _msg, duration_cast<milliseconds>(now - last).count() );
     last = now;
 }
 

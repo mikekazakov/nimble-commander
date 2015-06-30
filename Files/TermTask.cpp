@@ -33,14 +33,17 @@ TermTask::~TermTask()
 void TermTask::SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback )
 {
     lock_guard<mutex> lock(m_OnChildOutputLock);
-    m_OnChildOutput = move(_callback);
+    m_OnChildOutput = make_shared<decltype(_callback)>(move(_callback));
 }
 
 void TermTask::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
 {
-    lock_guard<mutex> lock(m_OnChildOutputLock);
-    if( m_OnChildOutput && _sz && _d )
-        m_OnChildOutput(_d, _sz);
+    m_OnChildOutputLock.lock();
+    auto clbk = m_OnChildOutput;
+    m_OnChildOutputLock.unlock();
+    
+    if( clbk && *clbk && _sz && _d )
+        (*clbk)(_d, _sz);
 }
 
 int TermTask::SetTermWindow(int _fd,

@@ -15,7 +15,6 @@ public:
     ~TermTask(); // NO virtual here
     
     
-    // calling this method from a callback itself will cause a guaranteed deadlock
     void SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback );
     
     
@@ -45,7 +44,7 @@ protected:
     
     mutable mutex m_Lock;
 private:    
-    function<void(const void *_d, size_t _sz)>  m_OnChildOutput;
-    mutex                                       m_OnChildOutputLock;
+    shared_ptr<function<void(const void *_d, size_t _sz)>>  m_OnChildOutput;
+    mutex                                                   m_OnChildOutputLock;
     
 };

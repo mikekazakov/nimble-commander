@@ -146,7 +146,7 @@ void TermShellTask::ReadChildOutput()
         // If data on master side of PTY (some child's output)
         if(FD_ISSET(m_MasterFD, &fd_in)) {
             // try to read a bit more - wait 1usec to see if any additional data will come in
-            unsigned have_read = ReadInputAsMuchAsAvailable(m_MasterFD, input, input_sz);            
+            unsigned have_read = ReadInputAsMuchAsAvailable(m_MasterFD, input, input_sz);
             if(!m_TemporarySuppressed)
                 DoCalloutOnChildOutput(input, have_read);
         }

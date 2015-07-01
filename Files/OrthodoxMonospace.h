@@ -8,7 +8,6 @@
 
 #pragma once
 
-#import <Cocoa/Cocoa.h>
 #include "Encodings.h"
 
 class FontCache;
@@ -22,6 +21,7 @@ struct DoubleColor
     DoubleColor() = default;
     DoubleColor(double _r, double _g, double _b, double _a):
         r(_r), g(_g), b(_b), a(_a) {}
+#ifdef __OBJC__
     DoubleColor(NSColor *_c)
     {
         assert(_c != nil);
@@ -30,6 +30,7 @@ struct DoubleColor
     inline NSColor* ToNSColor() const {
         return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:a];
     }
+#endif
     void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };
@@ -127,7 +128,7 @@ void DrawStringWithBackgroundXY(UniChar *_s,
 /**
  * calculates amount of monospace characters need to accommodate whole input string
  */
-int CalculateSymbolsSpaceForString(const uint16 *_s, size_t _amount);
+int CalculateSymbolsSpaceForString(const uint16_t *_s, size_t _amount);
 
 /**
  * calculates maximum amount of unichars that will not exceed _symb_amount when printed

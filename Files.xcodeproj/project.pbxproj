@@ -304,7 +304,7 @@
 		CF6D9C37196678010077B146 /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3B175D997A00757DE1 /* MainWindowBigFileViewState.mm */; };
 		CF6D9C39196678010077B146 /* TermShellTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */; };
 		CF6D9C3A196678010077B146 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
-		CF6D9C3B196678010077B146 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
+		CF6D9C3B196678010077B146 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
 		CF6D9C3C196678010077B146 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CF6D9C3D196678010077B146 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
 		CF6D9C3E196678010077B146 /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123416C5284800D247EE /* PanelData.mm */; };
@@ -457,6 +457,10 @@
 		CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
+		CFA57B251B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */; };
+		CFA57B261B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */; };
+		CFA57B271B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */; };
+		CFA57B291B43014900AC5EDF /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */; };
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
@@ -476,7 +480,7 @@
 		CFB3E4831844ACD700D375E2 /* TermShellTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */; };
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
-		CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
+		CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
 		CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
 		CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
 		CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
@@ -694,7 +698,7 @@
 		CFF6F2701A13567C00011177 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CFF6F2731A13567C00011177 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF6053016F4572700AB3287 /* FileAlreadyExistSheetController.mm */; };
-		CFF6F2741A13567C00011177 /* TermScreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.mm */; };
+		CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
 		CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CD3182CBA68006EC35C /* SUStandardVersionComparator.m */; };
 		CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
@@ -1313,6 +1317,8 @@
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowHotkeysTab.h; sourceTree = "<group>"; };
 		CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowHotkeysTab.mm; sourceTree = "<group>"; };
+		CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TermScreenBuffer.cpp; sourceTree = "<group>"; };
+		CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreenBufferTests.mm; sourceTree = "<group>"; };
 		CFA58397170EA3C400E508CF /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperation.mm; sourceTree = "<group>"; };
 		CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileDeletionOperationJob.mm; sourceTree = "<group>"; };
@@ -1341,7 +1347,7 @@
 		CFB3E47D1844ACD700D375E2 /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermParser.mm; sourceTree = "<group>"; };
 		CFB3E47E1844ACD700D375E2 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermView.mm; sourceTree = "<group>"; };
 		CFB3E47F1844ACD700D375E2 /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermScreen.h; sourceTree = "<group>"; };
-		CFB3E4801844ACD700D375E2 /* TermScreen.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreen.mm; sourceTree = "<group>"; };
+		CFB3E4801844ACD700D375E2 /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TermScreen.cpp; sourceTree = "<group>"; };
 		CFB3E4811844ACD700D375E2 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermParser.h; sourceTree = "<group>"; };
 		CFB3E4821844ACD700D375E2 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermView.h; sourceTree = "<group>"; };
 		CFB56283194ECA1B00A3B70E /* FPSLimitedDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPSLimitedDrawer.h; sourceTree = "<group>"; };
@@ -2372,7 +2378,9 @@
 				CFB3E4811844ACD700D375E2 /* TermParser.h */,
 				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
 				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
-				CFB3E4801844ACD700D375E2 /* TermScreen.mm */,
+				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
+				CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */,
+				CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */,
 				CFB3E4821844ACD700D375E2 /* TermView.h */,
 				CFB3E47E1844ACD700D375E2 /* TermView.mm */,
 				CF8E76C01B353A1000BA16AD /* TermScrollView.h */,
@@ -3165,6 +3173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */,
+				CFA57B291B43014900AC5EDF /* TermScreenBufferTests.mm in Sources */,
 				CFAA2AB2196BA56B0036B388 /* TermShellTask_Tests.mm in Sources */,
 				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
 				CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */,
@@ -3219,6 +3228,7 @@
 				CF50B7141A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
 				CF50B7331A15171600E3D96D /* VFSNetSFTPFile.cpp in Sources */,
 				CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CFA57B261B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */,
 				CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */,
 				CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */,
@@ -3315,7 +3325,7 @@
 				CF6D9C37196678010077B146 /* MainWindowBigFileViewState.mm in Sources */,
 				CF6D9C39196678010077B146 /* TermShellTask.mm in Sources */,
 				CF6D9C3A196678010077B146 /* TermParser.mm in Sources */,
-				CF6D9C3B196678010077B146 /* TermScreen.mm in Sources */,
+				CF6D9C3B196678010077B146 /* TermScreen.cpp in Sources */,
 				CF6D9C3C196678010077B146 /* TermView.mm in Sources */,
 				CF6D9C3D196678010077B146 /* MainWindowTerminalState.mm in Sources */,
 				CF6D9C3E196678010077B146 /* PanelData.mm in Sources */,
@@ -3429,12 +3439,13 @@
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */,
+				CFA57B251B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFF6053216F4572700AB3287 /* FileAlreadyExistSheetController.mm in Sources */,
-				CFB3E4861844ACD700D375E2 /* TermScreen.mm in Sources */,
+				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
 				CF50B7251A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
 				CFDA4CD5182CBA68006EC35C /* SUStandardVersionComparator.m in Sources */,
@@ -3630,6 +3641,7 @@
 				CF50B7091A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
+				CFA57B271B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFF6F2631A13567C00011177 /* Hash.cpp in Sources */,
 				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
@@ -3641,7 +3653,7 @@
 				CF50B6E11A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
 				CFF6F2731A13567C00011177 /* FileAlreadyExistSheetController.mm in Sources */,
-				CFF6F2741A13567C00011177 /* TermScreen.mm in Sources */,
+				CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */,
 				CF50B7271A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFF6F2771A13567C00011177 /* SUStandardVersionComparator.m in Sources */,
@@ -4191,7 +4203,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -4223,7 +4235,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (

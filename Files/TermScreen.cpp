@@ -79,8 +79,6 @@ void TermScreen::PutCh(uint32_t _char)
         sp.l = _char;
         sp.c1 = 0;
         sp.c2 = 0;
-//        sp.foreground = m_Color & 0x7;
-//        sp.background = (m_Color & 0x38) >> 3;
         sp.foreground = m_ForegroundColor;
         sp.background = m_BackgroundColor;
         sp.intensity = m_Intensity;

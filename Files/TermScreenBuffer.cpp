@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "TermScreen.h"
+#include "TermScreenBuffer.h"
 
 using _ = TermScreen::Buffer;
 
@@ -42,7 +42,13 @@ pair<const _::Space*, const _::Space*> _::LineFromNo(int _line_number) const
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else // backscreen later
+    else if( _line_number < 0 && -_line_number <= m_OnScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_OnScreenLines.size() + _line_number);
+        auto &l = m_BackScreenLines[ind];
+        assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
+        return { &m_BackScreenSpaces[l.start_index],
+                 &m_BackScreenSpaces[l.start_index + l.line_length] };
+    } else
         return {nullptr, nullptr};
 }
 
@@ -55,7 +61,14 @@ pair<_::Space*, _::Space*> _::LineFromNo(int _line_number)
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else // backscreen later
+    else if( _line_number < 0 && -_line_number <= m_OnScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_OnScreenLines.size() + _line_number);
+        auto &l = m_BackScreenLines[ind];
+        assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
+        return { &m_BackScreenSpaces[l.start_index],
+            &m_BackScreenSpaces[l.start_index + l.line_length] };
+    }
+    else
         return {nullptr, nullptr};
 }
 
@@ -125,6 +138,24 @@ void _::ResizeScreen(int _new_sx, int _new_sy)
 {
     
     
+}
+
+void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
+{
+    // TODO: trimming and empty lines ?
+    while( _from < _to ) {
+        unsigned line_len = min( m_Width, unsigned(_to - _from) );
+        
+        m_BackScreenLines.emplace_back();
+        m_BackScreenLines.back().start_index = (unsigned)m_BackScreenSpaces.size();
+        m_BackScreenLines.back().line_length = line_len;
+        m_BackScreenLines.back().is_wrapped = _wrapped;
+        m_BackScreenSpaces.insert(end(m_BackScreenSpaces),
+                                  _from,
+                                  _from + line_len);
+
+        _from += line_len;
+    }
 }
 
 vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const

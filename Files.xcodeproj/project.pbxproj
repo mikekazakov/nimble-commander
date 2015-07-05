@@ -1290,6 +1290,7 @@
 		CF9066B819AB5636001DC687 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
+		CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TermScreenBuffer.h; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
@@ -2379,6 +2380,7 @@
 				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
 				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
 				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
+				CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */,
 				CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */,
 				CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */,
 				CFB3E4821844ACD700D375E2 /* TermView.h */,
@@ -4203,7 +4205,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -4235,7 +4237,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4442,7 +4444,7 @@
 				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
@@ -4486,7 +4488,7 @@
 				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";

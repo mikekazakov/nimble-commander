@@ -164,7 +164,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)adjustSizes:(bool)_mandatory
 {
-    int fsy = m_Screen->Height() + m_Screen->ScrollBackLinesCount();
+    int fsy = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
     if(fsy == m_LastScreenFSY && _mandatory == false)
         return;
     
@@ -220,36 +220,41 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     oms::SetParamsForUserReadableText(context, m_FontCache.get());
     CGContextSetShouldSmoothFonts(context, true);
 
-    for(int i = line_start; i < line_end; ++i)
+    for(int i = line_start, bsl = m_Screen->Buffer().BackScreenLines();
+        i < line_end;
+        ++i)
     {
-        
-        if(i < m_Screen->ScrollBackLinesCount())
+        if(i < bsl)
         {
             // scrollback
-            auto line = m_Screen->GetScrollBackLine(i);
-            if(line)
-                [self DrawLine:*line
+//            auto line = m_Screen->GetScrollBackLine(i);
+            auto line = m_Screen->Buffer().LineFromNo(i - bsl);
+            if(line.first)
+                [self DrawLine:line
                           at_y:i
-                         sel_y:i - m_Screen->ScrollBackLinesCount()
+                         sel_y:i - bsl
                        context:context
                      cursor_at:-1];
         }
         else
         {
             // real screen
-            auto line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
-            if(line)
+//            auto line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
+            auto line = m_Screen->Buffer().LineFromNo(i - bsl);
+            if(line.first)
             {
-                if(m_Screen->CursorY() != i - m_Screen->ScrollBackLinesCount())
-                    [self DrawLine:*line
+                if(m_Screen->CursorY() != i - bsl)
+                    [self DrawLine:line
                               at_y:i
-                             sel_y:i - m_Screen->ScrollBackLinesCount()
+                             sel_y:i - bsl
                            context:context
                          cursor_at:-1];
                 else
-                    [self DrawLine:*line
+                    [self DrawLine:line
                               at_y:i
-                             sel_y:i - m_Screen->ScrollBackLinesCount()
+                             sel_y:i -
+                     
+                     bsl
                            context:context
                          cursor_at:m_Screen->CursorX()];
             }
@@ -262,7 +267,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
 }
 
-- (void) DrawLine:(const TermScreen::Line &)_line
+- (void) DrawLine:(pair<const TermScreen::Space*, const TermScreen::Space*>)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
@@ -271,7 +276,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     // draw backgrounds
     DoubleColor curr_c = {-1, -1, -1, -1};
     int x = 0;
-    for(TermScreen::Space char_space: _line.chars)
+//    for(TermScreen::Space char_space: _line.chars)
+    for(auto char_space: _line)
     {
         int bg_no = char_space.reverse ? char_space.foreground : char_space.background;
         if(bg_no != TermScreenColors::Default) {
@@ -337,7 +343,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     bool is_aa = true;
     CGContextSetShouldAntialias(_context, is_aa);
     
-    for(TermScreen::Space char_space: _line.chars)
+//    for(TermScreen::Space char_space: _line.chars)
+    for(auto char_space: _line)
     {
         DoubleColor c = m_ForegroundColor;
         if(char_space.reverse) {
@@ -432,7 +439,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
  */
 - (SelPoint)ProjectPoint:(NSPoint)_point
 {
-    int line_predict = floor(_point.y / m_FontCache->Height()) - m_Screen->ScrollBackLinesCount();
+    int line_predict = floor(_point.y / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
     int col_predict = floor(_point.x / m_FontCache->Width());
     return SelPoint{col_predict, line_predict};
 }
@@ -488,53 +495,53 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)copy:(id)sender
 {
-    if(!m_HasSelection)
-        return;
-    
-    if(m_SelStart == m_SelEnd)
-        return;
-    
-    vector<uint32_t> unichars;
-    SelPoint curr = m_SelStart;
-    while(true)
-    {
-        if(curr >= m_SelEnd) break;
-        
-        const TermScreen::Line *line = nullptr;
-        if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
-        else           line = m_Screen->GetScreenLine(curr.y);
-        
-        if(!line) {
-            curr.y++;
-            continue;
-        }
-        
-        bool any_inserted = false;
-        auto chars_len = line->actual_length();
-        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
-            auto &sp = line->chars[curr.x];
-            if(sp.l == TermScreen::MultiCellGlyph) continue;
-            unichars.push_back(sp.l != 0 ? sp.l : ' ');
-            if(sp.c1 != 0) unichars.push_back(sp.c1);
-            if(sp.c2 != 0) unichars.push_back(sp.c2);
-            any_inserted = true;
-        }
-    
-        if(curr >= m_SelEnd)
-            break;
-        
-        curr.y++;
-        curr.x = 0;
-        if(any_inserted && !line->wrapped) unichars.push_back(0x000A);
-    }
-    
-    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
-                                                length:unichars.size() * sizeof(uint32_t)
-                                              encoding:NSUTF32LittleEndianStringEncoding];
-    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
-    [pasteBoard clearContents];
-    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
-    [pasteBoard setString:result forType:NSStringPboardType];
+//    if(!m_HasSelection)
+//        return;
+//    
+//    if(m_SelStart == m_SelEnd)
+//        return;
+//    
+//    vector<uint32_t> unichars;
+//    SelPoint curr = m_SelStart;
+//    while(true)
+//    {
+//        if(curr >= m_SelEnd) break;
+//        
+//        const TermScreen::Line *line = nullptr;
+//        if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
+//        else           line = m_Screen->GetScreenLine(curr.y);
+//        
+//        if(!line) {
+//            curr.y++;
+//            continue;
+//        }
+//        
+//        bool any_inserted = false;
+//        auto chars_len = line->actual_length();
+//        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
+//            auto &sp = line->chars[curr.x];
+//            if(sp.l == TermScreen::MultiCellGlyph) continue;
+//            unichars.push_back(sp.l != 0 ? sp.l : ' ');
+//            if(sp.c1 != 0) unichars.push_back(sp.c1);
+//            if(sp.c2 != 0) unichars.push_back(sp.c2);
+//            any_inserted = true;
+//        }
+//    
+//        if(curr >= m_SelEnd)
+//            break;
+//        
+//        curr.y++;
+//        curr.x = 0;
+//        if(any_inserted && !line->wrapped) unichars.push_back(0x000A);
+//    }
+//    
+//    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
+//                                                length:unichars.size() * sizeof(uint32_t)
+//                                              encoding:NSUTF32LittleEndianStringEncoding];
+//    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
+//    [pasteBoard clearContents];
+//    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
+//    [pasteBoard setString:result forType:NSStringPboardType];
 }
 
 - (IBAction)paste:(id)sender
@@ -553,7 +560,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (void)selectAll:(id)sender
 {
     m_HasSelection = true;
-    m_SelStart.y = -m_Screen->ScrollBackLinesCount();
+    m_SelStart.y = -m_Screen->Buffer().BackScreenLines();
     m_SelStart.x = 0;
     m_SelEnd.y = m_Screen->Height()-1;
     m_SelEnd.x = m_Screen->Width();

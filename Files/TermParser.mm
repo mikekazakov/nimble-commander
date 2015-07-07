@@ -567,18 +567,14 @@ void TermParser::CSI_H()
 
 void TermParser::CSI_K()
 {
-    m_Scr.DoEraseInLine(m_Params[0]);
+    m_Scr.EraseInLine(m_Params[0]);
 }
 
 void TermParser::CSI_X()
 {
     if(m_Params[0] == 0)
         m_Params[0]++;
-    int pos = m_Scr.CursorX();
-    m_Scr.DoEraseCharacters(m_Params[0] + pos > m_Scr.Width() ?
-                             m_Scr.Width() - pos :
-                             m_Params[0]
-                             );
+    m_Scr.EraseInLineCount(m_Params[0]);
 }
 
 void TermParser::CSI_M()
@@ -946,7 +942,7 @@ void TermParser::CSI_L()
         p = m_Scr.Height() - m_Scr.CursorY();
     else if(p == 0)
         p = 1;
-    m_Scr.DoScrollDown(m_Scr.CursorY(), m_Bottom, p);
+    m_Scr.ScrollDown(m_Scr.CursorY(), m_Bottom, p);
 }
 
 void TermParser::CSI_At()
@@ -957,7 +953,7 @@ void TermParser::CSI_At()
     else if(p == 0)
         p = 1;
     m_Scr.DoShiftRowRight(p);
-    m_Scr.DoEraseAt(m_Scr.CursorX(), m_Scr.CursorY(), p);
+    m_Scr.EraseAt(m_Scr.CursorX(), m_Scr.CursorY(), p); // this seems to be redundant! CHECK!
 }
 
 void TermParser::DoGoTo(int _x, int _y)
@@ -976,7 +972,7 @@ void TermParser::DoGoTo(int _x, int _y)
 void TermParser::RI()
 {
     if(m_Scr.CursorY() == m_Top)
-        m_Scr.DoScrollDown(m_Top, m_Bottom, 1);
+        m_Scr.ScrollDown(m_Top, m_Bottom, 1);
     else
         m_Scr.DoCursorUp();
 }
@@ -1026,7 +1022,7 @@ void TermParser::Resized()
 void TermParser::CSI_T()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
-    while(p--) m_Scr.DoScrollDown(m_Top, m_Bottom, 1);
+    while(p--) m_Scr.ScrollDown(m_Top, m_Bottom, 1);
 }
 
 void TermParser::CSI_S()

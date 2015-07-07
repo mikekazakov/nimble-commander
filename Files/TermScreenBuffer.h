@@ -8,18 +8,48 @@
 
 #pragma once
 
-#include "TermScreen.h"
+struct TermScreenColors
+{
+    enum {
+        Default     = -1,
+        Black       = 0,
+        Red         = 1,
+        Green       = 2,
+        Yellow      = 3,
+        Blue        = 4,
+        Magenta     = 5,
+        Cyan        = 6,
+        White       = 7,
+        BlackHi     = 8,
+        RedHi       = 9,
+        GreenHi     = 10,
+        YellowHi    = 11,
+        BlueHi      = 12,
+        MagentaHi   = 13,
+        CyanHi      = 14,
+        WhiteHi     = 15
+    };
+};
 
 // need:
 // - backscreen
-// - screenshots - saving / restoring
 // - resizing
-class TermScreen::Buffer
+class TermScreenBuffer
 {
 public:
-    using Space = TermScreen::Space;
+    struct Space
+    {
+        uint32_t l;        // basic letter, may be non-bmp
+        unsigned short c1; // combining character 1. zero if no. bmp-only
+        unsigned short c2; // combining character 2. zero if no. bmp-only
+        signed char foreground;
+        signed char background;
+        unsigned int intensity  :1;
+        unsigned int underline  :1;
+        unsigned int reverse    :1;
+    };
     
-    Buffer(unsigned _width, unsigned _height);
+    TermScreenBuffer(unsigned _width, unsigned _height);
     
     inline unsigned Width()  const { return m_Width;  }
     inline unsigned Height() const { return m_Height; }
@@ -48,12 +78,26 @@ public:
     // use for diagnose and test purposes only
     string DumpScreenAsANSI() const;
     
+    inline bool HasSnapshot() const { return (bool)m_Snapshot; }
+    void MakeSnapshot();
+    void RevertToSnapshot();
+    void DropSnapshot();
+    
+    
 private:
     struct LineMeta
     {
         unsigned start_index = 0;
         unsigned line_length = 0;
         bool is_wrapped = false;
+    };
+    
+    struct Snapshot
+    {
+        Snapshot(unsigned _w, unsigned _h);
+        const unsigned            width;
+        const unsigned            height;
+        const unique_ptr<Space[]> chars;
     };
     
     LineMeta *MetaFromLineNo( int _line_number );
@@ -72,20 +116,22 @@ private:
     vector<Space>       m_BackScreenSpaces; // will be growing
     
     Space               m_EraseChar = DefaultEraseChar();
+
+    unique_ptr<Snapshot>m_Snapshot;
 };
 
-inline const TermScreen::Buffer::Space*
-begin( const pair<const TermScreen::Buffer::Space*, const TermScreen::Buffer::Space*> &_p )
+inline const TermScreenBuffer::Space*
+begin( const pair<const TermScreenBuffer::Space*, const TermScreenBuffer::Space*> &_p )
 { return _p.first; }
 
-inline TermScreen::Buffer::Space*
-begin( const pair<TermScreen::Buffer::Space*, TermScreen::Buffer::Space*> &_p )
+inline TermScreenBuffer::Space*
+begin( const pair<TermScreenBuffer::Space*, TermScreenBuffer::Space*> &_p )
 { return _p.first; }
 
-inline const TermScreen::Buffer::Space*
-end( const pair<const TermScreen::Buffer::Space*, const TermScreen::Buffer::Space*> &_p )
+inline const TermScreenBuffer::Space*
+end( const pair<const TermScreenBuffer::Space*, const TermScreenBuffer::Space*> &_p )
 { return _p.second; }
 
-inline TermScreen::Buffer::Space*
-end( const pair<TermScreen::Buffer::Space*, TermScreen::Buffer::Space*> &_p )
+inline TermScreenBuffer::Space*
+end( const pair<TermScreenBuffer::Space*, TermScreenBuffer::Space*> &_p )
 { return _p.second; }

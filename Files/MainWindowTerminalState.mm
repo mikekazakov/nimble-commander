@@ -81,29 +81,36 @@
     
     m_Task->SetOnChildOutput([=](const void* _d, int _sz){
         if(MainWindowTerminalState *strongself = weakself) {
-            MachTimeBenchmark mtb;
+
+
             
             bool newtitle = false;
             strongself->m_TermScrollView.screen.Lock();
 
+            
+                        MachTimeBenchmark mtb;
+
+            
             int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
+            
+                        auto nanos = mtb.Delta();
+                        static unsigned long nanos_total(0);
+                        nanos_total += nanos.count();
+                        static unsigned long bytes_total(0);
+                        bytes_total += _sz;
+                        auto nanos_pb = double(nanos_total) / double(bytes_total);
+                        printf( "parsing speed avg: %.0f\n", nanos_pb );
+            
+            
+            
+            
             if(flags & TermParser::Result_ChangedTitle)
                 newtitle = true;
         
             strongself->m_TermScrollView.screen.Unlock();
             
             
-            auto nanos = mtb.Delta();
-//            auto nanos_pb = nanos.count() / _sz;
-//            printf( "parsing speed: %llu\n", nanos_pb );
-            
-            static nanoseconds nanos_total(0);
-            nanos_total += nanos;
-            static unsigned long bytes_total(0);
-            bytes_total += _sz;
-            
-            auto nanos_pb = nanos_total.count() / bytes_total;
-            printf( "parsing speed avg: %llu\n", nanos_pb );
+
             
             
             

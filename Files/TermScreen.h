@@ -8,28 +8,7 @@
 
 #pragma once
 
-struct TermScreenColors
-{
-    enum {
-        Default     = -1,
-        Black       = 0,
-        Red         = 1,
-        Green       = 2,
-        Yellow      = 3,
-        Blue        = 4,
-        Magenta     = 5,
-        Cyan        = 6,
-        White       = 7,
-        BlackHi     = 8,
-        RedHi       = 9,
-        GreenHi     = 10,
-        YellowHi    = 11,
-        BlueHi      = 12,
-        MagentaHi   = 13,
-        CyanHi      = 14,
-        WhiteHi     = 15
-    };
-};
+#include "TermScreenBuffer.h"
 
 class TermScreen
 {
@@ -38,39 +17,20 @@ public:
     ~TermScreen();
 
     static const unsigned short MultiCellGlyph = 0xFFFE;
-    
-    struct Space
-    {
-        uint32_t l;        // basic letter, may be non-bmp
-        unsigned short c1; // combining character 1. zero if no. bmp-only
-        unsigned short c2; // combining character 2. zero if no. bmp-only
-        signed char foreground;
-        signed char background;
-        unsigned int intensity  :1;
-        unsigned int underline  :1;
-        unsigned int reverse    :1;
-    };
-    
-    struct Line
-    {
-        bool          wrapped = false;
-        vector<Space> chars;
-        unsigned actual_length() const;
-    };
-    
-    class Buffer;
+    using Space = TermScreenBuffer::Space;
     
     inline void Lock()      { m_Lock.lock();   }
     inline void Unlock()    { m_Lock.unlock(); }
     
-    const Line *GetScreenLine(int _line_no) const;
-    const Line *GetScrollBackLine(int _line_no) const;
+//    const Line *GetScreenLine(int _line_no) const;
+//    const Line *GetScrollBackLine(int _line_no) const;
     
-    inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
+//    inline int ScrollBackLinesCount() const { return (int)m_ScrollBack.size(); }
     
     void ResizeScreen(int _new_sx, int _new_sy);
     
     void PutCh(uint32_t _char);
+    void PutString(const string &_str);
     
     /**
      * Marks current screen line as wrapped. That means that the next line is continuation of current line.
@@ -89,17 +49,22 @@ public:
     void DoCursorDown(int _n = 1);
     void DoCursorLeft(int _n = 1);
     void DoCursorRight(int _n = 1);
-    void DoEraseCharacters(int _n);
     
-    void DoScrollDown(int _top, int _bottom, int _lines);
-    void DoScrollUp(int _top, int _bottom, int _lines);
+    void ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines);
+    void DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines);
     
     void SaveScreen();
     void RestoreScreen();
     
+
+
+    inline const TermScreenBuffer &Buffer() const { return m_Buffer; }
+    inline int Width()   const { return /*m_Width*/ m_Buffer.Width();  }
+    inline int Height()  const { return /*m_Height*/ m_Buffer.Height(); }
     
-    inline int Width()   const { return m_Width;  }
-    inline int Height()  const { return m_Height; }
+    
+//    inline int Width()   const { return /*m_Width*/ m_Buffer->Width();  }
+//    inline int Height()  const { return /*m_Height*/ m_Buffer->Height(); }
     inline int CursorX() const { return m_PosX;   }
     inline int CursorY() const { return m_PosY;   }
     
@@ -114,10 +79,14 @@ public:
 // EL – Erase in Line	Erases part of the line.
 // If n is zero (or missing), clear from cursor to the end of the line.
 // If n is one, clear from cursor to beginning of the line.
-// If n is two, clear entire line. Cursor position does not change.
-    void DoEraseInLine(int _mode);
+// If n is two, clear entire line.
+// Cursor position does not change.
+    void EraseInLine(int _mode);
     
-    void DoEraseAt(int _x, int _y, int _count=1);
+    // Erases _n characters in line starting from current cursor position. _n may be beyond bounds
+    void EraseInLineCount(unsigned _n);
+    
+    void EraseAt(unsigned _x, unsigned _y, unsigned _count);
     
     
     void DoShiftRowLeft(int _chars);
@@ -127,41 +96,44 @@ public:
     inline const char* Title() const { return m_Title; }
     
 private:
-    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
-    {
-        int width;
-        int height;
-        Space chars[1]; // chars will be a real size
-        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
-    };
+    void CopyLineChars(int _from, int _to);
+    void ClearLine(int _ind);
+//    struct ScreenShot // allocated with malloc, line by line from [0] till [height-1]
+//    {
+//        int width;
+//        int height;
+//        Space chars[1]; // chars will be a real size
+//        static inline size_t sizefor(int _sx, int _sy) { return sizeof(int)*2 + sizeof(Space)*_sx*_sy; }
+//    };
     
-    mutex                    m_Lock;
+    mutex                         m_Lock;
     int                           m_ForegroundColor = TermScreenColors::Default;
     int                           m_BackgroundColor = TermScreenColors::Default;
     bool                          m_Intensity = false;
     bool                          m_Underline = false;
     bool                          m_Reverse = false;
     bool                          m_AlternateScreen = false;
-    int                           m_Width = 0;
-    int                           m_Height = 0;
+//    int                           m_Width = 0;
+//    int                           m_Height = 0;
     int                           m_PosX = 0;
     int                           m_PosY = 0;
     Space                         m_EraseChar;
-    ScreenShot                   *m_ScreenShot = nullptr;
+//    ScreenShot                   *m_ScreenShot = nullptr;
+    
+    TermScreenBuffer              m_Buffer;
     
     // TODO: merge screen with scrollback to eliminate torn lines effects
-    list<Line>                    m_Screen;
-    list<Line>                    m_ScrollBack;
+//    list<Line>                    m_Screen;
+//    list<Line>                    m_ScrollBack;
 
     
     static const int        m_TitleMaxLen = 1024;
     char                    m_Title[m_TitleMaxLen];
     
     
-    Line *GetLineRW(int _line_no);
-    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from);
-    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from1, const list<Line> &_from2);
-    static list<Line> DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width);
+//    Line *GetLineRW(int _line_no);
+//    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from);
+//    static list<vector<Space>> ComposeContinuousLines(const list<Line> &_from1, const list<Line> &_from2);
+//    static list<Line> DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width);
 };
 
-#include "TermScreenBuffer.h"

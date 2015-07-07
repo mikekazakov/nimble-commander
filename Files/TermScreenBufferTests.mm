@@ -11,7 +11,7 @@
 
 #define private public
 
-#import "TermScreen.h"
+#import "TermScreenBuffer.h"
 
 @interface TermScreenBufferTests : XCTestCase
 
@@ -22,7 +22,7 @@
 - (void)testInit
 {
     {
-        TermScreen::Buffer buffer(3,4);
+        TermScreenBuffer buffer(3,4);
         XCTAssert(buffer.Width() == 3);
         XCTAssert(buffer.Height() == 4);
         (buffer.LineFromNo(0).first)->l = 'A';
@@ -37,7 +37,7 @@
         XCTAssert( buffer.LineWrapped(3) == true );
     }
     {
-        TermScreen::Buffer buffer(0,0);
+        TermScreenBuffer buffer(0,0);
         XCTAssert(buffer.Width() == 0);
         XCTAssert(buffer.Height() == 0);
         auto l1 = buffer.LineFromNo(0);
@@ -48,7 +48,7 @@
         XCTAssert( l3.first == nullptr && l3.second == nullptr );
     }
     {
-        TermScreen::Buffer buffer(0,2);
+        TermScreenBuffer buffer(0,2);
         XCTAssert(buffer.Width() == 0);
         XCTAssert(buffer.Height() == 2);
         auto l1 = buffer.LineFromNo(0);
@@ -61,7 +61,7 @@
 
 - (void)testComposeContinuousLines
 {
-    TermScreen::Buffer buffer(3,4);
+    TermScreenBuffer buffer(3,4);
     XCTAssert(buffer.Width() == 3);
     XCTAssert(buffer.Height() == 4);
     (buffer.LineFromNo(0).second-1)->l = 'A';

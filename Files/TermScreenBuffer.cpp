@@ -8,9 +8,9 @@
 
 #include "TermScreenBuffer.h"
 
-using _ = TermScreen::Buffer;
+using _ = TermScreenBuffer;
 
-_::Buffer(unsigned _width, unsigned _height):
+_::TermScreenBuffer(unsigned _width, unsigned _height):
     m_Width(_width),
     m_Height(_height)
 {
@@ -42,8 +42,8 @@ pair<const _::Space*, const _::Space*> _::LineFromNo(int _line_number) const
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else if( _line_number < 0 && -_line_number <= m_OnScreenLines.size() ) {
-        unsigned ind = unsigned((signed)m_OnScreenLines.size() + _line_number);
+    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         auto &l = m_BackScreenLines[ind];
         assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
         return { &m_BackScreenSpaces[l.start_index],
@@ -61,12 +61,12 @@ pair<_::Space*, _::Space*> _::LineFromNo(int _line_number)
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else if( _line_number < 0 && -_line_number <= m_OnScreenLines.size() ) {
-        unsigned ind = unsigned((signed)m_OnScreenLines.size() + _line_number);
+    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         auto &l = m_BackScreenLines[ind];
         assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
         return { &m_BackScreenSpaces[l.start_index],
-            &m_BackScreenSpaces[l.start_index + l.line_length] };
+                 &m_BackScreenSpaces[l.start_index + l.line_length] };
     }
     else
         return {nullptr, nullptr};
@@ -76,7 +76,11 @@ _::LineMeta *_::MetaFromLineNo( int _line_number )
 {
     if( _line_number >= 0 && _line_number < m_OnScreenLines.size() )
         return &m_OnScreenLines[_line_number];
-    else // backscreen later
+    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
+        return &m_BackScreenLines[ind];
+    }
+    else
         return nullptr;
 }
 
@@ -84,7 +88,11 @@ const _::LineMeta *_::MetaFromLineNo( int _line_number ) const
 {
     if( _line_number >= 0 && _line_number < m_OnScreenLines.size() )
         return &m_OnScreenLines[_line_number];
-    else // backscreen later
+    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+        unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
+        return &m_BackScreenLines[ind];
+    }
+    else
         return nullptr;
 }
 
@@ -101,7 +109,7 @@ bool _::LineWrapped(int _line_number) const
 {
     if(auto l = MetaFromLineNo(_line_number))
         return l->is_wrapped;
-    return nullptr;
+    return false;
 }
 
 void _::SetLineWrapped(int _line_number, bool _wrapped)
@@ -149,7 +157,7 @@ void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
         m_BackScreenLines.emplace_back();
         m_BackScreenLines.back().start_index = (unsigned)m_BackScreenSpaces.size();
         m_BackScreenLines.back().line_length = line_len;
-        m_BackScreenLines.back().is_wrapped = _wrapped;
+        m_BackScreenLines.back().is_wrapped = _wrapped ? true : (line_len == m_Width);
         m_BackScreenSpaces.insert(end(m_BackScreenSpaces),
                                   _from,
                                   _from + line_len);
@@ -176,4 +184,36 @@ vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const
     }
     
     return lines;
+}
+
+_::Snapshot::Snapshot(unsigned _w, unsigned _h):
+    width(_w),
+    height(_h),
+    chars(make_unique<Space[]>( _w*_h))
+{
+}
+
+void _::MakeSnapshot()
+{
+    if( !m_Snapshot || m_Snapshot->width != m_Width || m_Snapshot->height != m_Height )
+        m_Snapshot = make_unique<Snapshot>( m_Width, m_Height );
+    copy_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_Snapshot->chars.get() );
+}
+
+void _::RevertToSnapshot()
+{
+    if( !HasSnapshot() )
+        return;
+    
+    if( m_Height == m_Snapshot->height && m_Width == m_Snapshot->width ) {
+        copy_n( m_Snapshot->chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
+    }
+    else {
+        // TODO
+    }
+}
+
+void _::DropSnapshot()
+{
+    m_Snapshot.reset();
 }

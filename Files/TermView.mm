@@ -495,53 +495,53 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)copy:(id)sender
 {
-//    if(!m_HasSelection)
-//        return;
-//    
-//    if(m_SelStart == m_SelEnd)
-//        return;
-//    
-//    vector<uint32_t> unichars;
-//    SelPoint curr = m_SelStart;
-//    while(true)
-//    {
-//        if(curr >= m_SelEnd) break;
-//        
-//        const TermScreen::Line *line = nullptr;
-//        if(curr.y < 0) line = m_Screen->GetScrollBackLine( m_Screen->ScrollBackLinesCount() + curr.y );
-//        else           line = m_Screen->GetScreenLine(curr.y);
-//        
-//        if(!line) {
-//            curr.y++;
-//            continue;
-//        }
-//        
-//        bool any_inserted = false;
-//        auto chars_len = line->actual_length();
-//        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
-//            auto &sp = line->chars[curr.x];
-//            if(sp.l == TermScreen::MultiCellGlyph) continue;
-//            unichars.push_back(sp.l != 0 ? sp.l : ' ');
-//            if(sp.c1 != 0) unichars.push_back(sp.c1);
-//            if(sp.c2 != 0) unichars.push_back(sp.c2);
-//            any_inserted = true;
-//        }
-//    
-//        if(curr >= m_SelEnd)
-//            break;
-//        
-//        curr.y++;
-//        curr.x = 0;
-//        if(any_inserted && !line->wrapped) unichars.push_back(0x000A);
-//    }
-//    
-//    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
-//                                                length:unichars.size() * sizeof(uint32_t)
-//                                              encoding:NSUTF32LittleEndianStringEncoding];
-//    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
-//    [pasteBoard clearContents];
-//    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
-//    [pasteBoard setString:result forType:NSStringPboardType];
+    if(!m_HasSelection)
+        return;
+    
+    if(m_SelStart == m_SelEnd)
+        return;
+    
+    vector<uint32_t> unichars;
+    SelPoint curr = m_SelStart;
+    while(true)
+    {
+        if(curr >= m_SelEnd) break;
+        
+        auto line = m_Screen->Buffer().LineFromNo( curr.y );
+        
+        if( !line.first ) {
+            curr.y++;
+            continue;
+        }
+        
+        bool any_inserted = false;
+        auto chars_len = line.second - line.first;
+        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
+            auto &sp = line.first[curr.x];
+            if(sp.l == TermScreen::MultiCellGlyph) continue;
+            unichars.push_back(sp.l != 0 ? sp.l : ' ');
+            if(sp.c1 != 0) unichars.push_back(sp.c1);
+            if(sp.c2 != 0) unichars.push_back(sp.c2);
+            any_inserted = true;
+        }
+    
+        if(curr >= m_SelEnd)
+            break;
+        
+        if(any_inserted && !m_Screen->Buffer().LineWrapped( curr.y ))
+            unichars.push_back(0x000A);
+        
+        curr.y++;
+        curr.x = 0;
+    }
+    
+    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
+                                                length:unichars.size() * sizeof(uint32_t)
+                                              encoding:NSUTF32LittleEndianStringEncoding];
+    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
+    [pasteBoard clearContents];
+    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
+    [pasteBoard setString:result forType:NSStringPboardType];
 }
 
 - (IBAction)paste:(id)sender

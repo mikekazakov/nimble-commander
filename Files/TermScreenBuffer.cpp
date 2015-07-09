@@ -159,7 +159,7 @@ void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
         m_BackScreenLines.emplace_back();
         m_BackScreenLines.back().start_index = (unsigned)m_BackScreenSpaces.size();
         m_BackScreenLines.back().line_length = line_len;
-        m_BackScreenLines.back().is_wrapped = _wrapped ? true : (line_len == m_Width);
+        m_BackScreenLines.back().is_wrapped = _wrapped ? true : (m_Width < _to - _from);
         m_BackScreenSpaces.insert(end(m_BackScreenSpaces),
                                   _from,
                                   _from + line_len);

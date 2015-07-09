@@ -10,6 +10,8 @@
 
 using _ = TermScreenBuffer;
 
+static_assert( sizeof(_::Space) == 10 , "");
+
 _::TermScreenBuffer(unsigned _width, unsigned _height):
     m_Width(_width),
     m_Height(_height)

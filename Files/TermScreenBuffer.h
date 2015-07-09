@@ -11,7 +11,6 @@
 struct TermScreenColors
 {
     enum {
-        Default     = -1,
         Black       = 0,
         Red         = 1,
         Green       = 2,
@@ -27,27 +26,29 @@ struct TermScreenColors
         BlueHi      = 12,
         MagentaHi   = 13,
         CyanHi      = 14,
-        WhiteHi     = 15
-    };
+        WhiteHi     = 15,
+        Default     = 16
+    }; // need 5 bits to store this color
 };
 
 // need:
-// - backscreen
 // - resizing
 class TermScreenBuffer
 {
 public:
+#pragma pack(push, 1)
     struct Space
     {
-        uint32_t l;        // basic letter, may be non-bmp
-        unsigned short c1; // combining character 1. zero if no. bmp-only
-        unsigned short c2; // combining character 2. zero if no. bmp-only
-        signed char foreground;
-        signed char background;
-        unsigned int intensity  :1;
-        unsigned int underline  :1;
-        unsigned int reverse    :1;
-    };
+        uint32_t             l; // basic letter, may be non-bmp
+        uint16_t            c1; // combining character 1. zero if no. bmp-only
+        uint16_t            c2; // combining character 2. zero if no. bmp-only
+        unsigned foreground :5;
+        unsigned background :5;
+        unsigned intensity  :1;
+        unsigned underline  :1;
+        unsigned reverse    :1;
+    }; // 10 bytes per screen space
+#pragma pop
     
     TermScreenBuffer(unsigned _width, unsigned _height);
     

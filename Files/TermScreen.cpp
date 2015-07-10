@@ -247,7 +247,7 @@ void TermScreen::EraseInLine(int _mode)
     // If n is two, clear entire line.
     // Cursor position does not change.
     auto line = m_Buffer.LineFromNo(m_PosY);
-    if(!line.first)
+    if(!line)
         return;
     auto i = begin(line);
     auto e = end(line);
@@ -261,7 +261,7 @@ void TermScreen::EraseInLine(int _mode)
 void TermScreen::EraseInLineCount(unsigned _n)
 {
     auto line = m_Buffer.LineFromNo(m_PosY);
-    if(!line.first)
+    if(!line)
         return;
     auto i = begin(line) + m_PosX;
     auto e = min( i + _n, end(line) );
@@ -319,7 +319,7 @@ void TermScreen::DoShiftRowLeft(int _chars)
 //        line->chars[m_Width-i-1] = m_EraseChar; // why m_Width here???
     
     auto line = m_Buffer.LineFromNo(m_PosY);
-    if(!line.first)
+    if(!line)
         return;
     auto chars = line.first;
     
@@ -349,7 +349,7 @@ void TermScreen::DoShiftRowRight(int _chars)
 //        line->chars[m_PosX + i] = m_EraseChar;
     
     auto line = m_Buffer.LineFromNo(m_PosY);
-    if(!line.first)
+    if(!line)
         return;
     auto chars = line.first;
     
@@ -364,19 +364,18 @@ void TermScreen::DoShiftRowRight(int _chars)
 
 void TermScreen::EraseAt(unsigned _x, unsigned _y, unsigned _count)
 {
-    auto line = m_Buffer.LineFromNo(_y);
-    if(!line.first)
-        return;
-    auto i = begin(line) + _x;
-    auto e = min( i + _count, end(line) );
-    fill(i, e, m_EraseChar);
+    if( auto line = m_Buffer.LineFromNo(_y) ) {
+        auto i = begin(line) + _x;
+        auto e = min( i + _count, end(line) );
+        fill(i, e, m_EraseChar);
+    }
 }
 
 void TermScreen::CopyLineChars(int _from, int _to)
 {
     auto src = m_Buffer.LineFromNo(_from);
     auto dst = m_Buffer.LineFromNo(_to);
-    if(src.first && dst.first)
+    if(src && dst)
         copy_n(src.first,
                min(src.second - src.first, dst.second - dst.first),
                dst.first);
@@ -384,8 +383,7 @@ void TermScreen::CopyLineChars(int _from, int _to)
 
 void TermScreen::ClearLine(int _ind)
 {
-    auto line = m_Buffer.LineFromNo(_ind);
-    if(line.first) {
+    if( auto line = m_Buffer.LineFromNo(_ind) ) {
         fill( line.first, line.second, m_EraseChar );
         m_Buffer.SetLineWrapped(_ind, false);
     }
@@ -474,7 +472,7 @@ void TermScreen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
 //            m_ScrollBack.emplace_back(*GetLineRW(i));
 //            m_ScrollBack.back().chars.resize(m_ScrollBack.back().actual_length());
             auto line = m_Buffer.LineFromNo(i);
-            assert(line.first);
+            assert(line);
             m_Buffer.FeedBackscreen(line.first,
                                     line.second,
                                     m_Buffer.LineWrapped(i));

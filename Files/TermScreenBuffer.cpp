@@ -35,7 +35,7 @@ void _::FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i, vector<LineMeta
     }
 }
 
-pair<const _::Space*, const _::Space*> _::LineFromNo(int _line_number) const
+_::RangePair<const _::Space> _::LineFromNo(int _line_number) const
 {
     if( _line_number >= 0 && _line_number < m_OnScreenLines.size() ) {
         auto &l = m_OnScreenLines[_line_number];
@@ -54,7 +54,7 @@ pair<const _::Space*, const _::Space*> _::LineFromNo(int _line_number) const
         return {nullptr, nullptr};
 }
 
-pair<_::Space*, _::Space*> _::LineFromNo(int _line_number)
+_::RangePair<_::Space> _::LineFromNo(int _line_number)
 {
     if( _line_number >= 0 && _line_number < m_OnScreenLines.size() ) {
         auto &l = m_OnScreenLines[_line_number];
@@ -174,7 +174,7 @@ vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const
 
     for(bool continue_prev = false; _from < _to; ++_from) {
         auto source = LineFromNo(_from);
-        if(source.first == nullptr)
+        if(!source)
             throw out_of_range("invalid bounds in TermScreen::Buffer::ComposeContinuousLines");
         
         if(!continue_prev)

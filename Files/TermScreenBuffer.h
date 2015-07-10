@@ -62,8 +62,13 @@ public:
     // -1 is the last (most recent) backscreen line
     // return an iterator pair [i,e)
     // on invalid input parameters return [nullptr,nullptr)
-    pair<const Space*, const Space*> LineFromNo(int _line_number) const;
-    pair<Space*, Space*> LineFromNo(int _line_number);
+    template <class T> struct RangePair : public pair<T*,T*>
+    {
+        using pair<T*,T*>::pair;
+        operator bool() const { return this->first != nullptr && this->second != nullptr; };
+    };
+    RangePair<const Space> LineFromNo(int _line_number) const;
+    RangePair<Space> LineFromNo(int _line_number);
     
     void ResizeScreen(int _new_sx, int _new_sy);
     

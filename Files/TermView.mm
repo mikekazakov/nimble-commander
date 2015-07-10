@@ -228,8 +228,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         {
             // scrollback
 //            auto line = m_Screen->GetScrollBackLine(i);
-            auto line = m_Screen->Buffer().LineFromNo(i - bsl);
-            if(line.first)
+            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
                 [self DrawLine:line
                           at_y:i
                          sel_y:i - bsl
@@ -240,9 +239,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         {
             // real screen
 //            auto line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
-            auto line = m_Screen->Buffer().LineFromNo(i - bsl);
-            if(line.first)
-            {
+            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl)) {
                 if(m_Screen->CursorY() != i - bsl)
                     [self DrawLine:line
                               at_y:i
@@ -252,9 +249,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                 else
                     [self DrawLine:line
                               at_y:i
-                             sel_y:i -
-                     
-                     bsl
+                             sel_y:i - bsl
                            context:context
                          cursor_at:m_Screen->CursorX()];
             }
@@ -267,7 +262,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
 }
 
-- (void) DrawLine:(pair<const TermScreen::Space*, const TermScreen::Space*>)_line
+- (void) DrawLine:(TermScreenBuffer::RangePair<const TermScreenBuffer::Space>)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
@@ -509,7 +504,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         
         auto line = m_Screen->Buffer().LineFromNo( curr.y );
         
-        if( !line.first ) {
+        if( !line ) {
             curr.y++;
             continue;
         }

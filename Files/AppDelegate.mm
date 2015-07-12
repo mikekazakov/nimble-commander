@@ -549,8 +549,15 @@
 {
     if( RoutedIO::Instance().Enabled() )
         RoutedIO::Instance().TurnOff();
-    else
-        RoutedIO::Instance().TurnOn();
+    else {
+        bool result = RoutedIO::Instance().TurnOn();
+        if( !result ) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = NSLocalizedString(@"Failed to access a privileged helper.", "Information that toggling admin mode on had failed");
+            [alert addButtonWithTitle:NSLocalizedString(@"Ok", "")];
+            [alert runModal];
+        }
+    }
 
     [self updateDockTileBadge];
 }

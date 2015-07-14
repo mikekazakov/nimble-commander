@@ -143,20 +143,15 @@
 
 - (void) UpdateTitle
 {
-    NSString *title = 0;
-    
     m_TermScrollView.screen.Lock();
-    if(strlen(m_TermScrollView.screen.Title()) > 0)
-        title = [NSString stringWithUTF8String:m_TermScrollView.screen.Title()];
+    NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
     m_TermScrollView.screen.Unlock();
     
-    if(title == 0)
-    {
-        string cwd = m_Task->CWD();
-        
+    if(title.length == 0) {
+        string cwd = m_Task->CWD();        
         if(!cwd.empty() && cwd.back() != '/')
             cwd += '/';
-        title = [NSString stringWithUTF8String:cwd.c_str()];
+        title = [NSString stringWithUTF8StdString:cwd];
     }
 
     dispatch_or_run_in_main_queue([=]{

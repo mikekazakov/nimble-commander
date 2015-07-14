@@ -13,15 +13,20 @@
 class TermScreen
 {
 public:
-    TermScreen(int _w, int _h);
+    TermScreen(unsigned _width, unsigned _height);
 
     static const unsigned short MultiCellGlyph = 0xFFFE;
     using Space = TermScreenBuffer::Space;
     
-    inline void Lock()      { m_Lock.lock();   }
-    inline void Unlock()    { m_Lock.unlock(); }
+    inline void                     Lock()    const { m_Lock.lock();            }
+    inline void                     Unlock()  const { m_Lock.unlock();          }
+    inline const TermScreenBuffer  &Buffer()  const { return m_Buffer;          }
+    inline int                      Width()   const { return m_Buffer.Width();  }
+    inline int                      Height()  const { return m_Buffer.Height(); }
+    inline int                      CursorX() const { return m_PosX;            }
+    inline int                      CursorY() const { return m_PosY;            }
     
-    void ResizeScreen(int _new_sx, int _new_sy);
+    void ResizeScreen(unsigned _new_sx, unsigned _new_sy);
     
     void PutCh(uint32_t _char);
     void PutString(const string &_str);
@@ -50,13 +55,6 @@ public:
     void SaveScreen();
     void RestoreScreen();
     
-
-    inline const TermScreenBuffer &Buffer() const { return m_Buffer; }
-    inline int Width()   const { return /*m_Width*/ m_Buffer.Width();  }
-    inline int Height()  const { return /*m_Height*/ m_Buffer.Height(); }
-    inline int CursorX() const { return m_PosX;   }
-    inline int CursorY() const { return m_PosY;   }
-    
 // CSI n J
 // ED – Erase Display	Clears part of the screen.
 //    If n is zero (or missing), clear from cursor to end of screen.
@@ -81,25 +79,24 @@ public:
     void DoShiftRowLeft(int _chars);
     void DoShiftRowRight(int _chars);    
     
-    inline void SetTitle(const char *_t) { strcpy(m_Title, _t); }
-    inline const char* Title() const { return m_Title; }
+    void SetTitle(const char *_t);
+    inline const string& Title() const { return m_Title; }
     
 private:
     void CopyLineChars(int _from, int _to);
     void ClearLine(int _ind);
     
-    mutex                         m_Lock;
-    int                           m_ForegroundColor = TermScreenColors::Default;
-    int                           m_BackgroundColor = TermScreenColors::Default;
+    mutable mutex                 m_Lock;
+    uint8_t                       m_ForegroundColor = TermScreenColors::Default;
+    uint8_t                       m_BackgroundColor = TermScreenColors::Default;
     bool                          m_Intensity = false;
     bool                          m_Underline = false;
     bool                          m_Reverse = false;
     bool                          m_AlternateScreen = false;
     int                           m_PosX = 0;
     int                           m_PosY = 0;
-    Space                         m_EraseChar;
+    Space                         m_EraseChar = TermScreenBuffer::DefaultEraseChar();
     TermScreenBuffer              m_Buffer;
-    static const int        m_TitleMaxLen = 1024;
-    char                    m_Title[m_TitleMaxLen];
+    string                        m_Title;
 };
 

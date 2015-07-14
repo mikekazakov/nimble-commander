@@ -27,7 +27,7 @@ public:
     void ResizeWindow(int _sx, int _sy);
     
     static void EscapeSpaces(char *_buf);
-    inline const char *TaskBinaryName() const { return m_TaskBinaryName.c_str(); }
+    inline const string &TaskBinaryName() const { return m_TaskBinaryName; }
     
 private:
     void CleanUp();    

@@ -116,17 +116,14 @@
 
 - (void) updateTitle
 {
-    NSString *title = nil;
-    
     m_TermScrollView.screen.Lock();
-    if( strlen(m_TermScrollView.screen.Title() ) > 0)
-        title = [NSString stringWithUTF8String:m_TermScrollView.screen.Title()];
+    NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
     m_TermScrollView.screen.Unlock();
     
-    if(title == nil)
+    if(title.length == 0)
         title = [NSString stringWithFormat:@"%@ - %@",
-                 [NSString stringWithUTF8String:m_Task->TaskBinaryName()],
-                 [NSString stringWithUTF8String:m_FilePath.filename().c_str()]];
+                 [NSString stringWithUTF8StdString:m_Task->TaskBinaryName()],
+                 [NSString stringWithUTF8StdString:m_FilePath.filename().native()]];
     
     dispatch_or_run_in_main_queue([=]{
         self.window.title = title;

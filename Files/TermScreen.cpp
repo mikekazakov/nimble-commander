@@ -10,12 +10,9 @@
 #include "FontCache.h"
 #include "OrthodoxMonospace.h"
 
-TermScreen::TermScreen(int _w, int _h):
-    m_Buffer(_w, _h),
-    m_EraseChar(TermScreenBuffer::DefaultEraseChar())
+TermScreen::TermScreen(unsigned _w, unsigned _h):
+    m_Buffer(_w, _h)
 {
-    
-    m_Title[0] = 0;
 }
 
 void TermScreen::PutString(const string &_str)
@@ -365,10 +362,12 @@ void TermScreen::RestoreScreen()
     m_Buffer.RevertToSnapshot();
 }
 
-void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
+void TermScreen::ResizeScreen(unsigned _new_sx, unsigned _new_sy)
 {
     if(Width() == _new_sx && Height() == _new_sy)
         return;
+    if( _new_sx == 0 || _new_sy == 0 )
+        throw invalid_argument("TermScreen::ResizeScreen sizes can't be zero");
     
     Lock();
 
@@ -380,4 +379,9 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
     GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
     
     Unlock();
+}
+
+void TermScreen::SetTitle(const char *_t)
+{
+    m_Title = _t;
 }

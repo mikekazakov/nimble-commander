@@ -189,35 +189,30 @@ void TermScreen::EraseInLineCount(unsigned _n)
 
 void TermScreen::SetFgColor(int _color)
 {
-    m_ForegroundColor = _color;
     m_EraseChar.foreground = _color;
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetBgColor(int _color)
 {
-    m_BackgroundColor = _color;
     m_EraseChar.background = _color;
     m_Buffer.SetEraseChar(m_EraseChar);    
 }
 
 void TermScreen::SetIntensity(bool _intensity)
 {
-    m_Intensity = _intensity;
-    m_EraseChar.intensity = m_Intensity;
+    m_EraseChar.intensity = _intensity;
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetUnderline(bool _is_underline)
 {
-    m_Underline = _is_underline;
     m_EraseChar.underline = _is_underline;
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetReverse(bool _is_reverse)
 {
-    m_Reverse = _is_reverse;
     m_EraseChar.reverse = _is_reverse;
     m_Buffer.SetEraseChar(m_EraseChar);    
 }
@@ -320,7 +315,7 @@ void TermScreen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
     if(_lines<1)
         return;
 
-    if(_top == 0 && _bottom == Height())
+    if(_top == 0 && _bottom == Height() && !m_AlternateScreen)
         for(int i = 0; i < min(_lines, (unsigned)Height()); ++i) {
             // we're scrolling up the whole screen - let's feed scrollback with leftover
             auto line = m_Buffer.LineFromNo(i);

@@ -87,16 +87,11 @@ private:
     void ClearLine(int _ind);
     
     mutable mutex                 m_Lock;
-    uint8_t                       m_ForegroundColor = TermScreenColors::Default;
-    uint8_t                       m_BackgroundColor = TermScreenColors::Default;
-    bool                          m_Intensity = false;
-    bool                          m_Underline = false;
-    bool                          m_Reverse = false;
-    bool                          m_AlternateScreen = false;
     int                           m_PosX = 0;
     int                           m_PosY = 0;
     Space                         m_EraseChar = TermScreenBuffer::DefaultEraseChar();
     TermScreenBuffer              m_Buffer;
     string                        m_Title;
+    bool                          m_AlternateScreen = false;    
 };
 

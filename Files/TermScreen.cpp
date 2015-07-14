@@ -272,30 +272,35 @@ void TermScreen::SetFgColor(int _color)
 {
     m_ForegroundColor = _color;
     m_EraseChar.foreground = _color;
+    m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetBgColor(int _color)
 {
     m_BackgroundColor = _color;
     m_EraseChar.background = _color;
+    m_Buffer.SetEraseChar(m_EraseChar);    
 }
 
 void TermScreen::SetIntensity(bool _intensity)
 {
     m_Intensity = _intensity;
     m_EraseChar.intensity = m_Intensity;
+    m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetUnderline(bool _is_underline)
 {
     m_Underline = _is_underline;
     m_EraseChar.underline = _is_underline;
+    m_Buffer.SetEraseChar(m_EraseChar);
 }
 
 void TermScreen::SetReverse(bool _is_reverse)
 {
     m_Reverse = _is_reverse;
     m_EraseChar.reverse = _is_reverse;
+    m_Buffer.SetEraseChar(m_EraseChar);    
 }
 
 void TermScreen::SetAlternateScreen(bool _is_alternate)
@@ -512,6 +517,24 @@ void TermScreen::RestoreScreen()
 
 void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
 {
+    if(Width() == _new_sx && Height() == _new_sy)
+        return;
+    
+    Lock();
+
+    bool feed_from_bs = m_PosY == Height() - 1; // questionable!
+    
+    m_Buffer.ResizeScreen(_new_sx, _new_sy, feed_from_bs && !m_AlternateScreen);
+    
+    
+
+    
+    // adjust cursor Y if it was at the bottom prior to resizing
+//    GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
+    GoTo(CursorX(), Height() - 1); // will clip if necessary    
+    
+    Unlock();
+    
 //    if(m_Width == _new_sx && m_Height == _new_sy)
 //        return;
 //        

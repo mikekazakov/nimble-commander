@@ -31,8 +31,6 @@ struct TermScreenColors
     }; // need 5 bits to store this color
 };
 
-// need:
-// - resizing
 class TermScreenBuffer
 {
 public:
@@ -70,7 +68,7 @@ public:
     RangePair<const Space> LineFromNo(int _line_number) const;
     RangePair<Space> LineFromNo(int _line_number);
     
-    void ResizeScreen(int _new_sx, int _new_sy);
+    void ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen );
     
     void FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped );
     
@@ -111,7 +109,10 @@ private:
     
     static void FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i, vector<LineMeta>::iterator _e, unsigned _width);
     static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
+    static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
+    static unsigned OccupiedChars( const Space *_begin, const Space *_end );
     vector<vector<Space>> ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
+    static vector< tuple<vector<Space>, bool> > DecomposeContinuousLines( const vector<vector<Space>>& _scr, unsigned _width ); // <spaces, is wrapped>
     
     
     unsigned            m_Width    = 0; // onscreen and backscreen width

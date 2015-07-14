@@ -14,7 +14,7 @@
 
 @property (nonatomic, readonly) bool isAnythingRunning;
 
-- (void) SetInitialWD:(const char*)_wd;
+- (void) SetInitialWD:(const string&)_wd;
 - (void) ChDir:(const char*)_new_dir;
 - (void) Execute:(const char *)_short_fn at:(const char*)_at;
 - (void) Execute:(const char *)_short_fn at:(const char*)_at with_parameters:(const char*)_params;

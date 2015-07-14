@@ -298,7 +298,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     if(m_Terminal == nil)
     {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
-        [state SetInitialWD:_cwd.c_str()];
+        [state SetInitialWD:_cwd];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }

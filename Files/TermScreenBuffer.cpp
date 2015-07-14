@@ -26,6 +26,13 @@ unique_ptr<_::Space[]>_::ProduceRectangularSpaces(unsigned _width, unsigned _hei
     return make_unique<Space[]>(_width*_height);
 }
 
+unique_ptr<_::Space[]> _::ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char)
+{
+    auto p = ProduceRectangularSpaces(_width, _height);
+    fill( &p[0], &p[_width*_height], _initial_char );
+    return p;
+}
+
 void _::FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i, vector<LineMeta>::iterator _e, unsigned _width)
 {
     unsigned start = 0;
@@ -144,10 +151,72 @@ _::Space _::DefaultEraseChar()
     return sp;
 }
 
-void _::ResizeScreen(int _new_sx, int _new_sy)
+// need real ocupied size
+// need "anchor" here
+void _::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen)
 {
+    if( _new_sx == 0 || _new_sy == 0)
+        throw out_of_range("TermScreenBuffer::ResizeScreen - screen sizes can't be zero");
+
     
+    auto fill_scr_from_declines = [=](vector< tuple<vector<_::Space>, bool> >::const_iterator _i,
+                                      vector< tuple<vector<_::Space>, bool> >::const_iterator _e,
+                                      size_t _l = 0){
+        for( ; _i != _e; ++_i, ++_l ) {
+            copy( begin(get<0>(*_i)), end(get<0>(*_i)), &m_OnScreenSpaces[ m_OnScreenLines[_l].start_index ] );
+            m_OnScreenLines[_l].is_wrapped = get<1>(*_i);
+        }
+    };
+    auto fill_bkscr_from_declines = [=](vector< tuple<vector<_::Space>, bool> >::const_iterator _i,
+                                        vector< tuple<vector<_::Space>, bool> >::const_iterator _e){
+        for( ; _i != _e; ++_i ) {
+            LineMeta lm;
+            lm.start_index = (int)m_BackScreenSpaces.size();
+            lm.line_length = (int)get<0>(*_i).size();
+            lm.is_wrapped = get<1>(*_i);
+            m_BackScreenLines.emplace_back(lm);
+            m_BackScreenSpaces.insert(end(m_BackScreenSpaces), begin(get<0>(*_i)), end(get<0>(*_i)) );
+        }
+    };
     
+    if( _merge_with_backscreen ) {
+        auto comp_lines = ComposeContinuousLines(-BackScreenLines(), Height());
+        auto decomp_lines = DecomposeContinuousLines(comp_lines, _new_sx);
+        
+        m_BackScreenLines.clear();
+        m_BackScreenSpaces.clear();
+        if( decomp_lines.size() > _new_sy) {
+            fill_bkscr_from_declines( begin(decomp_lines), end(decomp_lines) - _new_sy );
+            
+            m_OnScreenSpaces = ProduceRectangularSpaces(_new_sx, _new_sy, m_EraseChar);
+            m_OnScreenLines.resize(_new_sy);
+            FixupOnScreenLinesIndeces(begin(m_OnScreenLines), end(m_OnScreenLines), _new_sx);
+            fill_scr_from_declines( end(decomp_lines) - _new_sy, end(decomp_lines) );
+        }
+        else {
+            m_OnScreenSpaces = ProduceRectangularSpaces(_new_sx, _new_sy, m_EraseChar);
+            m_OnScreenLines.resize(_new_sy);
+            FixupOnScreenLinesIndeces(begin(m_OnScreenLines), end(m_OnScreenLines), _new_sx);
+            fill_scr_from_declines( begin(decomp_lines), end(decomp_lines) );
+        }
+    }
+    else {
+        auto bkscr_decomp_lines = DecomposeContinuousLines(ComposeContinuousLines(-BackScreenLines(), 0),
+                                                           _new_sx);
+        m_BackScreenLines.clear();
+        m_BackScreenSpaces.clear();
+        fill_bkscr_from_declines( begin(bkscr_decomp_lines), end(bkscr_decomp_lines) );
+        
+        auto onscr_decomp_lines = DecomposeContinuousLines(ComposeContinuousLines(0, Height()),
+                                                           _new_sx);
+        m_OnScreenSpaces = ProduceRectangularSpaces(_new_sx, _new_sy, m_EraseChar);
+        m_OnScreenLines.resize(_new_sy);
+        FixupOnScreenLinesIndeces(begin(m_OnScreenLines), end(m_OnScreenLines), _new_sx);
+        fill_scr_from_declines( begin(onscr_decomp_lines), min(begin(onscr_decomp_lines) + _new_sy, end(onscr_decomp_lines)) );
+    }
+
+    m_Width = _new_sx;
+    m_Height = _new_sy;
 }
 
 void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
@@ -168,11 +237,27 @@ void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
     }
 }
 
+unsigned _::OccupiedChars( const Space *_begin, const Space *_end )
+{
+    assert( _end >= _end );
+    if( _end == _begin)
+        return 0;
+
+    unsigned len = 0;
+    for( auto i = _end - 1; i >= _begin; --i )
+        if( i->l != 0 ) {
+            len = (unsigned)(i - _begin + 1);
+            break;
+        }
+    
+    return len;
+}
+
 vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const
 {
     vector<vector<_::Space>> lines;
 
-    for(bool continue_prev = false; _from < _to; ++_from) {
+    for( bool continue_prev = false; _from < _to; ++_from) {
         auto source = LineFromNo(_from);
         if(!source)
             throw out_of_range("invalid bounds in TermScreen::Buffer::ComposeContinuousLines");
@@ -181,11 +266,41 @@ vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const
             lines.emplace_back();
         auto &current = lines.back();
         
-        current.insert(end(current), begin(source), end(source));
+        current.insert(end(current),
+                       begin(source),
+                       begin(source) + OccupiedChars(begin(source),
+                                                     end(source))
+                       );
         continue_prev = LineWrapped(_from);
     }
     
     return lines;
+}
+
+vector< tuple<vector<_::Space>, bool> > _::DecomposeContinuousLines( const vector<vector<Space>>& _src, unsigned _width )
+{
+    if( _width == 0)
+        throw invalid_argument("TermScreenBuffer::DecomposeContinuousLines width can't be zero");
+
+    vector< tuple<vector<_::Space>, bool> > result;
+    
+    for( auto &l: _src ) {
+        if( l.empty() ) // special case for CRLF-only lines
+            result.emplace_back( make_tuple<vector<_::Space>, bool>({}, false) );
+
+        for( size_t i = 0, e = l.size(); i < e; i += _width ) {
+            auto t = make_tuple<vector<_::Space>, bool>({}, false);
+            if( i + _width < e ) {
+                get<0>(t).assign( begin(l) + i, begin(l) + i + _width );
+                get<1>(t) = true;
+            }
+            else {
+                get<0>(t).assign( begin(l) + i, end(l) );
+            }
+            result.emplace_back( move(t) );
+        }
+    }
+    return result;
 }
 
 _::Snapshot::Snapshot(unsigned _w, unsigned _h):
@@ -210,8 +325,13 @@ void _::RevertToSnapshot()
     if( m_Height == m_Snapshot->height && m_Width == m_Snapshot->width ) {
         copy_n( m_Snapshot->chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
     }
-    else {
-        // TODO
+    else { // TODO: anchor?
+        fill_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_EraseChar );
+        for( int y = 0, e = min(m_Snapshot->height, m_Height); y != e; ++y ) {
+            copy_n( m_Snapshot->chars.get() + y*m_Snapshot->width,
+                   min(m_Snapshot->width, m_Width),
+                   m_OnScreenSpaces.get() + y*m_Width);
+        }
     }
 }
 

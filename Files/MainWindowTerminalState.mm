@@ -22,9 +22,9 @@
 @implementation MainWindowTerminalState
 {
     TermScrollView             *m_TermScrollView;    
-    unique_ptr<TermShellTask>    m_Task;
-    unique_ptr<TermParser>  m_Parser;
-    char            m_InitalWD[MAXPATHLEN];
+    unique_ptr<TermShellTask>   m_Task;
+    unique_ptr<TermParser>      m_Parser;
+    string                      m_InitalWD;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -32,7 +32,7 @@
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        strcpy(m_InitalWD, CommonPaths::Get(CommonPaths::Home).c_str());
+        m_InitalWD = CommonPaths::Get(CommonPaths::Home);
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -65,17 +65,17 @@
     return nil;
 }
 
-- (void) SetInitialWD:(const char*)_wd
+- (void) SetInitialWD:(const string&)_wd
 {
-    if(_wd && strlen(_wd) > 0)
-        strcpy(m_InitalWD, _wd);
+    if(!_wd.empty())
+        m_InitalWD = _wd;
 }
 
 - (void) Assigned
 {
     // need right CWD here
     if(m_Task->State() == TermShellTask::StateInactive)
-        m_Task->Launch(m_InitalWD, m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
+        m_Task->Launch(m_InitalWD.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
     
     __weak MainWindowTerminalState *weakself = self;
     

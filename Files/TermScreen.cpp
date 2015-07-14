@@ -23,40 +23,30 @@ void TermScreen::PutString(const string &_str)
 
 void TermScreen::PutCh(uint32_t _char)
 {
-    // ???
-//    assert(m_PosY < m_Screen.size());
-    // TODO: optimize it out
-  
     auto line = m_Buffer.LineFromNo(m_PosY);
-    auto chars = line.first;
-//    auto &line = *GetLineRW(m_PosY);
+    if( !line )
+        return;
     
-    if(!oms::IsUnicodeCombiningCharacter(_char))
-    {
-        assert(m_PosX >= 0 && m_PosX < Width()); // TODO: change assert to deal with range
-//        auto &sp = line.chars[m_PosX++];
-        auto &sp = line.first[m_PosX++];
-        sp.l = _char;
-        sp.c1 = 0;
-        sp.c2 = 0;
-        sp.foreground = m_ForegroundColor;
-        sp.background = m_BackgroundColor;
-        sp.intensity = m_Intensity;
-        sp.underline = m_Underline;
-        sp.reverse   = m_Reverse;
+    auto chars = begin(line);
     
-        if(oms::WCWidthMin1(_char) == 2 && m_PosX < Width())
-        {
-            auto &foll = chars[m_PosX++];
-            foll = sp;
-            foll.l = MultiCellGlyph;
+    if( !oms::IsUnicodeCombiningCharacter(_char) ) {
+        if( chars + m_PosX < end(line) ) {
+            auto sp = m_EraseChar;
+            sp.l = _char;
+            // sp.c1 == 0
+            // sp.c2 == 0
+            chars[m_PosX++] = sp;
+            
+            if(oms::WCWidthMin1(_char) == 2 &&
+               chars + m_PosX < end(line) ) {
+                sp.l = MultiCellGlyph;
+                chars[m_PosX++] = sp;
+            }
         }
     }
-    else
-    { // combining characters goes here
-        if(m_PosX > 0)
-        {
-            assert(m_PosX <= Width());
+    else { // combining characters goes here
+        if(m_PosX > 0 &&
+           chars + m_PosX < end(line) ) {
             int target_pos = m_PosX - 1;
             if((chars[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
             if(chars[target_pos].c1 == 0) chars[target_pos].c1 = _char;
@@ -64,7 +54,6 @@ void TermScreen::PutCh(uint32_t _char)
         }
     }
     
-//    line.wrapped = false;
     m_Buffer.SetLineWrapped(m_PosY, false); // do we need it EVERY time?????
 }
 

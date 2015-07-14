@@ -78,12 +78,12 @@
     
     buffer.SetLineWrapped(0, true);
     auto cl2 = buffer.ComposeContinuousLines(0, 4);
-    XCTAssert( cl2.size() == 3 && cl2[0].size() == 6 && cl2[0].at(2).l == 'A' && cl2[0].at(5).l == 0);
+    XCTAssert( cl2.size() == 3 && cl2[0].size() == 3 && cl2[0].at(2).l == 'A');
     XCTAssert(                    cl2[1].size() == 3 && cl2[1].at(2).l == 'B' );
     
     buffer.SetLineWrapped(1, true);
     auto cl3 = buffer.ComposeContinuousLines(0, 4);
-    XCTAssert( cl3.size() == 2 && cl3[0].size() == 9 && cl3[0].at(2).l == 'A' && cl3[0].at(5).l == 0 && cl3[0].at(8).l == 'B');
+    XCTAssert( cl3.size() == 2 && cl3[0].size() == 6 && cl3[0].at(2).l == 'A' && cl3[0].at(4).l == 0 && cl3[0].at(5).l == 'B');
 }
 
 

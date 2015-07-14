@@ -10,62 +10,13 @@
 #include "FontCache.h"
 #include "OrthodoxMonospace.h"
 
-//unsigned TermScreen::Line::actual_length() const
-//{
-//    size_t len = 0, i = 0, e = chars.size();
-//    for(;i!=e;++i)
-//        if(chars[i].l != 0)
-//            len = i+1;
-//    return (unsigned)len;
-//}
-
 TermScreen::TermScreen(int _w, int _h):
-//    m_Width(_w),
-//    m_Height(_h),
     m_Buffer(_w, _h),
     m_EraseChar(TermScreenBuffer::DefaultEraseChar())
 {
-//    m_EraseChar.l = 0;
-//    m_EraseChar.c1 = 0;
-//    m_EraseChar.c2 = 0;
-//    m_EraseChar.foreground = TermScreenColors::Default;
-//    m_EraseChar.background = TermScreenColors::Default;
-//    m_EraseChar.intensity = 0;
-//    m_EraseChar.underline = 0;
-//    m_EraseChar.reverse   = 0;
     
     m_Title[0] = 0;
-    
-//    Line l;
-//    l.chars.resize(m_Width, m_EraseChar);
-//    for(int i =0; i < m_Height; ++i)
-//        m_Screen.push_back(l);
 }
-
-TermScreen::~TermScreen()
-{
-//    free(m_ScreenShot);
-}
-
-//const TermScreen::Line *TermScreen::GetScreenLine(int _line_no) const
-//{
-//    if(_line_no < 0 || _line_no >= m_Screen.size()) return nullptr;
-//    
-//    auto it = begin(m_Screen);
-//    advance(it, _line_no);
-//  
-//    return &(*it);
-//}
-//
-//TermScreen::Line *TermScreen::GetLineRW(int _line_no)
-//{
-//    if(_line_no < 0 || _line_no >= m_Screen.size()) return nullptr;
-//    
-//    auto it = begin(m_Screen);
-//    advance(it, _line_no);
-//    
-//    return &(*it);
-//}
 
 void TermScreen::PutString(const string &_str)
 {
@@ -136,13 +87,6 @@ void TermScreen::DoEraseScreen(int _mode)
 {
     if(_mode == 1) {
         for(int i = 0; i < Height(); ++i) {
-//            auto &l = *GetLineRW(i);
-//            for(int j = 0; j < m_Width; ++j) {
-//                l.chars[j] = m_EraseChar;
-//                if(i == m_PosY && j == m_PosX)
-//                    return;
-//            }
-//            l.wrapped = false;
             auto chars = m_Buffer.LineFromNo(i).first;
             for(int j = 0; j < Width(); ++j) {
                 chars[j] = m_EraseChar;
@@ -153,23 +97,12 @@ void TermScreen::DoEraseScreen(int _mode)
         }
     } else if(_mode == 2)
     { // clear all screen
-//        for(auto &l: m_Screen) {
-//            l.wrapped = false;
-//            for(auto &c: l.chars)
-//                c = m_EraseChar;
-//        }
         for(int i = 0; i < Height(); ++i) {
             for(auto &c: m_Buffer.LineFromNo(i))
                 c = m_EraseChar;
             m_Buffer.SetLineWrapped(i, false);
         }
     } else {
-//        for(int i = m_PosY; i < m_Height; ++i) {
-//            auto &l = *GetLineRW(i);
-//            l.wrapped = false;
-//            for(int j = (i == m_PosY ? m_PosX : 0); j < m_Width; ++j)
-//                l.chars[j] = m_EraseChar;
-//        }
         for(int i = m_PosY; i < Height(); ++i) {
             m_Buffer.SetLineWrapped(i, false);
             auto chars = m_Buffer.LineFromNo(i).first;
@@ -310,24 +243,10 @@ void TermScreen::SetAlternateScreen(bool _is_alternate)
 
 void TermScreen::DoShiftRowLeft(int _chars)
 {
-//    auto *line = GetLineRW(m_PosY);
-//    if(!line)
-//        return;
-//    
-//    assert(m_PosX >= 0 && m_PosX < m_Width);
-//    
-//    for(int x = m_PosX + _chars; x < m_Width; ++x)
-////        if(x-_chars >= 0)
-//            line->chars[x-_chars] = line->chars[x];
-//    
-//    for(int i = 0; i < _chars; ++i)
-//        line->chars[m_Width-i-1] = m_EraseChar; // why m_Width here???
-    
     auto line = m_Buffer.LineFromNo(m_PosY);
     if(!line)
         return;
     auto chars = line.first;
-    
     
     // TODO: write as an algo
     
@@ -341,18 +260,6 @@ void TermScreen::DoShiftRowLeft(int _chars)
 
 void TermScreen::DoShiftRowRight(int _chars)
 {
-//    auto *line = GetLineRW(m_PosY);
-//    if(!line)
-//        return;
-//
-//    assert(m_PosX >= 0 && m_PosX < m_Width);
-//    
-//    for(int x = m_Width-1; x >= m_PosX + _chars; --x)
-//        line->chars[x] = line->chars[x - _chars];
-//        
-//    for(int i = 0; i < _chars; ++i)
-//        line->chars[m_PosX + i] = m_EraseChar;
-    
     auto line = m_Buffer.LineFromNo(m_PosY);
     if(!line)
         return;
@@ -381,15 +288,15 @@ void TermScreen::CopyLineChars(int _from, int _to)
     auto src = m_Buffer.LineFromNo(_from);
     auto dst = m_Buffer.LineFromNo(_to);
     if(src && dst)
-        copy_n(src.first,
-               min(src.second - src.first, dst.second - dst.first),
-               dst.first);
+        copy_n(begin(src),
+               min(end(src) - begin(src), end(dst) - begin(dst)),
+               begin(dst));
 }
 
 void TermScreen::ClearLine(int _ind)
 {
     if( auto line = m_Buffer.LineFromNo(_ind) ) {
-        fill( line.first, line.second, m_EraseChar );
+        fill( begin(line), end(line), m_EraseChar );
         m_Buffer.SetLineWrapped(_ind, false);
     }
 }
@@ -412,56 +319,12 @@ void TermScreen::ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines)
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));        
     }
     
-        // {
-//        auto src = m_Buffer.LineFromNo(n_src);
-//        auto dst = m_Buffer.LineFromNo(n_dst);
-//        assert(src.first &&
-//               dst.first &&
-//               src.second - src.first == dst.second - dst.first);
-//        copy( src.first, src.second, dst.first );
-//    }
-        
     for(int i = _top; i < min(_top + _lines, _bottom); ++i)
         ClearLine(i);
 }
 
 void TermScreen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
 {
-//    if(_top < 0)
-//        _top = 0;
-//    if(_bottom > m_Height)
-//        _bottom = m_Height;
-//    
-//    if(_top + _lines >= _bottom)
-//        _lines = _bottom - _top - 1;
-//
-//    if(_lines < 1)
-//        return;
-//
-//    if(_top == 0 && _bottom == m_Height)
-//        for(int i = 0; i < _lines; ++i)
-//        { // we're scrolling up the whole screen - let's feed scrollback with leftover
-//            m_ScrollBack.emplace_back(*GetLineRW(i));
-//            m_ScrollBack.back().chars.resize(m_ScrollBack.back().actual_length());
-//        }
-//    
-//    for(int i = _top; i < _bottom - _lines; ++i)
-//    {
-//        auto *src = GetLineRW(i + _lines);
-//        auto *dst = GetLineRW(i);
-//        assert(src && dst);
-//        
-//        *dst = *src;
-//    }
-//    
-//    for(int i = _bottom - 1; i >= _bottom - _lines; --i)
-//    {
-//        auto *line = GetLineRW(i);
-//        assert(line);
-//        for(auto &c: line->chars)
-//            c = m_EraseChar;
-//        line->wrapped = false;
-//    }
     if(_bottom > Height())
         _bottom = Height();
     if(_top >= Height())
@@ -474,12 +337,10 @@ void TermScreen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
     if(_top == 0 && _bottom == Height())
         for(int i = 0; i < min(_lines, (unsigned)Height()); ++i) {
             // we're scrolling up the whole screen - let's feed scrollback with leftover
-//            m_ScrollBack.emplace_back(*GetLineRW(i));
-//            m_ScrollBack.back().chars.resize(m_ScrollBack.back().actual_length());
             auto line = m_Buffer.LineFromNo(i);
             assert(line);
-            m_Buffer.FeedBackscreen(line.first,
-                                    line.second,
+            m_Buffer.FeedBackscreen(begin(line),
+                                    end(line),
                                     m_Buffer.LineWrapped(i));
         }
     
@@ -490,10 +351,8 @@ void TermScreen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));
     }
     
-//    for(int i = _top; i < min(_top + _lines, _bottom); ++i) {
     for( int i = _bottom - 1; i >= max( (int)_bottom-(int)_lines, 0); --i)
         ClearLine(i);
-    
 }
 
 void TermScreen::SaveScreen()
@@ -506,15 +365,6 @@ void TermScreen::RestoreScreen()
     m_Buffer.RevertToSnapshot();
 }
 
-//const TermScreen::Line *TermScreen::GetScrollBackLine(int _line_no) const
-//{
-//    if(_line_no < 0 || _line_no >= m_ScrollBack.size()) return 0;
-//    
-//    auto it = m_ScrollBack.begin();
-//    advance(it, _line_no);    
-//    return &(*it);    
-//}
-
 void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
 {
     if(Width() == _new_sx && Height() == _new_sy)
@@ -526,167 +376,8 @@ void TermScreen::ResizeScreen(int _new_sx, int _new_sy)
     
     m_Buffer.ResizeScreen(_new_sx, _new_sy, feed_from_bs && !m_AlternateScreen);
     
-    
-
-    
     // adjust cursor Y if it was at the bottom prior to resizing
-//    GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
-    GoTo(CursorX(), Height() - 1); // will clip if necessary    
+    GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
     
     Unlock();
-    
-//    if(m_Width == _new_sx && m_Height == _new_sy)
-//        return;
-//        
-//    Lock();
-//
-//    list<TermScreen::Line> new_screen, new_scrollback;
-//    bool feed_from_bs = m_PosY == m_Height - 1; // questionable!
-//    
-//    // if we're on alternate screen (ie mc, man, top etc) - don't alter backscroll on resizing side-effects
-//    
-//    if(feed_from_bs && !m_AlternateScreen) {
-//        // compose non-wrapped strings from current screen and backscroll
-//        auto comp_lines = ComposeContinuousLines(m_ScrollBack, m_Screen);
-//
-//        // decompose it back with new width
-//        auto new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
-//        if(new_lines.size() <= _new_sy)
-//            new_screen = move(new_lines);
-//        else {
-//            auto it = end(new_lines);
-//            advance(it, -_new_sy);
-//            new_screen.splice(end(new_screen), new_lines, it, end(new_lines));
-//            new_scrollback = move(new_lines);
-//        }
-//    } else {
-//        // compose non-wrapped strings from current screen
-//        auto comp_lines = ComposeContinuousLines(m_Screen);
-//        
-//        // decompose it back with new width
-//        auto new_lines = DecomposeContinuousLines(comp_lines, _new_sx);
-//
-//        new_scrollback = DecomposeContinuousLines(ComposeContinuousLines(m_ScrollBack), _new_sx);
-//        
-//        if(new_lines.size() <= _new_sy || m_AlternateScreen)
-//            new_screen = move(new_lines);
-//        else {
-//            auto it = end(new_lines);
-//            advance(it, -_new_sy);
-//            new_screen.splice(end(new_screen), new_lines, it, end(new_lines));
-//            new_scrollback.splice(end(new_scrollback), new_lines, begin(new_lines), end(new_lines));
-//        }
-//    }
-//    
-//    // 3rd - append height if need
-//    new_screen.resize(_new_sy);
-//
-//    // fill gaps(if any) with m_EraseChar
-//    for(auto &l: new_screen)
-//        l.chars.resize(_new_sx, m_EraseChar);
-//    
-//    m_Screen = move(new_screen);
-//    m_ScrollBack = move(new_scrollback);
-//    
-//    m_Height = _new_sy;
-//    m_Width = _new_sx;
-//    
-//    if(m_ScreenShot != 0)
-//    { // resize alternative screen
-//        ScreenShot *old = m_ScreenShot;
-//        m_ScreenShot = (ScreenShot*) malloc(ScreenShot::sizefor(m_Width, m_Height));
-//        m_ScreenShot->width = m_Width;
-//        m_ScreenShot->height = m_Height;
-//
-//        for(int i = 0; i < m_Width*m_Height; ++i)
-//            m_ScreenShot->chars[i] = m_EraseChar;
-//        
-//        for(int y = 0; y < m_ScreenShot->height && y < old->height; ++y)
-//            for(int x = 0; x < m_ScreenShot->width && x < old->width; ++x)
-//                m_ScreenShot->chars[ y*m_ScreenShot->width + x ] = old->chars[ y*old->width + x ];
-//        
-//        free(old);
-//    }
-//
-//    // adjust cursor Y if it was at the bottom prior to resizing
-//    GoTo(CursorX(), feed_from_bs ? m_Height - 1 : CursorY()); // will clip if necessary
-//    
-//    Unlock();
 }
-
-//list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Line> &_from)
-//{
-//    list<vector<TermScreen::Space>> lines;
-//    vector<TermScreen::Space> *curr = nullptr;
-//    
-//    bool cont = false;
-//    for(auto &l: _from) {
-//        if(!cont) {
-//            lines.emplace_back();
-//            curr = &lines.back();
-//        }
-//        
-//        curr->insert(end(*curr),
-//                     begin(l.chars),
-//                     begin(l.chars) + l.actual_length());
-//        
-//        cont = l.wrapped;
-//    }
-//    return lines;
-//}
-//
-//list<vector<TermScreen::Space>> TermScreen::ComposeContinuousLines(const list<Line> &_from1, const list<Line> &_from2)
-//{
-//    list<vector<TermScreen::Space>> lines;
-//    vector<TermScreen::Space> *curr = nullptr;
-//    
-//    bool cont = false;
-//    for(auto &l: _from1) {
-//        if(!cont) {
-//            lines.emplace_back();
-//            curr = &lines.back();
-//        }
-//        
-//        curr->insert(end(*curr),
-//                     begin(l.chars),
-//                     begin(l.chars) + l.actual_length());
-//        
-//        cont = l.wrapped;
-//    }
-//    
-//    for(auto &l: _from2) {
-//        if(!cont) {
-//            lines.emplace_back();
-//            curr = &lines.back();
-//        }
-//        
-//        curr->insert(end(*curr),
-//                     begin(l.chars),
-//                     begin(l.chars) + l.actual_length());
-//        
-//        cont = l.wrapped;
-//    }
-//    
-//    return lines;
-//}
-//
-//list<TermScreen::Line> TermScreen::DecomposeContinuousLines(const list<vector<Space>> &_from, unsigned _width)
-//{
-//    list<TermScreen::Line> lines;
-//    for(auto &l: _from) {
-//        if(l.empty()) // special case for CRLF-only lines
-//            lines.emplace_back();
-//        
-//        for(int i = 0; i < l.size(); i += _width) {
-//            lines.emplace_back();
-//            auto &dl = lines.back();
-//            if(i + _width < l.size()) {
-//                dl.chars.assign(begin(l) + i, begin(l) + i + _width);
-//                dl.wrapped = true;
-//            }
-//            else
-//                dl.chars.assign(begin(l) + i, l.end());
-//        }
-//    }
-//    return lines;
-//}

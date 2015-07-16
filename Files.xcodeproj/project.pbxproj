@@ -1810,6 +1810,31 @@
 			name = RHPreferences;
 			sourceTree = "<group>";
 		};
+		CF0A40091B57E138002A092B /* TerminalCore */ = {
+			isa = PBXGroup;
+			children = (
+				CFABA8451B403AA3008DF6D1 /* TermTask.h */,
+				CFABA8441B403AA3008DF6D1 /* TermTask.cpp */,
+				CFB3E47C1844ACD700D375E2 /* TermShellTask.h */,
+				CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */,
+				CF09856F18EEA8CF006E6410 /* TermSingleTask.h */,
+				CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */,
+				CFB3E4811844ACD700D375E2 /* TermParser.h */,
+				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
+				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
+				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
+				CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */,
+				CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */,
+				CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */,
+				CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */,
+				CFB3E4821844ACD700D375E2 /* TermView.h */,
+				CFB3E47E1844ACD700D375E2 /* TermView.mm */,
+				CF8E76C01B353A1000BA16AD /* TermScrollView.h */,
+				CF8E76C11B353A1000BA16AD /* TermScrollView.mm */,
+			);
+			name = TerminalCore;
+			sourceTree = "<group>";
+		};
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -2374,22 +2399,6 @@
 		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
-				CFABA8451B403AA3008DF6D1 /* TermTask.h */,
-				CFABA8441B403AA3008DF6D1 /* TermTask.cpp */,
-				CFB3E47C1844ACD700D375E2 /* TermShellTask.h */,
-				CFB3E47B1844ACD700D375E2 /* TermShellTask.mm */,
-				CFB3E4811844ACD700D375E2 /* TermParser.h */,
-				CFB3E47D1844ACD700D375E2 /* TermParser.mm */,
-				CFB3E47F1844ACD700D375E2 /* TermScreen.h */,
-				CFB3E4801844ACD700D375E2 /* TermScreen.cpp */,
-				CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */,
-				CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */,
-				CFA57B241B42FF1300AC5EDF /* TermScreenBuffer.cpp */,
-				CFA57B281B43014900AC5EDF /* TermScreenBufferTests.mm */,
-				CFB3E4821844ACD700D375E2 /* TermView.h */,
-				CFB3E47E1844ACD700D375E2 /* TermView.mm */,
-				CF8E76C01B353A1000BA16AD /* TermScrollView.h */,
-				CF8E76C11B353A1000BA16AD /* TermScrollView.mm */,
 				CFB3E4781844AC8A00D375E2 /* MainWindowTerminalState.h */,
 				CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */,
 			);
@@ -2460,8 +2469,6 @@
 			children = (
 				CFB709C618E99B7100A83E61 /* ExternalEditorInfo.h */,
 				CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */,
-				CF09856F18EEA8CF006E6410 /* TermSingleTask.h */,
-				CF09856E18EEA8CF006E6410 /* TermSingleTask.mm */,
 				CF09857218EEB031006E6410 /* MainWindowExternalTerminalEditorState.h */,
 				CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */,
 			);
@@ -2603,6 +2610,7 @@
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				B528011916FCF347004E260D /* Operation */,
+				CF0A40091B57E138002A092B /* TerminalCore */,
 				CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */,
 				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
 				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,

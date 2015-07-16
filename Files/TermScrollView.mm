@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#import "NSUserDefaults+myColorSupport.h"
 #import "TermScrollView.h"
 #import "FontCache.h"
 #import "TermParser.h"
@@ -36,26 +37,29 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         self.scrollsDynamically = true;
         self.contentView.copiesOnScroll = false;
         self.contentView.canDrawConcurrently = false;
-        self.contentView.drawsBackground = false;
+        self.contentView.drawsBackground = true;
+        self.contentView.backgroundColor = [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor0"];
         
         m_Screen = make_unique<TermScreen>(floor(rc.size.width / m_View.fontCache.Width()),
                                            floor(rc.size.height / m_View.fontCache.Height()));
         
         [m_View AttachToScreen:m_Screen.get()];
         
+        m_View.reportsSizeByOccupiedContent = true;
+        
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(m_View)]];
-        [self addConstraint:
-         [NSLayoutConstraint constraintWithItem:m_View
-                                      attribute:NSLayoutAttributeHeight
-                                      relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                         toItem:self.contentView
-                                      attribute:NSLayoutAttributeHeight
-                                     multiplier:1
-                                       constant:0]];
+//        [self addConstraint:
+//         [NSLayoutConstraint constraintWithItem:m_View
+//                                      attribute:NSLayoutAttributeHeight
+//                                      relatedBy:NSLayoutRelationGreaterThanOrEqual
+//                                         toItem:self.contentView
+//                                      attribute:NSLayoutAttributeHeight
+//                                     multiplier:1
+//                                       constant:0]];
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)

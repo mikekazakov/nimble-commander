@@ -25,6 +25,7 @@ enum class TermViewCursor
 @property (readonly) FPSLimitedDrawer *FPSDrawer;
 @property (nonatomic, readonly) const FontCache &fontCache;
 @property (nonatomic, readonly) TermParser *parser; // may be nullptr
+@property (nonatomic) bool reportsSizeByOccupiedContent;
 
 - (void) reloadSettings;
 - (void) AttachToScreen:(TermScreen*)_scr;

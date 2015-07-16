@@ -59,9 +59,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     TermScreen     *m_Screen;
     TermParser     *m_Parser;
     
-    int             m_LastScreenFSY;
+    int             m_LastScreenFullHeight;
     
     bool            m_HasSelection;
+    bool            m_ReportsSizeByOccupiedContent;
     SelPoint        m_SelStart;
     SelPoint        m_SelEnd;
     AnsiColors      m_AnsiColors;
@@ -76,13 +77,15 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 }
 
 @synthesize FPSDrawer = m_FPS;
+@synthesize reportsSizeByOccupiedContent = m_ReportsSizeByOccupiedContent;
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        m_LastScreenFSY = 0;
+        m_LastScreenFullHeight = 0;
         m_HasSelection = false;
+        m_ReportsSizeByOccupiedContent = false;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = [[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.FramesPerSecond"] intValue];
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
@@ -162,17 +165,36 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return m_IntrinsicSize;
 }
 
+- (int)fullScreenHeight
+{
+//int full_height = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
+    if( !m_ReportsSizeByOccupiedContent ) {
+        return m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
+    }
+    else {
+        int height = m_Screen->Buffer().BackScreenLines();
+        auto occupied = m_Screen->Buffer().OccupiedOnScreenLines();
+        if(occupied)
+            height += occupied->second;
+        return height;
+    }
+}
+
 - (void)adjustSizes:(bool)_mandatory
 {
-    int fsy = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
-    if(fsy == m_LastScreenFSY && _mandatory == false)
+//    int full_height = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
+    int full_height = self.fullScreenHeight;
+    if(full_height == m_LastScreenFullHeight && _mandatory == false)
         return;
     
-    double sy = fsy * m_FontCache->Height();
+    m_LastScreenFullHeight = full_height;
+    
+    double sy = full_height * m_FontCache->Height();
     double rest = self.superview.frame.size.height -
         floor(self.superview.frame.size.height / m_FontCache->Height()) * m_FontCache->Height();
 
     m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, sy + rest);
+    NSLog(@"height = %f", m_IntrinsicSize.height);
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView layoutSubtreeIfNeeded];
     
@@ -256,10 +278,25 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         }
     }
     
+#ifdef DEBUG
+    [self drawBackscreenOnscreenBorder:context];
+#endif
+    
     m_Screen->Unlock();
     
 //    tmb.Reset("drawn in: ");
     
+}
+
+- (void)drawBackscreenOnscreenBorder:(CGContextRef)_context
+{
+    CGRect rc;
+    rc.origin.x = 0;
+    rc.origin.y = m_Screen->Buffer().BackScreenLines() * m_FontCache->Height();
+    rc.size.width = self.bounds.size.width;
+    rc.size.height = 1;
+    CGContextSetRGBFillColor(_context, 1, 1, 1, 1);
+    CGContextFillRect(_context, rc);
 }
 
 - (void) DrawLine:(TermScreenBuffer::RangePair<const TermScreenBuffer::Space>)_line

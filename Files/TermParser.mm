@@ -197,7 +197,7 @@ void TermParser::Reset()
     
     SetTranslate(LAT1_MAP);
     UpdateAttrs();
-    m_Scr.GoTo(0, 0);
+    m_Scr.GoToDefaultPosition();
     EscSave();
 
     m_Title[m_TitleLen] = 0;

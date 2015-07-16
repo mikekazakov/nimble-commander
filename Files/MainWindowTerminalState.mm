@@ -88,18 +88,18 @@
             strongself->m_TermScrollView.screen.Lock();
 
             
-                        MachTimeBenchmark mtb;
+//                        MachTimeBenchmark mtb;
 
             
             int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
             
-                        auto nanos = mtb.Delta();
-                        static unsigned long nanos_total(0);
-                        nanos_total += nanos.count();
-                        static unsigned long bytes_total(0);
-                        bytes_total += _sz;
-                        auto nanos_pb = double(nanos_total) / double(bytes_total);
-                        printf( "parsing speed avg: %.0f\n", nanos_pb );
+//                        auto nanos = mtb.Delta();
+//                        static unsigned long nanos_total(0);
+//                        nanos_total += nanos.count();
+//                        static unsigned long bytes_total(0);
+//                        bytes_total += _sz;
+//                        auto nanos_pb = double(nanos_total) / double(bytes_total);
+//                        printf( "parsing speed avg: %.0f\n", nanos_pb );
             
             
             

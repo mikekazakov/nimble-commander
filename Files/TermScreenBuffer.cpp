@@ -237,6 +237,11 @@ void _::FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped )
     }
 }
 
+static inline bool IsOccupiedChar( const _::Space &_s )
+{
+    return _s.l != 0;
+}
+
 unsigned _::OccupiedChars( const Space *_begin, const Space *_end )
 {
     assert( _end >= _end );
@@ -244,13 +249,36 @@ unsigned _::OccupiedChars( const Space *_begin, const Space *_end )
         return 0;
 
     unsigned len = 0;
-    for( auto i = _end - 1; i >= _begin; --i )
-        if( i->l != 0 ) {
+    for( auto i = _end - 1; i >= _begin; --i ) // going backward
+        if( IsOccupiedChar(*i) ) {
             len = (unsigned)(i - _begin + 1);
             break;
         }
     
     return len;
+}
+
+bool _::HasOccupiedChars( const Space *_begin, const Space *_end )
+{
+    assert( _end >= _end );
+    for( ; _begin != _end; ++_begin ) // going forward
+        if( IsOccupiedChar(*_begin) )
+            return true;
+    return false;;
+}
+
+unsigned _::OccupiedChars( int _line_no ) const
+{
+    if( auto l = LineFromNo(_line_no) )
+        return OccupiedChars(begin(l), end(l));
+    return 0;
+}
+
+bool _::HasOccupiedChars( int _line_no ) const
+{
+    if( auto l = LineFromNo(_line_no) )
+        return HasOccupiedChars(begin(l), end(l));
+    return false;
 }
 
 vector<vector<_::Space>> _::ComposeContinuousLines(int _from, int _to) const
@@ -338,4 +366,20 @@ void _::RevertToSnapshot()
 void _::DropSnapshot()
 {
     m_Snapshot.reset();
+}
+
+optional<pair<int, int>> _::OccupiedOnScreenLines() const
+{
+    int first = numeric_limits<int>::max(),
+         last = numeric_limits<int>::min();
+    for( int i = 0, e = Height(); i < e; ++i )
+        if( HasOccupiedChars(i) ) {
+            first = min(first, i);
+            last = max(last, i);
+        }
+    
+    if( first > last )
+        return nullopt;
+    
+    return make_pair(first, last + 1);
 }

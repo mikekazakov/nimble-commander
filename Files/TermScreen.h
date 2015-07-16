@@ -13,10 +13,10 @@
 class TermScreen
 {
 public:
-    TermScreen(unsigned _width, unsigned _height);
-
     static const unsigned short MultiCellGlyph = 0xFFFE;
     using Space = TermScreenBuffer::Space;
+    
+    TermScreen(unsigned _width, unsigned _height);
     
     inline void                     Lock()    const { m_Lock.lock();            }
     inline void                     Unlock()  const { m_Lock.unlock();          }
@@ -44,6 +44,7 @@ public:
     void SetAlternateScreen(bool _is_alternate);
 
     void GoTo(int _x, int _y);
+    void GoToDefaultPosition();
     void DoCursorUp(int _n = 1);
     void DoCursorDown(int _n = 1);
     void DoCursorLeft(int _n = 1);
@@ -92,6 +93,6 @@ private:
     Space                         m_EraseChar = TermScreenBuffer::DefaultEraseChar();
     TermScreenBuffer              m_Buffer;
     string                        m_Title;
-    bool                          m_AlternateScreen = false;    
+    bool                          m_AlternateScreen = false;
 };
 

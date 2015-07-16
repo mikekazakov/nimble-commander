@@ -12,6 +12,7 @@ class TermScreen;
 
 // http://ascii-table.com/ansi-escape-sequences.php
 // http://en.wikipedia.org/wiki/ANSI_escape_code
+// http://graphcomp.com/info/specs/ansi_col.html
 
 class TermParser
 {

@@ -79,6 +79,13 @@ public:
     void SetEraseChar(Space _ch);
     static Space DefaultEraseChar();
     
+    /**
+     * [1st, 2nd) lines range.
+     * lines should have any non-zero symbol, including space (32).
+     * if screen is absolutely clean it will return nullopt
+     */
+    optional<pair<int, int>> OccupiedOnScreenLines() const;
+    
     // use for diagnose and test purposes only
     string DumpScreenAsANSI() const;
     
@@ -111,6 +118,9 @@ private:
     static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
     static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
     static unsigned OccupiedChars( const Space *_begin, const Space *_end );
+    static bool HasOccupiedChars( const Space *_begin, const Space *_end );
+    unsigned OccupiedChars( int _line_no ) const;
+    bool HasOccupiedChars( int _line_no ) const;
     vector<vector<Space>> ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
     static vector< tuple<vector<Space>, bool> > DecomposeContinuousLines( const vector<vector<Space>>& _scr, unsigned _width ); // <spaces, is wrapped>
     

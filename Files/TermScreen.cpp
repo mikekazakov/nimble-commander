@@ -13,6 +13,7 @@
 TermScreen::TermScreen(unsigned _w, unsigned _h):
     m_Buffer(_w, _h)
 {
+    GoToDefaultPosition();
 }
 
 void TermScreen::PutString(const string &_str)
@@ -23,6 +24,9 @@ void TermScreen::PutString(const string &_str)
 
 void TermScreen::PutCh(uint32_t _char)
 {
+//    if(_char >= 32 && _char < 127)
+//        printf("%c", _char);
+    
     auto line = m_Buffer.LineFromNo(m_PosY);
     if( !line )
         return;
@@ -73,19 +77,20 @@ void TermScreen::DoEraseScreen(int _mode)
 {
     if(_mode == 1) {
         for(int i = 0; i < Height(); ++i) {
-            auto chars = m_Buffer.LineFromNo(i).first;
-            for(int j = 0; j < Width(); ++j) {
-                chars[j] = m_EraseChar;
-                if(i == m_PosY && j == m_PosX)
-                    return;
+            auto l = m_Buffer.LineFromNo(i);
+            if(i != m_PosY)
+                fill(begin(l), end(l), m_EraseChar);
+            else {
+                fill(begin(l), min( begin(l)+m_PosX, end(l) ), m_EraseChar);
+                return;
             }
             m_Buffer.SetLineWrapped(i, false);
         }
     } else if(_mode == 2)
     { // clear all screen
         for(int i = 0; i < Height(); ++i) {
-            for(auto &c: m_Buffer.LineFromNo(i))
-                c = m_EraseChar;
+            auto l = m_Buffer.LineFromNo(i);
+            fill(begin(l), end(l), m_EraseChar);
             m_Buffer.SetLineWrapped(i, false);
         }
     } else {
@@ -368,4 +373,9 @@ void TermScreen::ResizeScreen(unsigned _new_sx, unsigned _new_sy)
 void TermScreen::SetTitle(const char *_t)
 {
     m_Title = _t;
+}
+
+void TermScreen::GoToDefaultPosition()
+{
+    GoTo(0, 0);
 }

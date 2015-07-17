@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Carbon/Carbon.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "ActionsShortcutsManager.h"
 #import "PanelController.h"
@@ -533,6 +534,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if ( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
     
+    auto kc = theEvent.keyCode;
     auto mod = theEvent.modifierFlags;
     mod &= ~NSAlphaShiftKeyMask;
     mod &= ~NSNumericPadKeyMask;
@@ -550,6 +552,21 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         static const int prev_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_previous_tab");
         if([NSApplication.sharedApplication.menu itemWithTagHierarchical:prev_tab].enabled)
             return [super performKeyEquivalent:theEvent];
+        return true;
+    }
+    if( kc == 126 && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
+        [self increaseBottomTerminalGap];
+        return true;
+    }
+    if( kc == 125 && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
+        [self decreaseBottomTerminalGap];
+        return true;
+    }
+    if( kc == kVK_ANSI_O && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
+        if(self.isPanelsSplitViewHidden)
+            [self showPanelsSplitView];
+        else
+            [self hidePanelsSplitView];
         return true;
     }
     

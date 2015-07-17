@@ -22,6 +22,7 @@ class PanelData;
 @class FilePanelMainSplitView;
 @class MainWndGoToButton;
 @class OperationsSummaryViewController;
+@class FilePanelOverlappedTerminal;
 
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate, MMTabBarViewDelegate>
 {
@@ -29,6 +30,9 @@ class PanelData;
     vector<PanelController*> m_RightPanelControllers;
     
     FilePanelMainSplitView *m_MainSplitView;
+    NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
+    FilePanelOverlappedTerminal *m_OverlappedTerminal;
+    int                     m_OverlappedTerminalBottomGap;
     
     MainWndGoToButton *m_LeftPanelGoToButton;
     MainWndGoToButton *m_RightPanelGoToButton;
@@ -112,13 +116,22 @@ class PanelData;
  */
 - (bool) isRightController:(PanelController*)_controller;
 
+/**
+ * Panels split view may be hidden to fully show overlapped terminal contents
+ */
+@property (nonatomic, readonly) bool isPanelsSplitViewHidden;
+
+- (void) hidePanelsSplitView;
+- (void) showPanelsSplitView;
+
 - (void) HandleTabButton;
 @end
 
 
 @interface MainWindowFilePanelState ()
 
-- (void) savePanelsOptions;
+- (void)savePanelsOptions;
+- (void)frameDidChange;
 
 @end
 
@@ -126,3 +139,5 @@ class PanelData;
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "MainWindowFilePanelState+Menu.h"
 #import "MainWindowFilePanelState+TabsSupport.h"
+#import "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+

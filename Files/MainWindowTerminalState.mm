@@ -11,10 +11,10 @@
 #import "TermScreen.h"
 #import "TermParser.h"
 #import "TermView.h"
-#import "MainWindowController.h"
-#import "FontCache.h"
-#import "ActionsShortcutsManager.h"
 #import "TermScrollView.h"
+#import "MainWindowController.h"
+#import "ActionsShortcutsManager.h"
+
 
 #import "Common.h"
 #import "common_paths.h"
@@ -41,7 +41,7 @@
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
 
         
-        m_Task.reset(new TermShellTask);
+        m_Task = make_unique<TermShellTask>();
         auto task_ptr = m_Task.get();
         m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){

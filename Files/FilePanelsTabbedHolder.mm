@@ -61,13 +61,16 @@
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
                                                                constant:50]];
-        [m_TabView addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
-                                                              attribute:NSLayoutAttributeHeight
-                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                 toItem:nil
-                                                              attribute:NSLayoutAttributeNotAnAttribute
-                                                             multiplier:1.0
-                                                               constant:50]];
+        
+        NSLayoutConstraint *c = [NSLayoutConstraint constraintWithItem:m_TabView
+                                                             attribute:NSLayoutAttributeHeight
+                                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                toItem:nil
+                                                             attribute:NSLayoutAttributeNotAnAttribute
+                                                            multiplier:1.0
+                                                              constant:50];
+        c.priority = NSLayoutPriorityDefaultLow;
+        [m_TabView addConstraint:c];
         [self addSubview:m_TabView];
         
         m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -89,13 +92,15 @@
                                                              attribute:NSLayoutAttributeNotAnAttribute
                                                             multiplier:1.0
                                                               constant:50]];
-        [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
-                                                             attribute:NSLayoutAttributeHeight
-                                                             relatedBy:NSLayoutRelationEqual
-                                                                toItem:nil
-                                                             attribute:NSLayoutAttributeNotAnAttribute
-                                                            multiplier:1.0
-                                                              constant:m_TabBar.heightOfTabBarButtons]];
+        c = [NSLayoutConstraint constraintWithItem:m_TabBar
+                                         attribute:NSLayoutAttributeHeight
+                                         relatedBy:NSLayoutRelationEqual
+                                            toItem:nil
+                                         attribute:NSLayoutAttributeNotAnAttribute
+                                        multiplier:1.0
+                                          constant:m_TabBar.heightOfTabBarButtons];
+        c.priority = NSLayoutPriorityDefaultLow+1;
+        [m_TabBar addConstraint:c];
         m_TabView.delegate = m_TabBar;
         
         [self doLayoutTabless];

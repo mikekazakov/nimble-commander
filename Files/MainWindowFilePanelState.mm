@@ -28,6 +28,7 @@
 #import "common_paths.h"
 #import "SandboxManager.h"
 #import "FileCopyOperation.h"
+#import "FilePanelOverlappedTerminal.h"
 
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
@@ -44,6 +45,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     if(self)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        m_OverlappedTerminalBottomGap = 0;
         m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
         m_GoToForceActivation = [defaults boolForKey:g_DefsGoToActivation];
         
@@ -143,6 +145,11 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
         
         [self updateTabBarsVisibility];
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsGeneralShowTabs options:0 context:NULL];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
+        
     }
     return self;
 }
@@ -150,6 +157,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 - (void) dealloc
 {
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:g_DefsGeneralShowTabs];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (BOOL)acceptsFirstResponder { return true; }
@@ -213,10 +221,39 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
     m_Toolbar.showsBaselineSeparator = false;
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==0)-|" options:0 metrics:nil views:views]];
+    m_OverlappedTerminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
+    m_OverlappedTerminal.translatesAutoresizingMaskIntoConstraints = false;
+    [self addSubview:m_OverlappedTerminal positioned:NSWindowBelow relativeTo:nil];
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView, m_OverlappedTerminal);
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==100)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:m_MainSplitView
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                  multiplier:1
+                                                                    constant:-100];
+    m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
+    
+
+//    m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self
+//                                                                   attribute:NSLayoutAttributeBottom
+//                                                                   relatedBy:NSLayoutRelationEqual
+//                                                                      toItem:m_MainSplitView
+//                                                                   attribute:NSLayoutAttributeBottom
+//                                                                  multiplier:1
+//                                                                    constant:100];
+    
+    
+    [self addConstraint:m_MainSplitViewBottomConstraint];
+    
+    
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[m_OverlappedTerminal]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_OverlappedTerminal]-(0)-|" options:0 metrics:nil views:views]];
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
@@ -824,6 +861,27 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
             });
         }
     }
+}
+
+- (void)frameDidChange
+{
+    auto gap = [m_OverlappedTerminal bottomGapForLines:m_OverlappedTerminalBottomGap];
+    m_MainSplitViewBottomConstraint.constant = -gap;
+}
+
+- (bool)isPanelsSplitViewHidden
+{
+    return m_MainSplitView.hidden;
+}
+
+- (void) hidePanelsSplitView
+{
+    m_MainSplitView.hidden = true;
+}
+
+- (void) showPanelsSplitView
+{
+    m_MainSplitView.hidden = false;
 }
 
 @end

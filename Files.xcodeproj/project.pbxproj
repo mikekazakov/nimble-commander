@@ -49,6 +49,12 @@
 		CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */; };
 		CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
+		CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
+		CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
+		CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
+		CF0A40141B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
+		CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
+		CF0A40161B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
@@ -1040,6 +1046,10 @@
 		CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTab.mm; sourceTree = "<group>"; };
 		CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = "<group>"; };
 		CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTabNewEditorSheet.mm; sourceTree = "<group>"; };
+		CF0A400D1B57E28C002A092B /* FilePanelOverlappedTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelOverlappedTerminal.h; sourceTree = "<group>"; };
+		CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelOverlappedTerminal.mm; sourceTree = "<group>"; };
+		CF0A40121B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+OverlappedTerminalSupport.h"; sourceTree = "<group>"; };
+		CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+OverlappedTerminalSupport.mm"; sourceTree = "<group>"; };
 		CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
 		CF1100CD1913778800E170FC /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = 3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1869,6 +1879,8 @@
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
 				CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */,
 				CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */,
+				CF0A40121B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.h */,
+				CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
 			);
@@ -1929,6 +1941,8 @@
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
 				CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */,
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
+				CF0A400D1B57E28C002A092B /* FilePanelOverlappedTerminal.h */,
+				CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -3223,6 +3237,7 @@
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
+				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CFC5D4A819BB4FFB005BB24A /* Hash.cpp in Sources */,
@@ -3278,6 +3293,7 @@
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF6D9C02196678000077B146 /* DisplayNamesCache.mm in Sources */,
+				CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CF6D9C0B196678000077B146 /* ExternalEditorInfo.mm in Sources */,
@@ -3525,6 +3541,7 @@
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
 				CFA0B23A1869542200501C35 /* common_paths.cpp in Sources */,
 				CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */,
+				CF0A40141B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
@@ -3603,6 +3620,7 @@
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */,
 				CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
@@ -3636,6 +3654,7 @@
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF6F2471A13567C00011177 /* PanelData.mm in Sources */,
 				CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */,
+				CF0A40161B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFF6F2491A13567C00011177 /* PanelView.mm in Sources */,
 				CF50B72D1A15170600E3D96D /* VFSNetFTPInternals.mm in Sources */,
 				CFF6F24D1A13567C00011177 /* BigFileViewSheet.mm in Sources */,
@@ -3691,6 +3710,7 @@
 				CFF6F2881A13567C00011177 /* Operation.mm in Sources */,
 				CFF6F2891A13567C00011177 /* filesysattr.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
+				CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFF6F28B1A13567C00011177 /* GenericOperationView.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
 				CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,

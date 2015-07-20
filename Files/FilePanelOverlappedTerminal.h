@@ -8,9 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "TermShellTask.h"
+
 @interface FilePanelOverlappedTerminal : NSView
 
 - (double) bottomGapForLines:(int)_lines_amount;
 - (int) totalScreenLines;
+- (void) runShell;
+
+@property (nonatomic, readonly) TermShellTask::TaskState state;
 
 @end

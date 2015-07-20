@@ -877,6 +877,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 - (void) hidePanelsSplitView
 {
     m_MainSplitView.hidden = true;
+    [self activateOverlappedTerminal];
 }
 
 - (void) showPanelsSplitView

@@ -74,7 +74,7 @@
 - (void) Assigned
 {
     // need right CWD here
-    if(m_Task->State() == TermShellTask::StateInactive)
+    if(m_Task->State() == TermShellTask::TaskState::Inactive)
         m_Task->Launch(m_InitalWD.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
     
     __weak MainWindowTerminalState *weakself = self;
@@ -183,9 +183,9 @@
 {
 //    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
-    if(m_Task->State() == TermShellTask::StateDead ||
-       m_Task->State() == TermShellTask::StateInactive ||
-       m_Task->State() == TermShellTask::StateShell)
+    if(m_Task->State() == TermShellTask::TaskState::Dead ||
+       m_Task->State() == TermShellTask::TaskState::Inactive ||
+       m_Task->State() == TermShellTask::TaskState::Shell)
         return true;
     
     auto children = m_Task->ChildrenList();
@@ -217,7 +217,7 @@
 - (bool) isAnythingRunning
 {
     auto state = m_Task->State();
-    return state == TermShellTask::StateProgramExternal || state == TermShellTask::StateProgramInternal;
+    return state == TermShellTask::TaskState::ProgramExternal || state == TermShellTask::TaskState::ProgramInternal;
 }
 
 - (void) Terminate
@@ -227,8 +227,8 @@
 
 - (string)CWD
 {
-    if(m_Task->State() == TermShellTask::StateInactive ||
-       m_Task->State() == TermShellTask::StateDead)
+    if(m_Task->State() == TermShellTask::TaskState::Inactive ||
+       m_Task->State() == TermShellTask::TaskState::Dead)
         return "";
     
     return m_Task->CWD();

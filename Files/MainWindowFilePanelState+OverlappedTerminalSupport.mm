@@ -18,6 +18,7 @@
     m_OverlappedTerminalBottomGap++;
     m_OverlappedTerminalBottomGap = min(m_OverlappedTerminalBottomGap, m_OverlappedTerminal.totalScreenLines);
     [self frameDidChange];
+    [self activateOverlappedTerminal];
 }
 
 - (void) decreaseBottomTerminalGap
@@ -30,6 +31,14 @@
     if( m_OverlappedTerminalBottomGap > 0 )
         m_OverlappedTerminalBottomGap--;
     [self frameDidChange];
+}
+
+- (void) activateOverlappedTerminal
+{
+    auto s = m_OverlappedTerminal.state;
+    if( s == TermShellTask::TaskState::Inactive ||
+        s == TermShellTask::TaskState::Dead )
+       [m_OverlappedTerminal runShell];
 }
 
 @end

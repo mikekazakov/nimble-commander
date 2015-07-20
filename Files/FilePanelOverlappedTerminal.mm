@@ -62,9 +62,6 @@
                 });
             }
         });
-        
-        if(m_Task->State() == TermShellTask::StateInactive)
-            m_Task->Launch(m_InitalWD.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
     }
     return self;
 }
@@ -85,6 +82,21 @@
 - (int) totalScreenLines
 {
     return m_TermScrollView.screen.Height();
+}
+
+- (TermShellTask::TaskState) state
+{
+    return m_Task->State();
+}
+
+- (void) runShell
+{
+    auto s = m_Task->State();
+    if( s == TermShellTask::TaskState::Inactive ||
+        s == TermShellTask::TaskState::Dead )
+        m_Task->Launch(m_InitalWD.c_str(),
+                       m_TermScrollView.screen.Width(),
+                       m_TermScrollView.screen.Height());
 }
 
 @end

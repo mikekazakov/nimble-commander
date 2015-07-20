@@ -15,22 +15,22 @@ class TermShellTask : public TermTask
 public:
     ~TermShellTask();
     
-    enum TermState {
+    enum class TaskState {
 
         // initial state - shell is not initialized and is not running
-        StateInactive        = 0,
+        Inactive        = 0,
 
         // shell is running normally
-        StateShell           = 1,
+        Shell           = 1,
         
         // a child program is running under shell, executed from it's command line
-        StateProgramInternal = 2,
+        ProgramInternal = 2,
         
         // a child program is running under shell, executed from Files' UI
-        StateProgramExternal = 3,
+        ProgramExternal = 3,
         
         // shell died
-        StateDead            = 4
+        Dead            = 4
     };
 
     inline void SetOnBashPrompt(void (^_)(const char*)) { m_OnBashPrompt = _; };
@@ -60,7 +60,7 @@ public:
     
     
     
-    inline TermState State() const { return m_State; }
+    inline TaskState State() const { return m_State; }
     
     /**
      * Current working directory. With trailing slash, in form: /Users/migun/.
@@ -87,19 +87,20 @@ public:
 private:
     bool IsCurrentWD(const char *_what) const;
     void ProcessBashPrompt(const void *_d, int _sz);
-    void SetState(TermState _new_state);
+    void SetState(TaskState _new_state);
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
     void (^m_OnBashPrompt)(const char *_cwd) = nil;
 
-    volatile TermState m_State = StateInactive;
+    volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
     volatile bool m_TemporarySuppressed = false; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX = 0;
     int m_TermSY = 0;
+    thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";
 };

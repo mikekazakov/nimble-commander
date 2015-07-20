@@ -43,6 +43,9 @@ TermShellTask::~TermShellTask()
 
 void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
 {
+    if(m_InputThread.joinable())
+        throw logic_error("TermShellTask::Launch called with joinable input thread");
+    
     m_TermSX = _sx;
     m_TermSY = _sy;
     
@@ -68,10 +71,10 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
         close(slave_fd);
         close(m_CwdPipe[1]);
         
-        SetState(StateShell);
+        SetState(TaskState::Shell);
         
-        // TODO: consider using thread here, not a queue (mind maximum running queues issue)
-        dispatch_async(dispatch_get_global_queue(0, 0), [=]{
+        m_InputThread = thread([=]{
+            pthread_setname_np( ("TermShellTask background input thread, PID="s + to_string(m_ShellPID)).c_str() );
             ReadChildOutput();
         });
     }
@@ -103,7 +106,7 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
         // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
         // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
         // consider a better way here
-        int max_fd = (int)sysconf(_SC_OPEN_MAX);
+        static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
         for(int fd = 3; fd < max_fd; fd++)
             if(fd != g_PromptPipe)
                 close(fd);
@@ -190,10 +193,10 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         
         current_cwd = m_CWD;
         
-        if(m_State == TermState::StateProgramExternal ||
-           m_State == TermState::StateProgramInternal ) {
+        if(m_State == TaskState::ProgramExternal ||
+           m_State == TaskState::ProgramInternal ) {
             // shell just finished running something - let's back it to StateShell state
-            SetState(StateShell);
+            SetState(TaskState::Shell);
         }
         
         if(m_TemporarySuppressed && m_RequestedCWD == tmp) {
@@ -211,8 +214,8 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
 
 void TermShellTask::WriteChildInput(const void *_d, int _sz)
 {
-    if(m_State == StateInactive ||
-       m_State == StateDead )
+    if(m_State == TaskState::Inactive ||
+       m_State == TaskState::Dead )
         return;
     
     if(_sz <= 0)
@@ -224,8 +227,8 @@ void TermShellTask::WriteChildInput(const void *_d, int _sz)
     
     if( ((char*)_d)[_sz-1] == '\n' ||
         ((char*)_d)[_sz-1] == '\r' )
-        if(m_State == StateShell)
-            SetState(StateProgramInternal);
+        if(m_State == TaskState::Shell)
+            SetState(TaskState::ProgramInternal);
 }
 
 void TermShellTask::CleanUp()
@@ -257,23 +260,26 @@ void TermShellTask::CleanUp()
         m_CwdPipe[0] = m_CwdPipe[1] = -1;
     }
     
+    if( m_InputThread.joinable() )
+        m_InputThread.join();
+    
     m_TemporarySuppressed = false;
     m_RequestedCWD = "";
     m_CWD = "";
     
-    SetState(StateInactive);
+    SetState(TaskState::Inactive);
 }
 
 void TermShellTask::ShellDied()
 {
     if(m_ShellPID > 0) // no need to call it if PID is already set to invalid - we're in closing state
     {
-        SetState(StateDead);
+        SetState(TaskState::Dead);
         CleanUp();
     }
 }
 
-void TermShellTask::SetState(TermShellTask::TermState _new_state)
+void TermShellTask::SetState(TaskState _new_state)
 {
     m_State = _new_state;
   
@@ -284,7 +290,7 @@ void TermShellTask::SetState(TermShellTask::TermState _new_state)
 
 void TermShellTask::ChDir(const char *_new_cwd)
 {
-    if(m_State != StateShell)
+    if(m_State != TaskState::Shell)
         return;
     
     if(IsCurrentWD(_new_cwd))
@@ -320,7 +326,7 @@ bool TermShellTask::IsCurrentWD(const char *_what) const
 
 void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
 {
-    if(m_State != StateShell)
+    if(m_State != TaskState::Shell)
         return;
     
     char cmd[MAXPATHLEN];
@@ -362,13 +368,13 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
                 _parameters != nullptr ? _parameters : ""
                 );
     
-    SetState(StateProgramExternal);
+    SetState(TaskState::ProgramExternal);
     WriteChildInput(input, (int)strlen(input));
 }
 
 void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
 {
-    if(m_State != StateShell)
+    if(m_State != TaskState::Shell)
         return;
     
     char cmd[MAXPATHLEN];
@@ -381,7 +387,7 @@ void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_paramete
             _parameters != nullptr ? _parameters : ""
             );
 
-    SetState(StateProgramExternal);
+    SetState(TaskState::ProgramExternal);
     WriteChildInput(input, (int)strlen(input));
 }
 
@@ -431,7 +437,7 @@ int TermShellTask::EscapeShellFeed(const char *_feed, char *_escaped, size_t _bu
 
 vector<string> TermShellTask::ChildrenList()
 {
-    if(m_State == StateInactive || m_State == StateDead || m_ShellPID < 0)
+    if(m_State == TaskState::Inactive || m_State == TaskState::Dead || m_ShellPID < 0)
         return vector<string>();
     
     size_t proc_cnt = 0;
@@ -479,7 +485,7 @@ void TermShellTask::ResizeWindow(int _sx, int _sy)
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    if(m_State != StateInactive && m_State != StateDead)
+    if(m_State != TaskState::Inactive && m_State != TaskState::Dead)
         TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
 }
 

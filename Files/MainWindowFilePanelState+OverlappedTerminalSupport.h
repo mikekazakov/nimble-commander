@@ -10,6 +10,7 @@
 
 @interface MainWindowFilePanelState (OverlappedTerminalSupport)
 
+- (void) activateOverlappedTerminal;
 - (void) increaseBottomTerminalGap;
 - (void) decreaseBottomTerminalGap;
 

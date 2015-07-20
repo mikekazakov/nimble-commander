@@ -168,6 +168,12 @@ TermParser::TermParser(TermScreen &_scr, function<void(const void* _d, int _sz)>
     Reset();
 }
 
+TermParser::~TermParser()
+{
+    // DO NOT DELETE THIS DESCTRUCTOR
+    // it was added 'coz of clang bug(?) with inlining default desctructor in Objective-C++ mode, which caused a crashes in function<> desctructor
+}
+
 void TermParser::Reset()
 {
     m_Height = m_Scr.Height();

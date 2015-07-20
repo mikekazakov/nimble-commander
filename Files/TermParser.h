@@ -34,36 +34,34 @@ public:
     
 private:
     // enumerations and constants
-    enum EState{
-        S_Normal,
-        S_Esc,
-        S_LeftBr,
-        S_RightBr,
-        S_ProcParams,
-        S_GotParams,
-        S_SetG0,
-        S_SetG1,
-        S_TitleSemicolon,
-        S_TitleBuf
+    enum class EState{
+        Normal,
+        Esc,
+        LeftBr,
+        RightBr,
+        ProcParams,
+        GotParams,
+        SetG0,
+        SetG1,
+        TitleSemicolon,
+        TitleBuf
     };
     
     static const int        m_ParamsSize = 16;
     static const int        m_UTF16CharsStockSize = 16384;
-    static const int        m_TitleMaxLen = 1024;
     static const unsigned char m_DefaultColor = 0x07;
     
     // data and linked objects
     TermScreen             &m_Scr;
     function<void(const void* _d, int _sz)> m_TaskInput;
     function<void(int,int)> m_TaskScreenResizeCallback;
-    int                     m_EscState;
+    EState                  m_EscState;
     int                     m_Params[m_ParamsSize];
     int                     m_ParamsCnt;
     uint32_t                m_UTF32Char;
     int                     m_UTF8Count;
     int                     m_UTF16CharsStockLen;
     const unsigned short   *m_TranslateMap;
-    int                     m_TitleLen;
     int                     m_TitleType;
     int                     m_Height;
     int                     m_Width;
@@ -92,7 +90,7 @@ private:
     // 'big' data comes at last
     unsigned int            m_TabStop[16];
     uint16_t                m_UTF16CharsStock[m_UTF16CharsStockSize];
-    char                    m_Title[m_TitleMaxLen];
+    string                  m_Title;
     
     // methods
     void SetTranslate(unsigned char _charset);

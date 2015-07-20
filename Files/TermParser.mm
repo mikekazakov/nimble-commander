@@ -170,8 +170,8 @@ TermParser::TermParser(TermScreen &_scr, function<void(const void* _d, int _sz)>
 
 TermParser::~TermParser()
 {
-    // DO NOT DELETE THIS DESCTRUCTOR
-    // it was added 'coz of clang bug(?) with inlining default desctructor in Objective-C++ mode, which caused a crashes in function<> desctructor
+    // ***@@@ DO NOT DELETE THIS DESCTRUCTOR @@@***
+    // it was added 'coz of clang bug(?) with inlining of default desctructor in Objective-C++ mode, which caused a crashes in function<> desctructor
 }
 
 void TermParser::Reset()
@@ -184,13 +184,12 @@ void TermParser::Reset()
     m_State[0].bg_color = TermScreenColors::Default;
     m_State[0].g0_charset = LAT1_MAP;
     m_State[0].g1_charset = GRAF_MAP;
-    m_TitleLen = 0;
     m_TitleType = 0;
     m_LineAbs = true;
     m_InsertMode = false;
     m_Top = 0;
     m_Bottom = m_Scr.Height();
-    m_EscState = S_Normal;
+    m_EscState = EState::Normal;
     m_ParamsCnt = 0;
     m_QuestionFlag = false;
     m_ParsingParamNow = 0;
@@ -206,8 +205,8 @@ void TermParser::Reset()
     m_Scr.GoToDefaultPosition();
     EscSave();
 
-    m_Title[m_TitleLen] = 0;
-    m_Scr.SetTitle(m_Title);
+    m_Title.clear();
+    m_Scr.SetTitle("");
     
     m_Scr.SetAlternateScreen(false);
 
@@ -303,11 +302,10 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
     switch (c)
     {
         case  0: return;
-        case  7: if(m_EscState == S_TitleBuf)
+        case  7: if(m_EscState == EState::TitleBuf)
                  {
-                     m_Title[m_TitleLen] = 0;
-                     m_Scr.SetTitle(m_Title);
-                     m_EscState = S_Normal;
+                     m_Scr.SetTitle(m_Title.c_str());
+                     m_EscState = EState::Normal;
                      _result_flags |= TermParser::Result_ChangedTitle;
                      return;
                  }
@@ -320,21 +318,21 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
         case 12: LF(); return;
         case 13: CR(); return;
         case 24:
-        case 26: m_EscState = S_Normal; return;
-        case 27: m_EscState = S_Esc; return;
+        case 26: m_EscState = EState::Normal; return;
+        case 27: m_EscState = EState::Esc; return;
         default: break;
     }
     
     switch (m_EscState)
     {
-        case S_Esc:
-            m_EscState = S_Normal;
+        case EState::Esc:
+            m_EscState = EState::Normal;
             switch (c)
             {
-                case '[': m_EscState = S_LeftBr;    return;
-                case ']': m_EscState = S_RightBr;   return;
-                case '(': m_EscState = S_SetG0;     return;
-                case ')': m_EscState = S_SetG1;     return;
+                case '[': m_EscState = EState::LeftBr;    return;
+                case ']': m_EscState = EState::RightBr;   return;
+                case '(': m_EscState = EState::SetG0;     return;
+                case ')': m_EscState = EState::SetG1;     return;
                 case '>':  /* Numeric keypad - ignoring now */  return;
                 case '=':  /* Appl. keypad - ignoring now */    return;
                 case '7': EscSave();    return;
@@ -346,46 +344,43 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                 default: printf("missed Esc char: %d(\'%c\')\n", (int)c, c); return;
             }
             
-        case S_RightBr:
+        case EState::RightBr:
             switch (c)
             {
                 case '0':
                 case '1':
                 case '2':
                     m_TitleType = c - '0';
-                    m_EscState = S_TitleSemicolon;
+                    m_EscState = EState::TitleSemicolon;
                     return;
                 case 'P':
-                    m_EscState = S_Normal;
+                    m_EscState = EState::Normal;
                     return;
                 case 'R':
-                    m_EscState = S_Normal;
+                    m_EscState = EState::Normal;
                 default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c);
             }
             
-            m_EscState = S_Normal;
+            m_EscState = EState::Normal;
             return;
             
-        case S_TitleSemicolon:
+        case EState::TitleSemicolon:
             if (c==';') {
-                m_EscState = S_TitleBuf;
-                m_TitleLen = 0;
+                m_EscState = EState::TitleBuf;
+                m_Title.clear();
             }
             else
-                m_EscState = S_Normal;
+                m_EscState = EState::Normal;
             return;
             
-        case S_TitleBuf:
-            if(m_TitleLen == m_TitleMaxLen)
-                m_EscState = S_Normal;
-            else
-                m_Title[m_TitleLen++] = c;
+        case EState::TitleBuf:
+            m_Title += c;
             return;
             
-        case S_LeftBr:
+        case EState::LeftBr:
             memset(m_Params, 0, sizeof(m_Params));
             m_ParamsCnt = 0;
-            m_EscState = S_ProcParams;
+            m_EscState = EState::ProcParams;
             m_ParsingParamNow = false;
             m_QuestionFlag = false;
             if(c == '?') {
@@ -393,7 +388,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                 return;
             }
                  
-        case S_ProcParams:
+        case EState::ProcParams:
             if(c == '>') {
                 // modifier '>' is somehow related with alternative screen, don't give a fuck now
                 return;
@@ -408,15 +403,15 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                 m_Params[m_ParamsCnt] += c - '0';
                 return;
             } else
-                m_EscState = S_GotParams;
+                m_EscState = EState::GotParams;
 
-        case S_GotParams:
+        case EState::GotParams:
             if(m_ParsingParamNow) {
                 m_ParsingParamNow = false;
                 m_ParamsCnt++;
             }
             
-            m_EscState = S_Normal;
+            m_EscState = EState::Normal;
             switch(c) {
                 case 'h': CSI_DEC_PMS(true);  return;
                 case 'l': CSI_DEC_PMS(false); return;
@@ -448,7 +443,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             }
             return;
         
-        case S_SetG0:
+        case EState::SetG0:
             if (c == '0')       m_State[0].g0_charset  = GRAF_MAP;
             else if (c == 'B')  m_State[0].g0_charset  = LAT1_MAP;
             else if (c == 'U')  m_State[0].g0_charset  = IBMPC_MAP;
@@ -456,7 +451,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
             return;
             
-        case S_SetG1:
+        case EState::SetG1:
             if (c == '0')       m_State[0].g1_charset  = GRAF_MAP;
             else if (c == 'B')  m_State[0].g1_charset  = LAT1_MAP;
             else if (c == 'U')  m_State[0].g1_charset  = IBMPC_MAP;
@@ -464,7 +459,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
             return;
             
-        case S_Normal:
+        case EState::Normal:
             if(c > 0x7f) {
                 if (m_UTF8Count && (c&0xc0)==0x80) {
                     m_UTF32Char = (m_UTF32Char<<6) | (c&0x3f);

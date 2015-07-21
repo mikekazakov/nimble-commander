@@ -38,6 +38,7 @@ static bool IsDirectoryAvailableForBrowsing(const char *_path)
 
 TermShellTask::~TermShellTask()
 {
+    m_IsShuttingDown = true;
     CleanUp();
 }
 
@@ -163,7 +164,10 @@ void TermShellTask::ReadChildOutput()
                 
         // check if child process died
         if(FD_ISSET(m_MasterFD, &fd_err)) {
-            ShellDied();
+            if(!m_IsShuttingDown)
+                dispatch_to_main_queue([=]{
+                    ShellDied();
+                });
             goto end_of_all;
         }
     } // End while

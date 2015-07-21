@@ -45,8 +45,6 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         
         [m_View AttachToScreen:m_Screen.get()];
         
-        m_View.reportsSizeByOccupiedContent = true;
-        
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
                                                  options:0

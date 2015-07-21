@@ -103,4 +103,5 @@ private:
     thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";
+    volatile bool m_IsShuttingDown = false;
 };

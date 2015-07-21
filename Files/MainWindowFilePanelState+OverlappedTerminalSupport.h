@@ -14,4 +14,8 @@
 - (void) increaseBottomTerminalGap;
 - (void) decreaseBottomTerminalGap;
 
+- (void) hidePanelsSplitView;
+- (void) showPanelsSplitView;
+
+
 @end

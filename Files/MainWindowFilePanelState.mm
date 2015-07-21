@@ -502,18 +502,12 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 - (PanelController*) leftPanelController
 {
-    PanelView *pv = m_MainSplitView.leftTabbedHolder.current;
-    if(!pv) return nil;
-    assert( [pv.delegate isKindOfClass:PanelController.class] );
-    return (PanelController*)pv.delegate;
+    return objc_cast<PanelController>(m_MainSplitView.leftTabbedHolder.current.delegate);
 }
 
 - (PanelController*) rightPanelController
 {
-    PanelView *pv = m_MainSplitView.rightTabbedHolder.current;
-    if(!pv) return nil;
-    assert( [pv.delegate isKindOfClass:PanelController.class] );
-    return (PanelController*)pv.delegate;
+    return objc_cast<PanelController>(m_MainSplitView.rightTabbedHolder.current.delegate);
 }
 
 - (bool) isLeftController:(PanelController*)_controller
@@ -872,17 +866,6 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 - (bool)isPanelsSplitViewHidden
 {
     return m_MainSplitView.hidden;
-}
-
-- (void) hidePanelsSplitView
-{
-    m_MainSplitView.hidden = true;
-    [self activateOverlappedTerminal];
-}
-
-- (void) showPanelsSplitView
-{
-    m_MainSplitView.hidden = false;
 }
 
 @end

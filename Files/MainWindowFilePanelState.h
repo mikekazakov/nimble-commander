@@ -31,8 +31,11 @@ class PanelData;
     
     FilePanelMainSplitView *m_MainSplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
+
+    // overlapped terminal support
     FilePanelOverlappedTerminal *m_OverlappedTerminal;
     int                     m_OverlappedTerminalBottomGap;
+    __weak PanelController* m_PreviouslyFocusedPanelController;
     
     MainWndGoToButton *m_LeftPanelGoToButton;
     MainWndGoToButton *m_RightPanelGoToButton;
@@ -120,9 +123,6 @@ class PanelData;
  * Panels split view may be hidden to fully show overlapped terminal contents
  */
 @property (nonatomic, readonly) bool isPanelsSplitViewHidden;
-
-- (void) hidePanelsSplitView;
-- (void) showPanelsSplitView;
 
 - (void) HandleTabButton;
 @end

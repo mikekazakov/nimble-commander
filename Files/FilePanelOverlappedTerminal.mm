@@ -33,6 +33,7 @@
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
+        m_TermScrollView.view.reportsSizeByOccupiedContent = true;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
@@ -97,6 +98,11 @@
         m_Task->Launch(m_InitalWD.c_str(),
                        m_TermScrollView.screen.Width(),
                        m_TermScrollView.screen.Height());
+}
+
+- (void) focusTerminal
+{
+    [self.window makeFirstResponder:m_TermScrollView.view];
 }
 
 @end

@@ -15,6 +15,7 @@
 - (double) bottomGapForLines:(int)_lines_amount;
 - (int) totalScreenLines;
 - (void) runShell;
+- (void) focusTerminal;
 
 @property (nonatomic, readonly) TermShellTask::TaskState state;
 

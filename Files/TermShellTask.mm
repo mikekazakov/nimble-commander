@@ -497,3 +497,8 @@ void TermShellTask::Terminate()
 {
     CleanUp();
 }
+
+void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd)> _callback )
+{
+    m_OnBashPrompt = move(_callback);
+}

@@ -66,7 +66,7 @@
                 });
             }
         });
-        m_Task->SetOnBashPrompt(^(const char *_cwd){
+        m_Task->SetOnBashPrompt([=](const char *_cwd){
             if(FilePanelOverlappedTerminal *strongself = weakself)
                 dispatch_to_main_queue([=]{
                     if(strongself->m_OnShellCWDChanged)

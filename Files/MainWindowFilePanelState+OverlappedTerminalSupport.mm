@@ -129,4 +129,15 @@
         [m_OverlappedTerminal changeWorkingDirectory:_new_cwd];
 }
 
+- (void) handleCtrlAltTab
+{
+    if( !self.overlappedTerminalVisible )
+        return;
+    
+    if( self.isPanelActive )
+       [self moveFocusToOverlappedTerminal];
+    else
+        [self moveFocusBackToPanels];
+}
+
 @end

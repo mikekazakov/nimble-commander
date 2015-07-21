@@ -569,6 +569,10 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
             [self hidePanelsSplitView];
         return true;
     }
+    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
+        [self handleCtrlAltTab];
+        return true;
+    }
     
     return [super performKeyEquivalent:theEvent];
 }

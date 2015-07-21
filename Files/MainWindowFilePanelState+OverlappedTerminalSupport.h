@@ -20,5 +20,6 @@
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc;
 - (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd;
+- (void) handleCtrlAltTab;
 
 @end

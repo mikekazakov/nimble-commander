@@ -22,7 +22,10 @@
     unique_ptr<TermShellTask>   m_Task;
     unique_ptr<TermParser>      m_Parser;
     string                      m_InitalWD;
+    function<void()>            m_OnShellCWDChanged;
 }
+
+@synthesize onShellCWDChanged = m_OnShellCWDChanged;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -63,6 +66,13 @@
                 });
             }
         });
+        m_Task->SetOnBashPrompt(^(const char *_cwd){
+            if(FilePanelOverlappedTerminal *strongself = weakself)
+                dispatch_to_main_queue([=]{
+                    if(strongself->m_OnShellCWDChanged)
+                        strongself->m_OnShellCWDChanged();
+                });
+        });
     }
     return self;
 }
@@ -90,8 +100,11 @@
     return m_Task->State();
 }
 
-- (void) runShell
+- (void) runShell:(const string&)_initial_wd;
 {
+    if( !_initial_wd.empty() )
+        m_InitalWD = _initial_wd;
+        
     auto s = m_Task->State();
     if( s == TermShellTask::TaskState::Inactive ||
         s == TermShellTask::TaskState::Dead )
@@ -100,9 +113,18 @@
                        m_TermScrollView.screen.Height());
 }
 
+- (void) changeWorkingDirectory:(const string&)_new_dir
+{
+    m_Task->ChDir(_new_dir.c_str());
+}
+
 - (void) focusTerminal
 {
     [self.window makeFirstResponder:m_TermScrollView.view];
 }
 
+- (string) cwd
+{
+    return m_Task->CWD();
+}
 @end

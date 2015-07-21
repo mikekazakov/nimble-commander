@@ -210,7 +210,7 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         }
     }
     
-    if(m_OnBashPrompt)
+    if( m_OnBashPrompt && m_RequestedCWD.empty() )
         m_OnBashPrompt(current_cwd.c_str());
     if(do_nr_hack)
         DoCalloutOnChildOutput("\n\r", 2);

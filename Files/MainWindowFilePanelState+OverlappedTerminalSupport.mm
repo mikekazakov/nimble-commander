@@ -10,6 +10,7 @@
 #import "FilePanelOverlappedTerminal.h"
 #import "FilePanelMainSplitView.h"
 #import "PanelView.h"
+#import "PanelController.h"
 
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
 
@@ -70,9 +71,32 @@
 - (void) activateOverlappedTerminal
 {
     auto s = m_OverlappedTerminal.state;
-    if( s == TermShellTask::TaskState::Inactive ||
-        s == TermShellTask::TaskState::Dead )
-       [m_OverlappedTerminal runShell];
+    if( s == TermShellTask::TaskState::Inactive || s == TermShellTask::TaskState::Dead ) {
+        string wd;
+        if( auto p = self.activePanelController )
+            if( p.vfs->IsNativeFS() )
+                wd = p.currentDirectoryPath;
+        
+        [m_OverlappedTerminal runShell:wd];
+        
+        __weak MainWindowFilePanelState *weakself = self;
+        m_OverlappedTerminal.onShellCWDChanged = [=]{
+            if( MainWindowFilePanelState *strongself = weakself ) {
+                auto pc = strongself.activePanelController;
+                if( !pc )
+                    pc = strongself->m_PreviouslyFocusedPanelController;
+                if( pc ) {
+                    auto cwd = strongself->m_OverlappedTerminal.cwd;
+                    if( cwd != pc.currentDirectoryPath ) {
+                        auto r = make_shared<PanelControllerGoToDirContext>();
+                        r->RequestedDirectory = cwd;
+                        r->VFS = VFSNativeHost::SharedHost();
+                        [pc GoToDirWithContext:r];
+                    }
+                }
+            }
+        };
+    }
 }
 
 - (void) hidePanelsSplitView
@@ -86,6 +110,23 @@
 {
     m_MainSplitView.hidden = false;
     [self moveFocusBackToPanels];
+}
+
+- (bool) overlappedTerminalVisible
+{
+    return m_OverlappedTerminal && m_OverlappedTerminalBottomGap > 0;
+}
+
+- (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc
+{
+    if( _pc.vfs->IsNativeFS() && self.overlappedTerminalVisible )
+        [self synchronizeOverlappedTerminalCWD:_pc.currentDirectoryPath];
+}
+
+- (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd
+{
+    if( m_OverlappedTerminal )
+        [m_OverlappedTerminal changeWorkingDirectory:_new_cwd];
 }
 
 @end

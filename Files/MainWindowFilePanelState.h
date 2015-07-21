@@ -63,6 +63,9 @@ class PanelData;
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)activePanelChangedTo:(PanelController *)controller;
 
+/**
+ * Called by panel controller when it sucessfuly changes it's current path
+ */
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path;
 

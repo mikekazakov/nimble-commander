@@ -565,6 +565,8 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 {
     [self UpdateTitle];
     [self updateTabBarButtons];
+    m_PreviouslyFocusedPanelController = controller;
+    [self synchronizeOverlappedTerminalWithPanel:controller];
 }
 
 - (void) UpdateTitle
@@ -623,8 +625,10 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     if(_panel == nil)
         return;
 
-    if(_panel == self.activePanelController)
+    if(_panel == self.activePanelController) {
         [self UpdateTitle];
+        [self synchronizeOverlappedTerminalWithPanel:_panel];
+    }
     
     [self updateTabNameForController:_panel];    
 }

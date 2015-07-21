@@ -10,6 +10,7 @@
 
 @interface MainWindowFilePanelState (OverlappedTerminalSupport)
 
+- (bool) overlappedTerminalVisible;
 - (void) activateOverlappedTerminal;
 - (void) increaseBottomTerminalGap;
 - (void) decreaseBottomTerminalGap;
@@ -17,5 +18,7 @@
 - (void) hidePanelsSplitView;
 - (void) showPanelsSplitView;
 
+- (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc;
+- (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd;
 
 @end

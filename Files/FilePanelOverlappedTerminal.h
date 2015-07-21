@@ -14,9 +14,12 @@
 
 - (double) bottomGapForLines:(int)_lines_amount;
 - (int) totalScreenLines;
-- (void) runShell;
+- (void) runShell:(const string&)_initial_wd;
 - (void) focusTerminal;
+- (void) changeWorkingDirectory:(const string&)_new_dir;
 
 @property (nonatomic, readonly) TermShellTask::TaskState state;
+@property (nonatomic) function<void()> onShellCWDChanged;
+@property (nonatomic, readonly) string cwd;
 
 @end

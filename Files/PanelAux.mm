@@ -132,3 +132,48 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             NSBeep();
     });
 }
+
+bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
+{
+    static vector<string> extensions;
+    static once_flag once;
+    call_once(once, []{
+        bool any = false;
+        
+        // load from defaults
+        if(NSString *exts_string = [NSUserDefaults.standardUserDefaults stringForKey:@"FilePanelsGeneralExecutableExtensionsList"])
+            if(NSArray *extensions_array = [exts_string componentsSeparatedByString:@","])
+                for(NSString *s: extensions_array)
+                    if(s != nil && s.length > 0)
+                        if(const char *utf8 = s.UTF8String) {
+                            extensions.emplace_back(utf8);
+                            any = true;
+                        }
+        
+        // hardcoded fallback case if something went wrong
+        if(!any)
+            extensions = vector<string>{"sh", "pl", "rb", "py"};
+    });
+    
+    if(_item.IsDir())
+        return false;
+    
+    // TODO: need more sophisticated executable handling here
+    // THIS IS WRONG!
+    bool uexec = (_item.UnixMode() & S_IXUSR) ||
+    (_item.UnixMode() & S_IXGRP) ||
+    (_item.UnixMode() & S_IXOTH) ;
+    
+    if(!uexec) return false;
+    
+    if(!_item.HasExtension())
+        return true; // if file has no extension and had execute rights - let's try it
+    
+    const char *ext = _item.Extension();
+    
+    for(auto &s: extensions)
+        if(s == ext)
+            return true;
+    
+    return false;
+}

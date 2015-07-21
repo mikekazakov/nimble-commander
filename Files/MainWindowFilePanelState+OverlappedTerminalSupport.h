@@ -21,5 +21,14 @@
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc;
 - (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd;
 - (void) handleCtrlAltTab;
+- (void) feedOverlappedTerminalWithCurrentFilename;
+
+/**
+ * will handle it if:
+ * 1) overlapped terminal is enabled and visible
+ * 2) it is in Shell state
+ * 3) Shell is not in Virgin state
+ */
+- (bool) handleReturnKeyWithOverlappedTerminal;
 
 @end

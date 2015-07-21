@@ -129,7 +129,7 @@
         }
     });
     
-    m_Task->SetOnBashPrompt([=](const char *_cwd){
+    m_Task->SetOnBashPrompt([=](const char *_cwd, bool _changed){
         if(MainWindowTerminalState *strongself = weakself) {
             strongself->m_TermScrollView.screen.SetTitle("");
             [strongself UpdateTitle];

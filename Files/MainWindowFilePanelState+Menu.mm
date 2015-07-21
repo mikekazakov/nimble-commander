@@ -535,43 +535,51 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         return [super performKeyEquivalent:theEvent];
     
     auto kc = theEvent.keyCode;
-    auto mod = theEvent.modifierFlags;
+    auto mod = theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask;
     mod &= ~NSAlphaShiftKeyMask;
     mod &= ~NSNumericPadKeyMask;
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
     
     // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
-    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ) {
+    if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
         static const int next_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_next_tab");
         if([NSApplication.sharedApplication.menu itemWithTagHierarchical:next_tab].enabled)
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSShiftKeyMask) ) {
+    if( unicode == NSTabCharacter && mod == (NSControlKeyMask|NSShiftKeyMask) ) {
         static const int prev_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_previous_tab");
         if([NSApplication.sharedApplication.menu itemWithTagHierarchical:prev_tab].enabled)
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    if( kc == 126 && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
-        [self increaseBottomTerminalGap];
-        return true;
-    }
-    if( kc == 125 && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
-        [self decreaseBottomTerminalGap];
-        return true;
-    }
-    if( kc == kVK_ANSI_O && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
-        if(self.isPanelsSplitViewHidden)
-            [self showPanelsSplitView];
-        else
-            [self hidePanelsSplitView];
-        return true;
-    }
-    if( unicode == NSTabCharacter && (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask) ) {
-        [self handleCtrlAltTab];
-        return true;
+    
+    // overlapped terminal stuff
+    if( mod == (NSControlKeyMask|NSAlternateKeyMask) ) {
+        if( kc == kVK_UpArrow ) {
+            [self increaseBottomTerminalGap];
+            return true;
+        }
+        if( kc == kVK_DownArrow) {
+            [self decreaseBottomTerminalGap];
+            return true;
+        }
+        if( kc == kVK_ANSI_O  ) {
+            if(self.isPanelsSplitViewHidden)
+                [self showPanelsSplitView];
+            else
+                [self hidePanelsSplitView];
+            return true;
+        }
+        if( unicode == NSTabCharacter ) {
+            [self handleCtrlAltTab];
+            return true;
+        }
+        if( kc == kVK_Return ) {
+            [self feedOverlappedTerminalWithCurrentFilename];
+            return true;
+        }
     }
     
     return [super performKeyEquivalent:theEvent];

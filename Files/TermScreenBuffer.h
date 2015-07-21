@@ -94,6 +94,10 @@ public:
     void RevertToSnapshot();
     void DropSnapshot();
     
+    static unsigned OccupiedChars( const Space *_begin, const Space *_end );
+    static bool HasOccupiedChars( const Space *_begin, const Space *_end );
+    unsigned OccupiedChars( int _line_no ) const;
+    bool HasOccupiedChars( int _line_no ) const;
     
 private:
     struct LineMeta
@@ -117,10 +121,6 @@ private:
     static void FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i, vector<LineMeta>::iterator _e, unsigned _width);
     static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
     static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
-    static unsigned OccupiedChars( const Space *_begin, const Space *_end );
-    static bool HasOccupiedChars( const Space *_begin, const Space *_end );
-    unsigned OccupiedChars( int _line_no ) const;
-    bool HasOccupiedChars( int _line_no ) const;
     vector<vector<Space>> ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
     static vector< tuple<vector<Space>, bool> > DecomposeContinuousLines( const vector<vector<Space>>& _scr, unsigned _width ); // <spaces, is wrapped>
     

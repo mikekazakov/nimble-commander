@@ -29,3 +29,8 @@ public:
                     );
     
 };
+
+namespace panel
+{
+    bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
+}

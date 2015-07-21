@@ -177,8 +177,9 @@ end_of_all:
 
 void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
 {
-    string current_cwd;
+    string current_cwd = m_CWD;
     bool do_nr_hack = false;
+    bool current_wd_changed = false;
 
     {
         lock_guard<mutex> lock(m_Lock);
@@ -195,7 +196,10 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         if( m_CWD.empty() || m_CWD.back() != '/' )
             m_CWD += '/';
         
-        current_cwd = m_CWD;
+        if(current_cwd != m_CWD) {
+            current_cwd = m_CWD;
+            current_wd_changed = true;
+        }
         
         if(m_State == TaskState::ProgramExternal ||
            m_State == TaskState::ProgramInternal ) {
@@ -211,7 +215,7 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
     }
     
     if( m_OnBashPrompt && m_RequestedCWD.empty() )
-        m_OnBashPrompt(current_cwd.c_str());
+        m_OnBashPrompt(current_cwd.c_str(), current_wd_changed);
     if(do_nr_hack)
         DoCalloutOnChildOutput("\n\r", 2);
 }
@@ -427,7 +431,7 @@ int TermShellTask::EscapeShellFeed(const char *_feed, char *_escaped, size_t _bu
     }
     
     const char *res = destString.UTF8String;
-    size_t res_sz = destString.length;
+    size_t res_sz = strlen(res);
     
     if(res_sz >= _buf_sz)
     {
@@ -498,7 +502,7 @@ void TermShellTask::Terminate()
     CleanUp();
 }
 
-void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd)> _callback )
+void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd, bool _changed)> _callback )
 {
     m_OnBashPrompt = move(_callback);
 }

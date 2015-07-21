@@ -16,6 +16,8 @@
 #import "common_paths.h"
 #import "FilePanelOverlappedTerminal.h"
 
+static auto g_BashPromptInputDelay = 10ms;
+
 @implementation FilePanelOverlappedTerminal
 {
     TermScrollView             *m_TermScrollView;
@@ -23,6 +25,8 @@
     unique_ptr<TermParser>      m_Parser;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
+    int                         m_BashCommandStartX;
+    int                         m_BashCommandStartY;
 }
 
 @synthesize onShellCWDChanged = m_OnShellCWDChanged;
@@ -32,6 +36,7 @@
     self = [super initWithFrame:frameRect];
     if(self)
     {
+        m_BashCommandStartX = m_BashCommandStartY = numeric_limits<int>::max();
         m_InitalWD = CommonPaths::Get(CommonPaths::Home);
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
@@ -66,15 +71,35 @@
                 });
             }
         });
-        m_Task->SetOnBashPrompt([=](const char *_cwd){
-            if(FilePanelOverlappedTerminal *strongself = weakself)
-                dispatch_to_main_queue([=]{
-                    if(strongself->m_OnShellCWDChanged)
-                        strongself->m_OnShellCWDChanged();
+        m_Task->SetOnBashPrompt([=](const char *_cwd, bool _changed){
+            if(FilePanelOverlappedTerminal *strongself = weakself) {
+                dispatch_to_main_queue_after(g_BashPromptInputDelay, [=]{
+                    [strongself guessWhereCommandLineIs];
                 });
+                
+                if(_changed)
+                    dispatch_to_main_queue([=]{
+                        if(strongself->m_OnShellCWDChanged)
+                            strongself->m_OnShellCWDChanged();
+                    });
+            }
         });
     }
     return self;
+}
+
+- (void) guessWhereCommandLineIs
+{
+    m_TermScrollView.screen.Lock();
+
+//    cout << m_TermScrollView.screen.Buffer().DumpScreenAsANSI() << endl;
+//    printf( "cursor is at (%d, %d)\n",
+//           m_TermScrollView.screen.CursorX(),
+//           m_TermScrollView.screen.CursorY());
+    m_BashCommandStartX = m_TermScrollView.screen.CursorX();
+    m_BashCommandStartY = m_TermScrollView.screen.CursorY();
+    
+    m_TermScrollView.screen.Unlock();
 }
 
 - (double) bottomGapForLines:(int)_lines_amount
@@ -127,4 +152,46 @@
 {
     return m_Task->CWD();
 }
+
+- (void) feedShellWithInput:(const string&)_input
+{
+    if( self.state != TermShellTask::TaskState::Shell )
+        return;
+    
+    printf("feedShellWithInput, virgin=%s\n", self.isShellVirgin ? "true" : "false");
+    
+    const size_t sz = 4096;
+    char escaped[sz];
+    int r = TermShellTask::EscapeShellFeed(_input.c_str(), escaped, sz);
+    if(r >= 0) {
+        m_Task->WriteChildInput(escaped, r);
+        m_Task->WriteChildInput(" ", 1);
+    }
+}
+
+- (void) commitShell
+{
+    if( self.state != TermShellTask::TaskState::Shell )
+        return;
+    m_Task->WriteChildInput("\n", strlen("\n"));
+}
+
+- (bool) isShellVirgin
+{
+    if( self.state != TermShellTask::TaskState::Shell )
+        return false;
+    
+    auto virgin = false;
+    m_TermScrollView.screen.Lock();
+    if( auto line = m_TermScrollView.screen.Buffer().LineFromNo( m_BashCommandStartY ) ) {
+        auto i = min( max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
+        auto e = end( line );
+        if( !TermScreenBuffer::HasOccupiedChars(i, e) )
+            virgin = true;
+    }
+    m_TermScrollView.screen.Unlock();
+    
+    return virgin;
+}
+
 @end

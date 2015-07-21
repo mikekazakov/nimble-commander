@@ -30,51 +30,6 @@ static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuick
                                g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
                                g_DefaultsGeneralShowLocalizedFilenames];
 
-static bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
-{
-    static vector<string> extensions;
-    static once_flag once;
-    call_once(once, []{
-        bool any = false;
-        
-        // load from defaults
-        if(NSString *exts_string = [NSUserDefaults.standardUserDefaults stringForKey:@"FilePanelsGeneralExecutableExtensionsList"])
-            if(NSArray *extensions_array = [exts_string componentsSeparatedByString:@","])
-                for(NSString *s: extensions_array)
-                    if(s != nil && s.length > 0)
-                        if(const char *utf8 = s.UTF8String) {
-                            extensions.emplace_back(utf8);
-                            any = true;
-                        }
-        
-        // hardcoded fallback case if something went wrong
-        if(!any)
-            extensions = vector<string>{"sh", "pl", "rb", "py"};
-    });
-    
-    if(_item.IsDir())
-        return false;
-    
-    // TODO: need more sophisticated executable handling here
-    // THIS IS WRONG!
-    bool uexec = (_item.UnixMode() & S_IXUSR) ||
-                 (_item.UnixMode() & S_IXGRP) ||
-                 (_item.UnixMode() & S_IXOTH) ;
-    
-    if(!uexec) return false;
-    
-    if(!_item.HasExtension())
-        return true; // if file has no extension and had execute rights - let's try it
-    
-    const char *ext = _item.Extension();
-
-    for(auto &s: extensions)
-        if(s == ext)
-            return true;
-    
-    return false;
-}
-
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     view(_view),
     data(_data),
@@ -352,6 +307,9 @@ void panel::GenericCursorPersistance::Restore()
 
 - (void) HandleGoIntoDirOrOpenInSystem
 {
+    if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
+        return;
+    
     if([self HandleGoIntoDirOrArchive])
         return;
     
@@ -362,7 +320,7 @@ void panel::GenericCursorPersistance::Restore()
     // need more sophisticated executable handling here
     if(configuration::has_terminal &&
        self.vfs->IsNativeFS() &&
-       IsEligbleToTryToExecuteInConsole(*entry))
+       panel::IsEligbleToTryToExecuteInConsole(*entry))
     {
         auto path = self.currentDirectoryPath;
         [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];

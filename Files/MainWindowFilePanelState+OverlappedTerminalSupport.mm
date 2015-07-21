@@ -11,6 +11,7 @@
 #import "FilePanelMainSplitView.h"
 #import "PanelView.h"
 #import "PanelController.h"
+#import "PanelAux.h"
 
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
 
@@ -29,7 +30,6 @@
         else
             [self ActivatePanelByController:self.leftPanelController];
     }
-    m_PreviouslyFocusedPanelController = nil;
 }
 
 - (bool) isOverlappedTerminalRunning
@@ -87,7 +87,7 @@
                     pc = strongself->m_PreviouslyFocusedPanelController;
                 if( pc ) {
                     auto cwd = strongself->m_OverlappedTerminal.cwd;
-                    if( cwd != pc.currentDirectoryPath ) {
+                    if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
                         auto r = make_shared<PanelControllerGoToDirContext>();
                         r->RequestedDirectory = cwd;
                         r->VFS = VFSNativeHost::SharedHost();
@@ -138,6 +138,40 @@
        [self moveFocusToOverlappedTerminal];
     else
         [self moveFocusBackToPanels];
+}
+
+
+- (void) feedOverlappedTerminalWithCurrentFilename
+{
+    if( !self.overlappedTerminalVisible ||
+         m_OverlappedTerminal.state != TermShellTask::TaskState::Shell )
+        return;
+    
+    auto pc = self.activePanelController;
+    if( !pc )
+        pc = m_PreviouslyFocusedPanelController;
+    if( pc && pc.vfs->IsNativeFS() )
+        if( auto entry = pc.view.item ) {
+            if( panel::IsEligbleToTryToExecuteInConsole(*entry) &&
+                m_OverlappedTerminal.isShellVirgin )
+                [m_OverlappedTerminal feedShellWithInput:"./"s + entry->Name()];
+            else
+                [m_OverlappedTerminal feedShellWithInput:entry->Name()];
+        }
+}
+
+- (bool) handleReturnKeyWithOverlappedTerminal
+{
+    if( self.overlappedTerminalVisible &&
+        m_OverlappedTerminal.state == TermShellTask::TaskState::Shell &&
+        m_OverlappedTerminal.isShellVirgin == false ) {
+        // dirty, dirty shell... lets clear it all with Return key
+        [m_OverlappedTerminal commitShell];        
+        return true;
+    }
+    
+    
+    return false;
 }
 
 @end

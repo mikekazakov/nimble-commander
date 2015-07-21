@@ -33,7 +33,7 @@ public:
         Dead            = 4
     };
 
-    void SetOnBashPrompt(function<void(const char *_cwd)> _callback );
+    void SetOnBashPrompt(function<void(const char *_cwd, bool _changed)> _callback );
     
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir, int _sx, int _sy);
@@ -92,7 +92,7 @@ private:
     void CleanUp();
     void ReadChildOutput();
 
-    function<void(const char *_cwd)> m_OnBashPrompt;
+    function<void(const char *_cwd, bool _changed)> m_OnBashPrompt;
     volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
     volatile int m_ShellPID = -1;

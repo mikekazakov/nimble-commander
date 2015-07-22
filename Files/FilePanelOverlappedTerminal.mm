@@ -197,12 +197,10 @@ static const auto g_LongProcessDelay = 150ms;
 {
     if( self.state != TermShellTask::TaskState::Shell )
         return;
-    
-    const size_t sz = 4096;
-    char escaped[sz];
-    int r = TermShellTask::EscapeShellFeed(_input.c_str(), escaped, sz);
-    if(r >= 0) {
-        m_Task->WriteChildInput(escaped, r);
+
+    auto esc = TermTask::EscapeShellFeed( _input );
+    if( !esc.empty() ) {
+        m_Task->WriteChildInput( esc.c_str(), (int)esc.length() );
         m_Task->WriteChildInput(" ", 1);
     }
 }

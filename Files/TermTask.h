@@ -17,6 +17,7 @@ public:
     
     void SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback );
     
+    static string EscapeShellFeed(const string &_feed);
     
 protected:
     void DoCalloutOnChildOutput( const void *_d, size_t _sz  );

@@ -337,8 +337,7 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
     if(m_State != TaskState::Shell)
         return;
     
-    char cmd[MAXPATHLEN];
-    EscapeShellFeed(_short_fn, cmd, MAXPATHLEN); // black magic inside
+    string cmd = EscapeShellFeed( _short_fn );
     
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
@@ -365,13 +364,13 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
     if(cwd[0] != 0)
         sprintf(input, "cd '%s'; ./%s%s%s\n",
                 cwd,
-                cmd,
+                cmd.c_str(),
                 _parameters != nullptr ? " " : "",
                 _parameters != nullptr ? _parameters : ""
                 );
     else
         sprintf(input, "./%s%s%s\n",
-                cmd,
+                cmd.c_str(),
                 _parameters != nullptr ? " " : "",
                 _parameters != nullptr ? _parameters : ""
                 );
@@ -385,62 +384,17 @@ void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_paramete
     if(m_State != TaskState::Shell)
         return;
     
-    char cmd[MAXPATHLEN];
-    EscapeShellFeed(_path, cmd, MAXPATHLEN); // black magic inside
+    string cmd = EscapeShellFeed(_path);
     
     char input[2048];
     sprintf(input, "%s%s%s\n",
-            cmd,
+            cmd.c_str(),
             _parameters != nullptr ? " " : "",
             _parameters != nullptr ? _parameters : ""
             );
 
     SetState(TaskState::ProgramExternal);
     WriteChildInput(input, (int)strlen(input));
-}
-
-int TermShellTask::EscapeShellFeed(const char *_feed, char *_escaped, size_t _buf_sz)
-{
-    if(_feed == nullptr)
-        return -1;
-    
-    // TODO: OPTIMIZE!
-    NSString *orig = [NSString stringWithUTF8String:_feed];
-    if(!orig)
-        return -1;
-    
-    // TODO: rewrite this NS-style shit with plain C-strings manipulations
-    static NSCharacterSet *escapeCharsSet = [NSCharacterSet characterSetWithCharactersInString:@" ()\\!"];
-    
-    NSMutableString *destString = [@"" mutableCopy];
-    NSScanner *scanner = [NSScanner scannerWithString:orig];
-    scanner.charactersToBeSkipped = nil;
-    while (![scanner isAtEnd]) {
-        NSString *tempString;
-        [scanner scanUpToCharactersFromSet:escapeCharsSet intoString:&tempString];
-        if([scanner isAtEnd]){
-            [destString appendString:tempString];
-        }
-        else {
-            if(tempString != nil)
-                [destString appendFormat:@"%@\\%@", tempString, [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
-            else
-                [destString appendFormat:@"\\%@", [orig substringWithRange:NSMakeRange([scanner scanLocation], 1)]];
-            [scanner setScanLocation:[scanner scanLocation]+1];
-        }
-    }
-    
-    const char *res = destString.UTF8String;
-    size_t res_sz = strlen(res);
-    
-    if(res_sz >= _buf_sz)
-    {
-        strncpy(_escaped, res, _buf_sz-1);
-        _escaped[_buf_sz-1] = 0;
-        return (int)_buf_sz;
-    }
-    strcpy(_escaped, res);
-    return (int)res_sz;
 }
 
 vector<string> TermShellTask::ChildrenList()

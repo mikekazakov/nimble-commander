@@ -74,17 +74,6 @@ public:
      */
     vector<string> ChildrenList();
     
-    
-    
-    
-    /**
-     * Returns number of characters filled in _escaped.
-     * If returned values equals to _buf_sz - then buffer was exhausted.
-     * Returns -1 on any other errors.
-     */
-    static int EscapeShellFeed(const char *_feed, char *_escaped, size_t _buf_sz);
-    
-    
 private:
     bool IsCurrentWD(const char *_what) const;
     void ProcessBashPrompt(const void *_d, int _sz);

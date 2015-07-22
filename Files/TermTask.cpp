@@ -187,3 +187,16 @@ unsigned TermTask::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf
             already_read < _buf_sz);
     return already_read;
 }
+
+string TermTask::EscapeShellFeed(const string &_feed)
+{
+    static const char to_esc[] = {'|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t' };
+    string result;
+    result.reserve( _feed.length() );
+    for( auto c: _feed ) {
+        if( any_of( begin(to_esc), end(to_esc), [=](auto e){ return c == e; } ) )
+            result += '\\';
+        result += c;
+    }
+    return result;
+}

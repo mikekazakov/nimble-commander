@@ -320,11 +320,8 @@ void panel::GenericCursorPersistance::Restore()
     // need more sophisticated executable handling here
     if(configuration::has_terminal &&
        self.vfs->IsNativeFS() &&
-       panel::IsEligbleToTryToExecuteInConsole(*entry))
-    {
-        auto path = self.currentDirectoryPath;
-        [(MainWindowController*)self.window.delegate RequestTerminalExecution:entry->Name() at:path.c_str()];
-        
+       panel::IsEligbleToTryToExecuteInConsole(*entry)) {
+        [self.state requestTerminalExecution:entry->Name() at:self.currentDirectoryPath];
         return;
     }
     

@@ -872,4 +872,10 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     return m_MainSplitView.hidden;
 }
 
+- (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd
+{
+    if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] )
+        [(MainWindowController*)self.window.delegate RequestTerminalExecution:_filename.c_str() at:_cwd.c_str()];
+}
+
 @end

@@ -29,6 +29,7 @@
 @property (nonatomic, readonly) bool isShellVirgin;
 @property (nonatomic) function<void()> onShellCWDChanged;
 @property (nonatomic) function<void()> onLongTaskStarted;
+@property (nonatomic) function<void()> onLongTaskFinished;
 @property (nonatomic, readonly) string cwd;
 
 @end

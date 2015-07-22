@@ -86,6 +86,9 @@
         m_OverlappedTerminal.onLongTaskStarted = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskStarted];
         };
+        m_OverlappedTerminal.onLongTaskFinished = [=]{
+            [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskFinished];
+        };
     }
 }
 
@@ -109,6 +112,12 @@
 {
     if( self.overlappedTerminalVisible )
         [self hidePanelsSplitView];
+}
+
+- (void)onOverlappedTerminalLongTaskFinished
+{
+    if( self.isPanelsSplitViewHidden )
+        [self showPanelsSplitView];
 }
 
 - (void) hidePanelsSplitView
@@ -183,6 +192,19 @@
     }
     
     
+    return false;
+}
+
+- (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path
+{
+    if( self.overlappedTerminalVisible &&
+       m_OverlappedTerminal.state == TermShellTask::TaskState::Shell &&
+       m_OverlappedTerminal.isShellVirgin == true ) {
+        // assumes that _filename is eligible to execute in terminal (should be check by PanelController before)
+        [m_OverlappedTerminal feedShellWithInput:"./"s + _filename];
+        [m_OverlappedTerminal commitShell];
+        return true;
+    }
     return false;
 }
 

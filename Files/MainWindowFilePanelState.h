@@ -74,6 +74,7 @@ class PanelData;
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel;
+- (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)CloseOverlay:(PanelController*)_panel;
 
 

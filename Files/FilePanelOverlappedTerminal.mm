@@ -17,7 +17,7 @@
 #import "FilePanelOverlappedTerminal.h"
 
 static const auto g_BashPromptInputDelay = 10ms;
-static const auto g_LongProcessDelay = 100ms;
+static const auto g_LongProcessDelay = 150ms;
 
 @implementation FilePanelOverlappedTerminal
 {
@@ -27,12 +27,15 @@ static const auto g_LongProcessDelay = 100ms;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
     function<void()>            m_OnLongTaskStarted;
+    function<void()>            m_OnLongTaskFinished;
     int                         m_BashCommandStartX;
     int                         m_BashCommandStartY;
+    volatile bool               m_RunningLongTask;
 }
 
 @synthesize onShellCWDChanged = m_OnShellCWDChanged;
 @synthesize onLongTaskStarted = m_OnLongTaskStarted;
+@synthesize onLongTaskFinished = m_OnLongTaskFinished;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -40,6 +43,7 @@ static const auto g_LongProcessDelay = 100ms;
     if(self)
     {
         m_BashCommandStartX = m_BashCommandStartY = numeric_limits<int>::max();
+        m_RunningLongTask = false;
         m_InitalWD = CommonPaths::Get(CommonPaths::Home);
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
@@ -107,10 +111,20 @@ static const auto g_LongProcessDelay = 100ms;
         dispatch_to_main_queue_after(g_LongProcessDelay, [=]{
             if( m_Task->State() == TermShellTask::TaskState::ProgramInternal ||
                m_Task->State() == TermShellTask::TaskState::ProgramExternal ) {
-                if(m_OnLongTaskStarted)
+                m_RunningLongTask = true;
+                if( m_OnLongTaskStarted )
                     m_OnLongTaskStarted();
             }
         });
+    }
+    else {
+        if( m_RunningLongTask ) {
+            m_RunningLongTask = true;
+            dispatch_to_main_queue([=]{
+                if( m_OnLongTaskFinished )
+                    m_OnLongTaskFinished();
+            });
+        }
     }
 }
 
@@ -183,8 +197,6 @@ static const auto g_LongProcessDelay = 100ms;
 {
     if( self.state != TermShellTask::TaskState::Shell )
         return;
-    
-    printf("feedShellWithInput, virgin=%s\n", self.isShellVirgin ? "true" : "false");
     
     const size_t sz = 4096;
     char escaped[sz];

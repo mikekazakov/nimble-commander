@@ -31,4 +31,5 @@
  */
 - (bool) handleReturnKeyWithOverlappedTerminal;
 
+- (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path;
 @end

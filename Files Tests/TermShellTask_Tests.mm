@@ -46,7 +46,7 @@ static string ToRealPath(const string &_from)
 
 - (void)testBasic {
     TermShellTask shell;
-    XCTAssert( shell.State() == TermShellTask::StateInactive );
+    XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
     string cwd = CommonPaths::Get(CommonPaths::Home);
     shell.Launch(cwd.c_str(), 100, 100);
@@ -54,7 +54,7 @@ static string ToRealPath(const string &_from)
     
     // check cwd
     XCTAssert( ToRealPath(shell.CWD()) == ToRealPath(cwd) );
-    XCTAssert( shell.State() == TermShellTask::StateShell);
+    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
     
     // the only task is running is shell itself, and is not returned by ChildrenList
     XCTAssert( shell.ChildrenList().empty() );
@@ -64,20 +64,20 @@ static string ToRealPath(const string &_from)
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::StateProgramExternal);
+    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramExternal);
     
     // simulates user press Q to quit top
     shell.WriteChildInput("q", 1);
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().empty() );
-    XCTAssert( shell.State() == TermShellTask::StateShell);
+    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
   
     // check chdir
     cwd = CommonPaths::Get(CommonPaths::Home) + "Downloads/";
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
-    XCTAssert( shell.State() == TermShellTask::StateShell);
+    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
     
     // test chdir in the middle of some typing
     shell.WriteChildInput("ls ", 3);
@@ -85,19 +85,19 @@ static string ToRealPath(const string &_from)
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
-    XCTAssert( shell.State() == TermShellTask::StateShell);
+    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
 
     // check internal program state
     shell.WriteChildInput("top\r", 4);
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::StateProgramInternal );
+    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramInternal );
 
     // check termination
     shell.Terminate();
     XCTAssert( shell.ChildrenList().empty() );
-    XCTAssert( shell.State() == TermShellTask::StateInactive );
+    XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
     // check execution with short path in different directory
     shell.Launch(CommonPaths::Get(CommonPaths::Home).c_str(), 100, 100);
@@ -106,7 +106,7 @@ static string ToRealPath(const string &_from)
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::StateProgramExternal );
+    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramExternal );
     
     shell.Terminate();
     XCTAssert( shell.ChildrenList().empty() );

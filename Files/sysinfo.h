@@ -33,12 +33,14 @@ struct CPULoad
     // system + user + idle = 1.0
 };
     
+#ifdef __OBJC__
 struct SystemOverview
 {
     NSString *computer_name;
     NSString *user_full_name;
     NSString *human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
 };
+#endif
 
 enum class OSXVersion
 {
@@ -69,7 +71,9 @@ OSXVersion GetOSXVersion() noexcept;
 /**
  * Returns common information about system, such as computer name, computer model, user name etc
  */
+#ifdef __OBJC__
 bool GetSystemOverview(SystemOverview &_overview);
+#endif
 
 /**
  * Returns a list of all BSD processes on the system.  This routine

@@ -81,22 +81,34 @@
         
         __weak MainWindowFilePanelState *weakself = self;
         m_OverlappedTerminal.onShellCWDChanged = [=]{
-            if( MainWindowFilePanelState *strongself = weakself ) {
-                auto pc = strongself.activePanelController;
-                if( !pc )
-                    pc = strongself->m_PreviouslyFocusedPanelController;
-                if( pc ) {
-                    auto cwd = strongself->m_OverlappedTerminal.cwd;
-                    if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
-                        auto r = make_shared<PanelControllerGoToDirContext>();
-                        r->RequestedDirectory = cwd;
-                        r->VFS = VFSNativeHost::SharedHost();
-                        [pc GoToDirWithContext:r];
-                    }
-                }
-            }
+            [(MainWindowFilePanelState*)weakself onOverlappedTerminalShellCWDChanged];
+        };
+        m_OverlappedTerminal.onLongTaskStarted = [=]{
+            [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskStarted];
         };
     }
+}
+
+- (void) onOverlappedTerminalShellCWDChanged
+{
+    auto pc = self.activePanelController;
+    if( !pc )
+        pc = m_PreviouslyFocusedPanelController;
+    if( pc ) {
+        auto cwd = m_OverlappedTerminal.cwd;
+        if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
+            auto r = make_shared<PanelControllerGoToDirContext>();
+            r->RequestedDirectory = cwd;
+            r->VFS = VFSNativeHost::SharedHost();
+            [pc GoToDirWithContext:r];
+        }
+    }
+}
+
+- (void)onOverlappedTerminalLongTaskStarted
+{
+    if( self.overlappedTerminalVisible )
+        [self hidePanelsSplitView];
 }
 
 - (void) hidePanelsSplitView

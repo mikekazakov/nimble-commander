@@ -16,7 +16,8 @@
 #import "common_paths.h"
 #import "FilePanelOverlappedTerminal.h"
 
-static auto g_BashPromptInputDelay = 10ms;
+static const auto g_BashPromptInputDelay = 10ms;
+static const auto g_LongProcessDelay = 100ms;
 
 @implementation FilePanelOverlappedTerminal
 {
@@ -25,11 +26,13 @@ static auto g_BashPromptInputDelay = 10ms;
     unique_ptr<TermParser>      m_Parser;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
+    function<void()>            m_OnLongTaskStarted;
     int                         m_BashCommandStartX;
     int                         m_BashCommandStartY;
 }
 
 @synthesize onShellCWDChanged = m_OnShellCWDChanged;
+@synthesize onLongTaskStarted = m_OnLongTaskStarted;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -58,34 +61,57 @@ static auto g_BashPromptInputDelay = 10ms;
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
         
         __weak FilePanelOverlappedTerminal *weakself = self;
-        
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
-            if(FilePanelOverlappedTerminal *strongself = weakself) {
-                strongself->m_TermScrollView.screen.Lock();
-                strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                strongself->m_TermScrollView.screen.Unlock();
-                [strongself->m_TermScrollView.view.FPSDrawer invalidate];
-                
-                dispatch_to_main_queue( [=]{
-                    [strongself->m_TermScrollView.view adjustSizes:false];
-                });
-            }
+            [(FilePanelOverlappedTerminal*)weakself onChildOutput:_d size:_sz];
         });
         m_Task->SetOnBashPrompt([=](const char *_cwd, bool _changed){
-            if(FilePanelOverlappedTerminal *strongself = weakself) {
-                dispatch_to_main_queue_after(g_BashPromptInputDelay, [=]{
-                    [strongself guessWhereCommandLineIs];
-                });
-                
-                if(_changed)
-                    dispatch_to_main_queue([=]{
-                        if(strongself->m_OnShellCWDChanged)
-                            strongself->m_OnShellCWDChanged();
-                    });
-            }
+            [(FilePanelOverlappedTerminal*)weakself onBashPrompt:_cwd cwdChanged:_changed];
+        });
+        m_Task->SetOnStateChange([=](TermShellTask::TaskState _state){
+            [(FilePanelOverlappedTerminal*)weakself onTaskStateChanged:_state];
         });
     }
     return self;
+}
+
+- (void) onChildOutput:(const void*)_d size:(int)_sz
+{
+    m_TermScrollView.screen.Lock();
+    m_Parser->EatBytes((const unsigned char*)_d, _sz);
+    m_TermScrollView.screen.Unlock();
+    [m_TermScrollView.view.FPSDrawer invalidate];
+    
+    dispatch_to_main_queue( [=]{
+        [m_TermScrollView.view adjustSizes:false];
+    });
+}
+
+- (void) onBashPrompt:(const char*)_cwd cwdChanged:(bool)_changed
+{
+    dispatch_to_main_queue_after(g_BashPromptInputDelay, [=]{
+        [self guessWhereCommandLineIs];
+    });
+    
+    if(_changed)
+        dispatch_to_main_queue([=]{
+            if(m_OnShellCWDChanged)
+                m_OnShellCWDChanged();
+        });
+}
+
+- (void) onTaskStateChanged:(TermShellTask::TaskState)_state
+{
+    if( _state == TermShellTask::TaskState::ProgramInternal ||
+        _state == TermShellTask::TaskState::ProgramExternal ) {
+        
+        dispatch_to_main_queue_after(g_LongProcessDelay, [=]{
+            if( m_Task->State() == TermShellTask::TaskState::ProgramInternal ||
+               m_Task->State() == TermShellTask::TaskState::ProgramExternal ) {
+                if(m_OnLongTaskStarted)
+                    m_OnLongTaskStarted();
+            }
+        });
+    }
 }
 
 - (void) guessWhereCommandLineIs

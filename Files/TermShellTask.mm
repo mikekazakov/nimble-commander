@@ -291,8 +291,8 @@ void TermShellTask::SetState(TaskState _new_state)
 {
     m_State = _new_state;
   
-    // do some fancy stuff here
-    
+    if(m_OnStateChanged)
+        m_OnStateChanged(m_State);
 //    printf("TermTask state changed to %d\n", _new_state);
 }
 
@@ -505,4 +505,9 @@ void TermShellTask::Terminate()
 void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd, bool _changed)> _callback )
 {
     m_OnBashPrompt = move(_callback);
+}
+
+void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )
+{
+    m_OnStateChanged = move( _callback );
 }

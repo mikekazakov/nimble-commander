@@ -28,14 +28,16 @@ class PanelData;
 {
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;
+    __weak PanelController*  m_LastFocusedPanelController;
     
     FilePanelMainSplitView *m_MainSplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
 
-    // overlapped terminal support
-    FilePanelOverlappedTerminal *m_OverlappedTerminal;
-    int                     m_OverlappedTerminalBottomGap;
-    __weak PanelController* m_PreviouslyFocusedPanelController;
+    struct { // overlapped terminal support
+    FilePanelOverlappedTerminal *terminal;
+    int                          bottom_gap;
+    bool                         did_hide_panels_for_long_task;
+    }                       m_OverlappedTerminal;
     
     MainWndGoToButton *m_LeftPanelGoToButton;
     MainWndGoToButton *m_RightPanelGoToButton;

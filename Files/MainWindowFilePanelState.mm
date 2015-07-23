@@ -45,7 +45,8 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     if(self)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        m_OverlappedTerminalBottomGap = 0;
+        m_OverlappedTerminal.bottom_gap = 0;
+        m_OverlappedTerminal.did_hide_panels_for_long_task = false;
         m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
         m_GoToForceActivation = [defaults boolForKey:g_DefsGoToActivation];
         
@@ -221,11 +222,12 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
     m_Toolbar.showsBaselineSeparator = false;
     
-    m_OverlappedTerminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
-    m_OverlappedTerminal.translatesAutoresizingMaskIntoConstraints = false;
-    [self addSubview:m_OverlappedTerminal positioned:NSWindowBelow relativeTo:nil];
+    m_OverlappedTerminal.terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
+    m_OverlappedTerminal.terminal.translatesAutoresizingMaskIntoConstraints = false;
+    auto terminal = m_OverlappedTerminal.terminal;
+    [self addSubview:m_OverlappedTerminal.terminal positioned:NSWindowBelow relativeTo:nil];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView, m_OverlappedTerminal);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView, terminal);
 //    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==100)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
@@ -252,8 +254,8 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     [self addConstraint:m_MainSplitViewBottomConstraint];
     
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[m_OverlappedTerminal]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_OverlappedTerminal]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
@@ -565,7 +567,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 {
     [self UpdateTitle];
     [self updateTabBarButtons];
-    m_PreviouslyFocusedPanelController = controller;
+    m_LastFocusedPanelController = controller;
     [self synchronizeOverlappedTerminalWithPanel:controller];
 }
 
@@ -863,7 +865,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 - (void)frameDidChange
 {
-    auto gap = [m_OverlappedTerminal bottomGapForLines:m_OverlappedTerminalBottomGap];
+    auto gap = [m_OverlappedTerminal.terminal bottomGapForLines:m_OverlappedTerminal.bottom_gap];
     m_MainSplitViewBottomConstraint.constant = -gap;
 }
 

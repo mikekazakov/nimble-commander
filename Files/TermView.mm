@@ -149,6 +149,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     m_Parser = _par;
 }
 
+- (void) setAllowCursorBlinking:(bool)allowCursorBlinking
+{
+    m_BlinkingCaret->SetEnabled(allowCursorBlinking);
+}
+
+- (bool) allowCursorBlinking
+{
+    return m_BlinkingCaret->Enabled();
+}
+
 - (void) reloadSettings
 {
     NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];

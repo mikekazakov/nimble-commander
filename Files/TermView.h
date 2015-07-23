@@ -26,6 +26,7 @@ enum class TermViewCursor
 @property (nonatomic, readonly) const FontCache &fontCache;
 @property (nonatomic, readonly) TermParser *parser; // may be nullptr
 @property (nonatomic) bool reportsSizeByOccupiedContent;
+@property (nonatomic) bool allowCursorBlinking;
 
 - (void) reloadSettings;
 - (void) AttachToScreen:(TermScreen*)_scr;

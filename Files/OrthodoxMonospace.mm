@@ -17,6 +17,11 @@ void SetFillColor(CGContextRef _context, const DoubleColor &_color)
     CGContextSetRGBFillColor(_context, _color.r, _color.g, _color.b, _color.a);
 }
 
+void SetStrokeColor(CGContextRef _context, const DoubleColor &_color)
+{
+    CGContextSetRGBStrokeColor(_context, _color.r, _color.g, _color.b, _color.a);
+}
+
 void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _context, FontCache *_cache)
 {
     FontCache::Pair p = _cache->Get(_s);

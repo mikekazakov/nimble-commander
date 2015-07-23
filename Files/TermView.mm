@@ -104,6 +104,18 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return YES;
 }
 
+- (BOOL)becomeFirstResponder
+{
+    self.needsDisplay = true;
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    self.needsDisplay = true;
+    return YES;
+}
+
 -(BOOL) isOpaque
 {
 	return YES;
@@ -246,10 +258,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         i < line_end;
         ++i)
     {
-        if(i < bsl)
-        {
-            // scrollback
-//            auto line = m_Screen->GetScrollBackLine(i);
+        if(i < bsl) { // scrollback
             if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
                 [self DrawLine:line
                           at_y:i
@@ -257,35 +266,21 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                        context:context
                      cursor_at:-1];
         }
-        else
-        {
-            // real screen
-//            auto line = m_Screen->GetScreenLine(i - m_Screen->ScrollBackLinesCount());
-            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl)) {
-                if(m_Screen->CursorY() != i - bsl)
-                    [self DrawLine:line
-                              at_y:i
-                             sel_y:i - bsl
-                           context:context
-                         cursor_at:-1];
-                else
-                    [self DrawLine:line
-                              at_y:i
-                             sel_y:i - bsl
-                           context:context
-                         cursor_at:m_Screen->CursorX()];
-            }
+        else { // real screen
+            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
+                [self DrawLine:line
+                          at_y:i
+                         sel_y:i - bsl
+                       context:context
+                     cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
         }
     }
     
 #ifdef DEBUG
-    [self drawBackscreenOnscreenBorder:context];
+//    [self drawBackscreenOnscreenBorder:context];
 #endif
     
     m_Screen->Unlock();
-    
-//    tmb.Reset("drawn in: ");
-    
 }
 
 - (void)drawBackscreenOnscreenBorder:(CGContextRef)_context
@@ -433,27 +428,40 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)drawCursor:(NSRect)_char_rect context:(CGContextRef)_context
 {
-    oms::SetFillColor(_context, m_CursorColor);
+    const bool is_wnd_active = NSView.focusView.window.isKeyWindow;
+    const bool is_first_responder = self.window.firstResponder == self;
     
-    switch (m_CursorType) {
-        case TermViewCursor::Block:
-            CGContextFillRect(_context, NSRectToCGRect(_char_rect));            
-            break;
-            
-        case TermViewCursor::Underline:
-            CGContextFillRect(_context,
-                              CGRectMake(_char_rect.origin.x,
-                                         _char_rect.origin.y + _char_rect.size.height - 2,
-                                         _char_rect.size.width,
-                                         2));
-            break;
-            
-        case TermViewCursor::VerticalBar:
-            CGContextFillRect(_context,
-                              CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
-                              );
-            break;
+    if( is_wnd_active && is_first_responder ) {
+        oms::SetFillColor(_context, m_CursorColor);        
+        switch (m_CursorType) {
+            case TermViewCursor::Block:
+                CGContextFillRect(_context, NSRectToCGRect(_char_rect));
+                break;
+                
+            case TermViewCursor::Underline:
+                CGContextFillRect(_context,
+                                  CGRectMake(_char_rect.origin.x,
+                                             _char_rect.origin.y + _char_rect.size.height - 2,
+                                             _char_rect.size.width,
+                                             2));
+                break;
+                
+            case TermViewCursor::VerticalBar:
+                CGContextFillRect(_context,
+                                  CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
+                                  );
+                break;
+        }
     }
+    else {
+        oms::SetStrokeColor(_context, m_CursorColor);
+        CGContextSetLineWidth(_context, 1);
+        CGContextSetShouldAntialias(_context, false);
+        _char_rect.origin.y += 1;
+        _char_rect.size.height -= 1;
+        CGContextStrokeRect(_context, NSRectToCGRect(_char_rect));
+    }
+    
 }
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect

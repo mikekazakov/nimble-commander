@@ -72,6 +72,7 @@ struct unichars_draw_batch
     
 // graphic configuration
 void SetFillColor(CGContextRef _cont, const DoubleColor &_color);
+void SetStrokeColor(CGContextRef _cont, const DoubleColor &_color);
 void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache);
 void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache);
     

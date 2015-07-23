@@ -119,7 +119,7 @@ static const auto g_LongProcessDelay = 150ms;
     }
     else {
         if( m_RunningLongTask ) {
-            m_RunningLongTask = true;
+            m_RunningLongTask = false;
             dispatch_to_main_queue([=]{
                 if( m_OnLongTaskFinished )
                     m_OnLongTaskFinished();

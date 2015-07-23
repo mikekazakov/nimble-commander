@@ -13,6 +13,7 @@
 #import "TermParser.h"
 #import "Common.h"
 #import "NSUserDefaults+myColorSupport.h"
+#import "BlinkingCaret.h"
 
 struct SelPoint
 {
@@ -74,15 +75,17 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     TermViewCursor  m_CursorType;
     FPSLimitedDrawer *m_FPS;
     NSSize          m_IntrinsicSize;
+    unique_ptr<BlinkingCaret> m_BlinkingCaret;
 }
 
-@synthesize FPSDrawer = m_FPS;
+@synthesize fpsDrawer = m_FPS;
 @synthesize reportsSizeByOccupiedContent = m_ReportsSizeByOccupiedContent;
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
+        m_BlinkingCaret = make_unique<BlinkingCaret>(self);
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
@@ -432,25 +435,28 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     const bool is_first_responder = self.window.firstResponder == self;
     
     if( is_wnd_active && is_first_responder ) {
-        oms::SetFillColor(_context, m_CursorColor);        
-        switch (m_CursorType) {
-            case TermViewCursor::Block:
-                CGContextFillRect(_context, NSRectToCGRect(_char_rect));
-                break;
-                
-            case TermViewCursor::Underline:
-                CGContextFillRect(_context,
-                                  CGRectMake(_char_rect.origin.x,
-                                             _char_rect.origin.y + _char_rect.size.height - 2,
-                                             _char_rect.size.width,
-                                             2));
-                break;
-                
-            case TermViewCursor::VerticalBar:
-                CGContextFillRect(_context,
-                                  CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
-                                  );
-                break;
+        m_BlinkingCaret->ScheduleNextRedraw(); // be sure not to call Shedule... when view is not active
+        if( m_BlinkingCaret->Visible() ) {
+            oms::SetFillColor(_context, m_CursorColor);
+            switch (m_CursorType) {
+                case TermViewCursor::Block:
+                    CGContextFillRect(_context, NSRectToCGRect(_char_rect));
+                    break;
+                    
+                case TermViewCursor::Underline:
+                    CGContextFillRect(_context,
+                                      CGRectMake(_char_rect.origin.x,
+                                                 _char_rect.origin.y + _char_rect.size.height - 2,
+                                                 _char_rect.size.width,
+                                                 2));
+                    break;
+                    
+                case TermViewCursor::VerticalBar:
+                    CGContextFillRect(_context,
+                                      CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
+                                      );
+                    break;
+            }
         }
     }
     else {
@@ -461,7 +467,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         _char_rect.size.height -= 1;
         CGContextStrokeRect(_context, NSRectToCGRect(_char_rect));
     }
-    
 }
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect

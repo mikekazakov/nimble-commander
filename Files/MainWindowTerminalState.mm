@@ -114,7 +114,7 @@
             
             
             
-            [strongself->m_TermScrollView.view.FPSDrawer invalidate];
+            [strongself->m_TermScrollView.view.fpsDrawer invalidate];
             
 //            mtb.ResetNano("Parsed in: ");
 //            printf("(data size: %d)\n", _sz);

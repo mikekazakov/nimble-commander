@@ -77,7 +77,7 @@
                 
                 strongself->m_Parser->Flush();
                 strongself->m_TermScrollView.screen.Unlock();
-                [strongself->m_TermScrollView.view.FPSDrawer invalidate];
+                [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                 
                 dispatch_to_main_queue( [=]{
                     [strongself->m_TermScrollView.view adjustSizes:false]; // !!!!! REFACTOR  !!!

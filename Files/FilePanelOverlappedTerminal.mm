@@ -83,7 +83,7 @@ static const auto g_LongProcessDelay = 150ms;
     m_TermScrollView.screen.Lock();
     m_Parser->EatBytes((const unsigned char*)_d, _sz);
     m_TermScrollView.screen.Unlock();
-    [m_TermScrollView.view.FPSDrawer invalidate];
+    [m_TermScrollView.view.fpsDrawer invalidate];
     
     dispatch_to_main_queue( [=]{
         [m_TermScrollView.view adjustSizes:false];

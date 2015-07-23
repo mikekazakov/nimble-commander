@@ -20,9 +20,9 @@ enum class TermViewCursor
     VerticalBar = 2
 };
 
-@interface TermView : NSView
+@interface TermView : NSView<ViewWithFPSLimitedDrawer>
 
-@property (readonly) FPSLimitedDrawer *FPSDrawer;
+@property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
 @property (nonatomic, readonly) const FontCache &fontCache;
 @property (nonatomic, readonly) TermParser *parser; // may be nullptr
 @property (nonatomic) bool reportsSizeByOccupiedContent;

@@ -28,3 +28,10 @@
 - (void) invalidate;
 
 @end
+
+@protocol ViewWithFPSLimitedDrawer <NSObject>
+
+@required
+@property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
+
+@end

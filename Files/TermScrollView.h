@@ -11,7 +11,7 @@
 
 @interface TermScrollView : NSScrollView
 
-- (id)initWithFrame:(NSRect)frameRect;
+- (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top;
 
 @property (nonatomic, readonly) TermView    *view;
 @property (nonatomic, readonly) TermScreen  &screen;

@@ -14,23 +14,75 @@
 
 static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
 
+@interface TermScrollViewFlippableDocumentHolder : NSView
+- (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
+@end
+
+@implementation TermScrollViewFlippableDocumentHolder
+{
+    bool m_Flipped;
+}
+
+- (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped
+{
+    self = [super initWithFrame:frameRect];
+    if(self) {
+        m_Flipped = flipped;
+
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:view];
+
+        [self addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:NSDictionaryOfVariableBindings(view)]];
+        [self addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[view]-0-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:NSDictionaryOfVariableBindings(view)]];
+        self.translatesAutoresizingMaskIntoConstraints = false;
+    }
+    return self;
+}
+
+- (BOOL) isFlipped
+{
+    return m_Flipped;
+}
+
+-(BOOL) isOpaque
+{
+    return YES;
+}
+
+- (void) drawRect:(NSRect)dirtyRect
+{
+}
+
+@end
+
+///////////////////////////////////////////////////////////////////////// TermScrollView
+
 @implementation TermScrollView
 {
-    TermView               *m_View;
-    unique_ptr<TermScreen>  m_Screen;
+    TermView                               *m_View;
+    TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
+    unique_ptr<TermScreen>                  m_Screen;
 }
 
 @synthesize view = m_View;
 
-- (id)initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top
 {
     self = [super initWithFrame:frameRect];
     if(self) {
         auto rc = self.contentView.bounds;
         
         m_View = [[TermView alloc] initWithFrame:rc];
-        m_View.translatesAutoresizingMaskIntoConstraints = NO;
-        self.documentView = m_View;
+        m_ViewHolder = [[TermScrollViewFlippableDocumentHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
+        self.documentView = m_ViewHolder;
         self.hasVerticalScroller = ![NSUserDefaults.standardUserDefaults boolForKey:g_HideScrollbarKey];
         self.borderType = NSNoBorder;
         self.verticalScrollElasticity = NSScrollElasticityNone;
@@ -46,10 +98,10 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         [m_View AttachToScreen:m_Screen.get()];
         
         [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_View(>=100)]-0-|"
+         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
                                                  options:0
                                                  metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(m_View)]];
+                                                   views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
 //        [self addConstraint:
 //         [NSLayoutConstraint constraintWithItem:m_View
 //                                      attribute:NSLayoutAttributeHeight
@@ -111,7 +163,9 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y -= theEvent.deltaY * self.verticalLineScroll;
+    scrollRect.origin.y += theEvent.deltaY *
+                            self.verticalLineScroll *
+                            (m_ViewHolder.isFlipped ? -1 : 1);
     [(NSView *)self.documentView scrollRectToVisible:scrollRect];
 }
 

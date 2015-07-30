@@ -46,7 +46,7 @@ static const auto g_LongProcessDelay = 150ms;
         m_RunningLongTask = false;
         m_InitalWD = CommonPaths::Get(CommonPaths::Home);
         
-        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
+        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds attachToTop:false];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_TermScrollView.view.reportsSizeByOccupiedContent = true;
         [self addSubview:m_TermScrollView];

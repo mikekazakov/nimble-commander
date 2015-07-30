@@ -40,7 +40,7 @@
         m_Params = _params;
         m_FilePath = _file_path;
 
-        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds];
+        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds attachToTop:true];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];

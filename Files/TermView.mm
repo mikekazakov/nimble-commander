@@ -214,12 +214,13 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     m_LastScreenFullHeight = full_height;
     
+    auto clipview = self.enclosingScrollView.contentView;
     double sy = full_height * m_FontCache->Height();
-    double rest = self.superview.frame.size.height -
-        floor(self.superview.frame.size.height / m_FontCache->Height()) * m_FontCache->Height();
+    double rest = clipview.frame.size.height -
+        floor(clipview.frame.size.height / m_FontCache->Height()) * m_FontCache->Height();
 
     m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, sy + rest);
-    NSLog(@"height = %f", m_IntrinsicSize.height);
+//    NSLog(@"height = %f, addition = %f", m_IntrinsicSize.height, rest);
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView layoutSubtreeIfNeeded];
     
@@ -229,14 +230,20 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) scrollToBottom
 {
-    
-    auto clipview = (NSClipView*)self.superview;
     auto scrollview = self.enclosingScrollView;
+    auto clipview = scrollview.contentView;
     
-    auto p = NSMakePoint(0, self.frame.size.height - scrollview.contentSize.height);
-
-    [clipview scrollToPoint:p];
-    [scrollview reflectScrolledClipView:clipview];
+    auto h1 = self.frame.size.height;
+    auto h2 = scrollview.contentSize.height;
+    if( h1 > h2 ) {
+        auto p = NSMakePoint(0,
+                             self.superview.isFlipped ?
+                                (self.frame.size.height - scrollview.contentSize.height) :
+                                0
+                             );
+        [clipview scrollToPoint:p];
+        [scrollview reflectScrolledClipView:clipview];
+    }
 }
 
 - (void)drawRect:(NSRect)dirtyRect

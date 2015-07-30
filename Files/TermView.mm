@@ -263,10 +263,20 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSLog(@"%llu", (now - last_redraw)/1000000);
     last_redraw = now;*/
     
-//    MachTimeBenchmark tmb;
+//    MachTimeBenchmark mtb;
+
+    int line_start=0, line_end=0;
+    if( self.superview.isFlipped ) {
+        auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
+        line_start = floor(clipviewbounds.origin.y / m_FontCache->Height());
+        line_end   = line_start + ceil(clipviewbounds.size.height / m_FontCache->Height());
+    }
+    else {
+        auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
+        line_end = ceil( (self.bounds.size.height - clipviewbounds.origin.y) / m_FontCache->Height());
+        line_start = line_end - ceil(clipviewbounds.size.height / m_FontCache->Height());
+    }
     
-    int line_start = floor([self.superview bounds].origin.y / m_FontCache->Height());
-    int line_end   = line_start + ceil(NSHeight(self.superview.bounds) / m_FontCache->Height());
     
     m_Screen->Lock();
     
@@ -301,6 +311,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 #endif
     
     m_Screen->Unlock();
+    
+//    mtb.ResetMilli();
 }
 
 - (void)drawBackscreenOnscreenBorder:(CGContextRef)_context

@@ -52,15 +52,6 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
     return m_Flipped;
 }
 
--(BOOL) isOpaque
-{
-    return YES;
-}
-
-- (void) drawRect:(NSRect)dirtyRect
-{
-}
-
 @end
 
 ///////////////////////////////////////////////////////////////////////// TermScrollView

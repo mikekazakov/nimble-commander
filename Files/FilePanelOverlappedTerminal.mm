@@ -17,7 +17,8 @@
 #import "FilePanelOverlappedTerminal.h"
 
 static const auto g_BashPromptInputDelay = 10ms;
-static const auto g_LongProcessDelay = 150ms;
+static const auto g_TaskStartInputDelay = 50ms;
+static const auto g_LongProcessDelay = 100ms;
 
 @implementation FilePanelOverlappedTerminal
 {
@@ -107,14 +108,18 @@ static const auto g_LongProcessDelay = 150ms;
 {
     if( _state == TermShellTask::TaskState::ProgramInternal ||
         _state == TermShellTask::TaskState::ProgramExternal ) {
-        
-        dispatch_to_main_queue_after(g_LongProcessDelay, [=]{
-            if( m_Task->State() == TermShellTask::TaskState::ProgramInternal ||
-               m_Task->State() == TermShellTask::TaskState::ProgramExternal ) {
-                m_RunningLongTask = true;
-                if( m_OnLongTaskStarted )
-                    m_OnLongTaskStarted();
-            }
+        dispatch_to_main_queue_after(g_TaskStartInputDelay, [=]{
+            int task_pid = m_Task->ShellChildPID();
+            if(task_pid >= 0)
+                dispatch_to_main_queue_after(g_LongProcessDelay, [=]{
+                    if( (m_Task->State() == TermShellTask::TaskState::ProgramInternal ||
+                         m_Task->State() == TermShellTask::TaskState::ProgramExternal) &&
+                         m_Task->ShellChildPID() == task_pid ) {
+                        m_RunningLongTask = true;
+                        if( m_OnLongTaskStarted )
+                            m_OnLongTaskStarted();
+                    }
+                });
         });
     }
     else {

@@ -397,7 +397,7 @@ void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_paramete
     WriteChildInput(input, (int)strlen(input));
 }
 
-vector<string> TermShellTask::ChildrenList()
+vector<string> TermShellTask::ChildrenList() const
 {
     if(m_State == TaskState::Inactive || m_State == TaskState::Dead || m_ShellPID < 0)
         return vector<string>();
@@ -431,6 +431,31 @@ again:  if(ppid == m_ShellPID)
     
     free(proc_list);
     return result;
+}
+
+int TermShellTask::ShellChildPID() const
+{
+    if(m_State == TaskState::Inactive || m_State == TaskState::Dead || m_State == TaskState::Shell || m_ShellPID < 0)
+        return -1;
+    
+    size_t proc_cnt = 0;
+    kinfo_proc *proc_list;
+    if(sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
+        return -1;
+    
+    int child_pid = -1;
+    
+    for(int i = 0; i < proc_cnt; ++i) {
+        int pid = proc_list[i].kp_proc.p_pid;
+        int ppid = proc_list[i].kp_eproc.e_ppid;
+        if( ppid == m_ShellPID ) {
+            child_pid = pid;
+            break;
+        }
+    }
+    
+    free(proc_list);
+    return child_pid;
 }
 
 string TermShellTask::CWD() const

@@ -72,7 +72,13 @@ public:
     /**
      * returns a list of children excluding topmost shell (ie bash).
      */
-    vector<string> ChildrenList();
+    vector<string> ChildrenList() const;
+    
+    /**
+     * Will return -1 if there's no children on shell or on any errors
+     * Based on same mech as ChildrenList() so may be time-costly
+     */
+    int ShellChildPID() const;
     
 private:
     bool IsCurrentWD(const char *_what) const;

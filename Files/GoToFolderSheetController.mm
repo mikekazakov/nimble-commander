@@ -49,7 +49,9 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 {
     m_Handler = _handler;
     [_window beginSheet:self.window
-      completionHandler:^(NSModalResponse returnCode){}
+      completionHandler:^(NSModalResponse returnCode){
+          m_Handler = nullptr;
+      }
      ];
 }
 
@@ -63,7 +65,6 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
     if(_code == 0) {
         [NSUserDefaults.standardUserDefaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
         [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
-        m_Handler = nullptr;
     }
     else { // show error here
         self.Error.stringValue = VFSError::ToNSError(_code).localizedDescription;
@@ -73,7 +74,6 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 - (IBAction)OnCancel:(id)sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
-    m_Handler = nullptr;
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification

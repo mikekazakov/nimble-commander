@@ -647,5 +647,9 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     [self setNeedsDisplay];
 }
 
+- (NSFont*) font
+{
+    return (__bridge NSFont*) m_FontCache->BaseFont();
+}
 
 @end

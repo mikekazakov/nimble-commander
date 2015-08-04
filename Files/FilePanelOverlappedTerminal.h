@@ -19,6 +19,7 @@
 - (void) changeWorkingDirectory:(const string&)_new_dir;
 - (void) feedShellWithInput:(const string&)_input;
 - (void) commitShell;
+- (void) runPasteMenu:(const vector<string>&)_strings;
 
 @property (nonatomic, readonly) TermShellTask::TaskState state;
 

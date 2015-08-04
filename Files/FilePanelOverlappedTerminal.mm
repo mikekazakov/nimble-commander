@@ -235,4 +235,27 @@ static const auto g_LongProcessDelay = 100ms;
     return virgin;
 }
 
+- (void) runPasteMenu:(const vector<string>&)_strings
+{
+    NSMenu *menu = [[NSMenu alloc] init];
+    
+    menu.font = m_TermScrollView.view.font;
+    
+    for(auto &i:_strings) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = [NSString stringWithUTF8StdString:i];
+        it.target = self;
+        it.action = @selector(handlePasteMenuItem:);
+        [menu addItem:it];
+    }
+    
+    [menu popUpMenuPositioningItem:nil atLocation:NSMakePoint(0, 0) inView:self];
+}
+
+- (void) handlePasteMenuItem:(id)_sender
+{
+    if( auto it = objc_cast<NSMenuItem>(_sender) )
+        [self feedShellWithInput:it.title.fileSystemRepresentationSafe];
+}
+
 @end

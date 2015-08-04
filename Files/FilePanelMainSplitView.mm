@@ -13,6 +13,7 @@
 #import "FilePanelsTabbedHolder.h"
 #import "AppDelegate.h"
 #import "Common.h"
+#import "ActionsShortcutsManager.h"
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;
@@ -324,55 +325,76 @@ static CGColorRef DividerColor(bool _wnd_active)
     mod &= ~NSNumericPadKeyMask;
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
+    auto kc = theEvent.keyCode;
+        
+    const auto &am = ActionsShortcutsManager::Instance();
+    const auto isshortcut = [&](int tag) {
+        if( auto sc = am.ShortCutFromTag(tag) )
+            return sc->IsKeyDown(unicode, kc, mod);
+        return false;
+    };
     
-    if(unicode == NSLeftArrowFunctionKey &&
-       ((mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ||
-        (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask)) &&
-       !self.anyCollapsed) {
-        NSView *v1 = self.subviews[0];
-        NSView *v2 = self.subviews[1];
-        NSRect left  = v1.frame;
-        NSRect right = v2.frame;
-        
-        auto gran = self.granularityForKeyResizing;
-        
-        left.size.width -= gran;
-        right.origin.x -= gran;
-        right.size.width += gran;
-        if(left.size.width < 0) {
-            right.origin.x -= left.size.width;
-            right.size.width += left.size.width;
-            left.size.width = 0;
-        }
-        v1.frame = left;
-        v2.frame = right;
+    static const auto filepanels_move_left = am.TagFromAction( "menu.view.panels_position.move_left" );
+    if( isshortcut(filepanels_move_left) ) {
+        [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
-    else if(unicode == NSRightArrowFunctionKey &&
-            ((mod & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask ||
-             (mod & NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask)) &&
-            !self.anyCollapsed) {
-        NSView *v1 = self.subviews[0];
-        NSView *v2 = self.subviews[1];
-        NSRect left  = v1.frame;
-        NSRect right = v2.frame;
-        
-        auto gran = self.granularityForKeyResizing;
-        
-        left.size.width += gran;
-        right.origin.x += gran;
-        right.size.width -= gran;
-        if(right.size.width < 0) {
-            left.size.width += right.size.width;
-            right.origin.x -= right.size.width;
-            right.size.width = 0;
-        }
-        v1.frame = left;
-        v2.frame = right;
+
+    static const auto filepanels_move_right = am.TagFromAction( "menu.view.panels_position.move_right" );
+    if( isshortcut(filepanels_move_right) ) {
+        [self OnViewPanelsPositionMoveRight:self];
         return true;
     }
     
     return [super performKeyEquivalent:theEvent];
+}
+
+- (IBAction)OnViewPanelsPositionMoveLeft:(id)sender
+{
+    if(self.anyCollapsed)
+        return;
+    
+    NSView *v1 = self.subviews[0];
+    NSView *v2 = self.subviews[1];
+    NSRect left  = v1.frame;
+    NSRect right = v2.frame;
+    
+    auto gran = self.granularityForKeyResizing;
+    
+    left.size.width -= gran;
+    right.origin.x -= gran;
+    right.size.width += gran;
+    if(left.size.width < 0) {
+        right.origin.x -= left.size.width;
+        right.size.width += left.size.width;
+        left.size.width = 0;
+    }
+    v1.frame = left;
+    v2.frame = right;
+}
+
+- (IBAction)OnViewPanelsPositionMoveRight:(id)sender
+{
+    if(self.anyCollapsed)
+        return;
+    
+    NSView *v1 = self.subviews[0];
+    NSView *v2 = self.subviews[1];
+    NSRect left  = v1.frame;
+    NSRect right = v2.frame;
+    
+    auto gran = self.granularityForKeyResizing;
+    
+    left.size.width += gran;
+    right.origin.x += gran;
+    right.size.width -= gran;
+    if(right.size.width < 0) {
+        left.size.width += right.size.width;
+        right.origin.x -= right.size.width;
+        right.size.width = 0;
+    }
+    v1.frame = left;
+    v2.frame = right;
 }
 
 @end

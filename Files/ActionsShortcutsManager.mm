@@ -8,6 +8,7 @@
 
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "ActionsShortcutsManager.h"
+#import "Common.h"
 
 static NSString *g_OverridesDefaultsKey = @"CommonHotkeysOverrides";
 
@@ -16,6 +17,17 @@ static NSString *OverridesFullPathOld()
     static NSString *g_OverridesFilenameOld = @"/shortcuts.plist";
     return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilenameOld];
 }
+
+static const vector<tuple<string, string>> g_DefaultShortcuts = {
+        {"menu.view.panels_position.move_up",       u8"^⌥\uF700"},  // ctrl+alt+↑
+        {"menu.view.panels_position.move_down",     u8"^⌥\uF701"},  // ctrl+alt+↓
+        {"menu.view.panels_position.move_left",     u8"^⌥\uF702"},  // ctrl+alt+←
+        {"menu.view.panels_position.move_right",    u8"^⌥\uF703"},  // ctrl+alt+→
+        {"menu.view.panels_position.showpanels",    u8"^⌥o"},       // ctrl+alt+o
+        {"menu.view.panels_position.focusterminal", u8"^⌥\t"},      // ctrl+alt+⇥
+        {"menu.file.feed_filename_to_terminal",     u8"^⌥\\r"},     // ctrl+alt+↵
+        {"menu.file.feed_filenames_to_terminal",    u8"^⌥⌘\\r"},    // ctrl+alt+cmd+↵
+};
 
 NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
 {
@@ -100,7 +112,6 @@ bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
     else if([key_ isEqualToString:@"\\t"])
         key_ = @"\t";
     
-    
     modifiers = mod_;
     key = key_;
     unic = [key characterAtIndex:0];
@@ -144,6 +155,16 @@ ActionsShortcutsManager::ActionsShortcutsManager()
     NSString *defaults_fn = [NSBundle.mainBundle pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
     ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
     
+    for(auto &d: g_DefaultShortcuts) {
+        auto i = m_ActionToTag.find( get<0>(d) );
+        if( i == end(m_ActionToTag) )
+            continue;
+        
+        ShortCut sc;
+        if( sc.FromPersString([NSString stringWithUTF8StdStringNoCopy:get<1>(d)]) )
+            m_ShortCutsDefaults[i->second] = sc;
+    }
+        
     MigrateExternalPlistIfAny();
     
     if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:g_OverridesDefaultsKey])

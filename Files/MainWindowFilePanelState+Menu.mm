@@ -541,6 +541,8 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
     
+    const auto &am = ActionsShortcutsManager::Instance();
+    
     // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
     if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
         static const int next_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_next_tab");
@@ -554,32 +556,36 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    
+
+    const auto isshortcut = [&](int tag) {
+        if( auto sc = am.ShortCutFromTag(tag) )
+            return sc->IsKeyDown(unicode, kc, mod);
+        return false;
+    };
+
     // overlapped terminal stuff
-    if( mod == (NSControlKeyMask|NSAlternateKeyMask) ) {
-        if( kc == kVK_UpArrow ) {
-            [self increaseBottomTerminalGap];
-            return true;
-        }
-        if( kc == kVK_DownArrow) {
-            [self decreaseBottomTerminalGap];
-            return true;
-        }
-        if( kc == kVK_ANSI_O  ) {
-            if(self.isPanelsSplitViewHidden)
-                [self showPanelsSplitView];
-            else
-                [self hidePanelsSplitView];
-            return true;
-        }
-        if( unicode == NSTabCharacter ) {
-            [self handleCtrlAltTab];
-            return true;
-        }
-        if( kc == kVK_Return ) {
-            [self feedOverlappedTerminalWithCurrentFilename];
-            return true;
-        }
+    static const auto filepanels_move_up = am.TagFromAction( "menu.view.panels_position.move_up" );
+    if( isshortcut(filepanels_move_up) ) {
+        [self OnViewPanelsPositionMoveUp:self];
+        return true;
+    }
+    
+    static const auto filepanels_move_down = am.TagFromAction( "menu.view.panels_position.move_down" );
+    if( isshortcut(filepanels_move_down) ) {
+        [self OnViewPanelsPositionMoveDown:self];
+        return true;
+    }
+    
+    static const auto filepanels_showhide = am.TagFromAction( "menu.view.panels_position.showpanels" );
+    if( isshortcut(filepanels_showhide) ) {
+        [self OnViewPanelsPositionShowHidePanels:self];
+        return true;
+    }
+    
+    static const auto filepanels_focusterminal = am.TagFromAction( "menu.view.panels_position.focusterminal" );
+    if( isshortcut(filepanels_focusterminal) ) {
+        [self OnViewPanelsPositionFocusOverlappedTerminal:self];
+        return true;
     }
     
     return [super performKeyEquivalent:theEvent];
@@ -589,6 +595,39 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:![defaults boolForKey:g_DefsGeneralShowTabs] forKey:g_DefsGeneralShowTabs];
+}
+
+- (IBAction)OnViewPanelsPositionMoveUp:(id)sender
+{
+    [self increaseBottomTerminalGap];
+}
+
+- (IBAction)OnViewPanelsPositionMoveDown:(id)sender
+{
+    [self decreaseBottomTerminalGap];
+}
+
+- (IBAction)OnViewPanelsPositionShowHidePanels:(id)sender
+{
+    if(self.isPanelsSplitViewHidden)
+        [self showPanelsSplitView];
+    else
+        [self hidePanelsSplitView];
+}
+
+- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id)sender
+{
+    [self handleCtrlAltTab];
+}
+
+- (IBAction)OnFileFeedFilenameToTerminal:(id)sender
+{
+    [self feedOverlappedTerminalWithCurrentFilename];
+}
+
+- (IBAction)OnFileFeedFilenamesToTerminal:(id)sender
+{
+    [self feedOverlappedTerminalWithFilenamesMenu];
 }
 
 @end

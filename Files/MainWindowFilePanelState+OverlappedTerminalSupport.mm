@@ -185,6 +185,37 @@
         }
 }
 
+- (void) feedOverlappedTerminalWithFilenamesMenu
+{
+    if( !self.overlappedTerminalVisible || m_OverlappedTerminal.terminal.state != TermShellTask::TaskState::Shell )
+        return;
+
+    auto cpc = self.activePanelController;
+    if( !cpc )
+        cpc = m_LastFocusedPanelController;
+    if( cpc ) {
+        auto opc = cpc == self.leftPanelController ? self.rightPanelController : self.leftPanelController;
+        
+        vector<string> strings;
+        auto add = [&](const string &_s) {
+            if(!_s.empty())
+                strings.emplace_back(_s);
+        };
+        
+        if( cpc.vfs->IsNativeFS() ) {
+            add( cpc.currentFocusedEntryFilename );
+            add( cpc.currentFocusedEntryPath );
+        }
+        if( opc.vfs->IsNativeFS() ) {
+            add( opc.currentFocusedEntryFilename );
+            add( opc.currentFocusedEntryPath );
+        }
+        
+        if( !strings.empty() )
+            [m_OverlappedTerminal.terminal runPasteMenu:strings];
+    }
+}
+
 - (bool) handleReturnKeyWithOverlappedTerminal
 {
     if( self.overlappedTerminalVisible &&

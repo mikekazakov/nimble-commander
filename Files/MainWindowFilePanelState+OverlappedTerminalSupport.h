@@ -22,6 +22,7 @@
 - (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd;
 - (void) handleCtrlAltTab;
 - (void) feedOverlappedTerminalWithCurrentFilename;
+- (void) feedOverlappedTerminalWithFilenamesMenu;
 
 /**
  * will handle it if:

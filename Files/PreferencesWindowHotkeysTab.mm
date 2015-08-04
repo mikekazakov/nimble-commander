@@ -27,7 +27,7 @@
                                     end(m_Shortcuts),
                                  [](auto &_t) {
                                      if(_t.first.find_first_of("menu.") != 0)
-                                         return true;
+                                         return false;
                                      if(!ActionsShortcutsManager::Instance().ShortCutFromTag(_t.second))
                                          return true;
                                      NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];

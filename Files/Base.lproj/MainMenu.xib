@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
@@ -137,6 +137,18 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                 <connections>
                                     <action selector="OnFileOpenInOppositePanel:" target="-1" id="DYJ-vB-ePl"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste Filename to Terminal" tag="11022" id="XNI-Bn-uVO">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnFileFeedFilenameToTerminal:" target="-1" id="4Og-nn-a8M"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Paste Filenames to Terminal..." tag="11023" alternate="YES" id="wd3-KT-mmq">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnFileFeedFilenamesToTerminal:" target="-1" id="dgz-Xe-kY1"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="S1o-rN-BPZ">
@@ -373,6 +385,49 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="t5L-ik-2nt"/>
+                            <menuItem title="Panels Position" id="zNZ-x6-hcs">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Panels Position" id="QN7-b6-kdr">
+                                    <items>
+                                        <menuItem title="Move Left" tag="13220" id="xoX-Le-jyi">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionMoveLeft:" target="-1" id="4Ea-ZE-sy8"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Move Right" tag="13230" id="LBa-B1-fXx">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionMoveRight:" target="-1" id="qnB-ck-bEc"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Move Up" tag="13200" id="aYe-xJ-eDM">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionMoveUp:" target="-1" id="XF8-tt-F7p"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Move Down" tag="13210" id="eHg-pH-jwx">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionMoveDown:" target="-1" id="IKL-ha-a77"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Show/Hide Panels" tag="13240" id="pGI-yr-mvL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionShowHidePanels:" target="-1" id="wXi-AA-cLv"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Focus Overlapped Terminal" tag="13250" id="Z21-QA-ACq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnViewPanelsPositionFocusOverlappedTerminal:" target="-1" id="5ZS-OA-RnQ"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Show/Hide Tab Bar" tag="13179" id="NK3-hW-YDx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

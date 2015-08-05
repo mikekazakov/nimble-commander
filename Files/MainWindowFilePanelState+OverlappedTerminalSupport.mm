@@ -139,7 +139,8 @@
 
 - (bool) overlappedTerminalVisible
 {
-    return m_OverlappedTerminal.terminal && m_OverlappedTerminal.bottom_gap > 0;
+    return m_OverlappedTerminal.terminal &&
+        (m_OverlappedTerminal.bottom_gap > 0 || self.isPanelsSplitViewHidden);
 }
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc

@@ -309,7 +309,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     m_LastResponder = nil;
     
     // if we don't know which view should be active - make left panel a first responder
-    if(!self.isPanelActive)
+    if( !self.overlappedTerminalVisible && !self.isPanelActive)
         [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
     
     [self UpdateTitle];

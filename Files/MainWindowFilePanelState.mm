@@ -680,7 +680,8 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
-    if (m_OperationsController.OperationsCount == 0)
+    if (m_OperationsController.OperationsCount == 0 &&
+        !self.isAnythingRunningInOverlappedTerminal )
         return true;
     
     NSAlert *dialog = [[NSAlert alloc] init];

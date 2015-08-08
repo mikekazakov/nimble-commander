@@ -244,4 +244,13 @@
     return false;
 }
 
+- (bool) isAnythingRunningInOverlappedTerminal
+{
+    if( !m_OverlappedTerminal.terminal )
+        return false;
+    auto s = m_OverlappedTerminal.terminal.state;
+    return s == TermShellTask::TaskState::ProgramInternal ||
+           s == TermShellTask::TaskState::ProgramExternal ;
+}
+
 @end

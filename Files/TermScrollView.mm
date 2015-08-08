@@ -81,7 +81,7 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         self.contentView.copiesOnScroll = false;
         self.contentView.canDrawConcurrently = false;
         self.contentView.drawsBackground = true;
-        self.contentView.backgroundColor = [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor0"];
+        self.contentView.backgroundColor = m_View.backgroundColor;
         
         m_Screen = make_unique<TermScreen>(floor(rc.size.width / m_View.fontCache.Width()),
                                            floor(rc.size.height / m_View.fontCache.Height()));

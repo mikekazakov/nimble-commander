@@ -28,6 +28,7 @@ enum class TermViewCursor
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
 @property (nonatomic, readonly) NSFont *font;
+@property (nonatomic, readonly) NSColor *backgroundColor;
 
 - (void) reloadSettings;
 - (void) AttachToScreen:(TermScreen*)_scr;
@@ -36,4 +37,5 @@ enum class TermViewCursor
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;
 
+- (NSColor*) ANSIColorForNo:(int)_number;
 @end

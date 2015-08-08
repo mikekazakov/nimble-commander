@@ -652,4 +652,14 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return (__bridge NSFont*) m_FontCache->BaseFont();
 }
 
+- (NSColor*) ANSIColorForNo:(int)_number
+{
+    return (_number < 0 || _number >= m_AnsiColors.size()) ? nil : m_AnsiColors[_number].ToNSColor();
+}
+
+- (NSColor*) backgroundColor
+{
+    return m_BackgroundColor.ToNSColor();
+}
+
 @end

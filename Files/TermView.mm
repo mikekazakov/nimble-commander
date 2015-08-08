@@ -192,16 +192,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (int)fullScreenHeight
 {
-//int full_height = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
     if( !m_ReportsSizeByOccupiedContent ) {
         return m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
     }
     else {
-        int height = m_Screen->Buffer().BackScreenLines();
-        auto occupied = m_Screen->Buffer().OccupiedOnScreenLines();
-        if(occupied)
-            height += occupied->second;
-        return height;
+        int onscreen = 0;
+        if( auto occupied = m_Screen->Buffer().OccupiedOnScreenLines() )
+            onscreen = occupied->second;
+        if( m_Screen->CursorY() >= onscreen )
+            onscreen = m_Screen->CursorY() + 1;
+        return m_Screen->Buffer().BackScreenLines() + onscreen;
     }
 }
 

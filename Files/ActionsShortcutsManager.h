@@ -76,8 +76,6 @@ private:
     void WriteOverrides(NSMutableArray *_dict) const;
     void WriteOverridesToNSDefaults() const;
     
-    void MigrateExternalPlistIfAny();
-    
     // persistance holy grail is below, change id's only in emergency case:
     const vector<pair<string,int>> m_ActionsTags = {
         {"menu.files.about",                    10000},

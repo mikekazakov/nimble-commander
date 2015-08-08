@@ -18,15 +18,120 @@ static NSString *OverridesFullPathOld()
     return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilenameOld];
 }
 
-static const vector<tuple<string, string>> g_DefaultShortcuts = {
+static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
+        {"menu.files.about",                        u8""        },
+        {"menu.files.preferences",                  u8"⌘,"      },  // cmd+,
+        {"menu.files.toggle_admin_mode",            u8""        },
+        {"menu.files.hide",                         u8"⌘h"      },  // cmd+h
+        {"menu.files.hide_others",                  u8"⌥⌘h"     },  // cmd+alt+h
+        {"menu.files.show_all",                     u8""        },
+        {"menu.files.quit",                         u8"⌘q"      },  // cmd+q
+
+        {"menu.file.newwindow",                     u8"⌘n"      },  // cmd+n
+        {"menu.file.new_folder",                    u8"⇧⌘n"     },  // cmd+shift+n
+        {"menu.file.new_folder_with_selection",     u8"^⌘n"     },  // cmd+ctrl+n
+        {"menu.file.new_file",                      u8"⌥⌘n"     },  // cmd+alt+n
+        {"menu.file.new_tab",                       u8"⌘t"      },  // cmd+t
+        {"menu.file.open",                          u8"\\r"     },  // ↵
+        {"menu.file.open_native",                   u8"⇧\\r"    },  // shift+↵
+        {"menu.file.open_in_opposite_panel",        u8"⌥\\r"    },  // alt+↵
+        {"menu.file.calculate_sizes",               u8"⇧⌥\\r"   },  // shift+alt+↵
+        {"menu.file.calculate_all_sizes",           u8"⇧^\\r"   },  // shift+ctrl+↵
+        {"menu.file.feed_filename_to_terminal",     u8"^⌥\\r"   },  // ctrl+alt+↵
+        {"menu.file.feed_filenames_to_terminal",    u8"^⌥⌘\\r"  },  // ctrl+alt+cmd+↵
+        {"menu.file.calculate_checksum",            u8"⇧⌘k"     },  // shift+cmd+k
+        {"menu.file.close_window",                  u8"⇧⌘w"     },  // shift+cmd+w
+        {"menu.file.close",                         u8"⌘w"      },  // cmd+w
+        {"menu.file.find",                          u8"⌘f"      },  // cmd+f
+        {"menu.file.page_setup",                    u8"⇧⌘p"     },  // shift+cmd+p
+        {"menu.file.print",                         u8"⌘p"      },  // cmd+p
+
+        {"menu.edit.copy",                          u8"⌘c"      },  // cmd+c
+        {"menu.edit.paste",                         u8"⌘v"      },  // cmd+v
+        {"menu.edit.select_all",                    u8"⌘a"      },  // cmd+a
+        {"menu.edit.deselect_all",                  u8"⌥⌘a"     },  // alt+cmd+a
+        {"menu.edit.invert_selection",              u8"^⌘a"     },  // ctrl+cmd+a
+
+    
+        {"menu.view.left_panel_change_folder",      u8"\uF704"  },  // F1
+        {"menu.view.right_panel_change_folder",     u8"\uF705"  },  // F2
+        {"menu.view.swap_panels",                   u8"⌘u"      },  // cmd+u
+        {"menu.view.sync_panels",                   u8"⌥⌘u"     },  // alt+cmd+u
+        {"menu.view.refresh",                       u8"⌘r"      },  // cmd+r
+
+    
+        {"menu.view.toggle_short_mode",             u8"^1"      },  // ctrl+1
+        {"menu.view.toggle_medium_mode",            u8"^2"      },  // ctrl+2
+        {"menu.view.toggle_full_mode",              u8"^3"      },  // ctrl+3
+        {"menu.view.toggle_wide_mode",              u8"^4"      },  // ctrl+4
+        {"menu.view.sorting_by_name",               u8"^⌘1"     },  // ctrl+cmd+1
+        {"menu.view.sorting_by_extension",          u8"^⌘2"     },  // ctrl+cmd+2
+        {"menu.view.sorting_by_modify_time",        u8"^⌘3"     },  // ctrl+cmd+3
+        {"menu.view.sorting_by_size",               u8"^⌘4"     },  // ctrl+cmd+4
+        {"menu.view.sorting_by_creation_time",      u8"^⌘5"     },  // ctrl+cmd+5
+        {"menu.view.sorting_view_hidden",           u8"⇧⌥⌘i"    },  // shift+alt+cmd+i
+        {"menu.view.sorting_separate_folders",      u8""        },
+        {"menu.view.sorting_case_sensitive",        u8""        },
+        {"menu.view.sorting_numeric_comparison",    u8""        },
         {"menu.view.panels_position.move_up",       u8"^⌥\uF700"},  // ctrl+alt+↑
         {"menu.view.panels_position.move_down",     u8"^⌥\uF701"},  // ctrl+alt+↓
         {"menu.view.panels_position.move_left",     u8"^⌥\uF702"},  // ctrl+alt+←
         {"menu.view.panels_position.move_right",    u8"^⌥\uF703"},  // ctrl+alt+→
-        {"menu.view.panels_position.showpanels",    u8"^⌥o"},       // ctrl+alt+o
-        {"menu.view.panels_position.focusterminal", u8"^⌥\t"},      // ctrl+alt+⇥
-        {"menu.file.feed_filename_to_terminal",     u8"^⌥\\r"},     // ctrl+alt+↵
-        {"menu.file.feed_filenames_to_terminal",    u8"^⌥⌘\\r"},    // ctrl+alt+cmd+↵
+        {"menu.view.panels_position.showpanels",    u8"^⌥o"     },  // ctrl+alt+o
+        {"menu.view.panels_position.focusterminal", u8"^⌥\t"    },  // ctrl+alt+⇥
+        {"menu.view.show_tabs",                     u8"⇧⌘t"     },  // shift+cmd+t
+        {"menu.view.show_toolbar",                  u8"⌥⌘t"     },  // alt+cmd+t
+        {"menu.view.show_terminal",                 u8"⌥⌘o"     },  // alt+cmd+o
+    
+        {"menu.go.back",                            u8"⌘["      },  // cmd+[
+        {"menu.go.forward",                         u8"⌘]"      },  // cmd+]
+        {"menu.go.enclosing_folder",                u8"⌘\uF700" },  // cmd+↑
+        {"menu.go.into_folder",                     u8"⌘\uF701" },  // cmd+↓
+
+        {"menu.go.documents",                       u8"⇧⌘o"     },  // shift+cmd+o
+        {"menu.go.desktop",                         u8"⇧⌘d"     },  // shift+cmd+d
+        {"menu.go.downloads",                       u8"⌥⌘l"     },  // alt+cmd+l
+        {"menu.go.home",                            u8"⇧⌘h"     },  // shift+cmd+h
+        {"menu.go.library",                         u8""        },
+        {"menu.go.applications",                    u8"⇧⌘a"     }, // shift+cmd+a
+        {"menu.go.utilities",                       u8"⇧⌘u"     }, // shift+cmd+u
+        {"menu.go.processes_list",                  u8"⌥⌘p"     }, // alt+cmd+p
+        {"menu.go.to_folder",                       u8"⇧⌘g"     }, // shift+cmd+g
+        {"menu.go.connect.ftp",                     u8""        },
+        {"menu.go.connect.sftp",                    u8""        },
+        {"menu.go.root",                            u8""        },
+
+        {"menu.command.system_overview",            u8"⌘l"      }, // cmd+l
+        {"menu.command.volume_information",         u8""        },
+        {"menu.command.file_attributes",            u8"^a"      }, // ctrl+a
+        {"menu.command.copy_file_name",             u8"⇧⌘c"     }, // shift+cmd+c
+        {"menu.command.copy_file_path",             u8"⌥⌘c"     }, // alt+cmd+c
+        {"menu.command.select_with_mask",           u8"⌘="      }, // cmd+=
+        {"menu.command.deselect_with_mask",         u8"⌘-"      }, // cmd+-
+        {"menu.command.quick_look",                 u8"⌘y"      }, // cmd+y
+        {"menu.command.internal_viewer",            u8"⌥\uF706" }, // alt+F3
+        {"menu.command.external_editor",            u8"\uF707"  }, // F4
+        {"menu.command.eject_volume",               u8"⌘e"      }, // cmd+e
+        {"menu.command.compress",                   u8""        },
+        {"menu.command.batch_rename",               u8"^m"      }, // ctrl+m
+        {"menu.command.copy_to",                    u8"\uF708"  }, // F5
+        {"menu.command.copy_as",                    u8"⇧\uF708" }, // shift+F5
+        {"menu.command.move_to",                    u8"\uF709"  }, // F6
+        {"menu.command.move_as",                    u8"⇧\uF709" }, // shift+F6
+        {"menu.command.create_directory",           u8"\uF70a"  }, // F7
+        {"menu.command.move_to_trash",              u8"⌘\u007f" }, // cmd+backspace
+        {"menu.command.delete",                     u8"\uF70b"  }, // F8
+        {"menu.command.delete_alternative",         u8"⇧\uF70b" }, // shift+F8
+        {"menu.command.link_create_soft",           u8""        },
+        {"menu.command.link_create_hard",           u8""        },
+        {"menu.command.link_edit",                  u8""        },
+
+        {"menu.window.minimize",                    u8"⌘m"      }, // cmd+m
+        {"menu.window.fullscreen",                  u8"^⌘f"     }, // ctrl+cmd+f
+        {"menu.window.zoom",                        u8""        },
+        {"menu.window.show_previous_tab",           u8"⇧^\t"    }, // shift+ctrl+tab
+        {"menu.window.show_next_tab",               u8"^\t"     }, // ctrl+tab
+        {"menu.window.bring_all_to_front",          u8""        },
 };
 
 NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
@@ -151,21 +256,16 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         m_TagToAction[i.second] = i.first;
         m_ActionToTag[i.first]  = i.second;
     }
-    
-    NSString *defaults_fn = [NSBundle.mainBundle pathForResource:@"ShortcutsDefaults" ofType:@"plist"];
-    ReadDefaults([NSArray arrayWithContentsOfFile:defaults_fn]);
-    
+        
     for(auto &d: g_DefaultShortcuts) {
         auto i = m_ActionToTag.find( get<0>(d) );
         if( i == end(m_ActionToTag) )
             continue;
         
         ShortCut sc;
-        if( sc.FromPersString([NSString stringWithUTF8StdStringNoCopy:get<1>(d)]) )
+        if( sc.FromPersString([NSString stringWithUTF8StringNoCopy:get<1>(d)]) )
             m_ShortCutsDefaults[i->second] = sc;
     }
-        
-    MigrateExternalPlistIfAny();
     
     if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:g_OverridesDefaultsKey])
         ReadOverrides(overrides);
@@ -354,40 +454,6 @@ void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
     WriteOverridesToNSDefaults();
-}
-
-void ActionsShortcutsManager::MigrateExternalPlistIfAny()
-{
-    NSArray *old = [NSArray arrayWithContentsOfFile:OverridesFullPathOld()];
-    if(!old)
-        return;
-    if(old.count % 2 != 0)
-        return;
-
-    // store backup of migrated plist
-    rename(OverridesFullPathOld().UTF8String, [NSString stringWithFormat:@"%@_old", OverridesFullPathOld()].UTF8String);
-    
-    m_ShortCutsOverrides.clear();
-    for(int ind = 0; ind < old.count; ind += 2) {
-        NSString *key = [old objectAtIndex:ind];
-        NSString *obj = [old objectAtIndex:ind+1];
-        
-        auto i = m_ActionToTag.find(key.UTF8String);
-        if(i == m_ActionToTag.end())
-            continue;
-        
-        if([obj isEqualToString:@"default"])
-            continue;
-        
-        ShortCut sc;
-        if(sc.FromPersString(obj))
-            m_ShortCutsOverrides[i->second] = sc;
-    }
-
-    // and then write overrides to defaults
-    WriteOverridesToNSDefaults();
-    
-    m_ShortCutsOverrides.clear();
 }
 
 void ActionsShortcutsManager::WriteOverridesToNSDefaults() const

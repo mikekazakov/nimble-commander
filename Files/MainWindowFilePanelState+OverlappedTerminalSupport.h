@@ -36,4 +36,7 @@
 
 - (bool) isAnythingRunningInOverlappedTerminal;
 
+- (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event;
+- (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event;
+
 @end

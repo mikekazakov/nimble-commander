@@ -807,7 +807,7 @@ void TermParser::PushRawTaskInput(NSString *_str)
 
 void TermParser::ProcessKeyDown(NSEvent *_event)
 {
-    NSString*  const character = [_event charactersIgnoringModifiers];
+    NSString*  const character = [_event characters];
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
 //    unsigned short const keycode = [_event keyCode];

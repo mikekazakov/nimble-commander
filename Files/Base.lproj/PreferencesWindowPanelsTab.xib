@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
@@ -949,7 +949,7 @@
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
         <stackView orientation="vertical" alignment="left" spacing="5" hasEqualSpacing="YES" horizontalStackHuggingPriority="1000" horizontalHuggingPriority="249" verticalHuggingPriority="249" id="cMG-5Y-D3j">
-            <rect key="frame" x="0.0" y="0.0" width="378" height="159"/>
+            <rect key="frame" x="0.0" y="0.0" width="378" height="178"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <edgeInsets key="edgeInsets" left="2" right="2" top="2" bottom="2"/>
             <beginningViews>
@@ -1071,6 +1071,16 @@
                         <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
                     </connections>
                 </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
+                    <rect key="frame" x="18" y="128" width="399" height="18"/>
+                    <buttonCell key="cell" type="check" title="Route keyboard input into overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralRouteKeyboardInputIntoTerminal" id="b7p-iv-DFR"/>
+                    </connections>
+                </button>
             </beginningViews>
             <visibilityPriorities>
                 <integer value="1000"/>
@@ -1081,8 +1091,10 @@
                 <integer value="1000"/>
                 <integer value="1000"/>
                 <integer value="1000"/>
+                <integer value="1000"/>
             </visibilityPriorities>
             <customSpacing>
+                <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>

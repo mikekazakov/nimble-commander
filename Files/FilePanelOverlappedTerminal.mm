@@ -258,4 +258,39 @@ static const auto g_LongProcessDelay = 100ms;
         [self feedShellWithInput:it.title.fileSystemRepresentationSafe];
 }
 
+- (bool) canFeedShellWithKeyDown:(NSEvent *)event
+{
+    if( self.state != TermShellTask::TaskState::Shell )
+        return false;
+    
+    static NSCharacterSet *chars;
+    static once_flag once;
+    call_once(once, []{
+        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
+        [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@"\u007f"]];
+        chars = un;
+    });
+    
+    NSString *str = event.characters;
+    if( str.length == 0)
+        return false;
+    
+    bool isin = [chars characterIsMember:[str characterAtIndex:0]]; // consider uing UTF-32 here
+    return isin;
+}
+
+- (bool) feedShellWithKeyDown:(NSEvent *)event
+{
+    if( [self canFeedShellWithKeyDown:event] ) {
+        [m_TermScrollView.view keyDown:event];
+        return true;
+    }
+    
+    return false;
+}
+
 @end

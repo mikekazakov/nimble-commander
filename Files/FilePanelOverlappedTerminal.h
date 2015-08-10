@@ -21,6 +21,9 @@
 - (void) commitShell;
 - (void) runPasteMenu:(const vector<string>&)_strings;
 
+- (bool) canFeedShellWithKeyDown:(NSEvent *)event;
+- (bool) feedShellWithKeyDown:(NSEvent *)event;
+
 @property (nonatomic, readonly) TermShellTask::TaskState state;
 
 /**

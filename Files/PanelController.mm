@@ -25,6 +25,7 @@ static auto g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotD
 static auto g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
 static auto g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
 static auto g_DefaultsGeneraluseTildeAsHomeShortcut =  @"FilePanelsGeneralUseTildeAsHomeShotcut";
+static auto g_DefaultsGeneralRouteKeyboardInputIntoTerminal =  @"FilePanelsGeneralRouteKeyboardInputIntoTerminal";
 static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
                                g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
                                g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
@@ -372,6 +373,9 @@ void panel::GenericCursorPersistance::Restore()
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
+ 
+    const bool route_to_overlapped_terminal = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralRouteKeyboardInputIntoTerminal];
+    const bool terminal_can_eat = route_to_overlapped_terminal && [self.state overlappedTerminalWillEatKeyDown:event];
     
     NSString*  const character   = event.charactersIgnoringModifiers;
     if ( character.length > 0 ) {
@@ -383,7 +387,8 @@ void panel::GenericCursorPersistance::Restore()
             [self.state HandleTabButton];
             return true;
         }
-        if(unicode == 0x20) { // Space button
+        if(unicode == 0x20 &&
+           !terminal_can_eat) { // Space button
             [self OnFileViewCommand:self];
             return true;
         }
@@ -397,30 +402,19 @@ void panel::GenericCursorPersistance::Restore()
         }
         if( unicode == '~' &&
            (modif & (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
-           [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneraluseTildeAsHomeShortcut]
-           ) { // Tilde to go Home
+           [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneraluseTildeAsHomeShortcut] &&
+           !terminal_can_eat) { // Tilde to go Home
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
             return true;
         }
         if( unicode == '/' &&
-           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 ) {
+           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
+           !terminal_can_eat) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
             return true;
         }
-        /*    if(keycode == 3 ) { // 'F' button
-         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask))
-         {
-         return true;
-         }
-         }*/
-        
-        /*    if(keycode == 46 ) { // 'M' button
-         if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-         return true;
-         }
-         }*/
         
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
         auto &shortcuts = ActionsShortcutsManager::Instance();
@@ -438,10 +432,14 @@ void panel::GenericCursorPersistance::Restore()
             return true;
         
         if(keycode == 51 && // backspace
-           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0
+           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
+           !terminal_can_eat
            ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
             return [self HandleGoToUpperDirectory];
         }
+        
+        if( terminal_can_eat && [self.state feedOverlappedTerminalWithKeyDown:event] )
+            return true;
     }
     
     return false;

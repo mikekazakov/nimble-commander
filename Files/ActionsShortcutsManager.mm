@@ -52,14 +52,11 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.edit.deselect_all",                  u8"⌥⌘a"     },  // alt+cmd+a
         {"menu.edit.invert_selection",              u8"^⌘a"     },  // ctrl+cmd+a
 
-    
         {"menu.view.left_panel_change_folder",      u8"\uF704"  },  // F1
         {"menu.view.right_panel_change_folder",     u8"\uF705"  },  // F2
         {"menu.view.swap_panels",                   u8"⌘u"      },  // cmd+u
         {"menu.view.sync_panels",                   u8"⌥⌘u"     },  // alt+cmd+u
         {"menu.view.refresh",                       u8"⌘r"      },  // cmd+r
-
-    
         {"menu.view.toggle_short_mode",             u8"^1"      },  // ctrl+1
         {"menu.view.toggle_medium_mode",            u8"^2"      },  // ctrl+2
         {"menu.view.toggle_full_mode",              u8"^3"      },  // ctrl+3
@@ -87,7 +84,6 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.go.forward",                         u8"⌘]"      },  // cmd+]
         {"menu.go.enclosing_folder",                u8"⌘\uF700" },  // cmd+↑
         {"menu.go.into_folder",                     u8"⌘\uF701" },  // cmd+↓
-
         {"menu.go.documents",                       u8"⇧⌘o"     },  // shift+cmd+o
         {"menu.go.desktop",                         u8"⇧⌘d"     },  // shift+cmd+d
         {"menu.go.downloads",                       u8"⌥⌘l"     },  // alt+cmd+l

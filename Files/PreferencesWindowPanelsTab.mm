@@ -121,6 +121,8 @@
                                              options:0
                                              metrics:nil
                                                views:NSDictionaryOfVariableBindings(stackview)]];
+    [self.CommonOptionsScrollView.documentView scrollPoint:
+     NSMakePoint(0.0, [self.CommonOptionsScrollView.documentView bounds].size.height)];
     
     [self.view layoutSubtreeIfNeeded];
 }

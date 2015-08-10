@@ -253,4 +253,20 @@
            s == TermShellTask::TaskState::ProgramExternal ;
 }
 
+- (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event
+{
+    if( !self.overlappedTerminalVisible )
+        return false;
+    
+    return [m_OverlappedTerminal.terminal canFeedShellWithKeyDown:event];
+}
+
+- (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event
+{
+    if( !self.overlappedTerminalVisible )
+        return false;
+    
+    return [m_OverlappedTerminal.terminal feedShellWithKeyDown:event];
+}
+
 @end

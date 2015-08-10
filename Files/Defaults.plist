@@ -118,6 +118,8 @@
 	<true/>
 	<key>FilePanelsGeneralGoToForceActivation</key>
 	<true/>
+	<key>FilePanelsGeneralRouteKeyboardInputIntoTerminal</key>
+	<false/>
 	<key>FilePanels_Modern_FontSize</key>
 	<integer>13</integer>
 	<key>FilePanels_Modern_RegularBackground</key>

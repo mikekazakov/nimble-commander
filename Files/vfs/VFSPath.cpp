@@ -86,3 +86,21 @@ bool VFSPathStack::weak_equal(const VFSPathStack&_r) const
     return true;
 }
 
+string VFSPathStack::verbose_string() const
+{
+    if(m_Stack.empty())
+        return m_Path;
+    
+    // TODO: real implementation
+    string res;
+
+    auto fs_tag = m_Stack.front().fs_tag;
+    if( fs_tag == VFSNetFTPHost::Tag )  res += "ftp://";
+    if( fs_tag == VFSNetSFTPHost::Tag ) res += "sftp://";
+    if( fs_tag == VFSPSHost::Tag )      res += "[psfs]:";
+    
+    for( auto &i: m_Stack )
+        res += i.junction;
+    res += m_Path;
+    return res;
+}

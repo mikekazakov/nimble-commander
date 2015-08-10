@@ -383,6 +383,13 @@ void panel::GenericCursorPersistance::Restore()
         unichar const unicode        = [character characterAtIndex:0];
         unsigned short const keycode = event.keyCode;
         
+        if(keycode == 3 ) { // 'F' button
+            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+                [self abraCadabra];
+                return true;
+            }
+        }
+        
         if(unicode == NSTabCharacter) { // Tab button
             [self.state HandleTabButton];
             return true;

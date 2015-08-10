@@ -21,9 +21,20 @@ public:
     bool CanMoveBack() const;
     void MoveBack();
     
-    
     void Put(VFSPathStack&& _path);
+    
+    /**
+     * Will return nullptr if history is in "recording" state.
+     */
     const VFSPathStack* Current() const;
+
+    /**
+     * Will put History in "playing" state and adjust playing position accordingly,
+     * and return current history element
+     */
+    const VFSPathStack* RewindAt(size_t _indx);
+    
+    vector<reference_wrapper<const VFSPathStack>> All() const;
 private:
     list<VFSPathStack>  m_History;
      // lesser the index - farther the history entry

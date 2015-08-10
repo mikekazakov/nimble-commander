@@ -109,6 +109,9 @@
 		CF4E33D21B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
 		CF4E33D31B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
 		CF4E33D41B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
+		CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
+		CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
+		CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
 		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
@@ -1135,6 +1138,8 @@
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
 		CF4E33D11B75F889005B5292 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
+		CF4E33D51B78CF60005B5292 /* PanelController+NavigationMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+NavigationMenu.h"; sourceTree = "<group>"; };
+		CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+NavigationMenu.mm"; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_press.png; path = Resource/tab_close_press.png; sourceTree = "<group>"; };
@@ -1867,6 +1872,8 @@
 				CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */,
 				CFAADAB01930E02200D30699 /* PanelController+Menu.h */,
 				CFAADAB11930E02200D30699 /* PanelController+Menu.mm */,
+				CF4E33D51B78CF60005B5292 /* PanelController+NavigationMenu.h */,
+				CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */,
 				CFA0B22E18648F9A00501C35 /* PanelHistory.h */,
 				CFA0B22D18648F9A00501C35 /* PanelHistory.mm */,
 				CF0519DA17E9C98A00590C74 /* PanelAux.h */,
@@ -3329,6 +3336,7 @@
 				CF6D9C20196678000077B146 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF6D9C21196678000077B146 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF6D9C22196678000077B146 /* FileAlreadyExistSheetController.mm in Sources */,
+				CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CF6D9C23196678000077B146 /* MassCopySheetController.mm in Sources */,
 				CF6D9C24196678000077B146 /* FileCopyOperation.mm in Sources */,
 				CF6D9C25196678000077B146 /* FileCopyOperationJobNativeToNative.mm in Sources */,
@@ -3452,6 +3460,7 @@
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF50B7281A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
+				CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
@@ -3748,6 +3757,7 @@
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
 				CFF6F2CB1A13567C00011177 /* FileCompressOperation.mm in Sources */,
 				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
+				CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */,
 				CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */,
 				CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */,

@@ -48,6 +48,7 @@ public:
     inline const Part& back() const { return m_Stack.back(); }
     inline const string& path() const { return m_Path; }
     bool weak_equal(const VFSPathStack&_r) const;
+    string verbose_string() const;
 private:
     friend struct hash<VFSPathStack>;
     vector<Part>    m_Stack;

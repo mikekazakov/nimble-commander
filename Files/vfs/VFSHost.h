@@ -10,7 +10,8 @@
 
 #import "VFSError.h"
 #import "VFSDeclarations.h"
-#import "chained_strings.h"
+#import "VFSConfiguration.h"
+#import "VFSFactory.h"
 
 struct VFSHostOptions
 {
@@ -66,7 +67,6 @@ public:
      */
     const char *JunctionPath() const;
     shared_ptr<VFSHost> Parent() const;
-    
     
     
     virtual int StatFS(const char *_path, // path may be a file path, or directory path
@@ -191,7 +191,14 @@ public:
      * Best of all it should return a shared object which is already used in host.
      * Can return nullptr, which is ok.
      */
-    virtual shared_ptr<VFSHostOptions> Options() const;
+    [[deprecated]] virtual shared_ptr<VFSHostOptions> Options() const;
+    
+    /**
+     * Consequent calls should return the same object if no changes had occured.
+     * I.e. Host HAVE to store this Configuration object inside.
+     * (hosts with dummy configs can have a global const exemplars)
+     */
+    virtual VFSConfiguration Configuration() const;
     
     // return value 0 means error or unsupported for this VFS
     virtual bool IsDirChangeObservingAvailable(const char *_path);
@@ -223,3 +230,4 @@ private:
     VFSHost(const VFSHost& _r) = delete;
     void operator=(const VFSHost& _r) = delete;
 };
+

@@ -17,6 +17,8 @@ public:
     
     static const char *Tag;    
     virtual const char *FSTag() const override;
+    virtual VFSConfiguration Configuration() const override;
+    static VFSMeta Meta();
     
     virtual bool IsWriteable() const override;
     virtual bool IsWriteableAtPath(const char *_dir) const override;

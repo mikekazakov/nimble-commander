@@ -244,6 +244,26 @@ ERROR_B:
 ERROR_A:;
 }
 
+class VFSPSHostConfiguration
+{
+public:
+    const char *Tag() const
+    {
+        return VFSPSHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return "";
+    }
+    
+    bool operator==(const VFSPSHostConfiguration&) const
+    {
+        return true;
+    }
+};
+
+
 VFSPSHost::VFSPSHost():
     VFSHost("", shared_ptr<VFSHost>(0)),
     m_UpdateQ(make_shared<SerialQueueT>(__FILES_IDENTIFIER__".VFSPSHost"))
@@ -259,6 +279,22 @@ VFSPSHost::~VFSPSHost()
 const char *VFSPSHost::FSTag() const
 {
     return Tag;
+}
+
+VFSConfiguration VFSPSHost::Configuration() const
+{
+    static auto c = VFSPSHostConfiguration();
+    return c;
+}
+
+VFSMeta VFSPSHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return GetSharedOrNew();
+    };
+    return m;
 }
 
 shared_ptr<VFSPSHost> VFSPSHost::GetSharedOrNew()

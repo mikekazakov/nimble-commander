@@ -9,10 +9,22 @@
 #import <sys/errno.h>
 #import "../3rd_party/libarchive/archive_platform.h"
 #import "VFSError.h"
+#import "VFSDeclarations.h"
 
 static NSString *const g_Domain = @__FILES_IDENTIFIER__".vfs";
 
-namespace VFSError 
+VFSErrorException::VFSErrorException( int _err ) :
+    m_Code(_err)
+{
+    m_Verb = "vfs exception code #"s + to_string(_err);
+}
+
+const char* VFSErrorException::what() const noexcept
+{
+    return m_Verb.c_str();
+}
+
+namespace VFSError
 {
 
 int FromErrno(int _errno)

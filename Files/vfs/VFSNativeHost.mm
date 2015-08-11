@@ -17,6 +17,35 @@
 
 const char *VFSNativeHost::Tag = "native";
 
+class VFSNativeHostConfiguration
+{
+public:
+    const char *Tag() const
+    {
+        return VFSNativeHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return "";
+    }
+    
+    bool operator==(const VFSNativeHostConfiguration&) const
+    {
+        return true;
+    }
+};
+
+VFSMeta VFSNativeHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return SharedHost();
+    };
+    return m;
+}
+
 VFSNativeHost::VFSNativeHost():
     VFSHost("", 0)
 {
@@ -417,4 +446,10 @@ int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, VFSCance
 bool VFSNativeHost::IsNativeFS() const noexcept
 {
     return true;
+}
+
+VFSConfiguration VFSNativeHost::Configuration() const
+{
+    static const auto aa = VFSNativeHostConfiguration();
+    return aa;
 }

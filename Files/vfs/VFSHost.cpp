@@ -12,6 +12,7 @@
 #import "path_manip.h"
 
 static_assert(sizeof(VFSStat) == 128, "");
+static const char *g_ThisTag = "nullfs";
 
 bool VFSStatFS::operator==(const VFSStatFS& _r) const
 {
@@ -78,6 +79,10 @@ void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
     _to.st_birthtimespec    = _from.btime;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////// VFSHostDirObservationTicket
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 VFSHostDirObservationTicket::VFSHostDirObservationTicket() noexcept:
     m_Ticket(0),
     m_Host()
@@ -127,6 +132,34 @@ void VFSHostDirObservationTicket::reset()
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////// VFSHostConfiguration
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class VFSHostConfiguration
+{
+public:
+    
+    const char *Tag() const
+    {
+        return g_ThisTag;
+    }
+    
+    const char *Junction() const
+    {
+        return "";
+    }
+    
+    bool operator==(const VFSHostConfiguration&) const
+    {
+        return true;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////// VFSHost
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 VFSHost::VFSHost(const char *_junction_path,
                  shared_ptr<VFSHost> _parent):
     m_JunctionPath(_junction_path ? _junction_path : ""),
@@ -140,7 +173,7 @@ VFSHost::~VFSHost()
 
 const char *VFSHost::FSTag() const
 {
-    return "nullfs";
+    return g_ThisTag;
 }
 
 shared_ptr<VFSHost> VFSHost::Parent() const
@@ -400,6 +433,12 @@ string VFSHost::VerboseJunctionPath() const
 shared_ptr<VFSHostOptions> VFSHost::Options() const
 {
     return nullptr;
+}
+
+VFSConfiguration VFSHost::Configuration() const
+{
+    static auto config = VFSConfiguration( VFSHostConfiguration() );
+    return config;
 }
 
 bool VFSHost::Exists(const char *_path, VFSCancelChecker _cancel_checker)

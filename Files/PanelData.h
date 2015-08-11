@@ -1,6 +1,7 @@
 #pragma once
 #include "DispatchQueue.h"
 #include "VFS.h"
+#import "chained_strings.h"
 
 struct PanelSortMode
 {

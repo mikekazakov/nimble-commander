@@ -112,6 +112,12 @@
 		CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
 		CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
 		CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
+		CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */; };
+		CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */; };
+		CF4E33DF1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */; };
+		CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
+		CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
+		CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
 		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
@@ -1140,6 +1146,10 @@
 		CF4E33D11B75F889005B5292 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		CF4E33D51B78CF60005B5292 /* PanelController+NavigationMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+NavigationMenu.h"; sourceTree = "<group>"; };
 		CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+NavigationMenu.mm"; sourceTree = "<group>"; };
+		CF4E33DB1B791F9F005B5292 /* VFSConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSConfiguration.h; path = vfs/VFSConfiguration.h; sourceTree = "<group>"; };
+		CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSConfiguration.cpp; path = vfs/VFSConfiguration.cpp; sourceTree = "<group>"; };
+		CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFactory.cpp; path = vfs/VFSFactory.cpp; sourceTree = "<group>"; };
+		CF4E33E11B79B53E005B5292 /* VFSFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFactory.h; path = vfs/VFSFactory.h; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_press.png; path = Resource/tab_close_press.png; sourceTree = "<group>"; };
@@ -2123,6 +2133,10 @@
 		CF653C4018C38DD400502920 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */,
+				CF4E33E11B79B53E005B5292 /* VFSFactory.h */,
+				CF4E33DB1B791F9F005B5292 /* VFSConfiguration.h */,
+				CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */,
 				CF50B6B81A15167800E3D96D /* VFSDeclarations.h */,
 				CF50B6B91A15167800E3D96D /* VFSError.h */,
 				CF50B6BA1A15167800E3D96D /* VFSError.mm */,
@@ -3268,6 +3282,7 @@
 				CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */,
 				CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */,
 				CF50B7441A15173100E3D96D /* VFSEasyOps.mm in Sources */,
+				CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */,
 				CF6D9C711966780D0077B146 /* chained_strings.cpp in Sources */,
 				CF6D9C721966780D0077B146 /* Encodings.cpp in Sources */,
@@ -3419,6 +3434,7 @@
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CF6D9BD2196677CA0077B146 /* NSArray+SSYMutations.m in Sources */,
 				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
+				CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF6D9BD3196677CA0077B146 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF6D9BD4196677CA0077B146 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF6D9BD5196677CA0077B146 /* SUStandardVersionComparator.m in Sources */,
@@ -3460,6 +3476,7 @@
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.mm in Sources */,
 				CF50B7281A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
+				CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
 				CFC4342616E0E1E3001B0512 /* CreateDirectorySheetController.mm in Sources */,
@@ -3604,6 +3621,7 @@
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
+				CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CFE5DDA41ADF9E63008F1108 /* IdleSleepPreventer.cpp in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
@@ -3689,6 +3707,7 @@
 				CFF6F2631A13567C00011177 /* Hash.cpp in Sources */,
 				CF50B7371A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */,
+				CF4E33DF1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CFF6F26A1A13567C00011177 /* Encodings.cpp in Sources */,
 				CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFF6F26C1A13567C00011177 /* path_manip.c in Sources */,
@@ -3840,6 +3859,7 @@
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */,
 				CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */,
+				CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */,

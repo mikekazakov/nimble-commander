@@ -134,11 +134,22 @@ struct VFSStat
     inline static meaningT AllMeaning() { const uint64_t t = ~0; return *(meaningT*)&t; }
 };
 
+class VFSErrorException : public exception
+{
+public:
+    VFSErrorException( int _err );
+    virtual const char* what() const noexcept override;    
+private:
+    int     m_Code;
+    string  m_Verb;
+};
+
 class VFSListing;
 class VFSHost;
 class VFSHostOptions;
 class VFSFile;
 class VFSPath;
+class VFSConfiguration;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
 typedef weak_ptr<VFSHost>           VFSHostWeakPtr;

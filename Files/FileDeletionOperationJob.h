@@ -10,6 +10,7 @@
 
 #import "OperationJob.h"
 #import "FileDeletionOperation.h"
+#import "chained_strings.h"
 
 class FileDeletionOperationJob : public OperationJob
 {

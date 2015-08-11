@@ -93,6 +93,9 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     // modules initialization
+    VFSFactory::Instance().RegisterVFS( VFSNativeHost::Meta() );
+    VFSFactory::Instance().RegisterVFS( VFSPSHost::Meta() );
+    
     NativeFSManager::Instance();
         
     // disable some features available in menu by configuration limitation

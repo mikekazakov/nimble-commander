@@ -170,24 +170,6 @@ public:
     virtual int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs);
     
     /**
-     * Returns readable host's address.
-     * For example, for native fs it will be "".
-     * For PSFS it will be like "psfs:"
-     * For FTP it will be like "ftp://127.0.0.1"
-     * For archive fs it will be path at parent fs like "/Users/migun/Downloads/1.zip"
-     * Default implementation returns JunctionPath()
-     */
-    virtual string VerboseJunctionPath() const;
-    
-    /**
-     * Returns options used to open current host, which later can be used to reconstruct this host.
-     * This object should be immutable due to performance reasons.
-     * Best of all it should return a shared object which is already used in host.
-     * Can return nullptr, which is ok.
-     */
-    [[deprecated]] virtual shared_ptr<VFSHostOptions> Options() const;
-    
-    /**
      * Consequent calls should return the same object if no changes had occured.
      * I.e. Host HAVE to store this Configuration object inside.
      * (hosts with dummy configs can have a global const exemplars)

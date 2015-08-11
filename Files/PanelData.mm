@@ -210,7 +210,7 @@ string PanelData::VerboseDirectoryFullPath() const
     
     string s;
     while(hosts_n > 0)
-        s += hosts[--hosts_n]->VerboseJunctionPath();
+        s += hosts[--hosts_n]->Configuration().VerboseJunction();
     s += m_Listing->RelativePath();
     if(s.back() != '/') s += '/';
     return s;

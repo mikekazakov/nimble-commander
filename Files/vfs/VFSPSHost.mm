@@ -261,8 +261,12 @@ public:
     {
         return true;
     }
+    
+    const char *VerboseJunction() const
+    {
+        return "[psfs]:";
+    }
 };
-
 
 VFSPSHost::VFSPSHost():
     VFSHost("", shared_ptr<VFSHost>(0)),
@@ -619,11 +623,6 @@ int VFSPSHost::IterateDirectoryListing(const char *_path, function<bool(const VF
     }
     
     return VFSError::Ok;
-}
-
-string VFSPSHost::VerboseJunctionPath() const
-{
-    return "[psfs]:";
 }
 
 int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)

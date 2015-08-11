@@ -63,6 +63,7 @@ public:
     string user;
     string passwd;
     string keypath;
+    string verbose; // cached only. not counted in operator ==
     long   port;
     
     const char *Tag() const
@@ -82,6 +83,11 @@ public:
                passwd     == _rhs.passwd &&
                keypath    == _rhs.keypath &&
                port       == _rhs.port;
+    }
+    
+    const char *VerboseJunction() const
+    {
+        return verbose.c_str();
     }
 };
 
@@ -128,6 +134,7 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
         config.passwd = _passwd;
         config.keypath = _keypath;
         config.port = _port;
+        config.verbose = "sftp://"s + config.user + "@" + config.server_url;
         m_Config = VFSConfiguration(move(config));
     }
     
@@ -573,11 +580,6 @@ int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, 
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
-}
-
-string VFSNetSFTPHost::VerboseJunctionPath() const
-{
-    return "sftp://"s + JunctionPath();
 }
 
 bool VFSNetSFTPHost::ShouldProduceThumbnails() const

@@ -83,7 +83,7 @@ string VFSFile::ComposeVerbosePath() const
     
     string s;
     while(hosts_n > 0)
-        s += hosts[--hosts_n]->VerboseJunctionPath();
+        s += hosts[--hosts_n]->Configuration().VerboseJunction();
     s += m_RelativePath;
     return s;
 }

@@ -23,6 +23,7 @@ public:
     string user;
     string passwd;
     string start_dir;
+    string verbose; // cached only. not counted in operator ==
     long   port;
     
     const char *Tag() const
@@ -43,6 +44,12 @@ public:
         start_dir  == _rhs.start_dir &&
         port       == _rhs.port;
     }
+    
+    const char *VerboseJunction() const
+    {
+        return verbose.c_str();
+    }
+    
 };
 
 VFSNetFTPHost::~VFSNetFTPHost()
@@ -65,6 +72,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
         config.passwd = _passwd;
         config.start_dir = _start_dir;
         config.port = _port;
+        config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;        
         m_Configuration = VFSConfiguration( move(config) );
     }
     
@@ -197,11 +205,6 @@ string VFSNetFTPHost::BuildFullURLString(const char *_path) const
     url += JunctionPath();
     url += _path;
     return url;
-}
-
-string VFSNetFTPHost::VerboseJunctionPath() const
-{
-    return "ftp://"s + JunctionPath();
 }
 
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()

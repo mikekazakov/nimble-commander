@@ -42,7 +42,7 @@ struct AdditionalPath
         
         string s;
         while(hosts_n > 0)
-            s += hosts[--hosts_n]->VerboseJunctionPath();
+            s += hosts[--hosts_n]->Configuration().VerboseJunction();
         s += path;
         return s;
     }

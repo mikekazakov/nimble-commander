@@ -23,6 +23,11 @@ const char *VFSConfiguration::Junction() const
     return m_Object->Junction();
 }
 
+const char *VFSConfiguration::VerboseJunction() const
+{
+    return m_Object->VerboseJunction();
+}
+
 bool VFSConfiguration::Equal( const VFSConfiguration &_rhs ) const
 {
     // logic:

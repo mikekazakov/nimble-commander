@@ -65,7 +65,6 @@ public:
     virtual int CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker) override;
     virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
     
-    virtual string VerboseJunctionPath() const override;
     virtual bool ShouldProduceThumbnails() const override;
     
     // internal stuff

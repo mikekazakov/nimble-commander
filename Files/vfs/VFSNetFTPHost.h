@@ -65,8 +65,6 @@ public:
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
-    
-    virtual string VerboseJunctionPath() const override;
 
     // internal stuff below:
     string BuildFullURLString(const char *_path) const;

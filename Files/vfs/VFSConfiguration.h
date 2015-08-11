@@ -11,10 +11,13 @@
 /** 
  * Configuration requirements synopsis
  *
+ * === required:
  * const char *Tag() const
  * const char *Junction() const
  * bool operator==(const T&) const
  *
+ * === optional (diagnosed with SNIFAE):
+ * const char *VerboseJunction() const
  */
 
 class VFSConfiguration
@@ -31,6 +34,16 @@ public:
     
     const char *Tag() const;
     const char *Junction() const;
+    
+    /**
+     * Returns readable host's address.
+     * For example, for native fs it will be "".
+     * For PSFS it will be like "psfs:"
+     * For FTP it will be like "ftp://127.0.0.1"
+     * For archive fs it will be path at parent fs like "/Users/migun/Downloads/1.zip"
+     * Default implementation returns JunctionPath()
+     */
+    const char *VerboseJunction() const;
     bool Equal( const VFSConfiguration &_rhs ) const;
     inline bool operator ==(const VFSConfiguration &_rhs) const { return  Equal(_rhs); }
     inline bool operator !=(const VFSConfiguration &_rhs) const { return !Equal(_rhs); }
@@ -61,6 +74,7 @@ private:
         virtual ~Concept() = default;
         virtual const char *Tag() const = 0;
         virtual const char *Junction() const = 0;
+        virtual const char *VerboseJunction() const = 0;
         virtual const type_info &TypeID() const = 0;
         virtual bool Equal( const Concept &_rhs ) const = 0;
     };
@@ -68,6 +82,8 @@ private:
     template <class T>
     struct Model : Concept
     {
+        T obj;
+        
         Model(T _t):
             obj( move(_t) )
         {};
@@ -93,7 +109,18 @@ private:
             return obj == rhs.obj;
         }
         
-        T obj;
+        template <typename C>
+        static auto VerboseJunctionImpl(const C&t, int) ->
+        decltype( t.VerboseJunction(), (const char*)nullptr )
+        { return t.VerboseJunction(); }
+        
+        static const char* VerboseJunctionImpl(const T&t, long)
+        { return t.Junction(); }
+        
+        virtual const char *VerboseJunction() const
+        {
+            return VerboseJunctionImpl(obj, 0);
+        }
     };
     
     shared_ptr<const Concept> m_Object;

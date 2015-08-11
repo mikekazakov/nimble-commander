@@ -416,16 +416,6 @@ const shared_ptr<VFSHost> &VFSHost::DummyHost()
     return host;
 }
 
-string VFSHost::VerboseJunctionPath() const
-{
-    return JunctionPath();
-}
-
-shared_ptr<VFSHostOptions> VFSHost::Options() const
-{
-    return nullptr;
-}
-
 VFSConfiguration VFSHost::Configuration() const
 {
     static auto config = VFSConfiguration( VFSHostConfiguration() );

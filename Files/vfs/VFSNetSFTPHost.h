@@ -15,27 +15,22 @@ typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
-struct VFSNetSFTPOptions : VFSHostOptions
-{
-    string user;
-    string passwd; // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
-    string keypath; // full path to private key
-    long   port = 22;
-    
-    bool Equal(const VFSHostOptions &_r) const override;
-};
-
 class VFSNetSFTPHost : public VFSHost
 {
 public:
     // vfs identity
     static  const char *Tag;
     virtual const char *FSTag() const override;
-    
+    virtual VFSConfiguration Configuration() const override;
+    static VFSMeta Meta();
     
     // construction
-    VFSNetSFTPHost(const char *_serv_url);
-    int Open(const VFSNetSFTPOptions &_options);
+    VFSNetSFTPHost(const string &_serv_url,
+                   const string &_user,
+                   const string &_passwd, // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
+                   const string &_keypath, // full path to private key
+                   long   _port = 22);
+    VFSNetSFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
     
     const string& HomeDir() const;
 
@@ -71,7 +66,6 @@ public:
     virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
     
     virtual string VerboseJunctionPath() const override;
-    virtual shared_ptr<VFSHostOptions> Options() const override;
     virtual bool ShouldProduceThumbnails() const override;
     
     // internal stuff
@@ -95,14 +89,16 @@ private:
     static void SpawnSSH2_KbdCallback(const char *name, int name_len, const char *instruction, int instruction_len,
                                       int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses, void **abstract);
+    int DoInit();
     int SpawnSSH2(unique_ptr<Connection> &_t);
     int SpawnSFTP(unique_ptr<Connection> &_t);
     
     in_addr_t InetAddr() const;
+    const class VFSNetSFTPHostConfiguration &Config() const;
     
     list<unique_ptr<Connection>>                m_Connections;
     mutex                                       m_ConnectionsLock;
-    shared_ptr<VFSNetSFTPOptions>               m_Options;
+    VFSConfiguration                            m_Config;
     string                                      m_HomeDir;
     in_addr_t                                   m_HostAddr = 0;
 };

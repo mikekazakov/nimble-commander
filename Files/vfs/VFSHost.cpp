@@ -30,15 +30,6 @@ bool VFSStatFS::operator!=(const VFSStatFS& _r) const
     volume_name != _r.volume_name;
 }
 
-VFSHostOptions::~VFSHostOptions()
-{
-};
-
-bool VFSHostOptions::Equal(const VFSHostOptions &_r) const
-{
-    return typeid(_r) == typeid(*this);
-}
-
 void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
 {
     _to.dev     = _from.st_dev;

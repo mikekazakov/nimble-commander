@@ -93,8 +93,12 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
     // modules initialization
-    VFSFactory::Instance().RegisterVFS( VFSNativeHost::Meta() );
-    VFSFactory::Instance().RegisterVFS( VFSPSHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(      VFSNetSFTPHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(       VFSNetFTPHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(      VFSArchiveHost::Meta() );
+    VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
     
     NativeFSManager::Instance();
         

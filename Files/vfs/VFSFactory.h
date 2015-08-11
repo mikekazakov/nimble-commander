@@ -7,7 +7,7 @@ class VFSMeta
 public:
     string                                                      Tag;
     function<VFSHostPtr(const VFSHostPtr &_parent,
-                        const VFSConfiguration& _config)>       SpawnWithConfig;
+                        const VFSConfiguration& _config)>       SpawnWithConfig; // may throw an exception upon call
 };
 
 class VFSFactory

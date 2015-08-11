@@ -18,11 +18,60 @@
 
 const char *VFSArchiveHost::Tag = "arc_libarchive";
 
-VFSArchiveHost::VFSArchiveHost(const char *_junction_path,
-                               shared_ptr<VFSHost> _parent):
-    VFSHost(_junction_path, _parent)
+class VFSArchiveHostConfiguration
+{
+public:
+    string path;
+    
+    const char *Tag() const
+    {
+        return VFSArchiveHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return path.c_str();
+    }
+    
+    bool operator==(const VFSArchiveHostConfiguration&_rhs) const
+    {
+        return path == _rhs.path;
+    }
+};
+
+VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
+    VFSHost(_path.c_str(), _parent)
 {
     assert(_parent);
+    {
+        VFSArchiveHostConfiguration config;
+        config.path = _path;
+        m_Configuration = VFSConfiguration( move(config) );
+    }
+
+    int rc = DoInit();
+    if(rc < 0) {
+        if(m_Arc != 0) { // TODO: ugly
+            archive_read_free(m_Arc);
+            m_Arc = 0;
+        }
+        throw VFSErrorException(rc);
+    }
+}
+
+VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent),
+    m_Configuration(_config)
+{
+    assert(_parent);
+    int rc = DoInit();
+    if(rc < 0) {
+        if(m_Arc != 0) { // TODO: ugly
+            archive_read_free(m_Arc);
+            m_Arc = 0;
+        }
+        throw VFSErrorException(rc);
+    }
 }
 
 VFSArchiveHost::~VFSArchiveHost()
@@ -41,7 +90,22 @@ bool VFSArchiveHost::IsImmutableFS() const noexcept
     return true;
 }
 
-int VFSArchiveHost::Open()
+VFSConfiguration VFSArchiveHost::Configuration() const
+{
+    return m_Configuration;
+}
+
+VFSMeta VFSArchiveHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return make_shared<VFSArchiveHost>(_parent, _config);
+    };
+    return m;
+}
+
+int VFSArchiveHost::DoInit()
 {
     assert(m_Arc == 0);
 

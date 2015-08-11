@@ -209,29 +209,30 @@
 - (void) GoToFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_connection
                       password:(const string&)_passwd
 {
-    VFSNetFTPOptions opts;
-    opts.user = _connection->user;
-    opts.passwd = _passwd;
-    opts.port = _connection->port;
-    
-    auto host = make_shared<VFSNetFTPHost>(_connection->host.c_str());
-    int ret = host->Open(_connection->path.c_str(), opts);
-    if(ret != 0)
-        return dispatch_to_main_queue([=]{
+    try {
+        auto host = make_shared<VFSNetFTPHost>(_connection->host,
+                                               _connection->user,
+                                               _passwd,
+                                               _connection->path,
+                                               _connection->port
+                                               );
+        dispatch_to_main_queue([=]{
+            m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+            [self GoToDir:_connection->path vfs:host select_entry:"" async:true];
+        });
+        
+        // save successful connection to history
+        SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
+        SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+    } catch (VFSErrorException &e) {
+        dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
             alert.messageText = NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
-            alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
-    dispatch_to_main_queue([=]{
-        m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-        [self GoToDir:_connection->path vfs:host select_entry:"" async:true];
-    });
-    
-    // save successful connection to history
-    SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
-    SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+    }
 }
 
 - (void) showGoToFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_current
@@ -270,30 +271,31 @@
 - (void) GoToSFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_connection
                          password:(const string&)_passwd
 {
-    VFSNetSFTPOptions opts;
-    opts.user = _connection->user;
-    opts.passwd = _passwd;
-    opts.port = _connection->port;
-    opts.keypath = _connection->keypath;
-
-    auto host = make_shared<VFSNetSFTPHost>(_connection->host.c_str());
-    int ret = host->Open(opts);
-    if(ret != 0)
-        return dispatch_to_main_queue([=]{
+    try {
+        auto host = make_shared<VFSNetSFTPHost>(_connection->host,
+                                                _connection->user,
+                                                _passwd,
+                                                _connection->keypath,
+                                                _connection->port
+                                                );
+        dispatch_to_main_queue([=]{
+            m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+            [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
+        });
+        
+        // save successful connection to history
+        SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
+        SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+        
+    } catch (const VFSErrorException &e) {
+        dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
             alert.messageText = NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
-            alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
+            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
-    dispatch_to_main_queue([=]{
-        m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-        [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
-    });
-    
-    // save successful connection to history
-    SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
-    SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+    }
 }
 
 - (void) showGoToSFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_current; // current may be nullptr

@@ -12,16 +12,6 @@
 #import "VFSListing.h"
 #import "VFSNetSFTPFile.h"
 
-
-bool VFSNetSFTPOptions::Equal(const VFSHostOptions &_r) const
-{
-    if(typeid(_r) != typeid(*this))
-        return false;
-    
-    const VFSNetSFTPOptions& r = (const VFSNetSFTPOptions&)_r;
-    return user == r.user && passwd == r.passwd && keypath == r.keypath && port == r.port;
-}
-
 VFSNetSFTPHost::Connection::~Connection()
 {
     if(sftp) {
@@ -66,31 +56,100 @@ struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent con
 
 const char *VFSNetSFTPHost::Tag = "net_sftp";
 
+class VFSNetSFTPHostConfiguration
+{
+public:
+    string server_url;
+    string user;
+    string passwd;
+    string keypath;
+    long   port;
+    
+    const char *Tag() const
+    {
+        return VFSNetSFTPHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return server_url.c_str();
+    }
+    
+    bool operator==(const VFSNetSFTPHostConfiguration&_rhs) const
+    {
+        return server_url == _rhs.server_url &&
+               user       == _rhs.user &&
+               passwd     == _rhs.passwd &&
+               keypath    == _rhs.keypath &&
+               port       == _rhs.port;
+    }
+};
+
 const char *VFSNetSFTPHost::FSTag() const
 {
     return Tag;
 }
 
-VFSNetSFTPHost::VFSNetSFTPHost(const char *_serv_url):
-    VFSHost(_serv_url, nullptr)
+VFSConfiguration VFSNetSFTPHost::Configuration() const
+{
+    return m_Config;
+}
+
+VFSMeta VFSNetSFTPHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return make_shared<VFSNetSFTPHost>(_config);
+    };
+    return m;
+}
+
+VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
+    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr),
+    m_Config(_config)
+{
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
+}
+
+VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
+                               const string &_user,
+                               const string &_passwd,
+                               const string &_keypath,
+                               long   _port):
+    VFSHost(_serv_url.c_str(), nullptr)
+{
+    {
+        VFSNetSFTPHostConfiguration config;
+        config.server_url = _serv_url;
+        config.user = _user;
+        config.passwd = _passwd;
+        config.keypath = _keypath;
+        config.port = _port;
+        m_Config = VFSConfiguration(move(config));
+    }
+    
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
+}
+
+int VFSNetSFTPHost::DoInit()
 {
     static once_flag once;
     call_once(once, []{
         int rc = libssh2_init(0);
         assert(rc == 0);
     });
-}
 
-int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
-{
-    struct hostent *remote_host = gethostbyname(JunctionPath());
+    struct hostent *remote_host = gethostbyname( Config().server_url.c_str() );
     if(!remote_host)
         return VFSError::NetSFTPCouldntResolveHost; // need something meaningful
     if(remote_host->h_addrtype != AF_INET)
         return VFSError::NetSFTPCouldntResolveHost; // need something meaningful
     m_HostAddr = *(in_addr_t *) remote_host->h_addr_list[0];
-    
-    m_Options = make_shared<VFSNetSFTPOptions>(_options);
     
     unique_ptr<Connection> conn;
     int rc = SpawnSSH2(conn);
@@ -128,6 +187,11 @@ int VFSNetSFTPHost::Open(const VFSNetSFTPOptions &_options)
     return 0;
 }
 
+const class VFSNetSFTPHostConfiguration &VFSNetSFTPHost::Config() const
+{
+    return m_Config.GetUnchecked<VFSNetSFTPHostConfiguration>();
+}
+
 const string& VFSNetSFTPHost::HomeDir() const
 {
     return m_HomeDir;
@@ -142,14 +206,13 @@ void VFSNetSFTPHost::SpawnSSH2_KbdCallback(const char *name, int name_len,
 {
     VFSNetSFTPHost *_this = *(VFSNetSFTPHost **)abstract;
     if (num_prompts == 1) {
-        responses[0].text = strdup(_this->m_Options->passwd.c_str());
-        responses[0].length = (unsigned)_this->m_Options->passwd.length();
+        responses[0].text = strdup(_this->Config().passwd.c_str());
+        responses[0].length = (unsigned)_this->Config().passwd.length();
     }
 }
 
 int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
 {
-    assert(m_Options);
     _t = nullptr;
     auto connection = make_unique<Connection>();
 
@@ -159,7 +222,7 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     connection->socket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in sin;
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(m_Options->port > 0 ? m_Options->port : 22);
+    sin.sin_port = htons(Config().port > 0 ? Config().port : 22);
     sin.sin_addr.s_addr = hostaddr;
     if (connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0)
         return VFSError::NetSFTPCouldntConnect;
@@ -175,32 +238,32 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     if(rc)
         return VFSError::NetSFTPCouldntEstablishSSH;
     
-    if(!m_Options->keypath.empty()) {
+    if(!Config().keypath.empty()) {
         if(libssh2_userauth_publickey_fromfile_ex(connection->ssh,
-                                                  m_Options->user.c_str(),
-                                                  (unsigned)m_Options->user.length(),
+                                                  Config().user.c_str(),
+                                                  (unsigned)Config().user.length(),
                                                   nullptr,
-                                                  m_Options->keypath.c_str(),
-                                                  m_Options->passwd.c_str()))
+                                                  Config().keypath.c_str(),
+                                                  Config().passwd.c_str()))
             return VFSError::NetSFTPCouldntAuthenticateKey;
     }
     else {
-        char *authlist = libssh2_userauth_list(connection->ssh, m_Options->user.c_str(), (unsigned)m_Options->user.length());
+        char *authlist = libssh2_userauth_list(connection->ssh, Config().user.c_str(), (unsigned)Config().user.length());
         bool has_keyboard_interactive = authlist != nullptr &&
                                         strstr(authlist, "keyboard-interactive") != nullptr;
         
         int ret = LIBSSH2_ERROR_AUTHENTICATION_FAILED;
         if( has_keyboard_interactive ) // if supported - use keyboard interactive first
             ret = libssh2_userauth_keyboard_interactive_ex(connection->ssh,
-                                                           m_Options->user.c_str(),
-                                                           (unsigned)m_Options->user.length(),
+                                                           Config().user.c_str(),
+                                                           (unsigned)Config().user.length(),
                                                            &SpawnSSH2_KbdCallback);
         if( ret ) // if no luck - use just password
             ret = libssh2_userauth_password_ex(connection->ssh,
-                                               m_Options->user.c_str(),
-                                               (unsigned)m_Options->user.length(),
-                                               m_Options->passwd.c_str(),
-                                               (unsigned)m_Options->passwd.length(),
+                                               Config().user.c_str(),
+                                               (unsigned)Config().user.length(),
+                                               Config().passwd.c_str(),
+                                               (unsigned)Config().passwd.length(),
                                                NULL);
         if ( ret )
             return VFSError::NetSFTPCouldntAuthenticatePassword;
@@ -515,11 +578,6 @@ int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, 
 string VFSNetSFTPHost::VerboseJunctionPath() const
 {
     return "sftp://"s + JunctionPath();
-}
-
-shared_ptr<VFSHostOptions> VFSNetSFTPHost::Options() const
-{
-    return m_Options;
 }
 
 bool VFSNetSFTPHost::ShouldProduceThumbnails() const

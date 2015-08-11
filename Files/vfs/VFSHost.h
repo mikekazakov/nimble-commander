@@ -13,12 +13,6 @@
 #import "VFSConfiguration.h"
 #import "VFSFactory.h"
 
-struct VFSHostOptions
-{
-    virtual ~VFSHostOptions();
-    virtual bool Equal(const VFSHostOptions &_r) const;
-};
-
 class VFSHostDirObservationTicket
 {
 public:

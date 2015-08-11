@@ -138,7 +138,8 @@ class VFSErrorException : public exception
 {
 public:
     VFSErrorException( int _err );
-    virtual const char* what() const noexcept override;    
+    virtual const char* what() const noexcept override;
+    int                 code() const noexcept;
 private:
     int     m_Code;
     string  m_Verb;
@@ -146,13 +147,11 @@ private:
 
 class VFSListing;
 class VFSHost;
-class VFSHostOptions;
 class VFSFile;
 class VFSPath;
 class VFSConfiguration;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
 typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
-typedef shared_ptr<VFSHostOptions>  VFSHostOptionsPtr;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

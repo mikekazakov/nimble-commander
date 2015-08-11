@@ -24,6 +24,11 @@ const char* VFSErrorException::what() const noexcept
     return m_Verb.c_str();
 }
 
+int VFSErrorException::code() const noexcept
+{
+    return m_Code;
+}
+
 namespace VFSError
 {
 

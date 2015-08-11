@@ -19,14 +19,14 @@ struct VFSArchiveState;
 class VFSArchiveHost : public VFSHost
 {
 public:
-    VFSArchiveHost(const char *_junction_path,
-                   shared_ptr<VFSHost> _parent);
+    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent); // flags will be added later
+    VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSArchiveHost();
     
     static const char *Tag;
     virtual const char *FSTag() const override;
-    
-    int Open(); // flags will be added later
+    virtual VFSConfiguration Configuration() const override;    
+    static VFSMeta Meta();
 
     
     virtual bool IsImmutableFS() const noexcept override;
@@ -105,6 +105,8 @@ public:
     const Symlink *ResolvedSymlink(uint32_t _uid);
     
 private:
+    int DoInit();
+    
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
     
@@ -120,6 +122,7 @@ private:
     
     void ResolveSymlink(uint32_t _uid);
     
+    VFSConfiguration                        m_Configuration;
     shared_ptr<VFSFile>                     m_ArFile;
     shared_ptr<VFSArchiveMediator>          m_Mediator;
     struct archive                         *m_Arc = nullptr;

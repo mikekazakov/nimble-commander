@@ -13,7 +13,7 @@ bool VFSPathStack::Part::operator==(const Part&_r) const
     return fs_tag == _r.fs_tag &&
             junction == _r.junction &&
             !host.owner_before(_r.host) && !_r.host.owner_before(host) && // tricky weak_ptr comparison
-            options == _r.options
+            configuration == _r.configuration
             ;
 }
 
@@ -24,9 +24,7 @@ bool VFSPathStack::Part::weak_equal(const Part&_r) const
        
     if(fs_tag != _r.fs_tag) return false;
     if(junction != _r.junction) return false;
-    if(options == nullptr && _r.options != nullptr) return false;
-    if(options != nullptr && _r.options == nullptr) return false;
-    if(options != nullptr && !options->Equal(*_r.options)) return false;
+    if(configuration != _r.configuration ) return false;
     return true;
 }
 
@@ -54,7 +52,7 @@ VFSPathStack::VFSPathStack(const VFSListing &_listing)
         m_Stack[depth-1].fs_tag = curr_host->FSTag();
         m_Stack[depth-1].junction = curr_host->JunctionPath();
         m_Stack[depth-1].host = curr_host->shared_from_this();
-        m_Stack[depth-1].options = curr_host->Options();
+        m_Stack[depth-1].configuration = curr_host->Configuration();
         curr_host = curr_host->Parent().get();
         --depth;
     } while(curr_host != nullptr);

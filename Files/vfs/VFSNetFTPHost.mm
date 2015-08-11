@@ -16,28 +16,76 @@ using namespace VFSNetFTP;
 
 const char *VFSNetFTPHost::Tag = "net_ftp";
 
-bool VFSNetFTPOptions::Equal(const VFSHostOptions &_r) const
+class VFSNetFTPHostConfiguration
 {
-    if(typeid(_r) != typeid(*this))
-        return false;
-
-    const VFSNetFTPOptions& r = (const VFSNetFTPOptions&)_r;
-    return user == r.user &&
-            passwd == r.passwd &&
-            port == r.port;
-}
-
-VFSNetFTPHost::VFSNetFTPHost(const char *_serv_url):
-    VFSHost(_serv_url, nullptr),
-    m_Cache(make_unique<VFSNetFTP::Cache>())
-{
-    m_Cache->SetChangesCallback(^(const string &_at_dir) {
-        InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/" );
-    });
-}
+public:
+    string server_url;
+    string user;
+    string passwd;
+    string start_dir;
+    long   port;
+    
+    const char *Tag() const
+    {
+        return VFSNetFTPHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return server_url.c_str();
+    }
+    
+    bool operator==(const VFSNetFTPHostConfiguration&_rhs) const
+    {
+        return server_url == _rhs.server_url &&
+        user       == _rhs.user &&
+        passwd     == _rhs.passwd &&
+        start_dir  == _rhs.start_dir &&
+        port       == _rhs.port;
+    }
+};
 
 VFSNetFTPHost::~VFSNetFTPHost()
 {
+    // this dummy destructor is here due to forwarded types
+}
+
+VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
+                             const string &_user,
+                             const string &_passwd,
+                             const string &_start_dir,
+                             long   _port):
+    VFSHost(_serv_url.c_str(), nullptr),
+    m_Cache(make_unique<VFSNetFTP::Cache>())
+{
+    {
+        VFSNetFTPHostConfiguration config;
+        config.server_url = _serv_url;
+        config.user = _user;
+        config.passwd = _passwd;
+        config.start_dir = _start_dir;
+        config.port = _port;
+        m_Configuration = VFSConfiguration( move(config) );
+    }
+    
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
+}
+
+VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
+    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr),
+    m_Cache(make_unique<VFSNetFTP::Cache>()),
+    m_Configuration(_config)
+{
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
+}
+
+const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const
+{
+    return m_Configuration.GetUnchecked<VFSNetFTPHostConfiguration>();
 }
 
 const char *VFSNetFTPHost::FSTag() const
@@ -45,15 +93,31 @@ const char *VFSNetFTPHost::FSTag() const
     return Tag;
 }
 
-int VFSNetFTPHost::Open(const char *_starting_dir, const VFSNetFTPOptions &_options)
+VFSMeta VFSNetFTPHost::Meta()
 {
-    m_Options = make_shared<VFSNetFTPOptions>(_options);
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return make_shared<VFSNetFTPHost>(_config);
+    };
+    return m;
+}
+
+VFSConfiguration VFSNetFTPHost::Configuration() const
+{
+    return m_Configuration;
+}
+
+int VFSNetFTPHost::DoInit()
+{
+    m_Cache->SetChangesCallback(^(const string &_at_dir) {
+        InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/" );
+    });
     
     auto instance = SpawnCURL();
     
-    int result = DownloadAndCacheListing(instance.get(), _starting_dir, nullptr, nullptr);
-    if(result == 0)
-    {
+    int result = DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
+    if(result == 0) {
         m_ListingInstance = move(instance);
         return 0;
     }
@@ -573,22 +637,17 @@ void VFSNetFTPHost::BasicOptsSetup(VFSNetFTP::CURLInstance *_inst)
     _inst->EasySetOpt(CURLOPT_VERBOSE, g_CURLVerbose);
     _inst->EasySetOpt(CURLOPT_FTP_FILEMETHOD, g_CURLFTPMethod);
     
-    if(m_Options->user != "")
-        _inst->EasySetOpt(CURLOPT_USERNAME, m_Options->user.c_str());
-    if(m_Options->passwd != "")
-        _inst->EasySetOpt(CURLOPT_PASSWORD, m_Options->passwd.c_str());
-    if(m_Options->port > 0)
-        _inst->EasySetOpt(CURLOPT_PORT, m_Options->port);
+    if(Config().user != "")
+        _inst->EasySetOpt(CURLOPT_USERNAME, Config().user.c_str());
+    if(Config().passwd != "")
+        _inst->EasySetOpt(CURLOPT_PASSWORD, Config().passwd.c_str());
+    if(Config().port > 0)
+        _inst->EasySetOpt(CURLOPT_PORT, Config().port);
 
     // TODO: SSL support
     // _inst->EasySetOpt(CURLOPT_USE_SSL, CURLUSESSL_TRY);
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYPEER, false);
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYHOST, false);
-}
-
-shared_ptr<VFSHostOptions> VFSNetFTPHost::Options() const
-{
-    return m_Options;
 }
 
 int VFSNetFTPHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)

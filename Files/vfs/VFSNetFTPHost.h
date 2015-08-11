@@ -12,31 +12,21 @@
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 
-struct VFSNetFTPOptions : VFSHostOptions
-{
-    string user;
-    string passwd;
-    long   port = 21;
-    
-    bool Equal(const VFSHostOptions &_r) const override;
-};
-
 class VFSNetFTPHost : public VFSHost
 {
 public:
-    VFSNetFTPHost(const char *_serv_url); // like 'localhost', or '192.168.2.5' or 'ftp.microsoft.com'
+    VFSNetFTPHost(const string &_serv_url,
+                  const string &_user,
+                  const string &_passwd,
+                  const string &_start_dir,
+                  long   _port = 21);
+    VFSNetFTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
     ~VFSNetFTPHost();
 
     static  const char *Tag;
+    static VFSMeta Meta();
     virtual const char *FSTag() const override;
-    
-    /**
-     * return VFS error code, 0 if opened ok.
-     * upon opening will read starting directory listing
-     */
-    int Open(const char *_starting_dir,
-             const VFSNetFTPOptions &_options = VFSNetFTPOptions()
-             );
+    virtual VFSConfiguration Configuration() const override;    
     
     // core VFSHost methods
     virtual int FetchDirectoryListing(const char *_path,
@@ -77,7 +67,6 @@ public:
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
     
     virtual string VerboseJunctionPath() const override;
-    virtual shared_ptr<VFSHostOptions> Options() const override;
 
     // internal stuff below:
     string BuildFullURLString(const char *_path) const;
@@ -92,6 +81,7 @@ public:
     
     VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
 private:
+    int DoInit();
     int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,
                                 const char *_path,
                                 shared_ptr<VFSNetFTP::Directory> *_cached_dir,
@@ -112,6 +102,7 @@ private:
     void InformDirectoryChanged(const string &_dir_wth_sl);
     
     void BasicOptsSetup(VFSNetFTP::CURLInstance *_inst);
+    const class VFSNetFTPHostConfiguration &Config() const;
     
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;
@@ -129,5 +120,5 @@ private:
     vector<UpdateHandler>           m_UpdateHandlers;
     mutex                           m_UpdateHandlersLock;
     unsigned long                   m_LastUpdateTicket = 1;
-    shared_ptr<VFSNetFTPOptions>    m_Options;
+    VFSConfiguration                m_Configuration;
 };

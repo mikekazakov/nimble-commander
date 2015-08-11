@@ -30,16 +30,19 @@ shared_ptr<VFSHost> VFSArchiveProxy::OpenFileAsArchive(const string &_path,
     if(_parent->IsNativeFS() &&
        VFSArchiveUnRARHost::IsRarArchive(_path.c_str()) )
     {
-        shared_ptr<VFSArchiveUnRARHost> host = make_shared<VFSArchiveUnRARHost>(_path.c_str());
-        if(host->Open() == 0)
+        try {
+            auto host = make_shared<VFSArchiveUnRARHost>(_path);
             return host;
-        
+        } catch (VFSErrorException &e) {
+        }
         return nullptr;
     }
     
-    auto archive = make_shared<VFSArchiveHost>(_path.c_str(), _parent);
-    if(archive->Open() >= 0)
+    try {
+        auto archive = make_shared<VFSArchiveHost>(_path, _parent);
         return archive;
+    } catch (VFSErrorException &e) {
+    }
     
     return nullptr;
 }

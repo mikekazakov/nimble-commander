@@ -38,10 +38,54 @@ static time_t DosTimeToUnixTime(uint32_t _dos_time)
 
 const char *VFSArchiveUnRARHost::Tag = "arc_unrar";
 
-VFSArchiveUnRARHost::VFSArchiveUnRARHost(const char *_junction_path):
-    VFSHost(_junction_path, VFSNativeHost::SharedHost()),
+class VFSArchiveUnRARHostConfiguration
+{
+public:
+    string path;
+    
+    const char *Tag() const
+    {
+        return VFSArchiveUnRARHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return path.c_str();
+    }
+    
+    bool operator==(const VFSArchiveUnRARHostConfiguration&_rhs) const
+    {
+        return path == _rhs.path;
+    }
+};
+
+
+VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
+    VFSHost(_path.c_str(), VFSNativeHost::SharedHost()),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL))
 {
+    {
+        VFSArchiveUnRARHostConfiguration config;
+        config.path = _path;
+        m_Configuration = VFSConfiguration( move(config) );
+    }
+    
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
+}
+
+VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent),
+    m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
+    m_Configuration(_config)
+{
+    if(!_parent->IsNativeFS())
+        throw VFSErrorException(VFSError::InvalidCall);
+    
+    int rc = DoInit();
+    if(rc < 0)
+        throw VFSErrorException(rc);
 }
 
 VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
@@ -58,6 +102,21 @@ const char *VFSArchiveUnRARHost::FSTag() const
 bool VFSArchiveUnRARHost::IsImmutableFS() const noexcept
 {
     return true;
+}
+
+VFSConfiguration VFSArchiveUnRARHost::Configuration() const
+{
+    return m_Configuration;
+}
+
+VFSMeta VFSArchiveUnRARHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return make_shared<VFSArchiveUnRARHost>(_parent, _config);
+    };
+    return m;
 }
 
 bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
@@ -88,7 +147,7 @@ bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
     return result;
 }
 
-int VFSArchiveUnRARHost::Open()
+int VFSArchiveUnRARHost::DoInit()
 {
     if(!Parent() || Parent()->IsNativeFS() == false)
         return VFSError::NotSupported;

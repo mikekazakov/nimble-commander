@@ -15,10 +15,10 @@ class VFSPathStack
 public:
     struct Part
     {
-        const char* fs_tag;
+        const char* fs_tag; // this tag is redundant since configuration already able to provide it
         string junction;
         weak_ptr<VFSHost> host;
-        VFSHostOptionsPtr options;
+        VFSConfiguration configuration;
 
         /**
          * operation== performs fast comparison by ptrs.

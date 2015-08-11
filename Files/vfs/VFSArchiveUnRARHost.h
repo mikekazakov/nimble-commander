@@ -20,14 +20,17 @@ class VFSArchiveUnRARHost : public VFSHost
 {
 public:
     static const char *Tag;
-    VFSArchiveUnRARHost(const char *_junction_path);
+    VFSArchiveUnRARHost(const string &_path);
+    VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSArchiveUnRARHost();
     
     virtual const char *FSTag() const override;
     virtual bool IsImmutableFS() const noexcept override;
+    virtual VFSConfiguration Configuration() const override;
+    static VFSMeta Meta();
+    
 
     static bool IsRarArchive(const char *_archive_native_path);
-    int Open(); // flags will be added later
     
     
     // core VFSHost methods
@@ -85,6 +88,7 @@ public:
     
     VFS_DECLARE_SHARED_PTR(VFSArchiveUnRARHost);
 private:
+    int DoInit(); // flags will be added later
     
     int InitialReadFileList(void *_rar_handle);
 
@@ -99,6 +103,7 @@ private:
     uint64_t                                m_UnpackedItemsSize = 0;
     bool                                    m_IsSolidArchive = false;
     struct stat                             m_ArchiveFileStat;
+    VFSConfiguration                        m_Configuration;
 
     // TODO: int m_FD for exclusive lock?
 };

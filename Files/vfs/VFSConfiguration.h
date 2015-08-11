@@ -20,14 +20,20 @@
 class VFSConfiguration
 {
 public:
+    VFSConfiguration();
+
     template <class T>
     VFSConfiguration(T _t):
         m_Object( make_shared<Model<T>>( move(_t) ) )
-    {}
+    {
+        static_assert( is_class<T>::value, "configuration should be a class/struct" );
+    }
     
     const char *Tag() const;
     const char *Junction() const;
     bool Equal( const VFSConfiguration &_rhs ) const;
+    inline bool operator ==(const VFSConfiguration &_rhs) const { return  Equal(_rhs); }
+    inline bool operator !=(const VFSConfiguration &_rhs) const { return !Equal(_rhs); }
     
     template <class T>
     bool IsType() const
@@ -39,8 +45,14 @@ public:
     const T &Get() const
     {
         if( auto p = dynamic_pointer_cast<const Model<T>>( m_Object ) )
-            return *p;
+            return p->obj;
         throw domain_error("invalid configuration request");
+    }
+
+    template <class T>
+    const T &GetUnchecked() const
+    {
+        return static_cast<const Model<T>*>( m_Object.get() )->obj;
     }
     
 private:

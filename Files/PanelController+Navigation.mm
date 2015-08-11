@@ -40,12 +40,7 @@
         
         if(_stack[i].fs_tag != curr_stack[i]->FSTag()) break;
         if(_stack[i].junction != curr_stack[i]->JunctionPath()) break;
-        
-        auto opts1 = _stack[i].options;
-        auto opts2 = curr_stack[i]->Options();
-        if(opts1 == nullptr && opts2 != nullptr) break;
-        if(opts1 != nullptr && opts2 == nullptr) break;
-        if(opts1 != nullptr && !opts1->Equal(*opts2)) break;
+        if( curr_stack[i]->Configuration() != _stack[i].configuration ) break;
 
         // this is not the object which was used before, but it matches and seems that can be used
         res_stack.emplace_back(curr_stack[i]);
@@ -56,56 +51,18 @@
     {
         // refactor this in separate functions
         const auto &part = _stack[i];
-        if(part.fs_tag == VFSNativeHost::Tag) {
-            res_stack.emplace_back(VFSNativeHost::SharedHost());
+        auto meta = VFSFactory::Instance().Find(part.fs_tag);
+        if( !meta )
+            break;
+        
+        try {
+            auto host = meta->SpawnWithConfig(res_stack.empty() ? nullptr : res_stack.back(),
+                                              part.configuration);
+            res_stack.emplace_back(host);
+        } catch (VFSErrorException &e) {
+            // TODO: something
+            break;
         }
-        else if(part.fs_tag == VFSPSHost::Tag) {
-            res_stack.emplace_back(VFSPSHost::GetSharedOrNew());
-        }
-        else if(part.fs_tag == VFSArchiveHost::Tag) {
-            assert(i > 0);
-            auto arhost = make_shared<VFSArchiveHost>(part.junction.c_str(), res_stack.back());
-            if(arhost->Open() >= 0)
-                res_stack.emplace_back(arhost);
-            else
-                break;
-        }
-        else if(part.fs_tag == VFSArchiveUnRARHost::Tag) {
-            assert(i > 0);
-            if(!res_stack.back()->IsNativeFS())
-                break;
-            auto arhost = make_shared<VFSArchiveUnRARHost>(part.junction.c_str());
-            if(arhost->Open() >= 0)
-                res_stack.emplace_back(arhost);
-            else
-                break;
-        }
-        else if(part.fs_tag == VFSNetFTPHost::Tag) {
-            assert(i == 0);
-            assert(i == _stack.size() - 1); // need to return here later
-            auto options = dynamic_pointer_cast<VFSNetFTPOptions>(part.options);
-            if(!options)
-                break;
-            auto ftp = make_shared<VFSNetFTPHost>(part.junction.c_str());
-            if(ftp->Open(_stack.path().c_str(), *options) >= 0)
-                res_stack.emplace_back(ftp);
-            else
-                break;
-        }
-        else if(part.fs_tag == VFSNetSFTPHost::Tag) {
-            assert(i == 0);
-            assert(i == _stack.size() - 1); // need to return here later
-            auto options = dynamic_pointer_cast<VFSNetSFTPOptions>(part.options);
-            if(!options)
-                break;
-            auto sftp = make_shared<VFSNetSFTPHost>(part.junction.c_str());
-            if(sftp->Open(*options) >= 0)
-                res_stack.emplace_back(sftp);
-            else
-                break;
-        }
-        else
-            assert(0);
     }
     
     // TODO: need an ability to show errors at least

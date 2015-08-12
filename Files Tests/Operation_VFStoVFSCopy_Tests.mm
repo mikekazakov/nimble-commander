@@ -68,8 +68,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testCopyToFTP_192_168_2_5_____1
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     const char *fn1 = "/System/Library/Kernels/kernel",
                *fn2 = "/Public/!FilesTesting/kernel";
@@ -98,8 +103,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testCopyToFTP_192_168_2_5_____2
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     auto files = {"Info.plist", "PkgInfo", "version.plist"};
     
@@ -135,8 +145,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testCopyToFTP_192_168_2_5_____3
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
     
@@ -284,8 +299,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testCopyGenericToGeneric_Modes_CopyToPathName_SingleFile
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     const char *fn1 = "/System/Library/Kernels/kernel",
     *fn2 = "/Public/!FilesTesting/kernel",

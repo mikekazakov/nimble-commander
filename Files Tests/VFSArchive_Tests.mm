@@ -72,9 +72,14 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testXNUSource_TAR
 {
-    auto host = make_shared<VFSArchiveHost>(g_XNU.c_str(), VFSNativeHost::SharedHost());
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_XNU.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
 
-    XCTAssert( host->Open() == 0 );
     XCTAssert( host->StatTotalDirs() == 246 );
     XCTAssert( host->StatTotalRegs() == 3288 );
     XCTAssert( host->IsDirectory("/", 0, 0) == true );
@@ -130,8 +135,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 // was fault before 1.0.6, so introducing this regression test
 - (void)testAngular
 {
-    auto host = make_shared<VFSArchiveHost>(g_Angular.c_str(), VFSNativeHost::SharedHost());
-    XCTAssert( host->Open() == 0 );
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_Angular.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
 
     XCTAssert( host->StatTotalFiles() == 2764 );
     XCTAssert( host->StatTotalRegs() == 2431 );
@@ -155,8 +165,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 // contains symlinks
 - (void)testAdiumZip
 {
-    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
-    XCTAssert( host->Open() == 0 );
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     VFSStat st;
     XCTAssert( host->Stat("/Adium.app/Contents/Info.plist", st, 0, 0) == 0 );
@@ -183,8 +198,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testAdiumZip_XAttrs
 {
-    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
-    XCTAssert( host->Open() == 0 );
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
 
     VFSFilePtr file;
     char buf[4096];
@@ -212,8 +232,13 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     auto dir = self.makeTmpDir;
     
-    auto host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
-    XCTAssert( host->Open() == 0 );
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     FileCopyOperation *op = [FileCopyOperation alloc];
     op = [op initWithFiles:vector<string>(1, "Adium.app")

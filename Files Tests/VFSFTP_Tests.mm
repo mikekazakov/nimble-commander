@@ -24,14 +24,15 @@ static string UUID()
 
 - (void)testFtpMozillaOrg
 {
-static const char* readme = "\n\
-   ftp.mozilla.org / archive.mozilla.org - files are in /pub/mozilla.org\n\
-\n\
-   releases.mozilla.org now points to our CDN distribution network and no longer works for FTP traffic\n\
-";
+    static const char* readme = "The contents of ftp://ftp.mozilla.org has moved to http://archive.mozilla.org\n";
     
-    auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("ftp.mozilla.org", "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     VFSStat stat;
     XCTAssert( host->Stat("/README", stat, 0, 0) == 0 );
@@ -56,22 +57,15 @@ static const char* readme = "\n\
     XCTAssert( file->Read(buf, 4096) == strlen(readme) );
     
     // check seeking
-    XCTAssert( file->Seek(0x50, VFSFile::Seek_Set) == 0x50 );
+    XCTAssert( file->Seek(0x30, VFSFile::Seek_Set) == 0x30 );
     XCTAssert( file->Read(buf, 16) == 16 );
-    XCTAssert( memcmp(buf, "leases.mozilla.o", 16) == 0 );
+    XCTAssert( memcmp(buf, "to http://archiv", 16) == 0 );
     XCTAssert( file->Seek(0, VFSFile::Seek_Set) == 0 );
     XCTAssert( file->Read(buf, 16) == 16 );
-    XCTAssert( memcmp(buf, "\n   ftp.mozilla.", 16) == 0 );
+    XCTAssert( memcmp(buf, "The contents of ", 14) == 0 );
     XCTAssert( file->Seek(0xFFFFFFF, VFSFile::Seek_Set) == strlen(readme) );
     XCTAssert( file->Eof() );
     XCTAssert( file->Read(buf, 16) == 0 );
-    
-    // check seeking at big distance and reading an arbitrary selected known data block
-    XCTAssert( host->CreateFile("/pub/firefox/releases/28.0b9/source/firefox-28.0b9.bundle", file, 0) == 0 );
-    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
-    XCTAssert( file->Seek(0x23B0A820, VFSFile::Seek_Set) == 0x23B0A820 );
-    XCTAssert( file->Read(buf, 16) == 16 );
-    XCTAssert( memcmp(buf, "\x84\x62\x9d\xc0\x90\x38\xbb\x53\x23\xf1\xce\x45\x91\x74\x32\x2c", 16) == 0 );
     
     // check reaction on invalid requests
     XCTAssert( host->CreateFile("/iwuhdowgfuiwygfuiwgfuiwef", file, 0) == 0 );
@@ -86,8 +80,13 @@ static const char* readme = "\n\
 
 - (void)test192_168_2_5
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     const char *fn1 = "/System/Library/Kernels/kernel",
                *fn2 = "/Public/!FilesTesting/kernel";
@@ -118,12 +117,13 @@ static const char* readme = "\n\
 
 - (void)testMacMini
 {
-    VFSNetFTPOptions opts;
-    opts.user = "r2d2";
-    opts.passwd = "r2d2";
-    
-    auto host = make_shared<VFSNetFTPHost>("macmini.local");
-    XCTAssert( host->Open("/", opts) == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     const char *fn1 = "/System/Library/Kernels/kernel",
     *fn2 = "/kernel";
@@ -154,8 +154,13 @@ static const char* readme = "\n\
 
 - (void)test192_168_2_5_EmptyFileTest
 {
-    auto host = make_shared<VFSNetFTPHost>("192.168.2.5");
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     const char *fn = "/Public/!FilesTesting/empty_file";
 
     VFSStat stat;
@@ -183,13 +188,13 @@ static const char* readme = "\n\
 // so currently using OSX Server built-in ftp.
 - (void)testMacMini_AppendTest
 {
-    VFSNetFTPOptions opts;
-    opts.user = "r2d2";
-    opts.passwd = "r2d2";
-    
-    auto host = make_shared<VFSNetFTPHost>("macmini.local");
-    
-    XCTAssert( host->Open("/", opts) == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     const char *fn = "/Public/!FilesTesting/append.txt";
 
     VFSStat stat;
@@ -230,8 +235,13 @@ static const char* readme = "\n\
 
 - (void) testLocal_MKD_RMD
 {
-    auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>(g_LocalFTP, "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     for(auto dir: {g_LocalTestPath + UUID(),
                    g_LocalTestPath + string(@"В лесу родилась елочка, В лесу она росла".UTF8String),
                    g_LocalTestPath + string(@"北京市 >≥±§ 😱".UTF8String)
@@ -254,8 +264,13 @@ static const char* readme = "\n\
 
 - (void) testLocal_Rename_NAS
 {
-    auto host = make_shared<VFSNetFTPHost>(g_LocalFTP.c_str());
-    XCTAssert( host->Open("/") == 0 );
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>(g_LocalFTP, "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     
     string fn1 = "/System/Library/Kernels/kernel", fn2 = g_LocalTestPath + "kernel", fn3 = g_LocalTestPath + "kernel34234234";
     
@@ -286,13 +301,13 @@ static const char* readme = "\n\
 
 - (void) testLocal_Rename_127001
 {
-    VFSNetFTPOptions opts;
-    opts.user = "r2d2";    
-    opts.passwd = "r2d2";
-
-    auto host = make_shared<VFSNetFTPHost>("macmini.local");
-    XCTAssert( host->Open("/", opts) == 0 );
-    
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";
     
     VFSStat stat;
@@ -317,13 +332,17 @@ static const char* readme = "\n\
     XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
 }
 
-- (void)testListing_Mozilla_Org
+- (void)testListing_Kernel_Org
 {
-    auto path = "/pub/camino/";
-    auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-    XCTAssert( host->Open(path) == 0 );
-
-    set<string> should_be = {"nightly", "releases", "source", "tinderbox-builds"};
+    auto path = "/pub/dist/";
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", path);
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    set<string> should_be = {"knoppix", "knoppix-dvd", "planb", "superrescue"};
     set<string> in_fact;
     
     XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
@@ -333,13 +352,37 @@ static const char* readme = "\n\
     XCTAssert(should_be == in_fact);
 }
 
-- (void)testListing_Microsoft_Com
+- (void)testSeekRead_Kernel_Org
 {
-    auto path = "/developr/fortran/";
-    auto host = make_shared<VFSNetFTPHost>("ftp.microsoft.com");
-    XCTAssert( host->Open(path) == 0 );
-    
-    set<string> should_be = {"KB", "public", "unsup-ed", "README.TXT", "ReadMe1.txt"};
+    VFSHostPtr host;
+    try {
+        auto host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", "/pub/dist/planb/");
+        
+        // check seeking at big distance and reading an arbitrary selected known data block
+        VFSFilePtr file;
+        char buf[4096];
+        XCTAssert( host->CreateFile("/pub/dist/planb/custom-kit.tar.gz", file, 0) == 0 );
+        XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
+        XCTAssert( file->Seek(0x14F52440, VFSFile::Seek_Set) == 0x14F52440);
+        XCTAssert( file->Read(buf, 16) == 16 );
+        XCTAssert( memcmp(buf, "\x59\xc6\x88\x0c\x54\x5a\x54\xfe\xd3\x95\x96\x81\xf7\x50\xa5\x65", 16) == 0 );
+        
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testListing_RedHat_Com
+{
+    auto path = "/redhat/dst2007/APPLICATIONS/";
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("ftp.redhat.com", "", "", path);
+    } catch (VFSErrorException &e) {
+        XCTAssert( 0 );
+        return;
+    }
+    set<string> should_be = {"evolution", "evolution-data-server", "gcj", "IBMJava2-JRE", "IBMJava2-SDK", "java-1.4.2-bea", "java-1.4.2-ibm", "rhn_satellite_java_update"};
     set<string> in_fact;
     
     XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
@@ -351,9 +394,15 @@ static const char* readme = "\n\
 
 - (void)testBigFilesReadingCancellation
 {
-    path path = "/pub/diskimages/Firefox1.0.iso";
-    auto host = make_shared<VFSNetFTPHost>("ftp.mozilla.org");
-    XCTAssert( host->Open(path.parent_path().c_str()) == 0 );
+    path path = "/pub/dist/planb/custom-kit.tar.gz";
+    
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", path.parent_path().native());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;        
+    }    
   
     __block bool finished = false;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{

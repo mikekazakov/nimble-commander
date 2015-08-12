@@ -10,55 +10,44 @@
 #import "VFS.h"
 #import "PanelData.h"
 
+static const auto g_QNAPNAS             = "192.168.2.5";
+static const auto g_VBoxDebian7x86      = "debian7x86.local";
+static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
+
 @interface VFSSFTP_Tests : XCTestCase
 @end
 
 @implementation VFSSFTP_Tests
 
-- (shared_ptr<VFSNetSFTPHost>) hostNASQnap {
-    return make_shared<VFSNetSFTPHost>("192.168.2.5");
-}
-
-
-- (shared_ptr<VFSNetSFTPHost>) hostVBoxDebian7x86 {
-    return make_shared<VFSNetSFTPHost>("debian7x86.local");
-}
-
-- (shared_ptr<VFSNetSFTPHost>) hostVBoxUbuntu1404x64 {
-    return make_shared<VFSNetSFTPHost>("192.168.2.171");
-}
-
-- (VFSNetSFTPOptions) optionsForVBoxDebian7x86 {
-    VFSNetSFTPOptions opts;
-    opts.user = "root";
-    opts.passwd = "123456";
-    opts.port = -1;
-    return opts;
-}
-
-- (VFSNetSFTPOptions) optionsForVBoxDebian7x86_PrivKey {
-    VFSNetSFTPOptions opts;
-    opts.user = "root";
-    opts.passwd = "";
-    opts.keypath = "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root";
-    return opts;
-}
-
-- (VFSNetSFTPOptions) optionsForVBoxDebian7x86_PrivKeyPass {
-    VFSNetSFTPOptions opts;
-    opts.user = "root";
-    opts.passwd = "qwerty";
-    opts.keypath = "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty";
-    return opts;
-}
-
-- (void)testBasicWithOpts:(VFSNetSFTPOptions)_opts
+- (VFSHostPtr) hostForVBoxDebian7x86
 {
-    auto host = self.hostVBoxDebian7x86;
-    XCTAssert( host->Open(_opts) == 0);
-    
-    XCTAssert( host->HomeDir() == "/root" );
-    
+    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
+                                       "root",
+                                       "123456",
+                                       "",
+                                       -1);
+}
+
+- (VFSHostPtr) hostForVBoxDebian7x86WithPrivKey
+{
+    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
+                                       "root",
+                                       "",
+                                       "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root",
+                                       -1);
+}
+
+- (VFSHostPtr) hostForVBoxDebian7x86WithPrivKeyPass
+{
+    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
+                                       "root",
+                                       "qwerty",
+                                       "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty",
+                                       -1);
+}
+
+- (void)testBasicWithHost:(VFSHostPtr)host
+{
     unique_ptr<VFSListing> listing;
     XCTAssert( host->FetchDirectoryListing("/", listing, 0, 0) == 0);
     
@@ -79,43 +68,61 @@
 
 - (void)testBasic
 {
-    [self testBasicWithOpts:self.optionsForVBoxDebian7x86];
+    try
+    {
+        [self testBasicWithHost:self.hostForVBoxDebian7x86];
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
 }
 
 - (void)testBasicWithPrivateKey
 {
-    [self testBasicWithOpts:self.optionsForVBoxDebian7x86_PrivKey];
+    [self testBasicWithHost:self.hostForVBoxDebian7x86WithPrivKey];
 }
 
 - (void)testBasicWithPrivateKeyPass
 {
-    [self testBasicWithOpts:self.optionsForVBoxDebian7x86_PrivKeyPass];
+    [self testBasicWithHost:self.hostForVBoxDebian7x86WithPrivKeyPass];
 }
 
 - (void)testInvalidPWD_Debian
 {
-    VFSNetSFTPOptions opts;
-    opts.user = "wiufhiwhf";
-    opts.passwd = "u3hf8973h89fh";
-    opts.port = -1;
-    auto host = self.hostVBoxDebian7x86;
-    XCTAssert( host->Open(opts) != 0);
+    try {
+        make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
+                                    "wiufhiwhf",
+                                    "u3hf8973h89fh",
+                                    "",
+                                    -1);
+        XCTAssert( false );
+    } catch ( VFSErrorException &e ) {
+        XCTAssert( e.code() != 0 );
+    }
 }
 
 - (void)testInvalidPWD_NAS
 {
-    VFSNetSFTPOptions opts;
-    opts.user = "wiufhiwhf";
-    opts.passwd = "u3hf8973h89fh";
-    opts.port = -1;
-    auto host = self.hostNASQnap;
-    XCTAssert( host->Open(opts) != 0);
+    try {
+        make_shared<VFSNetSFTPHost>(g_QNAPNAS,
+                                    "wiufhiwhf",
+                                    "u3hf8973h89fh",
+                                    "",
+                                    -1);
+        XCTAssert( false );
+    } catch ( VFSErrorException &e ) {
+        XCTAssert( e.code() != 0 );
+    }
 }
 
 - (void) testBasicRead {
-    auto host = self.hostVBoxDebian7x86;
-    XCTAssert( host->Open(self.optionsForVBoxDebian7x86) == 0);
-    
+    VFSHostPtr host;
+    try
+    {
+        host = self.hostForVBoxDebian7x86;
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
     VFSFilePtr file;
     XCTAssert( host->CreateFile("/etc/debian_version", file, 0) == 0);
     XCTAssert( file->Open( VFSFlags::OF_Read ) == 0);
@@ -130,33 +137,37 @@
 
 - (void) testBasicUbuntu1404
 {
-    { // auth with private key
-        VFSNetSFTPOptions opts;
-        opts.user = "r2d2";
-        opts.keypath = "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2";
-        auto host = self.hostVBoxUbuntu1404x64;
-        XCTAssert( host->Open(opts) == 0);
+    try { // auth with private key
+        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+                                    "r2d2",
+                                    "",
+                                    "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2");
         XCTAssert( host->HomeDir() == "/home/r2d2" );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
     }
     
-    { // auth with encrypted private key
-    VFSNetSFTPOptions opts;
-    opts.user = "r2d2";
-    opts.passwd = "qwerty";
-    opts.keypath = "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty";
-    auto host = self.hostVBoxUbuntu1404x64;
-    XCTAssert( host->Open(opts) == 0);
+    try { // auth with encrypted private key
+        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+                                                "r2d2",
+                                                "qwerty",
+                                                "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty");
     XCTAssert( host->HomeDir() == "/home/r2d2" );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
     }
+
     
-    { // auth with login-password pair
-        VFSNetSFTPOptions opts;
-        opts.user = "r2d2";
-        opts.passwd = "r2d2";
-        auto host = self.hostVBoxUbuntu1404x64;
-        XCTAssert( host->Open(opts) == 0);
+    try { // auth with login-password pair
+        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+                                                "r2d2",
+                                                "r2d2",
+                                                "");
         XCTAssert( host->HomeDir() == "/home/r2d2" );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
     }
+
 }
 
 

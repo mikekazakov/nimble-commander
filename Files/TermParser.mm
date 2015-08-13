@@ -807,7 +807,7 @@ void TermParser::PushRawTaskInput(NSString *_str)
 
 void TermParser::ProcessKeyDown(NSEvent *_event)
 {
-    NSString*  const character = [_event characters];
+    NSString* character = [_event charactersIgnoringModifiers];
     if ( [character length] != 1 ) return;
     unichar const unicode        = [character characterAtIndex:0];
 //    unsigned short const keycode = [_event keyCode];
@@ -888,6 +888,9 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         return;
     }
 
+    if( (modflag&NSDeviceIndependentModifierFlagsMask) == NSAlphaShiftKeyMask )
+        character = _event.characters;
+    
     const char* utf8 = [character UTF8String];
     m_TaskInput(utf8, (int)strlen(utf8));
     

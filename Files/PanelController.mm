@@ -646,7 +646,6 @@ void panel::GenericCursorPersistance::Restore()
     if(_filename == nil ||
        _filename.length == 0 ||
        _filename.fileSystemRepresentation == nullptr ||
-       [_filename rangeOfString:@"/"].location != NSNotFound ||
        [_filename isEqualToString:@"."] ||
        [_filename isEqualToString:@".."] ||
        !m_View.item ||
@@ -655,6 +654,16 @@ void panel::GenericCursorPersistance::Restore()
         return;
     
     string target_fn = _filename.fileSystemRepresentationSafe;
+ 
+    // checking for invalid symbols
+    if( !self.vfs->ValidateFilename(target_fn.c_str()) ) {
+        NSAlert *a = [[NSAlert alloc] init];
+        a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"), _filename];
+        a.informativeText = NSLocalizedString(@"Try using a name with fewer characters, or with no punctuation marks.", "Informative text when user is entering an invalid filename");
+        a.alertStyle = NSCriticalAlertStyle;
+        [a runModal];
+        return;
+    }
     
     FileCopyOperationOptions opts;
     opts.docopy = false;

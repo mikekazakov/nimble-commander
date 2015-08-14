@@ -30,12 +30,22 @@
             it.tag = hist_items.size() - indx - 1;
             it.target = self;
             it.action = @selector(doCalloutByHistoryPopupMenuItem:);
+            it.indentationLevel = 1;
             [menu addItem:it];
         }
     }
     if( menu.itemArray.count > 1 && m_History.IsRecording() )
         [menu removeItemAtIndex:0];
-    [menu popUpMenuPositioningItem:nil atLocation:NSMakePoint(0, 0) inView:self.view];
+    
+    [menu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"History", "History popup menu title in file panels") action:nullptr keyEquivalent:@""]
+                                               atIndex:0];
+    
+    NSPoint p;
+    p.x = (self.view.bounds.size.width - menu.size.width) / 2.;
+    p.y = (self.view.bounds.size.height - menu.size.height) / 2.;
+    [menu popUpMenuPositioningItem:nil
+                        atLocation:p
+                            inView:self.view];
 }
 
 - (void)doCalloutByHistoryPopupMenuItem:(id)sender

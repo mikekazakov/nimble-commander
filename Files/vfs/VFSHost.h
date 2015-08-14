@@ -185,6 +185,12 @@ public:
     
     virtual bool ShouldProduceThumbnails() const;
     
+    /**
+     * Checks if _filenames contains a forbidden symbols and return false if found them.
+     * Default implementation forbids ":\\/\r\t\n" chars, overrides may change this behaviour
+     */
+    virtual bool ValidateFilename(const char *_filename) const;
+    
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,
                                    int _flags,

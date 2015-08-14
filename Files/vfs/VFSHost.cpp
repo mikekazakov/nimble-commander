@@ -437,3 +437,16 @@ bool VFSHost::IsNativeFS() const noexcept
 {
     return false;
 }
+
+bool VFSHost::ValidateFilename(const char *_filename) const
+{
+    if( !_filename )
+        return false;
+
+    const auto i = _filename, e = _filename + strlen(_filename);
+    if( i == e )
+        return false;
+
+    static const char invalid_chars[] = ":\\/\r\t\n";
+    return find_first_of(i, e, begin(invalid_chars), end(invalid_chars)) == e;
+}

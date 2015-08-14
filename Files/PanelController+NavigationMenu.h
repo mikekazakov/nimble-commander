@@ -10,7 +10,6 @@
 
 @interface PanelController (NavigationMenu)
 
-// RENAME ME!!!
-- (void) abraCadabra;
+- (void) popUpQuickListWithHistory;
 
 @end

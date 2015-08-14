@@ -385,7 +385,7 @@ void panel::GenericCursorPersistance::Restore()
         
         if(keycode == 3 ) { // 'F' button
             if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-                [self abraCadabra];
+//                [self abraCadabra];
                 return true;
             }
         }

@@ -11,7 +11,7 @@
 
 @implementation PanelController (NavigationMenu)
 
-- (void) abraCadabra
+- (void) popUpQuickListWithHistory
 {
     auto hist_items = m_History.All();
     

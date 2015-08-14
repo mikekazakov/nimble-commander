@@ -15,6 +15,9 @@ class VFSPathStack
 public:
     struct Part
     {
+        Part() = default;
+        Part(VFSHost &_host);
+        
         const char* fs_tag; // this tag is redundant since configuration already able to provide it
         string junction;
         weak_ptr<VFSHost> host;
@@ -34,6 +37,7 @@ public:
     
     VFSPathStack();
     VFSPathStack(const VFSListing &_listing);
+    VFSPathStack(const VFSHostPtr &_vfs, const string &_path);
     VFSPathStack(const VFSPathStack&_r);
     VFSPathStack(VFSPathStack&&_r);
     

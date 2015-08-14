@@ -522,6 +522,20 @@ DQ
                                     <action selector="OnGoToProcessesList:" target="-1" id="jfN-Xy-VDo"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Sda-qY-Ec2"/>
+                            <menuItem title="Quick Lists" id="ToO-KH-35P">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Quick Lists" id="N85-H8-Cbx">
+                                    <items>
+                                        <menuItem title="History" tag="14160" id="Uht-NR-INk">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsHistory:" target="-1" id="2jp-A4-b6Y"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="wKr-Tq-RoM"/>
                             <menuItem title="Go To Folder..." tag="14110" keyEquivalent="G" id="r9P-3y-Fqa">
                                 <connections>

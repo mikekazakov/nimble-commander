@@ -352,6 +352,11 @@
     }
 }
 
+- (IBAction)OnGoToQuickListsHistory:(id)sender
+{
+    [self popUpQuickListWithHistory];
+}
+
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )

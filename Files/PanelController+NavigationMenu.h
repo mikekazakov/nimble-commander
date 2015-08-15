@@ -10,6 +10,7 @@
 
 @interface PanelController (NavigationMenu)
 
+- (void) popUpQuickListWithParentFolders;
 - (void) popUpQuickListWithHistory;
 
 @end

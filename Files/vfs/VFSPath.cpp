@@ -56,18 +56,6 @@ VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const string &_path):
     reverse(begin(m_Stack), end(m_Stack));
 }
 
-VFSPathStack::VFSPathStack(const VFSPathStack&_r):
-    m_Stack(_r.m_Stack),
-    m_Path(_r.m_Path)
-{
-}
-
-VFSPathStack::VFSPathStack(VFSPathStack&&_r):
-    m_Stack(move(_r.m_Stack)),
-    m_Path(move(_r.m_Path))
-{
-}
-
 bool VFSPathStack::weak_equal(const VFSPathStack&_r) const
 {
     if(m_Stack.size() != _r.m_Stack.size()) return false;

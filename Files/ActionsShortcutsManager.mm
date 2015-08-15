@@ -96,6 +96,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.go.connect.ftp",                     u8""        },
         {"menu.go.connect.sftp",                    u8""        },
         {"menu.go.root",                            u8""        },
+        {"menu.go.quick_lists.parent_folders",      u8"⌘1"      }, // cmd+1
         {"menu.go.quick_lists.history",             u8"⌘2"      }, // cmd+2
 
         {"menu.command.system_overview",            u8"⌘l"      }, // cmd+l

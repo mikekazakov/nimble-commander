@@ -527,6 +527,12 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Quick Lists" id="N85-H8-Cbx">
                                     <items>
+                                        <menuItem title="Parent Folders" tag="14170" id="zeQ-Na-TPl">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsParents:" target="-1" id="eQW-JH-Dzz"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="History" tag="14160" id="Uht-NR-INk">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

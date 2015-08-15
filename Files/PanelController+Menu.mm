@@ -352,6 +352,11 @@
     }
 }
 
+- (IBAction)OnGoToQuickListsParents:(id)sender
+{
+    [self popUpQuickListWithParentFolders];
+}
+
 - (IBAction)OnGoToQuickListsHistory:(id)sender
 {
     [self popUpQuickListWithHistory];

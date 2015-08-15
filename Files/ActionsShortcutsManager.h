@@ -157,6 +157,7 @@ private:
         {"menu.go.connect.sftp",                14140},
         {"menu.go.root",                        14150},
         {"menu.go.quick_lists.history",         14160},
+        {"menu.go.quick_lists.parent_folders",  14170},
         
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},

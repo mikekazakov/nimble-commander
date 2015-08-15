@@ -551,6 +551,12 @@ DQ
                                                 <action selector="OnGoToQuickListsVolumes:" target="-1" id="two-3W-jTs"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Connections" tag="14200" id="kWp-fQ-T0l">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsConnections:" target="-1" id="uCn-9Y-BfF"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

@@ -157,6 +157,7 @@ private:
         {"menu.go.quick_lists.history",         14170},
         {"menu.go.quick_lists.favorites",       14180},
         {"menu.go.quick_lists.volumes",         14190},
+        {"menu.go.quick_lists.connections",     14200},
         
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},

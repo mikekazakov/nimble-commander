@@ -372,6 +372,11 @@
     [self popUpQuickListWithFavorites];
 }
 
+- (IBAction)OnGoToQuickListsConnections:(id)sender
+{
+    [self popUpQuickListWithNetworkConnections];
+}
+
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )

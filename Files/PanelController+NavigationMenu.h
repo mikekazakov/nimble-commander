@@ -14,5 +14,6 @@
 - (void) popUpQuickListWithHistory;
 - (void) popUpQuickListWithVolumes;
 - (void) popUpQuickListWithFavorites;
+- (void) popUpQuickListWithNetworkConnections;
 
 @end

@@ -94,6 +94,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.go.quick_lists.history",             u8"⌘2"      }, // cmd+2
         {"menu.go.quick_lists.favorites",           u8"⌘3"      }, // cmd+3
         {"menu.go.quick_lists.volumes",             u8"⌘4"      }, // cmd+4
+        {"menu.go.quick_lists.connections",         u8"⌘5"      }, // cmd+5
 
         {"menu.command.system_overview",            u8"⌘l"      }, // cmd+l
         {"menu.command.volume_information",         u8""        },

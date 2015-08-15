@@ -290,7 +290,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     [menu addItem:TitleItem()];
     [self synchronizeTitleAndSelectedItem];
     
-    static const auto icon_size = NSMakeSize(NSFont.systemFontSize, NSFont.systemFontSize);
+    static const auto icon_size = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
     
     size_t common_path_max = 0;
     NSMenuItem *common_item = nil;

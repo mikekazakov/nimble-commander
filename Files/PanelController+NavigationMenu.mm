@@ -10,6 +10,10 @@
 #import "Common.h"
 #import "PanelController+NavigationMenu.h"
 #import "MainWndGoToButton.h"
+#import "SavedNetworkConnectionsManager.h"
+
+static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
+//static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
 
 static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing &_listing  )
 {
@@ -63,6 +67,19 @@ static NSString *KeyEquivalent(int _ind)
     }
 }
 
+static NSImage *ImageForPathStack( const VFSPathStack &_stack )
+{
+    if( _stack.back().fs_tag == VFSNativeHost::Tag )
+        if(auto image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:_stack.path()]]) {
+            image.size = g_IconSize;
+            return image;
+        }
+    
+    static auto image = [NSImage imageNamed:NSImageNameFolder];
+    image.size = g_IconSize;
+    return image;
+}
+
 @interface PanelControllerQuickListMenuItemPathStackHolder : NSObject
 - (instancetype) initWithObject:(const VFSPathStack&)_obj;
 @property (readonly, nonatomic) const VFSPathStack& object;
@@ -74,6 +91,25 @@ static NSString *KeyEquivalent(int _ind)
 }
 @synthesize object = m_Obj;
 - (instancetype) initWithObject:(const VFSPathStack&)_obj
+{
+    self = [super init];
+    if( self )
+        m_Obj = _obj;
+    return self;
+}
+@end
+
+@interface PanelControllerQuickListConnectionHolder : NSObject
+- (instancetype) initWithObject:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>&)_obj;
+@property (readonly, nonatomic) const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>& object;
+@end
+
+@implementation PanelControllerQuickListConnectionHolder
+{
+    shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> m_Obj;
+}
+@synthesize object = m_Obj;
+- (instancetype) initWithObject:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>&)_obj
 {
     self = [super init];
     if( self )
@@ -121,10 +157,10 @@ static NSString *KeyEquivalent(int _ind)
             NSMenuItem *it = [[NSMenuItem alloc] init];
             
             it.title = title;
+            it.image = ImageForPathStack( item );
             it.tag = hist_items.size() - indx - 1;
             it.target = self;
             it.action = @selector(doCalloutByHistoryPopupMenuItem:);
-            it.indentationLevel = 1;
             [menu addItem:it];
         }
     }
@@ -156,10 +192,10 @@ static NSString *KeyEquivalent(int _ind)
         
         NSMenuItem *it = [[NSMenuItem alloc] init];
         it.title = title;
+        it.image = ImageForPathStack( i );
         it.target = self;
         it.action = @selector(doCalloutWithPathStackHolder:);
         it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:i];
-        it.indentationLevel = 1;
         [menu addItem:it];
     }
     
@@ -185,11 +221,15 @@ static NSString *KeyEquivalent(int _ind)
         auto path = VFSPathStack( VFSNativeHost::SharedHost(), volume->mounted_at_path );
         
         NSMenuItem *it = [[NSMenuItem alloc] init];
+        if(volume->verbose.icon != nil) {
+            NSImage *img = volume->verbose.icon.copy;
+            img.size = g_IconSize;
+            it.image = img;
+        }
         it.title = volume->verbose.localized_name;
         it.target = self;
         it.action = @selector(doCalloutWithPathStackHolder:);
         it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
-        it.indentationLevel = 1;
         [menu addItem:it];
     }
     
@@ -201,7 +241,7 @@ static NSString *KeyEquivalent(int _ind)
     auto favourites = MainWndGoToButton.finderFavorites;
     
     NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Favourites", "Favourites popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Favorites", "Favorites popup menu title in file panels") action:nullptr keyEquivalent:@""]];
     
     for( auto f: favourites ) {
         auto path = VFSPathStack( VFSNativeHost::SharedHost(),  f.path.fileSystemRepresentationSafe );
@@ -210,16 +250,54 @@ static NSString *KeyEquivalent(int _ind)
         [f getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
         
         NSMenuItem *it = [[NSMenuItem alloc] init];
+        NSImage *img;
+        [f getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
+        if(img != nil) {
+            img.size = g_IconSize;
+            it.image = img;
+        }
         it.title = title;
         it.target = self;
         it.action = @selector(doCalloutWithPathStackHolder:);
         it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
-        it.indentationLevel = 1;
         [menu addItem:it];
         
     }
    
     [self popUpQuickListMenu:menu];
+}
+
+- (void) popUpQuickListWithNetworkConnections
+{
+    static auto network_image = []{
+        NSImage *m = [NSImage imageNamed:NSImageNameNetwork];
+        m.size = g_IconSize;
+        return m;
+    }();
+    
+    NSMenu *menu = [[NSMenu alloc] init];
+    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Connections", "Connections popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+
+    auto connections = SavedNetworkConnectionsManager::Instance().Connections();
+    
+    for(auto &c:connections) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
+        it.image = network_image;
+        it.target = self;
+        it.action = @selector(doCalloutWithConnectionHolder:);
+        it.representedObject = [[PanelControllerQuickListConnectionHolder alloc] initWithObject:c];
+        [menu addItem:it];
+    }
+    
+    [self popUpQuickListMenu:menu];    
+}
+
+- (void)doCalloutWithConnectionHolder:(id)sender
+{
+    if( auto item = objc_cast<NSMenuItem>(sender) )
+        if( auto holder = objc_cast<PanelControllerQuickListConnectionHolder>(item.representedObject) )
+            [self GoToSavedConnection:holder.object];
 }
 
 @end

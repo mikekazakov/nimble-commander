@@ -69,12 +69,9 @@ private:
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
     
-    void ReadDefaults(NSArray *_dict);
-    void WriteDefaults(NSMutableArray *_dict) const;
-    
     void ReadOverrides(NSArray *_dict);
     void WriteOverrides(NSMutableArray *_dict) const;
-    void WriteOverridesToNSDefaults() const;
+    void WriteOverridesToConfigFile() const;
     
     // persistance holy grail is below, change id's only in emergency case:
     const vector<pair<string,int>> m_ActionsTags = {

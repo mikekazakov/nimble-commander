@@ -6,17 +6,11 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "ActionsShortcutsManager.h"
 #import "Common.h"
+#import "AppDelegate.h"
 
-static NSString *g_OverridesDefaultsKey = @"CommonHotkeysOverrides";
-
-static NSString *OverridesFullPathOld()
-{
-    static NSString *g_OverridesFilenameOld = @"/shortcuts.plist";
-    return [[[NSFileManager defaultManager] applicationSupportDirectory] stringByAppendingString:g_OverridesFilenameOld];
-}
+static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
 
 static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.files.about",                        u8""        },
@@ -265,8 +259,8 @@ ActionsShortcutsManager::ActionsShortcutsManager()
             m_ShortCutsDefaults[i->second] = sc;
     }
     
-    if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:g_OverridesDefaultsKey])
-        ReadOverrides(overrides);
+    if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
+        ReadOverrides(a);
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -289,43 +283,6 @@ string ActionsShortcutsManager::ActionFromTag(int _tag) const
         if(i.second == _tag)
             return i.first;
     return "";
-}
-
-void ActionsShortcutsManager::ReadDefaults(NSArray *_dict)
-{
-    m_ShortCutsDefaults.clear();
-    if(_dict.count % 2 != 0)
-        return;
-
-    for(int ind = 0; ind < _dict.count; ind += 2)
-    {
-        NSString *key = [_dict objectAtIndex:ind];
-        NSString *obj = [_dict objectAtIndex:ind+1];
-        
-        auto i = m_ActionToTag.find(key.UTF8String);
-        if(i == m_ActionToTag.end())
-            continue;
-        
-        ShortCut sc;
-        if(sc.FromPersString(obj))
-            m_ShortCutsDefaults[i->second] = sc;
-    }
-}
-
-void ActionsShortcutsManager::WriteDefaults(NSMutableArray *_dict) const
-{
-    for(auto &i: m_ActionsTags)
-    {
-        [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
-        
-        int tag = i.second;
-        
-        auto sc = m_ShortCutsDefaults.find(tag);
-        if(sc != m_ShortCutsDefaults.end())
-            [_dict addObject:sc->second.ToPersString()];
-        else
-            [_dict addObject:@""];
-    }
 }
 
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
@@ -395,7 +352,7 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
     for(auto &i: m_ActionsTags) {
         int tag = i.second;
         auto scover = m_ShortCutsOverrides.find(tag);
-        if(scover != m_ShortCutsOverrides.end()) {
+        if(scover != end(m_ShortCutsOverrides)) {
             [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
             [_dict addObject:scover->second.ToPersString()];
         }
@@ -442,22 +399,28 @@ void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
         m_ShortCutsOverrides.erase(tag);
         return;
     }
+    
+    auto now = m_ShortCutsOverrides.find(tag);
+    if( now != end(m_ShortCutsOverrides) && now->second == _sc )
+        return; // nothing new
+    
     m_ShortCutsOverrides[tag] = _sc;
     
-    // immediately write to NSUserDefaults
-    WriteOverridesToNSDefaults();
+    // immediately write to config file
+    WriteOverridesToConfigFile();
 }
 
 void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
-    WriteOverridesToNSDefaults();
+    WriteOverridesToConfigFile();
 }
 
-void ActionsShortcutsManager::WriteOverridesToNSDefaults() const
+void ActionsShortcutsManager::WriteOverridesToConfigFile() const
 {
     NSMutableArray *overrides = [NSMutableArray new];
     WriteOverrides(overrides);
-    
-    [NSUserDefaults.standardUserDefaults setObject:overrides forKey:g_OverridesDefaultsKey];
+
+    [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
+                atomically:true];
 }

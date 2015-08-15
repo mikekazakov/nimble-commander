@@ -6,12 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/NSFileManager+DirectoryLocations.h"
+#import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "AppDelegate.h"
 #import "MainWindowController.h"
 #import "OperationsController.h"
 #import "Common.h"
 #import "chained_strings.h"
-#import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "PreferencesWindowGeneralTab.h"
 #import "PreferencesWindowPanelsTab.h"
 #import "PreferencesWindowViewerTab.h"
@@ -42,12 +43,14 @@
     double              m_AppProgress;
     bool                m_IsRunningTests;
     string              m_StartupCWD;
+    string              m_ConfigDirectory;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
 @synthesize startupCWD = m_StartupCWD;
 @synthesize skin = m_Skin;
 @synthesize mainWindowControllers = m_MainWindows;
+@synthesize configDirectory = m_ConfigDirectory;
 
 - (id) init
 {
@@ -68,6 +71,8 @@
             [self askToResetDefaults];
             exit(0);
         }
+        
+        [self setupConfigDirectory];
         
         m_Skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
         assert(m_Skin == ApplicationSkin::Modern || m_Skin == ApplicationSkin::Classic);
@@ -196,6 +201,15 @@
         AppStoreRatings::Instance().Go();
     
     [self checkIfNeedToShowNagScreen];
+}
+
+- (void) setupConfigDirectory
+{
+    auto fm = NSFileManager.defaultManager;
+    NSString *config = [fm.applicationSupportDirectory stringByAppendingString:@"/Config/"];
+    if( ![fm fileExistsAtPath:config] )
+        [fm createDirectoryAtPath:config withIntermediateDirectories:true attributes:nil error:nil];
+    m_ConfigDirectory = config.fileSystemRepresentationSafe;
 }
 
 - (void) updateDockTileBadge

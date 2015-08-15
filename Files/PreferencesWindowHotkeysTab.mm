@@ -136,6 +136,7 @@
     if([alert runModal] == NSAlertFirstButtonReturn) {
         ActionsShortcutsManager::Instance().RevertToDefaults();
         ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+        m_EditFields.clear();
         [self.Table reloadData];
     }
 }

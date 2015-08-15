@@ -54,4 +54,10 @@
  */
 @property (nonatomic, readonly) const string& startupCWD;
 
+/**
+ * By default this dir is ~/Library/Application Support/Files(Lite,Pro).
+ * May change in the future.
+ */
+@property (nonatomic, readonly) const string& configDirectory;
+
 @end

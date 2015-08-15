@@ -362,6 +362,16 @@
     [self popUpQuickListWithHistory];
 }
 
+- (IBAction)OnGoToQuickListsVolumes:(id)sender
+{
+    [self popUpQuickListWithVolumes];
+}
+
+- (IBAction)OnGoToQuickListsFavorites:(id)sender
+{
+    [self popUpQuickListWithFavorites];
+}
+
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )

@@ -12,5 +12,7 @@
 
 - (void) popUpQuickListWithParentFolders;
 - (void) popUpQuickListWithHistory;
+- (void) popUpQuickListWithVolumes;
+- (void) popUpQuickListWithFavorites;
 
 @end

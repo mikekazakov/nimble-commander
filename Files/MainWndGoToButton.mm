@@ -192,16 +192,22 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
++ (vector<NSURL*>) finderFavorites
+{
+    auto f = GetFindersFavorites();
+    if(f.empty()) // something bad happened, fallback to hardcoded version
+        f = GetHardcodedFavorites(); // (not sure if this will be ever called)
+    return f;
+}
+
 - (void) UpdateUrls
 {
     m_Volumes.clear();
     for(auto &i: NativeFSManager::Instance().Volumes())
         if(i->mount_flags.dont_browse == false)
             m_Volumes.emplace_back(i);
-    
-    m_FinderFavorites = GetFindersFavorites();
-    if(m_FinderFavorites.empty()) // something bad happened, fallback to hardcoded version
-        m_FinderFavorites = GetHardcodedFavorites(); // (not sure if this will be ever called)
+
+    m_FinderFavorites = MainWndGoToButton.finderFavorites;
 }
 
 - (void) UpdateOtherPanelPaths

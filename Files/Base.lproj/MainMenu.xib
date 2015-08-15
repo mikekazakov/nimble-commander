@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
@@ -527,16 +527,28 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Quick Lists" id="N85-H8-Cbx">
                                     <items>
-                                        <menuItem title="Parent Folders" tag="14170" id="zeQ-Na-TPl">
+                                        <menuItem title="Parent Folders" tag="14160" id="zeQ-Na-TPl">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToQuickListsParents:" target="-1" id="eQW-JH-Dzz"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="History" tag="14160" id="Uht-NR-INk">
+                                        <menuItem title="History" tag="14170" id="Uht-NR-INk">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToQuickListsHistory:" target="-1" id="2jp-A4-b6Y"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Favorites" tag="14180" id="VDF-r2-LBL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsFavorites:" target="-1" id="drw-je-Ae6"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Volumes" tag="14190" id="QsY-av-veD">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsVolumes:" target="-1" id="two-3W-jTs"/>
                                             </connections>
                                         </menuItem>
                                     </items>

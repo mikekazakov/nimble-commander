@@ -30,4 +30,6 @@
 
 - (void) popUp;
 
++ (vector<NSURL*>) finderFavorites;
+
 @end

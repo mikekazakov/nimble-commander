@@ -6,8 +6,10 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#import "NativeFSManager.h"
 #import "Common.h"
 #import "PanelController+NavigationMenu.h"
+#import "MainWndGoToButton.h"
 
 static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing &_listing  )
 {
@@ -42,6 +44,25 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
     return result;
 }
 
+static NSString *KeyEquivalent(int _ind)
+{
+    switch(_ind) {
+        case  0: return @"1";
+        case  1: return @"2";
+        case  2: return @"3";
+        case  3: return @"4";
+        case  4: return @"5";
+        case  5: return @"6";
+        case  6: return @"7";
+        case  7: return @"8";
+        case  8: return @"9";
+        case  9: return @"0";
+        case 10: return @"-";
+        case 11: return @"=";
+        default: return @"";
+    }
+}
+
 @interface PanelControllerQuickListMenuItemPathStackHolder : NSObject
 - (instancetype) initWithObject:(const VFSPathStack&)_obj;
 @property (readonly, nonatomic) const VFSPathStack& object;
@@ -65,6 +86,13 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
 
 - (void) popUpQuickListMenu:(NSMenu*)menu
 {
+    auto items = menu.itemArray;
+    for(int ind = 1; ind < items.count; ++ind)
+        if( auto i = objc_cast<NSMenuItem>([items objectAtIndex:ind]) ) {
+            i.keyEquivalent = KeyEquivalent( ind - 1 );
+            i.keyEquivalentModifierMask = 0;
+        }
+    
     NSPoint p;
     p.x = (self.view.bounds.size.width - menu.size.width) / 2.;
     p.y = (self.view.bounds.size.height - menu.size.height) / 2.;
@@ -121,8 +149,7 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
     auto stacks = ProduceStacksForParentDirectories( self.data.Listing() );
     
     NSMenu *menu = [[NSMenu alloc] init];
-    [menu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]
-             atIndex:0];
+    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]];
     
     for( auto &i: stacks) {
         NSString *title = [NSString stringWithUTF8StdString:i.verbose_string()];
@@ -130,7 +157,7 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
         NSMenuItem *it = [[NSMenuItem alloc] init];
         it.title = title;
         it.target = self;
-        it.action = @selector(doCalloutByParentFoldersPopupMenuItem:);
+        it.action = @selector(doCalloutWithPathStackHolder:);
         it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:i];
         it.indentationLevel = 1;
         [menu addItem:it];
@@ -139,11 +166,60 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
     [self popUpQuickListMenu:menu];
 }
 
-- (void)doCalloutByParentFoldersPopupMenuItem:(id)sender
+- (void)doCalloutWithPathStackHolder:(id)sender
 {
     if( auto item = objc_cast<NSMenuItem>(sender) )
         if( auto holder = objc_cast<PanelControllerQuickListMenuItemPathStackHolder>(item.representedObject) )
             [self GoToVFSPathStack:holder.object];
+}
+
+- (void) popUpQuickListWithVolumes
+{
+    NSMenu *menu = [[NSMenu alloc] init];
+    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    
+    for( auto &volume: NativeFSManager::Instance().Volumes() ) {
+        if( volume->mount_flags.dont_browse )
+            continue;
+
+        auto path = VFSPathStack( VFSNativeHost::SharedHost(), volume->mounted_at_path );
+        
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = volume->verbose.localized_name;
+        it.target = self;
+        it.action = @selector(doCalloutWithPathStackHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
+        it.indentationLevel = 1;
+        [menu addItem:it];
+    }
+    
+    [self popUpQuickListMenu:menu];
+}
+
+- (void) popUpQuickListWithFavorites
+{
+    auto favourites = MainWndGoToButton.finderFavorites;
+    
+    NSMenu *menu = [[NSMenu alloc] init];
+    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Favourites", "Favourites popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    
+    for( auto f: favourites ) {
+        auto path = VFSPathStack( VFSNativeHost::SharedHost(),  f.path.fileSystemRepresentationSafe );
+
+        NSString *title;
+        [f getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
+        
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        it.title = title;
+        it.target = self;
+        it.action = @selector(doCalloutWithPathStackHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
+        it.indentationLevel = 1;
+        [menu addItem:it];
+        
+    }
+   
+    [self popUpQuickListMenu:menu];
 }
 
 @end

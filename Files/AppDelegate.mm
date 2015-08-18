@@ -21,7 +21,6 @@
 #import "PreferencesWindowTerminalTab.h"
 #import "PreferencesWindowHotkeysTab.h"
 #import "TemporaryNativeFileStorage.h"
-#import "NewVersionChecker.h"
 #import "MainWindowTerminalState.h"
 #import "NativeFSManager.h"
 #import "ActionsShortcutsManager.h"
@@ -198,8 +197,6 @@ static SUUpdater *g_Sparkle = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
 
-    if(!configuration::is_sandboxed)
-        NewVersionChecker::Go(); // we check for new versions only for non-sanboxed (say non-MAS) version
     if(configuration::is_for_app_store) // if we're building for AppStore - check if we want to ask user for rating
         AppStoreRatings::Instance().Go();
     

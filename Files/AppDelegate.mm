@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Sparkle/Sparkle.h>
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "AppDelegate.h"
@@ -32,6 +33,8 @@
 #import "RoutedIO.h"
 #import "sysinfo.h"
 #import "AppStoreRatings.h"
+
+static SUUpdater *g_Sparkle = nil;
 
 @implementation AppDelegate
 {
@@ -201,6 +204,19 @@
         AppStoreRatings::Instance().Go();
     
     [self checkIfNeedToShowNagScreen];
+    
+    if( configuration::version == configuration::Version::Full ) {
+        g_Sparkle = [SUUpdater sharedUpdater];
+        
+        NSMenuItem *item = [[NSMenuItem alloc] init];
+        item.title = NSLocalizedString(@"Check For Updates...", "Menu item title for check if any Files updates are here");
+        item.target = g_Sparkle;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wselector"
+        item.action = @selector(checkForUpdates:);
+#pragma clang diagnostic pop
+        [[[NSApp mainMenu] itemAtIndex:0].submenu insertItem:item atIndex:1];
+    }
 }
 
 - (void) setupConfigDirectory

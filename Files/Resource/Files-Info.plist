@@ -27,7 +27,8 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013-2015 Michael Kazakov. All rights reserved.</string>
+	<string>Copyright © 2013-2015 Michael Kazakov.
+All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -62,5 +63,7 @@
 		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
 		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
 	</dict>
+	<key>SUFeedURL</key>
+	<string>http://filesmanager.info/downloads/sparkle.xml</string>
 </dict>
 </plist>

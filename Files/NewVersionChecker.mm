@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/sparkle/SUStandardVersionComparator.h"
+#import <Sparkle/Sparkle.h>
 #import "NewVersionChecker.h"
 #import "Common.h"
 

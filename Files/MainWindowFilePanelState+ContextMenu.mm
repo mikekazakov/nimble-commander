@@ -7,7 +7,7 @@
 //
 
 #import <sys/stat.h>
-#import "3rd_party/sparkle/SUStandardVersionComparator.h"
+#import <Sparkle/Sparkle.h>
 #import "MainWindowFilePanelState+ContextMenu.h"
 #import "Common.h"
 #import "sysinfo.h"

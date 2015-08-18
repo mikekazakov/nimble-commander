@@ -202,7 +202,7 @@ static SUUpdater *g_Sparkle = nil;
     
     [self checkIfNeedToShowNagScreen];
     
-    if( configuration::version == configuration::Version::Full ) {
+    if( configuration::version == configuration::Version::Full && !self.isRunningTests ) {
         g_Sparkle = [SUUpdater sharedUpdater];
         
         NSMenuItem *item = [[NSMenuItem alloc] init];

@@ -443,8 +443,9 @@ bool VFSHost::ValidateFilename(const char *_filename) const
     if( !_filename )
         return false;
 
+    const auto max_filename_len = 256;
     const auto i = _filename, e = _filename + strlen(_filename);
-    if( i == e )
+    if( i == e || e - i > max_filename_len )
         return false;
 
     static const char invalid_chars[] = ":\\/\r\t\n";

@@ -658,7 +658,9 @@ void panel::GenericCursorPersistance::Restore()
     // checking for invalid symbols
     if( !self.vfs->ValidateFilename(target_fn.c_str()) ) {
         NSAlert *a = [[NSAlert alloc] init];
-        a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"), _filename];
+        a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
+                         _filename.length <= 256 ? _filename : [[_filename substringToIndex:256] stringByAppendingString:@"..."]
+                         ];
         a.informativeText = NSLocalizedString(@"Try using a name with fewer characters, or with no punctuation marks.", "Informative text when user is entering an invalid filename");
         a.alertStyle = NSCriticalAlertStyle;
         [a runModal];

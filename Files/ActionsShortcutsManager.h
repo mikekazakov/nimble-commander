@@ -71,7 +71,7 @@ private:
     
     void ReadOverrides(NSArray *_dict);
     void WriteOverrides(NSMutableArray *_dict) const;
-    void WriteOverridesToConfigFile() const;
+    bool WriteOverridesToConfigFile() const;
     
     // persistance holy grail is below, change id's only in emergency case:
     const vector<pair<string,int>> m_ActionsTags = {

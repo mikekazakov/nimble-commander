@@ -262,7 +262,13 @@ ActionsShortcutsManager::ActionsShortcutsManager()
             m_ShortCutsDefaults[i->second] = sc;
     }
     
-    if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
+    NSString *old_overrides = @"CommonHotkeysOverrides";
+    if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:old_overrides]) { // migrate to config file if any
+        ReadOverrides(overrides);
+        if( WriteOverridesToConfigFile() )
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:old_overrides];
+    }
+    else if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
         ReadOverrides(a);
 }
 
@@ -419,11 +425,11 @@ void ActionsShortcutsManager::RevertToDefaults()
     WriteOverridesToConfigFile();
 }
 
-void ActionsShortcutsManager::WriteOverridesToConfigFile() const
+bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
 {
     NSMutableArray *overrides = [NSMutableArray new];
     WriteOverrides(overrides);
 
-    [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
-                atomically:true];
+    return [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
+                       atomically:true];
 }

@@ -145,14 +145,10 @@
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc
 {
-    if( _pc.vfs->IsNativeFS() && self.overlappedTerminalVisible )
-        [self synchronizeOverlappedTerminalCWD:_pc.currentDirectoryPath];
-}
-
-- (void) synchronizeOverlappedTerminalCWD:(const string&)_new_cwd
-{
-    if( m_OverlappedTerminal.terminal )
-        [m_OverlappedTerminal.terminal changeWorkingDirectory:_new_cwd];
+    if( _pc.vfs->IsNativeFS() &&
+       self.overlappedTerminalVisible &&
+       m_OverlappedTerminal.terminal.isShellVirgin == true )
+        [m_OverlappedTerminal.terminal changeWorkingDirectory:_pc.currentDirectoryPath];
 }
 
 - (void) handleCtrlAltTab

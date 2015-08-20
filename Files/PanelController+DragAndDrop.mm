@@ -15,7 +15,10 @@
 #import "path_manip.h"
 #import "Common.h"
 
-static NSString *kPrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
+static NSString *g_PrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
+static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
+static NSString *g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
+static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
 
 @interface PanelDraggingItem : NSPasteboardItem
 @property(nonatomic) string filename;
@@ -33,14 +36,8 @@ static bool DraggingIntoFoldersAllowed()
 
 static NSFont *FontForDragImages()
 {
-    static NSFont *font = [NSFont fontWithName:@"Lucida Grande" size:13];
+    static NSFont *font = [NSFont systemFontOfSize:13];
     return font;
-}
-
-static NSString *FilenamesPasteboardUTI()
-{
-    static NSString *uti = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
-    return uti;
 }
 
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
@@ -197,7 +194,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if(m_FilenamesPasteboardDone)
         return;
     
-    if(m_FilenamesPasteboardEnabled && [type isEqualToString:FilenamesPasteboardUTI()])
+    if(m_FilenamesPasteboardEnabled && [type isEqualToString:g_PasteboardFilenamesUTI])
     { // old style is turned on by some special conditions
         NSMutableArray *ar = [NSMutableArray new];
         for(auto &i: m_Items)
@@ -205,7 +202,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [sender writeObjects:ar];
         m_FilenamesPasteboardDone = true;
     }
-    else if ([type isEqualToString:(NSString *)kPasteboardTypeFileURLPromise])
+    else if ([type isEqualToString:g_PasteboardFileURLPromiseUTI])
     {
         if(m_URLPromiseTarget == nil)
         {
@@ -233,7 +230,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                 forType:type];
         m_FilenamesPasteboardEnabled = false;
     }
-    else if([type isEqualToString:(NSString *)kUTTypeFileURL])
+    else if([type isEqualToString:g_PasteboardFileURLUTI])
     {
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:item.path.c_str()]];
         [url writeToPasteboard:sender];
@@ -260,12 +257,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 + (NSString*) dragAndDropPrivateUTI
 {
-    return kPrivateDragUTI;
+    return g_PrivateDragUTI;
 }
 
 - (void) RegisterDragAndDropListeners
 {
-    [m_View registerForDraggedTypes:@[kPrivateDragUTI, (NSString *)kUTTypeFileURL, (NSString *)kPasteboardTypeFileURLPromise]];
+    [m_View registerForDraggedTypes:@[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI]];
 }
 
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
@@ -296,11 +293,11 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     dragPosition.y -= 16;
     
     NSMutableArray *pasteboard_types = [NSMutableArray new];
-    [pasteboard_types addObject:(NSString *)kPasteboardTypeFileURLPromise];
-    [pasteboard_types addObject:kPrivateDragUTI];
+    [pasteboard_types addObject:g_PasteboardFileURLPromiseUTI];
+    [pasteboard_types addObject:g_PrivateDragUTI];
     if(vfs->IsNativeFS()) {
-        [pasteboard_types addObject:FilenamesPasteboardUTI()];
-        [pasteboard_types addObject:(NSString *)kUTTypeFileURL];
+        [pasteboard_types addObject:g_PasteboardFilenamesUTI];
+        [pasteboard_types addObject:g_PasteboardFileURLUTI];
     }
     
     for(auto i: vfs_items) {
@@ -411,18 +408,21 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                         break;
                     }
         }
-        else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
+        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI]) {
             // drag is from some other application
-            valid_items = [self countAcceptableDraggingItemsExt:sender forType:(NSString *)kUTTypeFileURL];
+            valid_items = [self countAcceptableDraggingItemsExt:sender forType:g_PasteboardFileURLUTI];
             NSDragOperation mask = sender.draggingSourceOperationMask;
             if(mask & NSDragOperationCopy)
                 result = NSDragOperationCopy;
         }
-        else if([sender.draggingPasteboard.types containsObject:(NSString *)kPasteboardTypeFileURLPromise] && self.vfs->IsNativeFS() ) {
+        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && self.vfs->IsNativeFS() ) {
             // tell we can accept file promises drags
-            valid_items = [self countAcceptableDraggingItemsExt:sender forType:(NSString *)kPasteboardTypeFileURLPromise];
+            valid_items = [self countAcceptableDraggingItemsExt:sender forType:g_PasteboardFileURLPromiseUTI];
             NSDragOperation mask = sender.draggingSourceOperationMask;
-            result = mask & (NSDragOperationCopy|NSDragOperationMove);
+            if( mask & NSDragOperationMove )
+                result = NSDragOperationMove;
+            else if( mask & NSDragOperationCopy )
+                result = NSDragOperationCopy;
         }
     }
     
@@ -565,7 +565,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             }
         }
     }
-    else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
+    else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI]) {
         NSArray *fileURLs = [sender.draggingPasteboard
                              readObjectsForClasses:@[NSURL.class]
                              options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
@@ -602,7 +602,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         
         return true;
     }
-    else if([sender.draggingPasteboard.types containsObject:(NSString *)kPasteboardTypeFileURLPromise] && self.vfs->IsNativeFS() ) {
+    else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && self.vfs->IsNativeFS() ) {
         // accept file promises drags
         NSURL *drop_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:destination_dir.native()]];
         [sender namesOfPromisedFilesDroppedAtDestination:drop_url];

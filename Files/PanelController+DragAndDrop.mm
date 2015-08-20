@@ -265,7 +265,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (void) RegisterDragAndDropListeners
 {
-    [m_View registerForDraggedTypes:@[kPrivateDragUTI, (NSString *)kUTTypeFileURL]];
+    [m_View registerForDraggedTypes:@[kPrivateDragUTI, (NSString *)kUTTypeFileURL, (NSString *)kPasteboardTypeFileURLPromise]];
 }
 
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
@@ -336,7 +336,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
 }
 
-- (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender
+- (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender forType:(NSString *)type
 {
     __block int urls_amount = 0;
     [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
@@ -344,7 +344,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                       classes:@[NSPasteboardItem.class]
                                 searchOptions:nil
                                    usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-                                       if( [((NSPasteboardItem*)draggingItem.item).types containsObject:(NSString *)kUTTypeFileURL] )
+                                       if( [((NSPasteboardItem*)draggingItem.item).types containsObject:type] )
                                            urls_amount++;
                                    }];
     return urls_amount;
@@ -413,10 +413,16 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         }
         else if([sender.draggingPasteboard.types containsObject:(NSString *)kUTTypeFileURL]) {
             // drag is from some other application
-            valid_items = [self countAcceptableDraggingItemsExt:sender];
+            valid_items = [self countAcceptableDraggingItemsExt:sender forType:(NSString *)kUTTypeFileURL];
             NSDragOperation mask = sender.draggingSourceOperationMask;
             if(mask & NSDragOperationCopy)
                 result = NSDragOperationCopy;
+        }
+        else if([sender.draggingPasteboard.types containsObject:(NSString *)kPasteboardTypeFileURLPromise] && self.vfs->IsNativeFS() ) {
+            // tell we can accept file promises drags
+            valid_items = [self countAcceptableDraggingItemsExt:sender forType:(NSString *)kPasteboardTypeFileURLPromise];
+            NSDragOperation mask = sender.draggingSourceOperationMask;
+            result = mask & (NSDragOperationCopy|NSDragOperationMove);
         }
     }
     
@@ -594,6 +600,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             [self.state.OperationsController AddOperation:op];
         }
         
+        return true;
+    }
+    else if([sender.draggingPasteboard.types containsObject:(NSString *)kPasteboardTypeFileURLPromise] && self.vfs->IsNativeFS() ) {
+        // accept file promises drags
+        NSURL *drop_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:destination_dir.native()]];
+        [sender namesOfPromisedFilesDroppedAtDestination:drop_url];
         return true;
     }
     

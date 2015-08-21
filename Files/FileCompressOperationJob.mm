@@ -188,6 +188,11 @@ retry_stat:
             m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceTotalBytes += stat_buffer.size;
         }
+        if(S_ISLNK(stat_buffer.mode))
+        {
+            m_ItemFlags.push_back((uint8_t)ItemFlags::symlink);
+            m_ScannedItems.push_back(_short_path, _prefix);
+        }
         else if(S_ISDIR(stat_buffer.mode))
         {
             char dirpath[MAXPATHLEN];
@@ -292,9 +297,32 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
         }
     }
-    else
-    { /* regular files */
-        int stat_ret = 0, open_file_ret = 0;;
+    else if( m_ItemFlags[_number] & (int)ItemFlags::symlink ) { // symlinks
+        int vfs_ret = 0;
+        char symlink[MAXPATHLEN];
+        retry_stat_symlink:;
+        if( (vfs_ret = m_SrcVFS->Stat(sourcepath, st, VFSFlags::F_NoFollow, 0)) == 0 &&
+            (vfs_ret = m_SrcVFS->ReadSymlink(sourcepath, symlink, MAXPATHLEN, 0)) == 0 ) {
+            entry = archive_entry_new();
+            archive_entry_set_pathname(entry, itemname);
+            VFSStat::ToSysStat(st, sst);
+            archive_entry_copy_stat(entry, &sst);
+            archive_entry_set_symlink(entry, symlink);
+            archive_write_header(m_Archive, entry);
+            archive_entry_free(entry);
+            entry = 0;
+        }
+        else { // failed to stat source file
+            if(m_SkipAll) goto cleanup;
+            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(vfs_ret) forPath:sourcepath] WaitForResult];
+            if(result == OperationDialogResult::Retry) goto retry_stat_symlink;
+            if(result == OperationDialogResult::Skip) goto cleanup;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+        }
+    }
+    else { /* regular files */
+        int stat_ret = 0, open_file_ret = 0;
         retry_stat_file:;
         if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
             

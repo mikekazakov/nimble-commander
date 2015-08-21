@@ -42,8 +42,9 @@ private:
     
     enum class ItemFlags
     {
-        no_flags    = 0b0000,
-        is_dir      = 0b0001,
+        no_flags    = 0 << 0,
+        is_dir      = 1 << 0,
+        symlink     = 1 << 1
     };
     
     

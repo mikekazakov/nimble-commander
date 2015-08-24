@@ -7,11 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF2D2F3C1B8B238A00111C75 /* Habanero.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F3B1B8B238A00111C75 /* Habanero.h */; };
-		CF2D2F3E1B8B238A00111C75 /* Habanero.m in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F3D1B8B238A00111C75 /* Habanero.m */; };
 		CF2D2F441B8B238B00111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F381B8B238A00111C75 /* libHabanero.dylib */; };
 		CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */; };
 		CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */; };
+		CF2D2F701B8B36B600111C75 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F6F1B8B36B600111C75 /* CoreFoundation.framework */; };
+		CF2D2F721B8B36C600111C75 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F711B8B36C600111C75 /* IOKit.framework */; };
+		CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F731B8B385C00111C75 /* tiny_string.cpp */; };
+		CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F741B8B385C00111C75 /* tiny_string.h */; };
+		CF2D2F791B8B3BC000111C75 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F771B8B3BC000111C75 /* Hash.cpp */; };
+		CF2D2F7A1B8B3BC000111C75 /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F781B8B3BC000111C75 /* Hash.h */; };
+		CF2D2F7C1B8B3BF100111C75 /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F7B1B8B3BF100111C75 /* Hash_Tests.mm */; };
+		CF2D2F7E1B8B3CF300111C75 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F7D1B8B3CF300111C75 /* libz.dylib */; };
+		CF2D2F811B8B451B00111C75 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */; };
+		CF2D2F821B8B451B00111C75 /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */; };
+		CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F831B8B47B700111C75 /* FontExtras.cpp */; };
+		CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F841B8B47B700111C75 /* FontExtras.h */; };
+		CF2D2F881B8B47EE00111C75 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F871B8B47EE00111C75 /* CoreText.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,12 +37,23 @@
 
 /* Begin PBXFileReference section */
 		CF2D2F381B8B238A00111C75 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF2D2F3B1B8B238A00111C75 /* Habanero.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Habanero.h; sourceTree = "<group>"; };
-		CF2D2F3D1B8B238A00111C75 /* Habanero.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Habanero.m; sourceTree = "<group>"; };
 		CF2D2F431B8B238B00111C75 /* HabaneroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabaneroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2D2F491B8B238B00111C75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdleSleepPreventer.cpp; sourceTree = "<group>"; };
 		CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdleSleepPreventer.h; sourceTree = "<group>"; };
+		CF2D2F6F1B8B36B600111C75 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		CF2D2F711B8B36C600111C75 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		CF2D2F731B8B385C00111C75 /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tiny_string.cpp; sourceTree = "<group>"; };
+		CF2D2F741B8B385C00111C75 /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tiny_string.h; sourceTree = "<group>"; };
+		CF2D2F771B8B3BC000111C75 /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hash.cpp; sourceTree = "<group>"; };
+		CF2D2F781B8B3BC000111C75 /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
+		CF2D2F7B1B8B3BF100111C75 /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Hash_Tests.mm; sourceTree = "<group>"; };
+		CF2D2F7D1B8B3CF300111C75 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dispatch_cpp.cpp; sourceTree = "<group>"; };
+		CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispatch_cpp.h; sourceTree = "<group>"; };
+		CF2D2F831B8B47B700111C75 /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontExtras.cpp; sourceTree = "<group>"; };
+		CF2D2F841B8B47B700111C75 /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontExtras.h; sourceTree = "<group>"; };
+		CF2D2F871B8B47EE00111C75 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +61,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF2D2F881B8B47EE00111C75 /* CoreText.framework in Frameworks */,
+				CF2D2F7E1B8B3CF300111C75 /* libz.dylib in Frameworks */,
+				CF2D2F721B8B36C600111C75 /* IOKit.framework in Frameworks */,
+				CF2D2F701B8B36B600111C75 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +84,7 @@
 			children = (
 				CF2D2F3A1B8B238A00111C75 /* Habanero */,
 				CF2D2F471B8B238B00111C75 /* HabaneroTests */,
+				CF2D2F6E1B8B369800111C75 /* Frameworks */,
 				CF2D2F391B8B238A00111C75 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,10 +101,16 @@
 		CF2D2F3A1B8B238A00111C75 /* Habanero */ = {
 			isa = PBXGroup;
 			children = (
+				CF2D2F841B8B47B700111C75 /* FontExtras.h */,
+				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
+				CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */,
+				CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */,
+				CF2D2F781B8B3BC000111C75 /* Hash.h */,
+				CF2D2F771B8B3BC000111C75 /* Hash.cpp */,
+				CF2D2F741B8B385C00111C75 /* tiny_string.h */,
+				CF2D2F731B8B385C00111C75 /* tiny_string.cpp */,
 				CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */,
 				CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */,
-				CF2D2F3B1B8B238A00111C75 /* Habanero.h */,
-				CF2D2F3D1B8B238A00111C75 /* Habanero.m */,
 			);
 			path = Habanero;
 			sourceTree = "<group>";
@@ -85,6 +118,7 @@
 		CF2D2F471B8B238B00111C75 /* HabaneroTests */ = {
 			isa = PBXGroup;
 			children = (
+				CF2D2F7B1B8B3BF100111C75 /* Hash_Tests.mm */,
 				CF2D2F481B8B238B00111C75 /* Supporting Files */,
 			);
 			path = HabaneroTests;
@@ -98,6 +132,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CF2D2F6E1B8B369800111C75 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F871B8B47EE00111C75 /* CoreText.framework */,
+				CF2D2F711B8B36C600111C75 /* IOKit.framework */,
+				CF2D2F6F1B8B36B600111C75 /* CoreFoundation.framework */,
+				CF2D2F7D1B8B3CF300111C75 /* libz.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -105,8 +150,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF2D2F7A1B8B3BC000111C75 /* Hash.h in Headers */,
 				CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */,
-				CF2D2F3C1B8B238A00111C75 /* Habanero.h in Headers */,
+				CF2D2F821B8B451B00111C75 /* dispatch_cpp.h in Headers */,
+				CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */,
+				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,8 +246,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2D2F3E1B8B238A00111C75 /* Habanero.m in Sources */,
+				CF2D2F791B8B3BC000111C75 /* Hash.cpp in Sources */,
+				CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */,
+				CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */,
 				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,
+				CF2D2F811B8B451B00111C75 /* dispatch_cpp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF2D2F7C1B8B3BF100111C75 /* Hash_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

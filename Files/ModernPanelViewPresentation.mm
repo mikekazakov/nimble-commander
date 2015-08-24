@@ -6,14 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-
 #import "PanelView.h"
 #import "ModernPanelViewPresentation.h"
 #import "PanelData.h"
 #import "Encodings.h"
 #import "Common.h"
 #import "NSUserDefaults+myColorSupport.h"
-#import "FontExtras.h"
 #import "ObjcToCppObservingBridge.h"
 #import "IconsGenerator.h"
 #import "ModernPanelViewPresentationHeader.h"
@@ -180,7 +178,7 @@ void ModernPanelViewPresentation::BuildGeometry()
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
     
     // Height of a single file line calculated from the font.
-    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
+    m_FontInfo = FontGeometryInfo( (__bridge CTFontRef)m_Font );
     
     // hardcoded stuff to mimic Finder's layout
     int icon_size = 16;
@@ -208,9 +206,9 @@ void ModernPanelViewPresentation::BuildGeometry()
             m_LineTextBaseline = m_LineHeight - 6;
             break;
         default:
-            m_LineHeight = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3];
-            m_LineTextBaseline = g_TextInsetsInLine[1] + m_FontAscent;
-            icon_size = m_FontHeight;
+            m_LineHeight = m_FontInfo.LineHeight() + g_TextInsetsInLine[1] + g_TextInsetsInLine[3];
+            m_LineTextBaseline = g_TextInsetsInLine[1] + m_FontInfo.Ascent();
+            icon_size = m_FontInfo.LineHeight();
     }
     
     m_IconCache.SetIconSize( icon_size );
@@ -679,7 +677,7 @@ ModernPanelViewPresentation::ItemLayout ModernPanelViewPresentation::LayoutItem(
     
     NSRect filename_rect = NSMakeRect(icon_size + 2*g_TextInsetsInLine[0], 0,
                              column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
-                             m_FontHeight);
+                             m_FontInfo.LineHeight());
     if (m_State->ViewType == PanelViewType::ViewFull)
         filename_rect.size.width -= m_TimeColumnWidth + m_DateColumnWidth;
     if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
@@ -744,7 +742,7 @@ void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int 
     NSRect rc = NSOffsetRect(LayoutItem(_item_index).filename_area, origin.x, origin.y);
     auto line_padding = 2.;
     rc.origin.x -= line_padding;
-    rc.origin.y += /* g_TextInsetsInLine[1]*/ m_LineTextBaseline - m_FontAscent;
+    rc.origin.y += /* g_TextInsetsInLine[1]*/ m_LineTextBaseline - m_FontInfo.Ascent();
     rc.size.width += line_padding;
     
     _editor.frame = rc;

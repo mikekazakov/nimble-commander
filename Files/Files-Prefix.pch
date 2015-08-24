@@ -50,6 +50,9 @@
     #include <functional>
     #include <future>
     #include <random>
+
+    #include <Habanero/dispatch_cpp.h>
+
     using namespace std;
     using namespace std::chrono;
 
@@ -62,8 +65,6 @@
     #include "3rd_party/built/include/boost/logic/tribool.hpp"
     using boost::logic::tribool;
     using boost::logic::indeterminate;
-
-    #include "dispatch_cpp.h"
 #endif
 
 #include "Configuration.h"

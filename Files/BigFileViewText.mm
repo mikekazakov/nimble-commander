@@ -9,7 +9,6 @@
 #import "BigFileViewText.h"
 #import "BigFileView.h"
 #import "Common.h"
-#import "FontExtras.h"
 
 static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
 {
@@ -216,8 +215,7 @@ BigFileViewText::~BigFileViewText()
 
 void BigFileViewText::GrabFontGeometry()
 {
-    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
-    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
+    m_FontInfo = FontGeometryInfo( [m_View TextFont] );
 }
 
 void BigFileViewText::OnBufferDecoded()
@@ -258,7 +256,7 @@ void BigFileViewText::BuildLayout()
     {
         // 1st - manual hack for breaking lines by space characters
         CFIndex count = 0;
-        unsigned spaces = ShouldBreakLineBySpaces(m_StringBuffer, (unsigned)start, m_FontWidth, wrapping_width);
+        unsigned spaces = ShouldBreakLineBySpaces(m_StringBuffer, (unsigned)start, m_FontInfo.MonospaceWidth(), wrapping_width);
         if(spaces != 0)
         {
             count = spaces;
@@ -273,7 +271,7 @@ void BigFileViewText::BuildLayout()
                                                                 typesetter,
                                                                 (unsigned)start,
                                                                 (unsigned)count,
-                                                                m_FontWidth,
+                                                                m_FontInfo.MonospaceWidth(),
                                                                 wrapping_width);
             count -= tail_spaces_cut;
         }
@@ -315,14 +313,14 @@ void BigFileViewText::ClearLayout()
 
 CGPoint BigFileViewText::TextAnchor()
 {
-    return NSMakePoint(ceil((m_LeftInset - m_HorizontalOffset * m_FontWidth)) - m_SmoothOffset.x,
-                       floor(m_View.contentBounds.height - m_FontHeight + m_FontDescent) + m_SmoothOffset.y);
+    return NSMakePoint(ceil((m_LeftInset - m_HorizontalOffset * m_FontInfo.MonospaceWidth())) - m_SmoothOffset.x,
+                       floor(m_View.contentBounds.height - m_FontInfo.LineHeight() + m_FontInfo.Descent()) + m_SmoothOffset.y);
 }
 
 int BigFileViewText::LineIndexFromYPos(double _y)
 {
     CGPoint left_upper = TextAnchor();
-    int y_off = ceil((left_upper.y - _y) / m_FontHeight);
+    int y_off = ceil((left_upper.y - _y) / m_FontInfo.LineHeight());
     int line_no = y_off + m_VerticalOffset;
     return line_no;
 }
@@ -365,14 +363,14 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     if(m_SmoothOffset.y < 0 && first_string > 0)
     {
         --first_string; // to be sure that we can see bottom-clipped lines
-        pos.y += m_FontHeight;
+        pos.y += m_FontInfo.LineHeight();
     }
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     
      for(size_t i = first_string;
-         i < m_Lines.size() && pos.y >= 0 - m_FontHeight;
-         ++i, pos.y -= m_FontHeight)
+         i < m_Lines.size() && pos.y >= 0 - m_FontInfo.LineHeight();
+         ++i, pos.y -= m_FontInfo.LineHeight())
      {
          auto &line = m_Lines[i];
          
@@ -407,7 +405,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
                  CGContextSaveGState(_context);
                  CGContextSetShouldAntialias(_context, false);
                  m_View.SelectionBkFillColor.Set(_context);
-                 CGContextFillRect(_context, CGRectMake(x1, pos.y - m_FontDescent, x2 - x1, m_FontHeight));
+                 CGContextFillRect(_context, CGRectMake(x1, pos.y - m_FontInfo.Descent(), x2 - x1, m_FontInfo.LineHeight()));
                  CGContextRestoreGState(_context);
              }
          }
@@ -695,10 +693,10 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
     }
     else
     { // we have all file decomposed into strings, so we can do smooth scrolling now
-        double full_document_size = double(m_Lines.size()) * m_FontHeight;
+        double full_document_size = double(m_Lines.size()) * m_FontInfo.LineHeight();
         double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
-        m_VerticalOffset = floor(scroll_y_offset / m_FontHeight);
-        m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontHeight;
+        m_VerticalOffset = floor(scroll_y_offset / m_FontInfo.LineHeight());
+        m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontInfo.LineHeight();
         [m_View setNeedsDisplay];
     }
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
@@ -710,8 +708,8 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
     double delta_x = theEvent.scrollingDeltaX;
     if(!theEvent.hasPreciseScrollingDeltas)
     {
-        delta_y *= m_FontHeight;
-        delta_x *= m_FontWidth;
+        delta_y *= m_FontInfo.LineHeight();
+        delta_x *= m_FontInfo.MonospaceWidth();
     }
     
     // vertical scrolling
@@ -725,13 +723,13 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
         {
             m_SmoothOffset.y -= delta_y;
         
-            while(m_SmoothOffset.y < -m_FontHeight) {
+            while(m_SmoothOffset.y < -m_FontInfo.LineHeight()) {
                 OnUpArrow();
-                m_SmoothOffset.y += m_FontHeight;
+                m_SmoothOffset.y += m_FontInfo.LineHeight();
             }
-            while(m_SmoothOffset.y > m_FontHeight) {
+            while(m_SmoothOffset.y > m_FontInfo.LineHeight()) {
                 OnDownArrow();
-                m_SmoothOffset.y -= m_FontHeight;
+                m_SmoothOffset.y -= m_FontInfo.LineHeight();
             }
         }
         else
@@ -743,19 +741,19 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
            (delta_y < 0 && m_VerticalOffset + m_FrameLines < m_Lines.size()) )
         {
             m_SmoothOffset.y -= delta_y;
-            if(m_SmoothOffset.y < -m_FontHeight)
+            if(m_SmoothOffset.y < -m_FontInfo.LineHeight())
             {
-                int dl = int(-m_SmoothOffset.y / m_FontHeight);
+                int dl = int(-m_SmoothOffset.y / m_FontInfo.LineHeight());
                 if(m_VerticalOffset > dl) m_VerticalOffset -= dl;
                 else m_VerticalOffset = 0;
-                m_SmoothOffset.y += dl * m_FontHeight;
+                m_SmoothOffset.y += dl * m_FontInfo.LineHeight();
             }
-            else if(m_SmoothOffset.y > m_FontHeight)
+            else if(m_SmoothOffset.y > m_FontInfo.LineHeight())
             {
-                int dl = int(m_SmoothOffset.y / m_FontHeight);
+                int dl = int(m_SmoothOffset.y / m_FontInfo.LineHeight());
                 if(m_VerticalOffset + m_FrameLines + dl < m_Lines.size()) m_VerticalOffset += dl;
                 else m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
-                m_SmoothOffset.y -= dl * m_FontHeight;
+                m_SmoothOffset.y -= dl * m_FontInfo.LineHeight();
             }
         }
         else
@@ -766,19 +764,19 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
     if( !m_View.wordWrap && ((delta_x > 0 && m_HorizontalOffset > 0) || delta_x < 0) )
     {
         m_SmoothOffset.x -= delta_x;
-        if(m_SmoothOffset.x > m_FontWidth)
+        if(m_SmoothOffset.x > m_FontInfo.MonospaceWidth())
         {
-            int dx = int(m_SmoothOffset.x / m_FontWidth);
+            int dx = int(m_SmoothOffset.x / m_FontInfo.MonospaceWidth());
             m_HorizontalOffset += dx;
-            m_SmoothOffset.x -= dx * m_FontWidth;
+            m_SmoothOffset.x -= dx * m_FontInfo.MonospaceWidth();
             
         }
-        else if(m_SmoothOffset.x < -m_FontWidth)
+        else if(m_SmoothOffset.x < -m_FontInfo.MonospaceWidth())
         {
-            int dx = int(-m_SmoothOffset.x / m_FontWidth);
+            int dx = int(-m_SmoothOffset.x / m_FontInfo.MonospaceWidth());
             if(m_HorizontalOffset > dx) m_HorizontalOffset -= dx;
             else m_HorizontalOffset = 0;
-            m_SmoothOffset.x += dx * m_FontWidth;
+            m_SmoothOffset.x += dx * m_FontInfo.MonospaceWidth();
         }
     }
     
@@ -801,7 +799,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
 void BigFileViewText::OnFrameChanged()
 {
     NSSize sz = m_View.contentBounds;
-    m_FrameLines = sz.height / m_FontHeight;
+    m_FrameLines = sz.height / m_FontInfo.LineHeight();
 
     if(m_FrameSize.width != sz.width)
         BuildLayout();

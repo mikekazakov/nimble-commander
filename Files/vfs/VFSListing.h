@@ -9,7 +9,7 @@
 #pragma once
 
 #include "VFSDeclarations.h"
-#include "tiny_string.h"
+#include <Habanero/tiny_string.h>
 
 struct VFSListingAttributes
 {

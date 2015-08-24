@@ -2,6 +2,7 @@
 
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
+#include <Habanero/FontExtras.h>
 
 class FontCache
 {
@@ -19,12 +20,12 @@ public:
     inline CTFontRef BaseFont() const {return m_CTFonts[0];}
     inline CTFontRef Font(int _no) const { return m_CTFonts[_no]; }
     
-    inline double Size()    const {return m_FontSize;}
-    inline double Height()  const {return m_FontHeight;}
-    inline double Width()   const {return m_FontWidth;}
-    inline double Ascent()  const {return m_FontAscent;}
-    inline double Descent() const {return m_FontDescent;}
-    inline double Leading() const {return m_FontLeading;}
+    inline double Size()    const {return m_FontInfo.Size();}
+    inline double Height()  const {return m_FontInfo.LineHeight();}
+    inline double Width()   const {return m_FontInfo.MonospaceWidth();}
+    inline double Ascent()  const {return m_FontInfo.Ascent();}
+    inline double Descent() const {return m_FontInfo.Descent();}
+    inline double Leading() const {return m_FontInfo.Leading();}
     
     Pair    Get(uint32_t _c);
     
@@ -43,12 +44,6 @@ private:
     map<uint32_t, Pair> m_CacheNonBMP;
     
     CFStringRef m_FontName;
-    double      m_FontSize;
-    double      m_FontHeight;
-    double      m_FontWidth;
-    double      m_FontAscent;
-    double      m_FontDescent;
-    double      m_FontLeading;
-    
+    FontGeometryInfo m_FontInfo;
     FontCache(const FontCache&); // forbid
 };

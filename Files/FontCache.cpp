@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <wchar.h>
 #include <math.h>
-#include "FontExtras.h"
 
 static vector<weak_ptr<FontCache>> g_Caches;
 
@@ -140,7 +139,7 @@ shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
     for(auto &i:g_Caches)
     {
         auto font = i.lock();
-        if(!CFStringCompare(font->m_FontName, full_name, 0) && fabs(font->m_FontSize-font_size) < 0.1)
+        if(!CFStringCompare(font->m_FontName, full_name, 0) && fabs(font->Size()-font_size) < 0.1)
         {
             // just return already created font cache
             CFRelease(full_name);
@@ -154,14 +153,12 @@ shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
     return font;
 }
 
-FontCache::FontCache(CTFontRef _basic_font)
+FontCache::FontCache(CTFontRef _basic_font):
+    m_FontInfo(_basic_font)
 {
     static_assert(sizeof(Pair) == 4, "");
     m_CTFonts.fill(nullptr);
-    m_FontHeight = GetLineHeightForFont(_basic_font, &m_FontAscent, &m_FontDescent, &m_FontLeading);
-    m_FontWidth  = GetMonospaceFontCharWidth(_basic_font);
     m_FontName = CTFontCopyFullName(_basic_font);
-    m_FontSize = CTFontGetSize(_basic_font);
     
     CFRetain(_basic_font);    
     m_CTFonts[0] = _basic_font;

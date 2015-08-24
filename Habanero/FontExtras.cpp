@@ -6,9 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <assert.h>
+#include <math.h>
+#include <stdexcept>
 #include "FontExtras.h"
 
-double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
+/**
+ * Grabs geometry information from given font and returns it's line height.
+ * Optionally returns font Ascent, Descent and Leading.
+ */
+static double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent, CGFloat *_leading)
 {
     assert(iFont != NULL);
     double ascent   = CTFontGetAscent(iFont);
@@ -42,7 +49,7 @@ double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_descent
     return lineHeight;
 }
 
-double GetMonospaceFontCharWidth(CTFontRef _font)
+static double GetMonospaceFontCharWidth(CTFontRef _font)
 {
     CFStringRef string = CFSTR("A");
     CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
@@ -53,4 +60,24 @@ double GetMonospaceFontCharWidth(CTFontRef _font)
     CFRelease(line);
     CFRelease(attrString);
     return floor(width+0.5);
+}
+
+FontGeometryInfo::FontGeometryInfo()
+{
+    m_Size = 0.;
+    m_Ascent = 0.;
+    m_Descent = 0.;
+    m_Leading = 0.;
+    m_LineHeight = 0.;
+    m_MonospaceWidth = 0.;
+}
+
+FontGeometryInfo::FontGeometryInfo(CTFontRef _font)
+{
+    if( !_font )
+        throw std::invalid_argument("font can't be nullptr");
+    
+    m_LineHeight = GetLineHeightForFont(_font, &m_Ascent, &m_Descent, &m_Leading);
+    m_MonospaceWidth = GetMonospaceFontCharWidth(_font);
+    m_Size = CTFontGetSize(_font);
 }

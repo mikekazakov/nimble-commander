@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Habanero/FontExtras.h>
 #import "BigFileViewProtocol.h"
 
 class BigFileViewHex : public BigFileViewImpl
@@ -55,11 +56,7 @@ private:
     unsigned                        m_RowsOffset  = 0;
     CGPoint                         m_SmoothOffset = {0, 0};
     int                             m_FrameLines  = 0; // amount of lines in our frame size ( +1 to fit cutted line also)
-    double                          m_FontHeight  = 0;
-    double                          m_FontWidth   = 0;
-    double                          m_FontAscent  = 0;
-    double                          m_FontDescent = 0;
-    double                          m_FontLeading = 0;
+    FontGeometryInfo                m_FontInfo;
     double                          m_LeftInset   = 0;
     vector<TextLine>                m_Lines;
 };

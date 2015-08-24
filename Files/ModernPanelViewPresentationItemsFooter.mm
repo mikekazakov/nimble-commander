@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/FontExtras.h>
 #import "ModernPanelViewPresentationItemsFooter.h"
 #import "ModernPanelViewPresentation.h"
-#import "FontExtras.h"
 #import "PanelData.h"
 #import "VFS.h"
 #import "ByteCountFormatter.h"
@@ -49,7 +49,9 @@ ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(M
     m_Parent(_parent)
 {
     m_Font = [NSFont systemFontOfSize:13];
-    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
+    FontGeometryInfo info{(__bridge CTFontRef)m_Font};
+    m_FontHeight = info.LineHeight();
+    m_FontAscent = info.Ascent();
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
     
     NSDictionary* attributes = [NSDictionary dictionaryWithObject:m_Font forKey:NSFontAttributeName];

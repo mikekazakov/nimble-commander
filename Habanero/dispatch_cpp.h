@@ -3,6 +3,7 @@
 #include <dispatch/dispatch.h>
 #include <functional>
 #include <utility>
+#include <chrono>
 
 // synopsis
 
@@ -60,7 +61,7 @@ template <class T>
 inline void dispatch_async( dispatch_queue_t queue, T f )
 {
     dispatch_async_f(queue,
-                     new T( move(f) ),
+                     new T( std::move(f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
                          (*f)();
@@ -73,7 +74,7 @@ inline void dispatch_group_async( dispatch_group_t group, dispatch_queue_t queue
 {
     dispatch_group_async_f(group,
                            queue,
-                           new T( move(f) ),
+                           new T( std::move(f) ),
                            [](void* _p) {
                                auto f = static_cast<T*>(_p);
                                (*f)();
@@ -85,7 +86,7 @@ template <class T>
 inline void dispatch_sync( dispatch_queue_t queue, T f )
 {
     dispatch_sync_f(queue,
-                    new T( move(f) ),
+                    new T( std::move(f) ),
                     [](void* _p) {
                         auto f = static_cast<T*>(_p);
                         (*f)();
@@ -110,7 +111,7 @@ inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queu
 {
     dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, when.count()),
                      queue,
-                     new T( move(f) ),
+                     new T( std::move(f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
                          (*f)();
@@ -122,7 +123,7 @@ template <class T>
 inline void dispatch_barrier_async( dispatch_queue_t queue, T f )
 {
     dispatch_barrier_async_f(queue,
-                             new T( move(f) ),
+                             new T( std::move(f) ),
                              [](void* _p) {
                                  auto f = static_cast<T*>(_p);
                                  (*f)();
@@ -134,7 +135,7 @@ template <class T>
 inline void dispatch_barrier_sync( dispatch_queue_t queue, T f )
 {
     dispatch_barrier_sync_f(queue,
-                            new T( move(f) ),
+                            new T( std::move(f) ),
                             [](void* _p) {
                                 auto f = static_cast<T*>(_p);
                                 (*f)();

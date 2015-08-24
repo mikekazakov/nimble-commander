@@ -14,8 +14,8 @@
 #import <sys/stat.h>
 #import <stdlib.h>
 #import <time.h>
+#import <Habanero/tiny_string.h>
 #import "VFSListing.h"
-#import "tiny_string.h"
 
 class VFSNativeHost;
 

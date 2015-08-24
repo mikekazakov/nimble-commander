@@ -9,7 +9,6 @@
 #import "BigFileViewHex.h"
 #import "BigFileView.h"
 #import "Common.h"
-#import "FontExtras.h"
 
 static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_RowOffsetSymbs = 10;
@@ -94,9 +93,8 @@ BigFileViewHex::~BigFileViewHex()
 
 void BigFileViewHex::GrabFontGeometry()
 {
-    m_FontHeight = GetLineHeightForFont([m_View TextFont], &m_FontAscent, &m_FontDescent, &m_FontLeading);
-    m_FontWidth  = GetMonospaceFontCharWidth([m_View TextFont]);
-    m_FrameLines = floor(m_View.contentBounds.height / m_FontHeight);
+    m_FontInfo = FontGeometryInfo([m_View TextFont]);
+    m_FrameLines = floor(m_View.contentBounds.height / m_FontInfo.LineHeight() );
 }
 
 void BigFileViewHex::OnBufferDecoded()
@@ -253,18 +251,18 @@ CGPoint BigFileViewHex::TextAnchor()
     NSRect v = [m_View visibleRect];
     CGPoint textPosition;
     textPosition.x = ceil(m_LeftInset) + m_SmoothOffset.x;
-    textPosition.y = floor(v.size.height - m_FontHeight) + m_SmoothOffset.y;
+    textPosition.y = floor(v.size.height - m_FontInfo.LineHeight()) + m_SmoothOffset.y;
     return textPosition;
 }
 
 BigFileViewHex::HitPart BigFileViewHex::PartHitTest(CGPoint _p)
 {
     CGPoint text_pos = TextAnchor();
-    if(_p.x < text_pos.x + m_FontWidth * (g_RowOffsetSymbs + 3))
+    if(_p.x < text_pos.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3))
         return HitPart::RowOffset;
     
-    if(_p.x < text_pos.x + m_FontWidth * (g_RowOffsetSymbs + 3) +
-       m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2)
+    if(_p.x < text_pos.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3) +
+       m_FontInfo.MonospaceWidth() * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2)
         return HitPart::DataDump;
     
     return HitPart::Text;
@@ -275,15 +273,15 @@ int BigFileViewHex::ByteIndexFromHitTest(CGPoint _p)
 {
     CGPoint left_upper = TextAnchor();
     
-    int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
+    int y_off = ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
     if(row_no >= m_Lines.size())
         return (int)m_Data->RawSize() + 1;
 
-    int x_off = _p.x - (left_upper.x + m_FontWidth * (g_RowOffsetSymbs + 3));
-    int char_ind = ceil(x_off / m_FontWidth);
+    int x_off = _p.x - (left_upper.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3));
+    int char_ind = ceil(x_off / m_FontInfo.MonospaceWidth());
     int byte_pos = Hex_ByteFromCharPos(char_ind);
     if(byte_pos < 0) byte_pos = 0;
     return m_Lines[row_no].row_byte_start + byte_pos;
@@ -294,7 +292,7 @@ int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
 {
     CGPoint left_upper = TextAnchor();
     
-    int y_off = ceil((left_upper.y - _p.y) / m_FontHeight);
+    int y_off = ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
@@ -302,8 +300,8 @@ int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
         return (int)m_Data->RawSize() + 1; // ???????? here should be m_Data->UniCharSize ?
     
     int x_off = _p.x - (left_upper.x +
-                        m_FontWidth * (g_RowOffsetSymbs + 3) +
-                        m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2);
+                        m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3) +
+                        m_FontInfo.MonospaceWidth() * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2);
     
     int ind = (int)CTLineGetStringIndexForPosition(m_Lines[row_no].text_ctline, CGPointMake(x_off, 0));
     
@@ -334,7 +332,7 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     if(m_SmoothOffset.y < 0 && first_row > 0)
     {
         --first_row; // to be sure that we can see bottom-clipped lines
-        text_pos.y += m_FontHeight;
+        text_pos.y += m_FontInfo.LineHeight();
     }
     
     for(size_t i = first_row; i < m_Lines.size(); ++i)
@@ -345,7 +343,7 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
         
         // draw row number
         [(__bridge NSString*)c.row drawAtPoint:pos withAttributes:text_attr];
-        pos.x += m_FontWidth * (g_RowOffsetSymbs + 3);        
+        pos.x += m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3);
 
         if(bselection.location >= 0 && bselection.length > 0) // draw selection under hex codes
         {
@@ -354,23 +352,23 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
             if(end > c.row_byte_start + c.row_bytes_num) end = c.row_byte_start + c.row_bytes_num;
             if(start < end)
             {
-                CGFloat x1 = Hex_CharPosFromByteNo(start - c.row_byte_start) * m_FontWidth;
-                CGFloat x2 = Hex_CharPosFromByteNo(end - c.row_byte_start) * m_FontWidth;
+                CGFloat x1 = Hex_CharPosFromByteNo(start - c.row_byte_start) * m_FontInfo.MonospaceWidth();
+                CGFloat x2 = Hex_CharPosFromByteNo(end - c.row_byte_start) * m_FontInfo.MonospaceWidth();
 
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
                 [m_View SelectionBkFillColor].Set(_context);
-                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontHeight));
+                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontInfo.LineHeight()));
                 CGContextRestoreGState(_context);
             }
         }
         
         // draw hex codes
         [(__bridge NSString*)c.hex[0] drawAtPoint:pos withAttributes:text_attr];
-        pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
+        pos.x += m_FontInfo.MonospaceWidth() * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
 
         [(__bridge NSString*)c.hex[1] drawAtPoint:pos withAttributes:text_attr];
-        pos.x += m_FontWidth * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
+        pos.x += m_FontInfo.MonospaceWidth() * (g_BytesPerHexLine / g_HexColumns * 3 + 2);
         
         if(selection.location >= 0 && selection.length > 0) // draw selection under text
         {
@@ -397,18 +395,18 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
                 [m_View SelectionBkFillColor].Set(_context);
-                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontHeight));
+                CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontInfo.LineHeight()));
                 CGContextRestoreGState(_context);
             }
         }
         
         // draw text itself (drawing with prepared CTLine should be faster than with raw CFString)
         CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
-        CGContextSetTextPosition(_context, pos.x, pos.y + ceil(m_FontDescent));
+        CGContextSetTextPosition(_context, pos.x, pos.y + ceil(m_FontInfo.Descent()));
         CTLineDraw(c.text_ctline, _context);
         
-        text_pos.y -= m_FontHeight;
-        if(text_pos.y < 0 - m_FontHeight)
+        text_pos.y -= m_FontInfo.LineHeight();
+        if(text_pos.y < 0 - m_FontInfo.LineHeight())
             break;
     }
     
@@ -647,7 +645,7 @@ void BigFileViewHex::HandleVerticalScroll(double _pos)
 
 void BigFileViewHex::OnFrameChanged()
 {
-    m_FrameLines = floor([m_View frame].size.height / m_FontHeight);    
+    m_FrameLines = floor([m_View frame].size.height / m_FontInfo.LineHeight());
 }
 
 void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
@@ -790,7 +788,7 @@ void BigFileViewHex::OnScrollWheel(NSEvent *theEvent)
 {
     double delta_y = [theEvent scrollingDeltaY];
     if(![theEvent hasPreciseScrollingDeltas])
-        delta_y *= m_FontHeight;
+        delta_y *= m_FontInfo.LineHeight();
     
     if((delta_y > 0 && (m_Data->FilePos() > 0 ||
                         m_RowsOffset > 0)       ) ||
@@ -800,13 +798,13 @@ void BigFileViewHex::OnScrollWheel(NSEvent *theEvent)
     {
         m_SmoothOffset.y -= delta_y;
             
-        while(m_SmoothOffset.y < -m_FontHeight) {
+        while(m_SmoothOffset.y < -m_FontInfo.LineHeight()) {
             OnUpArrow();
-            m_SmoothOffset.y += m_FontHeight;
+            m_SmoothOffset.y += m_FontInfo.LineHeight();
         }
-        while(m_SmoothOffset.y > m_FontHeight) {
+        while(m_SmoothOffset.y > m_FontInfo.LineHeight()) {
             OnDownArrow();
-            m_SmoothOffset.y -= m_FontHeight;
+            m_SmoothOffset.y -= m_FontInfo.LineHeight();
         }
         [m_View setNeedsDisplay];
     }

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/Hash.h>
 #import "CalculateChecksumSheetController.h"
-#import "Hash.h"
 #import "DispatchQueue.h"
 
 static NSString *g_DefAlgoKey = @"FilePanelsChecksumCalculationAlgorithm";

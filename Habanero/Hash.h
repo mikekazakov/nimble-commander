@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
+#include <stdint.h>
+
 class Hash
 {
 public:
@@ -27,9 +31,9 @@ public:
     Hash(Mode _mode);
     
     Hash& Feed(const void *_data, size_t _size);
-    vector<uint8_t> Final();
+    std::vector<uint8_t> Final();
     
-    static string Hex(const vector<uint8_t> &_d);
+    static std::string Hex(const std::vector<uint8_t> &_d);
     
 private:
     Mode    m_Mode;

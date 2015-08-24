@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Habanero/FontExtras.h>
 #import "ModernPanelViewPresentationHeader.h"
-#import "FontExtras.h"
 #import "PanelData.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
@@ -35,7 +35,9 @@ static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode
 ModernPanelViewPresentationHeader::ModernPanelViewPresentationHeader()
 {
     m_Font = [NSFont systemFontOfSize:13];
-    m_FontHeight = GetLineHeightForFont((__bridge CTFontRef)m_Font, &m_FontAscent);
+    FontGeometryInfo info{(__bridge CTFontRef)m_Font};
+    m_FontHeight = info.LineHeight();
+    m_FontAscent = info.Ascent();
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
     m_LastHeaderPath = ""; // flush cache if any
 }

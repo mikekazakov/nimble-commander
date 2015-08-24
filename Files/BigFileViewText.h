@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Habanero/FontExtras.h>
 #import "BigFileViewProtocol.h"
 
 class BigFileViewText : public BigFileViewImpl
@@ -84,11 +85,7 @@ private:
     size_t                      m_StringBufferSize = 0;
     
     // layout stuff
-    double                      m_FontHeight = 0;
-    double                      m_FontAscent = 0;
-    double                      m_FontDescent = 0;
-    double                      m_FontLeading = 0;
-    double                      m_FontWidth = 0;
+    FontGeometryInfo            m_FontInfo;
     double                      m_LeftInset = 5;
     CFMutableAttributedStringRef m_AttrString = nullptr;
     vector<TextLine>             m_Lines;

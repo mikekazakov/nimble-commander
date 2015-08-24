@@ -16,7 +16,7 @@
 @implementation Hash_Tests
 
 - (void)testBasic {
-    string d = "6Bwbu8HbVqF*GPNL$BR[Jh4Nk)$!afU#w6[erC4yYX2&$]VUzGjsaQ6M#%ZdJk${VbsWw_!F^NMnfDCC5A=5bPNf(#*HKYmu8NJd4qdAM[+a)4--J*mj#x7SriKU=sH6";
+    std::string d = "6Bwbu8HbVqF*GPNL$BR[Jh4Nk)$!afU#w6[erC4yYX2&$]VUzGjsaQ6M#%ZdJk${VbsWw_!F^NMnfDCC5A=5bPNf(#*HKYmu8NJd4qdAM[+a)4--J*mj#x7SriKU=sH6";
     
     XCTAssert( Hash::Hex( Hash(Hash::SHA1_160).Feed(d.c_str(), d.size()).Final() ) ==
               "d73c1e4c9531646c26605f672bfe1c74b4a40bd7" );

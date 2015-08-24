@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/FontExtras.h>
 #import "PanelViewPresentation.h"
 #import "PanelViewPresentationItemsColoringFilter.h"
 #import "ObjcToCppObservingBridge.h"
@@ -80,9 +81,9 @@ private:
     const ColoringAttrs& AttrsForItem(const VFSListingItem& _item) const;
     
     NSFont *m_Font;
-    double m_FontAscent;
-    double m_FontHeight;
+    FontGeometryInfo m_FontInfo;
     double m_LineHeight; // full height of a row with gaps
+    
     double m_LineTextBaseline;
     double m_SizeColumWidth;
     double m_DateColumnWidth;

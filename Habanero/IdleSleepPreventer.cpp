@@ -7,6 +7,7 @@
 //
 
 #include <IOKit/pwr_mgt/IOPMLib.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include "IdleSleepPreventer.h"
 
 IdleSleepPreventer::Promise::Promise()
@@ -36,7 +37,7 @@ void IdleSleepPreventer::Add()
     m_Promises++;
     
     if( m_ID == kIOPMNullAssertionID ) {
-        static CFStringRef reason = CFSTR("Files is performing an operation");
+        static CFStringRef reason = CFStringCreateWithFormat(nullptr, nullptr, CFSTR("%@ is performing an operation"), CFBundleGetIdentifier(CFBundleGetMainBundle()) );
         IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep,
                                     kIOPMAssertionLevelOn,
                                     reason,

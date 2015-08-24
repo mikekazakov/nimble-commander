@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/FontExtras.h>
 #import "PanelController+DragAndDrop.h"
 #import "MainWindowFilePanelState.h"
 #import "FileCopyOperation.h"
 #import "FileLinkOperation.h"
 #import "OperationsController.h"
-#import "FontExtras.h"
 #import "path_manip.h"
 #import "Common.h"
 
@@ -34,12 +34,6 @@ static bool DraggingIntoFoldersAllowed()
     return [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralAllowDraggingIntoFolders"];
 }
 
-static NSFont *FontForDragImages()
-{
-    static NSFont *font = [NSFont systemFontOfSize:13];
-    return font;
-}
-
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 {
     if(_item == nil ||
@@ -49,10 +43,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     NSDraggingImageComponent *imageComponent;
     NSMutableArray *components = [NSMutableArray arrayWithCapacity:2];
     
-    NSFont *font = FontForDragImages();
-    double font_ascent;
-    double font_descent;
-    double line_height = GetLineHeightForFont( (__bridge CTFontRef) font, &font_ascent, &font_descent);
+    static NSFont *font = [NSFont systemFontOfSize:13];
+    static FontGeometryInfo font_info{ (__bridge CTFontRef) font };
     
     NSImage *icon_image;
     if(_item.vfs->IsNativeFS())
@@ -60,16 +52,16 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     else
         icon_image = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
     
-    [icon_image setSize:NSMakeSize(line_height, line_height)];
+    [icon_image setSize:NSMakeSize(font_info.LineHeight(), font_info.LineHeight())];
     imageComponent = [NSDraggingImageComponent draggingImageComponentWithKey:NSDraggingImageComponentIconKey];
-    imageComponent.frame = NSMakeRect(0, 0, line_height, line_height);
+    imageComponent.frame = NSMakeRect(0, 0, font_info.LineHeight(), font_info.LineHeight());
     imageComponent.contents = icon_image;
     [components addObject:imageComponent];
     
     
     double label_width = 250;
     
-    NSImage *label_image = [[NSImage alloc] initWithSize:CGSizeMake(label_width, line_height)];
+    NSImage *label_image = [[NSImage alloc] initWithSize:CGSizeMake(label_width, font_info.LineHeight())];
     [label_image lockFocus];
     
     
@@ -89,13 +81,13 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     
     NSString *itemName = [NSString stringWithUTF8String:_item.filename.c_str()];
     
-    [itemName drawWithRect:NSMakeRect(0, font_descent, label_width, line_height)
+    [itemName drawWithRect:NSMakeRect(0, font_info.Descent(), label_width, font_info.LineHeight())
                    options:0
                 attributes:attributes];
     
     [label_image unlockFocus];
     imageComponent = [NSDraggingImageComponent draggingImageComponentWithKey:NSDraggingImageComponentLabelKey];
-    imageComponent.frame = NSMakeRect(line_height + 7, 0, label_width, line_height);
+    imageComponent.frame = NSMakeRect(font_info.LineHeight() + 7, 0, label_width, font_info.LineHeight());
     imageComponent.contents = label_image;
     [components addObject:imageComponent];
     

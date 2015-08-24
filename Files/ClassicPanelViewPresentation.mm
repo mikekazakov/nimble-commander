@@ -11,7 +11,6 @@
 #import "Encodings.h"
 #import "PanelView.h"
 #import "PanelData.h"
-#import "FontExtras.h"
 #import "FontCache.h"
 #import "NSUserDefaults+myColorSupport.h"
 #import "ObjcToCppObservingBridge.h"

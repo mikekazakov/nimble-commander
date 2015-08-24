@@ -1,7 +1,4 @@
-#import <mach/mach_time.h>
 #import "Common.h"
-#import "sysinfo.h"
-#import "AppDelegate.h"
 
 // REMOVE THIS WHEN CLANG WILL HAVE IT INSIDE DEFAULT LIB
 bad_optional_access::~bad_optional_access() noexcept = default;
@@ -98,33 +95,6 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
     }
     
     return str;
-}
-
-static uint64_t InitGetTimeInNanoseconds();
-static uint64_t (*GetTimeInNanoseconds)() = InitGetTimeInNanoseconds;
-static mach_timebase_info_data_t info_data;
-
-static uint64_t GetTimeInNanosecondsScale()
-{
-    return mach_absolute_time()*info_data.numer/info_data.denom;
-}
-
-static uint64_t InitGetTimeInNanoseconds()
-{
-    static once_flag once;
-    call_once(once, []{
-        mach_timebase_info(&info_data);
-        if (info_data.denom == info_data.numer)
-            GetTimeInNanoseconds = &mach_absolute_time;
-        else
-            GetTimeInNanoseconds = &GetTimeInNanosecondsScale;
-    });
-    return GetTimeInNanoseconds();
-}
-
-nanoseconds machtime() noexcept
-{
-    return nanoseconds(GetTimeInNanoseconds());
 }
 
 void SyncMessageBoxUTF8(const char *_utf8_string)
@@ -331,11 +301,6 @@ const string &AppTemporaryDirectory() noexcept
 {
     static string path = NSTemporaryDirectory().fileSystemRepresentation;
     return path;
-}
-
-bool dispatch_is_main_queue() noexcept
-{
-    return NSThread.isMainThread;
 }
 
 MachTimeBenchmark::MachTimeBenchmark() noexcept:

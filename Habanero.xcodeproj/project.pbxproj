@@ -25,6 +25,9 @@
 		CF2D2F881B8B47EE00111C75 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F871B8B47EE00111C75 /* CoreText.framework */; };
 		CF2D2F8B1B8B5DD700111C75 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */; };
 		CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */; };
+		CF2D2F8E1B8B6B7800111C75 /* dispatch_cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */; };
+		CF2D2F911B8B6F2D00111C75 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F8F1B8B6F2D00111C75 /* mach_time.cpp */; };
+		CF2D2F921B8B6F2D00111C75 /* mach_time.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F901B8B6F2D00111C75 /* mach_time.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +61,9 @@
 		CF2D2F871B8B47EE00111C75 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonPaths.cpp; sourceTree = "<group>"; };
 		CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonPaths.h; sourceTree = "<group>"; };
+		CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = dispatch_cpp.mm; sourceTree = "<group>"; };
+		CF2D2F8F1B8B6F2D00111C75 /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mach_time.cpp; sourceTree = "<group>"; };
+		CF2D2F901B8B6F2D00111C75 /* mach_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mach_time.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +117,9 @@
 				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
 				CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */,
 				CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */,
+				CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */,
+				CF2D2F901B8B6F2D00111C75 /* mach_time.h */,
+				CF2D2F8F1B8B6F2D00111C75 /* mach_time.cpp */,
 				CF2D2F781B8B3BC000111C75 /* Hash.h */,
 				CF2D2F771B8B3BC000111C75 /* Hash.cpp */,
 				CF2D2F741B8B385C00111C75 /* tiny_string.h */,
@@ -160,6 +169,7 @@
 				CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */,
 				CF2D2F821B8B451B00111C75 /* dispatch_cpp.h in Headers */,
 				CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */,
+				CF2D2F921B8B6F2D00111C75 /* mach_time.h in Headers */,
 				CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */,
 				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
 			);
@@ -258,6 +268,8 @@
 				CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */,
 				CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */,
 				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,
+				CF2D2F911B8B6F2D00111C75 /* mach_time.cpp in Sources */,
+				CF2D2F8E1B8B6B7800111C75 /* dispatch_cpp.mm in Sources */,
 				CF2D2F811B8B451B00111C75 /* dispatch_cpp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -39,47 +39,6 @@ void SyncMessageBoxUTF8(const char *_utf8_string);
 /** returns a value from NSTemporaryDirectory, once captured. Contains a path with a trailing slash. */
 const string &AppTemporaryDirectory() noexcept;
 
-/** returns relative Mach time in nanoseconds using mach_absolute_time. */
-nanoseconds machtime() noexcept;
-
-/** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
-bool dispatch_is_main_queue() noexcept;
-
-/** syntax sugar for dispatch_async_f(dispatch_get_main_queue(), ...) call. */
-template <class T>
-inline void dispatch_to_main_queue(T _block)
-{
-    dispatch_async(dispatch_get_main_queue(), move(_block) );
-}
-
-/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ...) call. */
-template <class T>
-inline void dispatch_to_default(T _block)
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), move(_block) );
-}
-
-/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ...) call. */
-template <class T>
-inline void dispatch_to_background(T _block)
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), move(_block) );
-}
-
-/** syntax sugar for dispatch_after_f(..., dispatch_get_main_queue(), _block) call. */
-template <class T>
-inline void dispatch_to_main_queue_after(nanoseconds _delay, T _block)
-{
-    dispatch_after(_delay, dispatch_get_main_queue(), move(_block));
-}
-
-/** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
-template <class T>
-inline void dispatch_or_run_in_main_queue(T _block)
-{
-    dispatch_is_main_queue() ? _block() : dispatch_to_main_queue(move(_block));
-}
-
 struct MachTimeBenchmark
 {
     MachTimeBenchmark() noexcept;

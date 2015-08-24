@@ -1,11 +1,12 @@
 #pragma once
 
 #include <dispatch/dispatch.h>
-#include <functional>
-#include <utility>
 #include <chrono>
 
 // synopsis
+
+/** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
+bool dispatch_is_main_queue() noexcept;
 
 template <class T>
 void dispatch_async( dispatch_queue_t queue, T f );
@@ -24,6 +25,26 @@ void dispatch_barrier_async( dispatch_queue_t queue, T f );
 
 template <class T>
 void dispatch_barrier_sync( dispatch_queue_t queue, T f );
+
+/** syntax sugar for dispatch_async_f(dispatch_get_main_queue(), ...) call. */
+template <class T>
+void dispatch_to_main_queue(T _block);
+
+/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ...) call. */
+template <class T>
+void dispatch_to_default(T _block);
+
+/** syntax sugar for dispatch_async_f(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ...) call. */
+template <class T>
+void dispatch_to_background(T _block);
+
+/** syntax sugar for dispatch_after_f(..., dispatch_get_main_queue(), _block) call. */
+template <class T>
+void dispatch_to_main_queue_after(std::chrono::nanoseconds _delay, T _block);
+
+/** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
+template <class T>
+void dispatch_or_run_in_main_queue(T _block);
 
 class dispatch_queue
 {
@@ -141,6 +162,36 @@ inline void dispatch_barrier_sync( dispatch_queue_t queue, T f )
                                 (*f)();
                                 delete f;
                             });
+}
+
+template <class T>
+inline void dispatch_to_main_queue(T _block)
+{
+    dispatch_async(dispatch_get_main_queue(), std::move(_block) );
+}
+
+template <class T>
+inline void dispatch_to_default(T _block)
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), std::move(_block) );
+}
+
+template <class T>
+inline void dispatch_to_background(T _block)
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), std::move(_block) );
+}
+
+template <class T>
+inline void dispatch_to_main_queue_after(std::chrono::nanoseconds _delay, T _block)
+{
+    dispatch_after(_delay, dispatch_get_main_queue(), std::move(_block));
+}
+
+template <class T>
+inline void dispatch_or_run_in_main_queue(T _block)
+{
+    dispatch_is_main_queue() ? _block() : dispatch_to_main_queue(std::move(_block));
 }
 
 template <class T>

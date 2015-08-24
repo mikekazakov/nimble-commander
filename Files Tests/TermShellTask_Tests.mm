@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Habanero/CommonPaths.h>
 #include "tests_common.h"
 #include "TermShellTask.h"
-#include "common_paths.h"
 #include "common.h"
 
 static void testMicrosleep(uint64_t _microseconds)
@@ -48,7 +48,7 @@ static string ToRealPath(const string &_from)
     TermShellTask shell;
     XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
-    string cwd = CommonPaths::Get(CommonPaths::Home);
+    string cwd = CommonPaths::Home();
     shell.Launch(cwd.c_str(), 100, 100);
     testMicrosleep( microseconds(5s).count() );
     
@@ -73,7 +73,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
   
     // check chdir
-    cwd = CommonPaths::Get(CommonPaths::Home) + "Downloads/";
+    cwd = CommonPaths::Home() + "Downloads/";
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
@@ -81,7 +81,7 @@ static string ToRealPath(const string &_from)
     
     // test chdir in the middle of some typing
     shell.WriteChildInput("ls ", 3);
-    cwd = CommonPaths::Get(CommonPaths::Home);
+    cwd = CommonPaths::Home();
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.CWD() == cwd );
@@ -100,7 +100,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
     // check execution with short path in different directory
-    shell.Launch(CommonPaths::Get(CommonPaths::Home).c_str(), 100, 100);
+    shell.Launch(CommonPaths::Home().c_str(), 100, 100);
     testMicrosleep( microseconds(1s).count() );
     shell.Execute("top", "/usr/bin/", nullptr);
     testMicrosleep( microseconds(1s).count() );

@@ -80,6 +80,7 @@
 		CF2AC58E1818DD3800B0BEB4 /* path_manip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF2AC58D1818DD3800B0BEB4 /* path_manip.c */; };
 		CF2D2F671B8B252800111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
 		CF2D2F691B8B258600111C75 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF2D2F931B8B745400111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
 		CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
 		CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC71946D50400840F25 /* NSDictionary+SimpleMutations.m */; };
 		CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */; };
@@ -1604,6 +1605,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */,
+				CF2D2F931B8B745400111C75 /* libHabanero.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

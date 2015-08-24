@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "MainWindowFilePanelState.h"
 #import "PanelController.h"
 #import "PanelController+DataAccess.h"
@@ -25,7 +26,6 @@
 #import "sysinfo.h"
 #import "LSUrls.h"
 #import "ActionsShortcutsManager.h"
-#import "common_paths.h"
 #import "SandboxManager.h"
 #import "FileCopyOperation.h"
 #import "FilePanelOverlappedTerminal.h"
@@ -82,7 +82,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
                                                                vfs:VFSNativeHost::SharedHost()
                                                       select_entry:""
                                                              async:false] < 0)
-                [left_controller GoToDir:CommonPaths::Get(CommonPaths::Home)
+                [left_controller GoToDir:CommonPaths::Home()
                                            vfs:VFSNativeHost::SharedHost()
                                   select_entry:""
                                          async:false];

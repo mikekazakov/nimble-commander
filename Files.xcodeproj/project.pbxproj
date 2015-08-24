@@ -258,7 +258,6 @@
 		CF6D9BDA196677CA0077B146 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122016C4BD3D00D247EE /* main.m */; };
 		CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CF6D9BDD196678000077B146 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
-		CF6D9BDE196678000077B146 /* common_paths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.cpp */; };
 		CF6D9BDF196678000077B146 /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
 		CF6D9BE0196678000077B146 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */; };
 		CF6D9BE1196678000077B146 /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.cpp */; };
@@ -463,7 +462,6 @@
 		CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
-		CFA0B23A1869542200501C35 /* common_paths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.cpp */; };
 		CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
@@ -748,7 +746,6 @@
 		CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
-		CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B2381869542200501C35 /* common_paths.cpp */; };
 		CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
@@ -1368,8 +1365,6 @@
 		CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+Navigation.mm"; sourceTree = "<group>"; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoToFolderSheetController.h; sourceTree = "<group>"; };
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoToFolderSheetController.mm; sourceTree = "<group>"; };
-		CFA0B2381869542200501C35 /* common_paths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common_paths.cpp; sourceTree = "<group>"; };
-		CFA0B2391869542200501C35 /* common_paths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common_paths.h; sourceTree = "<group>"; };
 		CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
 		CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
 		CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
@@ -2396,8 +2391,6 @@
 				CFB060DC172E6AC4001F6949 /* Common.mm */,
 				CF2AC58D1818DD3800B0BEB4 /* path_manip.c */,
 				CF2AC58F1818DD4800B0BEB4 /* path_manip.h */,
-				CFA0B2381869542200501C35 /* common_paths.cpp */,
-				CFA0B2391869542200501C35 /* common_paths.h */,
 				CFE2697A16F01BA90048A393 /* chained_strings.cpp */,
 				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
 				CF1D17D316FAA58F0050B13F /* filesysinfo.mm */,
@@ -3316,7 +3309,6 @@
 				CF6D9C731966780D0077B146 /* FontCache.cpp in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF6D9BDD196678000077B146 /* Common.mm in Sources */,
-				CF6D9BDE196678000077B146 /* common_paths.cpp in Sources */,
 				CF6D9BDF196678000077B146 /* filesysinfo.mm in Sources */,
 				CF6D9BE0196678000077B146 /* EncodingsAdditions.mm in Sources */,
 				CF6D9BE1196678000077B146 /* FSEventsDirUpdate.cpp in Sources */,
@@ -3584,7 +3576,6 @@
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
-				CFA0B23A1869542200501C35 /* common_paths.cpp in Sources */,
 				CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */,
 				CF0A40141B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
@@ -3794,7 +3785,6 @@
 				CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */,
 				CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
-				CFF6F2DA1A13567C00011177 /* common_paths.cpp in Sources */,
 				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,

@@ -9,9 +9,9 @@
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Authorization.h>
 #include <Security/AuthorizationDB.h>
+#include <Habanero/CommonPaths.h>
 #include "RoutedIO.h"
 #include "Common.h"
-#include "common_paths.h"
 #include "RoutedIOInterfaces.h"
 
 static PosixIOInterface &IODirectCreateProxy();
@@ -75,7 +75,7 @@ static const char *InstalledPath()
 
 static const char *BundledPath()
 {
-    static string s = CommonPaths::Get(CommonPaths::AppBundle) + "Contents/Library/LaunchServices/" + g_HelperLabel;
+    static string s = CommonPaths::AppBundle() + "Contents/Library/LaunchServices/" + g_HelperLabel;
     return s.c_str();
 }
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "PanelController+DataAccess.h"
-#import "common_paths.h"
 
 @implementation PanelController (DataAccess)
 
@@ -106,7 +106,7 @@
     if( self.vfs->IsNativeFS() &&
        _ref.front() == '~' ) { // relative to home
         auto ref = _ref.substr(1);
-        path p = path(CommonPaths::Get(CommonPaths::Home));
+        path p = path(CommonPaths::Home());
         if(!ref.empty())
             p.remove_filename();
         p /= ref;

@@ -7,6 +7,7 @@
 //
 
 #import <Sparkle/Sparkle.h>
+#import <Habanero/CommonPaths.h>
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #import "AppDelegate.h"
@@ -26,7 +27,6 @@
 #import "ActionsShortcutsManager.h"
 #import "MainWindowFilePanelState.h"
 #import "SandboxManager.h"
-#import "common_paths.h"
 #import "MASAppInstalledChecker.h"
 #import "TrialWindowController.h"
 #import "RoutedIO.h"
@@ -163,7 +163,7 @@ static SUUpdater *g_Sparkle = nil;
     if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
         if(sm.Empty()) {
-            sm.AskAccessForPathSync(CommonPaths::Get(CommonPaths::Home), false);
+            sm.AskAccessForPathSync(CommonPaths::Home(), false);
             if(m_MainWindows.empty())
                 [self AllocateNewMainWindow];
         }

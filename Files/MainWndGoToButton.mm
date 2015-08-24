@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "MainWndGoToButton.h"
 #import "AppDelegate.h"
 #import "Common.h"
 #import "MainWindowFilePanelState.h"
 #import "MainWindowController.h"
-#import "common_paths.h"
 #import "NativeFSManager.h"
 #import "PanelController.h"
 
@@ -84,18 +84,18 @@ static vector<NSURL*> GetFindersFavorites()
 
 static vector<NSURL*> GetHardcodedFavorites()
 {
-    auto url = [](CommonPaths::Path _p) {
-        return [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:CommonPaths::Get(_p)]
+    auto url = [](const string& _p) {
+        return [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_p]
                           isDirectory:true];
     };
     vector<NSURL*> result;
-    result.emplace_back(url(CommonPaths::Home));
-    result.emplace_back(url(CommonPaths::Desktop));
-    result.emplace_back(url(CommonPaths::Documents));
-    result.emplace_back(url(CommonPaths::Downloads));
-    result.emplace_back(url(CommonPaths::Movies));
-    result.emplace_back(url(CommonPaths::Music));
-    result.emplace_back(url(CommonPaths::Pictures));
+    result.emplace_back(url(CommonPaths::Home()));
+    result.emplace_back(url(CommonPaths::Desktop()));
+    result.emplace_back(url(CommonPaths::Documents()));
+    result.emplace_back(url(CommonPaths::Downloads()));
+    result.emplace_back(url(CommonPaths::Movies()));
+    result.emplace_back(url(CommonPaths::Music()));
+    result.emplace_back(url(CommonPaths::Pictures()));
     return result;
 }
 

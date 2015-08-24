@@ -7,6 +7,7 @@
 //
 
 #include <Carbon/Carbon.h>
+#import <Habanero/CommonPaths.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "ActionsShortcutsManager.h"
 #import "PanelController.h"
@@ -14,7 +15,6 @@
 #import "FilePanelMainSplitView.h"
 #import "OperationsController.h"
 #import "Common.h"
-#import "common_paths.h"
 #import "ExternalEditorInfo.h"
 #import "MainWindowController.h"
 #import "FileCompressOperation.h"

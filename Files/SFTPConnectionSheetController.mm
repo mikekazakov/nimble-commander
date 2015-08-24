@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "SFTPConnectionSheetController.h"
-#import "common_paths.h"
 #import "Common.h"
 #import "SavedNetworkConnectionsManager.h"
 
-static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
+static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 @implementation SFTPConnectionSheetController
 {
@@ -116,7 +116,7 @@ static const auto g_SSHdir = CommonPaths::Get(CommonPaths::Home) + ".ssh/";
 
 - (IBAction)OnChooseKey:(id)sender
 {
-    auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ? g_SSHdir : CommonPaths::Get(CommonPaths::Home);
+    auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ? g_SSHdir : CommonPaths::Home();
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;

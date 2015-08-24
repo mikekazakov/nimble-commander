@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "TermShellTask.h"
 #import "TermScreen.h"
 #import "TermParser.h"
@@ -13,7 +14,6 @@
 #import "TermScrollView.h"
 #import "FontCache.h"
 #import "Common.h"
-#import "common_paths.h"
 #import "FilePanelOverlappedTerminal.h"
 
 static const auto g_BashPromptInputDelay = 10ms;
@@ -45,7 +45,7 @@ static const auto g_LongProcessDelay = 100ms;
     {
         m_BashCommandStartX = m_BashCommandStartY = numeric_limits<int>::max();
         m_RunningLongTask = false;
-        m_InitalWD = CommonPaths::Get(CommonPaths::Home);
+        m_InitalWD = CommonPaths::Home();
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds attachToTop:false];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;

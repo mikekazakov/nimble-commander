@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "PanelController.h"
 #import "Common.h"
-#import "common_paths.h"
 
 @implementation PanelController (Navigation)
 
@@ -197,7 +197,7 @@ loadPreviousState:(bool)_load_state
         
         // we can't work on this vfs. currently for simplicity - just go home
         dispatch_to_main_queue([=]{
-            [self GoToDir:CommonPaths::Get(CommonPaths::Home)
+            [self GoToDir:CommonPaths::Home()
                       vfs:VFSNativeHost::SharedHost()
              select_entry:""
                     async:true];

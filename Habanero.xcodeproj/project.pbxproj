@@ -23,6 +23,8 @@
 		CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F831B8B47B700111C75 /* FontExtras.cpp */; };
 		CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F841B8B47B700111C75 /* FontExtras.h */; };
 		CF2D2F881B8B47EE00111C75 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F871B8B47EE00111C75 /* CoreText.framework */; };
+		CF2D2F8B1B8B5DD700111C75 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */; };
+		CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		CF2D2F831B8B47B700111C75 /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontExtras.cpp; sourceTree = "<group>"; };
 		CF2D2F841B8B47B700111C75 /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontExtras.h; sourceTree = "<group>"; };
 		CF2D2F871B8B47EE00111C75 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonPaths.cpp; sourceTree = "<group>"; };
+		CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonPaths.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,8 @@
 		CF2D2F3A1B8B238A00111C75 /* Habanero */ = {
 			isa = PBXGroup;
 			children = (
+				CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */,
+				CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */,
 				CF2D2F841B8B47B700111C75 /* FontExtras.h */,
 				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
 				CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */,
@@ -154,6 +160,7 @@
 				CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */,
 				CF2D2F821B8B451B00111C75 /* dispatch_cpp.h in Headers */,
 				CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */,
+				CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */,
 				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -247,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF2D2F791B8B3BC000111C75 /* Hash.cpp in Sources */,
+				CF2D2F8B1B8B5DD700111C75 /* CommonPaths.cpp in Sources */,
 				CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */,
 				CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */,
 				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,

@@ -7,12 +7,12 @@
 //
 
 #import <sys/xattr.h>
+#import <Habanero/CommonPaths.h>
 #import "FileCopyOperationJob.h"
 #import "FileCopyOperationJobNativeToNative.h"
 #import "filesysinfo.h"
 #import "NativeFSManager.h"
 #import "Common.h"
-#import "common_paths.h"
 #import "RoutedIO.h"
 
 // assumes that _fn1 is a valid file/dir name, or will return false immediately
@@ -204,7 +204,7 @@ void FileCopyOperationJobNativeToNative::ScanDestination()
     }
     else if( m_InitialDestination.compare(0, 1, "~") == 0 ) {
         char path[MAXPATHLEN];
-        strcpy(path, CommonPaths::Get(CommonPaths::Home).c_str());
+        strcpy(path, CommonPaths::Home().c_str());
         if( m_InitialDestination.compare(0, 2, "~/") == 0 )
             strcat(path, m_InitialDestination.c_str() + 2);
         else

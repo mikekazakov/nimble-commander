@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "ActionsShortcutsManager.h"
 #import "PanelController+Menu.h"
-#import "common_paths.h"
 #import "GoToFolderSheetController.h"
 #import "FileSysAttrChangeOperation.h"
 #import "FileSysEntryAttrSheetController.h"
@@ -124,51 +124,51 @@
 }
 
 - (IBAction)OnGoToHome:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Home)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Home()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Home) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDocuments:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Documents)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Documents()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Documents) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Documents() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDesktop:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Desktop)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Desktop()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Desktop) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Desktop() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToDownloads:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Downloads)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Downloads()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Downloads) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Downloads() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToApplications:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Applications)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Applications()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Applications) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Applications() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToUtilities:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Utilities)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Utilities()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Utilities) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Utilities() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToLibrary:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Library)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Library()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Library) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Library() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToRoot:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Get(CommonPaths::Root)])
+    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Root()])
         return;
-    [self GoToDir:CommonPaths::Get(CommonPaths::Root) vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    [self GoToDir:CommonPaths::Root() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
 }
 
 - (IBAction)OnGoToProcessesList:(id)sender {

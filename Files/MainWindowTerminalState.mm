@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/CommonPaths.h>
 #import "MainWindowTerminalState.h"
 #import "TermShellTask.h"
 #import "TermScreen.h"
@@ -17,7 +18,6 @@
 
 
 #import "Common.h"
-#import "common_paths.h"
 
 @implementation MainWindowTerminalState
 {
@@ -32,7 +32,7 @@
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        m_InitalWD = CommonPaths::Get(CommonPaths::Home);
+        m_InitalWD = CommonPaths::Home();
         
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds attachToTop:true];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;

@@ -27,7 +27,7 @@ static bool IsWholePhrase(CFStringRef _string, CFRange _range)
     return true;
 }
 
-SearchInFile::SearchInFile(FileWindow* _file):
+SearchInFile::SearchInFile(FileWindow &_file):
     m_File(_file),
     m_Position(0),
     m_WorkMode(WorkMode::NotSet),
@@ -36,10 +36,11 @@ SearchInFile::SearchInFile(FileWindow* _file):
     m_TextSearchEncoding(encodings::ENCODING_INVALID),
     m_SearchOptions(0)
 {
-    assert(m_File->FileOpened());
-    m_Position = _file->WindowPos();
-    m_DecodedBuffer.reset(new UniChar[_file->WindowSize()]);
-    m_DecodedBufferIndx.reset(new uint32_t[_file->WindowSize()]);
+    if( !m_File.FileOpened() )
+        throw invalid_argument("FileWindow should be opened");
+    m_Position = _file.WindowPos();
+    m_DecodedBuffer = make_unique<uint16_t[]>(_file.WindowSize());
+    m_DecodedBufferIndx = make_unique<uint32_t[]>(_file.WindowSize());
 }
 
 SearchInFile::~SearchInFile()
@@ -52,13 +53,13 @@ SearchInFile::~SearchInFile()
 
 void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 {
-    assert( (m_File->FileSize() > 0 && _pos < m_File->FileSize()) || _pos == 0 );
+    assert( (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0 );
     m_Position = _pos;
 
-    if(m_File->WindowSize() + m_Position > m_File->FileSize())
-        m_File->MoveWindow(m_File->FileSize() - m_File->WindowSize());
+    if(m_File.WindowSize() + m_Position > m_File.FileSize())
+        m_File.MoveWindow(m_File.FileSize() - m_File.WindowSize());
     else
-        m_File->MoveWindow(m_Position);
+        m_File.MoveWindow(m_Position);
 }
 
 void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
@@ -81,19 +82,18 @@ SearchInFile::Result SearchInFile::Search(uint64_t *_offset, uint64_t *_bytes_le
 
 bool SearchInFile::IsEOF() const
 {
-    assert(m_File != 0);
-    return m_Position >= m_File->FileSize();
+    return m_Position >= m_File.FileSize();
 }
 
 SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
 {
-    if(m_File->FileSize() == 0)
+    if(m_File.FileSize() == 0)
         return Result::NotFound; // for singular case
     
-    if(m_File->FileSize() < encodings::BytesForCodeUnit(m_TextSearchEncoding))
+    if(m_File.FileSize() < encodings::BytesForCodeUnit(m_TextSearchEncoding))
         return Result::NotFound; // for singular case
     
-    if(m_Position >= m_File->FileSize())
+    if(m_Position >= m_File.FileSize())
         return Result::EndOfFile; // when finished searching
     
     if(CFStringGetLength(m_RequestedTextSearch) <= 0)
@@ -101,7 +101,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
 
     while(true)
     {
-        if(m_Position >= m_File->FileSize())
+        if(m_Position >= m_File.FileSize())
             break; // when finished searching
 
         if(_checker && _checker())
@@ -110,21 +110,21 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         // move our load window inside a file
         size_t window_pos = m_Position;
         size_t left_window_gap = 0;
-        if(window_pos + m_File->WindowSize() > m_File->FileSize())
+        if(window_pos + m_File.WindowSize() > m_File.FileSize())
         {
-            window_pos = m_File->FileSize() - m_File->WindowSize();
+            window_pos = m_File.FileSize() - m_File.WindowSize();
             left_window_gap = m_Position - window_pos;
         }
-        m_File->MoveWindow(window_pos);
-        assert(m_Position >= m_File->WindowPos() &&
-               m_Position < m_File->WindowPos() + m_File->WindowSize()); // sanity check
+        m_File.MoveWindow(window_pos);
+        assert(m_Position >= m_File.WindowPos() &&
+               m_Position < m_File.WindowPos() + m_File.WindowSize()); // sanity check
         
         // get UniChars from this window using given encoding
         assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
-        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File->WindowPos() & 1) == 1);
+        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
         encodings::InterpretAsUnichar(m_TextSearchEncoding,
-                                      (const unsigned char*) m_File->Window() + left_window_gap  + (isodd ? 1 : 0),
-                                      m_File->WindowSize() - left_window_gap  - (isodd ? 1 : 0),
+                                      (const unsigned char*) m_File.Window() + left_window_gap  + (isodd ? 1 : 0),
+                                      m_File.WindowSize() - left_window_gap  - (isodd ? 1 : 0),
                                       m_DecodedBuffer.get(),
                                       m_DecodedBufferIndx.get(),
                                       &m_DecodedBufferSize);
@@ -148,16 +148,16 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         if(result.location == kCFNotFound)
         {
             // lets proceed further
-            if(m_File->WindowPos() + m_File->WindowSize() < m_File->FileSize())
+            if(m_File.WindowPos() + m_File.WindowSize() < m_File.FileSize())
             { // can move on
                 // left some space in the tail to exclude situations when searched text is cut between the windows
                 assert(left_window_gap == 0);
-                assert(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit < m_File->WindowSize());
-                m_Position = m_Position + m_File->WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
+                assert(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit < m_File.WindowSize());
+                m_Position = m_Position + m_File.WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
             }
             else
             { // this is the end (c)
-                m_Position = m_File->FileSize();
+                m_Position = m_File.FileSize();
             }
         }
         else
@@ -177,7 +177,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
             if(_offset != nullptr)
                 *_bytes_len = (result.location + result.length < m_DecodedBufferSize ?
                                m_DecodedBufferIndx[result.location+result.length] :
-                               m_File->WindowSize() - left_window_gap )
+                               m_File.WindowSize() - left_window_gap )
                                 - m_DecodedBufferIndx[result.location];
             m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
             return Result::Found;

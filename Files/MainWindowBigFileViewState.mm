@@ -204,7 +204,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     if(m_SearchFileWindow->OpenFile(vfsfile) != 0)
         return false;
     
-    m_SearchInFile = make_unique<SearchInFile>(m_SearchFileWindow.get());
+    m_SearchInFile = make_unique<SearchInFile>(*m_SearchFileWindow);
     m_SearchInFile->SetSearchOptions(
                                      ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
                                      ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );

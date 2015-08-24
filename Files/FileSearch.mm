@@ -207,7 +207,7 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host, CFRa
     if(int xattr_enc = EncodingFromXAttr(file))
         encoding = xattr_enc;
     
-    SearchInFile sif(&fw);
+    SearchInFile sif(fw);
     sif.ToggleTextSearch((__bridge CFStringRef)m_FilterContent->text, encoding);
     sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
                          (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );

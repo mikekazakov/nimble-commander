@@ -25,14 +25,14 @@ IdleSleepPreventer &IdleSleepPreventer::Instance()
     return *i;
 }
 
-unique_ptr<IdleSleepPreventer::Promise> IdleSleepPreventer::GetPromise()
+std::unique_ptr<IdleSleepPreventer::Promise> IdleSleepPreventer::GetPromise()
 {
-    return unique_ptr<IdleSleepPreventer::Promise>(new Promise);
+    return std::unique_ptr<IdleSleepPreventer::Promise>(new Promise);
 }
 
 void IdleSleepPreventer::Add()
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     m_Promises++;
     
     if( m_ID == kIOPMNullAssertionID ) {
@@ -46,7 +46,7 @@ void IdleSleepPreventer::Add()
 
 void IdleSleepPreventer::Release()
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     m_Promises--;
 
     if( m_Promises == 0 && m_ID != kIOPMNullAssertionID ) {

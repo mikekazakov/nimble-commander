@@ -10,7 +10,7 @@
 #define Directories_OperationJob_h
 
 #import "OperationStats.h"
-#import "IdleSleepPreventer.h"
+#import <Habanero/IdleSleepPreventer.h>
 
 @class Operation;
 

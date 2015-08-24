@@ -1,0 +1,386 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CF2D2F3C1B8B238A00111C75 /* Habanero.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F3B1B8B238A00111C75 /* Habanero.h */; };
+		CF2D2F3E1B8B238A00111C75 /* Habanero.m in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F3D1B8B238A00111C75 /* Habanero.m */; };
+		CF2D2F441B8B238B00111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F381B8B238A00111C75 /* libHabanero.dylib */; };
+		CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */; };
+		CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CF2D2F451B8B238B00111C75 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF2D2F301B8B238A00111C75 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF2D2F371B8B238A00111C75;
+			remoteInfo = Habanero;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CF2D2F381B8B238A00111C75 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF2D2F3B1B8B238A00111C75 /* Habanero.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Habanero.h; sourceTree = "<group>"; };
+		CF2D2F3D1B8B238A00111C75 /* Habanero.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Habanero.m; sourceTree = "<group>"; };
+		CF2D2F431B8B238B00111C75 /* HabaneroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HabaneroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF2D2F491B8B238B00111C75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdleSleepPreventer.cpp; sourceTree = "<group>"; };
+		CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdleSleepPreventer.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CF2D2F351B8B238A00111C75 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF2D2F401B8B238B00111C75 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF2D2F441B8B238B00111C75 /* libHabanero.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CF2D2F2F1B8B238A00111C75 = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F3A1B8B238A00111C75 /* Habanero */,
+				CF2D2F471B8B238B00111C75 /* HabaneroTests */,
+				CF2D2F391B8B238A00111C75 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CF2D2F391B8B238A00111C75 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F381B8B238A00111C75 /* libHabanero.dylib */,
+				CF2D2F431B8B238B00111C75 /* HabaneroTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF2D2F3A1B8B238A00111C75 /* Habanero */ = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */,
+				CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */,
+				CF2D2F3B1B8B238A00111C75 /* Habanero.h */,
+				CF2D2F3D1B8B238A00111C75 /* Habanero.m */,
+			);
+			path = Habanero;
+			sourceTree = "<group>";
+		};
+		CF2D2F471B8B238B00111C75 /* HabaneroTests */ = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F481B8B238B00111C75 /* Supporting Files */,
+			);
+			path = HabaneroTests;
+			sourceTree = "<group>";
+		};
+		CF2D2F481B8B238B00111C75 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CF2D2F491B8B238B00111C75 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CF2D2F361B8B238A00111C75 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF2D2F6D1B8B2BBD00111C75 /* IdleSleepPreventer.h in Headers */,
+				CF2D2F3C1B8B238A00111C75 /* Habanero.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CF2D2F371B8B238A00111C75 /* Habanero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF2D2F4C1B8B238B00111C75 /* Build configuration list for PBXNativeTarget "Habanero" */;
+			buildPhases = (
+				CF2D2F341B8B238A00111C75 /* Sources */,
+				CF2D2F351B8B238A00111C75 /* Frameworks */,
+				CF2D2F361B8B238A00111C75 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Habanero;
+			productName = Habanero;
+			productReference = CF2D2F381B8B238A00111C75 /* libHabanero.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		CF2D2F421B8B238B00111C75 /* HabaneroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF2D2F4F1B8B238B00111C75 /* Build configuration list for PBXNativeTarget "HabaneroTests" */;
+			buildPhases = (
+				CF2D2F3F1B8B238B00111C75 /* Sources */,
+				CF2D2F401B8B238B00111C75 /* Frameworks */,
+				CF2D2F411B8B238B00111C75 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF2D2F461B8B238B00111C75 /* PBXTargetDependency */,
+			);
+			name = HabaneroTests;
+			productName = HabaneroTests;
+			productReference = CF2D2F431B8B238B00111C75 /* HabaneroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF2D2F301B8B238A00111C75 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = "MIchael Kazakov";
+				TargetAttributes = {
+					CF2D2F371B8B238A00111C75 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					CF2D2F421B8B238B00111C75 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = CF2D2F331B8B238A00111C75 /* Build configuration list for PBXProject "Habanero" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CF2D2F2F1B8B238A00111C75;
+			productRefGroup = CF2D2F391B8B238A00111C75 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CF2D2F371B8B238A00111C75 /* Habanero */,
+				CF2D2F421B8B238B00111C75 /* HabaneroTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CF2D2F411B8B238B00111C75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF2D2F341B8B238A00111C75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF2D2F3E1B8B238A00111C75 /* Habanero.m in Sources */,
+				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF2D2F3F1B8B238B00111C75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF2D2F461B8B238B00111C75 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF2D2F371B8B238A00111C75 /* Habanero */;
+			targetProxy = CF2D2F451B8B238B00111C75 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CF2D2F4A1B8B238B00111C75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CF2D2F4B1B8B238B00111C75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CF2D2F4D1B8B238B00111C75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF2D2F4E1B8B238B00111C75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		CF2D2F501B8B238B00111C75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HabaneroTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF2D2F511B8B238B00111C75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HabaneroTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CF2D2F331B8B238A00111C75 /* Build configuration list for PBXProject "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF2D2F4A1B8B238B00111C75 /* Debug */,
+				CF2D2F4B1B8B238B00111C75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF2D2F4C1B8B238B00111C75 /* Build configuration list for PBXNativeTarget "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF2D2F4D1B8B238B00111C75 /* Debug */,
+				CF2D2F4E1B8B238B00111C75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF2D2F4F1B8B238B00111C75 /* Build configuration list for PBXNativeTarget "HabaneroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF2D2F501B8B238B00111C75 /* Debug */,
+				CF2D2F511B8B238B00111C75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CF2D2F301B8B238A00111C75 /* Project object */;
+}

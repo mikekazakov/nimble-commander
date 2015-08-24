@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <memory>
+#include <mutex>
+
 class IdleSleepPreventer
 {
 public:
@@ -23,13 +26,13 @@ public:
     };
 
     static IdleSleepPreventer &Instance();
-    unique_ptr<Promise> GetPromise();
+    std::unique_ptr<Promise> GetPromise();
     
 private:
     void Add();
     void Release();
     
-    mutex       m_Lock;
+    std::mutex  m_Lock;
     int         m_Promises = 0;
     uint32_t    m_ID = 0; // zero means ID is not acquired
     

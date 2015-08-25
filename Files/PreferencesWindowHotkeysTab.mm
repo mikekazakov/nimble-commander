@@ -10,6 +10,22 @@
 #import "ActionsShortcutsManager.h"
 #import "Common.h"
 
+static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
+{
+    if(!_item)
+        return nil;
+
+    NSString *title = _item.title;
+    
+    NSMenuItem *current = _item.parentItem;
+    while( current ) {
+        title = [NSString stringWithFormat:@"%@ ▶ %@", current.title, title];
+        current = current.parentItem;
+    }
+    
+    return title;
+}
+
 @implementation PreferencesWindowHotkeysTab
 {
     vector<GTMHotKeyTextField *> m_EditFields;
@@ -46,7 +62,7 @@
     self.Table.delegate = self;
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"action"];
-    column.width = 300;
+    column.width = 350;
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Action";
     [self.Table addTableColumn:column];
     
@@ -81,12 +97,16 @@
     auto &tag = m_Shortcuts[row];
     auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);
 
-
+    NSMenuItem *menu_item = [[NSApp mainMenu] itemWithTagHierarchical:tag.second];
     
     if([tableColumn.identifier isEqualToString:@"action"])
     {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        tf.stringValue = [NSString stringWithUTF8String:tag.first.c_str()];
+        tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
+        if( auto title = ComposeVerboseMenuItemTitle(menu_item) )
+            tf.stringValue = title;
+        else
+            tf.stringValue = tf.toolTip;
         tf.bordered = false;
         tf.editable = false;
         tf.drawsBackground = false;

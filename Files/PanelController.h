@@ -41,13 +41,13 @@ namespace panel
     {
     public:
         GenericCursorPersistance(PanelView* _view, const PanelData &_data);
-        void Restore();
+        void Restore() const;
         
     private:
-        PanelView *view;
-        const PanelData &data;
-        int oldcursorpos;
-        string oldcursorname;
+        PanelView                  *m_View;
+        const PanelData            &m_Data;
+        string                      m_OldCursorName;
+        PanelData::EntrySortKeys    m_OldEntrySortKeys;
     };
 }
 

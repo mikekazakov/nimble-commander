@@ -201,6 +201,17 @@ class PanelData
 {
 public:
     typedef vector<unsigned> DirSortIndT; // value in this array is an index for VFSListing
+
+    struct EntrySortKeys
+    {
+        string      name;
+        NSString   *display_name;
+        string      extension;
+        uint64_t    size;
+        time_t      mtime;
+        time_t      btime;
+        bool        is_dir;
+    };
     
     PanelData();
     
@@ -221,12 +232,16 @@ public:
      * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
-    
     const VFSListingItem*   EntryAtRawPosition(int _pos) const;
     const VFSListingItem*   EntryAtSortPosition(int _pos) const;
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
-
+    
+    /**
+     * Will throw an invalid_argument on invalid _pos.
+     */
+    EntrySortKeys           EntrySortKeysAtSortPosition(int _pos) const;
+    
     /**
      * will redirect ".." upwards
      */
@@ -243,6 +258,13 @@ public:
      * Returning value is in raw land, that is DirectoryEntries[N], not sorted ones.
      */
     int RawIndexForName(const char *_filename) const;
+    
+    /**
+     * Performs a search using current sort settings with prodived keys.
+     * Return a lower bound entry - first entry with is not less than a key from _keys.
+     * Returns -1 if such entry wasn't found.
+     */
+    int SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const;
     
     /**
      * return -1 if didn't found.
@@ -320,6 +342,7 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
+    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing

@@ -216,87 +216,170 @@ string PanelData::VerboseDirectoryFullPath() const
     return s;
 }
 
-struct SortPredLess
+struct SortPredLessBase
 {
-private:
+protected:
     const VFSListing&               ind_tar;
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLess(const VFSListing &_items, PanelSortMode sort_mode):
+    SortPredLessBase(const VFSListing &_items, PanelSortMode sort_mode):
         ind_tar(_items),
         sort_mode(sort_mode)
     {
         str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-            (sort_mode.numeric_sort ? kCFCompareNumerically : 0);
-        
+        (sort_mode.numeric_sort ? kCFCompareNumerically : 0);
     }
+};
+
+struct SortPredLessIndToInd : public SortPredLessBase
+{
+    SortPredLessIndToInd(const VFSListing &_items, PanelSortMode sort_mode): SortPredLessBase(_items, sort_mode) {}
     
   	bool operator()(unsigned _1, unsigned _2) const
     {
+        using _ = PanelSortMode::Mode;
+        const auto invalid_size = VFSListingItem::InvalidSize;
         const auto &val1 = ind_tar[_1];
         const auto &val2 = ind_tar[_2];
         
-        if(sort_mode.sep_dirs)
-        {
+        if(sort_mode.sep_dirs) {
             if(val1.IsDir() && !val2.IsDir()) return true;
             if(!val1.IsDir() && val2.IsDir()) return false;
         }
         
+        auto by_name = [&] { return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags); };
+        
         switch(sort_mode.sort)
         {
-            case PanelSortMode::SortByName:
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0;
-            case PanelSortMode::SortByNameRev:
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0;
-            case PanelSortMode::SortByExt:
-                if(val1.HasExtension() && val2.HasExtension() )
-                {
+            case _::SortByName:
+                return by_name() < 0;
+            case _::SortByNameRev:
+                return by_name() > 0;
+            case _::SortByExt:
+                if(val1.HasExtension() && val2.HasExtension() ) {
                     int r = strcmp(val1.Extension(), val2.Extension());
                     if(r < 0) return true;
                     if(r > 0) return false;
-                    return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0;
+                    return by_name() < 0;
                 }
                 if(val1.HasExtension() && !val2.HasExtension() ) return false;
                 if(!val1.HasExtension() && val2.HasExtension() ) return true;
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0; // fallback case
-            case PanelSortMode::SortByExtRev:
-                if(val1.HasExtension() && val2.HasExtension() )
-                {
+                return by_name() < 0; // fallback case
+            case _::SortByExtRev:
+                if(val1.HasExtension() && val2.HasExtension() ) {
                     int r = strcmp(val1.Extension(), val2.Extension());
                     if(r < 0) return false;
                     if(r > 0) return true;
-                    return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0;
+                    return by_name() > 0;
                 }
                 if(val1.HasExtension() && !val2.HasExtension() ) return true;
                 if(!val1.HasExtension() && val2.HasExtension() ) return false;
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0; // fallback case
-            case PanelSortMode::SortByMTime:    return val1.MTime() > val2.MTime();
-            case PanelSortMode::SortByMTimeRev: return val1.MTime() < val2.MTime();
-            case PanelSortMode::SortByBTime:    return val1.BTime() > val2.BTime();
-            case PanelSortMode::SortByBTimeRev: return val1.BTime() < val2.BTime();
-            case PanelSortMode::SortBySize:
-                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize)
-                    if(val1.Size() != val2.Size()) return val1.Size() > val2.Size();
-                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return false;
-                if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return true;
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) < 0; // fallback case
-            case PanelSortMode::SortBySizeRev:
-                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize)
-                    if(val1.Size() != val2.Size()) return val1.Size() < val2.Size();
-                if(val1.Size() != VFSListingItem::InvalidSize && val2.Size() == VFSListingItem::InvalidSize) return true;
-                if(val1.Size() == VFSListingItem::InvalidSize && val2.Size() != VFSListingItem::InvalidSize) return false;
-                return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags) > 0; // fallback case
-            case PanelSortMode::SortByRawCName:
+                return by_name() > 0; // fallback case
+            case _::SortByMTime:    return val1.MTime() > val2.MTime();
+            case _::SortByMTimeRev: return val1.MTime() < val2.MTime();
+            case _::SortByBTime:    return val1.BTime() > val2.BTime();
+            case _::SortByBTimeRev: return val1.BTime() < val2.BTime();
+            case _::SortBySize:
+                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
+                    if(val1.Size() != val2.Size())
+                        return val1.Size() > val2.Size();
+                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return false;
+                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return true;
+                return by_name() < 0; // fallback case
+            case _::SortBySizeRev:
+                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
+                    if(val1.Size() != val2.Size())
+                        return val1.Size() < val2.Size();
+                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return true;
+                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return false;
+                return by_name() > 0; // fallback case
+            case _::SortByRawCName:
                 return strcmp(val1.Name(), val2.Name()) < 0;
                 break;
-            case PanelSortMode::SortNoSort:
+            case _::SortNoSort:
                 assert(0); // meaningless sort call
                 break;
 
             default:;
         };
 
+        return false;
+    }
+};
+
+struct SortPredLessIndToKeys : public SortPredLessBase
+{
+    SortPredLessIndToKeys(const VFSListing &_items, PanelSortMode sort_mode): SortPredLessBase(_items, sort_mode) {}
+    
+    bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
+    {
+        using _ = PanelSortMode::Mode;
+        const auto invalid_size = VFSListingItem::InvalidSize;
+        const auto &val1 = ind_tar[_1];
+        
+        if(sort_mode.sep_dirs) {
+            if(val1.IsDir() && !_val2.is_dir) return true;
+            if(!val1.IsDir() && _val2.is_dir) return false;
+        }
+        
+        auto by_name = [&] { return CFStringCompare(val1.CFDisplayName(), (CFStringRef)_val2.display_name, str_comp_flags); };
+
+        switch(sort_mode.sort)
+        {
+            case _::SortByName: return by_name() < 0;
+            case _::SortByNameRev: return by_name() > 0;
+            case _::SortByExt:
+                if(val1.HasExtension() && !_val2.extension.empty() ) {
+                    int r = strcmp(val1.Extension(), _val2.extension.c_str());
+                    if(r < 0) return true;
+                    if(r > 0) return false;
+                    return by_name() < 0;
+                }
+                if(val1.HasExtension() && _val2.extension.empty() ) return false;
+                if(!val1.HasExtension() && !_val2.extension.empty() ) return true;
+                return by_name() < 0; // fallback case
+            case _::SortByExtRev:
+                if(val1.HasExtension() && !_val2.extension.empty() ) {
+                    int r = strcmp(val1.Extension(), _val2.extension.c_str());
+                    if(r < 0) return false;
+                    if(r > 0) return true;
+                    return by_name() > 0;
+                }
+                if(val1.HasExtension() && _val2.extension.empty() ) return true;
+                if(!val1.HasExtension() && !_val2.extension.empty() ) return false;
+                return by_name() > 0; // fallback case
+            case _::SortByMTime:    return val1.MTime() > _val2.mtime;
+            case _::SortByMTimeRev: return val1.MTime() < _val2.mtime;
+            case _::SortByBTime:    return val1.BTime() > _val2.btime;
+            case _::SortByBTimeRev: return val1.BTime() < _val2.btime;
+            case _::SortBySize:
+                if( val1.Size() != invalid_size && _val2.size != invalid_size )
+                    if( val1.Size() != _val2.size )
+                        return val1.Size() > _val2.size;
+                if( val1.Size() != invalid_size && _val2.size == invalid_size )
+                    return false;
+                if( val1.Size() == invalid_size && _val2.size != invalid_size )
+                    return true;
+                return by_name() < 0; // fallback case
+            case _::SortBySizeRev:
+                if( val1.Size() != invalid_size && _val2.size != invalid_size )
+                    if( val1.Size() != _val2.size )
+                        return val1.Size() < _val2.size;
+                if( val1.Size() != invalid_size && _val2.size == invalid_size )
+                    return true;
+                if( val1.Size() == invalid_size && _val2.size != invalid_size )
+                    return false;
+                return by_name() > 0; // fallback case
+            case _::SortByRawCName:
+                return strcmp(val1.Name(), _val2.name.c_str()) < 0;
+                break;
+            case _::SortNoSort:
+                assert(0); // meaningless sort call
+                break;
+            default:;
+        };
+        
         return false;
     }
 };
@@ -694,7 +777,7 @@ void PanelData::DoSortWithHardFiltering()
        m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    SortPredLess pred(*m_Listing, m_CustomSortMode);
+    SortPredLessIndToInd pred(*m_Listing, m_CustomSortMode);
     DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
@@ -731,4 +814,38 @@ void PanelData::BuildSoftFilteringIndeces()
         unsigned index = 0;
         generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), [&]{return index++;} );
     }
+}
+
+PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item)
+{
+    EntrySortKeys keys;
+    keys.name = _item.Name();
+    keys.display_name = [_item.NSDisplayName() copy];
+    keys.extension = _item.HasExtension() ? _item.Extension() : "";
+    keys.size = _item.Size();
+    keys.mtime = _item.MTime();
+    keys.btime = _item.BTime();
+    keys.is_dir = _item.IsDir();
+    return keys;
+}
+
+PanelData::EntrySortKeys PanelData::EntrySortKeysAtSortPosition(int _pos) const
+{
+    auto item = EntryAtSortPosition(_pos);
+    if( !item )
+        throw invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
+    return ExtractSortKeysFromEntry(*item);
+}
+
+int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
+{
+    auto it = lower_bound(begin(m_EntriesByCustomSort),
+                          end(m_EntriesByCustomSort),
+                          _keys,
+                          SortPredLessIndToKeys(*m_Listing,
+                                                 m_CustomSortMode)
+                          );
+    if( it != end(m_EntriesByCustomSort) )
+        return (int)distance( begin(m_EntriesByCustomSort), it );
+    return -1;
 }

@@ -32,31 +32,34 @@ static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuick
                                g_DefaultsGeneralShowLocalizedFilenames];
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
-    view(_view),
-    data(_data),
-    oldcursorpos(_view.curpos)
+    m_View(_view),
+    m_Data(_data)
 {
-    if(oldcursorpos >= 0 && view.item != nullptr)
-        oldcursorname = view.item->Name();
-}
-    
-void panel::GenericCursorPersistance::Restore()
-{
-    int newcursorrawpos = data.RawIndexForName(oldcursorname.c_str());
-    if( newcursorrawpos >= 0 )
-    {
-        int newcursorsortpos = data.SortedIndexForRawIndex(newcursorrawpos);
-        if(newcursorsortpos >= 0)
-            view.curpos = newcursorsortpos;
-        else
-            view.curpos = data.SortedDirectoryEntries().empty() ? -1 : 0;
+    auto cur_pos = _view.curpos;
+    if(cur_pos >= 0 && m_View.item != nullptr) {
+        m_OldCursorName = m_View.item->Name();
+        m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
     }
-    else
-    {
-        if( oldcursorpos < data.SortedDirectoryEntries().size() )
-            view.curpos = oldcursorpos;
+}
+
+void panel::GenericCursorPersistance::Restore() const
+{
+    int newcursorrawpos = m_Data.RawIndexForName(m_OldCursorName.c_str());
+    if( newcursorrawpos >= 0 ) {
+        int newcursorsortpos = m_Data.SortedIndexForRawIndex(newcursorrawpos);
+        if(newcursorsortpos >= 0)
+            m_View.curpos = newcursorsortpos;
         else
-            view.curpos = int(data.SortedDirectoryEntries().size()) - 1;
+            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : 0;
+    }
+    else {
+        int lower_bound = m_Data.SortLowerBoundForEntrySortKeys(m_OldEntrySortKeys);
+        if( lower_bound >= 0) {
+            m_View.curpos = lower_bound;
+        }
+        else {
+            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
+        }
     }
 }
 

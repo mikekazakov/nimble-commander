@@ -111,19 +111,19 @@
 		CF2D2F3A1B8B238A00111C75 /* Habanero */ = {
 			isa = PBXGroup;
 			children = (
-				CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */,
-				CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */,
-				CF2D2F841B8B47B700111C75 /* FontExtras.h */,
-				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
 				CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */,
 				CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */,
 				CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */,
 				CF2D2F901B8B6F2D00111C75 /* mach_time.h */,
 				CF2D2F8F1B8B6F2D00111C75 /* mach_time.cpp */,
-				CF2D2F781B8B3BC000111C75 /* Hash.h */,
-				CF2D2F771B8B3BC000111C75 /* Hash.cpp */,
 				CF2D2F741B8B385C00111C75 /* tiny_string.h */,
 				CF2D2F731B8B385C00111C75 /* tiny_string.cpp */,
+				CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */,
+				CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */,
+				CF2D2F841B8B47B700111C75 /* FontExtras.h */,
+				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
+				CF2D2F781B8B3BC000111C75 /* Hash.h */,
+				CF2D2F771B8B3BC000111C75 /* Hash.cpp */,
 				CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */,
 				CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */,
 			);

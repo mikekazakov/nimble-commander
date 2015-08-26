@@ -126,7 +126,7 @@ public:
     virtual int ReadSymlink(const char *_symlink_path,
                             char *_buffer,
                             size_t _buffer_size,
-                            VFSCancelChecker _cancel_checker);
+                            VFSCancelChecker _cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,
@@ -137,17 +137,17 @@ public:
      * Unlinkes(deletes) a file. Dont follow last symlink, in case of.
      * Don't delete a directories, similar to POSIX.
      */
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker);
+    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
 
     /**
      * Deletes and empty directory. Will fail on non-empty ones.
      */
-    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker);
+    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
     
     /**
      * Change the name of a file.
      */
-    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker);
+    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker = nullptr);
     
     /**
      * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.

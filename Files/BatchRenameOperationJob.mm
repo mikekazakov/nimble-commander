@@ -55,7 +55,11 @@ void BatchRenameOperationJob::ProcessItem(const string &_orig, const string &_re
     
     int ret = 0;
 retry_rename:
-    ret = m_VFS->Rename(_orig.c_str(), _renamed.c_str(), nullptr);
+    if( m_VFS->Exists(_renamed.c_str()) == true )
+        ret = VFSError::FromErrno(EEXIST);
+    else
+        ret = m_VFS->Rename(_orig.c_str(), _renamed.c_str(), nullptr);
+    
     if(ret != 0) { // failed to rename
         if(m_SkipAll) goto cleanup;
         int result = [[m_Operation DialogOnRenameError:VFSError::ToNSError(ret) source:_orig destination:_renamed] WaitForResult];

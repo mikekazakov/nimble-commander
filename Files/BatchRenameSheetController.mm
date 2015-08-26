@@ -252,8 +252,11 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         else { // very inefficient duplicates search
             for(size_t j = 0; j!=e; ++j)
                 if(i != j) {
-                    NSString *fn2 = m_LabelsAfter[j].stringValue;
-                    if( [fn1 isEqualToString:fn2] ) {
+                    if( [fn1 isEqualToString:m_LabelsAfter[j].stringValue] ) {
+                        is_valid = false;
+                        break;
+                    }
+                    if( [fn1 isEqualToString:m_LabelsBefore[j].stringValue] ) {
                         is_valid = false;
                         break;
                     }

@@ -238,7 +238,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
                                                                       toItem:self
                                                                    attribute:NSLayoutAttributeBottom
                                                                   multiplier:1
-                                                                    constant:-100];
+                                                                    constant:0];
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     
 

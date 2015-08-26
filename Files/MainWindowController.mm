@@ -62,6 +62,16 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
         
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
                                                                 Window:self.window];
+        
+        if( m_PanelState.toolbar && m_ToolbarVisible ) { // ugly hack with hard-coded toolbar height to fix-up invalid window size after restoring
+            NSRect rc = self.window.frame;
+            auto toolbar_height = 38;
+            rc.origin.y -= toolbar_height;
+            rc.size.height += toolbar_height;
+            [self.window setFrame:rc display:false];
+            NSLog(@"fixup height:%.0f", window.frame.size.height);
+        }
+        
         [self PushNewWindowState:m_PanelState];
         
         [NSNotificationCenter.defaultCenter addObserver:self

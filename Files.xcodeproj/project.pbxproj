@@ -449,6 +449,12 @@
 		CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
+		CF955EFD1B8DC099004A25AF /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF955EFF1B8DC0B1004A25AF /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF955F001B8DC101004A25AF /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
+		CF955F011B8DC105004A25AF /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
+		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
+		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF9B49DB1B494E5500C59677 /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */; };
 		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -827,7 +833,6 @@
 		CFF6F3641A13567C00011177 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
-		CFF6F3671A13567C00011177 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
@@ -1003,6 +1008,26 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF6FAA2C1B82E62C006E0742 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF955EF71B8DC08E004A25AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CF955EFD1B8DC099004A25AF /* libHabanero.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF955EFE1B8DC0A8004A25AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CF955EFF1B8DC0B1004A25AF /* libHabanero.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1347,6 +1372,7 @@
 		CF9066B819AB5636001DC687 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
+		CF955F021B8DC6CB004A25AF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TermScreenBuffer.h; sourceTree = "<group>"; };
 		CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreenTests.mm; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
@@ -1613,6 +1639,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */,
+				CF955F001B8DC101004A25AF /* libHabanero.dylib in Frameworks */,
 				CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */,
 				CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */,
 				CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */,
@@ -1684,6 +1712,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
+				CF955F011B8DC105004A25AF /* libHabanero.dylib in Frameworks */,
 				CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */,
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
 				CFF6F3561A13567C00011177 /* libcurl.a in Frameworks */,
@@ -1704,7 +1734,6 @@
 				CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */,
 				CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
-				CFF6F3671A13567C00011177 /* libz.a in Frameworks */,
 				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
 				CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */,
 			);
@@ -2599,6 +2628,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF955F021B8DC6CB004A25AF /* libz.dylib */,
 				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
 				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
 				CF9066C319AB7928001DC687 /* libcrypto.dylib */,
@@ -2806,6 +2836,7 @@
 				CF6D997B196675290077B146 /* Resources */,
 				CFEB6F7C19694639000FD09D /* ShellScript */,
 				CF6FAA291B82E60B006E0742 /* CopyFiles */,
+				CF955EFE1B8DC0A8004A25AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -2864,6 +2895,7 @@
 				CFF6F36A1A13567C00011177 /* Resources */,
 				CFF6F39D1A13567C00011177 /* ShellScript */,
 				CF6FAA2B1B82E626006E0742 /* CopyFiles */,
+				CF955EF71B8DC08E004A25AF /* CopyFiles */,
 			);
 			buildRules = (
 			);

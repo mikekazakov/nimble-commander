@@ -222,13 +222,7 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
     m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
     m_Toolbar.showsBaselineSeparator = false;
     
-    m_OverlappedTerminal.terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
-    m_OverlappedTerminal.terminal.translatesAutoresizingMaskIntoConstraints = false;
-    auto terminal = m_OverlappedTerminal.terminal;
-    [self addSubview:m_OverlappedTerminal.terminal positioned:NSWindowBelow relativeTo:nil];
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView, terminal);
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]-(==100)-|" options:0 metrics:nil views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
@@ -240,22 +234,18 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
                                                                   multiplier:1
                                                                     constant:0];
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
-    
-
-//    m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:self
-//                                                                   attribute:NSLayoutAttributeBottom
-//                                                                   relatedBy:NSLayoutRelationEqual
-//                                                                      toItem:m_MainSplitView
-//                                                                   attribute:NSLayoutAttributeBottom
-//                                                                  multiplier:1
-//                                                                    constant:100];
-    
-    
     [self addConstraint:m_MainSplitViewBottomConstraint];
     
-    
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
+    if( configuration::has_terminal ) {
+        m_OverlappedTerminal.terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
+        m_OverlappedTerminal.terminal.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_OverlappedTerminal.terminal positioned:NSWindowBelow relativeTo:nil];
+        
+        auto terminal = m_OverlappedTerminal.terminal;
+        views = NSDictionaryOfVariableBindings(terminal);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
+    }
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar

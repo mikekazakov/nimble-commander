@@ -108,57 +108,11 @@ static SUUpdater *g_Sparkle = nil;
     VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
     
     NativeFSManager::Instance();
-        
-    // disable some features available in menu by configuration limitation
-    auto tag_from_lit   = [=](const char *s){ return ActionsShortcutsManager::Instance().TagFromAction(s);       };
-    auto menuitem       = [=](const char *s){ return [[NSApp mainMenu] itemWithTagHierarchical:tag_from_lit(s)]; };
-    if(!configuration::has_psfs)
-        menuitem("menu.go.processes_list").hidden = true;
-    if(!configuration::has_terminal)
-        menuitem("menu.view.show_terminal").hidden = true;
-    if(!configuration::has_brief_system_overview)
-        menuitem("menu.command.system_overview").hidden = true;
-    if(!configuration::has_unix_attributes_editing)
-        menuitem("menu.command.file_attributes").hidden = true;
-    if(!configuration::has_detailed_volume_information)
-        menuitem("menu.command.volume_information").hidden = true;
-    if(!configuration::has_batch_rename)
-        menuitem("menu.command.batch_rename").hidden = true;
-    // fix for a hanging separator in Lite version
-    // BAD, BAD approach with hardcoded standalone tag!
-    // need to write a mech to hide separators if surrounding menu items became hidden
-    // or just w8 till all upgrade to 10.10, which does it automatically
-    if(!configuration::has_brief_system_overview &&
-       !configuration::has_unix_attributes_editing &&
-       !configuration::has_detailed_volume_information)
-        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
-    if(!configuration::has_internal_viewer)
-        menuitem("menu.command.internal_viewer").hidden = true;
-    if(!configuration::has_compression_operation)
-        menuitem("menu.command.compress").hidden = true;
-    if(!configuration::has_fs_links_manipulation) {
-        menuitem("menu.command.link_create_soft").hidden = true;
-        menuitem("menu.command.link_create_hard").hidden = true;
-        menuitem("menu.command.link_edit").hidden = true;
-        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
-    }
-    if(!configuration::has_network_connectivity) {
-        menuitem("menu.go.connect.ftp").hidden = true;
-        menuitem("menu.go.connect.sftp").hidden = true;        
-        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
-    }
     
-    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
-    menuitem("menu.files.try_full_version").hidden = configuration::version == configuration::Version::Full;
-    menuitem("menu.files.try_full_version").title = configuration::version == configuration::Version::Lite ?
-        NSLocalizedString(@"Try Full Version", "Menu item title") :
-        NSLocalizedString(@"Download Full Version", "Menu item title");
-    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full ||
-        sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10;
+    [self disableFeaturesByVersion];
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-    
     
     if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
@@ -168,6 +122,61 @@ static SUUpdater *g_Sparkle = nil;
                 [self AllocateNewMainWindow];
         }
     }
+}
+
+- (void)disableFeaturesByVersion
+{
+    // disable some features available in menu by configuration limitation
+    auto tag_from_lit   = [ ](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s);       };
+    auto menuitem       = [&](const char *s) { return [[NSApp mainMenu] itemWithTagHierarchical:tag_from_lit(s)]; };
+    auto hide           = [&](const char *s) {
+        auto item = menuitem(s);
+        item.alternate = false;
+        item.hidden = true;
+    };
+    
+    if(!configuration::has_psfs)
+        hide("menu.go.processes_list");
+    if(!configuration::has_terminal) {
+        hide("menu.view.show_terminal");
+        hide("menu.view.panels_position.move_up");
+        hide("menu.view.panels_position.move_down");
+        hide("menu.view.panels_position.showpanels");
+        hide("menu.view.panels_position.focusterminal");
+        hide("menu.file.feed_filename_to_terminal");
+        hide("menu.file.feed_filenames_to_terminal");        
+    }
+    
+    if(!configuration::has_brief_system_overview)       hide("menu.command.system_overview");
+    if(!configuration::has_unix_attributes_editing)     hide("menu.command.file_attributes");
+    if(!configuration::has_detailed_volume_information) hide("menu.command.volume_information");
+    if(!configuration::has_batch_rename)                hide("menu.command.batch_rename");
+    // fix for a hanging separator in Lite version
+    // BAD, BAD approach with hardcoded standalone tag!
+    // need to write a mech to hide separators if surrounding menu items became hidden
+    // or just w8 till all upgrade to 10.10, which does it automatically
+    if(!configuration::has_brief_system_overview &&
+       !configuration::has_unix_attributes_editing &&
+       !configuration::has_detailed_volume_information)
+        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
+    if(!configuration::has_internal_viewer)             hide("menu.command.internal_viewer");
+    if(!configuration::has_compression_operation)       hide("menu.command.compress");
+    if(!configuration::has_fs_links_manipulation) {
+        hide("menu.command.link_create_soft");
+        hide("menu.command.link_create_hard");
+        hide("menu.command.link_edit");
+        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
+    }
+    if(!configuration::has_network_connectivity) {
+        hide("menu.go.connect.ftp");
+        hide("menu.go.connect.sftp");
+        hide("menu.go.quick_lists.connections");
+        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
+    }
+    
+    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
+    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full ||
+                                                      sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

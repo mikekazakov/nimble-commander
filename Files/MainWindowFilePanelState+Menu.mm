@@ -564,28 +564,30 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     };
 
     // overlapped terminal stuff
-    static const auto filepanels_move_up = am.TagFromAction( "menu.view.panels_position.move_up" );
-    if( isshortcut(filepanels_move_up) ) {
-        [self OnViewPanelsPositionMoveUp:self];
-        return true;
-    }
-    
-    static const auto filepanels_move_down = am.TagFromAction( "menu.view.panels_position.move_down" );
-    if( isshortcut(filepanels_move_down) ) {
-        [self OnViewPanelsPositionMoveDown:self];
-        return true;
-    }
-    
-    static const auto filepanels_showhide = am.TagFromAction( "menu.view.panels_position.showpanels" );
-    if( isshortcut(filepanels_showhide) ) {
-        [self OnViewPanelsPositionShowHidePanels:self];
-        return true;
-    }
-    
-    static const auto filepanels_focusterminal = am.TagFromAction( "menu.view.panels_position.focusterminal" );
-    if( isshortcut(filepanels_focusterminal) ) {
-        [self OnViewPanelsPositionFocusOverlappedTerminal:self];
-        return true;
+    if( configuration::has_terminal ) {
+        static const auto filepanels_move_up = am.TagFromAction( "menu.view.panels_position.move_up" );
+        if( isshortcut(filepanels_move_up) ) {
+            [self OnViewPanelsPositionMoveUp:self];
+            return true;
+        }
+        
+        static const auto filepanels_move_down = am.TagFromAction( "menu.view.panels_position.move_down" );
+        if( isshortcut(filepanels_move_down) ) {
+            [self OnViewPanelsPositionMoveDown:self];
+            return true;
+        }
+        
+        static const auto filepanels_showhide = am.TagFromAction( "menu.view.panels_position.showpanels" );
+        if( isshortcut(filepanels_showhide) ) {
+            [self OnViewPanelsPositionShowHidePanels:self];
+            return true;
+        }
+        
+        static const auto filepanels_focusterminal = am.TagFromAction( "menu.view.panels_position.focusterminal" );
+        if( isshortcut(filepanels_focusterminal) ) {
+            [self OnViewPanelsPositionFocusOverlappedTerminal:self];
+            return true;
+        }
     }
     
     return [super performKeyEquivalent:theEvent];

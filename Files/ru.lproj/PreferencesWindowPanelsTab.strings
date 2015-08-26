@@ -19,6 +19,9 @@
 /* Class = "NSTabViewItem"; label = "Quick Search"; ObjectID = "7ue-46-YVg"; */
 "7ue-46-YVg.label" = "Быстрый поиск";
 
+/* Class = "NSButtonCell"; title = "Route keyboard input into overlapped terminal"; ObjectID = "8nl-FW-wYu"; */
+"8nl-FW-wYu.title" = "Перенаправлять ввод клавиатуры в терминал";
+
 /* Class = "NSTabViewItem"; label = "Common"; ObjectID = "21"; */
 "21.label" = "Общее";
 

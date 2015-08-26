@@ -286,6 +286,12 @@
 /* Class = "NSMenuItem"; title = "Enclosing Folder"; ObjectID = "L3e-fZ-Zko"; */
 "L3e-fZ-Zko.title" = "На уровень выше";
 
+/* Class = "NSMenuItem"; title = "Move Right"; ObjectID = "LBa-B1-fXx"; */
+"LBa-B1-fXx.title" = "Сдвидуть вправо";
+
+/* Class = "NSMenu"; title = "Quick Lists"; ObjectID = "N85-H8-Cbx"; */
+"N85-H8-Cbx.title" = "Быстрые списки";
+
 /* Class = "NSMenuItem"; title = "Open in Finder"; ObjectID = "NCx-aq-tJi"; */
 "NCx-aq-tJi.title" = "Открыть в Finder";
 
@@ -301,23 +307,50 @@
 /* Class = "NSMenuItem"; title = "Calculate All Folders Sizes"; ObjectID = "Pq6-25-hPh"; */
 "Pq6-25-hPh.title" = "Вычислить размер всех папок";
 
+/* Class = "NSMenu"; title = "Panels Position"; ObjectID = "QN7-b6-kdr"; */
+"QN7-b6-kdr.title" = "Позиция панелей";
+
 /* Class = "NSMenuItem"; title = "Eject Volume"; ObjectID = "QWh-Qx-Rx6"; */
 "QWh-Qx-Rx6.title" = "Извлечь том";
+
+/* Class = "NSMenuItem"; title = "Volumes"; ObjectID = "QsY-av-veD"; */
+"QsY-av-veD.title" = "Тома";
 
 /* Class = "NSMenuItem"; title = "Connect To..."; ObjectID = "R1g-do-NyV"; */
 "R1g-do-NyV.title" = "Подключиться к...";
 
+/* Class = "NSMenuItem"; title = "Quick Lists"; ObjectID = "ToO-KH-35P"; */
+"ToO-KH-35P.title" = "Быстрые списки";
+
+/* Class = "NSMenuItem"; title = "History"; ObjectID = "Uht-NR-INk"; */
+"Uht-NR-INk.title" = "История";
+
+/* Class = "NSMenuItem"; title = "Favorites"; ObjectID = "VDF-r2-LBL"; */
+"VDF-r2-LBL.title" = "Избранное";
+
 /* Class = "NSMenuItem"; title = "Show Previous Tab"; ObjectID = "ViK-AU-jLn"; */
 "ViK-AU-jLn.title" = "Показать предыдущую вкладку";
 
+/* Class = "NSMenuItem"; title = "Paste Filename to Terminal"; ObjectID = "XNI-Bn-uVO"; */
+"XNI-Bn-uVO.title" = "Вставить имя файла в терминал";
+
 /* Class = "NSMenuItem"; title = "Library"; ObjectID = "YvS-GY-g28"; */
 "YvS-GY-g28.title" = "Библиотеки";
+
+/* Class = "NSMenuItem"; title = "Focus Overlapped Terminal"; ObjectID = "Z21-QA-ACq"; */
+"Z21-QA-ACq.title" = "Фокус на терминал";
+
+/* Class = "NSMenuItem"; title = "Move Up"; ObjectID = "aYe-xJ-eDM"; */
+"aYe-xJ-eDM.title" = "Сдвинуть вверх";
 
 /* Class = "NSMenuItem"; title = "SFTP Server"; ObjectID = "bip-nL-0se"; */
 "bip-nL-0se.title" = "SFTP серверу";
 
 /* Class = "NSMenuItem"; title = "Desktop"; ObjectID = "dJC-Rr-wZM"; */
 "dJC-Rr-wZM.title" = "Рабочий стол";
+
+/* Class = "NSMenuItem"; title = "Move Down"; ObjectID = "eHg-pH-jwx"; */
+"eHg-pH-jwx.title" = "Сдвинуть вниз";
 
 /* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "fHK-0D-kaF"; */
 "fHK-0D-kaF.title" = "Закрыть окно";
@@ -349,6 +382,9 @@
 /* Class = "NSMenuItem"; title = "Open In Opposite Panel"; ObjectID = "jt1-bG-SNx"; */
 "jt1-bG-SNx.title" = "Открыть в противоположной панели";
 
+/* Class = "NSMenuItem"; title = "Connections"; ObjectID = "kWp-fQ-T0l"; */
+"kWp-fQ-T0l.title" = "Соединения";
+
 /* Class = "NSMenuItem"; title = "Calculate Checksum"; ObjectID = "mz4-ml-xw1"; */
 "mz4-ml-xw1.title" = "Вычислить контрольную сумму";
 
@@ -357,6 +393,9 @@
 
 /* Class = "NSMenuItem"; title = "Processes List"; ObjectID = "ooW-Y5-gXA"; */
 "ooW-Y5-gXA.title" = "Список процессов";
+
+/* Class = "NSMenuItem"; title = "Show/Hide Panels"; ObjectID = "pGI-yr-mvL"; */
+"pGI-yr-mvL.title" = "Показать/скрыть панели";
 
 /* Class = "NSMenuItem"; title = "Go To Folder..."; ObjectID = "r9P-3y-Fqa"; */
 "r9P-3y-Fqa.title" = "Переход к папке...";
@@ -382,6 +421,18 @@
 /* Class = "NSMenuItem"; title = "Copy File Name"; ObjectID = "wUh-lo-NqX"; */
 "wUh-lo-NqX.title" = "Копировать имя файла";
 
+/* Class = "NSMenuItem"; title = "Paste Filenames to Terminal..."; ObjectID = "wd3-KT-mmq"; */
+"wd3-KT-mmq.title" = "Вставить имена файлов в терминал...";
+
+/* Class = "NSMenuItem"; title = "Move Left"; ObjectID = "xoX-Le-jyi"; */
+"xoX-Le-jyi.title" = "Сдвинуть влево";
+
 /* Class = "NSMenuItem"; title = "Show Hidden Files"; ObjectID = "zGu-Ls-RVD"; */
 "zGu-Ls-RVD.title" = "Показывать скрытые файлы";
+
+/* Class = "NSMenuItem"; title = "Panels Position"; ObjectID = "zNZ-x6-hcs"; */
+"zNZ-x6-hcs.title" = "Положение панелей";
+
+/* Class = "NSMenuItem"; title = "Parent Folders"; ObjectID = "zeQ-Na-TPl"; */
+"zeQ-Na-TPl.title" = "Родительские папки";
 

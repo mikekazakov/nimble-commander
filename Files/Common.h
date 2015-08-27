@@ -32,6 +32,9 @@ struct DialogResult
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;
+CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const string &_s) noexcept;
+CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept;
+CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept;
 
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);

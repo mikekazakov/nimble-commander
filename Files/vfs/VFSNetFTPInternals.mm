@@ -214,6 +214,8 @@ shared_ptr<Directory> ParseListing(const char *_str)
 
                 ent.name = filename;
                 ent.cfname = CFStringCreateWithUTF8StdStringNoCopy(ent.name);
+                if( !ent.cfname )
+                    ent.cfname = CFStringCreateWithMacOSRomanStdStringNoCopy(ent.name);
                 ent.mode = st.st_mode;
                 ent.size = st.st_size;
                 ent.time = st.st_mtime;

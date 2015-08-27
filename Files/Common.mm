@@ -297,6 +297,37 @@ CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noex
                                          kCFAllocatorNull);
 }
 
+CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const string &_s) noexcept
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s.c_str(),
+                                         _s.length(),
+                                         kCFStringEncodingMacRoman,
+                                         false,
+                                         kCFAllocatorNull);
+
+}
+
+CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s,
+                                         strlen(_s),
+                                         kCFStringEncodingMacRoman,
+                                         false,
+                                         kCFAllocatorNull);
+}
+
+CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s,
+                                         _len,
+                                         kCFStringEncodingMacRoman,
+                                         false,
+                                         kCFAllocatorNull);
+}
+
 const string &AppTemporaryDirectory() noexcept
 {
     static string path = NSTemporaryDirectory().fileSystemRepresentation;

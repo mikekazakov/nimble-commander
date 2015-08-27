@@ -530,12 +530,6 @@ static SUUpdater *g_Sparkle = nil;
     return false;
 }
 
-- (IBAction)OnMenuTryFullVersion:(id)sender
-{
-    NSString *url_string = @"http://filesmanager.info/downloads/latest.dmg";
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:url_string]];
-}
-
 - (void) checkIfNeedToShowNagScreen
 {
     if(configuration::version != configuration::Version::Full)

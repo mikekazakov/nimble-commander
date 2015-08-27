@@ -38,4 +38,26 @@
     }
 }
 
+- (NSEvent *)nextEventMatchingMask:(NSUInteger)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag
+{
+    try
+    {
+        return [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
+    }
+    catch(exception &e)
+    {
+        cout << "Exception caught: " << e.what() << endl;
+    }
+    catch(exception *e)
+    {
+        cout << "Exception caught: " << e->what() << endl;
+    }
+    catch(...)
+    {
+        cout << "Caught an unhandled exception!" << endl;
+    }
+
+    return nil;
+}
+
 @end

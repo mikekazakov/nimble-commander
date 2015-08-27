@@ -39,8 +39,6 @@
     
     
     int amount = (int)m_Items->size();
-    assert(amount > 0);
-    
     if(m_IsCopying) {
         if(amount > 1)
             self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
@@ -117,6 +115,9 @@
 
 - (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(shared_ptr<vector<string>>)_items handler:(MassCopySheetCompletionHandler)_handler
 {
+    if( _items->empty() )
+        throw invalid_argument("MassCopySheetController.ShowSheet: _items can't be empty");
+    
     m_Handler = _handler;
     m_InitialPath = _path;
     m_IsCopying = _iscopying;

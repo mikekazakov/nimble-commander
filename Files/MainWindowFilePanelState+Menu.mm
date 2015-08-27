@@ -370,6 +370,8 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         return;
     
     auto filenames = make_shared<vector<string>>(self.activePanelController.selectedEntriesOrFocusedEntryFilenames);
+    if( filenames->empty() )
+        return;
     
     string dest_path = destination->DirectoryPathWithTrailingSlash();
     NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];

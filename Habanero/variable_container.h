@@ -13,26 +13,32 @@
 #include <vector>
 #include <unordered_map>
 
-
-template <class T>
-class variable_container
+struct __variable_container_base
 {
-public:
-    typedef T           value_type;
-    typedef T&          reference;
-    typedef const T&    const_reference;
-    
     enum class type : char
     {
         dense   = 0,
         sparse  = 1,
         common  = 2
     };
+};
+
+template <class T = int>
+class variable_container
+{
+public:
+    typedef T           value_type;
+    typedef T&          reference;
+    typedef const T&    const_reference;
+
+    using type = __variable_container_base::type;
     
     /**
      * Construction/desctuction/assigning.
      */
-    variable_container( type _type );
+    variable_container( type _type = type::common );
+    variable_container( const T& _value );
+    variable_container( T &&_value );
     variable_container( const variable_container& _rhs );
     variable_container( variable_container&& _rhs );
     ~variable_container();
@@ -40,11 +46,30 @@ public:
     const variable_container &operator=( variable_container&& _rhs );
     
     /**
+     * return current container's type.
+     */
+    type mode() const;
+    
+    /**
      * for common mode return common value.
      * for other modes uses at() of vector<> and unordered_map<>.
      */
     T &at(unsigned _at);
+    T &operator[](unsigned _at);
     const T &at(unsigned _at) const;
+    const T &operator[](unsigned _at) const;
+    
+    /**
+     * return amount of elements inside.
+     * for common mode always returns 1.
+     * for other modes return size of a corresponding container.
+     */
+    unsigned size() const;
+    
+    /**
+     * returns size() == 0;
+     */
+    bool empty() const;
     
     /**
      * Can be used only with Dense mode, ignored otherwise.
@@ -112,9 +137,29 @@ variable_container<T>::variable_container( variable_container<T>&& _rhs ):
 }
 
 template <class T>
+variable_container<T>::variable_container( const T& _value ):
+    m_Type(type::common)
+{
+    new (&Common()) common_type( _value );
+}
+
+template <class T>
+variable_container<T>::variable_container( T &&_value ):
+    m_Type(type::common)
+{
+    new (&Common()) common_type( move(_value) );
+}
+
+template <class T>
 variable_container<T>::~variable_container()
 {
     Destruct();
+}
+
+template <class T>
+typename variable_container<T>::type variable_container<T>::mode() const
+{
+    return m_Type;
 }
 
 template <class T>
@@ -133,6 +178,7 @@ const variable_container<T> &variable_container<T>::operator =(const variable_co
         else if( m_Type == type::dense )
             Dense() = _rhs.Dense();
     }
+    return *this;
 }
 
 template <class T>
@@ -151,6 +197,7 @@ const variable_container<T> &variable_container<T>::operator =(variable_containe
         else if( m_Type == type::dense )
             Dense() = move(_rhs.Dense());
     }
+    return *this;    
 }
 
 template <class T> typename variable_container<T>::common_type &variable_container<T>::Common() {
@@ -241,6 +288,12 @@ T &variable_container<T>::at(unsigned _at)
 }
 
 template <class T>
+T &variable_container<T>::operator[](unsigned _at)
+{
+    return at(_at);
+}
+
+template <class T>
 const T &variable_container<T>::at(unsigned _at) const
 {
     if( m_Type == type::common )
@@ -254,9 +307,15 @@ const T &variable_container<T>::at(unsigned _at) const
 }
 
 template <class T>
+const T &variable_container<T>::operator[](unsigned _at) const
+{
+    return at(_at);
+}
+
+template <class T>
 void variable_container<T>::resize( unsigned _new_size )
 {
-    if( m_Type == type::Dense )
+    if( m_Type == type::dense )
         Dense().resize( _new_size );
 }
 
@@ -313,4 +372,23 @@ bool variable_container<T>::has( unsigned _at ) const
         return Sparse().find(_at) != end(Sparse());
     else
         throw std::logic_error("invalid type in variable_container<T>::has");
+}
+
+template <class T>
+unsigned variable_container<T>::size() const
+{
+    if( m_Type == type::common )
+        return 1;
+    else if( m_Type == type::dense )
+        return (unsigned)Dense().size();
+    else if( m_Type == type::sparse )
+        return (unsigned)Sparse().size();
+    else
+        throw std::logic_error("invalid type in variable_container<T>::size");
+}
+
+template <class T>
+bool variable_container<T>::empty() const
+{
+    return size() == 0;
 }

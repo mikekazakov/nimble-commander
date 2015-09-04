@@ -67,12 +67,13 @@ const CFString &CFString::operator=(const CFString &_rhs) noexcept
     p = _rhs.p;
     if( p )
         CFRetain(p);
-    
     return *this;
 }
 
 const CFString &CFString::operator=(CFString &&_rhs) noexcept
 {
+    if( p )
+        CFRelease(p);
     p = _rhs.p;
     _rhs.p = nullptr;
     return *this;

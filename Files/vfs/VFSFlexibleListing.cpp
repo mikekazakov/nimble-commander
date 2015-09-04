@@ -57,6 +57,14 @@ static void Validate(const VFSFlexibleListingInput& _source)
     if(_source.directories.mode() == variable_container<>::type::dense &&
        _source.directories.size() != items_no)
         throw logic_error("VFSFlexibleListingInput validation failed: directories amount is inconsistent");
+    
+    if(_source.unix_modes.size() != items_no)
+        throw logic_error("VFSFlexibleListingInput validation failed: unix_modes amount is inconsistent");
+    
+    if(_source.unix_types.size() != items_no)
+        throw logic_error("VFSFlexibleListingInput validation failed: unix_types amount is inconsistent");
+        
+    
 }
 
 shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput &&_input)
@@ -65,9 +73,22 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput
 
     auto l = Alloc();
     l->m_Filenames = move(_input.filenames);
+    l->m_DisplayFilenames = move(_input.display_filenames);
     l->BuildFilenames();
-
     
+    l->m_Sizes = move(_input.sizes);
+    l->m_Inodes = move(_input.inodes);
+    l->m_ATimes = move(_input.atimes);
+    l->m_BTimes = move(_input.btimes);
+    l->m_CTimes = move(_input.ctimes);
+    l->m_MTimes = move(_input.mtimes);
+    l->m_UnixModes = move(_input.unix_modes);
+    l->m_UnixTypes = move(_input.unix_types);
+    l->m_UIDS = move(_input.uids);
+    l->m_GIDS = move(_input.gids);
+    l->m_UnixFlags = move(_input.unix_flags);
+    l->m_Symlinks = move(_input.symlinks);
+    l->m_CreationTime = time(0);
     
     return l;
 }
@@ -84,25 +105,38 @@ VFSFlexibleListing::VFSFlexibleListing()
 
 unsigned VFSFlexibleListing::Count() const
 {
-    return (unsigned)m_Filenames.size();
+    return m_ItemsCount;
+}
+
+static CFString UTF8WithFallback(const string &_s)
+{
+    CFString s( _s );
+    if( !s )
+        s = CFString( _s, kCFStringEncodingMacRoman );
+    return s;
 }
 
 void VFSFlexibleListing::BuildFilenames()
 {
     size_t i = 0, e = m_Filenames.size();
-    m_ItemCount = (unsigned)e;
+    m_ItemsCount = (unsigned)e;
     
     m_FilenamesCF.resize( e );
     m_ExtensionOffsets.resize( e );
+    
+//    variable_container<CFString>    m_DisplayFilenamesCF;
+    m_DisplayFilenamesCF = variable_container<CFString>(variable_container<>::type::sparse);
+    
     for(; i != e; ++i ) {
         auto &current = m_Filenames[i];
-        
+
         // build Cocoa strings for filenames.
         // if filename is badly broken and UTF8 is invalid - treat it like MacRoman encoding
-        CFString s( current );
-        if( !s )
-            s = CFString( current, kCFStringEncodingMacRoman );
-        m_FilenamesCF[i] = move(s);
+        m_FilenamesCF[i] = UTF8WithFallback(current);
+        
+        if( m_DisplayFilenames.has((unsigned)i) )
+            m_DisplayFilenamesCF.insert((unsigned)i,
+                                        UTF8WithFallback(m_DisplayFilenames[(unsigned)i]) );
         
         // parse extension if any
         // here we skip possible cases like
@@ -122,7 +156,7 @@ void VFSFlexibleListing::BuildFilenames()
 }
 
 #define __CHECK_BOUNDS( a ) \
-    if( (a) >= m_ItemCount ) \
+    if( (a) >= m_ItemsCount ) \
         throw out_of_range(string(__PRETTY_FUNCTION__) + ": index out of range");
 
 bool VFSFlexibleListing::HasExtension(unsigned _ind) const
@@ -177,6 +211,160 @@ bool VFSFlexibleListing::HasCommonDirectory() const
 {
     return m_Directories.mode() == variable_container<>::type::common;
 }
+
+bool VFSFlexibleListing::HasSize(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Sizes.has(_ind);
+}
+
+uint64_t VFSFlexibleListing::Size(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
+}
+
+bool VFSFlexibleListing::HasInode(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Inodes.has(_ind);
+}
+
+uint64_t VFSFlexibleListing::Inode(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
+}
+
+bool VFSFlexibleListing::HasATime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_ATimes.has(_ind);
+}
+
+time_t VFSFlexibleListing::ATime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_ATimes.has(_ind) ? m_ATimes[_ind] : m_CreationTime;
+}
+
+bool VFSFlexibleListing::HasMTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_MTimes.has(_ind);
+}
+
+time_t VFSFlexibleListing::MTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_MTimes.has(_ind) ? m_MTimes[_ind] : m_CreationTime;
+}
+
+bool VFSFlexibleListing::HasCTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_CTimes.has(_ind);
+}
+
+time_t VFSFlexibleListing::CTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_CTimes.has(_ind) ? m_CTimes[_ind] : m_CreationTime;
+}
+
+bool VFSFlexibleListing::HasBTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_BTimes.has(_ind);
+}
+
+time_t VFSFlexibleListing::BTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
+}
+
+mode_t VFSFlexibleListing::UnixMode(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UnixModes[_ind];
+}
+
+uint8_t VFSFlexibleListing::UnixType(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UnixTypes[_ind];
+}
+
+bool VFSFlexibleListing::HasUID(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UIDS.has(_ind);
+}
+
+uid_t VFSFlexibleListing::UID(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UIDS.has(_ind) ? m_UIDS[_ind] : 0;
+}
+
+bool VFSFlexibleListing::HasGID(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_GIDS.has(_ind);
+}
+
+gid_t VFSFlexibleListing::GID(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_GIDS.has(_ind) ? m_GIDS[_ind] : 0;
+}
+
+bool VFSFlexibleListing::HasUnixFlags(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UnixFlags.has(_ind);
+}
+
+uint32_t VFSFlexibleListing::UnixFlags(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UnixFlags.has(_ind) ? m_UnixFlags[_ind] : 0;
+}
+
+bool VFSFlexibleListing::HasSymlink(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Symlinks.has(_ind);
+}
+
+const string& VFSFlexibleListing::Symlink(unsigned _ind) const
+{
+    static const string st = "";
+    __CHECK_BOUNDS(_ind);
+    return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
+}
+
+bool VFSFlexibleListing::HasDisplayFilename(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_DisplayFilenames.has(_ind);
+}
+
+const string& VFSFlexibleListing::DisplayFilename(unsigned _ind) const
+{
+    static const string st = "";
+    __CHECK_BOUNDS(_ind);
+    return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : st;
+}
+
+CFStringRef VFSFlexibleListing::DisplayFilenameCF(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : CFSTR("");
+}
+
+//time_t
 
 //auto aa = []{
 //    VFSFlexibleListingInput inp;

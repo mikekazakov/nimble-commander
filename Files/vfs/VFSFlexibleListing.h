@@ -97,9 +97,9 @@ class VFSFlexibleListing : public enable_shared_from_this<VFSFlexibleListing>
 public:
     static shared_ptr<VFSFlexibleListing> Build(VFSFlexibleListingInput &&_input);
     
-    unsigned Count() const;
-    bool HasCommonHost() const;
-    bool HasCommonDirectory() const;
+    unsigned            Count               () const;
+    bool                HasCommonHost       () const;
+    bool                HasCommonDirectory  () const;
     
     
     const string&       Directory           (unsigned _ind) const;
@@ -108,23 +108,78 @@ public:
     const string&       Filename            (unsigned _ind) const;
     CFStringRef         FilenameCF          (unsigned _ind) const;
 #ifdef __OBJC__
-    NSString*           FilenameNS          (unsigned _ind) const { return (__bridge NSString*)FilenameCF(_ind); }
+    inline NSString*    FilenameNS          (unsigned _ind) const { return (__bridge NSString*)FilenameCF(_ind); }
 #endif
+
+    mode_t              UnixMode            (unsigned _ind) const;
+    uint8_t             UnixType            (unsigned _ind) const;
     
     bool                HasExtension        (unsigned _ind) const;
     uint16_t            ExtensionOffset     (unsigned _ind) const;
     const char*         Extension           (unsigned _ind) const;
+    
+    bool                HasSize             (unsigned _ind) const;
+    uint64_t            Size                (unsigned _ind) const;
+    
+    bool                HasInode            (unsigned _ind) const;
+    uint64_t            Inode               (unsigned _ind) const;
+    
+    bool                HasATime            (unsigned _ind) const;
+    time_t              ATime               (unsigned _ind) const;
+
+    bool                HasMTime            (unsigned _ind) const;
+    time_t              MTime               (unsigned _ind) const;
+
+    bool                HasCTime            (unsigned _ind) const;
+    time_t              CTime               (unsigned _ind) const;
+
+    bool                HasBTime            (unsigned _ind) const;
+    time_t              BTime               (unsigned _ind) const;
+    
+    bool                HasUID              (unsigned _ind) const;
+    uid_t               UID                 (unsigned _ind) const;
+
+    bool                HasGID              (unsigned _ind) const;
+    gid_t               GID                 (unsigned _ind) const;
+
+    bool                HasUnixFlags        (unsigned _ind) const;
+    uint32_t            UnixFlags           (unsigned _ind) const;
+    
+    bool                HasSymlink          (unsigned _ind) const;
+    const string&       Symlink             (unsigned _ind) const;
+    
+    bool                HasDisplayFilename  (unsigned _ind) const;
+    const string&       DisplayFilename     (unsigned _ind) const;
+    CFStringRef         DisplayFilenameCF   (unsigned _ind) const;
+#ifdef __OBJC__
+    inline NSString*    DisplayFilenameNS   (unsigned _ind) const { return (__bridge NSString*)DisplayFilenameCF(_ind); }
+#endif
     
 private:
     VFSFlexibleListing();
     static shared_ptr<VFSFlexibleListing> Alloc(); // fighting against c++...
     void BuildFilenames();    
     
-    unsigned                        m_ItemCount;
+    unsigned                        m_ItemsCount;
+    time_t                          m_CreationTime;
     variable_container<VFSHostPtr>  m_Hosts;
     variable_container<string>      m_Directories;
     vector<string>                  m_Filenames;
     vector<CFString>                m_FilenamesCF;
     vector<uint16_t>                m_ExtensionOffsets;
+    vector<mode_t>                  m_UnixModes;
+    vector<uint8_t>                 m_UnixTypes;
+    variable_container<uint64_t>    m_Sizes;
+    variable_container<uint64_t>    m_Inodes;
+    variable_container<time_t>      m_ATimes;
+    variable_container<time_t>      m_MTimes;
+    variable_container<time_t>      m_CTimes;
+    variable_container<time_t>      m_BTimes;
+    variable_container<uid_t>       m_UIDS;
+    variable_container<gid_t>       m_GIDS;
+    variable_container<uint32_t>    m_UnixFlags;
+    variable_container<string>      m_Symlinks;
+    variable_container<string>      m_DisplayFilenames;
+    variable_container<CFString>    m_DisplayFilenamesCF;
 };
 

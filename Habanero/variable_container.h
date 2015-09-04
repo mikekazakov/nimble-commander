@@ -85,8 +85,8 @@ public:
 
     /**
      * for common mode return true always.
-     * for sparse checks for presence of this item.
-     * for dense check vector bounds.
+     * for sparse mode checks for presence of this item.
+     * for dense mode checks vector bounds.
      */
     bool has( unsigned _at ) const;
     

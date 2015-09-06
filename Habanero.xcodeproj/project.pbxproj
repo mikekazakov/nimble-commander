@@ -31,6 +31,8 @@
 		CF8629291B96BAFF00B33CFD /* variable_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629271B96BAFF00B33CFD /* variable_container.cpp */; };
 		CF86292A1B96BAFF00B33CFD /* variable_container.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8629281B96BAFF00B33CFD /* variable_container.h */; };
 		CF86292C1B96C79700B33CFD /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */; };
+		CF86293D1B986C4300B33CFD /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86293B1B986C4300B33CFD /* CFString.cpp */; };
+		CF86293E1B986C4300B33CFD /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CF86293C1B986C4300B33CFD /* CFString.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		CF8629271B96BAFF00B33CFD /* variable_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = variable_container.cpp; sourceTree = "<group>"; };
 		CF8629281B96BAFF00B33CFD /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variable_container.h; sourceTree = "<group>"; };
 		CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VariableContainer_Tests.mm; sourceTree = "<group>"; };
+		CF86293B1B986C4300B33CFD /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFString.cpp; sourceTree = "<group>"; };
+		CF86293C1B986C4300B33CFD /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFString.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +138,8 @@
 				CF2D2F771B8B3BC000111C75 /* Hash.cpp */,
 				CF2D2F6B1B8B2BBD00111C75 /* IdleSleepPreventer.h */,
 				CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */,
+				CF86293C1B986C4300B33CFD /* CFString.h */,
+				CF86293B1B986C4300B33CFD /* CFString.cpp */,
 			);
 			path = Habanero;
 			sourceTree = "<group>";
@@ -181,6 +187,7 @@
 				CF2D2F861B8B47B700111C75 /* FontExtras.h in Headers */,
 				CF2D2F921B8B6F2D00111C75 /* mach_time.h in Headers */,
 				CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */,
+				CF86293E1B986C4300B33CFD /* CFString.h in Headers */,
 				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,6 +287,7 @@
 				CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */,
 				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,
 				CF2D2F911B8B6F2D00111C75 /* mach_time.cpp in Sources */,
+				CF86293D1B986C4300B33CFD /* CFString.cpp in Sources */,
 				CF2D2F8E1B8B6B7800111C75 /* dispatch_cpp.mm in Sources */,
 				CF2D2F811B8B451B00111C75 /* dispatch_cpp.cpp in Sources */,
 			);

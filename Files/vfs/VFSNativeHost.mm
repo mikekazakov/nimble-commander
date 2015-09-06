@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import "DisplayNamesCache.h"
 #import "VFSNativeHost.h"
 #import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
@@ -35,6 +36,13 @@ public:
         return true;
     }
 };
+
+static string EnsureTrailingSlash(string _s)
+{
+    if( _s.empty() || _s.back() != '/' )
+        _s.push_back('/');
+    return _s;
+}
 
 VFSMeta VFSNativeHost::Meta()
 {
@@ -73,6 +81,170 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
     _target = move(listing);
     
     return VFSError::Ok;
+}
+
+int VFSNativeHost::FetchFlexibleListing(const char *_path,
+                                        shared_ptr<VFSFlexibleListing> &_target,
+                                        int _flags,
+                                        VFSCancelChecker _cancel_checker)
+{
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    
+    DIR *dirp = io.opendir(_path);
+    if(!dirp)
+        return VFSError::FromErrno(errno);
+    
+    if(_cancel_checker && _cancel_checker()) {
+        io.closedir(dirp);
+        return VFSError::Cancelled;
+    }
+    
+    dirent *entp;
+    
+    bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
+    if(_flags & VFSFlags::F_NoDotDot)
+        need_to_add_dot_dot = false;    
+    
+    vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
+    dirents.reserve(64);
+    while((entp = io.readdir(dirp)) != NULL) {
+        if(_cancel_checker && _cancel_checker()) {
+            io.closedir(dirp);
+            return 0;
+        }
+        
+        if(entp->d_ino == 0)
+            continue; // apple's documentation suggest to skip such files
+        if(entp->d_namlen == 1 && entp->d_name[0] ==  '.')
+            continue; // do not process self entry
+        if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.' ) { // special case for dot-dot directory
+            if(_flags & VFSFlags::F_NoDotDot)
+                continue;
+            need_to_add_dot_dot = false;
+            
+            if(strcmp(_path, "/") == 0)
+                continue; // skip .. for root directory
+            
+            // TODO: handle situation when ".." is not the #0 entry
+            
+            // it's very nice that sometimes OSX can not set a valid flags on ".." file in a mount point
+            // so for now - just fix it by hand
+            if(entp->d_type == 0)
+                entp->d_type = DT_DIR; // a very-very strange bugfix
+        }
+        
+        dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
+    }
+    io.closedir(dirp);
+    
+    if(need_to_add_dot_dot)
+        dirents.insert(begin(dirents), make_tuple("..", 0, DT_DIR)); // add ".." entry by hand
+    
+    // set up or listing structure
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.inodes.reset( variable_container<>::type::dense );
+    listing_source.atimes.reset( variable_container<>::type::dense );
+    listing_source.mtimes.reset( variable_container<>::type::dense );
+    listing_source.ctimes.reset( variable_container<>::type::dense );
+    listing_source.btimes.reset( variable_container<>::type::dense );
+    listing_source.unix_flags.reset( variable_container<>::type::dense );
+    listing_source.uids.reset( variable_container<>::type::dense );
+    listing_source.gids.reset( variable_container<>::type::dense );
+    listing_source.sizes.reset( variable_container<>::type::dense );
+    listing_source.symlinks.reset( variable_container<>::type::sparse );
+    
+    unsigned amount = (unsigned)dirents.size();
+    listing_source.filenames.resize(amount);
+    listing_source.inodes.resize(amount);
+    listing_source.unix_types.resize(amount);
+    listing_source.atimes.resize(amount);
+    listing_source.mtimes.resize(amount);
+    listing_source.ctimes.resize(amount);
+    listing_source.btimes.resize(amount);
+    listing_source.unix_modes.resize(amount);
+    listing_source.unix_flags.resize(amount);
+    listing_source.uids.resize(amount);
+    listing_source.gids.resize(amount);
+    listing_source.sizes.resize(amount);
+    
+    for(unsigned n = 0, e = (unsigned)dirents.size(); n!=e; ++n ) {
+        auto &i = dirents[n];
+        listing_source.filenames[n] = move(get<0>(i));
+        listing_source.inodes[n] = get<1>(i);
+        listing_source.unix_types[n] = get<2>(i);
+    }
+    
+    // stat files, find extenstions any any and create CFString name representations in several threads
+    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
+        if(_cancel_checker && _cancel_checker()) return;
+
+        string filename = listing_source.directories[0] + listing_source.filenames[n];
+        
+        // stat the file
+        struct stat stat_buffer;
+        if(io.stat(filename.c_str(), &stat_buffer) == 0) {
+            listing_source.atimes[n]        = stat_buffer.st_atimespec.tv_sec;
+            listing_source.mtimes[n]        = stat_buffer.st_mtimespec.tv_sec;
+            listing_source.ctimes[n]        = stat_buffer.st_ctimespec.tv_sec;
+            listing_source.btimes[n]        = stat_buffer.st_birthtimespec.tv_sec;
+            listing_source.unix_modes[n]    = stat_buffer.st_mode;
+            listing_source.unix_flags[n]    = stat_buffer.st_flags;
+            listing_source.uids[n]          = stat_buffer.st_uid;
+            listing_source.gids[n]          = stat_buffer.st_gid;
+            listing_source.sizes[n]         = stat_buffer.st_size;
+            // add other stat info here. there's a lot more
+        }
+        
+        // if we're dealing with a symlink - read it's content to know the real file path
+        if( listing_source.unix_types[n] == DT_LNK ) {
+            char linkpath[MAXPATHLEN];
+            ssize_t sz = io.readlink(filename.c_str(), linkpath, MAXPATHLEN);
+            if(sz != -1) {
+                linkpath[sz] = 0;
+                listing_source.symlinks.insert(n, linkpath);
+            }
+            
+            // stat the original file so we can extract some interesting info from it
+            struct stat link_stat_buffer;
+            if( io.lstat(filename.c_str(), &link_stat_buffer) == 0 &&
+                (link_stat_buffer.st_flags & UF_HIDDEN) )
+                listing_source.unix_flags[n] |= UF_HIDDEN; // currently using only UF_HIDDEN flag
+        }
+    });
+    
+    
+    // TODO:
+    // load display names
+//    if(_flags & VFSFlags::F_LoadDisplayNames)
+//        if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(_path)) {
+//            auto &dnc = DisplayNamesCache::Instance();
+//            lock_guard<mutex> lock(dnc);
+//            for(unsigned n = 0, e = amount; n != e; ++n) {
+////                auto &it = m_Items[n];
+////                if(it.IsDir() && !it.IsDotDot()) {
+////    return (m_UnixModes[_ind] & S_IFMT) == S_IFDIR;
+//                const static string dotdot = "..";
+//                if( (listing_source.unix_modes[n] & S_IFMT) == S_IFDIR &&
+//                     listing_source.filenames[n] != dotdot )
+//                    auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
+//                                                          it.Inode(),
+//                                                          RelativePath(),
+//                                                          it.Name(),
+//                                                          it.CFName()
+//                                                          );
+//                    if(dn.str != nullptr) {
+//                        it.cf_displayname = dn.str;
+//                        CFRetain(it.cf_displayname);
+//                    }
+//                }
+//            }
+//        }
+    
+    _target = VFSFlexibleListing::Build(move(listing_source));
+    
+    return 0;
 }
 
 int VFSNativeHost::CreateFile(const char* _path,

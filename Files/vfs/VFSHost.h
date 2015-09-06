@@ -12,6 +12,7 @@
 #import "VFSDeclarations.h"
 #import "VFSConfiguration.h"
 #import "VFSFactory.h"
+#import "VFSFlexibleListing.h"
 
 class VFSHostDirObservationTicket
 {
@@ -85,6 +86,11 @@ public:
 
     virtual int FetchDirectoryListing(const char *_path,
                                       unique_ptr<VFSListing> &_target,
+                                      int _flags,
+                                      VFSCancelChecker _cancel_checker);
+    
+    virtual int FetchFlexibleListing(const char *_path,
+                                      shared_ptr<VFSFlexibleListing> &_target,
                                       int _flags,
                                       VFSCancelChecker _cancel_checker);
     

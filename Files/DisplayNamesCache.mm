@@ -9,8 +9,6 @@
 #include "DisplayNamesCache.h"
 #include "Common.h"
 
-static_assert(sizeof(DisplayNamesCache::DisplayName) == 32, "");
-
 inline static uint64_t FSIDTo64(fsid_t _id)
 {
     return *(uint64_t*)&_id;
@@ -92,6 +90,7 @@ const DisplayNamesCache::DisplayName &DisplayNamesCache::DisplayNameForNativeFS(
     }
     else {
         display = [display precomposedStringWithCanonicalMapping];
+        e.display_filename = display.UTF8String;
         e.str = (CFStringRef)CFBridgingRetain(display);
         return map.emplace(_inode, move(e)).first->second;
     }

@@ -436,6 +436,9 @@
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
+		CF8629331B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
+		CF8629341B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
+		CF8629351B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
 		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8E76C21B353A1000BA16AD /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E76C11B353A1000BA16AD /* TermScrollView.mm */; };
@@ -1341,6 +1344,8 @@
 		CF8629221B956B7A00B33CFD /* SUStandardVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUStandardVersionComparator.h; path = 3rd_party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.h; sourceTree = "<group>"; };
 		CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUStandardVersionComparator.m; path = 3rd_party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.m; sourceTree = "<group>"; };
 		CF8629241B956B7A00B33CFD /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = 3rd_party/SparkleEmbedded/Sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
+		CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFlexibleListing.cpp; path = vfs/VFSFlexibleListing.cpp; sourceTree = "<group>"; };
+		CF8629321B98006800B33CFD /* VFSFlexibleListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFlexibleListing.h; path = vfs/VFSFlexibleListing.h; sourceTree = "<group>"; };
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelData_Tests.mm; sourceTree = "<group>"; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
@@ -2183,6 +2188,8 @@
 				CF50B6BE1A15167800E3D96D /* VFSHost.h */,
 				CF50B6BF1A15167800E3D96D /* VFSListing.cpp */,
 				CF50B6C01A15167800E3D96D /* VFSListing.h */,
+				CF8629321B98006800B33CFD /* VFSFlexibleListing.h */,
+				CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */,
 				CF50B6C11A15167800E3D96D /* VFSPath.cpp */,
 				CF50B6C21A15167800E3D96D /* VFSPath.h */,
 			);
@@ -3371,6 +3378,7 @@
 				CF6D9C10196678000077B146 /* Operation.mm in Sources */,
 				CF6D9C11196678000077B146 /* OperationsController.mm in Sources */,
 				CF5C1E331B075057005DE19F /* BatchRenameSheetController.mm in Sources */,
+				CF8629341B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */,
 				CF6D9C12196678000077B146 /* OperationDialogController.mm in Sources */,
 				CF6D9C13196678000077B146 /* OperationDialogAlert.mm in Sources */,
 				CF50B6CD1A15167800E3D96D /* VFSListing.cpp in Sources */,
@@ -3572,6 +3580,7 @@
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */,
+				CF8629331B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */,
 				CF50B7131A1516E700E3D96D /* VFSNativeHost.mm in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
@@ -3781,6 +3790,7 @@
 				CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */,
 				CFF6F2A01A13567C00011177 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF5C1E341B075057005DE19F /* BatchRenameSheetController.mm in Sources */,
+				CF8629351B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */,
 				CFF6F2A51A13567C00011177 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CFF6F2A71A13567C00011177 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF50B7151A1516E700E3D96D /* VFSNativeHost.mm in Sources */,

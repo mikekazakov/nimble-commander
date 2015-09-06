@@ -22,6 +22,7 @@ public:
     struct DisplayName
     {
         string filename = "";
+        string display_filename = "";
         CFStringRef str = nullptr;
     };
     

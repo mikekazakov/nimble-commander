@@ -451,3 +451,8 @@ bool VFSHost::ValidateFilename(const char *_filename) const
     static const char invalid_chars[] = ":\\/\r\t\n";
     return find_first_of(i, e, begin(invalid_chars), end(invalid_chars)) == e;
 }
+
+int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
+{
+    return VFSError::NotSupported;
+}

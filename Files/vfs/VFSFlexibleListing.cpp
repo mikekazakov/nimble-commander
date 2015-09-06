@@ -72,6 +72,8 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput
     Validate( _input ); // will throw an exception on error
 
     auto l = Alloc();
+    l->m_Hosts = move(_input.hosts);
+    l->m_Directories = move(_input.directories);
     l->m_Filenames = move(_input.filenames);
     l->m_DisplayFilenames = move(_input.display_filenames);
     l->BuildFilenames();
@@ -364,7 +366,36 @@ CFStringRef VFSFlexibleListing::DisplayFilenameCF(unsigned _ind) const
     return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : CFSTR("");
 }
 
-//time_t
+bool VFSFlexibleListing::IsDotDot(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    auto &s = m_Filenames[_ind];
+    return s.length() == 2 && s[0]=='.' && s[1] == '.';
+}
+
+bool VFSFlexibleListing::IsDir(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return (m_UnixModes[_ind] & S_IFMT) == S_IFDIR;
+}
+
+bool VFSFlexibleListing::IsReg(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return (m_UnixModes[_ind] & S_IFMT) == S_IFREG;
+}
+
+bool VFSFlexibleListing::IsHidden(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & UF_HIDDEN)) && !IsDotDot(_ind);
+}
+
+VFSFlexibleListingItem VFSFlexibleListing::Item(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return VFSFlexibleListingItem(shared_from_this(), _ind);
+}
 
 //auto aa = []{
 //    VFSFlexibleListingInput inp;

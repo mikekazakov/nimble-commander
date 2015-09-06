@@ -51,13 +51,18 @@ public:
     type mode() const;
     
     /**
+     * reverts container to empty state with specified type.
+     */
+    void reset( type _type );
+    
+    /**
      * for common mode return common value.
      * for other modes uses at() of vector<> and unordered_map<>.
      */
-    T &at(unsigned _at);
-    T &operator[](unsigned _at);
-    const T &at(unsigned _at) const;
-    const T &operator[](unsigned _at) const;
+    T &at(size_t _at);
+    T &operator[](size_t _at);
+    const T &at(size_t _at) const;
+    const T &operator[](size_t _at) const;
     
     /**
      * return amount of elements inside.
@@ -74,14 +79,14 @@ public:
     /**
      * Can be used only with Dense mode, ignored otherwise.
      */
-    void resize( unsigned _new_size );
+    void resize( size_t _new_size );
     
     /**
      * if mode is Dense an _at is above current size -> will resize accordingly.
      * if mode is Common will ignore _at and fill common value with _value.
      */
-    void insert( unsigned _at, const T& _value );
-    void insert( unsigned _at, T&& _value );
+    void insert( size_t _at, const T& _value );
+    void insert( size_t _at, T&& _value );
 
     /**
      * for common mode return true always.
@@ -109,7 +114,8 @@ private:
     void ConstructCopy(const variable_container<T>& _rhs);
     void ConstructMove(variable_container<T>&& _rhs);
     void Destruct();
-
+    // it would be nice to change this ugly casts to C++11-style unions, but current XCode6.4 crashes on them. check it later.
+    // TODO: get rid of Common(), Sparse() and Dense() functions, move to modern union.
     std::array<char,
                m_StorageSize>   m_Storage;
     type                        m_Type;
@@ -160,6 +166,12 @@ template <class T>
 typename variable_container<T>::type variable_container<T>::mode() const
 {
     return m_Type;
+}
+
+template <class T>
+void variable_container<T>::reset(type _type)
+{
+    *this = variable_container<T>(_type);
 }
 
 template <class T>
@@ -275,52 +287,52 @@ void variable_container<T>::Destruct()
 }
 
 template <class T>
-T &variable_container<T>::at(unsigned _at)
+T &variable_container<T>::at(size_t _at)
 {
     if( m_Type == type::common )
         return Common();
     else if( m_Type == type::dense )
         return Dense().at(_at);
     else if( m_Type == type::sparse )
-        return Sparse().at(_at);
+        return Sparse().at((unsigned)_at);
     else
         throw std::logic_error("invalid type in variable_container<T>::at");
 }
 
 template <class T>
-T &variable_container<T>::operator[](unsigned _at)
+T &variable_container<T>::operator[](size_t _at)
 {
     return at(_at);
 }
 
 template <class T>
-const T &variable_container<T>::at(unsigned _at) const
+const T &variable_container<T>::at(size_t _at) const
 {
     if( m_Type == type::common )
         return Common();
     else if( m_Type == type::dense )
         return Dense().at(_at);
     else if( m_Type == type::sparse )
-        return Sparse().at(_at);
+        return Sparse().at((unsigned)_at);
     else
         throw std::logic_error("invalid type in variable_container<T>::at");
 }
 
 template <class T>
-const T &variable_container<T>::operator[](unsigned _at) const
+const T &variable_container<T>::operator[](size_t _at) const
 {
     return at(_at);
 }
 
 template <class T>
-void variable_container<T>::resize( unsigned _new_size )
+void variable_container<T>::resize( size_t _new_size )
 {
     if( m_Type == type::dense )
         Dense().resize( _new_size );
 }
 
 template <class T>
-void variable_container<T>::insert( unsigned _at, const T& _value )
+void variable_container<T>::insert( size_t _at, const T& _value )
 {
     if( m_Type == type::common ) {
         Common() = _value;
@@ -331,7 +343,7 @@ void variable_container<T>::insert( unsigned _at, const T& _value )
         Dense()[_at] = _value;
     }
     else if( m_Type == type::sparse ) {
-        auto r = Sparse().insert( typename sparse_type::value_type( _at, _value ) );
+        auto r = Sparse().insert( typename sparse_type::value_type( (unsigned)_at, _value ) );
         if( !r.second )
             r.first->second = _value;
     }
@@ -340,7 +352,7 @@ void variable_container<T>::insert( unsigned _at, const T& _value )
 }
 
 template <class T>
-void variable_container<T>::insert( unsigned _at, T&& _value )
+void variable_container<T>::insert( size_t _at, T&& _value )
 {
     if( m_Type == type::common ) {
         Common() = move(_value);
@@ -351,9 +363,9 @@ void variable_container<T>::insert( unsigned _at, T&& _value )
         Dense()[_at] = move(_value);
     }
     else if( m_Type == type::sparse ) {
-        auto i = Sparse().find( _at );
+        auto i = Sparse().find( (unsigned)_at );
         if( i == end(Sparse()) )
-            Sparse().insert( typename sparse_type::value_type( _at, move(_value) ) );
+            Sparse().insert( typename sparse_type::value_type( (unsigned)_at, move(_value) ) );
         else
             i->second = move(_value);
     }

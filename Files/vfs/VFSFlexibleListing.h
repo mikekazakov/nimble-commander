@@ -163,6 +163,10 @@ public:
     bool                IsReg               (unsigned _ind) const;
     bool                IsHidden            (unsigned _ind) const;
     
+    struct iterator;
+    iterator            begin() const;
+    iterator            end()   const;
+    
 private:
     VFSFlexibleListing();
     static shared_ptr<VFSFlexibleListing> Alloc(); // fighting against c++...
@@ -267,4 +271,17 @@ public:
 private:
     shared_ptr<const VFSFlexibleListing>    L;
     unsigned                                I;
+    friend VFSFlexibleListing::iterator;
+};
+
+struct VFSFlexibleListing::iterator
+{
+    VFSFlexibleListingItem i;
+
+    void operator--() noexcept { i.I--; }
+    void operator++() noexcept { i.I++; }
+    
+    bool operator==(const iterator& _r) const noexcept { return i.I == _r.i.I && i.L == _r.i.L; }
+    bool operator!=(const iterator& _r) const noexcept { return !(*this == _r); }
+    const VFSFlexibleListingItem& operator*() const noexcept { return i; }
 };

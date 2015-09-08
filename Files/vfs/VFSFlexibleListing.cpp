@@ -397,6 +397,20 @@ VFSFlexibleListingItem VFSFlexibleListing::Item(unsigned _ind) const
     return VFSFlexibleListingItem(shared_from_this(), _ind);
 }
 
+VFSFlexibleListing::iterator VFSFlexibleListing::begin() const
+{
+    iterator it;
+    it.i = VFSFlexibleListingItem(shared_from_this(), 0);
+    return it;
+}
+
+VFSFlexibleListing::iterator VFSFlexibleListing::end() const
+{
+    iterator it;
+    it.i = VFSFlexibleListingItem(shared_from_this(), m_ItemsCount);
+    return it;
+}
+
 //auto aa = []{
 //    VFSFlexibleListingInput inp;
 //    inp.directories[0] = "/";

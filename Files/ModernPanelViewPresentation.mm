@@ -49,8 +49,9 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_dirent)
+NSString* ModernPanelViewPresentation::FileSizeToString(const VFSFlexibleListingItem &_dirent)
 {
+    // TODO: support for calculated dir size
     if( _dirent.IsDir() ) {
         if( _dirent.Size() != VFSListingItem::InvalidSize) {
             return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
@@ -314,7 +315,6 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     assert(m_State->CursorPos < (int)m_State->Data->SortedDirectoryEntries().size());
     assert(m_State->ItemsDisplayOffset >= 0);
     
-    auto &entries = m_State->Data->Listing();
     const int items_per_column = GetMaxItemsPerColumn();
     const int columns_count = GetNumberOfItemColumns();
     const bool active = View().active;
@@ -390,7 +390,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         int count = 0;
         for (; count < items_per_column; ++count, ++i) {
             const double item_start_y = start_y + count*m_LineHeight;
-            const VFSListingItem *item = m_State->Data->EntryAtSortPosition(i);
+            int raw_index = m_State->Data->RawIndexForSortIndex(i);
+            auto item = m_State->Data->EntryAtRawPosition(raw_index);
             
             // Draw alternate background.
             if(count % 2 == 1) {
@@ -401,6 +402,8 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             if (!item)
                 continue;
+            
+            auto &item_vd = m_State->Data->VolatileDataAtRawPosition(raw_index);
 
             if(m_State->CursorPos == i) {
                 if (active && wnd_active) {
@@ -413,7 +416,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 }
             }
             
-            const ColoringAttrs& attrs = AttrsForItem(*item);
+            const ColoringAttrs& attrs = AttrsForItem(item, item_vd);
             const bool focused = m_State->CursorPos == i && active && wnd_active;
             NSRect rect = NSMakeRect(start_x + icon_size + 2*g_TextInsetsInLine[0],
                                      item_start_y + m_LineTextBaseline,
@@ -427,7 +430,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.origin.y,
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                NSString *time_str = FormHumanReadableShortTime(item->MTime());
+                NSString *time_str = FormHumanReadableShortTime(item.MTime());
                 NSDictionary *attr = focused ? attrs.focused_time : attrs.regular_time;
                 NSRect time_str_real_rc = [time_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
@@ -447,7 +450,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               rect.origin.y,
                                               m_DateColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
-                NSString *date_str = FormHumanReadableShortDate(item->MTime());
+                NSString *date_str = FormHumanReadableShortDate(item.MTime());
                 NSRect date_str_real_rc = [date_str boundingRectWithSize:NSMakeSize(10000, 100)
                                                                  options:0
                                                               attributes:attr];
@@ -467,7 +470,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
 
-                [FileSizeToString(*item) drawWithRect:size_rect
+                [FileSizeToString(item) drawWithRect:size_rect
                                               options:0
                                            attributes:focused ? attrs.focused_size : attrs.regular_size];
                 
@@ -478,10 +481,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSDictionary *item_text_attr = focused ? attrs.focused : attrs.regular;
             
             if(rect.size.width > 0)
-                [item->NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
+                [item.NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
             
             // Draw icon
-            NSImageRep *image_rep = m_IconCache.ImageFor(m_State->Data->RawIndexForSortIndex(i), (VFSListing&)entries); // UGLY anti-const hack
+            NSImageRep *image_rep = m_IconCache.ImageFor(item, item_vd);
             NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
                                           item_start_y + floor((m_LineHeight - icon_size) / 2. - 0.5),
                                           icon_size,
@@ -494,7 +497,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                             hints:nil];
             
             // Draw symlink arrow over an icon
-            if(item->IsSymlink())
+            if(item.IsSymlink())
                 [m_SymlinkArrowImage drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
                                                            item_start_y + m_LineHeight - m_SymlinkArrowImage.size.height - 1,
                                                            m_SymlinkArrowImage.size.width,
@@ -555,11 +558,11 @@ void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
     CalculateLayoutFromFrame();
 }
 
-const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::AttrsForItem(const VFSListingItem& _item) const
+const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::AttrsForItem(const VFSFlexibleListingItem& _item, const PanelVolatileData& _item_vd) const
 {
     size_t i = 0, e = m_ColoringRules.size();
     for(;i<e;++i)
-        if(m_ColoringRules[i].filter.Filter(_item)) {
+        if(m_ColoringRules[i].filter.Filter(_item, _item_vd)) {
             assert(i < m_ColoringAttrs.size());
             return m_ColoringAttrs[i];
         }
@@ -687,15 +690,16 @@ ModernPanelViewPresentation::ItemLayout ModernPanelViewPresentation::LayoutItem(
     
     il.filename_area = filename_rect;
     
-    const VFSListingItem *item = m_State->Data->EntryAtSortPosition(_item_index);
+    auto item = m_State->Data->EntryAtSortPosition(_item_index);
     if(!item)
         return il;
     
     if(filename_rect.size.width > 0) {
         // what for AttrsForItem is used here?
-        NSRect rc = [item->NSDisplayName() boundingRectWithSize:filename_rect.size
+        NSRect rc = [item.NSDisplayName() boundingRectWithSize:filename_rect.size
                                                         options:0
-                                                     attributes:AttrsForItem(*item).regular];
+                                                     attributes:AttrsForItem(item,
+                                                                             m_State->Data->VolatileDataAtSortPosition(_item_index)).regular];
         
         il.filename_fact = il.filename_area;
         il.filename_fact.size.width = rc.size.width;

@@ -8,8 +8,9 @@
 
 #pragma once
 
-#import "VFSListing.h"
+#import "VFSFlexibleListing.h"
 #import "FileMask.h"
+#import "PanelData.h"
 
 struct PanelViewPresentationItemsColoringFilter
 {
@@ -33,7 +34,7 @@ struct PanelViewPresentationItemsColoringFilter
      * If any defined filter disagree with _item - will return false immediately.
      * Any empty coloring filter will return true on any _item.
      */
-    bool Filter(const VFSListingItem& _item) const;
+    bool Filter(const VFSFlexibleListingItem& _item, const PanelVolatileData &_item_vd) const;
     
     /**
      * Persistance support - store values in a dictionary.

@@ -174,11 +174,11 @@
         pc = m_LastFocusedPanelController;
     if( pc && pc.vfs->IsNativeFS() )
         if( auto entry = pc.view.item ) {
-            if( panel::IsEligbleToTryToExecuteInConsole(*entry) &&
+            if( panel::IsEligbleToTryToExecuteInConsole(entry) &&
                 m_OverlappedTerminal.terminal.isShellVirgin )
-                [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + entry->Name()];
+                [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + entry.Name()];
             else
-                [m_OverlappedTerminal.terminal feedShellWithInput:entry->Name()];
+                [m_OverlappedTerminal.terminal feedShellWithInput:entry.Name()];
         }
 }
 

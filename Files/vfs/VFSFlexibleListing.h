@@ -97,9 +97,10 @@ class VFSFlexibleListingItem;
 class VFSFlexibleListing : public enable_shared_from_this<VFSFlexibleListing>
 {
 public:
+    static shared_ptr<VFSFlexibleListing> EmptyListing();
     static shared_ptr<VFSFlexibleListing> Build(VFSFlexibleListingInput &&_input);
     
-    unsigned            Count               () const;
+    unsigned            Count               () const noexcept { return m_ItemsCount; };
     bool                HasCommonHost       () const;
     bool                HasCommonDirectory  () const;
 
@@ -209,6 +210,8 @@ public:
     auto&           Listing()           const { return L;                           }
     unsigned        Index()             const { return I;                           }
     
+    const VFSHostPtr& Host()            const { return L->Host(I);                  }
+    const string&   Directory()         const { return L->Directory(I);             }
     
     // currently mimicking old VFSListingItem interface, may change methods names later
     const char     *Name()              const { return L->Filename(I).c_str();      }

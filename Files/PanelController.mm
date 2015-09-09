@@ -36,8 +36,8 @@ panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, cons
     m_Data(_data)
 {
     auto cur_pos = _view.curpos;
-    if(cur_pos >= 0 && m_View.item != nullptr) {
-        m_OldCursorName = m_View.item->Name();
+    if(cur_pos >= 0 && m_View.item ) {
+        m_OldCursorName = m_View.item.Name();
         m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
     }
 }
@@ -204,13 +204,13 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) HandleOpenInSystem
 {
-    if(auto *item = m_View.item)
+    if(auto item = m_View.item)
     {
         string path = m_Data.DirectoryPathWithTrailingSlash();
 
         // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"
-        if(!item->IsDotDot())
-            path += item->Name();
+        if(!item.IsDotDot())
+            path += item.Name();
 
         // may go async here on non-native VFS
         PanelVFSFileWorkspaceOpener::Open(path, m_Data.Host());
@@ -281,16 +281,16 @@ void panel::GenericCursorPersistance::Restore() const
 - (bool) HandleGoIntoDirOrArchive
 {
     const auto entry = m_View.item;
-    if(entry == nullptr)
+    if( !entry )
         return false;
     
     // Handle directories.
-    if(entry->IsDir())
+    if(entry.IsDir())
     {
-        if(entry->IsDotDot())
+        if(entry.IsDotDot())
             return [self HandleGoToUpperDirectory];
         
-        path dir = path(m_Data.DirectoryPathWithTrailingSlash()) / entry->Name();
+        path dir = path(m_Data.DirectoryPathWithTrailingSlash()) / entry.Name();
         
         if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir.native()])
             return true; // silently reap this command, since user refuses to grant an access
@@ -318,14 +318,14 @@ void panel::GenericCursorPersistance::Restore() const
         return;
     
     auto entry = m_View.item;
-    if(entry == nullptr)
+    if( !entry )
         return;
     
     // need more sophisticated executable handling here
     if(configuration::has_terminal &&
        self.vfs->IsNativeFS() &&
-       panel::IsEligbleToTryToExecuteInConsole(*entry)) {
-        [self.state requestTerminalExecution:entry->Name() at:self.currentDirectoryPath];
+       panel::IsEligbleToTryToExecuteInConsole(entry)) {
+        [self.state requestTerminalExecution:entry.Name() at:self.currentDirectoryPath];
         return;
     }
     
@@ -336,41 +336,43 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) RefreshDirectory
 {
-    if(m_View == nil) return; // guard agains calls from init process
+    // TODO:
     
-    // going async here
-    if(!m_DirectoryLoadingQ->Empty())
-        return; //reducing overhead
-    
-    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
-    auto vfs = self.vfs;
-    
-    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-        unique_ptr<VFSListing> listing;
-        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
-        if(ret >= 0)
-        {
-            dispatch_to_main_queue( [=,listing=move(listing)]() mutable {
-                panel::GenericCursorPersistance pers(m_View, m_Data);
-                
-                m_Data.ReLoad(move(listing));
-                [m_View dataUpdated];
-                
-                if(![self CheckAgainstRequestedSelection])
-                    pers.Restore();
-
-                [self OnCursorChanged];
-                [self QuickSearchUpdate];
-                [m_View setNeedsDisplay];
-            });
-        }
-        else
-        {
-            dispatch_to_main_queue( [=]{
-                [self RecoverFromInvalidDirectory];
-            });
-        }
-    });
+//    if(m_View == nil) return; // guard agains calls from init process
+//    
+//    // going async here
+//    if(!m_DirectoryLoadingQ->Empty())
+//        return; //reducing overhead
+//    
+//    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
+//    auto vfs = self.vfs;
+//    
+//    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+//        unique_ptr<VFSListing> listing;
+//        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
+//        if(ret >= 0)
+//        {
+//            dispatch_to_main_queue( [=,listing=move(listing)]() mutable {
+//                panel::GenericCursorPersistance pers(m_View, m_Data);
+//                
+//                m_Data.ReLoad(move(listing));
+//                [m_View dataUpdated];
+//                
+//                if(![self CheckAgainstRequestedSelection])
+//                    pers.Restore();
+//
+//                [self OnCursorChanged];
+//                [self QuickSearchUpdate];
+//                [m_View setNeedsDisplay];
+//            });
+//        }
+//        else
+//        {
+//            dispatch_to_main_queue( [=]{
+//                [self RecoverFromInvalidDirectory];
+//            });
+//        }
+//    });
 }
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
@@ -564,7 +566,8 @@ void panel::GenericCursorPersistance::Restore() const
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
-    m_History.Put(VFSPathStack(m_Data.Listing()));
+// TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    m_History.Put(VFSPathStack(m_Data.Listing()));
     if(self.vfs->IsNativeFS())
         m_LastNativeDirectory = self.currentDirectoryPath;
 }
@@ -573,9 +576,11 @@ void panel::GenericCursorPersistance::Restore() const
 {
     // need to update some UI here  
     // update share button regaring current state
-    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
-                            [SharingService SharingEnabledForItem:m_View.item VFS:self.vfs];
-    
+    // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    //    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
+//                            [SharingService SharingEnabledForItem:m_View.item VFS:self.vfs];
+//    
     // update QuickLook if any
     [(QuickLookView *)m_QuickLook PreviewItem:self.currentFocusedEntryPath vfs:self.vfs];
 }
@@ -611,23 +616,25 @@ void panel::GenericCursorPersistance::Restore() const
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
     auto cur_focus = m_View.item;
-    if(!cur_focus || cur_focus->IsDotDot())
+    if(!cur_focus || cur_focus.IsDotDot())
         return nil;
     
     vector<const VFSListingItem*> items;
+
     
+    // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // 2 variants - currently focused item or all selected items (if focus is also selected)
-    if(m_Data.Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
-        items.push_back(cur_focus); // use focused item solely
-    else
-        for(auto &i: m_Data.Listing()) // use selected items
-            if(i.CFIsSelected())
-                items.push_back(&i);
-    
-    return [self.state RequestContextMenuOn:items
-                                       path:self.currentDirectoryPath.c_str()
-                                        vfs:self.vfs
-                                     caller:self];
+//    if(m_Data.Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
+//        items.push_back(cur_focus); // use focused item solely
+//    else
+//        for(auto &i: m_Data.Listing()) // use selected items
+//            if(i.CFIsSelected())
+//                items.push_back(&i);
+//    
+//    return [self.state RequestContextMenuOn:items
+//                                       path:self.currentDirectoryPath.c_str()
+//                                        vfs:self.vfs
+//                                     caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
@@ -637,8 +644,8 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view
 {
-    if(_view.item == nil ||
-       _view.item->IsDotDot() ||
+    if( !_view.item ||
+       _view.item.IsDotDot() ||
        !self.vfs->IsWriteable())
         return false;
     return true;
@@ -652,8 +659,8 @@ void panel::GenericCursorPersistance::Restore() const
        [_filename isEqualToString:@"."] ||
        [_filename isEqualToString:@".."] ||
        !m_View.item ||
-       m_View.item->IsDotDot() ||
-       [_filename isEqualToString:m_View.item->NSName()])
+       m_View.item.IsDotDot() ||
+       [_filename isEqualToString:m_View.item.NSName()])
         return;
     
     string target_fn = _filename.fileSystemRepresentationSafe;
@@ -675,12 +682,12 @@ void panel::GenericCursorPersistance::Restore() const
     
     FileCopyOperation *op = [FileCopyOperation alloc];
     if(self.vfs->IsNativeFS())
-        op = [op initWithFiles:vector<string>( 1, m_View.item->Name() )
+        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
                           root:self.currentDirectoryPath.c_str()
                           dest:target_fn.c_str()
                        options:opts];
     else if( self.vfs->IsWriteable() )
-        op = [op initWithFiles:vector<string>( 1, m_View.item->Name() )
+        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
                           root:self.currentDirectoryPath.c_str()
                         srcvfs:self.vfs
                           dest:target_fn.c_str()

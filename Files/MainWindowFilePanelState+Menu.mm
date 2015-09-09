@@ -34,11 +34,11 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
-    IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
-    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
-    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item->IsDir();
-    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && self.activePanelView.item->IsSymlink();
+    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item.IsDir();
+    IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot();
+    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item.IsDir();
+    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && self.activePanelView.item.IsSymlink();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
@@ -112,7 +112,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
-    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item->IsDir()) return;
+    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item.IsDir()) return;
     auto cur = self.activePanelController;
     auto opp = self.oppositePanelController;
     [opp GoToDir:cur.currentFocusedEntryPath
@@ -143,18 +143,18 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!self.activePanelController || !self.oppositePanelController)
         return;
     
-    auto const *item = self.activePanelView.item;
+    auto item = self.activePanelView.item;
     if(!item)
         return;
     
     string source_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    if(!item->IsDotDot())
-        source_path += item->Name();
+    if(!item.IsDotDot())
+        source_path += item.Name();
     
     string link_path = self.oppositePanelController.currentDirectoryPath;
     
-    if(!item->IsDotDot())
-        link_path += item->Name();
+    if(!item.IsDotDot())
+        link_path += item.Name();
     else
         link_path += [self activePanelData]->DirectoryPathShort();
     
@@ -175,16 +175,16 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     auto data = self.activePanelData;
-    auto const *item = self.activePanelView.item;
-    assert(item->IsSymlink());
+    auto item = self.activePanelView.item;
+    assert(item.IsSymlink());
     
-    string link_path = data->DirectoryPathWithTrailingSlash() + item->Name();
+    string link_path = data->DirectoryPathWithTrailingSlash() + item.Name();
     NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:item->Symlink()]
-            linkname:[NSString stringWithUTF8String:item->Name()]
+          sourcepath:[NSString stringWithUTF8String:item.Symlink()]
+            linkname:[NSString stringWithUTF8String:item.Name()]
              handler:^(int _result){
                  if(_result == DialogResult::OK)
                  {
@@ -198,17 +198,17 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
-    auto const *item = self.activePanelView.item;
-    assert(not item->IsDir());
+    auto item = self.activePanelView.item;
+    assert(not item.IsDir());
     
     string dir_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    string src_path = dir_path + item->Name();
+    string src_path = dir_path + item.Name();
     NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
     NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
     
     FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcename:[NSString stringWithUTF8String:item->Name()]
+          sourcename:[NSString stringWithUTF8String:item.Name()]
              handler:^(int _result){
                  if(_result == DialogResult::Create)
                  {
@@ -301,14 +301,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     __weak PanelController *act = self.activePanelController;
     __weak PanelController *opp = self.oppositePanelController;
     
-    auto const *item = self.activePanelView.item;
-    if(!item || item->IsDotDot())
+    auto item = self.activePanelView.item;
+    if(!item || item.IsDotDot())
         return;
     
-    auto filenames = make_shared< vector<string> >(1, item->Name());
+    auto filenames = make_shared< vector<string> >(1, item.Name());
     
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:filenames handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item.Name()] iscopying:true items:filenames handler:^(int _ret)
      {
          path root_path = self.activePanelData->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;
@@ -434,14 +434,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!source->Host()->IsWriteable())
         return;
     
-    auto const *item = self.activePanelView.item;
-    if(!item || item->IsDotDot())
+    auto item = self.activePanelView.item;
+    if(!item || item.IsDotDot())
         return;
     
-    auto filenames = make_shared< vector<string> >(1, item->Name());
+    auto filenames = make_shared< vector<string> >(1, item.Name());
         
     MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:filenames handler:^(int _ret)
+    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item.Name()] iscopying:false items:filenames handler:^(int _ret)
      {
          path root_path = source->DirectoryPathWithTrailingSlash();
          path req_path = mc.TextField.stringValue.fileSystemRepresentation;

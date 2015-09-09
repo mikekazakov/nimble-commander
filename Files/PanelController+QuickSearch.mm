@@ -222,7 +222,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     }
     else {
         int total = (int)m_Data.SortedDirectoryEntries().size();
-        if(total > 0 && m_Data.Listing().At(0).IsDotDot())
+        if(total > 0 && m_Data.Listing().IsDotDot(0))
             total--;
         m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
     }
@@ -271,7 +271,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
        m_View.curpos == 0 &&
        m_Data.SortedDirectoryEntries().size() >= 2 &&
-       m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0])->IsDotDot() )
+       m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0]).IsDotDot() )
         m_View.curpos = 1;
     
     [self QuickSearchHardUpdateTypingUI];

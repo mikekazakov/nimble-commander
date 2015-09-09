@@ -88,23 +88,23 @@
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.vfs->Parent() != nullptr;
-    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.file_attributes")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.volume_information")      return self.vfs->IsNativeFS();
-    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
+    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
+    IF_MENU_TAG("menu.command.external_editor")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.eject_volume")            return self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
-    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
+    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
+    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
     IF_MENU_TAG("menu.command.create_directory")        return self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.file.new_folder")                 return self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.batch_rename")            return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     
     return true; // will disable some items in the future
 }
@@ -202,7 +202,7 @@
 
 - (IBAction)OnGoIntoDirectory:(id)sender { // cmd+down
     auto item = m_View.item;
-    if(item != nullptr && item->IsDotDot() == false)
+    if(item && !item.IsDotDot() == false)
         [self HandleGoIntoDirOrArchive];
 }
 
@@ -430,7 +430,7 @@
     
     if(m_Data.Stats().selected_entries_amount > 0 )
         [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-    else if(m_View.item && !m_View.item->IsDotDot())
+    else if(m_View.item && !m_View.item.IsDotDot())
         [sheet ShowSheet:self.window
                     data:&m_Data
                    index:m_Data.RawIndexForSortIndex(m_View.curpos)
@@ -442,8 +442,8 @@
         return; // currently support volume info only on native fs
     
     string path = self.currentDirectoryPath;
-    if(m_View.item && !m_View.item->IsDotDot())
-        path += m_View.item->Name();
+    if(m_View.item && !m_View.item.IsDotDot())
+        path += m_View.item.Name();
     
     [[DetailedVolumeInformationSheetController new] ShowSheet:self.window destpath:path.c_str()];
 }
@@ -459,9 +459,9 @@
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
-    if(!m_View.item || m_View.item->IsDir())
+    if(!m_View.item || m_View.item.IsDir())
         return;
-    string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item->Name();
+    string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item.Name();
     [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.vfs];
 }
 
@@ -631,29 +631,31 @@
         return;
     
     auto item = m_View.item;
-    if(item == nullptr || item->IsDotDot())
+    if(item || item.IsDotDot())
         return;
     
-    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
-    if(ed == nil) {
-        NSBeep();
-        return;
-    }
+    // TODO:
     
-    string fn_path = self.currentDirectoryPath + item->Name();
-    if(ed.terminal == false) {
-        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
-                                   withApplication:ed.path
-                                     andDeactivate:true])
-            NSBeep();
-    }
-    else {
-        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
-        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
-                                             params:[ed substituteFileName:fn_path]
-                                               file:fn_path
-         ];
-    }
+//    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
+//    if(ed == nil) {
+//        NSBeep();
+//        return;
+//    }
+//    
+//    string fn_path = self.currentDirectoryPath + item->Name();
+//    if(ed.terminal == false) {
+//        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
+//                                   withApplication:ed.path
+//                                     andDeactivate:true])
+//            NSBeep();
+//    }
+//    else {
+//        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
+//        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
+//                                             params:[ed substituteFileName:fn_path]
+//                                               file:fn_path
+//         ];
+//    }
 }
 
 - (void)DeleteFiles:(BOOL)_shift_behavior
@@ -774,41 +776,41 @@
 
 - (IBAction)OnCalculateChecksum:(id)sender
 {
-    vector<string> filenames;
-    vector<uint64_t> sizes;
-    
-    // grab selected regular files if any
-    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
-        auto item = m_Data.EntryAtSortPosition(i);
-        if( item->CFIsSelected() && item->IsReg() && !item->IsSymlink() ) {
-            filenames.emplace_back(item->Name());
-            sizes.emplace_back(item->Size());
-        }
-    }
-    
-    // if have no - try focused item
-    if( filenames.empty() )
-        if( auto item = m_View.item )
-            if( !item->IsDir() && !item->IsSymlink() ) {
-                filenames.emplace_back(item->Name());
-                sizes.emplace_back(item->Size());
-            }
-
-    if( filenames.empty() )
-        return;
-    
-    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
-                                                                                            withSizes:move(sizes)
-                                                                                               atHost:self.vfs
-                                                                                               atPath:self.currentDirectoryPath];
-    [sheet beginSheetForWindow:self.window
-             completionHandler:^(NSModalResponse returnCode) {
-                 if(sheet.didSaved) {
-                     PanelControllerDelayedSelection req;
-                     req.filename = sheet.savedFilename;
-                     [self ScheduleDelayedSelectionChangeFor:req];
-                 }
-             }];
+//    vector<string> filenames;
+//    vector<uint64_t> sizes;
+//    
+//    // grab selected regular files if any
+//    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
+//        auto item = m_Data.EntryAtSortPosition(i);
+//        if( item->CFIsSelected() && item->IsReg() && !item->IsSymlink() ) {
+//            filenames.emplace_back(item->Name());
+//            sizes.emplace_back(item->Size());
+//        }
+//    }
+//    
+//    // if have no - try focused item
+//    if( filenames.empty() )
+//        if( auto item = m_View.item )
+//            if( !item->IsDir() && !item->IsSymlink() ) {
+//                filenames.emplace_back(item->Name());
+//                sizes.emplace_back(item->Size());
+//            }
+//
+//    if( filenames.empty() )
+//        return;
+//    
+//    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
+//                                                                                            withSizes:move(sizes)
+//                                                                                               atHost:self.vfs
+//                                                                                               atPath:self.currentDirectoryPath];
+//    [sheet beginSheetForWindow:self.window
+//             completionHandler:^(NSModalResponse returnCode) {
+//                 if(sheet.didSaved) {
+//                     PanelControllerDelayedSelection req;
+//                     req.filename = sheet.savedFilename;
+//                     [self ScheduleDelayedSelectionChangeFor:req];
+//                 }
+//             }];
 }
 
 - (IBAction)OnQuickNewFolder:(id)sender
@@ -970,24 +972,24 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-    vector<unsigned> inds = self.selectedEntriesOrFocusedEntryIndeces;
-    if(inds.empty())
-        return;
-    
-    auto vfs = self.vfs;
-    
-    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
-                                                                                 andIndeces:inds];
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode == NSModalResponseOK) {
-            auto src_paths = sheet.filenamesSource;
-            auto dst_paths = sheet.filenamesDestination;
-            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
-                                                                              renamedFilepaths:move(dst_paths)
-                                                                                           vfs:vfs];
-            [self.state AddOperation:op];
-        }
-    }];    
+//    vector<unsigned> inds = self.selectedEntriesOrFocusedEntryIndeces;
+//    if(inds.empty())
+//        return;
+//    
+//    auto vfs = self.vfs;
+//    
+//    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
+//                                                                                 andIndeces:inds];
+//    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+//        if(returnCode == NSModalResponseOK) {
+//            auto src_paths = sheet.filenamesSource;
+//            auto dst_paths = sheet.filenamesDestination;
+//            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
+//                                                                              renamedFilepaths:move(dst_paths)
+//                                                                                           vfs:vfs];
+//            [self.state AddOperation:op];
+//        }
+//    }];    
 }
 
 @end

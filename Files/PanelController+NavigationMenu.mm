@@ -182,24 +182,26 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
 
 - (void) popUpQuickListWithParentFolders
 {
-    auto stacks = ProduceStacksForParentDirectories( self.data.Listing() );
+    // TODO:: !!!!!!!!!
     
-    NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]];
-    
-    for( auto &i: stacks) {
-        NSString *title = [NSString stringWithUTF8StdString:i.verbose_string()];
-        
-        NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = title;
-        it.image = ImageForPathStack( i );
-        it.target = self;
-        it.action = @selector(doCalloutWithPathStackHolder:);
-        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:i];
-        [menu addItem:it];
-    }
-    
-    [self popUpQuickListMenu:menu];
+//    auto stacks = ProduceStacksForParentDirectories( self.data.Listing() );
+//    
+//    NSMenu *menu = [[NSMenu alloc] init];
+//    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+//    
+//    for( auto &i: stacks) {
+//        NSString *title = [NSString stringWithUTF8StdString:i.verbose_string()];
+//        
+//        NSMenuItem *it = [[NSMenuItem alloc] init];
+//        it.title = title;
+//        it.image = ImageForPathStack( i );
+//        it.target = self;
+//        it.action = @selector(doCalloutWithPathStackHolder:);
+//        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:i];
+//        [menu addItem:it];
+//    }
+//    
+//    [self popUpQuickListMenu:menu];
 }
 
 - (void)doCalloutWithPathStackHolder:(id)sender

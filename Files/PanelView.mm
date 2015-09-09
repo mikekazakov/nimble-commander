@@ -347,17 +347,17 @@ struct PanelViewStateStorage
 
 - (void) HandleInsert
 {
-    assert( dispatch_is_main_queue() );
-    
-    int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToNextItem();
-    
-    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
-        [self SelectUnselectInRange:origpos
-                      last_included:origpos
-                             select:!entry->CFIsSelected()];
-    
-    [self OnCursorPositionChanged];
+//    assert( dispatch_is_main_queue() );
+//    
+//    int origpos = m_State.CursorPos;
+//    m_Presentation->MoveCursorToNextItem();
+//    
+//    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
+//        [self SelectUnselectInRange:origpos
+//                      last_included:origpos
+//                             select:!entry->CFIsSelected()];
+//    
+//    [self OnCursorPositionChanged];
 }
 
 - (void) setCurpos:(int)_pos
@@ -443,87 +443,87 @@ struct PanelViewStateStorage
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags
 {
-    if((_flags & NSShiftKeyMask) == 0)
-    { // clear selection type when user releases SHIFT button
-        m_CursorSelectionType = CursorSelectionType::No;
-    }
-    else
-    {
-        if(m_CursorSelectionType == CursorSelectionType::No)
-        { // lets decide if we need to select or unselect files when user will use navigation arrows
-            if(const auto *item = self.item)
-            {
-                if(!item->IsDotDot())
-                { // regular case
-                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
-                    else                     m_CursorSelectionType = CursorSelectionType::Selection;
-                }
-                else
-                { // need to look at a first file (next to dotdot) for current representation if any.
-                    if(m_State.Data->SortedDirectoryEntries().size() > 1)
-                    { // using [1] item
-                        const auto item = m_State.Data->EntryAtSortPosition(1);
-                        if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
-                        else                     m_CursorSelectionType = CursorSelectionType::Selection;
-                    }
-                    else
-                    { // singular case - selection doesn't matter - nothing to select
-                        m_CursorSelectionType = CursorSelectionType::Selection;
-                    }
-                }
-            }
-        }
-    }
+//    if((_flags & NSShiftKeyMask) == 0)
+//    { // clear selection type when user releases SHIFT button
+//        m_CursorSelectionType = CursorSelectionType::No;
+//    }
+//    else
+//    {
+//        if(m_CursorSelectionType == CursorSelectionType::No)
+//        { // lets decide if we need to select or unselect files when user will use navigation arrows
+//            if(const auto *item = self.item)
+//            {
+//                if(!item->IsDotDot())
+//                { // regular case
+//                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
+//                    else                     m_CursorSelectionType = CursorSelectionType::Selection;
+//                }
+//                else
+//                { // need to look at a first file (next to dotdot) for current representation if any.
+//                    if(m_State.Data->SortedDirectoryEntries().size() > 1)
+//                    { // using [1] item
+//                        const auto item = m_State.Data->EntryAtSortPosition(1);
+//                        if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
+//                        else                     m_CursorSelectionType = CursorSelectionType::Selection;
+//                    }
+//                    else
+//                    { // singular case - selection doesn't matter - nothing to select
+//                        m_CursorSelectionType = CursorSelectionType::Selection;
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 
 
 - (void) mouseDown:(NSEvent *)_event
 {
-    m_LastPotentialRenamingLBDown = -1;
-    
-    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    
-    int old_cursor_pos = m_State.CursorPos;
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if (cursor_pos == -1) return;
-
-    auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
-    if(!click_entry)
-        return;
-    
-    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
-    
-    // Select range of items with shift+click.
-    // If clicked item is selected, then deselect the range instead.
-    if(modifier_flags & NSShiftKeyMask)
-        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
-                      last_included:cursor_pos
-                             select:!click_entry->CFIsSelected()];
-    // Select or deselect a single item with cmd+click.
-    else if(modifier_flags & NSCommandKeyMask)
-        [self SelectUnselectInRange:cursor_pos
-                      last_included:cursor_pos
-                             select:!click_entry->CFIsSelected()];
-    
-    m_Presentation->SetCursorPos(cursor_pos);
-    
-    if(old_cursor_pos != cursor_pos)
-    {
-        [self OnCursorPositionChanged];
-    }
-    else if(lb_pressed && !lb_cooldown)
-    {
-        // need more complex logic here (?)
-        m_LastPotentialRenamingLBDown = cursor_pos;
-    }
-
-    if(lb_pressed && self.active && !lb_cooldown)
-    {
-        m_ReadyToDrag = true;
-        m_LButtonDownPos = local_point;
-    }
+//    m_LastPotentialRenamingLBDown = -1;
+//    
+//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+//    
+//    int old_cursor_pos = m_State.CursorPos;
+//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+//    if (cursor_pos == -1) return;
+//
+//    auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
+//    if(!click_entry)
+//        return;
+//    
+//    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+//    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+//    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
+//    
+//    // Select range of items with shift+click.
+//    // If clicked item is selected, then deselect the range instead.
+//    if(modifier_flags & NSShiftKeyMask)
+//        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
+//                      last_included:cursor_pos
+//                             select:!click_entry->CFIsSelected()];
+//    // Select or deselect a single item with cmd+click.
+//    else if(modifier_flags & NSCommandKeyMask)
+//        [self SelectUnselectInRange:cursor_pos
+//                      last_included:cursor_pos
+//                             select:!click_entry->CFIsSelected()];
+//    
+//    m_Presentation->SetCursorPos(cursor_pos);
+//    
+//    if(old_cursor_pos != cursor_pos)
+//    {
+//        [self OnCursorPositionChanged];
+//    }
+//    else if(lb_pressed && !lb_cooldown)
+//    {
+//        // need more complex logic here (?)
+//        m_LastPotentialRenamingLBDown = cursor_pos;
+//    }
+//
+//    if(lb_pressed && self.active && !lb_cooldown)
+//    {
+//        m_ReadyToDrag = true;
+//        m_LButtonDownPos = local_point;
+//    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
@@ -613,32 +613,32 @@ struct PanelViewStateStorage
         [self OnCursorPositionChanged];
 }
 
-- (const VFSListingItem*)item
+- (VFSFlexibleListingItem)item
 {
     return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
-    assert( dispatch_is_main_queue() );
-    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
-         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
-        NSLog(@"SelectUnselectInRange - invalid range");
-        return;
-    }
-    
-    if(_start > _end)
-        swap(_start, _end);
-    
-    // we never want to select a first (dotdot) entry
-    if(auto i = m_State.Data->EntryAtSortPosition(_start))
-        if(i->IsDotDot())
-            ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
-    
-    for(int i = _start; i <= _end; ++i)
-        m_State.Data->CustomFlagsSelectSorted(i, _select);
-    
-    [self setNeedsDisplay];
+//    assert( dispatch_is_main_queue() );
+//    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
+//         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
+//        NSLog(@"SelectUnselectInRange - invalid range");
+//        return;
+//    }
+//    
+//    if(_start > _end)
+//        swap(_start, _end);
+//    
+//    // we never want to select a first (dotdot) entry
+//    if(auto i = m_State.Data->EntryAtSortPosition(_start))
+//        if(i->IsDotDot())
+//            ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
+//    
+//    for(int i = _start; i <= _end; ++i)
+//        m_State.Data->CustomFlagsSelectSorted(i, _select);
+//    
+//    [self setNeedsDisplay];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end
@@ -666,44 +666,44 @@ struct PanelViewStateStorage
 
 - (void) SavePathState
 {
-    assert( dispatch_is_main_queue() );
-    if(!m_State.Data)
-        return;
-    
-    auto &listing = m_State.Data->Listing();
-    
-    auto item = self.item;
-    if(item == nullptr)
-        return;
-    
-    auto path = VFSPathStack(listing);
-    auto &storage = m_States[hash<VFSPathStack>()(path)];
-    
-    storage.focused_item = item->Name();
-    storage.dispay_offset = m_State.ItemsDisplayOffset;
+//    assert( dispatch_is_main_queue() );
+//    if(!m_State.Data)
+//        return;
+//    
+//    auto &listing = m_State.Data->Listing();
+//    
+//    auto item = self.item;
+//    if(item == nullptr)
+//        return;
+//    
+//    auto path = VFSPathStack(listing);
+//    auto &storage = m_States[hash<VFSPathStack>()(path)];
+//    
+//    storage.focused_item = item->Name();
+//    storage.dispay_offset = m_State.ItemsDisplayOffset;
 }
 
 - (void) LoadPathState
 {
-    assert( dispatch_is_main_queue() );
-    if(!m_State.Data)
-        return;
-    
-    auto &listing = m_State.Data->Listing();
-    
-    auto path = VFSPathStack(listing);
-    auto it = m_States.find(hash<VFSPathStack>()(path));
-    if(it == end(m_States))
-        return;
-    
-    auto &storage = it->second;
-    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
-    if(cursor < 0)
-        return;
-    
-    m_State.ItemsDisplayOffset = storage.dispay_offset;
-    m_Presentation->SetCursorPos(cursor);
-    [self OnCursorPositionChanged];
+//    assert( dispatch_is_main_queue() );
+//    if(!m_State.Data)
+//        return;
+//    
+//    auto &listing = m_State.Data->Listing();
+//    
+//    auto path = VFSPathStack(listing);
+//    auto it = m_States.find(hash<VFSPathStack>()(path));
+//    if(it == end(m_States))
+//        return;
+//    
+//    auto &storage = it->second;
+//    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
+//    if(cursor < 0)
+//        return;
+//    
+//    m_State.ItemsDisplayOffset = storage.dispay_offset;
+//    m_Presentation->SetCursorPos(cursor);
+//    [self OnCursorPositionChanged];
 }
 
 - (void)directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
@@ -801,9 +801,9 @@ struct PanelViewStateStorage
     NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     tv.delegate = self;
     tv.fieldEditor = true;
-    tv.string = self.item->NSName().copy;
+    tv.string = self.item.NSName();
     NSRange sel_range = NSMakeRange(0, tv.string.length); // select whole filename by default
-    if(self.item->HasExtension()) { // find where extension starts and select filename only
+    if(self.item.HasExtension()) { // find where extension starts and select filename only
         NSRange r = [tv.string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"."]
                                                options:NSBackwardsSearch];
         if(r.location > 0)
@@ -833,7 +833,7 @@ struct PanelViewStateStorage
     [self addSubview:m_RenamingEditor];
     [self.window makeFirstResponder:m_RenamingEditor];
     
-    m_RenamingOriginalName = self.item->Name();
+    m_RenamingOriginalName = self.item.Name();
 }
 
 - (void)commitFieldEditor
@@ -861,7 +861,7 @@ struct PanelViewStateStorage
     if(!m_RenamingEditor)
         return true;
     
-    if(!self.item || m_RenamingOriginalName != self.item->Name())
+    if(!self.item || m_RenamingOriginalName != self.item.Name())
         return true;
     
     NSTextView *tv = m_RenamingEditor.documentView;
@@ -896,7 +896,7 @@ struct PanelViewStateStorage
 - (void) dataUpdated
 {
     assert( dispatch_is_main_queue() );
-    if(!self.item || m_RenamingOriginalName != self.item->Name())
+    if(!self.item || m_RenamingOriginalName != self.item.Name())
         [self discardFieldEditor];
 }
 

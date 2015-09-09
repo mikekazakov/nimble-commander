@@ -7,6 +7,7 @@
 //
 
 #include "VFSFlexibleListing.h"
+#include "VFSHost.h"
 
 static bool BasicDirectoryCheck(const string& _str)
 {
@@ -95,6 +96,19 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput
     return l;
 }
 
+shared_ptr<VFSFlexibleListing> VFSFlexibleListing::EmptyListing()
+{
+    static shared_ptr<VFSFlexibleListing> empty;
+    once_flag once;
+    call_once(once, []{
+        empty = Alloc();
+        empty->m_ItemsCount = 0;
+        empty->m_Hosts.insert(0, VFSHost::DummyHost());
+        empty->m_Directories.insert(0, "/");
+    });
+    return empty;
+}
+
 shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Alloc()
 {
     struct make_shared_enabler: public VFSFlexibleListing {};
@@ -103,11 +117,6 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Alloc()
 
 VFSFlexibleListing::VFSFlexibleListing()
 {
-}
-
-unsigned VFSFlexibleListing::Count() const
-{
-    return m_ItemsCount;
 }
 
 static CFString UTF8WithFallback(const string &_s)
@@ -194,14 +203,23 @@ CFStringRef VFSFlexibleListing::FilenameCF(unsigned _ind) const
 
 const VFSHostPtr& VFSFlexibleListing::Host(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
-    return m_Hosts[_ind];
+    if( HasCommonHost() )
+        return m_Hosts[0];
+    else {
+        __CHECK_BOUNDS(_ind);
+        return m_Hosts[_ind];
+    }
 }
 
 const string& VFSFlexibleListing::Directory(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
-    return m_Directories[_ind];
+    if( HasCommonDirectory() ) {
+        return m_Directories[0];
+    }
+    else {
+        __CHECK_BOUNDS(_ind);
+        return m_Directories[_ind];
+    }
 }
 
 bool VFSFlexibleListing::HasCommonHost() const
@@ -363,7 +381,7 @@ const string& VFSFlexibleListing::DisplayFilename(unsigned _ind) const
 CFStringRef VFSFlexibleListing::DisplayFilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : CFSTR("");
+    return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : FilenameCF(_ind);
 }
 
 bool VFSFlexibleListing::IsDotDot(unsigned _ind) const

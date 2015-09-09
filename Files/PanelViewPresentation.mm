@@ -255,36 +255,36 @@ void PanelViewPresentation::SetViewNeedsDisplay()
 void PanelViewPresentation::UpdateStatFS()
 {
     // in usual redrawings - update not more that in 5 secs
-    nanoseconds now = machtime();
-    if(m_StatFSLastUpdate + 5s < now ||
-       m_StatFSLastHost != m_State->Data->Host().get() ||
-       m_StatFSLastPath != m_State->Data->Listing().RelativePath()
-       )
-    {
-        m_StatFSLastUpdate = now;
-        m_StatFSLastHost = m_State->Data->Host().get();
-        m_StatFSLastPath = m_State->Data->Listing().RelativePath();
-        
-        if(!m_StatFSQueue->Empty())
-            return;
-
-        auto host = m_State->Data->Host();
-        auto path = m_State->Data->Listing().RelativePath();
-        m_StatFSQueue->Run([=]{
-            VFSStatFS stat;
-            if(host->StatFS(path, stat, 0) == 0 &&
-               stat != m_StatFS // force redrawing only if statfs has in fact changed
-               )
-            {
-                assert(dispatch_is_main_queue() == false);
-                // POSSIBLE DEADLOCK HERE
-                dispatch_sync(dispatch_get_main_queue(), ^{
-                    m_StatFS = stat;
-                    SetViewNeedsDisplay();
-                });
-            }
-        });
-    }
+//    nanoseconds now = machtime();
+//    if(m_StatFSLastUpdate + 5s < now ||
+//       m_StatFSLastHost != m_State->Data->Host().get() ||
+//       m_StatFSLastPath != m_State->Data->Listing().RelativePath()
+//       )
+//    {
+//        m_StatFSLastUpdate = now;
+//        m_StatFSLastHost = m_State->Data->Host().get();
+//        m_StatFSLastPath = m_State->Data->Listing().RelativePath();
+//        
+//        if(!m_StatFSQueue->Empty())
+//            return;
+//
+//        auto host = m_State->Data->Host();
+//        auto path = m_State->Data->Listing().RelativePath();
+//        m_StatFSQueue->Run([=]{
+//            VFSStatFS stat;
+//            if(host->StatFS(path, stat, 0) == 0 &&
+//               stat != m_StatFS // force redrawing only if statfs has in fact changed
+//               )
+//            {
+//                assert(dispatch_is_main_queue() == false);
+//                // POSSIBLE DEADLOCK HERE
+//                dispatch_sync(dispatch_get_main_queue(), ^{
+//                    m_StatFS = stat;
+//                    SetViewNeedsDisplay();
+//                });
+//            }
+//        });
+//    }
 }
 
 int PanelViewPresentation::GetNumberOfItemColumns() const

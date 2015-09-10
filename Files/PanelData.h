@@ -3,6 +3,8 @@
 #include "VFS.h"
 #import "chained_strings.h"
 
+struct PanelVolatileData;
+
 struct PanelSortMode
 {
     enum Mode
@@ -111,7 +113,7 @@ struct PanelDataTextFiltering
         return filter;
     }
     
-    bool IsValidItem(const VFSListingItem& _item) const;
+    bool IsValidItem(const VFSFlexibleListingItem& _item) const;
     
     void OnPanelDataLoad()
     {
@@ -129,7 +131,7 @@ struct PanelDataHardFiltering
 {
     bool show_hidden = true;
     PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
-    bool IsValidItem(const VFSListingItem& _item) const;
+    bool IsValidItem(const VFSFlexibleListingItem& _item) const;
 
     bool IsFiltering() const
     {
@@ -192,15 +194,19 @@ struct PanelVolatileData
 {
     enum {
         invalid_size = (0xFFFFFFFFFFFFFFFFu),
-        flag_selected = 1 << 1
-        
+        flag_selected   = 1 << 0,
+        flag_shown      = 1 << 1
     };
     
     uint64_t calculated_size = invalid_size;
     uint32_t flags = 0;
     uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
     
-    bool is_selected() const { return (flags & flag_selected) != 0; };
+    bool is_selected()          const { return (flags & flag_selected) != 0; };
+    bool is_shown()             const { return (flags & flag_shown) != 0; }
+    bool is_size_calculated()   const { return calculated_size != invalid_size; }
+    void toggle_selected( bool _v )   { flags = (flags & ~flag_selected) | (_v ? flag_selected : 0); }
+    void toggle_shown( bool _v )      { flags = (flags & ~flag_shown)    | (_v ? flag_shown    : 0); }
 };
 
 /**
@@ -345,7 +351,6 @@ public:
     void CustomFlagsSelectInvert();
     int  CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
-    void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     void CustomIconClearAll();
     
     /**
@@ -372,7 +377,6 @@ private:
     DirSortIndT             m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT             m_EntriesByCustomSort; // custom defined sort
     DirSortIndT             m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
-    vector<bool>            m_EntriesShownFlags;
     
     PanelSortMode           m_CustomSortMode;
     PanelDataHardFiltering  m_HardFiltering;

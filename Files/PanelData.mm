@@ -534,11 +534,9 @@ void PanelData::SetSortMode(PanelSortMode _mode)
 // need to call UpdateStatictics() after this method since we alter selected set
 void PanelData::ClearSelectedFlagsFromHiddenElements()
 {
-//    int s = m_Listing->Count();
-//    for(int i =0; i < s; ++i)
-//        if(m_EntriesShownFlags[i] == false &&
-//           (*m_Listing)[i].CFIsSelected() )
-//            (*m_Listing)[i].UnsetCFlag(VFSListingItem::Flags::Selected);
+    for(auto &vd: m_VolatileData)
+        if( !vd.is_shown() && vd.is_selected() )
+            vd.toggle_selected(false);
 }
 
 PanelSortMode PanelData::SortMode() const
@@ -548,28 +546,31 @@ PanelSortMode PanelData::SortMode() const
 
 void PanelData::UpdateStatictics()
 {
-//    m_Stats = PanelDataStatistics();
-//    if(m_Listing.get() == nullptr)
-//        return;
-//    
-//    // calculate totals for directory
-//    for(const auto &i: *m_Listing)
-//        if(i.IsReg()) {
-//            m_Stats.bytes_in_raw_reg_files += i.Size();
-//            m_Stats.raw_reg_files_amount++;
-//        }
-//    
-//    // calculate totals for selected. look only for entries which is visible (sorted/filtered ones)
-//    for(auto n: m_EntriesByCustomSort) {
-//        const auto &i = m_Listing->At(n);
-//        if(i.CFIsSelected()) {
-//            if(i.Size() != VFSListingItem::InvalidSize)
-//                m_Stats.bytes_in_selected_entries += i.Size();
-//            m_Stats.selected_entries_amount++;
-//            if(i.IsDir())  m_Stats.selected_dirs_amount++;
-//            else           m_Stats.selected_reg_amount++;
-//        }
-//    }
+    m_Stats = PanelDataStatistics();
+    if(m_Listing.get() == nullptr)
+        return;
+    assert( m_Listing->Count() == m_VolatileData.size() );
+    
+    // calculate totals for directory
+    for(const auto &i: *m_Listing)
+        if( i.IsReg() ) {
+            m_Stats.bytes_in_raw_reg_files += i.Size();
+            m_Stats.raw_reg_files_amount++;
+        }
+    
+    // calculate totals for selected. look only for entries which is visible (sorted/filtered ones)
+    for(auto n: m_EntriesByCustomSort) {
+        const auto &vd = m_VolatileData[n];
+        if( vd.is_selected() ) {
+            m_Stats.bytes_in_selected_entries += vd.is_size_calculated() ? vd.calculated_size : m_Listing->Size(n);
+            
+            m_Stats.selected_entries_amount++;
+            if( m_Listing->IsDir(n) )
+                m_Stats.selected_dirs_amount++;
+            else
+                m_Stats.selected_reg_amount++;
+        }
+    }
 }
 
 int PanelData::RawIndexForSortIndex(int _index) const
@@ -594,46 +595,41 @@ VFSFlexibleListingItem PanelData::EntryAtSortPosition(int _pos) const
 
 void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
-//    auto &entry = m_Listing->At(_at_raw_pos);
-//    
-//    if(entry.IsDotDot())
-//        return; // assuming we can't select dotdot entry
-//    
-//    if(entry.CFIsSelected() == _is_selected) // check if item is already selected
-//        return;
-//    
-//    if(_is_selected)
-//    {
-//        if(entry.Size() != VFSListingItem::InvalidSize)
-//            m_Stats.bytes_in_selected_entries += entry.Size();
-//        m_Stats.selected_entries_amount++;
-//        
-//        if(entry.IsDir()) m_Stats.selected_dirs_amount++;
-//        else              m_Stats.selected_reg_amount++; // mb another check for reg here?
-//        
-//        entry.SetCFlag(VFSListingItem::Flags::Selected);
-//    }
-//    else
-//    {
-//        if(entry.Size() != VFSListingItem::InvalidSize)
-//        {
-//            assert(m_Stats.bytes_in_selected_entries >= entry.Size()); // sanity check
-//            m_Stats.bytes_in_selected_entries -= entry.Size();
-//        }
-//        assert(m_Stats.selected_entries_amount > 0); // sanity check
-//        m_Stats.selected_entries_amount--;
-//        if(entry.IsDir())
-//        {
-//            assert(m_Stats.selected_dirs_amount > 0);
-//            m_Stats.selected_dirs_amount--;
-//        }
-//        else
-//        {
-//            assert(m_Stats.selected_reg_amount > 0);
-//            m_Stats.selected_reg_amount--;
-//        }
-//        entry.UnsetCFlag(VFSListingItem::Flags::Selected);
-//    }
+    if( _at_raw_pos < 0 || _at_raw_pos >= m_Listing->Count() )
+        return;
+    
+    if( m_Listing->IsDotDot(_at_raw_pos) )
+        return; // assuming we can't select dotdot entry
+    
+    auto &vd = m_VolatileData[_at_raw_pos];
+    
+    if( vd.is_selected() == _is_selected ) // check if item is already selected
+        return;
+    
+    auto sz = vd.is_size_calculated() ? vd.calculated_size : m_Listing->Size(_at_raw_pos);
+    if(_is_selected) {
+        m_Stats.bytes_in_selected_entries += sz;
+        m_Stats.selected_entries_amount++;
+        if( m_Listing->IsDir(_at_raw_pos) )
+            m_Stats.selected_dirs_amount++;
+        else
+            m_Stats.selected_reg_amount++; // mb another check for reg here?
+    }
+    else {
+        m_Stats.bytes_in_selected_entries = m_Stats.bytes_in_selected_entries >= sz ? m_Stats.bytes_in_selected_entries - sz : 0;
+        
+        assert(m_Stats.selected_entries_amount > 0); // sanity check
+        m_Stats.selected_entries_amount--;
+        if( m_Listing->IsDir(_at_raw_pos) ) {
+            assert(m_Stats.selected_dirs_amount > 0);
+            m_Stats.selected_dirs_amount--;
+        }
+        else {
+            assert(m_Stats.selected_reg_amount > 0);
+            m_Stats.selected_reg_amount--;
+        }
+    }
+    vd.toggle_selected(_is_selected);
 }
 
 void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
@@ -646,32 +642,19 @@ void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
 
 void PanelData::CustomFlagsSelectAllSorted(bool _select)
 {
-//    for(auto i: m_EntriesByCustomSort) {
-//        auto &ent = m_Listing->At(i);
-//        if(!ent.IsDotDot()) {
-//            if(_select)
-//                ent.SetCFlag(VFSListingItem::Flags::Selected);
-//            else
-//                ent.UnsetCFlag(VFSListingItem::Flags::Selected);
-//        }
-//    }
-//
-//    UpdateStatictics();
+    for(auto i: m_EntriesByCustomSort)
+        if( !m_Listing->IsDotDot(i) )
+            m_VolatileData[i].toggle_selected(_select);
+
+    UpdateStatictics();
 }
 
 void PanelData::CustomFlagsSelectInvert()
 {
-//    for(auto i: m_EntriesByCustomSort) {
-//        auto &ent = m_Listing->At(i);
-//        if(!ent.IsDotDot()) {
-//            if(ent.CFIsSelected())
-//                ent.UnsetCFlag(VFSListingItem::Flags::Selected);
-//            else
-//                ent.SetCFlag(VFSListingItem::Flags::Selected);
-//        }
-//    }
-//    
-//    UpdateStatictics();
+    for(auto i: m_EntriesByCustomSort)
+        if( !m_Listing->IsDotDot(i) )
+            m_VolatileData[i].toggle_selected( !m_VolatileData[i].is_shown() );
+    UpdateStatictics();
 }
 
 chained_strings PanelData::StringsFromSelectedEntries() const
@@ -735,17 +718,10 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
     return false;
 }
 
-void PanelData::CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id)
-{
-//    assert(_at_raw_pos < m_Listing->Count());
-//    auto &entry = (*m_Listing)[_at_raw_pos];
-//    entry.SetCIcon(_icon_id);
-}
-
 void PanelData::CustomIconClearAll()
 {
-//    for (auto &entry : *m_Listing)
-//        entry.SetCIcon(0);
+    for(auto &vd: m_VolatileData)
+        vd.icon = 0;
 }
 
 int PanelData::SortedIndexForName(const char *_filename) const
@@ -758,21 +734,19 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
     FileMask mask(_mask);
     int counter = 0;
     
-//    for(auto i: m_EntriesByCustomSort) {
-//        const auto &entry = (*m_Listing)[i];
-//        
-//        if(_ignore_dirs && entry.IsDir())
-//            continue;
-//        
-//        if(entry.IsDotDot())
-//            continue;
-//        
-//        if(mask.MatchName(entry.NSDisplayName())) {
-//            CustomFlagsSelectRaw(i, _select);
-//            counter++;
-//        }
-//    }
-//    
+    for(auto i: m_EntriesByCustomSort) {
+        if( _ignore_dirs && m_Listing->IsDir(i) )
+            continue;
+        
+        if( m_Listing->IsDotDot(i) )
+            continue;
+        
+        if( mask.MatchName(m_Listing->DisplayFilenameNS(i)) ) {
+            CustomFlagsSelectRaw(i, _select);
+            counter++;
+        }
+    }
+    
     return counter;
 }
 
@@ -805,7 +779,7 @@ void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
     UpdateStatictics();
 }
 
-bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
+bool PanelDataTextFiltering::IsValidItem(const VFSFlexibleListingItem& _item) const
 {
     if(text == nil)
         return true;
@@ -853,7 +827,7 @@ bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
     return true;
 }
 
-bool PanelDataHardFiltering::IsValidItem(const VFSListingItem& _item) const
+bool PanelDataHardFiltering::IsValidItem(const VFSFlexibleListingItem& _item) const
 {
     if(show_hidden == false && _item.IsHidden())
         return false;
@@ -871,16 +845,16 @@ void PanelData::DoSortWithHardFiltering()
         return;
 
     m_EntriesByCustomSort.reserve(size);
-    m_EntriesShownFlags.clear();
-    m_EntriesShownFlags.resize(size, true);
+    for(auto &vd: m_VolatileData)
+        vd.toggle_shown(true);
   
     if(m_HardFiltering.IsFiltering())
     {
         for(int i = 0; i < size; ++i)
-//            if( m_HardFiltering.IsValidItem(m_Listing->At(i)) )
+            if( m_HardFiltering.IsValidItem(m_Listing->Item(i)) )
                 m_EntriesByCustomSort.push_back(i);
-//            else
-//                m_EntriesShownFlags[i] = false;
+            else
+                m_VolatileData[i].toggle_shown(false);
     }
     else
     {
@@ -898,7 +872,6 @@ void PanelData::DoSortWithHardFiltering()
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
     // also assume that no filtering will exclude dotdot dir
-//    if( m_Listing->At(0).IsDotDot() )
     if( m_Listing->IsDotDot(0) )
         start++;
     
@@ -918,19 +891,19 @@ const PanelData::DirSortIndT& PanelData::EntriesBySoftFiltering() const
 
 void PanelData::BuildSoftFilteringIndeces()
 {
-//    if(m_SoftFiltering.IsFiltering()) {
-//        m_EntriesBySoftFiltering.clear();
-//        m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
-//        int i = 0, e = (int)m_EntriesByCustomSort.size();
-//        for(;i!=e;++i)
-//            if(m_SoftFiltering.IsValidItem(m_Listing->At(m_EntriesByCustomSort[i])))
-//                m_EntriesBySoftFiltering.push_back(i);
-//    }
-//    else {
+    if(m_SoftFiltering.IsFiltering()) {
+        m_EntriesBySoftFiltering.clear();
+        m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
+        int i = 0, e = (int)m_EntriesByCustomSort.size();
+        for(;i!=e;++i)
+            if(m_SoftFiltering.IsValidItem( m_Listing->Item(m_EntriesByCustomSort[i])) )
+                m_EntriesBySoftFiltering.push_back(i);
+    }
+    else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
         unsigned index = 0;
         generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), [&]{return index++;} );
-//    }
+    }
 }
 
 PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item)

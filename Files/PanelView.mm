@@ -443,37 +443,25 @@ struct PanelViewStateStorage
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags
 {
-//    if((_flags & NSShiftKeyMask) == 0)
-//    { // clear selection type when user releases SHIFT button
-//        m_CursorSelectionType = CursorSelectionType::No;
-//    }
-//    else
-//    {
-//        if(m_CursorSelectionType == CursorSelectionType::No)
-//        { // lets decide if we need to select or unselect files when user will use navigation arrows
-//            if(const auto *item = self.item)
-//            {
-//                if(!item->IsDotDot())
-//                { // regular case
-//                    if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
-//                    else                     m_CursorSelectionType = CursorSelectionType::Selection;
-//                }
-//                else
-//                { // need to look at a first file (next to dotdot) for current representation if any.
-//                    if(m_State.Data->SortedDirectoryEntries().size() > 1)
-//                    { // using [1] item
-//                        const auto item = m_State.Data->EntryAtSortPosition(1);
-//                        if(item->CFIsSelected()) m_CursorSelectionType = CursorSelectionType::Unselection;
-//                        else                     m_CursorSelectionType = CursorSelectionType::Selection;
-//                    }
-//                    else
-//                    { // singular case - selection doesn't matter - nothing to select
-//                        m_CursorSelectionType = CursorSelectionType::Selection;
-//                    }
-//                }
-//            }
-//        }
-//    }
+    if( (_flags & NSShiftKeyMask) == 0 ) {
+        // clear selection type when user releases SHIFT button
+        m_CursorSelectionType = CursorSelectionType::No;
+    }
+    else if( m_CursorSelectionType == CursorSelectionType::No ) {
+            // lets decide if we need to select or unselect files when user will use navigation arrows
+            if( auto item = self.item ) {
+                if(!item.IsDotDot()) { // regular case
+                    m_CursorSelectionType = self.item_vd.is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                }
+                else {
+                    // need to look at a first file (next to dotdot) for current representation if any.
+                    if(auto item = m_State.Data->EntryAtSortPosition(1))
+                        m_CursorSelectionType = m_State.Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                    else // singular case - selection doesn't matter - nothing to select
+                        m_CursorSelectionType = CursorSelectionType::Selection;
+                }
+            }
+        }
 }
 
 
@@ -618,27 +606,32 @@ struct PanelViewStateStorage
     return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }
 
+- (PanelVolatileData &)item_vd
+{
+    return m_State.Data->VolatileDataAtSortPosition(m_State.CursorPos);
+}
+
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
-//    assert( dispatch_is_main_queue() );
-//    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
-//         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
-//        NSLog(@"SelectUnselectInRange - invalid range");
-//        return;
-//    }
-//    
-//    if(_start > _end)
-//        swap(_start, _end);
-//    
-//    // we never want to select a first (dotdot) entry
-//    if(auto i = m_State.Data->EntryAtSortPosition(_start))
-//        if(i->IsDotDot())
-//            ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
-//    
-//    for(int i = _start; i <= _end; ++i)
-//        m_State.Data->CustomFlagsSelectSorted(i, _select);
-//    
-//    [self setNeedsDisplay];
+    assert( dispatch_is_main_queue() );
+    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
+         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
+        NSLog(@"SelectUnselectInRange - invalid range");
+        return;
+    }
+    
+    if(_start > _end)
+        swap(_start, _end);
+    
+    // we never want to select a first (dotdot) entry
+    if( auto i = m_State.Data->EntryAtSortPosition(_start) )
+        if( i.IsDotDot() )
+            ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
+    
+    for(int i = _start; i <= _end; ++i)
+        m_State.Data->CustomFlagsSelectSorted(i, _select);
+    
+    [self setNeedsDisplay];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end

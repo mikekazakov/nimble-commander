@@ -69,6 +69,7 @@
 		CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = dispatch_cpp.mm; sourceTree = "<group>"; };
 		CF2D2F8F1B8B6F2D00111C75 /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mach_time.cpp; sourceTree = "<group>"; };
 		CF2D2F901B8B6F2D00111C75 /* mach_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mach_time.h; sourceTree = "<group>"; };
+		CF5738211BA2ABFD00B7D53C /* algo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = algo.h; sourceTree = "<group>"; };
 		CF8629271B96BAFF00B33CFD /* variable_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = variable_container.cpp; sourceTree = "<group>"; };
 		CF8629281B96BAFF00B33CFD /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variable_container.h; sourceTree = "<group>"; };
 		CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VariableContainer_Tests.mm; sourceTree = "<group>"; };
@@ -130,6 +131,7 @@
 				CF2D2F731B8B385C00111C75 /* tiny_string.cpp */,
 				CF8629281B96BAFF00B33CFD /* variable_container.h */,
 				CF8629271B96BAFF00B33CFD /* variable_container.cpp */,
+				CF5738211BA2ABFD00B7D53C /* algo.h */,
 				CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */,
 				CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */,
 				CF2D2F841B8B47B700111C75 /* FontExtras.h */,

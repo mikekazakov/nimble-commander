@@ -1,5 +1,6 @@
-#import "PanelData.h"
 #import <CoreFoundation/CoreFoundation.h>
+#import <Habanero/algo.h>
+#import "PanelData.h"
 #import "Common.h"
 #import "chained_strings.h"
 #import "FileMask.h"
@@ -22,6 +23,15 @@ PanelData::PanelData():
 {
 }
 
+static void InitVolatileDataWithListing( vector<PanelVolatileData> &_vd, const VFSFlexibleListing &_listing)
+{
+    _vd.clear();
+    _vd.resize(_listing.Count());
+    for( unsigned i = 0, e = _listing.Count(); i != e; ++i )
+        if( !_listing.IsDir(i) )
+            _vd[i].size = _listing.Size(i);
+}
+
 void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
@@ -29,13 +39,8 @@ void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
     if( !_listing )
         throw logic_error("PanelData::Load: listing can't be nullptr");
     
-    m_Listing = move(_listing);
-    
-    m_VolatileData.clear();
-    m_VolatileData.resize(m_Listing->Count());
-    for( unsigned i = 0, e = m_Listing->Count(); i != e; ++i )
-        if( !m_Listing->IsDir(i) )
-            m_VolatileData[i].size = m_Listing->Size(i);
+    m_Listing = _listing;
+    InitVolatileDataWithListing(m_VolatileData, *m_Listing);
     
     m_HardFiltering.text.OnPanelDataLoad();
     m_SoftFiltering.OnPanelDataLoad();
@@ -49,53 +54,51 @@ void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
     UpdateStatictics();
 }
 
-//void PanelData::ReLoad(unique_ptr<VFSListing> _listing)
-//{
-//    assert(dispatch_is_main_queue()); // STA api design
-//    
-//    // sort new entries by raw c name for sync-swapping needs
-//    DirSortIndT dirbyrawcname;
-//    DoRawSort(*_listing, dirbyrawcname);
-//    
-//    // transfer custom data to new array using sorted indeces arrays
-//    size_t dst_i = 0, dst_e = _listing->Count(),
-//    src_i = 0, src_e = m_Listing->Count();
-//    for(;src_i < src_e && dst_i < dst_e; ++src_i)
-//    {
-//        int src = m_EntriesByRawName[src_i];
-//    check:  int dst = (dirbyrawcname)[dst_i];
-//        int cmp = strcmp((*m_Listing)[src].Name(), (*_listing)[dst].Name());
-//        if( cmp == 0 )
-//        {
-//            auto &item_dst = (*_listing)[dst];
-//            const auto &item_src = (*m_Listing)[src];
-//            
-//            item_dst.SetCFlags(item_src.CFlags());
-//            item_dst.SetCIcon(item_src.CIcon());
-//            
-//            if(item_dst.Size() == VFSListingItem::InvalidSize)
-//                item_dst.SetSize(item_src.Size()); // transfer sizes for folders - it can be calculated earlier
-//            
-//            ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
-//            if(dst_i == dst_e) break;
-//        }
-//        else if( cmp > 0 )
-//        {
-//            dst_i++;
-//            if(dst_i == dst_e) break;
-//            goto check;
-//        }
-//    }
-//    
-//    // put a new data in a place
-//    m_Listing = move(_listing);
-//    m_EntriesByRawName.swap(dirbyrawcname);
-//    
-//    // now sort our new data with custom sortings
-//    DoSortWithHardFiltering();
-//    BuildSoftFilteringIndeces();
-//    UpdateStatictics();
-//}
+void PanelData::ReLoad(const shared_ptr<VFSFlexibleListing> &_listing)
+{
+    assert(dispatch_is_main_queue()); // STA api design
+    
+    // !!! this will work ONLY with plain directories listing since is based on that filenames are unique !!!!
+    
+    // sort new entries by raw c name for sync-swapping needs
+    DirSortIndT dirbyrawcname;
+    DoRawSort(*_listing, dirbyrawcname);
+    
+    vector<PanelVolatileData> new_vd;
+    InitVolatileDataWithListing(new_vd, *_listing);
+    
+    // transfer custom data to new array using sorted indeces arrays
+    unsigned dst_i = 0, dst_e = _listing->Count(),
+             src_i = 0, src_e = m_Listing->Count();
+    for( ;src_i < src_e && dst_i < dst_e; ++src_i ) {
+        int src = m_EntriesByRawName[src_i];
+check:  int dst = (dirbyrawcname)[dst_i];
+        int cmp = m_Listing->Filename(src).compare( _listing->Filename(dst) );
+        if( cmp == 0 ) {
+            new_vd[ dst ] = m_VolatileData[ src ];
+            
+            ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
+            if(dst_i == dst_e)
+                break;
+        }
+        else if( cmp > 0 ) {
+            dst_i++;
+            if(dst_i == dst_e)
+                break;
+            goto check;
+        }
+    }
+    
+    // put a new data in a place
+    m_Listing = move(_listing);
+    m_VolatileData = move(new_vd);
+    m_EntriesByRawName.swap(dirbyrawcname);
+    
+    // now sort our new data with custom sortings
+    DoSortWithHardFiltering();
+    BuildSoftFilteringIndeces();
+    UpdateStatictics();
+}
 
 const shared_ptr<VFSHost> &PanelData::Host() const
 {
@@ -181,11 +184,9 @@ int PanelData::RawIndexForName(const char *_filename) const
     auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
     auto i = lower_bound(begin, end, _filename,
                          [=](unsigned _i, const char* _s) {
-//                             return strcmp((*m_Listing)[_i].Name(), _s) < 0;
-                             return strcmp( m_Listing->Filename(_i).c_str(), _s) < 0;
+                             return m_Listing->Filename(_i) < _s;
                          });
     if(i < end &&
-//       strcmp(_filename, (*m_Listing)[*i].Name()) == 0)
        m_Listing->Filename(*i) == _filename)
         return *i;
     
@@ -444,13 +445,11 @@ static void DoRawSort(const VFSFlexibleListing &_from, PanelData::DirSortIndT &_
     }
   
     _to.resize(_from.Count());
-
-    unsigned index = 0;
-    generate( begin(_to), end(_to), [&]{return index++;} );
+    generate( begin(_to), end(_to), linear_generator(0, 1) );
     
     sort(begin(_to),
          end(_to),
-         [&_from](unsigned _1, unsigned _2) { return strcmp(_from.Filename(_1).c_str(), _from.Filename(_2).c_str()) < 0; }
+         [&_from](unsigned _1, unsigned _2) { return _from.Filename(_1) < _from.Filename(_2); }
          );
 }
 
@@ -778,8 +777,7 @@ void PanelData::DoSortWithHardFiltering()
     else
     {
         m_EntriesByCustomSort.resize(m_Listing->Count());
-        unsigned index = 0;
-        generate( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), [&]{return index++;} );
+        generate( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), linear_generator(0, 1) );
     }
 
     if(m_EntriesByCustomSort.empty() ||
@@ -820,8 +818,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
-        unsigned index = 0;
-        generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), [&]{return index++;} );
+        generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), linear_generator(0, 1) );
     }
 }
 

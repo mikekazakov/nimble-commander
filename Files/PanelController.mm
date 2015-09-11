@@ -336,43 +336,39 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) RefreshDirectory
 {
-    // TODO:
+    if(m_View == nil) return; // guard agains calls from init process
     
-//    if(m_View == nil) return; // guard agains calls from init process
-//    
-//    // going async here
-//    if(!m_DirectoryLoadingQ->Empty())
-//        return; //reducing overhead
-//    
-//    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
-//    auto vfs = self.vfs;
-//    
-//    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-//        unique_ptr<VFSListing> listing;
-//        int ret = vfs->FetchDirectoryListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
-//        if(ret >= 0)
-//        {
-//            dispatch_to_main_queue( [=,listing=move(listing)]() mutable {
-//                panel::GenericCursorPersistance pers(m_View, m_Data);
-//                
-//                m_Data.ReLoad(move(listing));
-//                [m_View dataUpdated];
-//                
-//                if(![self CheckAgainstRequestedSelection])
-//                    pers.Restore();
-//
-//                [self OnCursorChanged];
-//                [self QuickSearchUpdate];
-//                [m_View setNeedsDisplay];
-//            });
-//        }
-//        else
-//        {
-//            dispatch_to_main_queue( [=]{
-//                [self RecoverFromInvalidDirectory];
-//            });
-//        }
-//    });
+    // going async here
+    if(!m_DirectoryLoadingQ->Empty())
+        return; //reducing overhead
+    
+    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
+    auto vfs = self.vfs;
+    
+    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+        shared_ptr<VFSFlexibleListing> listing;
+        int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
+        if(ret >= 0) {
+            dispatch_to_main_queue( [=]{
+                panel::GenericCursorPersistance pers(m_View, m_Data);
+                
+                m_Data.ReLoad(listing);
+                [m_View dataUpdated];
+                
+                if(![self CheckAgainstRequestedSelection])
+                    pers.Restore();
+
+                [self OnCursorChanged];
+                [self QuickSearchUpdate];
+                [m_View setNeedsDisplay];
+            });
+        }
+        else {
+            dispatch_to_main_queue( [=]{
+                [self RecoverFromInvalidDirectory];
+            });
+        }
+    });
 }
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event

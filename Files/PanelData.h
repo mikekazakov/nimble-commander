@@ -240,9 +240,8 @@ public:
     // PanelData is solely sync class - it does not give a fuck about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-//    void Load(unique_ptr<VFSListing> _listing);
-    void Load(const shared_ptr<VFSFlexibleListing> &_listing);
-//    void ReLoad(unique_ptr<VFSListing> _listing);
+    void Load  (const shared_ptr<VFSFlexibleListing> &_listing);
+    void ReLoad(const shared_ptr<VFSFlexibleListing> &_listing);
 
     /*[[deprecated]] */ const shared_ptr<VFSHost>     &Host() const;
 //    const VFSListing&             Listing() const;

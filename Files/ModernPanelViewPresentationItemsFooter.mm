@@ -112,6 +112,7 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
 }
 
 void ModernPanelViewPresentationItemsFooter::Draw(const VFSFlexibleListingItem &_current_entry,
+                                                  const PanelVolatileData &_current_item_vd,
                                                   const PanelDataStatistics &_stats,
                                                   PanelViewType _view_type,
                                                   bool _active,
@@ -124,7 +125,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSFlexibleListingItem &
     if(!_wnd_active)
         _active = false;
     
-    PrepareToDraw(_current_entry, _stats, _view_type, _active);
+    PrepareToDraw(_current_entry, _current_item_vd, _stats, _view_type, _active);
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
@@ -175,7 +176,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSFlexibleListingItem &
     }
 }
 
-void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleListingItem& _current_item, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
+void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
 {
     if(_stats.selected_entries_amount != 0)
     {
@@ -204,7 +205,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleList
     {
         if(m_LastActive == _active &&
            m_LastItemName == _current_item.Name() &&
-           m_LastItemSize == _current_item.Size() &&
+           m_LastItemSize == _current_item_vd.size &&
            m_LastItemDate == _current_item.MTime() &&
            m_LastItemSymlink.empty() == !_current_item.IsSymlink() &&
            (!_current_item.IsSymlink() || m_LastItemSymlink == _current_item.Symlink()) &&
@@ -216,7 +217,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleList
         // nope, we're outdated, need to rebuild info
         m_LastActive = _active;
         m_LastItemName = _current_item.Name();
-        m_LastItemSize = _current_item.Size();
+        m_LastItemSize = _current_item_vd.size;
         m_LastItemDate = _current_item.MTime();
         m_LastItemIsDir = _current_item.IsDir();
         m_LastItemIsDotDot = _current_item.IsDotDot();
@@ -245,7 +246,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleList
         m_ItemDateStr = [[NSAttributedString alloc] initWithString:date_str
                                                         attributes:attr1];
         
-        NSString *size_str = m_Parent->FileSizeToString(_current_item);
+        NSString *size_str = m_Parent->FileSizeToString(_current_item, _current_item_vd);
         m_ItemSizeStr = [[NSAttributedString alloc] initWithString:size_str
                                                         attributes:attr1];
 

@@ -33,6 +33,9 @@ void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
     
     m_VolatileData.clear();
     m_VolatileData.resize(m_Listing->Count());
+    for( unsigned i = 0, e = m_Listing->Count(); i != e; ++i )
+        if( !m_Listing->IsDir(i) )
+            m_VolatileData[i].size = m_Listing->Size(i);
     
     m_HardFiltering.text.OnPanelDataLoad();
     m_SoftFiltering.OnPanelDataLoad();
@@ -119,10 +122,24 @@ PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
     return m_VolatileData[_pos];
 }
 
+const PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _pos ) const
+{
+    if( _pos < 0 || _pos >= m_VolatileData.size() )
+        throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
+    
+    return m_VolatileData[_pos];
+}
+
 PanelVolatileData& PanelData::VolatileDataAtSortPosition( int _pos )
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
+
+const PanelVolatileData& PanelData::VolatileDataAtSortPosition( int _pos ) const
+{
+    return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
+}
+
 
 string PanelData::FullPathForEntry(int _raw_index) const
 {
@@ -206,11 +223,6 @@ string PanelData::DirectoryPathWithTrailingSlash() const
 {
     if(!m_Listing->HasCommonDirectory())
         return "";
-    
-//    string path = m_Listing->RelativePath();
-//    if(path.size() > 0 && path.back() != '/')
-//        path.push_back('/');
-    
     return m_Listing->Directory(0);
 }
 
@@ -251,12 +263,14 @@ string PanelData::VerboseDirectoryFullPath() const
 struct SortPredLessBase
 {
 protected:
-    const VFSFlexibleListing&               ind_tar;
+    const VFSFlexibleListing&       l;
+    const vector<PanelVolatileData>&vd;
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLessBase(const VFSFlexibleListing &_items, PanelSortMode sort_mode):
-        ind_tar(_items),
+    SortPredLessBase(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode):
+        l(_items),
+        vd(_vd),
         sort_mode(sort_mode)
     {
         str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
@@ -266,22 +280,19 @@ public:
 
 struct SortPredLessIndToInd : public SortPredLessBase
 {
-    SortPredLessIndToInd(const VFSFlexibleListing &_items, PanelSortMode sort_mode): SortPredLessBase(_items, sort_mode) {}
+    SortPredLessIndToInd(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
     
     bool operator()(unsigned _1, unsigned _2) const
     {
         using _ = PanelSortMode::Mode;
-        const auto invalid_size = VFSListingItem::InvalidSize; // this is not a case anymore
-        const VFSFlexibleListing& L = ind_tar;
-//        const auto &val1 = ind_tar[_1];
-//        const auto &val2 = ind_tar[_2];
+        const auto invalid_size = PanelVolatileData::invalid_size;
         
         if(sort_mode.sep_dirs) {
-            if( L.IsDir(_1) && !L.IsDir(_2) ) return true;
-            if(!L.IsDir(_1) &&  L.IsDir(_2) ) return false;
+            if( l.IsDir(_1) && !l.IsDir(_2) ) return true;
+            if(!l.IsDir(_1) &&  l.IsDir(_2) ) return false;
         }
         
-        auto by_name = [&] { return CFStringCompare( L.DisplayFilenameCF(_1), L.DisplayFilenameCF(_2), str_comp_flags); };
+        auto by_name = [&] { return CFStringCompare( l.DisplayFilenameCF(_1), l.DisplayFilenameCF(_2), str_comp_flags); };
         
         switch(sort_mode.sort)
         {
@@ -290,53 +301,49 @@ struct SortPredLessIndToInd : public SortPredLessBase
             case _::SortByNameRev:
                 return by_name() > 0;
             case _::SortByExt:
-                if( L.HasExtension(_1) && L.HasExtension(_2) ) {
-                    int r = strcmp(L.Extension(_1), L.Extension(_2));
+                if( l.HasExtension(_1) && l.HasExtension(_2) ) {
+                    int r = strcmp(l.Extension(_1), l.Extension(_2));
                     if(r < 0) return true;
                     if(r > 0) return false;
                     return by_name() < 0;
                 }
-                if( L.HasExtension(_1) && !L.HasExtension(_2) ) return false;
-                if(!L.HasExtension(_1) &&  L.HasExtension(_2) ) return true;
+                if( l.HasExtension(_1) && !l.HasExtension(_2) ) return false;
+                if(!l.HasExtension(_1) &&  l.HasExtension(_2) ) return true;
                 return by_name() < 0; // fallback case
             case _::SortByExtRev:
-                if( L.HasExtension(_1) && L.HasExtension(_2) ) {
-                    int r = strcmp(L.Extension(_1), L.Extension(_2));
+                if( l.HasExtension(_1) && l.HasExtension(_2) ) {
+                    int r = strcmp(l.Extension(_1), l.Extension(_2));
                     if(r < 0) return false;
                     if(r > 0) return true;
                     return by_name() > 0;
                 }
-                if( L.HasExtension(_1) && !L.HasExtension(_2) ) return true;
-                if(!L.HasExtension(_1) &&  L.HasExtension(_2) ) return false;
+                if( l.HasExtension(_1) && !l.HasExtension(_2) ) return true;
+                if(!l.HasExtension(_1) &&  l.HasExtension(_2) ) return false;
                 return by_name() > 0; // fallback case
-            case _::SortByMTime:    return L.MTime(_1) > L.MTime(_2);
-            case _::SortByMTimeRev: return L.MTime(_1) < L.MTime(_2);
-            case _::SortByBTime:    return L.BTime(_1) > L.BTime(_2);
-            case _::SortByBTimeRev: return L.BTime(_1) < L.BTime(_2);
+            case _::SortByMTime:    return l.MTime(_1) > l.MTime(_2);
+            case _::SortByMTimeRev: return l.MTime(_1) < l.MTime(_2);
+            case _::SortByBTime:    return l.BTime(_1) > l.BTime(_2);
+            case _::SortByBTimeRev: return l.BTime(_1) < l.BTime(_2);
             case _::SortBySize: {
-                auto s1 = L.Size(_1), s2 = L.Size(_2);
-                // special cases for dirs, include volatile listing data
-//                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
+                auto s1 = vd[_1].size, s2 = vd[_2].size;
+                if(s1 != invalid_size && s2 != invalid_size)
                     if(s1 != s2)
                         return s1 > s2;
-//                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return false;
-//                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return true;
+                if(s1 != invalid_size && s2 == invalid_size) return false;
+                if(s1 == invalid_size && s2 != invalid_size) return true;
                 return by_name() < 0; // fallback case
             }
             case _::SortBySizeRev: {
-                auto s1 = L.Size(_1), s2 = L.Size(_2);
-                if(s1 != s2)
-                    return s1 < s2;
-//                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
-//                    if(val1.Size() != val2.Size())
-//                        return val1.Size() < val2.Size();
-//                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return true;
-//                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return false;
+                auto s1 = vd[_1].size, s2 = vd[_2].size;
+                if(s1 != invalid_size && s2 != invalid_size)
+                    if(s1 != s2)
+                        return s1 < s2;
+                if(s1 != invalid_size && s2 == invalid_size) return true;
+                if(s1 == invalid_size && s2 != invalid_size) return false;
                 return by_name() > 0; // fallback case
             }
             case _::SortByRawCName:
-//                return strcmp(val1.Name(), val2.Name()) < 0;
-                return strcmp( L.Filename(_1).c_str() , L.Filename(_2).c_str()) < 0;
+                return l.Filename(_1) < l.Filename(_2);
                 break;
             case _::SortNoSort:
                 assert(0); // meaningless sort call
@@ -349,157 +356,84 @@ struct SortPredLessIndToInd : public SortPredLessBase
     }
 };
 
-//struct SortPredLessIndToInd : public SortPredLessBase
-//{
-//    SortPredLessIndToInd(const VFSListing &_items, PanelSortMode sort_mode): SortPredLessBase(_items, sort_mode) {}
-//    
-//  	bool operator()(unsigned _1, unsigned _2) const
-//    {
-//        using _ = PanelSortMode::Mode;
-//        const auto invalid_size = VFSListingItem::InvalidSize;
-//        const auto &val1 = ind_tar[_1];
-//        const auto &val2 = ind_tar[_2];
-//        
-//        if(sort_mode.sep_dirs) {
-//            if(val1.IsDir() && !val2.IsDir()) return true;
-//            if(!val1.IsDir() && val2.IsDir()) return false;
-//        }
-//        
-//        auto by_name = [&] { return CFStringCompare(val1.CFDisplayName(), val2.CFDisplayName(), str_comp_flags); };
-//        
-//        switch(sort_mode.sort)
-//        {
-//            case _::SortByName:
-//                return by_name() < 0;
-//            case _::SortByNameRev:
-//                return by_name() > 0;
-//            case _::SortByExt:
-//                if(val1.HasExtension() && val2.HasExtension() ) {
-//                    int r = strcmp(val1.Extension(), val2.Extension());
-//                    if(r < 0) return true;
-//                    if(r > 0) return false;
-//                    return by_name() < 0;
-//                }
-//                if(val1.HasExtension() && !val2.HasExtension() ) return false;
-//                if(!val1.HasExtension() && val2.HasExtension() ) return true;
-//                return by_name() < 0; // fallback case
-//            case _::SortByExtRev:
-//                if(val1.HasExtension() && val2.HasExtension() ) {
-//                    int r = strcmp(val1.Extension(), val2.Extension());
-//                    if(r < 0) return false;
-//                    if(r > 0) return true;
-//                    return by_name() > 0;
-//                }
-//                if(val1.HasExtension() && !val2.HasExtension() ) return true;
-//                if(!val1.HasExtension() && val2.HasExtension() ) return false;
-//                return by_name() > 0; // fallback case
-//            case _::SortByMTime:    return val1.MTime() > val2.MTime();
-//            case _::SortByMTimeRev: return val1.MTime() < val2.MTime();
-//            case _::SortByBTime:    return val1.BTime() > val2.BTime();
-//            case _::SortByBTimeRev: return val1.BTime() < val2.BTime();
-//            case _::SortBySize:
-//                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
-//                    if(val1.Size() != val2.Size())
-//                        return val1.Size() > val2.Size();
-//                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return false;
-//                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return true;
-//                return by_name() < 0; // fallback case
-//            case _::SortBySizeRev:
-//                if(val1.Size() != invalid_size && val2.Size() != invalid_size)
-//                    if(val1.Size() != val2.Size())
-//                        return val1.Size() < val2.Size();
-//                if(val1.Size() != invalid_size && val2.Size() == invalid_size) return true;
-//                if(val1.Size() == invalid_size && val2.Size() != invalid_size) return false;
-//                return by_name() > 0; // fallback case
-//            case _::SortByRawCName:
-//                return strcmp(val1.Name(), val2.Name()) < 0;
-//                break;
-//            case _::SortNoSort:
-//                assert(0); // meaningless sort call
-//                break;
-//
-//            default:;
-//        };
-//
-//        return false;
-//    }
-//};
+struct SortPredLessIndToKeys : public SortPredLessBase
+{
+    SortPredLessIndToKeys(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
+    
+    bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
+    {
+        using _ = PanelSortMode::Mode;
+        const auto invalid_size = VFSListingItem::InvalidSize;
+        
+        if(sort_mode.sep_dirs) {
+            if( l.IsDir(_1) && !_val2.is_dir) return true;
+            if(!l.IsDir(_1) &&  _val2.is_dir) return false;
+        }
+        
+        auto by_name = [&] { return CFStringCompare( l.DisplayFilenameCF(_1), (CFStringRef)_val2.display_name, str_comp_flags); };
 
-//struct SortPredLessIndToKeys : public SortPredLessBase
-//{
-//    SortPredLessIndToKeys(const VFSListing &_items, PanelSortMode sort_mode): SortPredLessBase(_items, sort_mode) {}
-//    
-//    bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
-//    {
-//        using _ = PanelSortMode::Mode;
-//        const auto invalid_size = VFSListingItem::InvalidSize;
-//        const auto &val1 = ind_tar[_1];
-//        
-//        if(sort_mode.sep_dirs) {
-//            if(val1.IsDir() && !_val2.is_dir) return true;
-//            if(!val1.IsDir() && _val2.is_dir) return false;
-//        }
-//        
-//        auto by_name = [&] { return CFStringCompare(val1.CFDisplayName(), (CFStringRef)_val2.display_name, str_comp_flags); };
-//
-//        switch(sort_mode.sort)
-//        {
-//            case _::SortByName: return by_name() < 0;
-//            case _::SortByNameRev: return by_name() > 0;
-//            case _::SortByExt:
-//                if(val1.HasExtension() && !_val2.extension.empty() ) {
-//                    int r = strcmp(val1.Extension(), _val2.extension.c_str());
-//                    if(r < 0) return true;
-//                    if(r > 0) return false;
-//                    return by_name() < 0;
-//                }
-//                if(val1.HasExtension() && _val2.extension.empty() ) return false;
-//                if(!val1.HasExtension() && !_val2.extension.empty() ) return true;
-//                return by_name() < 0; // fallback case
-//            case _::SortByExtRev:
-//                if(val1.HasExtension() && !_val2.extension.empty() ) {
-//                    int r = strcmp(val1.Extension(), _val2.extension.c_str());
-//                    if(r < 0) return false;
-//                    if(r > 0) return true;
-//                    return by_name() > 0;
-//                }
-//                if(val1.HasExtension() && _val2.extension.empty() ) return true;
-//                if(!val1.HasExtension() && !_val2.extension.empty() ) return false;
-//                return by_name() > 0; // fallback case
-//            case _::SortByMTime:    return val1.MTime() > _val2.mtime;
-//            case _::SortByMTimeRev: return val1.MTime() < _val2.mtime;
-//            case _::SortByBTime:    return val1.BTime() > _val2.btime;
-//            case _::SortByBTimeRev: return val1.BTime() < _val2.btime;
-//            case _::SortBySize:
-//                if( val1.Size() != invalid_size && _val2.size != invalid_size )
-//                    if( val1.Size() != _val2.size )
-//                        return val1.Size() > _val2.size;
-//                if( val1.Size() != invalid_size && _val2.size == invalid_size )
-//                    return false;
-//                if( val1.Size() == invalid_size && _val2.size != invalid_size )
-//                    return true;
-//                return by_name() < 0; // fallback case
-//            case _::SortBySizeRev:
-//                if( val1.Size() != invalid_size && _val2.size != invalid_size )
-//                    if( val1.Size() != _val2.size )
-//                        return val1.Size() < _val2.size;
-//                if( val1.Size() != invalid_size && _val2.size == invalid_size )
-//                    return true;
-//                if( val1.Size() == invalid_size && _val2.size != invalid_size )
-//                    return false;
-//                return by_name() > 0; // fallback case
-//            case _::SortByRawCName:
-//                return strcmp(val1.Name(), _val2.name.c_str()) < 0;
-//                break;
-//            case _::SortNoSort:
-//                assert(0); // meaningless sort call
-//                break;
-//            default:;
-//        };
-//        
-//        return false;
-//    }
-//};
+        switch(sort_mode.sort)
+        {
+            case _::SortByName: return by_name() < 0;
+            case _::SortByNameRev: return by_name() > 0;
+            case _::SortByExt:
+                if( l.HasExtension(_1) && !_val2.extension.empty() ) {
+                    int r = strcmp(l.Extension(_1), _val2.extension.c_str());
+                    if(r < 0) return true;
+                    if(r > 0) return false;
+                    return by_name() < 0;
+                }
+                if( l.HasExtension(_1) &&  _val2.extension.empty() ) return false;
+                if(!l.HasExtension(_1) && !_val2.extension.empty() ) return true;
+                return by_name() < 0; // fallback case
+            case _::SortByExtRev:
+                if( l.HasExtension(_1) && !_val2.extension.empty() ) {
+                    int r = strcmp(l.Extension(_1), _val2.extension.c_str());
+                    if(r < 0) return false;
+                    if(r > 0) return true;
+                    return by_name() > 0;
+                }
+                if( l.HasExtension(_1) &&  _val2.extension.empty() ) return true;
+                if(!l.HasExtension(_1) && !_val2.extension.empty() ) return false;
+                return by_name() > 0; // fallback case
+            case _::SortByMTime:    return l.MTime(_1) > _val2.mtime;
+            case _::SortByMTimeRev: return l.MTime(_1) < _val2.mtime;
+            case _::SortByBTime:    return l.BTime(_1) > _val2.btime;
+            case _::SortByBTimeRev: return l.BTime(_1) < _val2.btime;
+            case _::SortBySize: {
+                auto s1 = vd[_1].size;
+                if( s1 != invalid_size && _val2.size != invalid_size )
+                    if( s1 != _val2.size )
+                        return s1 > _val2.size;
+                if( s1 != invalid_size && _val2.size == invalid_size )
+                    return false;
+                if( s1 == invalid_size && _val2.size != invalid_size )
+                    return true;
+                return by_name() < 0; // fallback case
+            }
+            case _::SortBySizeRev: {
+                auto s1 = vd[_1].size;
+                if( s1 != invalid_size && _val2.size != invalid_size )
+                    if( s1 != _val2.size )
+                        return s1 < _val2.size;
+                if( s1 != invalid_size && _val2.size == invalid_size )
+                    return true;
+                if( s1 == invalid_size && _val2.size != invalid_size )
+                    return false;
+                return by_name() > 0; // fallback case
+            }
+            case _::SortByRawCName:
+                return l.Filename(_1) < _val2.name;
+                break;
+            case _::SortNoSort:
+                assert(0); // meaningless sort call
+                break;
+            default:;
+        };
+        
+        return false;
+    }
+};
 
 // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
 static void DoRawSort(const VFSFlexibleListing &_from, PanelData::DirSortIndT &_to)
@@ -562,7 +496,7 @@ void PanelData::UpdateStatictics()
     for(auto n: m_EntriesByCustomSort) {
         const auto &vd = m_VolatileData[n];
         if( vd.is_selected() ) {
-            m_Stats.bytes_in_selected_entries += vd.is_size_calculated() ? vd.calculated_size : m_Listing->Size(n);
+            m_Stats.bytes_in_selected_entries += vd.is_size_calculated() ? vd.size : 0;
             
             m_Stats.selected_entries_amount++;
             if( m_Listing->IsDir(n) )
@@ -606,7 +540,7 @@ void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     if( vd.is_selected() == _is_selected ) // check if item is already selected
         return;
     
-    auto sz = vd.is_size_calculated() ? vd.calculated_size : m_Listing->Size(_at_raw_pos);
+    auto sz = vd.is_size_calculated() ? vd.size : 0;
     if(_is_selected) {
         m_Stats.bytes_in_selected_entries += sz;
         m_Stats.selected_entries_amount++;
@@ -660,61 +594,46 @@ void PanelData::CustomFlagsSelectInvert()
 chained_strings PanelData::StringsFromSelectedEntries() const
 {
     chained_strings str;
-//    for(auto const &i: *m_Listing)
-//        if(i.CFIsSelected())
-//            str.push_back(i.Name(), (int)i.NameLen(), nullptr);
+    for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
+        if( m_VolatileData[i].is_selected() )
+            str.push_back( m_Listing->Filename(i), nullptr );
     return str;
 }
 
 vector<string> PanelData::SelectedEntriesFilenames() const
 {
     vector<string> list;
-//    for(auto const &i: *m_Listing)
-//        if(i.CFIsSelected())
-//            list.emplace_back(i.Name(), i.NameLen());
+    for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
+        if( m_VolatileData[i].is_selected() )
+            list.emplace_back( m_Listing->Filename(i) );
     return list;
 }
 
 bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
 {
-//    if(_entry    == nullptr ||
-//       _entry[0] == 0       ||
-//       _size == VFSListingItem::InvalidSize )
-//        return false;
-//    
-//    int n = RawIndexForName(_entry);
-//    if(n >= 0)
-//    {
-//        auto &i = (*m_Listing)[n];
-//        if(i.IsDir())
-//        {
-//            if(i.Size() == _size)
-//                return true;
-//            
-//            if(i.CFIsSelected())
-//            { // need to adjust our selected bytes statistic
-//                if(i.Size() != VFSListingItem::InvalidSize)
-//                {
-//                    assert(i.Size() <= m_Stats.bytes_in_selected_entries);
-//                    m_Stats.bytes_in_selected_entries -= i.Size();
-//                }
-//                m_Stats.bytes_in_selected_entries += _size;
-//            }
-//
-//            i.SetSize(_size);
-//
-//            if(m_CustomSortMode.sort & m_CustomSortMode.SortBySizeMask)
-//            {
-//                // double-check me
-//                DoSortWithHardFiltering();
-//                ClearSelectedFlagsFromHiddenElements();
-//                BuildSoftFilteringIndeces();
-//                UpdateStatictics();
-//            }            
-//            
-//            return true;
-//        }
-//    }
+    if(_entry    == nullptr ||
+       _entry[0] == 0       ||
+       _size == VFSListingItem::InvalidSize )
+        return false;
+    
+    int n = RawIndexForName(_entry);
+    if(n >= 0) {
+        if( m_Listing->IsDir(n) ) {
+            auto &vd = m_VolatileData[n];
+            if( vd.size == _size)
+                return true;
+            
+            vd.size = _size;
+            
+            // double-check me
+            DoSortWithHardFiltering();
+            ClearSelectedFlagsFromHiddenElements();
+            BuildSoftFilteringIndeces();
+            UpdateStatictics();
+            
+            return true;
+        }
+    }
     return false;
 }
 
@@ -867,7 +786,7 @@ void PanelData::DoSortWithHardFiltering()
        m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    SortPredLessIndToInd pred(*m_Listing, m_CustomSortMode);
+    SortPredLessIndToInd pred(*m_Listing, m_VolatileData, m_CustomSortMode);
     DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
@@ -906,13 +825,13 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item)
+PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSFlexibleListingItem& _item, const PanelVolatileData &_item_vd)
 {
     EntrySortKeys keys;
     keys.name = _item.Name();
-    keys.display_name = [_item.NSDisplayName() copy];
+    keys.display_name = _item.NSDisplayName();
     keys.extension = _item.HasExtension() ? _item.Extension() : "";
-    keys.size = _item.Size();
+    keys.size = _item_vd.size;
     keys.mtime = _item.MTime();
     keys.btime = _item.BTime();
     keys.is_dir = _item.IsDir();
@@ -924,21 +843,19 @@ PanelData::EntrySortKeys PanelData::EntrySortKeysAtSortPosition(int _pos) const
     auto item = EntryAtSortPosition(_pos);
     if( !item )
         throw invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
-// TODO!
-    //    return ExtractSortKeysFromEntry(*item);
-    return {};
+    return ExtractSortKeysFromEntry(item, VolatileDataAtSortPosition(_pos));
 }
 
 int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
 {
-    // TODO!
-//    auto it = lower_bound(begin(m_EntriesByCustomSort),
-//                          end(m_EntriesByCustomSort),
-//                          _keys,
-//                          SortPredLessIndToKeys(*m_Listing,
-//                                                 m_CustomSortMode)
-//                          );
-//    if( it != end(m_EntriesByCustomSort) )
-//        return (int)distance( begin(m_EntriesByCustomSort), it );
+    auto it = lower_bound(begin(m_EntriesByCustomSort),
+                          end(m_EntriesByCustomSort),
+                          _keys,
+                          SortPredLessIndToKeys(*m_Listing,
+                                                m_VolatileData,
+                                                m_CustomSortMode)
+                          );
+    if( it != end(m_EntriesByCustomSort) )
+        return (int)distance( begin(m_EntriesByCustomSort), it );
     return -1;
 }

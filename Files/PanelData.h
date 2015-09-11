@@ -198,13 +198,13 @@ struct PanelVolatileData
         flag_shown      = 1 << 1
     };
     
-    uint64_t calculated_size = invalid_size;
+    uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
     uint32_t flags = 0;
     uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
     
     bool is_selected()          const { return (flags & flag_selected) != 0; };
     bool is_shown()             const { return (flags & flag_shown) != 0; }
-    bool is_size_calculated()   const { return calculated_size != invalid_size; }
+    bool is_size_calculated()   const { return size != invalid_size; }
     void toggle_selected( bool _v )   { flags = (flags & ~flag_selected) | (_v ? flag_selected : 0); }
     void toggle_shown( bool _v )      { flags = (flags & ~flag_shown)    | (_v ? flag_shown    : 0); }
 };
@@ -257,10 +257,13 @@ public:
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
 //    const VFSListingItem*   EntryAtRawPosition(int _pos) const;
-    VFSFlexibleListingItem   EntryAtRawPosition(int _pos) const;
+    VFSFlexibleListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
-    VFSFlexibleListingItem   EntryAtSortPosition(int _pos) const;
+    const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
+    
+    VFSFlexibleListingItem   EntryAtSortPosition(int _pos) const; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
+    const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
     
@@ -368,7 +371,7 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
-    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item);
+    static EntrySortKeys ExtractSortKeysFromEntry(const VFSFlexibleListingItem& _item, const PanelVolatileData &_item_vd);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing

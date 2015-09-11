@@ -49,12 +49,11 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-NSString* ModernPanelViewPresentation::FileSizeToString(const VFSFlexibleListingItem &_dirent)
+NSString* ModernPanelViewPresentation::FileSizeToString(const VFSFlexibleListingItem &_dirent, const PanelVolatileData &_vd) const
 {
-    // TODO: support for calculated dir size
     if( _dirent.IsDir() ) {
-        if( _dirent.Size() != VFSListingItem::InvalidSize) {
-            return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), FileSizeFormat());
+        if( _vd.is_size_calculated() ) {
+            return ByteCountFormatter::Instance().ToNSString(_vd.size, FileSizeFormat());
         }
         else {
             if(_dirent.IsDotDot())
@@ -338,13 +337,15 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     m_Header->Draw(panelpath, active, wnd_active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
-    m_ItemsFooter->Draw(View().item,
-                        m_State->Data->Stats(),
-                        m_State->ViewType,
-                        active,
-                        wnd_active,
-                        m_ItemsArea.origin.y + m_ItemsArea.size.height,
-                        m_ItemsArea.size.width);
+    if( auto i = View().item)
+        m_ItemsFooter->Draw(i,
+                            View().item_vd,
+                            m_State->Data->Stats(),
+                            m_State->ViewType,
+                            active,
+                            wnd_active,
+                            m_ItemsArea.origin.y + m_ItemsArea.size.height,
+                            m_ItemsArea.size.width);
     
     // Volume footer if any
     if(m_VolumeFooter) {
@@ -470,7 +471,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                                               m_SizeColumWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                                               rect.size.height);
 
-                [FileSizeToString(item) drawWithRect:size_rect
+                [FileSizeToString(item, item_vd) drawWithRect:size_rect
                                               options:0
                                            attributes:focused ? attrs.focused_size : attrs.regular_size];
                 

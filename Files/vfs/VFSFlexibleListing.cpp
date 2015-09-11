@@ -173,7 +173,6 @@ void VFSFlexibleListing::BuildFilenames()
 bool VFSFlexibleListing::HasExtension(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    
     return m_ExtensionOffsets[_ind] != 0;
 }
 

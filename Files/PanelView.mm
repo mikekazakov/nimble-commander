@@ -106,14 +106,10 @@ struct PanelViewStateStorage
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
 {
     m_Delegate = delegate;
-    if(delegate)
-    {
-        id<PanelViewDelegate> del = m_Delegate;
-        if(auto r = objc_cast<NSResponder>(del)) {
-            NSResponder *current = self.nextResponder;
-            super.nextResponder = r;
-            r.nextResponder = current;
-        }
+    if( auto r = objc_cast<NSResponder>(delegate) ) {
+        NSResponder *current = self.nextResponder;
+        super.nextResponder = r;
+        r.nextResponder = current;
     }
 }
 
@@ -347,17 +343,17 @@ struct PanelViewStateStorage
 
 - (void) HandleInsert
 {
-//    assert( dispatch_is_main_queue() );
-//    
-//    int origpos = m_State.CursorPos;
-//    m_Presentation->MoveCursorToNextItem();
-//    
-//    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
-//        [self SelectUnselectInRange:origpos
-//                      last_included:origpos
-//                             select:!entry->CFIsSelected()];
-//    
-//    [self OnCursorPositionChanged];
+    assert( dispatch_is_main_queue() );
+    
+    int origpos = m_State.CursorPos;
+    m_Presentation->MoveCursorToNextItem();
+    
+    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
+        [self SelectUnselectInRange:origpos
+                      last_included:origpos
+                             select:!m_State.Data->VolatileDataAtSortPosition(origpos).is_selected()];
+    
+    [self OnCursorPositionChanged];
 }
 
 - (void) setCurpos:(int)_pos
@@ -467,51 +463,43 @@ struct PanelViewStateStorage
 
 - (void) mouseDown:(NSEvent *)_event
 {
-//    m_LastPotentialRenamingLBDown = -1;
-//    
-//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-//    
-//    int old_cursor_pos = m_State.CursorPos;
-//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-//    if (cursor_pos == -1) return;
-//
-//    auto click_entry = m_State.Data->EntryAtSortPosition(cursor_pos);
-//    if(!click_entry)
-//        return;
-//    
-//    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-//    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-//    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
-//    
-//    // Select range of items with shift+click.
-//    // If clicked item is selected, then deselect the range instead.
-//    if(modifier_flags & NSShiftKeyMask)
-//        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
-//                      last_included:cursor_pos
-//                             select:!click_entry->CFIsSelected()];
-//    // Select or deselect a single item with cmd+click.
-//    else if(modifier_flags & NSCommandKeyMask)
-//        [self SelectUnselectInRange:cursor_pos
-//                      last_included:cursor_pos
-//                             select:!click_entry->CFIsSelected()];
-//    
-//    m_Presentation->SetCursorPos(cursor_pos);
-//    
-//    if(old_cursor_pos != cursor_pos)
-//    {
-//        [self OnCursorPositionChanged];
-//    }
-//    else if(lb_pressed && !lb_cooldown)
-//    {
-//        // need more complex logic here (?)
-//        m_LastPotentialRenamingLBDown = cursor_pos;
-//    }
-//
-//    if(lb_pressed && self.active && !lb_cooldown)
-//    {
-//        m_ReadyToDrag = true;
-//        m_LButtonDownPos = local_point;
-//    }
+    m_LastPotentialRenamingLBDown = -1;
+    
+    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    
+    int old_cursor_pos = m_State.CursorPos;
+    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+    if (cursor_pos == -1)
+        return;
+
+    auto &click_entry_vd = m_State.Data->VolatileDataAtSortPosition(cursor_pos);
+    
+    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
+    
+    // Select range of items with shift+click.
+    // If clicked item is selected, then deselect the range instead.
+    if(modifier_flags & NSShiftKeyMask)
+        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
+                      last_included:cursor_pos
+                             select:!click_entry_vd.is_selected()];
+    else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
+        [self SelectUnselectInRange:cursor_pos
+                      last_included:cursor_pos
+                             select:!click_entry_vd.is_selected()];
+    
+    m_Presentation->SetCursorPos(cursor_pos);
+    
+    if(old_cursor_pos != cursor_pos)
+        [self OnCursorPositionChanged];
+    else if(lb_pressed && !lb_cooldown)
+        m_LastPotentialRenamingLBDown = cursor_pos; // need more complex logic here (?)
+
+    if(lb_pressed && self.active && !lb_cooldown) {
+        m_ReadyToDrag = true;
+        m_LButtonDownPos = local_point;
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event

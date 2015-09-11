@@ -47,29 +47,45 @@
 
 - (vector<unsigned>) selectedEntriesOrFocusedEntryIndeces
 {
-    // TODO:
     vector<unsigned> inds;
-//    auto &d = self.data;
-//    for( auto ind: d.SortedDirectoryEntries() ) {
-//        auto e = d.EntryAtRawPosition(ind);
-//        if( !e || !e->CFIsSelected() || e->IsDotDot() )
-//            continue;
-//        inds.emplace_back(ind);
-//    }
-//    
-//    if( inds.empty() ) {
-//        if(!self.view.item ||
-//           self.view.item->IsDotDot() ||
-//           self.view.curpos < 0)
-//            return {};
-//
-//        auto i = d.RawIndexForSortIndex(self.view.curpos);
-//        if(i < 0)
-//            return {};
-//        
-//        inds.emplace_back( i );
-//    }
+    auto &d = self.data;
+    for( auto ind: d.SortedDirectoryEntries() ) {
+        auto e = d.EntryAtRawPosition(ind);
+        if( !e || e.IsDotDot() || d.VolatileDataAtRawPosition(ind).is_selected() )
+            continue;
+        inds.emplace_back(ind);
+    }
+    
+    if( inds.empty() ) {
+        if(!self.view.item ||
+           self.view.item.IsDotDot() ||
+           self.view.curpos < 0)
+            return {};
+
+        auto i = d.RawIndexForSortIndex(self.view.curpos);
+        if(i < 0)
+            return {};
+        
+        inds.emplace_back( i );
+    }
     return inds;
+}
+
+- (vector<VFSFlexibleListingItem>)selectedEntriesOrFocusedEntries
+{
+    vector<VFSFlexibleListingItem> items;
+    auto &d = self.data;
+    for( auto ind: d.SortedDirectoryEntries() )
+        if( d.VolatileDataAtRawPosition(ind).is_selected() )
+            if( auto e = d.EntryAtRawPosition(ind) )
+                if( !e.IsDotDot() )
+                    items.emplace_back( move(e) );
+    
+    if( items.empty() )
+        if( auto e = d.EntryAtSortPosition(self.view.curpos) )
+            if( !e.IsDotDot() )
+                items.emplace_back( move(e) );
+    return items;
 }
 
 - (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot

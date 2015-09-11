@@ -44,6 +44,8 @@
  */
 @property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
 
+@property (nonatomic, readonly) vector<VFSFlexibleListingItem> selectedEntriesOrFocusedEntries;
+
 /**
  * Return current (topmost in vfs stack) VFS Host.
  */

@@ -214,6 +214,7 @@ public:
     const string&   Directory()         const { return L->Directory(I);             }
     
     // currently mimicking old VFSListingItem interface, may change methods names later
+    const string&   Filename()          const { return L->Filename(I);              }
     const char     *Name()              const { return L->Filename(I).c_str();      }
     size_t          NameLen()           const { return L->Filename(I).length();     }
     CFStringRef     CFName()            const { return L->FilenameCF(I);            }

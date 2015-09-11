@@ -97,7 +97,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 @interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
 
-- (id) initWithData:(const vector<const VFSListingItem*>&) _items
+- (id) initWithData:(vector<VFSFlexibleListingItem>) _items
              OnPath:(const char*)_path
                 vfs:(shared_ptr<VFSHost>) _host
             mainWnd:(MainWindowFilePanelState*)_wnd
@@ -105,6 +105,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             oppCont:(PanelController*)_opp_cont;
 
 @end
+
+// TODO: support for non-uniform listings
 
 @implementation MainWindowFilePanelContextMenu
 {
@@ -122,7 +124,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     int                         m_FilesCount;
 }
 
-- (id) initWithData:(const vector<const VFSListingItem*>&) _items
+- (id) initWithData:(vector<VFSFlexibleListingItem>) _items
              OnPath:(const char*)_path
                 vfs:(shared_ptr<VFSHost>) _host
             mainWnd:(MainWindowFilePanelState*)_wnd
@@ -144,10 +146,10 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         
         for(auto &i: _items)
         {
-            m_Items.push_back(i->Name());
+            m_Items.push_back(i.Name());
             
-            if(i->IsDir()) m_DirsCount++;
-            if(i->IsReg()) m_FilesCount++;
+            if(i.IsDir()) m_DirsCount++;
+            if(i.IsReg()) m_FilesCount++;
         }
     
         [self setMinimumWidth:200]; // hardcoding is bad!
@@ -158,7 +160,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     return self;
 }
 
-- (void) Stuffing:(const vector<const VFSListingItem*>&) _items
+- (void) Stuffing:(const vector<VFSFlexibleListingItem>&) _items
 {
     // cur_pnl_path should be the same as m_DirPath!!!
     string cur_pnl_path = m_CurrentController.currentDirectoryPath;
@@ -183,18 +185,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         list<LauchServicesHandlers> per_item_handlers;
         for(auto &i: _items)
-        {
-            char full_path[MAXPATHLEN];
-            sprintf(full_path, "%s%s", m_DirPath.c_str(), i->Name());
-            auto lsh = LauchServicesHandlers::GetForItem(*i, m_Host, full_path);
-            per_item_handlers.emplace_back(move(lsh));
-            
-            // check if there is no need to investigate types further since there's already no intersection
-            LauchServicesHandlers items_check;
-            LauchServicesHandlers::DoMerge(per_item_handlers, items_check);
-            if(items_check.paths.empty() && items_check.uti.empty())
-                break;
-        }
+            per_item_handlers.emplace_back( LauchServicesHandlers::GetForItem(i) );
         
         LauchServicesHandlers items_handlers;
         LauchServicesHandlers::DoMerge(per_item_handlers, items_handlers);
@@ -680,7 +671,7 @@ proceed:;
 
 @implementation MainWindowFilePanelState (ContextMenu)
 
-- (NSMenu*) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
+- (NSMenu*) RequestContextMenuOn:(vector<VFSFlexibleListingItem>) _items
                          path:(const char*) _path
                           vfs:(shared_ptr<VFSHost>) _host
                        caller:(PanelController*) _caller
@@ -695,7 +686,7 @@ proceed:;
         return nil;
     
     MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
-    menu = [menu initWithData:_items
+    menu = [menu initWithData:move(_items)
                        OnPath:_path
                           vfs:_host
                       mainWnd:self

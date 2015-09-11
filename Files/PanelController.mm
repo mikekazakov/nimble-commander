@@ -611,26 +611,14 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
-    auto cur_focus = m_View.item;
-    if(!cur_focus || cur_focus.IsDotDot())
+    auto items = self.selectedEntriesOrFocusedEntries;
+    if( items.empty() )
         return nil;
     
-    vector<const VFSListingItem*> items;
-
-    
-    // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // 2 variants - currently focused item or all selected items (if focus is also selected)
-//    if(m_Data.Stats().selected_entries_amount == 0 || !cur_focus->CFIsSelected())
-//        items.push_back(cur_focus); // use focused item solely
-//    else
-//        for(auto &i: m_Data.Listing()) // use selected items
-//            if(i.CFIsSelected())
-//                items.push_back(&i);
-//    
-//    return [self.state RequestContextMenuOn:items
-//                                       path:self.currentDirectoryPath.c_str()
-//                                        vfs:self.vfs
-//                                     caller:self];
+    return [self.state RequestContextMenuOn:move(items)
+                                       path:self.currentDirectoryPath.c_str()
+                                        vfs:self.vfs
+                                     caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

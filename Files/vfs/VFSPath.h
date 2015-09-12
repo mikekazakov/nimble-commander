@@ -36,7 +36,6 @@ public:
     };
     
     VFSPathStack();
-    VFSPathStack(const VFSListing &_listing);
     VFSPathStack(const VFSHostPtr &_vfs, const string &_path);
     
     inline bool operator==(const VFSPathStack& _r) const {

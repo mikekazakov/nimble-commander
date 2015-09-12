@@ -42,19 +42,19 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
 }
 
-+ (bool) SharingEnabledForItem:(const VFSListingItem*)_item VFS:(shared_ptr<VFSHost>)_host
++ (bool) SharingEnabledForItem:(const VFSFlexibleListingItem&)_item
 {
-    if(_item == nullptr || _host == nullptr)
+    if( !_item )
         return false;
     
-    if(_item->IsDotDot())
+    if(_item.IsDotDot())
         return false;
     
-    if(_host->IsNativeFS())
+    if(_item.Host()->IsNativeFS())
         return true;
     
-    if(_item->IsDir() == false &&
-       _item->Size() < g_MaxFileSizeForVFSShare)
+    if(_item.IsDir() == false &&
+       _item.Size() < g_MaxFileSizeForVFSShare)
         return true;
     
     return false;

@@ -168,6 +168,11 @@ void panel::GenericCursorPersistance::Restore() const
     return self.state.window;
 }
 
+- (bool) isUniform
+{
+    return m_Data.Listing().IsUniform();
+}
+
 - (void) setOptions:(NSDictionary *)options
 {
     auto hard_filtering = m_Data.HardFiltering();
@@ -562,8 +567,9 @@ void panel::GenericCursorPersistance::Restore() const
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
-// TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//    m_History.Put(VFSPathStack(m_Data.Listing()));
+
+    if( self.isUniform  )
+        m_History.Put( VFSPathStack(self.vfs, self.currentDirectoryPath) );
     if(self.vfs->IsNativeFS())
         m_LastNativeDirectory = self.currentDirectoryPath;
 }
@@ -572,11 +578,9 @@ void panel::GenericCursorPersistance::Restore() const
 {
     // need to update some UI here  
     // update share button regaring current state
-    // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    //    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
-//                            [SharingService SharingEnabledForItem:m_View.item VFS:self.vfs];
-//    
+    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
+                            [SharingService SharingEnabledForItem:m_View.item];
+    
     // update QuickLook if any
     [(QuickLookView *)m_QuickLook PreviewItem:self.currentFocusedEntryPath vfs:self.vfs];
 }

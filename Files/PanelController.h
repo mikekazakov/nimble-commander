@@ -126,6 +126,7 @@ namespace panel
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;
+@property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;
 @property (nonatomic) NSDictionary* options;
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;

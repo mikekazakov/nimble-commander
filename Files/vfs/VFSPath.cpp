@@ -40,11 +40,6 @@ VFSPathStack::VFSPathStack()
 {
 }
 
-VFSPathStack::VFSPathStack(const VFSListing &_listing) :
-    VFSPathStack(_listing.Host(), _listing.RelativePath())
-{
-}
-
 VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const string &_path):
     m_Path(_path)
 {

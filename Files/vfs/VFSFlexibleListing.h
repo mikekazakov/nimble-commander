@@ -101,12 +101,15 @@ public:
     static shared_ptr<VFSFlexibleListing> Build(VFSFlexibleListingInput &&_input);
     
     unsigned            Count               () const noexcept { return m_ItemsCount; };
+    bool                IsUniform           () const;
     bool                HasCommonHost       () const;
     bool                HasCommonDirectory  () const;
 
     VFSFlexibleListingItem Item             (unsigned _ind) const;
-    
+
+    const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;
+    const VFSHostPtr&   Host                () const; // will throw if there's no common host
     const VFSHostPtr&   Host                (unsigned _ind) const;
     
     const string&       Filename            (unsigned _ind) const;

@@ -200,6 +200,13 @@ CFStringRef VFSFlexibleListing::FilenameCF(unsigned _ind) const
     return *m_FilenamesCF[_ind];
 }
 
+const VFSHostPtr& VFSFlexibleListing::Host() const
+{
+    if( HasCommonHost() )
+        return m_Hosts[0];
+    throw logic_error("VFSFlexibleListing::Host() called for listing with no common host");
+}
+
 const VFSHostPtr& VFSFlexibleListing::Host(unsigned _ind) const
 {
     if( HasCommonHost() )
@@ -208,6 +215,13 @@ const VFSHostPtr& VFSFlexibleListing::Host(unsigned _ind) const
         __CHECK_BOUNDS(_ind);
         return m_Hosts[_ind];
     }
+}
+
+const string& VFSFlexibleListing::Directory() const
+{
+    if( HasCommonDirectory() )
+        return m_Directories[0];
+    throw logic_error("VFSFlexibleListing::Directory() called for listing with no common directory");
 }
 
 const string& VFSFlexibleListing::Directory(unsigned _ind) const
@@ -219,6 +233,12 @@ const string& VFSFlexibleListing::Directory(unsigned _ind) const
         __CHECK_BOUNDS(_ind);
         return m_Directories[_ind];
     }
+}
+
+bool VFSFlexibleListing::IsUniform() const
+{
+    return m_Hosts.mode() == variable_container<>::type::common &&
+     m_Directories.mode() == variable_container<>::type::common;
 }
 
 bool VFSFlexibleListing::HasCommonHost() const

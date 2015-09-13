@@ -213,6 +213,7 @@ public:
     auto&           Listing()           const { return L;                           }
     unsigned        Index()             const { return I;                           }
     
+    string          Path()              const { return Directory() + Filename();    }
     const VFSHostPtr& Host()            const { return L->Host(I);                  }
     const string&   Directory()         const { return L->Directory(I);             }
     

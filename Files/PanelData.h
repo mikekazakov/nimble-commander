@@ -265,6 +265,7 @@ public:
     const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
+    vector<VFSFlexibleListingItem> SelectedEntries() const;
     
     /**
      * Will throw an invalid_argument on invalid _pos.

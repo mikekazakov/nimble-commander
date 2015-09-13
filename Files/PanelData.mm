@@ -238,26 +238,24 @@ string PanelData::DirectoryPathShort() const
 
 string PanelData::VerboseDirectoryFullPath() const
 {
-    // TODO:
+    if( !m_Listing || !m_Listing->IsUniform())
+        return "";
+    array<VFSHost*, 32> hosts;
+    int hosts_n = 0;
+
+    VFSHost *cur = m_Listing->Host().get();
+    while(cur)
+    {
+        hosts[hosts_n++] = cur;
+        cur = cur->Parent().get();
+    }
     
-//    if(m_Listing == nullptr)
-//        return "";
-//    array<VFSHost*, 32> hosts;
-//    int hosts_n = 0;
-//
-//    VFSHost *cur = m_Listing->Host().get();
-//    while(cur)
-//    {
-//        hosts[hosts_n++] = cur;
-//        cur = cur->Parent().get();
-//    }
-//    
-//    string s;
-//    while(hosts_n > 0)
-//        s += hosts[--hosts_n]->Configuration().VerboseJunction();
-//    s += m_Listing->RelativePath();
-//    if(s.back() != '/') s += '/';
-//    return s;
+    string s;
+    while(hosts_n > 0)
+        s += hosts[--hosts_n]->Configuration().VerboseJunction();
+    s += m_Listing->Directory();
+    if(s.back() != '/') s += '/';
+    return s;
     return "";
 }
 
@@ -605,6 +603,15 @@ vector<string> PanelData::SelectedEntriesFilenames() const
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Filename(i) );
+    return list;
+}
+
+vector<VFSFlexibleListingItem> PanelData::SelectedEntries() const
+{
+    vector<VFSFlexibleListingItem> list;
+    for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
+        if( m_VolatileData[i].is_selected() )
+            list.emplace_back( m_Listing->Item(i) );
     return list;
 }
 

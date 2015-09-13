@@ -259,72 +259,72 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 - (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
 {
-    // TODO:
+    // TODO: non-uniform listings support
+    if( !self.isUniform )
+        return;
     
-//    auto focus_item = m_View.item;
-//    if( !focus_item || focus_item.IsDotDot() )
-//        return;
-//    
-//    auto vfs = self.vfs;
-//    PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
-//    broker.controller = self;
-//    broker.vfs = vfs;
-//    broker.root_path = m_Data.DirectoryPathWithTrailingSlash();
-//    
-//    NSMutableArray *drag_items = [NSMutableArray new];
-//    
-//    vector<const VFSListingItem*> vfs_items;
-//    
-//    if(focus_item->CFIsSelected() == false)
-//        vfs_items.push_back(focus_item);
-//    else
-//        for(auto &i: m_Data.Listing())
-//            if(i.CFIsSelected())         // get all selected from listing
-//                vfs_items.push_back(&i);
-//    
-//    NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
-//    dragPosition.x -= 16;
-//    dragPosition.y -= 16;
-//    
-//    NSMutableArray *pasteboard_types = [NSMutableArray new];
-//    [pasteboard_types addObject:g_PasteboardFileURLPromiseUTI];
-//    [pasteboard_types addObject:g_PrivateDragUTI];
-//    if(vfs->IsNativeFS()) {
-//        [pasteboard_types addObject:g_PasteboardFilenamesUTI];
-//        [pasteboard_types addObject:g_PasteboardFileURLUTI];
-//    }
-//    
-//    for(auto i: vfs_items) {
-//        PanelDraggingItem *pbItem = [PanelDraggingItem new];
-//        [pbItem setDataProvider:broker forTypes:pasteboard_types];
-//    
-//        // internal information
-//        pbItem.filename = i->Name();
-//        pbItem.isDir = i->IsDir();
-//        pbItem.path = broker.root_path + i->Name();
-//        pbItem.vfs = vfs;
-//
-//        // for File URL Promise
-//        [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
-//        
-//        // visual appearance of a drag
-//        NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter:pbItem];
-//        dragItem.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
-//
-//        __weak PanelDraggingItem *weak_drag_item = pbItem;
-//        dragItem.imageComponentsProvider = ^{
-//            return BuildImageComponentsForItem((PanelDraggingItem *)weak_drag_item);
-//        };
-//        
-//        [drag_items addObject:dragItem];
-//        dragPosition.y -= 16;
-//        
-//        broker.items.push_back(pbItem);
-//    }
-//    
-//    broker.count = (unsigned)drag_items.count;
-//    if(drag_items.count > 0)
-//        [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
+    auto focus_item = m_View.item;
+    if( !focus_item || focus_item.IsDotDot() )
+        return;
+    
+    auto vfs = self.vfs;
+    PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
+    broker.controller = self;
+    broker.vfs = vfs;
+    broker.root_path = m_Data.DirectoryPathWithTrailingSlash();
+    
+    NSMutableArray *drag_items = [NSMutableArray new];
+    
+    vector<VFSFlexibleListingItem> vfs_items;
+    
+    if( m_View.item_vd.is_selected() == false)
+        vfs_items.emplace_back(focus_item);
+    else
+        vfs_items = m_Data.SelectedEntries();
+    
+    NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
+    dragPosition.x -= 16;
+    dragPosition.y -= 16;
+    
+    NSMutableArray *pasteboard_types = [NSMutableArray new];
+    [pasteboard_types addObject:g_PasteboardFileURLPromiseUTI];
+    [pasteboard_types addObject:g_PrivateDragUTI];
+    if(vfs->IsNativeFS()) {
+        [pasteboard_types addObject:g_PasteboardFilenamesUTI];
+        [pasteboard_types addObject:g_PasteboardFileURLUTI];
+    }
+    
+    for(auto i: vfs_items) {
+        PanelDraggingItem *pbItem = [PanelDraggingItem new];
+        [pbItem setDataProvider:broker forTypes:pasteboard_types];
+    
+        // internal information
+        pbItem.filename = i.Name();
+        pbItem.isDir = i.IsDir();
+        pbItem.path = broker.root_path + i.Name();
+        pbItem.vfs = vfs;
+
+        // for File URL Promise
+        [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
+        
+        // visual appearance of a drag
+        NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter:pbItem];
+        dragItem.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
+
+        __weak PanelDraggingItem *weak_drag_item = pbItem;
+        dragItem.imageComponentsProvider = ^{
+            return BuildImageComponentsForItem((PanelDraggingItem *)weak_drag_item);
+        };
+        
+        [drag_items addObject:dragItem];
+        dragPosition.y -= 16;
+        
+        broker.items.push_back(pbItem);
+    }
+    
+    broker.count = (unsigned)drag_items.count;
+    if(drag_items.count > 0)
+        [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
 }
 
 - (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender forType:(NSString *)type

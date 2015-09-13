@@ -627,35 +627,29 @@
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {
-    if(self.vfs->IsNativeFS() == false)
-        return;
-    
     auto item = m_View.item;
-    if(item || item.IsDotDot())
+    if( !item || item.IsDotDot() || !item.Host()->IsNativeFS() )
         return;
     
-    // TODO:
+    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:item];
+    if(ed == nil) {
+        NSBeep();
+        return;
+    }
     
-//    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
-//    if(ed == nil) {
-//        NSBeep();
-//        return;
-//    }
-//    
-//    string fn_path = self.currentDirectoryPath + item->Name();
-//    if(ed.terminal == false) {
-//        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
-//                                   withApplication:ed.path
-//                                     andDeactivate:true])
-//            NSBeep();
-//    }
-//    else {
-//        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
-//        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
-//                                             params:[ed substituteFileName:fn_path]
-//                                               file:fn_path
-//         ];
-//    }
+    if(ed.terminal == false) {
+        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8StdString:item.Path()]
+                                   withApplication:ed.path
+                                     andDeactivate:true])
+            NSBeep();
+    }
+    else {
+        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
+        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
+                                             params:[ed substituteFileName:item.Path()]
+                                               file:item.Path()
+         ];
+    }
 }
 
 - (void)DeleteFiles:(BOOL)_shift_behavior
@@ -776,41 +770,42 @@
 
 - (IBAction)OnCalculateChecksum:(id)sender
 {
-//    vector<string> filenames;
-//    vector<uint64_t> sizes;
-//    
-//    // grab selected regular files if any
-//    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
-//        auto item = m_Data.EntryAtSortPosition(i);
-//        if( item->CFIsSelected() && item->IsReg() && !item->IsSymlink() ) {
-//            filenames.emplace_back(item->Name());
-//            sizes.emplace_back(item->Size());
-//        }
-//    }
-//    
-//    // if have no - try focused item
-//    if( filenames.empty() )
-//        if( auto item = m_View.item )
-//            if( !item->IsDir() && !item->IsSymlink() ) {
-//                filenames.emplace_back(item->Name());
-//                sizes.emplace_back(item->Size());
-//            }
-//
-//    if( filenames.empty() )
-//        return;
-//    
-//    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
-//                                                                                            withSizes:move(sizes)
-//                                                                                               atHost:self.vfs
-//                                                                                               atPath:self.currentDirectoryPath];
-//    [sheet beginSheetForWindow:self.window
-//             completionHandler:^(NSModalResponse returnCode) {
-//                 if(sheet.didSaved) {
-//                     PanelControllerDelayedSelection req;
-//                     req.filename = sheet.savedFilename;
-//                     [self ScheduleDelayedSelectionChangeFor:req];
-//                 }
-//             }];
+    vector<string> filenames;
+    vector<uint64_t> sizes;
+    
+    // grab selected regular files if any
+    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
+        auto item = m_Data.EntryAtSortPosition(i);
+        auto item_vd = m_Data.VolatileDataAtSortPosition(i);
+        if( item_vd.is_selected() && item.IsReg() && !item.IsSymlink() ) {
+            filenames.emplace_back(item.Name());
+            sizes.emplace_back(item.Size());
+        }
+    }
+    
+    // if have no - try focused item
+    if( filenames.empty() )
+        if( auto item = m_View.item )
+            if( !item.IsDir() && !item.IsSymlink() ) {
+                filenames.emplace_back(item.Name());
+                sizes.emplace_back(item.Size());
+            }
+
+    if( filenames.empty() )
+        return;
+    
+    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
+                                                                                            withSizes:move(sizes)
+                                                                                               atHost:self.vfs
+                                                                                               atPath:self.currentDirectoryPath];
+    [sheet beginSheetForWindow:self.window
+             completionHandler:^(NSModalResponse returnCode) {
+                 if(sheet.didSaved) {
+                     PanelControllerDelayedSelection req;
+                     req.filename = sheet.savedFilename;
+                     [self ScheduleDelayedSelectionChangeFor:req];
+                 }
+             }];
 }
 
 - (IBAction)OnQuickNewFolder:(id)sender
@@ -972,24 +967,26 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-//    vector<unsigned> inds = self.selectedEntriesOrFocusedEntryIndeces;
-//    if(inds.empty())
-//        return;
-//    
-//    auto vfs = self.vfs;
-//    
-//    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
-//                                                                                 andIndeces:inds];
-//    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-//        if(returnCode == NSModalResponseOK) {
-//            auto src_paths = sheet.filenamesSource;
-//            auto dst_paths = sheet.filenamesDestination;
-//            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
-//                                                                              renamedFilepaths:move(dst_paths)
-//                                                                                           vfs:vfs];
-//            [self.state AddOperation:op];
-//        }
-//    }];    
+    if( !self.isUniform )
+        return;
+    
+    auto items = self.selectedEntriesOrFocusedEntries;
+    if( items.empty() )
+        return;
+    
+    auto vfs = self.vfs;
+    
+    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithItems:move(items)];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode == NSModalResponseOK) {
+            auto src_paths = sheet.filenamesSource;
+            auto dst_paths = sheet.filenamesDestination;
+            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
+                                                                              renamedFilepaths:move(dst_paths)
+                                                                                           vfs:vfs];
+            [self.state AddOperation:op];
+        }
+    }];    
 }
 
 @end

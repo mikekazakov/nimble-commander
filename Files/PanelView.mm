@@ -647,44 +647,44 @@ struct PanelViewStateStorage
 
 - (void) SavePathState
 {
-//    assert( dispatch_is_main_queue() );
-//    if(!m_State.Data)
-//        return;
-//    
-//    auto &listing = m_State.Data->Listing();
-//    
-//    auto item = self.item;
-//    if(item == nullptr)
-//        return;
-//    
-//    auto path = VFSPathStack(listing);
-//    auto &storage = m_States[hash<VFSPathStack>()(path)];
-//    
-//    storage.focused_item = item->Name();
-//    storage.dispay_offset = m_State.ItemsDisplayOffset;
+    assert( dispatch_is_main_queue() );
+    if(!m_State.Data || !m_State.Data->Listing().IsUniform())
+        return;
+    
+    auto &listing = m_State.Data->Listing();
+    
+    auto item = self.item;
+    if( !item )
+        return;
+    
+    auto path = VFSPathStack( listing.Host(), listing.Directory() );
+    auto &storage = m_States[hash<VFSPathStack>()(path)];
+    
+    storage.focused_item = item.Name();
+    storage.dispay_offset = m_State.ItemsDisplayOffset;
 }
 
 - (void) LoadPathState
 {
-//    assert( dispatch_is_main_queue() );
-//    if(!m_State.Data)
-//        return;
-//    
-//    auto &listing = m_State.Data->Listing();
-//    
-//    auto path = VFSPathStack(listing);
-//    auto it = m_States.find(hash<VFSPathStack>()(path));
-//    if(it == end(m_States))
-//        return;
-//    
-//    auto &storage = it->second;
-//    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
-//    if(cursor < 0)
-//        return;
-//    
-//    m_State.ItemsDisplayOffset = storage.dispay_offset;
-//    m_Presentation->SetCursorPos(cursor);
-//    [self OnCursorPositionChanged];
+    assert( dispatch_is_main_queue() );
+    if(!m_State.Data || !m_State.Data->Listing().IsUniform())
+        return;
+    
+    auto &listing = m_State.Data->Listing();
+    
+    auto path = VFSPathStack( listing.Host(), listing.Directory() );
+    auto it = m_States.find(hash<VFSPathStack>()(path));
+    if(it == end(m_States))
+        return;
+    
+    auto &storage = it->second;
+    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
+    if(cursor < 0)
+        return;
+    
+    m_State.ItemsDisplayOffset = storage.dispay_offset;
+    m_Presentation->SetCursorPos(cursor);
+    [self OnCursorPositionChanged];
 }
 
 - (void)directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load

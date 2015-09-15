@@ -145,12 +145,12 @@ loadPreviousState:(bool)_load_state
         
         [self CancelBackgroundOperations]; // clean running operations if any
         dispatch_or_run_in_main_queue([=]{
+            m_UpperDirectory.Reset();
             [m_View SavePathState];
             m_Data.Load(listing);
             [m_View dataUpdated];
             [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];
-            [m_View setNeedsDisplay];
             [self OnPathChanged];
         });
     };
@@ -163,6 +163,21 @@ loadPreviousState:(bool)_load_state
         m_DirectoryLoadingQ->Run(workblock);
         return 0;
     }
+}
+
+- (void) loadNonUniformListing:(const shared_ptr<VFSFlexibleListing>&)_listing
+{
+    [self CancelBackgroundOperations]; // clean running operations if any
+    dispatch_or_run_in_main_queue([=]{
+        if( self.isUniform )
+            m_UpperDirectory = VFSPath( self.vfs, self.currentDirectoryPath );
+        
+        [m_View SavePathState];
+        m_Data.Load(_listing);
+        [m_View dataUpdated];
+        [m_View directoryChangedWithFocusedFilename:"" loadPreviousState:false];
+        [self OnPathChanged];
+    });
 }
 
 - (void) RecoverFromInvalidDirectory

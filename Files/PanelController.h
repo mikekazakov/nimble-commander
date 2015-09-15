@@ -57,6 +57,9 @@ namespace panel
     PanelData                   m_Data;   // owns
     PanelView                   *m_View;  // create and owns
     
+    // Handmade upper directory for non-uniform listings like search results
+    VFSPath                     m_UpperDirectory;
+    
     // VFS changes observation
     VFSHostDirObservationTicket  m_UpdatesObservationTicket;
     

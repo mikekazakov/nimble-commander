@@ -879,6 +879,7 @@ struct PanelViewStateStorage
     assert( dispatch_is_main_queue() );
     if(!self.item || m_RenamingOriginalName != self.item.Name())
         [self discardFieldEditor];
+    [self setNeedsDisplay];
 }
 
 - (void) setQuickSearchPrompt:(NSString*)_text

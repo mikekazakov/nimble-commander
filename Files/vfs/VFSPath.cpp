@@ -8,6 +8,36 @@
 
 #import "VFS.h"
 
+VFSPath::VFSPath()
+{
+}
+
+VFSPath::VFSPath(const VFSHostPtr &_host, string _path):
+    m_Host(_host),
+    m_Path(move(_path))
+{
+}
+
+const VFSHostPtr& VFSPath::Host() const noexcept
+{
+    return m_Host;
+}
+const string& VFSPath::Path() const noexcept
+{
+    return m_Path;
+}
+
+VFSPath::operator bool() const noexcept
+{
+    return (bool)m_Host;
+}
+
+void VFSPath::Reset()
+{
+    m_Host.reset();
+    m_Path.clear();
+}
+
 VFSPathStack::Part::Part(VFSHost &_host):
     fs_tag(_host.FSTag()),
     junction(_host.JunctionPath()),

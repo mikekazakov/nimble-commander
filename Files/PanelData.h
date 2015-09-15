@@ -243,9 +243,11 @@ public:
     void Load  (const shared_ptr<VFSFlexibleListing> &_listing);
     void ReLoad(const shared_ptr<VFSFlexibleListing> &_listing);
 
-    /*[[deprecated]] */ const shared_ptr<VFSHost>     &Host() const;
-//    const VFSListing&             Listing() const;
-    const VFSFlexibleListing&             Listing() const;    
+    /**
+     * Will throw logic_error if called on listing with no common host.
+     */
+    const shared_ptr<VFSHost>&  Host() const;
+    const VFSFlexibleListing&   Listing() const;
     
     const DirSortIndT&      SortedDirectoryEntries() const;
     

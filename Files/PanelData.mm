@@ -102,8 +102,8 @@ check:  int dst = (dirbyrawcname)[dst_i];
 
 const shared_ptr<VFSHost> &PanelData::Host() const
 {
-    // TODO:!!!!
-    assert( m_Listing->HasCommonHost() );
+    if( !m_Listing->HasCommonHost() )
+        throw logic_error("PanelData::Host was called with no common host in listing");
     return m_Listing->Host(0);
 }
 

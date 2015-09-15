@@ -96,6 +96,69 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput
     return l;
 }
 
+VFSFlexibleListingInput VFSFlexibleListing::Compose(const vector<shared_ptr<VFSFlexibleListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
+{
+    if( _listings.size() != _items_indeces.size() )
+        throw invalid_argument("VFSFlexibleListing::Compose input containers has different sizes");
+    
+    VFSFlexibleListingInput result;
+    result.hosts.reset( variable_container<>::type::dense );
+    result.directories.reset( variable_container<>::type::dense );
+    result.display_filenames.reset( variable_container<>::type::sparse );
+    result.sizes.reset( variable_container<>::type::sparse );
+    result.inodes.reset( variable_container<>::type::sparse );
+    result.atimes.reset( variable_container<>::type::sparse );
+    result.mtimes.reset( variable_container<>::type::sparse );
+    result.ctimes.reset( variable_container<>::type::sparse );
+    result.btimes.reset( variable_container<>::type::sparse );
+    result.uids.reset( variable_container<>::type::sparse );
+    result.gids.reset( variable_container<>::type::sparse );
+    result.unix_flags.reset( variable_container<>::type::sparse );
+    result.symlinks.reset( variable_container<>::type::sparse );
+ 
+    unsigned count = 0;
+    for( size_t l = 0, e = _listings.size(); l != e; ++l ) {
+        auto &listing = *_listings[l];
+        auto &indeces = _items_indeces[l];
+        for(auto i: indeces) {
+            if( i >= listing.Count() )
+                throw invalid_argument("VFSFlexibleListing::Compose: invalid index");
+            
+            result.filenames.emplace_back ( listing.Filename(i) );
+            result.unix_modes.emplace_back( listing.UnixMode(i) );
+            result.unix_types.emplace_back( listing.UnixType(i) );
+            result.hosts.insert      ( count, listing.Host(i) );
+            result.directories.insert( count, listing.Directory(i) );
+            if( listing.HasDisplayFilename(i) )
+                result.display_filenames.insert( count, listing.DisplayFilename(i) );
+            if( listing.HasSize(i) )
+                result.sizes.insert( count, listing.Size(i) );
+            if( listing.HasInode(i) )
+                result.inodes.insert( count, listing.Inode(i) );
+            if( listing.HasATime(i) )
+                result.atimes.insert( count, listing.ATime(i) );
+            if( listing.HasBTime(i) )
+                result.btimes.insert( count, listing.BTime(i) );
+            if( listing.HasCTime(i) )
+                result.ctimes.insert( count, listing.CTime(i) );
+            if( listing.HasMTime(i) )
+                result.mtimes.insert( count, listing.MTime(i) );
+            if( listing.HasUID(i) )
+                result.uids.insert( count, listing.UID(i) );
+            if( listing.HasGID(i) )
+                result.gids.insert( count, listing.GID(i) );
+            if( listing.HasUnixFlags(i) )
+                result.unix_flags.insert( count, listing.UnixFlags(i) );
+            if( listing.HasSymlink(i) )
+                result.symlinks.insert( count, listing.Symlink(i) );
+            
+            count++;
+        }
+    }
+    
+    return result;
+}
+
 shared_ptr<VFSFlexibleListing> VFSFlexibleListing::EmptyListing()
 {
     static shared_ptr<VFSFlexibleListing> empty;
@@ -407,7 +470,8 @@ bool VFSFlexibleListing::IsDotDot(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
-    return s.length() == 2 && s[0]=='.' && s[1] == '.';
+//    return s.length() == 2 && s[0]=='.' && s[1] == '.';
+    return s[0]=='.' && s[1] == '.' && s[2] == 0;
 }
 
 bool VFSFlexibleListing::IsDir(unsigned _ind) const

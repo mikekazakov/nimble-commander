@@ -145,7 +145,8 @@
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc
 {
-    if( _pc.vfs->IsNativeFS() &&
+    if(_pc.isUniform &&
+       _pc.vfs->IsNativeFS() &&
        self.overlappedTerminalVisible &&
        m_OverlappedTerminal.terminal.isShellVirgin == true )
         [m_OverlappedTerminal.terminal changeWorkingDirectory:_pc.currentDirectoryPath];

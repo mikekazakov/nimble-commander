@@ -5,6 +5,8 @@
 //  Created by Michael G. Kazakov on 22.02.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
+
+#import <Habanero/algo.h>
 #import "PanelController.h"
 #import "Common.h"
 #import "MainWindowController.h"
@@ -254,31 +256,33 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (bool) HandleGoToUpperDirectory
 {
-    path cur = path(m_Data.DirectoryPathWithTrailingSlash());
-    if(cur.empty()) return false;
-    if(cur == "/")
-    {
-        if(self.vfs->Parent() != nullptr)
-        {
-            path junct = self.vfs->JunctionPath();
-            assert(!junct.empty());
-            string dir = junct.parent_path().native();
-            string sel_fn = junct.filename().native();
+    if( self.isUniform  ) {
+        path cur = path(m_Data.DirectoryPathWithTrailingSlash());
+        if( cur.empty() )
+            return false;
+        if( cur == "/" ) {
+            if( self.vfs->Parent() != nullptr ) {
+                path junct = self.vfs->JunctionPath();
+                assert(!junct.empty());
+                string dir = junct.parent_path().native();
+                string sel_fn = junct.filename().native();
+                
+                if(self.vfs->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+                    return true; // silently reap this command, since user refuses to grant an access
+                return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn loadPreviousState:true async:true] == 0;
+            }
+        }
+        else {
+            string dir = cur.parent_path().remove_filename().native();
+            string sel_fn = cur.parent_path().filename().native();
             
-            if(self.vfs->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
+            if( self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir] )
                 return true; // silently reap this command, since user refuses to grant an access
-            return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn loadPreviousState:true async:true] == 0;
+            return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn loadPreviousState:true async:true] == 0;
         }
     }
-    else
-    {
-        string dir = cur.parent_path().remove_filename().native();
-        string sel_fn = cur.parent_path().filename().native();
-        
-        if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
-            return true; // silently reap this command, since user refuses to grant an access
-        return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn loadPreviousState:true async:true] == 0;
-    }
+    else if( m_UpperDirectory )
+        return [self GoToDir:m_UpperDirectory.Path() vfs:m_UpperDirectory.Host() select_entry:"" loadPreviousState:true async:true] == 0;
     return false;
 }
 
@@ -290,21 +294,17 @@ void panel::GenericCursorPersistance::Restore() const
         return false;
     
     // Handle directories.
-    if(entry.IsDir())
-    {
+    if(entry.IsDir()) {
         if(entry.IsDotDot())
             return [self HandleGoToUpperDirectory];
         
-        path dir = path(m_Data.DirectoryPathWithTrailingSlash()) / entry.Name();
-        
-        if(self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir.native()])
+        if(entry.Host()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:entry.Path()])
             return true; // silently reap this command, since user refuses to grant an access
         
-        return [self GoToDir:dir.native() vfs:self.vfs select_entry:"" async:true] == 0;
+        return [self GoToDir:entry.Path() vfs:entry.Host() select_entry:"" async:true] == 0;
     }
     // archive stuff here
-    else if(configuration::has_archives_browsing)
-    {
+    else if(configuration::has_archives_browsing) {
         auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.currentFocusedEntryPath,
                                                          self.vfs);
         if(arhost)
@@ -328,9 +328,10 @@ void panel::GenericCursorPersistance::Restore() const
     
     // need more sophisticated executable handling here
     if(configuration::has_terminal &&
-       self.vfs->IsNativeFS() &&
+       !entry.IsDotDot() &&
+       entry.Host()->IsNativeFS() &&
        panel::IsEligbleToTryToExecuteInConsole(entry)) {
-        [self.state requestTerminalExecution:entry.Name() at:self.currentDirectoryPath];
+        [self.state requestTerminalExecution:entry.Name() at:entry.Directory()];
         return;
     }
     
@@ -390,8 +391,8 @@ void panel::GenericCursorPersistance::Restore() const
         unsigned short const keycode = event.keyCode;
         
         if(keycode == 3 ) { // 'F' button
-            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSFunctionKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-//                [self abraCadabra];
+            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+                [self testNonUniformListing];
                 return true;
             }
         }
@@ -555,12 +556,13 @@ void panel::GenericCursorPersistance::Restore() const
 {
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
-    m_UpdatesObservationTicket.reset();
-    m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), [=]{
-        dispatch_to_main_queue([=]{
-            [(PanelController *)weakself RefreshDirectory];
+    m_UpdatesObservationTicket.reset();    
+    if( self.isUniform )
+        m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), [=]{
+            dispatch_to_main_queue([=]{
+                [(PanelController *)weakself RefreshDirectory];
+            });
         });
-    });
     
     [self ClearSelectionRequest];
     [self QuickSearchClearFiltering];
@@ -568,10 +570,11 @@ void panel::GenericCursorPersistance::Restore() const
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
 
-    if( self.isUniform  )
+    if( self.isUniform  ) {
         m_History.Put( VFSPathStack(self.vfs, self.currentDirectoryPath) );
-    if(self.vfs->IsNativeFS())
-        m_LastNativeDirectory = self.currentDirectoryPath;
+        if( self.vfs->IsNativeFS() )
+            m_LastNativeDirectory = self.currentDirectoryPath;
+    }
 }
 
 - (void) OnCursorChanged
@@ -582,7 +585,8 @@ void panel::GenericCursorPersistance::Restore() const
                             [SharingService SharingEnabledForItem:m_View.item];
     
     // update QuickLook if any
-    [(QuickLookView *)m_QuickLook PreviewItem:self.currentFocusedEntryPath vfs:self.vfs];
+    if( auto i = self.view.item )
+        [(QuickLookView *)m_QuickLook PreviewItem:i.Path() vfs:i.Host()];
 }
 
 - (void)OnShareButton:(id)sender
@@ -604,8 +608,11 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) UpdateBriefSystemOverview
 {
-    [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.currentDirectoryPath
-                                                             host:self.vfs];
+    if( auto i = self.view.item )
+        [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:i.Directory() host:i.Host()];
+    else if( self.isUniform )
+        [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.currentDirectoryPath
+                                                                 host:self.vfs];
 }
 
 - (void) PanelViewCursorChanged:(PanelView*)_view
@@ -725,6 +732,30 @@ void panel::GenericCursorPersistance::Restore() const
 - (bool)ensureCanGoToNativeFolderSync:(const string&)_path
 {
     return [PanelController ensureCanGoToNativeFolderSync:_path];
+}
+
+- (void) testNonUniformListing
+{
+    shared_ptr<VFSFlexibleListing> l1, l2;
+    VFSNativeHost::SharedHost()->FetchFlexibleListing("/users/migun/", l1, 0, 0);
+    VFSNativeHost::SharedHost()->FetchFlexibleListing("/users/migun/downloads/", l2, 0, 0);
+  
+    vector<shared_ptr<VFSFlexibleListing>> original_listings = {l1, l2};
+    vector<vector<unsigned>> indeces;
+    
+    indeces.emplace_back();
+    indeces.back().resize(l1->Count());
+    generate(begin(indeces.back()), end(indeces.back()), linear_generator(0, 1));
+    
+    indeces.emplace_back();
+    indeces.back().resize(l2->Count()-1);
+    generate(begin(indeces.back()), end(indeces.back()), linear_generator(1, 1));
+
+    auto source = VFSFlexibleListing::Compose(original_listings, indeces);
+    
+    auto new_listing = VFSFlexibleListing::Build(move(source));
+    
+    [self loadNonUniformListing:new_listing];
 }
 
 @end

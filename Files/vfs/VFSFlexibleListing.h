@@ -100,6 +100,13 @@ public:
     static shared_ptr<VFSFlexibleListing> EmptyListing();
     static shared_ptr<VFSFlexibleListing> Build(VFSFlexibleListingInput &&_input);
     
+    /**
+     * compose many listings into a new ListingInput.
+     * it will contain only sparse-based variable containers.
+     * will throw on errors
+     */
+    static VFSFlexibleListingInput Compose(const vector<shared_ptr<VFSFlexibleListing>> &_listings, const vector< vector<unsigned> > &_items_indeces);
+    
     unsigned            Count               () const noexcept { return m_ItemsCount; };
     bool                IsUniform           () const;
     bool                HasCommonHost       () const;

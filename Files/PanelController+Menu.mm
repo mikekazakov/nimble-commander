@@ -448,10 +448,51 @@
     [[DetailedVolumeInformationSheetController new] ShowSheet:self.window destpath:path.c_str()];
 }
 
+- (shared_ptr<VFSFlexibleListing>) fetchSearchResultsAsListing:(const map<string, vector<string>> &)_dir_to_filenames  atVFS:(VFSHostPtr)_vfs
+{
+    vector<shared_ptr<VFSFlexibleListing>> listings;
+    vector<vector<unsigned>> indeces;
+    
+    for(auto &directory: _dir_to_filenames) {
+        shared_ptr<VFSFlexibleListing> listing;
+        if( _vfs->FetchFlexibleListing(directory.first.c_str(), listing, m_VFSFetchingFlags, nullptr) == 0) {
+            listings.emplace_back(listing);
+            indeces.emplace_back();
+            auto &ind = indeces.back();
+
+            unordered_map<string, unsigned> listing_fn_ind;
+            for(unsigned i = 0, e = listing->Count(); i != e; ++i)
+                listing_fn_ind[ listing->Filename(i) ] = i;
+            
+            for( auto &filename: directory.second ) {
+                auto it = listing_fn_ind.find(filename);
+                if( it != end(listing_fn_ind) )
+                    ind.emplace_back( it->second );
+            }
+        }
+    }
+    
+    return VFSFlexibleListing::Build( VFSFlexibleListing::Compose(listings, indeces) );
+}
+
 - (IBAction)performFindPanelAction:(id)sender {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
+    sheet.OnPanelize = [=](const map<string, vector<string>> &_dir_to_filenames) {
+        auto host = sheet.host;
+    
+        dispatch_to_main_queue([=]{
+            auto l = [self fetchSearchResultsAsListing:_dir_to_filenames atVFS:host];
+            
+            [self loadNonUniformListing:l];
+            
+            
+            
+            
+        });
+    };
+    
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(auto item = sheet.SelectedItem)
             [self GoToDir:item->dir_path vfs:self.vfs select_entry:item->filename async:true];
@@ -459,10 +500,11 @@
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
-    if(!m_View.item || m_View.item.IsDir())
-        return;
-    string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item.Name();
-    [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.vfs];
+    if( auto i = self.view.item ) {
+        if( i.IsDir() )
+            return;
+        [self.mainWindowController RequestBigFileView:i.Path() with_fs:i.Host()];
+    }
 }
 
 - (IBAction)DoSelectByMask:(bool)_select {

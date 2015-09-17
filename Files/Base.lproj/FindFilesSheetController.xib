@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
@@ -211,7 +211,7 @@ DQ
                         </connections>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XFM-mL-fme">
-                        <rect key="frame" x="252" y="13" width="92" height="32"/>
+                        <rect key="frame" x="160" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="LbT-45-6a9"/>
                         </constraints>
@@ -453,13 +453,28 @@ DQ
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g6m-zK-tE9">
+                        <rect key="frame" x="252" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Frc-uX-PD0"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Panel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a08-QI-zeL">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnPanelize:" target="-2" id="W79-g3-57Y"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="3im-V9-my6" secondAttribute="bottom" constant="8" symbolic="YES" id="43f-vg-Mzk"/>
                     <constraint firstItem="XFM-mL-fme" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rT5-dE-JF7" secondAttribute="trailing" priority="250" constant="8" id="4B5-rI-TfI"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" id="5xp-dR-Q9F"/>
+                    <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="g6m-zK-tE9" secondAttribute="baseline" id="7mH-JL-ILg"/>
                     <constraint firstAttribute="centerX" secondItem="3im-V9-my6" secondAttribute="centerX" id="A1v-yf-5gv"/>
                     <constraint firstItem="00I-4I-INo" firstAttribute="leading" secondItem="40b-pd-d3f" secondAttribute="trailing" constant="12" symbolic="YES" id="EjG-pB-ubm"/>
+                    <constraint firstItem="40b-pd-d3f" firstAttribute="leading" secondItem="g6m-zK-tE9" secondAttribute="trailing" constant="12" symbolic="YES" id="I6N-9s-MVV"/>
                     <constraint firstItem="40b-pd-d3f" firstAttribute="baseline" secondItem="00I-4I-INo" secondAttribute="baseline" id="QtB-9M-dJj"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="baseline" secondItem="XFM-mL-fme" secondAttribute="baseline" id="Rpx-RL-jGV"/>
                     <constraint firstItem="XFM-mL-fme" firstAttribute="baseline" secondItem="40b-pd-d3f" secondAttribute="baseline" id="Y7X-RC-ZeI"/>
@@ -467,11 +482,11 @@ DQ
                     <constraint firstItem="40b-pd-d3f" firstAttribute="top" secondItem="axX-0L-v6g" secondAttribute="bottom" constant="20" symbolic="YES" id="YDo-HV-w6L"/>
                     <constraint firstItem="3im-V9-my6" firstAttribute="top" secondItem="2" secondAttribute="top" id="atJ-OV-YLN"/>
                     <constraint firstAttribute="bottom" secondItem="00I-4I-INo" secondAttribute="bottom" constant="20" symbolic="YES" id="dgX-2Y-QXz"/>
+                    <constraint firstItem="g6m-zK-tE9" firstAttribute="leading" secondItem="XFM-mL-fme" secondAttribute="trailing" constant="12" symbolic="YES" id="eNe-Qt-WaG"/>
                     <constraint firstAttribute="trailing" secondItem="00I-4I-INo" secondAttribute="trailing" constant="20" symbolic="YES" id="f0v-6e-fOK"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="g2D-tB-Ab3"/>
                     <constraint firstItem="WmK-6C-oal" firstAttribute="baseline" secondItem="rT5-dE-JF7" secondAttribute="baseline" id="kDR-1I-YwO"/>
                     <constraint firstItem="rT5-dE-JF7" firstAttribute="leading" secondItem="WmK-6C-oal" secondAttribute="trailing" constant="8" symbolic="YES" id="onO-Nr-1kq"/>
-                    <constraint firstItem="40b-pd-d3f" firstAttribute="leading" secondItem="XFM-mL-fme" secondAttribute="trailing" constant="12" symbolic="YES" id="rBr-Rj-jqx"/>
                     <constraint firstItem="axX-0L-v6g" firstAttribute="top" secondItem="2" secondAttribute="top" constant="190" id="rfW-EE-0xd"/>
                     <constraint firstAttribute="trailing" secondItem="3im-V9-my6" secondAttribute="trailing" id="uCE-oa-5Lt"/>
                     <constraint firstItem="3im-V9-my6" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="wkq-7q-Iab"/>

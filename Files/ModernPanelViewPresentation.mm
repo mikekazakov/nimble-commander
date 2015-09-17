@@ -318,6 +318,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     const int columns_count = GetNumberOfItemColumns();
     const bool active = View().active;
     const bool wnd_active = NSView.focusView.window.isKeyWindow;
+    const bool is_listing_uniform = m_State->Data->Listing().IsUniform();
     
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
@@ -481,8 +482,10 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             // Draw item text.
             NSDictionary *item_text_attr = focused ? attrs.focused : attrs.regular;
             
-            if(rect.size.width > 0)
-                [item.NSDisplayName() drawWithRect:rect options:0 attributes:item_text_attr];
+            if(rect.size.width > 0) {
+                NSString *string = is_listing_uniform ? item.NSDisplayName() : [NSString stringWithUTF8StdString:item.Path()];
+                [string drawWithRect:rect options:0 attributes:item_text_attr];
+            }
             
             // Draw icon
             NSImageRep *image_rep = m_IconCache.ImageFor(item, item_vd);

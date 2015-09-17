@@ -15,6 +15,7 @@
 @class QuickLookView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
+@class MainWindowController;
 
 struct PanelQuickSearchMode
 {
@@ -126,6 +127,7 @@ namespace panel
 }
 
 @property (nonatomic) MainWindowFilePanelState* state;
+@property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;

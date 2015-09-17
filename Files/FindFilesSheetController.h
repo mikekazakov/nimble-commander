@@ -48,6 +48,7 @@ struct FindFilesSheetControllerFoundItem
 @property (strong) IBOutlet NSButton *SearchInSubDirsButton;
 @property (strong) IBOutlet NSPopUpButton *EncodingsPopUp;
 @property FindFilesSheetFoundItem* focusedItem; // may be nullptr
+@property function<void(const map<string, vector<string>>&_dir_to_filenames)> OnPanelize;
 
 - (FindFilesSheetControllerFoundItem*) SelectedItem; // may be nullptr
 

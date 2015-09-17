@@ -170,6 +170,11 @@ void panel::GenericCursorPersistance::Restore() const
     return self.state.window;
 }
 
+- (MainWindowController *)mainWindowController
+{
+    return (MainWindowController*)self.window.delegate;
+}
+
 - (bool) isUniform
 {
     return m_Data.Listing().IsUniform();
@@ -211,17 +216,11 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) HandleOpenInSystem
 {
-    if(auto item = m_View.item)
-    {
-        string path = m_Data.DirectoryPathWithTrailingSlash();
-
-        // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"
-        if(!item.IsDotDot())
-            path += item.Name();
-
-        // may go async here on non-native VFS
-        PanelVFSFileWorkspaceOpener::Open(path, m_Data.Host());
-    }
+    // may go async here on non-native VFS
+    // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"    
+    if( auto item = m_View.item )
+        PanelVFSFileWorkspaceOpener::Open(item.IsDotDot() ? item.Directory() : item.Path(),
+                                          item.Host());
 }
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode

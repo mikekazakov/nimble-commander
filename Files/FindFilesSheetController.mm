@@ -128,11 +128,13 @@ static const int g_MaximumSearchResults = 16384;
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
     void                        (^m_Handler)();
+    function<void(const map<string, vector<string>>&_dir_to_filenames)> m_OnPanelize;
 }
 
 @synthesize FoundItems = m_FoundItems;
 @synthesize host = m_Host;
 @synthesize path = m_Path;
+@synthesize OnPanelize = m_OnPanelize;
 
 - (id) init
 {
@@ -465,6 +467,20 @@ static const int g_MaximumSearchResults = 16384;
     dispatch_to_main_queue_after(10ms, [=]{
         self.SearchButton.keyEquivalent = @"\r";
     });
+}
+
+- (IBAction)OnPanelize:(id)sender
+{
+    map<string, vector<string>> results; // directory->filenames
+    for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
+        auto d = item.data;
+        results[d->dir_path].emplace_back( d->filename );
+    }
+
+    if( m_OnPanelize )
+        m_OnPanelize( results );
+    
+    [self OnClose:self];
 }
 
 @end

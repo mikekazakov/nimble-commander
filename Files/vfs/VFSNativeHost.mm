@@ -154,6 +154,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     listing_source.gids.reset( variable_container<>::type::dense );
     listing_source.sizes.reset( variable_container<>::type::dense );
     listing_source.symlinks.reset( variable_container<>::type::sparse );
+    mutex symlinks_guard;
     
     unsigned amount = (unsigned)dirents.size();
     listing_source.filenames.resize(amount);
@@ -203,6 +204,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             ssize_t sz = io.readlink(filename.c_str(), linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
+                lock_guard<mutex> guard(symlinks_guard);
                 listing_source.symlinks.insert(n, linkpath);
             }
             

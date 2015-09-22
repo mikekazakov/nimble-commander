@@ -42,7 +42,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
         self.Text.stringValue = last;
     
     self.Text.delegate = self;
-    [self controlTextDidChange:nil];
+    [self controlTextDidChange:[NSNotification notificationWithName:@"" object:nil]];
 }
 
 - (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler

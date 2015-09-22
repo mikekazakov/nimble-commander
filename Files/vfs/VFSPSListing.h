@@ -41,9 +41,9 @@ struct VFSPSListingItem : VFSListingItem
     virtual mode_t          UnixMode()  const override { return S_IFREG | S_IRUSR | S_IRGRP; }
     
     
-    virtual bool            HasExtension() const { return true; }
+    virtual bool            HasExtension() const override { return true; }
 //    virtual unsigned short  ExtensionOffset() const { return 0; }
-    virtual const char*     Extension() const { return "txt"; }
+    virtual const char*     Extension() const override { return "txt"; }
     
     
     inline void Destroy()

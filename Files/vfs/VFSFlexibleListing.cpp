@@ -155,6 +155,15 @@ VFSFlexibleListingInput VFSFlexibleListing::Compose(const vector<shared_ptr<VFSF
             count++;
         }
     }
+    if( result.sizes.is_contiguous() )      result.sizes.compress_contiguous();
+    if( result.inodes.is_contiguous() )     result.inodes.compress_contiguous();
+    if( result.atimes.is_contiguous() )     result.atimes.compress_contiguous();
+    if( result.mtimes.is_contiguous() )     result.mtimes.compress_contiguous();
+    if( result.ctimes.is_contiguous() )     result.ctimes.compress_contiguous();
+    if( result.btimes.is_contiguous() )     result.btimes.compress_contiguous();
+    if( result.uids.is_contiguous() )       result.uids.compress_contiguous();
+    if( result.gids.is_contiguous() )       result.gids.compress_contiguous();
+    if( result.unix_flags.is_contiguous() ) result.unix_flags.compress_contiguous();
     
     return result;
 }

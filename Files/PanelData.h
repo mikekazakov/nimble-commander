@@ -232,6 +232,7 @@ public:
         time_t      mtime;
         time_t      btime;
         bool        is_dir;
+        bool        is_valid() const noexcept;
     };
     
     PanelData();

@@ -26,7 +26,7 @@ public:
     virtual uint32_t GetOffsetWithinWindow() override;
     virtual void MoveOffsetWithinWindow(uint32_t _offset) override;
     virtual void HandleVerticalScroll(double _pos) override;
-    virtual void OnFrameChanged();
+    virtual void OnFrameChanged() override;
     virtual void ScrollToByteOffset(uint64_t _offset) override;
     virtual void OnMouseDown(NSEvent *_event) override;
     virtual void OnScrollWheel(NSEvent *theEvent) override;

@@ -95,6 +95,20 @@ public:
      */
     bool has( unsigned _at ) const;
     
+    /**
+     * return true if:
+     * - type is common or dense
+     * - type is sparse and map containst all keys from [0, size)
+     */
+    bool is_contiguous() const noexcept;
+    
+    /**
+     * transforms sparse container with contiguous elements into a dense container.
+     * will throw a logic_error if any element is missing ( container is non contiguous ).
+     * if container isn't sparse type - will throw a logic_error.
+     */
+    void compress_contiguous();
+    
 private:
     typedef value_type                          common_type;
     typedef std::unordered_map<unsigned, T>     sparse_type;
@@ -403,4 +417,36 @@ template <class T>
 bool variable_container<T>::empty() const
 {
     return size() == 0;
+}
+
+template <class T>
+bool variable_container<T>::is_contiguous() const noexcept
+{
+    if( m_Type == type::dense || m_Type == type::common )
+        return true;
+    
+    for( unsigned i = 0, e = size(); i != e; ++i )
+        if( !has(i) )
+            return false;
+    
+    return true;
+}
+
+template <class T>
+void variable_container<T>::compress_contiguous()
+{
+    if( m_Type != type::sparse )
+        throw std::logic_error("variable_container<T>::compress_contiguous was called for a non-sparse container");
+    
+    variable_container<T> new_dense( type::dense );
+    
+    unsigned i = 0, e = size();
+    auto &dense = new_dense.Dense();
+    dense.reserve( e );
+    
+    auto &sparse = Sparse();
+    for(; i != e; ++i  )
+        dense.emplace_back( move(sparse.at(i)) );
+    
+    *this = move(new_dense);
 }

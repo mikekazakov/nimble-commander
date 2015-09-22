@@ -16,6 +16,11 @@ static inline PanelSortMode DefaultSortMode()
     
 }
 
+bool PanelData::EntrySortKeys::is_valid() const noexcept
+{
+    return !name.empty() && display_name != nil;
+}
+
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
     m_Listing(VFSFlexibleListing::EmptyListing()),
@@ -852,6 +857,9 @@ PanelData::EntrySortKeys PanelData::EntrySortKeysAtSortPosition(int _pos) const
 
 int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
 {
+    if( !_keys.is_valid() )
+        return -1;
+    
     auto it = lower_bound(begin(m_EntriesByCustomSort),
                           end(m_EntriesByCustomSort),
                           _keys,

@@ -333,7 +333,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
                                       forView:self.view
                                       classes:@[NSPasteboardItem.class]
-                                searchOptions:nil
+                                searchOptions:@{}
                                    usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
                                        if( [((NSPasteboardItem*)draggingItem.item).types containsObject:type] )
                                            urls_amount++;

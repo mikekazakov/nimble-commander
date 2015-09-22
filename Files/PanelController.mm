@@ -607,11 +607,12 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) UpdateBriefSystemOverview
 {
-    if( auto i = self.view.item )
-        [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:i.Directory() host:i.Host()];
-    else if( self.isUniform )
-        [(BriefSystemOverview *)m_BriefSystemOverview UpdateVFSTarget:self.currentDirectoryPath
-                                                                 host:self.vfs];
+    if( auto bso = (BriefSystemOverview *)m_BriefSystemOverview ) {
+        if( auto i = self.view.item )
+            [bso UpdateVFSTarget:i.Directory() host:i.Host()];
+        else if( self.isUniform )
+            [bso UpdateVFSTarget:self.currentDirectoryPath host:self.vfs];
+    }
 }
 
 - (void) PanelViewCursorChanged:(PanelView*)_view

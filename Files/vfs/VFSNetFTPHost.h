@@ -54,7 +54,7 @@ public:
                                 VFSCancelChecker _cancel_checker
                                 ) override;
     
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker);
+    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
     virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
     virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
     

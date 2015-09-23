@@ -555,26 +555,26 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-                                                                     srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.vfs
-                                                                     dstroot:m_OppositeController.currentDirectoryPath
-                                                                      dstvfs:m_OppositeController.vfs
-                                 ];
-    op.TargetPanel = m_OppositeController;
-    [m_MainWnd AddOperation:op];
+//    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
+//                                                                     srcroot:m_DirPath
+//                                                                      srcvfs:m_CurrentController.vfs
+//                                                                     dstroot:m_OppositeController.currentDirectoryPath
+//                                                                      dstvfs:m_OppositeController.vfs
+//                                 ];
+//    op.TargetPanel = m_OppositeController;
+//    [m_MainWnd AddOperation:op];
 }
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-                                                                     srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.vfs
-                                                                     dstroot:m_DirPath
-                                                                      dstvfs:m_CurrentController.vfs
-                                 ];
-    op.TargetPanel = m_CurrentController;
-    [m_MainWnd AddOperation:op];
+//    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
+//                                                                     srcroot:m_DirPath
+//                                                                      srcvfs:m_CurrentController.vfs
+//                                                                     dstroot:m_DirPath
+//                                                                      dstvfs:m_CurrentController.vfs
+//                                 ];
+//    op.TargetPanel = m_CurrentController;
+//    [m_MainWnd AddOperation:op];
 }
 
 - (void)OnShareWithService:(id)sender

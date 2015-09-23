@@ -10,6 +10,7 @@
 #import <sys/dirent.h>
 #import <sys/stat.h>
 #import <sys/xattr.h>
+#import <Habanero/algo.h>
 #import "3rd_party/libarchive/archive.h"
 #import "3rd_party/libarchive/archive_entry.h"
 #import "FileCompressOperationJob.h"
@@ -56,6 +57,13 @@ static bool WriteEAsIfAny(shared_ptr<VFSFile> _src, struct archive *_a, const ch
     return true;
 }
 
+static string EnsureTrailingSlash( string _s )
+{
+    if( _s.empty() || _s.back() != '/')
+        _s += '/';
+    return _s;
+}
+
 FileCompressOperationJob::FileCompressOperationJob():
     m_SkipAll(0),
     m_SourceTotalBytes(0),
@@ -69,34 +77,37 @@ FileCompressOperationJob::~FileCompressOperationJob()
 {
 }
 
-void FileCompressOperationJob::Init(vector<string>&& _src_files,
-          const string&_src_root,
-          VFSHostPtr _src_vfs,
+void FileCompressOperationJob::Init(vector<VFSFlexibleListingItem> _src_files,
           const string&_dst_root,
           VFSHostPtr _dst_vfs,
           FileCompressOperation *_operation)
 {
-    m_InitialItems = move(_src_files);
-    m_SrcVFS = _src_vfs;
+    m_InitialListingItems = move(_src_files);
     m_DstVFS = _dst_vfs;
-    m_SrcRoot = _src_root;
-    if(m_SrcRoot.empty() || m_SrcRoot.back() != '/') m_SrcRoot += '/';
-    m_DstRoot = _dst_root;
-    if(m_DstRoot.empty() || m_DstRoot.back() != '/') m_DstRoot += '/';
-
+    m_DstRoot =  EnsureTrailingSlash( _dst_root );
     m_Operation = _operation;
 }
 
 void FileCompressOperationJob::Do()
 {
-    if(FindSuitableFilename(m_TargetFileName))
-    {
+    string proposed_arcname;
+    if( m_InitialListingItems ) {
+        proposed_arcname = m_InitialListingItems->size() > 1 ? "Archive"s : m_InitialListingItems->front().Filename();
+    }
+    else {
+        assert( 0 );
+    }
+    
+    string arcname = FindSuitableFilename(proposed_arcname);
+    if( !arcname.empty() ) {
+        m_TargetFileName = arcname;
+        
         ScanItems();
         m_DoneScanning = true;
 
         m_Stats.SetMaxValue(m_SourceTotalBytes);
         
-        m_DstVFS->CreateFile(m_TargetFileName, m_TargetFile, 0);
+        m_DstVFS->CreateFile(m_TargetFileName.c_str(), m_TargetFile, 0);
         if(m_TargetFile->Open(VFSFlags::OF_Write | VFSFlags::OF_Create |
                               VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp) == 0)
         {
@@ -113,7 +124,7 @@ void FileCompressOperationJob::Do()
             m_TargetFile->Close();
     
             if(CheckPauseOrStop())
-                m_DstVFS->Unlink(m_TargetFileName, 0);
+                m_DstVFS->Unlink(m_TargetFileName.c_str(), 0);
         }
     }
     
@@ -130,106 +141,98 @@ ssize_t	FileCompressOperationJob::la_archive_write_callback(struct archive *, vo
     return ARCHIVE_FATAL;
 }
 
-bool FileCompressOperationJob::FindSuitableFilename(char* _full_filename)
+string FileCompressOperationJob::FindSuitableFilename(const string& _proposed_arcname) const
 {
     char fn[MAXPATHLEN];
-    char arc_pref[MAXPATHLEN];
     
-    if(m_InitialItems.size() > 1)
-        strcpy(arc_pref, "Archive");
-    else
-        strcpy(arc_pref, m_InitialItems.front().c_str());
-    
-    sprintf(fn, "%s%s.zip", m_DstRoot.c_str(), arc_pref);
+    sprintf(fn, "%s%s.zip", m_DstRoot.c_str(), _proposed_arcname.c_str());
     VFSStat st;
     if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
-    {
-        strcpy(_full_filename, fn);
-        return true;
-    }
+        return fn;
 
-    for(int i = 2; i < 100; ++i)
-    {
-        sprintf(fn, "%s%s %d.zip", m_DstRoot.c_str(), arc_pref, i);
+    for(int i = 2; i < 100; ++i) {
+        sprintf(fn, "%s%s %d.zip", m_DstRoot.c_str(), _proposed_arcname.c_str(), i);
         if(m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0)
-        {
-            strcpy(_full_filename, fn);
-            return true;
-        }
+            return fn;
     }
-    return false;
+    return "";
 }
 
 void FileCompressOperationJob::ScanItems()
 {
     // iterate in original filenames
-    for(const auto&i: m_InitialItems)
-    {
-        ScanItem(i.c_str(), i.c_str(), 0);
-        
-        if(CheckPauseOrStop()) return;
-    }
+    
+    if( m_InitialListingItems )
+        for(const auto&i: *m_InitialListingItems) {
+            ScanItem(i.Name(),
+                     i.Name(),
+                     FindOrInsertHost(i.Host()),
+                     FindOrInsertBasePath(i.Directory()),
+                     nullptr
+                     );
+            
+            if(CheckPauseOrStop())
+                return;
+        }    
 }
 
-void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, const chained_strings::node *_prefix)
+void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, unsigned _vfs_no, unsigned _basepath_no, const chained_strings::node *_prefix)
 {
-    char fullpath[MAXPATHLEN];
-    strcpy(fullpath, m_SrcRoot.c_str());
-    strcat(fullpath, _full_path);
-    
     VFSStat stat_buffer;
+
+    SourceItemMeta meta;
+    meta.base_path = _basepath_no;
+    meta.vfs = _vfs_no;
+    auto &vfs = m_SourceHosts[_vfs_no];
+    auto longpath = m_BasePaths[_basepath_no] + _full_path;
     
 retry_stat:
-    int stat_ret = m_SrcVFS->Stat(fullpath, stat_buffer, VFSFlags::F_NoFollow, 0); // no symlinks support currently
+    int stat_ret = vfs->Stat(longpath.c_str(), stat_buffer, VFSFlags::F_NoFollow, 0);
     if(stat_ret == VFSError::Ok) {
-        if(S_ISREG(stat_buffer.mode))
-        {
-            m_ItemFlags.push_back((uint8_t)ItemFlags::no_flags);
+        if( S_ISREG(stat_buffer.mode) ) {
+            meta.flags = (uint8_t)ItemFlags::no_flags;
+            m_ScannedItemsMeta.emplace_back( meta );
             m_ScannedItems.push_back(_short_path, _prefix);
             m_SourceTotalBytes += stat_buffer.size;
         }
-        if(S_ISLNK(stat_buffer.mode))
-        {
-            m_ItemFlags.push_back((uint8_t)ItemFlags::symlink);
+        else if( S_ISLNK(stat_buffer.mode) ) {
+            meta.flags = (uint8_t)ItemFlags::symlink;
+            m_ScannedItemsMeta.emplace_back( meta );
             m_ScannedItems.push_back(_short_path, _prefix);
         }
-        else if(S_ISDIR(stat_buffer.mode))
-        {
+        else if( S_ISDIR(stat_buffer.mode) ) {
             char dirpath[MAXPATHLEN];
             sprintf(dirpath, "%s/", _short_path);
-            m_ItemFlags.push_back((uint8_t)ItemFlags::is_dir);
+            meta.flags = (uint8_t)ItemFlags::is_dir;
+            m_ScannedItemsMeta.emplace_back( meta );
             m_ScannedItems.push_back(dirpath, _prefix);
             auto dirnode = &m_ScannedItems.back();
             
-        retry_opendir:
-            int iter_ret = m_SrcVFS->IterateDirectoryListing(fullpath, [&](const VFSDirEnt &_dirent){
+            retry_opendir:
+            int iter_ret = vfs->IterateDirectoryListing(longpath.c_str(), [&](const VFSDirEnt &_dirent){
                 char dirpathnested[MAXPATHLEN];
                 sprintf(dirpathnested, "%s/%s", _full_path, _dirent.name);
-                ScanItem(dirpathnested, _dirent.name, dirnode);
+                ScanItem(dirpathnested, _dirent.name, _vfs_no, _basepath_no, dirnode);
                 if (CheckPauseOrStop())
                     return false;
                 return true;
             });
-            if(iter_ret != VFSError::Ok)
-            {
-                int result = [[m_Operation OnCantAccessSourceDir:VFSError::ToNSError(iter_ret) forPath:fullpath] WaitForResult];
+            if(iter_ret != VFSError::Ok) {
+                int result = [[m_Operation OnCantAccessSourceDir:VFSError::ToNSError(iter_ret) forPath:longpath.c_str()] WaitForResult];
                 if (result == OperationDialogResult::Retry) goto retry_opendir;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
-                else if (result == OperationDialogResult::Stop)
-                {
+                else if (result == OperationDialogResult::Stop) {
                     RequestStop();
                     return;
                 }
             }
         }
     }
-    else if (!m_SkipAll)
-    {
-        int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:fullpath] WaitForResult];
+    else if (!m_SkipAll) {
+        int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:longpath.c_str()] WaitForResult];
         if (result == OperationDialogResult::Retry) goto retry_stat;
         else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
-        else if (result == OperationDialogResult::Stop)
-        {
+        else if (result == OperationDialogResult::Stop) {
             RequestStop();
             return;
         }
@@ -253,25 +256,25 @@ void FileCompressOperationJob::ProcessItems()
     m_Stats.SetCurrentItem("");
 }
 
-void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, int _number)
+void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, int _index)
 {
     VFSStat st;
     struct stat sst;
     char itemname[MAXPATHLEN];
-    char sourcepath[MAXPATHLEN];
     struct archive_entry *entry = 0;
     _node->str_with_pref(itemname);
     
-    // compose real src name
-    strcpy(sourcepath, m_SrcRoot.c_str());
-    strcat(sourcepath, itemname);
+    auto meta = m_ScannedItemsMeta[_index];
     
-    if(m_ItemFlags[_number] & (int)ItemFlags::is_dir)
-    { /* directories */
+    // compose real src name
+    auto sourcepath = m_BasePaths[ meta.base_path ] + itemname;
+    auto vfs = m_SourceHosts[ meta.vfs ];
+    
+    if (meta.flags & (int)ItemFlags::is_dir) { /* directories */
         assert(IsPathWithTrailingSlash(itemname));
         int stat_ret = 0;
         retry_stat_dir:;
-        if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
+        if((stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) == 0) {
             entry = archive_entry_new();
             archive_entry_set_pathname(entry, itemname);
             VFSStat::ToSysStat(st, sst);
@@ -282,7 +285,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             
             // metadata
             VFSFilePtr src_file;
-            m_SrcVFS->CreateFile(sourcepath, src_file, 0);
+            vfs->CreateFile(sourcepath.c_str(), src_file, 0);
             if(src_file->Open(VFSFlags::OF_Read) >= 0) {
                 itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
                 WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
@@ -290,19 +293,19 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         }
         else { // failed to stat source directory
             if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath] WaitForResult];
+            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
             if(result == OperationDialogResult::Retry) goto retry_stat_dir;
             if(result == OperationDialogResult::Skip) goto cleanup;
             if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
             if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
         }
     }
-    else if( m_ItemFlags[_number] & (int)ItemFlags::symlink ) { // symlinks
+    else if( meta.flags & (int)ItemFlags::symlink ) { // symlinks
         int vfs_ret = 0;
         char symlink[MAXPATHLEN];
         retry_stat_symlink:;
-        if( (vfs_ret = m_SrcVFS->Stat(sourcepath, st, VFSFlags::F_NoFollow, 0)) == 0 &&
-            (vfs_ret = m_SrcVFS->ReadSymlink(sourcepath, symlink, MAXPATHLEN, 0)) == 0 ) {
+        if( (vfs_ret = vfs->Stat(sourcepath.c_str(), st, VFSFlags::F_NoFollow, 0)) == 0 &&
+            (vfs_ret = vfs->ReadSymlink(sourcepath.c_str(), symlink, MAXPATHLEN, 0)) == 0 ) {
             entry = archive_entry_new();
             archive_entry_set_pathname(entry, itemname);
             VFSStat::ToSysStat(st, sst);
@@ -314,7 +317,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         }
         else { // failed to stat source file
             if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(vfs_ret) forPath:sourcepath] WaitForResult];
+            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(vfs_ret) forPath:sourcepath.c_str()] WaitForResult];
             if(result == OperationDialogResult::Retry) goto retry_stat_symlink;
             if(result == OperationDialogResult::Skip) goto cleanup;
             if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -324,10 +327,10 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
     else { /* regular files */
         int stat_ret = 0, open_file_ret = 0;
         retry_stat_file:;
-        if((stat_ret = m_SrcVFS->Stat(sourcepath, st, 0, 0)) == 0) {
+        if((stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) == 0) {
             
             VFSFilePtr src_file;
-            m_SrcVFS->CreateFile(sourcepath, src_file, 0);
+            vfs->CreateFile(sourcepath.c_str(), src_file, 0);
             retry_open_file:;
             if( (open_file_ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock)) == 0) {
                 entry = archive_entry_new();
@@ -364,7 +367,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
                 
                 if(vfs_read_ret < 0) { // error on reading source file
                     if(m_SkipAll) goto cleanup;
-                    int result = [[m_Operation OnReadError:VFSError::ToNSError((int)vfs_read_ret) forPath:sourcepath] WaitForResult];
+                    int result = [[m_Operation OnReadError:VFSError::ToNSError((int)vfs_read_ret) forPath:sourcepath.c_str()] WaitForResult];
                     if(result == OperationDialogResult::Retry) goto retry_read_src;
                     if(result == OperationDialogResult::Skip) goto cleanup;
                     if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -379,7 +382,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             }
             else { // failed to open source file
                 if(m_SkipAll) goto cleanup;
-                int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath] WaitForResult];
+                int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
                 if(result == OperationDialogResult::Retry) goto retry_open_file;
                 if(result == OperationDialogResult::Skip) goto cleanup;
                 if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -388,7 +391,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         }
         else { // failed to stat source file
             if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath] WaitForResult];
+            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
             if(result == OperationDialogResult::Retry) goto retry_stat_file;
             if(result == OperationDialogResult::Skip) goto cleanup;
             if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
@@ -401,17 +404,27 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         archive_entry_free(entry);
 }
 
-const char *FileCompressOperationJob::TargetFileName() const
+string FileCompressOperationJob::TargetFileName() const
 {
-    return m_TargetFileName;
+    return m_TargetFileName; // may race here and cause UB!!
 }
 
 unsigned FileCompressOperationJob::FilesAmount() const
 {
-    return (unsigned)m_ItemFlags.size();
+    return (unsigned) m_ScannedItemsMeta.size();
 }
 
 bool FileCompressOperationJob::IsDoneScanning() const
 {
     return m_DoneScanning;
+}
+
+uint8_t FileCompressOperationJob::FindOrInsertHost(const VFSHostPtr &_h)
+{
+    return (uint8_t)linear_find_or_insert( m_SourceHosts, _h );
+}
+
+unsigned FileCompressOperationJob::FindOrInsertBasePath(const string &_path)
+{
+    return (unsigned)linear_find_or_insert( m_BasePaths, _path );
 }

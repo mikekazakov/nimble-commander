@@ -125,13 +125,11 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
     
-    auto files = self.activePanelController.selectedEntriesOrFocusedEntryFilenames;
-    if(files.empty())
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    if(entries.empty())
         return;
 
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:self.activePanelController.currentDirectoryPath
-                                                                      srcvfs:self.activePanelController.vfs
+    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(entries)
                                                                      dstroot:self.oppositePanelController.currentDirectoryPath
                                                                       dstvfs:self.oppositePanelController.vfs];
     op.TargetPanel = self.oppositePanelController;

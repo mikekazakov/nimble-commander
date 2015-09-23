@@ -154,15 +154,11 @@ string PanelData::FullPathForEntry(int _raw_index) const
     if(_raw_index < 0 || _raw_index >= m_Listing->Count())
         return "";
 
-//    const auto &entry = m_Listing->At(_raw_index);
     auto entry = m_Listing->Item(_raw_index);
-    if( !entry.IsDotDot() ) {
-        return entry.Directory() + entry.Name();
-//        return DirectoryPathWithTrailingSlash() + entry.Name();
-    }
+    if( !entry.IsDotDot() )
+        return entry.Path();
     else {
         auto t = entry.Directory();
-//        auto t = DirectoryPathWithoutTrailingSlash();
         auto i = t.rfind('/');
         if(i == 0)
             t.resize(i+1);

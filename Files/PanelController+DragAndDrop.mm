@@ -20,11 +20,11 @@ static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFile
 static NSString *g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
 static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
 
+// item holds a link to listing
+// listing holds a link to vfs
 @interface PanelDraggingItem : NSPasteboardItem
-@property(nonatomic) string filename;
-@property(nonatomic) string path;
-@property(nonatomic) shared_ptr<VFSHost> vfs;
-@property(nonatomic) bool isDir;
+- (const VFSFlexibleListingItem&) item;
+- (void) setItem:(const VFSFlexibleListingItem&)_item;
 - (bool) IsValid;
 - (void) Clear;
 @end
@@ -39,6 +39,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     if(_item == nil ||
        !_item.IsValid)
         return nil;
+    auto item = _item.item;
     
     NSDraggingImageComponent *imageComponent;
     NSMutableArray *components = [NSMutableArray arrayWithCapacity:2];
@@ -47,8 +48,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     static FontGeometryInfo font_info{ (__bridge CTFontRef) font };
     
     NSImage *icon_image;
-    if(_item.vfs->IsNativeFS())
-        icon_image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8String:_item.path.c_str()]];
+    if(item.Host()->IsNativeFS())
+        icon_image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:item.Path()]];
     else
         icon_image = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
     
@@ -79,7 +80,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                   NSParagraphStyleAttributeName: item_text_pstyle,
                                   NSShadowAttributeName: label_shadow };
     
-    NSString *itemName = [NSString stringWithUTF8String:_item.filename.c_str()];
+    NSString *itemName = [NSString stringWithUTF8StdString:item.Filename()];
     
     [itemName drawWithRect:NSMakeRect(0, font_info.Descent(), label_width, font_info.LineHeight())
                    options:0
@@ -99,27 +100,27 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 
 @implementation PanelDraggingItem
 {
-    string m_Filename;
-    string m_Path;
-    shared_ptr<VFSHost> m_VFS;
-    bool m_IsDir;
+    VFSFlexibleListingItem m_Item;
 }
 
-@synthesize filename = m_Filename;
-@synthesize path = m_Path;
-@synthesize vfs = m_VFS;
-@synthesize isDir = m_IsDir;
+- (const VFSFlexibleListingItem&) item
+{
+    return m_Item;
+}
+
+- (void) setItem:(const VFSFlexibleListingItem&)_item
+{
+    m_Item = _item;
+}
 
 - (bool) IsValid
 {
-    return bool(m_VFS);
+    return bool(m_Item);
 }
 
 - (void) Clear
 {
-    m_VFS.reset();
-    string().swap(m_Filename);
-    string().swap(m_Path);
+    m_Item = VFSFlexibleListingItem();
 }
 
 @end
@@ -190,7 +191,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     { // old style is turned on by some special conditions
         NSMutableArray *ar = [NSMutableArray new];
         for(auto &i: m_Items)
-            [ar addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8String:i.path.c_str()]]];
+            [ar addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:i.item.Path()]]];
         [sender writeObjects:ar];
         m_FilenamesPasteboardDone = true;
     }
@@ -214,8 +215,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         if(m_URLPromiseTarget == nil)
             return;
         
-        path dest = path(m_URLPromiseTarget.path.fileSystemRepresentation) / item.filename;
-        VFSEasyCopyNode(item.path.c_str(), item.vfs,
+        path dest = path(m_URLPromiseTarget.path.fileSystemRepresentation) / item.item.Filename();
+        VFSEasyCopyNode(item.item.Path().c_str(), item.item.Host(),
                         dest.c_str(), VFSNativeHost::SharedHost());
 
         [item setString:[NSString stringWithUTF8String:dest.c_str()]
@@ -224,7 +225,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     }
     else if([type isEqualToString:g_PasteboardFileURLUTI])
     {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:item.path.c_str()]];
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:item.item.Path()]];
         [url writeToPasteboard:sender];
         m_FilenamesPasteboardEnabled = false;
     }
@@ -294,15 +295,12 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
         [pasteboard_types addObject:g_PasteboardFileURLUTI];
     }
     
-    for(auto i: vfs_items) {
+    for(auto &i: vfs_items) {
         PanelDraggingItem *pbItem = [PanelDraggingItem new];
         [pbItem setDataProvider:broker forTypes:pasteboard_types];
     
         // internal information
-        pbItem.filename = i.Name();
-        pbItem.isDir = i.IsDir();
-        pbItem.path = broker.root_path + i.Name();
-        pbItem.vfs = vfs;
+        pbItem.item = i;
 
         // for File URL Promise
         [pbItem setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
@@ -397,7 +395,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(dragging_over_dir && source.vfs == self.vfs)
                 for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                         options:nil])
-                    if( item.isDir && destination_dir == item.path+"/" ) { // filenames are stored without trailing slashes, so have to add it
+                    if( item.item.IsDir() && destination_dir == item.item.Path()+"/" ) { // filenames are stored without trailing slashes, so have to add it
                         result = NSDragOperationNone;
                         break;
                     }
@@ -474,7 +472,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             vector<string> files;
             for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                     options:nil])
-                files.emplace_back(item.filename);
+                files.emplace_back(item.item.Filename());
 
             if(files.empty())
                 return false;

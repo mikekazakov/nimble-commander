@@ -17,3 +17,15 @@ auto linear_generator( T _base, T _step )
         return v;
     };
 }
+
+template <typename C, typename T>
+size_t linear_find_or_insert( C &_c, const T &_v )
+{
+    auto b = std::begin(_c), e = std::end(_c);
+    auto it = std::find( b,  e, _v );
+    if( it != e )
+        return std::distance(b, it);
+    
+    _c.emplace_back( _v );
+    return _c.size() - 1;
+}

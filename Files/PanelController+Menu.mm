@@ -115,24 +115,24 @@ static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<stri
     
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
-    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.vfs->Parent() != nullptr;
+    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.volume_information")      return self.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.file_attributes")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
+    IF_MENU_TAG("menu.command.external_editor")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.create_directory")        return self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.batch_rename")            return self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     
     return true; // will disable some items in the future
 }

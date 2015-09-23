@@ -75,16 +75,14 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     NSString *m_ArchiveName;
 }
 
-- (id)initWithFiles:(vector<string>&&)_src_files
-            srcroot:(const string&)_src_root
-             srcvfs:(shared_ptr<VFSHost>)_src_vfs
+- (id)initWithFiles:(vector<VFSFlexibleListingItem>)_src_files
             dstroot:(const string&)_dst_root
-             dstvfs:(shared_ptr<VFSHost>)_dst_vfs;
+             dstvfs:(VFSHostPtr)_dst_vfs;
 {
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(move(_src_files), _src_root, _src_vfs, _dst_root, _dst_vfs, self);
+        m_Job.Init(move(_src_files), _dst_root, _dst_vfs, self);
         m_LastInfoUpdateTime = 0ms;
         m_HasTargetFn = false;
         m_NeedUpdateCaption = true;
@@ -96,9 +94,9 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
 - (void) ExtractTargetFn
 {
     if(!m_HasTargetFn)
-        if(strcmp(m_Job.TargetFileName(), "") != 0) {
+        if( !m_Job.TargetFileName().empty() ) {
             char tmp[MAXPATHLEN];
-            if(GetFilenameFromPath(m_Job.TargetFileName(), tmp)) {
+            if( GetFilenameFromPath(m_Job.TargetFileName().c_str(), tmp) ) {
                 m_ArchiveName = [NSString stringWithUTF8String:tmp];
                 m_HasTargetFn = true;
             }

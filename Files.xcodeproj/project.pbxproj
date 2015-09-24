@@ -310,7 +310,7 @@
 		CF6D9C2E196678010077B146 /* FileDeletionOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */; };
 		CF6D9C2F196678010077B146 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
 		CF6D9C30196678010077B146 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
-		CF6D9C31196678010077B146 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
+		CF6D9C31196678010077B146 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.cpp */; };
 		CF6D9C32196678010077B146 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CF6D9C33196678010077B146 /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE0E66D17F7D16A00BCF557 /* BigFileViewDataBackend.mm */; };
 		CF6D9C34196678010077B146 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
@@ -633,7 +633,7 @@
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
-		CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
+		CFCD88031815409000D82455 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.cpp */; };
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFD54FC31A29C4CA0098A4A9 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */; };
@@ -810,7 +810,7 @@
 		CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
 		CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
-		CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.mm */; };
+		CFF6F3471A13567C00011177 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD88011815409000D82455 /* FileCompressOperationJob.cpp */; };
 		CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC91946D50400840F25 /* NSUserDefaults+KeyPaths.m */; };
 		CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
@@ -1536,7 +1536,7 @@
 		CFCD87FB18143F5500D82455 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleDoubleEA.h; sourceTree = "<group>"; };
 		CFCD87FE181537A800D82455 /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperation.h; sourceTree = "<group>"; };
 		CFCD87FF181537A800D82455 /* FileCompressOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCompressOperation.mm; sourceTree = "<group>"; };
-		CFCD88011815409000D82455 /* FileCompressOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileCompressOperationJob.mm; sourceTree = "<group>"; };
+		CFCD88011815409000D82455 /* FileCompressOperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileCompressOperationJob.cpp; sourceTree = "<group>"; };
 		CFCD88021815409000D82455 /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCompressOperationJob.h; sourceTree = "<group>"; };
 		CFCF862518939589000552CD /* PanelController+QuickSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+QuickSearch.h"; sourceTree = "<group>"; };
 		CFCF862618939589000552CD /* PanelController+QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+QuickSearch.mm"; sourceTree = "<group>"; };
@@ -2752,7 +2752,7 @@
 				CFCD87FE181537A800D82455 /* FileCompressOperation.h */,
 				CFCD87FF181537A800D82455 /* FileCompressOperation.mm */,
 				CFCD88021815409000D82455 /* FileCompressOperationJob.h */,
-				CFCD88011815409000D82455 /* FileCompressOperationJob.mm */,
+				CFCD88011815409000D82455 /* FileCompressOperationJob.cpp */,
 			);
 			name = FileCompressOperation;
 			sourceTree = "<group>";
@@ -3418,7 +3418,7 @@
 				CF6D9C2F196678010077B146 /* FileDeletionSheetController.mm in Sources */,
 				CF6D9C30196678010077B146 /* FileCompressOperation.mm in Sources */,
 				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
-				CF6D9C31196678010077B146 /* FileCompressOperationJob.mm in Sources */,
+				CF6D9C31196678010077B146 /* FileCompressOperationJob.cpp in Sources */,
 				CF6D9C32196678010077B146 /* BigFileView.mm in Sources */,
 				CF6D9C33196678010077B146 /* BigFileViewDataBackend.mm in Sources */,
 				CF6D9C34196678010077B146 /* BigFileViewHex.mm in Sources */,
@@ -3690,7 +3690,7 @@
 				CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
-				CFCD88031815409000D82455 /* FileCompressOperationJob.mm in Sources */,
+				CFCD88031815409000D82455 /* FileCompressOperationJob.cpp in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
 				CF305DCC1946D50400840F25 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */,
@@ -3897,7 +3897,7 @@
 				CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
-				CFF6F3471A13567C00011177 /* FileCompressOperationJob.mm in Sources */,
+				CFF6F3471A13567C00011177 /* FileCompressOperationJob.cpp in Sources */,
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
 				CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,

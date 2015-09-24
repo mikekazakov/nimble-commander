@@ -11,8 +11,8 @@
 #import "chained_strings.h"
 #import "VFS.h"
 #import "OperationJob.h"
+#import "OperationDialogProtocol.h"
 
-@class FileCompressOperation;
 
 class FileCompressOperationJob : public OperationJob
 {
@@ -22,13 +22,26 @@ public:
     
     void Init(vector<VFSFlexibleListingItem> _src_files,
               const string&_dst_root,
-              VFSHostPtr _dst_vfs,
-              FileCompressOperation *_operation);
-    
+              VFSHostPtr _dst_vfs);
     
     string TargetFileName() const;
     unsigned FilesAmount() const;
     bool IsDoneScanning() const;
+    
+    
+    template <typename T>
+    void SetOnCantAccessSourceItem(T _t) { m_OnCantAccessSourceItem = move(_t); }
+    
+    template <typename T>
+    void SetOnCantAccessSourceDirectory(T _t) { m_OnCantAccessSourceDirectory = move(_t); }
+    
+    template <typename T>
+    void SetOnCantReadSourceItem(T _t) { m_OnCantReadSourceItem = move(_t); }
+
+    template <typename T>
+    void SetOnCantWriteArchive(T _t) { m_OnCantWriteArchive = move(_t); }
+        
+    
 private:
     virtual void Do();
     void ScanItems();
@@ -54,7 +67,6 @@ private:
         uint8_t     flags;
     };
     
-    __unsafe_unretained FileCompressOperation    *m_Operation;
     optional<vector<VFSFlexibleListingItem>> m_InitialListingItems;
     chained_strings                 m_ScannedItems;
     vector<SourceItemMeta>          m_ScannedItemsMeta;
@@ -73,5 +85,10 @@ private:
 
     struct archive                  *m_Archive;
     shared_ptr<VFSFile>        m_TargetFile;
+    
+    function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem = [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnCantAccessSourceDirectory = [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnCantReadSourceItem = [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error)> m_OnCantWriteArchive = [](int) { return OperationDialogResult::Stop; };
 };
 

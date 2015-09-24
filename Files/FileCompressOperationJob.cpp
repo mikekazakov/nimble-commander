@@ -14,7 +14,6 @@
 #import "3rd_party/libarchive/archive.h"
 #import "3rd_party/libarchive/archive_entry.h"
 #import "FileCompressOperationJob.h"
-#import "FileCompressOperation.h"
 #import "AppleDoubleEA.h"
 #import "Common.h"
 
@@ -79,13 +78,11 @@ FileCompressOperationJob::~FileCompressOperationJob()
 
 void FileCompressOperationJob::Init(vector<VFSFlexibleListingItem> _src_files,
           const string&_dst_root,
-          VFSHostPtr _dst_vfs,
-          FileCompressOperation *_operation)
+          VFSHostPtr _dst_vfs)
 {
     m_InitialListingItems = move(_src_files);
     m_DstVFS = _dst_vfs;
     m_DstRoot =  EnsureTrailingSlash( _dst_root );
-    m_Operation = _operation;
 }
 
 void FileCompressOperationJob::Do()
@@ -218,7 +215,7 @@ retry_stat:
                 return true;
             });
             if(iter_ret != VFSError::Ok) {
-                int result = [[m_Operation OnCantAccessSourceDir:VFSError::ToNSError(iter_ret) forPath:longpath.c_str()] WaitForResult];
+                int result = m_OnCantAccessSourceDirectory(iter_ret, longpath);
                 if (result == OperationDialogResult::Retry) goto retry_opendir;
                 else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
                 else if (result == OperationDialogResult::Stop) {
@@ -229,7 +226,7 @@ retry_stat:
         }
     }
     else if (!m_SkipAll) {
-        int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:longpath.c_str()] WaitForResult];
+        int result = m_OnCantAccessSourceItem(stat_ret, longpath);
         if (result == OperationDialogResult::Retry) goto retry_stat;
         else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
         else if (result == OperationDialogResult::Stop) {
@@ -260,10 +257,14 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
 {
     VFSStat st;
     struct stat sst;
-    char itemname[MAXPATHLEN];
-    struct archive_entry *entry = 0;
-    _node->str_with_pref(itemname);
+
+    struct archive_entry *entry = nullptr;
+    auto entry_cleanup = at_scope_end([&]{ // on any errors make sure to clean up allocated libarchive entries
+        archive_entry_free(entry); // nullptr is ok here
+    });
     
+    char itemname[MAXPATHLEN];
+    _node->str_with_pref(itemname);
     auto meta = m_ScannedItemsMeta[_index];
     
     // compose real src name
@@ -273,135 +274,124 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
     if (meta.flags & (int)ItemFlags::is_dir) { /* directories */
         assert(IsPathWithTrailingSlash(itemname));
         int stat_ret = 0;
-        retry_stat_dir:;
-        if((stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) == 0) {
-            entry = archive_entry_new();
-            archive_entry_set_pathname(entry, itemname);
-            VFSStat::ToSysStat(st, sst);
-            archive_entry_copy_stat(entry, &sst);
-            archive_write_header(m_Archive, entry);
-            archive_entry_free(entry);
-            entry = 0;
-            
-            // metadata
-            VFSFilePtr src_file;
-            vfs->CreateFile(sourcepath.c_str(), src_file, 0);
-            if(src_file->Open(VFSFlags::OF_Read) >= 0) {
-                itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
-                WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
+        while( (stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) != 0 ) {
+            // failed to stat source directory
+            if(m_SkipAll) return;
+            switch ( m_OnCantAccessSourceItem(stat_ret, sourcepath) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return;
+                case OperationDialogResult::SkipAll:    m_SkipAll = true; return;
+                case OperationDialogResult::Stop:       RequestStop(); return;
+                default:                                return;
             }
         }
-        else { // failed to stat source directory
-            if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
-            if(result == OperationDialogResult::Retry) goto retry_stat_dir;
-            if(result == OperationDialogResult::Skip) goto cleanup;
-            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+
+        entry = archive_entry_new();
+        archive_entry_set_pathname(entry, itemname);
+        VFSStat::ToSysStat(st, sst);
+        archive_entry_copy_stat(entry, &sst);
+        archive_write_header(m_Archive, entry);
+        // TODO: error handling??
+        
+        // metadata
+        VFSFilePtr src_file;
+        vfs->CreateFile(sourcepath.c_str(), src_file, 0);
+        if(src_file->Open(VFSFlags::OF_Read) >= 0) {
+            itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
+            WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
         }
     }
     else if( meta.flags & (int)ItemFlags::symlink ) { // symlinks
         int vfs_ret = 0;
         char symlink[MAXPATHLEN];
         retry_stat_symlink:;
-        if( (vfs_ret = vfs->Stat(sourcepath.c_str(), st, VFSFlags::F_NoFollow, 0)) == 0 &&
-            (vfs_ret = vfs->ReadSymlink(sourcepath.c_str(), symlink, MAXPATHLEN, 0)) == 0 ) {
-            entry = archive_entry_new();
-            archive_entry_set_pathname(entry, itemname);
-            VFSStat::ToSysStat(st, sst);
-            archive_entry_copy_stat(entry, &sst);
-            archive_entry_set_symlink(entry, symlink);
-            archive_write_header(m_Archive, entry);
-            archive_entry_free(entry);
-            entry = 0;
+        while( (vfs_ret = vfs->Stat(sourcepath.c_str(), st, VFSFlags::F_NoFollow, 0)) != 0 ||
+               (vfs_ret = vfs->ReadSymlink(sourcepath.c_str(), symlink, MAXPATHLEN, 0)) != 0 ) {
+            // failed to stat source file
+            if(m_SkipAll) return;
+            int result = m_OnCantAccessSourceItem(vfs_ret,  sourcepath);
+            if(result == OperationDialogResult::Retry) continue;
+            if(result == OperationDialogResult::Skip) return;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
-        else { // failed to stat source file
-            if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(vfs_ret) forPath:sourcepath.c_str()] WaitForResult];
-            if(result == OperationDialogResult::Retry) goto retry_stat_symlink;
-            if(result == OperationDialogResult::Skip) goto cleanup;
-            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-        }
+        
+        entry = archive_entry_new();
+        archive_entry_set_pathname(entry, itemname);
+        VFSStat::ToSysStat(st, sst);
+        archive_entry_copy_stat(entry, &sst);
+        archive_entry_set_symlink(entry, symlink);
+        archive_write_header(m_Archive, entry);
+        // TODO: error handling??
     }
     else { /* regular files */
         int stat_ret = 0, open_file_ret = 0;
-        retry_stat_file:;
-        if((stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) == 0) {
-            
-            VFSFilePtr src_file;
-            vfs->CreateFile(sourcepath.c_str(), src_file, 0);
-            retry_open_file:;
-            if( (open_file_ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock)) == 0) {
-                entry = archive_entry_new();
-                archive_entry_set_pathname(entry, itemname);
-                VFSStat::ToSysStat(st, sst);
-                archive_entry_copy_stat(entry, &sst);
-                archive_write_header(m_Archive, entry);
-            
-                int buf_sz = 256*1024;
-                char buf[buf_sz];
-                ssize_t vfs_read_ret;
-                retry_read_src:;
-                while( (vfs_read_ret = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
-                    if(CheckPauseOrStop()) goto cleanup;
-                    
-                    retry_la_write:
-                    ssize_t la_ret = archive_write_data(m_Archive, buf, vfs_read_ret);
-                    assert(la_ret == vfs_read_ret || la_ret < 0); // currently no cycle here, may need it in future
-                    
-                    if(la_ret < 0) { // some error on write has occured
-                        // assume that there's I/O problem with target VFS file - say about it
-                        if(m_SkipAll) goto cleanup;
-                        int result = [[m_Operation OnWriteError:VFSError::ToNSError(m_TargetFile->LastError())] WaitForResult];
-                        if(result == OperationDialogResult::Retry) goto retry_la_write;
-                        if(result == OperationDialogResult::Skip) goto cleanup;
-                        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-                        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-                    }
-
-                    // update statistics
-                    m_Stats.SetValue(m_TotalBytesProcessed);
-                    m_TotalBytesProcessed += vfs_read_ret;
-                }
-                
-                if(vfs_read_ret < 0) { // error on reading source file
-                    if(m_SkipAll) goto cleanup;
-                    int result = [[m_Operation OnReadError:VFSError::ToNSError((int)vfs_read_ret) forPath:sourcepath.c_str()] WaitForResult];
-                    if(result == OperationDialogResult::Retry) goto retry_read_src;
-                    if(result == OperationDialogResult::Skip) goto cleanup;
-                    if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-                    if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-                }
-            
-                // all was ok, clean after a bit
-                archive_entry_free(entry);
-                entry = 0;
-            
-                WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
-            }
-            else { // failed to open source file
-                if(m_SkipAll) goto cleanup;
-                int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
-                if(result == OperationDialogResult::Retry) goto retry_open_file;
-                if(result == OperationDialogResult::Skip) goto cleanup;
-                if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-                if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-            }
+        while( (stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) != 0 ) {
+            // failed to stat source file
+            if(m_SkipAll) return;
+            int result = m_OnCantAccessSourceItem(stat_ret, sourcepath);
+            if(result == OperationDialogResult::Retry) continue;
+            if(result == OperationDialogResult::Skip) return;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
-        else { // failed to stat source file
-            if(m_SkipAll) goto cleanup;
-            int result = [[m_Operation OnCantAccessSourceItem:VFSError::ToNSError(stat_ret) forPath:sourcepath.c_str()] WaitForResult];
-            if(result == OperationDialogResult::Retry) goto retry_stat_file;
-            if(result == OperationDialogResult::Skip) goto cleanup;
-            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+        
+        VFSFilePtr src_file;
+        vfs->CreateFile(sourcepath.c_str(), src_file, 0);
+        while( (open_file_ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock)) != 0) {
+            // failed to open source file
+            if(m_SkipAll) return;
+            int result = m_OnCantAccessSourceItem(stat_ret, sourcepath);
+            if(result == OperationDialogResult::Retry) continue;
+            if(result == OperationDialogResult::Skip) return;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
+        
+        entry = archive_entry_new();
+        archive_entry_set_pathname(entry, itemname);
+        VFSStat::ToSysStat(st, sst);
+        archive_entry_copy_stat(entry, &sst);
+        archive_write_header(m_Archive, entry);
+        
+        int buf_sz = 256*1024;
+        char buf[buf_sz];
+        ssize_t vfs_read_ret;
+    retry_read_src: ;
+        while( (vfs_read_ret = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
+            if(CheckPauseOrStop()) return;
+            
+        retry_la_write:
+            ssize_t la_ret = archive_write_data(m_Archive, buf, vfs_read_ret);
+            assert(la_ret == vfs_read_ret || la_ret < 0); // currently no cycle here, may need it in future
+            
+            if(la_ret < 0) { // some error on write has occured
+                // assume that there's I/O problem with target VFS file - say about it
+                if(m_SkipAll) return;
+                int result = m_OnCantWriteArchive(m_TargetFile->LastError());
+                if(result == OperationDialogResult::Retry) goto retry_la_write;
+                if(result == OperationDialogResult::Skip) return;
+                if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+                if(result == OperationDialogResult::Stop) { RequestStop(); return; }
+            }
+            
+            // update statistics
+            m_Stats.SetValue(m_TotalBytesProcessed);
+            m_TotalBytesProcessed += vfs_read_ret;
+        }
+        
+        if(vfs_read_ret < 0) { // error on reading source file
+            if(m_SkipAll) return;
+            int result = m_OnCantReadSourceItem((int)vfs_read_ret, sourcepath);
+            if(result == OperationDialogResult::Retry) goto retry_read_src;
+            if(result == OperationDialogResult::Skip) return;
+            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
+        }
+        
+        // all was ok, clean will be upon exit
+        WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
     }
-    
-    cleanup:;
-    if(entry)
-        archive_entry_free(entry);
 }
 
 string FileCompressOperationJob::TargetFileName() const

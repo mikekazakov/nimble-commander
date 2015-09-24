@@ -82,11 +82,33 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     self = [super initWithJob:&m_Job];
     if (self)
     {
-        m_Job.Init(move(_src_files), _dst_root, _dst_vfs, self);
+        m_Job.Init(move(_src_files), _dst_root, _dst_vfs);
         m_LastInfoUpdateTime = 0ms;
         m_HasTargetFn = false;
         m_NeedUpdateCaption = true;
         self.Caption = @"";
+  
+        __weak FileCompressOperation* weak_self = self;
+        m_Job.SetOnCantAccessSourceItem([=](int _vfs_error, string _path){
+            if( FileCompressOperation* strong_self = weak_self )
+                return [[strong_self OnCantAccessSourceItem:VFSError::ToNSError(_vfs_error) forPath:_path.c_str()] WaitForResult];
+            return OperationDialogResult::Stop;
+        });
+        m_Job.SetOnCantAccessSourceDirectory([=](int _vfs_error, string _path){
+            if( FileCompressOperation* strong_self = weak_self )
+                return [[strong_self OnCantAccessSourceDir:VFSError::ToNSError(_vfs_error) forPath:_path.c_str()] WaitForResult];
+            return OperationDialogResult::Stop;
+        });
+        m_Job.SetOnCantReadSourceItem([=](int _vfs_error, string _path){
+            if( FileCompressOperation* strong_self = weak_self )
+                return [[strong_self OnReadError:VFSError::ToNSError(_vfs_error) forPath:_path.c_str()] WaitForResult];
+            return OperationDialogResult::Stop;
+        });
+        m_Job.SetOnCantWriteArchive([=](int _vfs_error){
+            if( FileCompressOperation* strong_self = weak_self )
+                return [[strong_self OnWriteError:VFSError::ToNSError(_vfs_error)] WaitForResult];
+            return OperationDialogResult::Stop;
+        });
     }
     return self;
 }

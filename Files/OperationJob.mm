@@ -104,7 +104,8 @@ void OperationJob::SetCompleted()
     
     m_State = State::Completed;
     
-    [(Operation*)m_BaseOperation OnFinish];
+    if(m_OnFinish)
+        m_OnFinish();
 }
 
 bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
@@ -120,9 +121,4 @@ bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
     }
     
     return m_RequestStop;
-}
-
-void OperationJob::SetBaseOperation(Operation *_op)
-{
-    m_BaseOperation = _op;
 }

@@ -29,3 +29,17 @@ size_t linear_find_or_insert( C &_c, const T &_v )
     _c.emplace_back( _v );
     return _c.size() - 1;
 }
+
+template <typename T>
+auto at_scope_end( T _l )
+{
+    struct guard
+    {
+        guard( T _l ):l(move(_l)) {}
+        guard( guard&& ) = default;
+        ~guard() { l(); }
+        T l;
+    };
+    
+    return guard( std::move(_l) );
+}

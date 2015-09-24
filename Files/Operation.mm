@@ -123,7 +123,11 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
         m_IsIndeterminate = true;
         m_IsPaused = false;
         
-        m_Job->SetBaseOperation(self);
+        __weak Operation *weak_self = self;
+        m_Job->SetOnFinish([=]{
+            if( Operation* strong_self = weak_self )
+               [strong_self OnFinish];
+        });
         
         OperationsProgressReporter::Register((__bridge void*)self);
     }

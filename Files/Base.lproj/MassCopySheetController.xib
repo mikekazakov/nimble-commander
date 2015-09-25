@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MassCopySheetController">
@@ -29,7 +30,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="410" height="269"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="410" height="269"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -90,7 +91,7 @@ Gw
                     </button>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="69">
                         <rect key="frame" x="20" y="181" width="13" height="13"/>
-                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="EBF3DE2F-BA3F-4245-B55C-3B8D98796263" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
+                        <buttonCell key="cell" type="disclosureTriangle" bezelStyle="disclosure" image="2453FCB3-380F-4636-BE78-4BFFBB5B0D61" imagePosition="above" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="70">
                             <behavior key="behavior" pushIn="YES" changeBackground="YES" changeGray="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -108,7 +109,7 @@ Gw
                     </textField>
                     <box autoresizesSubviews="NO" title="Box" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="106">
                         <rect key="frame" x="17" y="57" width="376" height="125"/>
-                        <view key="contentView">
+                        <view key="contentView" id="179-9J-gnn">
                             <rect key="frame" x="1" y="1" width="374" height="123"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -150,21 +151,21 @@ Gw
                             </subviews>
                         </view>
                         <constraints>
-                            <constraint firstItem="92" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="115"/>
-                            <constraint firstItem="92" firstAttribute="top" secondItem="106" secondAttribute="top" constant="11" id="119"/>
-                            <constraint firstAttribute="trailing" secondItem="92" secondAttribute="trailing" constant="16" id="121"/>
-                            <constraint firstItem="127" firstAttribute="top" secondItem="92" secondAttribute="bottom" constant="6" symbolic="YES" id="129"/>
-                            <constraint firstAttribute="trailing" secondItem="127" secondAttribute="trailing" constant="16" id="130"/>
-                            <constraint firstItem="127" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="131"/>
-                            <constraint firstItem="132" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="134"/>
-                            <constraint firstItem="132" firstAttribute="top" secondItem="127" secondAttribute="bottom" constant="6" symbolic="YES" id="135"/>
-                            <constraint firstAttribute="trailing" secondItem="132" secondAttribute="trailing" constant="16" id="136"/>
-                            <constraint firstItem="137" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="139"/>
-                            <constraint firstAttribute="trailing" secondItem="137" secondAttribute="trailing" constant="16" id="141"/>
-                            <constraint firstItem="137" firstAttribute="top" secondItem="132" secondAttribute="bottom" constant="6" symbolic="YES" id="142"/>
-                            <constraint firstItem="143" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="145"/>
-                            <constraint firstAttribute="trailing" secondItem="143" secondAttribute="trailing" constant="16" id="146"/>
-                            <constraint firstItem="143" firstAttribute="top" secondItem="137" secondAttribute="bottom" constant="6" symbolic="YES" id="147"/>
+                            <constraint firstItem="137" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="0Rj-1N-OkO"/>
+                            <constraint firstItem="127" firstAttribute="top" secondItem="92" secondAttribute="bottom" constant="6" symbolic="YES" id="4hJ-BG-xjL"/>
+                            <constraint firstAttribute="trailing" secondItem="127" secondAttribute="trailing" constant="16" id="6Cx-Kp-rXi"/>
+                            <constraint firstItem="92" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="98B-SW-3p0"/>
+                            <constraint firstAttribute="trailing" secondItem="143" secondAttribute="trailing" constant="16" id="EDa-km-Lby"/>
+                            <constraint firstItem="143" firstAttribute="top" secondItem="137" secondAttribute="bottom" constant="6" symbolic="YES" id="Q0q-IR-mfg"/>
+                            <constraint firstItem="92" firstAttribute="top" secondItem="106" secondAttribute="top" constant="11" id="QH3-vx-Qew"/>
+                            <constraint firstItem="127" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="RfI-vK-l5a"/>
+                            <constraint firstItem="137" firstAttribute="top" secondItem="132" secondAttribute="bottom" constant="6" symbolic="YES" id="XfI-4d-HvW"/>
+                            <constraint firstItem="143" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="XkB-cP-hdX"/>
+                            <constraint firstAttribute="trailing" secondItem="92" secondAttribute="trailing" constant="16" id="YiR-UL-Kll"/>
+                            <constraint firstAttribute="trailing" secondItem="132" secondAttribute="trailing" constant="16" id="dM4-sk-a4f"/>
+                            <constraint firstItem="132" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="16" id="kXq-5f-yr6"/>
+                            <constraint firstAttribute="trailing" secondItem="137" secondAttribute="trailing" constant="16" id="ocS-QJ-81b"/>
+                            <constraint firstItem="132" firstAttribute="top" secondItem="127" secondAttribute="bottom" constant="6" symbolic="YES" id="pbE-Cf-HLv"/>
                         </constraints>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -216,7 +217,7 @@ Gw
         </button>
     </objects>
     <resources>
-        <image name="EBF3DE2F-BA3F-4245-B55C-3B8D98796263" width="1" height="1">
+        <image name="2453FCB3-380F-4636-BE78-4BFFBB5B0D61" width="1" height="1">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

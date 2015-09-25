@@ -155,7 +155,7 @@ DispatchGroup::~DispatchGroup()
     dispatch_release(m_Group);
 }
 
-void DispatchGroup::Run( function<void()> _f )
+void DispatchGroup::Run( function<void()> _f ) const
 {
     if(!_f)
         return;

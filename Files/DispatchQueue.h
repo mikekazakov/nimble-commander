@@ -121,7 +121,7 @@ public:
     /**
      * Run _block in group on queue with prioriry specified at construction time
      */
-    void Run( function<void()> _f );
+    void Run( function<void()> _f ) const;
     
     /**
      * Wait indefinitely until all task in group will be finished
@@ -138,7 +138,7 @@ private:
     void operator=(const DispatchGroup&) = delete;
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
-    atomic_uint m_Count{0};
+    mutable atomic_uint m_Count{0};
 };
 
 

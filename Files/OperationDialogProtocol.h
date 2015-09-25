@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
 
 // Predefined OperationDialogProtocol results.
 namespace OperationDialogResult

@@ -492,6 +492,8 @@ struct NativeFileSystemInfo
 };
 
 
+// TODO: return volumes by shared_ptr<const ...> so clients can't modify it in theory
+
 
 class NativeFSManager
 {

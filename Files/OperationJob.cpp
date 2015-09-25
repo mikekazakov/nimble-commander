@@ -6,8 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationJob.h"
-#import "Operation.h"
+#include "OperationJob.h"
 
 OperationJob::OperationJob():
     m_NoIdlePromise( IdleSleepPreventer::Instance().GetPromise() )

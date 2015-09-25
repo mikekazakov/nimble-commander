@@ -8,8 +8,8 @@
 
 #pragma once
 
-#import <Habanero/IdleSleepPreventer.h>
-#import "OperationStats.h"
+#include <Habanero/IdleSleepPreventer.h>
+#include "OperationStats.h"
 
 class OperationJob
 {
@@ -78,7 +78,8 @@ private:
     // preventing system from idle when any Job object is present
     unique_ptr<IdleSleepPreventer::Promise> m_NoIdlePromise;
     
-    function<void()> m_OnFinish; // called in SetCompleted only
+    // called in SetCompleted only
+    function<void()> m_OnFinish;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&) = delete;

@@ -1377,6 +1377,7 @@
 		CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MassCopySheetController.mm; path = Operations/Copy/MassCopySheetController.mm; sourceTree = "<group>"; };
 		CF9069931BB54081000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MassCopySheetController.xib; sourceTree = "<group>"; };
 		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = Operations/Copy/DialogResults.h; sourceTree = "<group>"; };
+		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = Operations/Copy/Options.h; sourceTree = "<group>"; };
 		CF955F021B8DC6CB004A25AF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		CF9B49D61B49331F00C59677 /* TermScreenBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TermScreenBuffer.h; sourceTree = "<group>"; };
 		CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermScreenTests.mm; sourceTree = "<group>"; };
@@ -2373,6 +2374,7 @@
 			isa = PBXGroup;
 			children = (
 				CF9069981BB542A5000C3CBB /* DialogResults.h */,
+				CF9069991BB55A22000C3CBB /* Options.h */,
 				CF90698D1BB54077000C3CBB /* MassCopySheetController.h */,
 				CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */,
 				CF9069921BB54081000C3CBB /* MassCopySheetController.xib */,

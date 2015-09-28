@@ -7,15 +7,95 @@
 //
 
 #include <Habanero/algo.h>
+//#include <sys/sendfile.h>
+//
+//#include <copyfile.h>
+
+#include "Common.h"
+
 #include "VFS.h"
 #include "RoutedIO.h"
 #include "FileCopyOperationJobNew.h"
 #include "DialogResults.h"
 
+static bool ShouldPreallocateSpace(int64_t _bytes_to_write, const NativeFileSystemInfo &_fs_info)
+{
+    const auto min_prealloc_size = 4096;
+    if( _bytes_to_write <= min_prealloc_size )
+        return false;
+
+    // need to check destination fs and permit preallocation only on certain filesystems
+    return _fs_info.fs_type_name == "hfs"; // Apple's copyfile() also uses preallocation on Xsan volumes
+}
+
+// PreallocateSpace assumes following ftruncate, meaningless otherwise
+static void PreallocateSpace(int64_t _preallocate_delta, int _file_des)
+{
+    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, _preallocate_delta};
+    if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == -1 ) {
+        preallocstore.fst_flags = F_ALLOCATEALL;
+        fcntl(_file_des, F_PREALLOCATE, &preallocstore);
+        
+    }
+    
+    
+//    typedef struct fstore {
+//        unsigned int fst_flags;	/* IN: flags word */
+//        int 	fst_posmode;	/* IN: indicates use of offset field */
+//        off_t	fst_offset;	/* IN: start of the region */
+//        off_t	fst_length;	/* IN: size of the region */
+//        off_t   fst_bytesalloc;	/* OUT: number of bytes allocated */
+//    } fstore_t;
+//    
+    
+    
+//    /* If supported, do preallocation for Xsan / HFS volumes */
+//#ifdef F_PREALLOCATE
+//    {
+//        fstore_t fst;
+//        
+//        fst.fst_flags = 0;
+//        fst.fst_posmode = F_PEOFPOSMODE;
+//        fst.fst_offset = 0;
+//        fst.fst_length = s->sb.st_size;
+//        /* Ignore errors; this is merely advisory. */
+//        (void)fcntl(s->dst_fd, F_PREALLOCATE, &fst);
+//    }
+//#endif
+}
+
+void FileCopyOperationJobNew::Do()
+{
+}
+
+void FileCopyOperationJobNew::test(string _from, string _to)
+{
+    auto &nfsm = NativeFSManager::Instance();
+    CopyNativeFileToNativeFile(_from,
+                               *nfsm.VolumeFromPath(path(_from).parent_path().native()),
+                               _to,
+                               *nfsm.VolumeFromPath(path(_to).parent_path().native()));
+}
+
+static auto run_test = []{
+    
+//    for( int i = 0; i < 2; ++i ) {
+        FileCopyOperationJobNew job;
+        MachTimeBenchmark mtb;
+        job.test("/users/migun/1/bigfile.avi", "/users/migun/2/newbigfile.avi");
+        mtb.ResetMilli();
+//        remove("/users/migun/2/newbigfile.avi");
+//    }
+    
+    int a = 10;
+    return 0;
+}();
+
+
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNativeFile(const string& _src_path,
-                                                                                        const NativeFileSystemInfo &_src_fs_info,
+                                                                                        const NativeFileSystemInfo &_src_dir_fs_info,
                                                                                         const string& _dst_path,
-                                                                                        const NativeFileSystemInfo &_dst_fs_info) const
+                                                                                        const NativeFileSystemInfo &_dst_dir_fs_info) const
 {
     auto &io = RoutedIO::Default;
 
@@ -39,14 +119,27 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
 //    auto src_fs_info = NativeFSManager::Instance().VolumeFromPath(_src);
 //
 //opensource:
-
-    // we initially open source file in non-blocking mode, so we can fail early and not to cause a hang. (hi, apple!)
-    int src_open_flags = O_RDONLY|O_NONBLOCK;
-    if( _src_fs_info.interfaces.file_lock )
-        src_open_flags |= O_SHLOCK;
     
+    // we need to check if our source file is a symlink, so we can't rely on _src_dir_fs_info as it can point to another filesystem
+    struct stat src_lstat_buf;
+    while( io.lstat(_src_path.c_str(), &src_lstat_buf) == -1 ) {
+        // failed to lstat source file
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+    
+//    int src_open_flags = O_RDONLY|O_NONBLOCK;
+//    if( _src_dir_fs_info.interfaces.file_lock )
+//        src_open_flags |= O_SHLOCK;
+    
+    // we initially open source file in non-blocking mode, so we can fail early and not to cause a hang. (hi, apple!)
     int source_fd = -1;
-    while( (source_fd = io.open(_src_path.c_str(), src_open_flags)) == -1 ) {
+    while( (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK)) == -1 &&
+           (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK)) == -1 ) {
         // failed to open source file
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
@@ -79,7 +172,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
     
     // get information about source file
     struct stat src_stat_buffer;
-    while( fstat(source_fd, &src_stat_buffer) == -1 ) {
+    if( !S_ISLNK(src_lstat_buf.st_mode) )
+        src_stat_buffer = src_lstat_buf;
+    else while( fstat(source_fd, &src_stat_buffer) == -1 ) {
         // failed to stat source
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
@@ -88,20 +183,54 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             case OperationDialogResult::Stop:       return StepResult::Stop;
         }
     }
+  
+    // find fs info for source file. if it is a symlink actually - we need to search for it exclusively with fcntl(..., F_GETPATH, ...) by VolumeFromFD
+    shared_ptr<const NativeFileSystemInfo> src_fs_info_holder_for_symlinks;
+    if( S_ISLNK(src_lstat_buf.st_mode) )
+        src_fs_info_holder_for_symlinks = NativeFSManager::Instance().VolumeFromFD(source_fd);
+    const NativeFileSystemInfo &src_fs_into = src_fs_info_holder_for_symlinks ? *src_fs_info_holder_for_symlinks : _src_dir_fs_info;
+    
+    // setting up copying scenario
+    int     dst_open_flags          = 0;
+    bool    do_erase_xattrs         = false,
+            do_unlink_on_stop       = false,
+            need_dst_truncate       = false,
+            dst_existed_before      = false,
+            dst_is_a_symlink        = false;
+    int64_t dst_size_on_stop        = 0,
+            total_dst_size          = src_stat_buffer.st_size,
+            preallocate_delta       = 0,
+            initial_writing_offset  = 0;
     
     // stat destination
     struct stat dst_stat_buffer;
     if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
         // file already exist. what should we do now?
+        dst_existed_before = true;
         
         if( m_SkipAll )
             return StepResult::Skipped;
         
         auto setup_overwrite = [&]{
-            // ...
+            dst_open_flags = O_WRONLY;
+            do_unlink_on_stop = true;
+            dst_size_on_stop = 0;
+            do_erase_xattrs = true;
+            preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size; // negative value is ok here
+            need_dst_truncate = src_stat_buffer.st_size < dst_stat_buffer.st_size;
         };
         auto setup_append = [&]{
-            // ...
+            dst_open_flags = O_WRONLY;
+            do_unlink_on_stop = false;
+            dst_size_on_stop = dst_stat_buffer.st_size;
+            total_dst_size += dst_stat_buffer.st_size;
+            initial_writing_offset = dst_stat_buffer.st_size;
+            preallocate_delta = src_stat_buffer.st_size;
+            
+            // TODO:
+            //        adjust_dst_time = false;
+            //        copy_xattrs = false;
+
         };
         
         if( m_OverwriteAll )
@@ -114,120 +243,200 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                 case OperationDialogResult::Skip:       return StepResult::Skipped;
                 default:                                return StepResult::Stop;
         }
+        
+        // we need to check if existining destination is actually a symlink
+        struct stat dst_lstat_buffer;
+        if( io.lstat(_dst_path.c_str(), &dst_lstat_buffer) == 0 && S_ISLNK(dst_lstat_buffer.st_mode) )
+            dst_is_a_symlink = true;
     }
     else {
         // no dest file - just create it
-        
-        
+        dst_open_flags = O_WRONLY|O_CREAT;
+        do_unlink_on_stop = true;
+        dst_size_on_stop = 0;
+        preallocate_delta = src_stat_buffer.st_size;
     }
-                
-                
+    
+    // open file descriptor for destination
+    int destination_fd = -1;
+    
+    while( true ) {
+        // we want to copy src permissions if options say so or just put default ones
+        mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.st_mode : S_IRUSR | S_IWUSR | S_IRGRP;
+        mode_t old_umask = umask( 0 );
+        destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
+        umask(old_umask);
 
-//    
-//    // stat destination
-//    totaldestsize = src_stat_buffer.st_size;
-//    if(io.stat(_dest, &dst_stat_buffer) != -1)
-//    { // file already exist. what should we do now?
-//        int result;
-//        if(m_SkipAll) goto cleanup;
-//        if(m_OverwriteAll) goto decoverwrite;
-//        if(m_AppendAll) goto decappend;
-//        
-//        result = [[m_Operation OnFileExist:_dest
-//                                   newsize:src_stat_buffer.st_size
-//                                   newtime:src_stat_buffer.st_mtimespec.tv_sec
-//                                   exisize:dst_stat_buffer.st_size
-//                                   exitime:dst_stat_buffer.st_mtimespec.tv_sec
-//                                  remember:&remember_choice] WaitForResult];
-//        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto decoverwrite; }
-//        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto decappend;    }
-//        if(result == OperationDialogResult::Skip)     { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
-//        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
-//        
-//        // decisions about what to do with existing destination
-//    decoverwrite:
-//        dstopenflags = O_WRONLY;
-//        erase_xattrs = true;
-//        unlink_on_stop = true;
-//        dest_sz_on_stop = 0;
-//        preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size;
-//        if(src_stat_buffer.st_size < dst_stat_buffer.st_size)
-//            need_dst_truncate = true;
-//        goto decend;
-//    decappend:
-//        dstopenflags = O_WRONLY;
-//        totaldestsize += dst_stat_buffer.st_size;
-//        startwriteoff = dst_stat_buffer.st_size;
-//        dest_sz_on_stop = dst_stat_buffer.st_size;
-//        preallocate_delta = src_stat_buffer.st_size;
-//        adjust_dst_time = false;
-//        copy_xattrs = false;
-//        unlink_on_stop = false;
-//        goto decend;
-//    decend:;
-//    }
-//    else
-//    { // no dest file - just create it
-//        dstopenflags = O_WRONLY|O_CREAT;
-//        unlink_on_stop = true;
-//        dest_sz_on_stop = 0;
-//        preallocate_delta = src_stat_buffer.st_size;
-//    }
-//    
-//opendest: // open file descriptor for destination
-//    oldumask = umask(0);
-//    if(m_Options.copy_unix_flags) // we want to copy src permissions
-//        destinationfd = io.open(_dest, dstopenflags, src_stat_buffer.st_mode);
-//    else // open file with default permissions
-//        destinationfd = io.open(_dest, dstopenflags, S_IRUSR | S_IWUSR | S_IRGRP);
-//    umask(oldumask);
-//    
-//    if(destinationfd == -1)
-//    {   // failed to open destination file
-//        if(m_SkipAll) goto cleanup;
-//        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_dest] WaitForResult];
-//        if(result == OperationDialogResult::Retry) goto opendest;
-//        if(result == OperationDialogResult::Skip) goto cleanup;
-//        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-//        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-//    }
-//    
-//    fcntl(destinationfd, F_NOCACHE, 1); // caching is meaningless here?
-//    
-//    if( FileCopyOperationJob::ShouldPreallocateSpace(preallocate_delta, destinationfd) ) {
-//        // tell systme to preallocate space for data since we dont want to trash our disk
-//        FileCopyOperationJob::PreallocateSpace(preallocate_delta, destinationfd);
-//        
-//        // truncate is needed for actual preallocation
-//        need_dst_truncate = true;
-//    }
-//    
-//    if( need_dst_truncate ) {
-//    dotruncate:
-//        // set right size for destination file for preallocating itself
-//        if( ftruncate(destinationfd, totaldestsize) == -1 ) {
-//            // failed to set dest file size
-//            if(m_SkipAll) goto cleanup;
-//            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
-//            if(result == OperationDialogResult::Retry) goto dotruncate;
-//            if(result == OperationDialogResult::Skip) goto cleanup;
-//            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-//            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-//        }
-//    }
-//    
-//    
-//dolseek: // find right position in destination file
-//    if(startwriteoff > 0 && lseek(destinationfd, startwriteoff, SEEK_SET) == -1)
-//    {   // failed seek in a file. lolwhat?
-//        if(m_SkipAll) goto cleanup;
-//        int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
-//        if(result == OperationDialogResult::Retry) goto dolseek;
-//        if(result == OperationDialogResult::Skip) goto cleanup;
-//        if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto cleanup;}
-//        if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-//    }
-//    
+        if( destination_fd != -1 )
+            break; // we're good to go
+        
+        // failed to open destination file
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
+            case OperationDialogResult::Retry:      continue;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            default:                                return StepResult::Stop;
+        }
+    }
+    
+    // don't forget ot close destination file descriptor anyway
+    auto close_destination = at_scope_end([&]{
+        if(destination_fd != -1) {
+            close(destination_fd);
+            destination_fd = -1;
+        }
+    });
+    
+    // for some circumstances we have to clean up remains if anything goes wrong
+    // and do it BEFORE close_destination fires
+    auto clean_destination = at_scope_end([&]{
+        if( destination_fd != -1 ) {
+            // we need to revert what we've done
+            ftruncate(destination_fd, dst_size_on_stop);
+            close(destination_fd);
+            destination_fd = -1;
+            if( do_unlink_on_stop )
+                io.unlink( _dst_path.c_str() );
+        }
+    });
+    
+    // caching is meaningless here
+    fcntl( destination_fd, F_NOCACHE, 1 );
+    
+    // find fs info for destination file. if it is a symlink actually - we need to search for it exclusively with fcntl(..., F_GETPATH, ...) by VolumeFromFD
+    shared_ptr<const NativeFileSystemInfo> dst_fs_info_holder_for_symlinks;
+    if( dst_existed_before && dst_is_a_symlink )
+        dst_fs_info_holder_for_symlinks = NativeFSManager::Instance().VolumeFromFD(destination_fd);
+    const NativeFileSystemInfo &dst_fs_info = dst_fs_info_holder_for_symlinks ? *dst_fs_info_holder_for_symlinks : _dst_dir_fs_info;
+    
+    if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
+        // tell systme to preallocate space for data since we dont want to trash our disk
+        PreallocateSpace(preallocate_delta, destination_fd);
+        
+        // truncate is needed for actual preallocation
+        need_dst_truncate = true;
+    }
+    
+    // set right size for destination file for preallocating itself and for reducing file size if necessary
+    if( need_dst_truncate )
+        while( ftruncate(destination_fd, total_dst_size) == -1 ) {
+            // failed to set dest file size
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            
+            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    
+    // find the right position in destination file
+    if( initial_writing_offset > 0 ) {
+        while( lseek(destination_fd, initial_writing_offset, SEEK_SET) == -1  ) {
+            // failed seek in a file. lolwut?
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            
+            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    }
+    
+    
+    
+    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    const uint32_t src_preffered_io_size = src_fs_into.basic.io_size < m_BufferSize ? src_fs_into.basic.io_size : m_BufferSize;
+    const uint32_t dst_preffered_io_size = dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
+    constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
+    uint32_t bytes_to_write = 0;
+    uint64_t source_bytes_read = 0;
+    uint64_t destination_bytes_written = 0;
+    
+    // read from source within current thread and write to destination within secondary queue
+    while( src_stat_buffer.st_size != destination_bytes_written ) {
+        
+        // check user decided to pause operation or discard it
+        if( CheckPauseOrStop() )
+            return StepResult::Stop;
+        
+        optional<StepResult> write_return; // optional storage for error returning
+        m_IOGroup.Run([this, bytes_to_write, destination_fd, write_buffer, dst_preffered_io_size, &destination_bytes_written, &write_return, &_dst_path]{
+            uint32_t left_to_write = bytes_to_write;
+            uint32_t has_written = 0; // amount of bytes written into destination this time
+            int write_loops = 0;
+            while( left_to_write > 0 ) {
+                int64_t n_written = write(destination_fd, write_buffer + has_written, min(left_to_write, dst_preffered_io_size) );
+                if( n_written > 0 ) {
+                    has_written += n_written;
+                    left_to_write -= n_written;
+                    destination_bytes_written += n_written;
+                }
+                else if( n_written < 0 || (++write_loops > max_io_loops) ) {
+                    if(m_SkipAll) {
+                        write_return = StepResult::Skipped;
+                        return;
+                    }
+                    switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                        case OperationDialogResult::Retry:      continue;
+                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
+                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        default:                                write_return = StepResult::Stop; return;
+                    }
+                }
+            }
+        });
+        
+        // here we handle the case in which source io size is much smaller than dest's io size
+        uint32_t to_read = max( src_preffered_io_size, dst_preffered_io_size );
+        if( src_stat_buffer.st_size - source_bytes_read < to_read )
+            to_read = uint32_t(src_stat_buffer.st_size - source_bytes_read);
+            
+        uint32_t has_read = 0; // amount of bytes read into buffer this time
+        int read_loops = 0; // amount of zero-resulting reads
+        optional<StepResult> read_return; // optional storage for error returning
+        while( to_read != 0 ) {
+            int64_t read_result = read(source_fd, read_buffer + has_read, src_preffered_io_size);
+            if( read_result > 0 ) {
+                source_bytes_read += read_result;
+                has_read += read_result;
+                to_read -= read_result;
+            }
+            else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
+                if(m_SkipAll) {
+                    read_return = StepResult::Skipped;
+                    break;
+                }
+                switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _src_path) ) {
+                    case OperationDialogResult::Retry:      continue;
+                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
+                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    default:                                read_return = StepResult::Stop; break;
+                }
+                break;
+            }
+        }
+        
+        m_IOGroup.Wait();
+        
+        if( write_return )
+            return *write_return;
+        if( read_return )
+            return *read_return;
+        
+        bytes_to_write = has_read;
+        swap( read_buffer, write_buffer );
+    }
+    
+
 //    while(true)
 //    {
 //        if(CheckPauseOrStop()) goto cleanup;
@@ -332,6 +541,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
 //    if(destinationfd != -1) close(destinationfd);
 //    return was_successful;
 //
+  
+    // we're ok, turn off destination cleaning
+    clean_destination.disengage();
     
     return StepResult::Ok;
 }

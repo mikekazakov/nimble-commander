@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <stdio.h>
+
 template <typename T>
 auto linear_generator( T _base, T _step )
 {
@@ -35,10 +37,42 @@ auto at_scope_end( T _l )
 {
     struct guard
     {
-        guard( T _l ):l(move(_l)) {}
+        guard( T _l ):
+            m_l(move(_l))
+        {
+        }
+        
         guard( guard&& ) = default;
-        ~guard() { l(); }
-        T l;
+        
+        ~guard()
+        {
+            if( m_engaged )
+                try {
+                    m_l();
+                }
+                catch(...) {
+                    fprintf(stderr, "exception thrown inside a at_scope_end() lambda!\n");
+                }
+        }
+        
+        bool engaded() const noexcept
+        {
+            return m_engaged;
+        }
+        
+        void engage() noexcept
+        {
+            m_engaged = true;
+        }
+        
+        void disengage() noexcept
+        {
+            m_engaged = false;
+        }
+        
+    private:
+        T m_l;
+        bool m_engaged = true;
     };
     
     return guard( std::move(_l) );

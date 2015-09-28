@@ -505,6 +505,7 @@ public:
      */
     vector<shared_ptr<NativeFileSystemInfo>> Volumes() const;
     
+    shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;    
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,

@@ -59,9 +59,9 @@ protected:
     //      SetStopped();
     //      return;
     // }
-    bool CheckPauseOrStop(int _sleep_in_ms = 100);
+    bool CheckPauseOrStop(int _sleep_in_ms = 100) const;
     
-    OperationStats m_Stats;
+    mutable OperationStats m_Stats;
     
 private:
     // Current state of the job.

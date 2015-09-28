@@ -15,7 +15,8 @@ OperationJob::OperationJob():
 
 OperationJob::~OperationJob()
 {
-    assert(IsFinished());
+    if( !IsFinished() )
+        fprintf(stderr, "OperationJob::~OperationJob(): operation was destroyed in a non-finished state!\n");
 }
 
 void OperationJob::Start()
@@ -107,7 +108,7 @@ void OperationJob::SetCompleted()
         m_OnFinish();
 }
 
-bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
+bool OperationJob::CheckPauseOrStop(int _sleep_in_ms) const
 {
     if (m_Paused && !m_RequestStop)
     {

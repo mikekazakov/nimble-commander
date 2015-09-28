@@ -385,6 +385,16 @@ void NativeFSManager::UpdateSpaceInformation(const shared_ptr<NativeFileSystemIn
     UpdateSpaceInfo(*_volume.get());
 }
 
+shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromFD(int _fd) const
+{
+    char path_buf[MAXPATHLEN];
+    int ret = fcntl(_fd, F_GETPATH, path_buf);
+    if( ret < 0 )
+        return nullptr;
+    
+    return VolumeFromPathFast(path_buf);
+}
+
 shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path) const
 {
     shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);

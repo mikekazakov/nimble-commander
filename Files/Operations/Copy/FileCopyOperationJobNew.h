@@ -10,6 +10,7 @@
 
 #include "NativeFSManager.h"
 #include "DispatchQueue.h"
+#include "Options.h"
 #include "OperationJob.h"
 #include "OperationDialogProtocol.h"
 
@@ -22,7 +23,12 @@ public:
     void ToggleAppendAll() { m_AppendAll = true; }
     
     
+    void test(string _from, string _to);
+    
+    
 private:
+    virtual void Do() override;
+    
     enum class StepResult
     {
         // operation was successful
@@ -42,9 +48,9 @@ private:
     
     // + stats callback
     StepResult CopyNativeFileToNativeFile(const string& _src_path,
-                                          const NativeFileSystemInfo &_src_fs_info,
+                                          const NativeFileSystemInfo &_src_dir_fs_info,
                                           const string& _dst_path,
-                                          const NativeFileSystemInfo &_dst_fs_info) const;
+                                          const NativeFileSystemInfo &_dst_dir_fs_info) const;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers
@@ -57,12 +63,22 @@ private:
     bool                    m_AppendAll     = false;
     
     
-    
+    FileCopyOperationOptions m_Options;
     
     function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem =
         [](int, string){ return OperationDialogResult::Stop; };
     function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnFileAlreadyExist =
         [](const struct stat&, const struct stat&, string) { return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile =
+        [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnSourceFileReadError =
+        [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError =
+        [](int, string){ return OperationDialogResult::Stop; };
+    
+//            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
+    
+//        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_dest] WaitForResult];
     
     //        result = [[m_Operation OnFileExist:_dest
     //                                   newsize:src_stat_buffer.st_size

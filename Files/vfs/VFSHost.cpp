@@ -456,3 +456,26 @@ int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListi
 {
     return VFSError::NotSupported;
 }
+
+int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
+                                       const vector<string> &_filenames,
+                                       int _flags,
+                                       vector<VFSFlexibleListingItem> &_result,
+                                       VFSCancelChecker _cancel_checker)
+{
+    shared_ptr<VFSFlexibleListing> listing;
+    int ret = FetchFlexibleListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
+    if( ret != 0 )
+        return ret;
+    
+    _result.clear();
+    _result.reserve( _filenames.size() );
+    
+    // O(n) implementation, can write as O(logn) with indirection indeces map
+    for(unsigned i = 0, e = listing->Count(); i != e; ++i)
+        for(auto &filename: _filenames)
+            if( listing->Filename(i) == filename )
+                _result.emplace_back( listing->Item(i) );
+    
+    return 0;
+}

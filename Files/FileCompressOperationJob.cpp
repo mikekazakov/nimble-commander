@@ -87,13 +87,7 @@ void FileCompressOperationJob::Init(vector<VFSFlexibleListingItem> _src_files,
 
 void FileCompressOperationJob::Do()
 {
-    string proposed_arcname;
-    if( m_InitialListingItems ) {
-        proposed_arcname = m_InitialListingItems->size() > 1 ? "Archive"s : m_InitialListingItems->front().Filename();
-    }
-    else {
-        assert( 0 );
-    }
+    string proposed_arcname = m_InitialListingItems.size() > 1 ? "Archive"s : m_InitialListingItems.front().Filename();
     
     string arcname = FindSuitableFilename(proposed_arcname);
     if( !arcname.empty() ) {
@@ -159,18 +153,17 @@ void FileCompressOperationJob::ScanItems()
 {
     // iterate in original filenames
     
-    if( m_InitialListingItems )
-        for(const auto&i: *m_InitialListingItems) {
-            ScanItem(i.Name(),
-                     i.Name(),
-                     FindOrInsertHost(i.Host()),
-                     FindOrInsertBasePath(i.Directory()),
-                     nullptr
-                     );
-            
-            if(CheckPauseOrStop())
-                return;
-        }    
+    for(const auto&i: m_InitialListingItems) {
+        ScanItem(i.Name(),
+                 i.Name(),
+                 FindOrInsertHost(i.Host()),
+                 FindOrInsertBasePath(i.Directory()),
+                 nullptr
+                 );
+        
+        if(CheckPauseOrStop())
+            return;
+    }
 }
 
 void FileCompressOperationJob::ScanItem(const char *_full_path, const char *_short_path, unsigned _vfs_no, unsigned _basepath_no, const chained_strings::node *_prefix)

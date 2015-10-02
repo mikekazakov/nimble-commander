@@ -67,7 +67,7 @@ private:
         uint8_t     flags;
     };
     
-    optional<vector<VFSFlexibleListingItem>> m_InitialListingItems;
+    vector<VFSFlexibleListingItem>  m_InitialListingItems;
     chained_strings                 m_ScannedItems;
     vector<SourceItemMeta>          m_ScannedItemsMeta;
     

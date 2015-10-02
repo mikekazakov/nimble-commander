@@ -39,6 +39,11 @@ struct NativeFileSystemInfo
         fsid_t fs_id;
         
         /**
+         * ID of device, used in stat() syscall
+         */
+        dev_t dev_id;
+        
+        /**
          * User that mounted the filesystem.
          */
         uid_t owner;
@@ -505,7 +510,8 @@ public:
      */
     vector<shared_ptr<NativeFileSystemInfo>> Volumes() const;
     
-    shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;    
+    shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;
+    shared_ptr<const NativeFileSystemInfo> VolumeFromDevID(dev_t _dev_id) const;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,

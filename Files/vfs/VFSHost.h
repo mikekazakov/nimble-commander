@@ -94,6 +94,12 @@ public:
                                       int _flags,
                                       VFSCancelChecker _cancel_checker);
     
+    int FetchFlexibleListingItems(const string& _directory_path,
+                                  const vector<string> &_filenames,
+                                  int _flags,
+                                  vector<VFSFlexibleListingItem> &_result,
+                                  VFSCancelChecker _cancel_checker);
+    
     /**
      * IterateDirectoryListing will skip "." and ".." entries if they are present.
      * Do not rely on it to build a directory listing, it's for contents iteration.

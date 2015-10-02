@@ -8,15 +8,23 @@
 
 #pragma once
 
+#include <Habanero/algo.h>
 #include "NativeFSManager.h"
 #include "DispatchQueue.h"
 #include "Options.h"
 #include "OperationJob.h"
 #include "OperationDialogProtocol.h"
 
+
 class FileCopyOperationJobNew : public OperationJob
 {
 public:
+    
+    void Init(vector<VFSFlexibleListingItem> _source_items,
+              const string &_dest_path,
+              const VFSHostPtr &_dest_host,
+              FileCopyOperationOptions _opts
+              );
     
     void ToggleSkipAll() { m_SkipAll = true; }
     void ToggleOverwriteAll() { m_OverwriteAll = true; }
@@ -24,6 +32,11 @@ public:
     
     
     void test(string _from, string _to);
+    void test2(string _dest, VFSHostPtr _host);
+    
+    void test3(string _dir, string _filename, VFSHostPtr _host);
+   
+    void Do_Hack();
     
     
 private:
@@ -44,17 +57,73 @@ private:
         SkipAll
     };
     
+    enum class PathCompositionType
+    {
+        PathPreffix, // path = dest_path + source_rel_path
+        FixedPath    // path = dest_path
+    };
     
+    class SourceItems
+    {
+    public:
+        int InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat );
+
+        int ItemsAmount() const noexcept;
+        
+        string          ComposeFullPath( int _item_no ) const;
+        string          ComposeRelativePath( int _item_no ) const;
+        mode_t          ItemMode( int _item_no ) const;
+        VFSHost        &ItemHost( int _item_no ) const;
+        
+        VFSHost &Host( uint16_t _host_ind ) const;
+        uint16_t InsertOrFindHost( const VFSHostPtr &_host );
+
+        const string &BaseDir( unsigned _base_dir_ind ) const;
+        unsigned InsertOrFindBaseDir( const string &_dir );
+
+        
+    private:
+        struct SourceItem
+        {
+            // full path = m_SourceItemsBaseDirectories[base_dir_index] + ... + m_Items[m_Items[parent_index].parent_index].item_name +  m_Items[parent_index].item_name + item_name;
+            string      item_name;
+            int         parent_index;
+            unsigned    base_dir_index;
+            uint16_t    host_index;
+            uint16_t    mode;
+            dev_t       dev_num;
+        };
+        
+        vector<SourceItem>                      m_Items;
+        vector<VFSHostPtr>                      m_SourceItemsHosts;
+        vector<string>                          m_SourceItemsBaseDirectories;
+    };
+    
+    void                    ProcessItems();
+    
+    PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const;
+    StepResult              BuildDestinationDirectory() const;
+    tuple<StepResult, SourceItems> ScanSourceItems() const;
+    string                  ComposeDestinationNameForItem( int _src_item_index ) const;
     
     // + stats callback
     StepResult CopyNativeFileToNativeFile(const string& _src_path,
-                                          const NativeFileSystemInfo &_src_dir_fs_info,
                                           const string& _dst_path,
-                                          const NativeFileSystemInfo &_dst_dir_fs_info) const;
+                                          function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
+                                          ) const;
+    StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
+                                                    const string& _dst_path);
+    
+    vector<VFSFlexibleListingItem> m_VFSListingItems;
+    SourceItems             m_SourceItems;
+    VFSHostPtr              m_DestinationHost;
+    string                  m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
+    string                  m_DestinationPath;
+    PathCompositionType     m_PathCompositionType;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers
-    static const int        m_BufferSize    = 4*1024*1024;
+    static const int        m_BufferSize    = 2*1024*1024;
     unique_ptr<uint8_t[]>   m_Buffers[2]    = { make_unique<uint8_t[]>(m_BufferSize), make_unique<uint8_t[]>(m_BufferSize) };
     
     DispatchGroup           m_IOGroup;
@@ -65,16 +134,27 @@ private:
     
     FileCopyOperationOptions m_Options;
     
-    function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem =
-        [](int, string){ return OperationDialogResult::Stop; };
-    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnFileAlreadyExist =
-        [](const struct stat&, const struct stat&, string) { return OperationDialogResult::Stop; };
-    function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile =
-        [](int, string){ return OperationDialogResult::Stop; };
-    function<int(int _vfs_error, string _path)> m_OnSourceFileReadError =
-        [](int, string){ return OperationDialogResult::Stop; };
-    function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError =
-        [](int, string){ return OperationDialogResult::Stop; };
+    function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
+        = [](int, string){ return OperationDialogResult::Stop; };
+
+    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnFileAlreadyExist
+        = [](const struct stat&, const struct stat&, string) { return OperationDialogResult::Stop; };
+
+    function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile
+        = [](int, string){ return OperationDialogResult::Stop; };
+
+    function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
+        = [](int, string){ return OperationDialogResult::Stop; };
+
+    function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError
+        = [](int, string){ return OperationDialogResult::Stop; };
+
+    function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationRootDir
+        = [](int, string){ return OperationDialogResult::Stop; };
+    
+    function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationDir
+        = [](int, string){ return OperationDialogResult::Stop; };
+    
     
 //            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
     

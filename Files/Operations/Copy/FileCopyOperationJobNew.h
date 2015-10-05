@@ -26,6 +26,8 @@ public:
               FileCopyOperationOptions _opts
               );
     
+    bool IsSingleItemProcessing() const noexcept { return m_IsSingleItemProcessing; }
+    
     void ToggleSkipAll() { m_SkipAll = true; }
     void ToggleOverwriteAll() { m_OverwriteAll = true; }
     void ToggleAppendAll() { m_AppendAll = true; }
@@ -114,6 +116,9 @@ private:
     StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                     const string& _dst_path);
     
+    void                    EraseXattrsFromNativeFD(int _fd_in) const;
+    void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
+    
     vector<VFSFlexibleListingItem> m_VFSListingItems;
     SourceItems             m_SourceItems;
     VFSHostPtr              m_DestinationHost;
@@ -127,6 +132,7 @@ private:
     unique_ptr<uint8_t[]>   m_Buffers[2]    = { make_unique<uint8_t[]>(m_BufferSize), make_unique<uint8_t[]>(m_BufferSize) };
     
     DispatchGroup           m_IOGroup;
+    bool                    m_IsSingleItemProcessing = false;
     bool                    m_SkipAll       = false;
     bool                    m_OverwriteAll  = false;
     bool                    m_AppendAll     = false;

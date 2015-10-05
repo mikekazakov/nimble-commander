@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "chained_strings.h"
+#import "VFS.h"
 struct FileCopyOperationOptions;
 
 typedef void (^MassCopySheetCompletionHandler)(int result);
@@ -36,7 +37,7 @@ typedef void (^MassCopySheetCompletionHandler)(int result);
 - (void)ShowSheet:(NSWindow *)_window
          initpath:(NSString*)_path
         iscopying:(bool)_iscopying
-            items:(shared_ptr<vector<string>>)_items
+            items:(shared_ptr<vector<VFSFlexibleListingItem>>)_items
           handler:(MassCopySheetCompletionHandler)_handler;
 // if _iscopying is false than dialog will think that user attempt to rename/move files
 - (void)FillOptions:(FileCopyOperationOptions*) _opts;

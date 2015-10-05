@@ -13,7 +13,7 @@
 @implementation MassCopySheetController
 {
     MassCopySheetCompletionHandler m_Handler;
-    shared_ptr<vector<string>> m_Items;
+    shared_ptr<vector<VFSFlexibleListingItem>> m_Items;
     NSString *m_InitialPath;
     bool m_IsCopying;
 }
@@ -45,7 +45,7 @@
                                                 [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file"),
-                                                [NSString stringWithUTF8String:m_Items->front().c_str()]];
+                                                [NSString stringWithUTF8String:m_Items->front().Name()]];
         self.CopyButton.title = self.CopyButtonStringStub.title;
     }
     else {
@@ -54,7 +54,7 @@
                                                 [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file"),
-                                                [NSString stringWithUTF8String:m_Items->front().c_str()]];
+                                                [NSString stringWithUTF8String:m_Items->front().Name()]];
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     
@@ -113,7 +113,7 @@
     [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
 }
 
-- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(shared_ptr<vector<string>>)_items handler:(MassCopySheetCompletionHandler)_handler
+- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(shared_ptr<vector<VFSFlexibleListingItem>>)_items handler:(MassCopySheetCompletionHandler)_handler
 {
     if( _items->empty() )
         throw invalid_argument("MassCopySheetController.ShowSheet: _items can't be empty");

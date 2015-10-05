@@ -718,71 +718,71 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 - (IBAction)paste:(id)sender
 {
-    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
-        return;
-    
-    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
-
-    // check what's inside pasteboard
-    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSFilenamesPboardType]];
-    if(!best_type)
-        return;
-
-    // check if we're on writeable VFS
-    if(!self.isPanelActive ||
-       !self.activePanelController.vfs->IsWriteable())
-        return;
-    
-    // input should be an array of filepaths
-    NSArray* ns_filenames = [paste_board propertyListForType:NSFilenamesPboardType];
-    if(!ns_filenames)
-        return;
-    
-    map<string, vector<string>> filenames; // root directory to containing filename maps
-    for(NSString *ns_filename in ns_filenames)
-    {
-        // filenames are without trailing slashes for dirs here
-        char dir[MAXPATHLEN], fn[MAXPATHLEN];
-        if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
-            continue;
-        if(!GetFilenameFromPath([ns_filename fileSystemRepresentation], fn))
-           continue;
-        filenames[dir].push_back(fn);
-    }
-    
-    if(filenames.empty()) // invalid pasteboard?
-        return;
-    
-    string destination = self.activePanelController.currentDirectoryPath;
-    
-    for(auto i: filenames) {        
-        FileCopyOperationOptions opts;
-        opts.docopy = true;
-        
-        Operation *op;
-        
-        if(self.activePanelController.vfs->IsNativeFS())
-            op = [[FileCopyOperation alloc] initWithFiles:i.second
-                                                     root:i.first.c_str()
-                                                     dest:destination.c_str()
-                                                  options:opts]; // native->native
-        else
-            op = [[FileCopyOperation alloc] initWithFiles:i.second
-                                                     root:i.first.c_str()
-                                                   srcvfs:VFSNativeHost::SharedHost()
-                                                     dest:destination.c_str()
-                                                   dstvfs:self.activePanelController.vfs
-                                                  options:opts]; // vfs(native)->vfs
-        
-        __weak PanelController *wpc = self.activePanelController;
-        [op AddOnFinishHandler:^{
-            dispatch_to_main_queue( [=]{
-                if(PanelController *pc = wpc) [pc RefreshDirectory];
-            });
-        }];
-        
-        [m_OperationsController AddOperation:op];
-    }
+//    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
+//        return;
+//    
+//    NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
+//
+//    // check what's inside pasteboard
+//    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSFilenamesPboardType]];
+//    if(!best_type)
+//        return;
+//
+//    // check if we're on writeable VFS
+//    if(!self.isPanelActive ||
+//       !self.activePanelController.vfs->IsWriteable())
+//        return;
+//    
+//    // input should be an array of filepaths
+//    NSArray* ns_filenames = [paste_board propertyListForType:NSFilenamesPboardType];
+//    if(!ns_filenames)
+//        return;
+//    
+//    map<string, vector<string>> filenames; // root directory to containing filename maps
+//    for(NSString *ns_filename in ns_filenames)
+//    {
+//        // filenames are without trailing slashes for dirs here
+//        char dir[MAXPATHLEN], fn[MAXPATHLEN];
+//        if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
+//            continue;
+//        if(!GetFilenameFromPath([ns_filename fileSystemRepresentation], fn))
+//           continue;
+//        filenames[dir].push_back(fn);
+//    }
+//    
+//    if(filenames.empty()) // invalid pasteboard?
+//        return;
+//    
+//    string destination = self.activePanelController.currentDirectoryPath;
+//    
+//    for(auto i: filenames) {        
+//        FileCopyOperationOptions opts;
+//        opts.docopy = true;
+//        
+//        Operation *op;
+//        
+//        if(self.activePanelController.vfs->IsNativeFS())
+//            op = [[FileCopyOperation alloc] initWithFiles:i.second
+//                                                     root:i.first.c_str()
+//                                                     dest:destination.c_str()
+//                                                  options:opts]; // native->native
+//        else
+//            op = [[FileCopyOperation alloc] initWithFiles:i.second
+//                                                     root:i.first.c_str()
+//                                                   srcvfs:VFSNativeHost::SharedHost()
+//                                                     dest:destination.c_str()
+//                                                   dstvfs:self.activePanelController.vfs
+//                                                  options:opts]; // vfs(native)->vfs
+//        
+//        __weak PanelController *wpc = self.activePanelController;
+//        [op AddOnFinishHandler:^{
+//            dispatch_to_main_queue( [=]{
+//                if(PanelController *pc = wpc) [pc RefreshDirectory];
+//            });
+//        }];
+//        
+//        [m_OperationsController AddOperation:op];
+//    }
 }
 
 - (IBAction)copy:(id)sender

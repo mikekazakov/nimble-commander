@@ -6,7 +6,9 @@
 //  Copyright © 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/xattr.h>
 #include <Habanero/algo.h>
+
 //#include <sys/sendfile.h>
 //
 //#include <copyfile.h>
@@ -45,6 +47,26 @@ static void PreallocateSpace(int64_t _preallocate_delta, int _file_des)
     }
 }
 
+static void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
+{
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    
+    attrs.commonattr = ATTR_CMN_MODTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CRTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
+
+//  do we really need atime to be changed?
+//    attrs.commonattr = ATTR_CMN_ACCTIME;
+//    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CHGTIME;
+    fsetattrlist(_target_fd, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
+}
+
 void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
                                    const string &_dest_path,
                                    const VFSHostPtr &_dest_host,
@@ -58,6 +80,7 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
 
 void FileCopyOperationJobNew::Do()
 {
+    m_IsSingleItemProcessing = m_VFSListingItems.size() == 1;
     bool need_to_build = false;
     auto comp_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
     if( need_to_build )
@@ -65,13 +88,17 @@ void FileCopyOperationJobNew::Do()
     m_PathCompositionType = comp_type;
     
     auto scan_result = ScanSourceItems();
-    if( get<0>(scan_result) != StepResult::Ok )
+    if( get<0>(scan_result) != StepResult::Ok ) {
+        SetStopped();
         return;
+    }
     m_SourceItems = move( get<1>(scan_result) );
     
     m_VFSListingItems.clear(); // don't need them anymore
     
     ProcessItems();
+    
+    SetCompleted();
 }
 
 void FileCopyOperationJobNew::ProcessItems()
@@ -167,7 +194,7 @@ void FileCopyOperationJobNew::test3(string _dir, string _filename, VFSHostPtr _h
     int a = 10;
 }
 
-static auto run_test = []{
+//static auto run_test = []{
     
 //    for( int i = 0; i < 2; ++i ) {
 //        FileCopyOperationJobNew job;
@@ -181,22 +208,22 @@ static auto run_test = []{
 //    job.test2("/users/migun/ABRA/", VFSNativeHost::SharedHost());
     
 //    job.test3("/Users/migun/", /*"Applications"*/ "!!", VFSNativeHost::SharedHost());
-    
-    auto host = VFSNativeHost::SharedHost();
-    vector<VFSFlexibleListingItem> items;
-//    int ret = host->FetchFlexibleListingItems("/Users/migun/Downloads", {"gimp-2.8.14.dmg", "PopcornTime-latest.dmg", "TorBrowser-5.0.1-osx64_en-US.dmg"}, 0, items, nullptr);
-//    int ret = host->FetchFlexibleListingItems("/Users/migun", {"Source"}, 0, items, nullptr);
-    int ret = host->FetchFlexibleListingItems("/Users/migun/Documents/Files/source/Files/3rd_party/built/include", {"boost"}, 0, items, nullptr);
-    
-
-    job.Init(move(items), "/Users/migun/!TEST", host, {});
-    job.Do_Hack();
-    
-    
-    
-    int a = 10;
-    return 0;
-}();
+//    
+//    auto host = VFSNativeHost::SharedHost();
+//    vector<VFSFlexibleListingItem> items;
+////    int ret = host->FetchFlexibleListingItems("/Users/migun/Downloads", {"gimp-2.8.14.dmg", "PopcornTime-latest.dmg", "TorBrowser-5.0.1-osx64_en-US.dmg"}, 0, items, nullptr);
+////    int ret = host->FetchFlexibleListingItems("/Users/migun", {"Source"}, 0, items, nullptr);
+//    int ret = host->FetchFlexibleListingItems("/Users/migun/Documents/Files/source/Files/3rd_party/built/include", {"boost"}, 0, items, nullptr);
+//    
+//
+//    job.Init(move(items), "/Users/migun/!TEST", host, {});
+//    job.Do_Hack();
+//    
+//    
+//    
+//    int a = 10;
+//    return 0;
+//}();
 
 FileCopyOperationJobNew::PathCompositionType FileCopyOperationJobNew::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
 {
@@ -399,39 +426,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                                                                                         function<void(const void *_data, unsigned _sz)> _source_data_feedback) const
 {
     auto &io = RoutedIO::Default;
-
-//    // TODO: need to ask about destination volume info to exclude meaningless operations for attrs which are not supported
-//    // TODO: need to adjust buffer sizes and writing calls to preffered volume's I/O size
-//    struct stat src_stat_buffer, dst_stat_buffer;
-//    char *readbuf = (char*)m_Buffer1.get(), *writebuf = (char*)m_Buffer2.get();
-//    int dstopenflags=0, sourcefd=-1, destinationfd=-1, fcntlret;
-//    int64_t preallocate_delta = 0;
-//    unsigned long startwriteoff = 0, totaldestsize = 0, dest_sz_on_stop = 0;
-//    bool adjust_dst_time = true, copy_xattrs = true, erase_xattrs = false, remember_choice = false,
-//    was_successful = false, unlink_on_stop = false;
-//    mode_t oldumask;
-//    unsigned long io_leftwrite = 0, io_totalread = 0, io_totalwrote = 0;
-//    bool io_docancel = false;
-//    bool need_dst_truncate = false;
-//    
-//    m_Stats.SetCurrentItem(_src);
-//    
-//    // getting fs_info for every single file is suboptimal. need to optimize it.
-//    auto src_fs_info = NativeFSManager::Instance().VolumeFromPath(_src);
-//
-//opensource:
-    
-    // we need to check if our source file is a symlink, so we can't rely on _src_dir_fs_info as it can point to another filesystem
-    struct stat src_lstat_buf;
-    while( io.lstat(_src_path.c_str(), &src_lstat_buf) == -1 ) {
-        // failed to lstat source file
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
-        }
-    }
     
     // we initially open source file in non-blocking mode, so we can fail early and not to cause a hang. (hi, apple!)
     int source_fd = -1;
@@ -469,9 +463,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
     
     // get information about source file
     struct stat src_stat_buffer;
-    if( !S_ISLNK(src_lstat_buf.st_mode) )
-        src_stat_buffer = src_lstat_buf;
-    else while( fstat(source_fd, &src_stat_buffer) == -1 ) {
+    while( fstat(source_fd, &src_stat_buffer) == -1 ) {
         // failed to stat source
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
@@ -490,7 +482,10 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
     // setting up copying scenario
     int     dst_open_flags          = 0;
     bool    do_erase_xattrs         = false,
+            do_copy_xattrs          = true,
             do_unlink_on_stop       = false,
+            do_set_times            = true,
+            do_set_unix_flags       = true,
             need_dst_truncate       = false,
             dst_existed_before      = false,
             dst_is_a_symlink        = false;
@@ -519,6 +514,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         auto setup_append = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = false;
+            do_copy_xattrs = false;
+            do_set_times = false;
+            do_set_unix_flags = false;
             dst_size_on_stop = dst_stat_buffer.st_size;
             total_dst_size += dst_stat_buffer.st_size;
             initial_writing_offset = dst_stat_buffer.st_size;
@@ -738,46 +736,66 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         swap( read_buffer, write_buffer );
     }
     
-
-
-//    
-//    // TODO: do we need to determine if various attributes setting was successful?
-//    
-//    // erase destination's xattrs
-//    if(m_Options.copy_xattrs && erase_xattrs)
-//        EraseXattrs(destinationfd);
-//    
-//    // copy xattrs from src to dest
-//    if(m_Options.copy_xattrs && copy_xattrs)
-//        CopyXattrs(sourcefd, destinationfd);
-//    
-//    // change ownage
-//    // TODO: we can't chown without superuser rights.
-//    // need to optimize this (sometimes) meaningless call
-//    if(m_Options.copy_unix_owners) {
-//        if(io.isrouted()) // long path
-//            io.chown(_dest, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
-//        else // short path
-//            fchown(destinationfd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
-//    }
-//    
-//    // change flags
-//    if(m_Options.copy_unix_flags) {
-//        if(io.isrouted()) // long path
-//            io.chflags(_dest, src_stat_buffer.st_flags);
-//        else
-//            fchflags(destinationfd, src_stat_buffer.st_flags);
-//    }
-//    
-//    // adjust destination time as source
-//    if(m_Options.copy_file_times && adjust_dst_time)
-//        AdjustFileTimes(destinationfd, &src_stat_buffer);
-
-  
     // we're ok, turn off destination cleaning
     clean_destination.disengage();
     
+    // do xattr things
+    // crazy OSX stuff: setting some xattrs like FinderInfo may actually change file's BSD flags
+    if( m_Options.copy_xattrs  ) {
+        if(do_erase_xattrs) // erase destination's xattrs
+            EraseXattrsFromNativeFD(destination_fd);
+
+        if(do_copy_xattrs) // copy xattrs from src to dest
+            CopyXattrsFromNativeFDToNativeFD(source_fd, destination_fd);
+    }
+
+    // do flags things
+    if( m_Options.copy_unix_flags && do_set_unix_flags ) {
+        if(io.isrouted()) // long path
+            io.chflags(_dst_path.c_str(), src_stat_buffer.st_flags);
+        else
+            fchflags(destination_fd, src_stat_buffer.st_flags);
+    }
+
+    // do times things
+    if( m_Options.copy_file_times && do_set_times )
+        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+    
+    // do ownage things
+    // TODO: we actually can't chown without superuser rights.
+    // need to optimize this (sometimes) meaningless call
+    if( m_Options.copy_unix_owners ) {
+        if( io.isrouted() ) // long path
+            io.chown(_dst_path.c_str(), src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+        else // short path
+            fchown(destination_fd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    }
+    
     return StepResult::Ok;
+}
+
+// uses m_Buffer[0] to reduce mallocs
+// currently there's no error handling or reporting here. may need this in the future. maybe.
+void FileCopyOperationJobNew::EraseXattrsFromNativeFD(int _fd_in) const
+{
+    auto xnames = (char*)m_Buffers[0].get();
+    auto xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
+    for( auto s = xnames, e = xnames + xnamesizes; s < e; s += strlen(s) + 1 ) // iterate thru xattr names..
+        fremovexattr(_fd_in, s, 0); // ..and remove everyone
+}
+
+// uses m_Buffer[0] and m_Buffer[1] to reduce mallocs
+// currently there's no error handling or reporting here. may need this in the future. maybe.
+void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const
+{
+    auto xnames = (char*)m_Buffers[0].get();
+    auto xdata = m_Buffers[1].get();
+    auto xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
+    for( auto s = xnames, e = xnames + xnamesizes; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
+        auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0, 0); // and read all these xattrs
+        if( xattrsize >= 0 ) // xattr can be zero-length, just a tag itself
+            fsetxattr(_fd_to, s, xdata, xattrsize, 0, 0); // write them into _fd_to
+    }
 }
 
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectoryToNativeDirectory(const string& _src_path,

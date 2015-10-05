@@ -900,56 +900,56 @@ static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<stri
 
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender
 {
-    auto files = self.selectedEntriesOrFocusedEntryFilenames;
-    if(files.empty())
-        return;
-    NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
-    string name = stub.fileSystemRepresentationSafe;
-    path dir = self.currentDirectoryPath;
-    
-    // currently doing existance checking in main thread, which is bad for a slow remote vfs
-    // better implement it asynchronously.
-    if( self.vfs->Exists((dir/name).c_str()) )
-        // this file already exists, will try another ones
-        for( int i = 2; ; ++i ) {
-            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
-            if( !self.vfs->Exists((dir/name).c_str()) )
-                break;
-            if( i >= 100 )
-                return; // we're full of such filenames, no reason to go on
-        }
-    
-    path src = self.currentDirectoryPath;
-    path dst = src / name / "/";
-    
-    FileCopyOperationOptions opts;
-    opts.docopy = false;
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    if(self.vfs->IsNativeFS())
-        op = [op initWithFiles:move(files) root:src.c_str() dest:dst.c_str() options:opts];
-    else
-        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.vfs dest:dst.c_str() dstvfs:self.vfs options:opts];
-
-    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-    __weak PanelController *ws = self;
-    [op AddOnFinishHandler:^{
-        dispatch_to_main_queue([=]{
-            PanelController *ss = ws;
-            
-            if(force_reload)
-                [ss RefreshDirectory];
-            
-            PanelControllerDelayedSelection req;
-            req.filename = name;
-            req.timeout = 2s;            
-            req.done = [=]{
-                [((PanelController*)ws).view startFieldEditorRenaming];
-            };
-            [ss ScheduleDelayedSelectionChangeFor:req];
-        });
-    }];
-    
-    [self.state AddOperation:op];
+//    auto files = self.selectedEntriesOrFocusedEntryFilenames;
+//    if(files.empty())
+//        return;
+//    NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
+//    string name = stub.fileSystemRepresentationSafe;
+//    path dir = self.currentDirectoryPath;
+//    
+//    // currently doing existance checking in main thread, which is bad for a slow remote vfs
+//    // better implement it asynchronously.
+//    if( self.vfs->Exists((dir/name).c_str()) )
+//        // this file already exists, will try another ones
+//        for( int i = 2; ; ++i ) {
+//            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
+//            if( !self.vfs->Exists((dir/name).c_str()) )
+//                break;
+//            if( i >= 100 )
+//                return; // we're full of such filenames, no reason to go on
+//        }
+//    
+//    path src = self.currentDirectoryPath;
+//    path dst = src / name / "/";
+//    
+//    FileCopyOperationOptions opts;
+//    opts.docopy = false;
+//    FileCopyOperation *op = [FileCopyOperation alloc];
+//    if(self.vfs->IsNativeFS())
+//        op = [op initWithFiles:move(files) root:src.c_str() dest:dst.c_str() options:opts];
+//    else
+//        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.vfs dest:dst.c_str() dstvfs:self.vfs options:opts];
+//
+//    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+//    __weak PanelController *ws = self;
+//    [op AddOnFinishHandler:^{
+//        dispatch_to_main_queue([=]{
+//            PanelController *ss = ws;
+//            
+//            if(force_reload)
+//                [ss RefreshDirectory];
+//            
+//            PanelControllerDelayedSelection req;
+//            req.filename = name;
+//            req.timeout = 2s;            
+//            req.done = [=]{
+//                [((PanelController*)ws).view startFieldEditorRenaming];
+//            };
+//            [ss ScheduleDelayedSelectionChangeFor:req];
+//        });
+//    }];
+//    
+//    [self.state AddOperation:op];
 }
 
 - (IBAction)OnQuickNewFile:(id)sender

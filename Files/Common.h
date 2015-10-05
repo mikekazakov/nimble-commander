@@ -61,8 +61,9 @@ private:
  * If _from_ is nil - returns nil.
  */
 template<typename T>
-inline T* objc_cast(id from) noexcept {
-    if ( [from isKindOfClass:[T class]] )
+T* objc_cast(id from) noexcept {
+    static const auto class_meta = [T class];
+    if( [from isKindOfClass:class_meta] )
         return static_cast<T*>(from);
     return nil;
 }

@@ -342,6 +342,7 @@ void panel::GenericCursorPersistance::Restore() const
 - (void) RefreshDirectory
 {
     if(m_View == nil) return; // guard agains calls from init process
+    if(!self.isUniform) return; // currently we can't reload non-uniform listings. maybe later?
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
@@ -655,13 +656,16 @@ void panel::GenericCursorPersistance::Restore() const
        [_filename isEqualToString:@".."] ||
        !m_View.item ||
        m_View.item.IsDotDot() ||
+       !m_View.item.Host()->IsWriteable() ||
        [_filename isEqualToString:m_View.item.NSName()])
         return;
     
     string target_fn = _filename.fileSystemRepresentationSafe;
+    auto item = m_View.item;
+    
  
     // checking for invalid symbols
-    if( !self.vfs->ValidateFilename(target_fn.c_str()) ) {
+    if( !item.Host()->ValidateFilename(target_fn.c_str()) ) {
         NSAlert *a = [[NSAlert alloc] init];
         a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
                          _filename.length <= 256 ? _filename : [[_filename substringToIndex:256] stringByAppendingString:@"..."]
@@ -675,22 +679,29 @@ void panel::GenericCursorPersistance::Restore() const
     FileCopyOperationOptions opts;
     opts.docopy = false;
     
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    if(self.vfs->IsNativeFS())
-        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
-                          root:self.currentDirectoryPath.c_str()
-                          dest:target_fn.c_str()
-                       options:opts];
-    else if( self.vfs->IsWriteable() )
-        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
-                          root:self.currentDirectoryPath.c_str()
-                        srcvfs:self.vfs
-                          dest:target_fn.c_str()
-                        dstvfs:self.vfs
-                       options:opts];
-    else
-        return;
+    FileCopyOperation *op = [[FileCopyOperation alloc] initWithItems:{item}
+                                                     destinationPath:item.Directory()+target_fn
+                                                     destinationHost:item.Host()
+                                                             options:opts
+                             ];
     
+//    if(self.vfs->IsNativeFS())
+//        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
+//                          root:self.currentDirectoryPath.c_str()
+//                          dest:target_fn.c_str()
+//                       options:opts];
+//    else if( self.vfs->IsWriteable() )
+//        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
+//                          root:self.currentDirectoryPath.c_str()
+//                        srcvfs:self.vfs
+//                          dest:target_fn.c_str()
+//                        dstvfs:self.vfs
+//                       options:opts];
+//    else
+//        return;
+    
+    
+    // TODO: this will crash on non-uniform listing
     string curr_path = self.currentDirectoryPath;
     auto curr_vfs = self.vfs;
     [op AddOnFinishHandler:^{

@@ -16,27 +16,32 @@
 
 @interface FileCopyOperation : Operation
 
+// new and the only copying operation init
+- (id)initWithItems:(vector<VFSFlexibleListingItem>)_files
+    destinationPath:(const string&)_path
+    destinationHost:(const VFSHostPtr&)_host
+            options:(const FileCopyOperationOptions&)_options;
 
 // native->native copying
-- (id)initWithFiles:(vector<string>)_files
-               root:(const char*)_root
-               dest:(const char*)_dest
-            options:(const FileCopyOperationOptions&)_opts;
-
-// VFS->native copying
-- (id)initWithFiles:(vector<string>)_files
-               root:(const char*)_root
-            rootvfs:(shared_ptr<VFSHost>)_vfs
-               dest:(const char*)_dest
-            options:(const FileCopyOperationOptions&)_opts;
-
-// VFS->VFS copying
-- (id)initWithFiles:(vector<string>)_files
-               root:(const char*)_root
-             srcvfs:(shared_ptr<VFSHost>)_vfs
-               dest:(const char*)_dest
-             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
-            options:(const FileCopyOperationOptions&)_opts;
+//- (id)initWithFiles:(vector<string>)_files
+//               root:(const char*)_root
+//               dest:(const char*)_dest
+//            options:(const FileCopyOperationOptions&)_opts;
+//
+//// VFS->native copying
+//- (id)initWithFiles:(vector<string>)_files
+//               root:(const char*)_root
+//            rootvfs:(shared_ptr<VFSHost>)_vfs
+//               dest:(const char*)_dest
+//            options:(const FileCopyOperationOptions&)_opts;
+//
+//// VFS->VFS copying
+//- (id)initWithFiles:(vector<string>)_files
+//               root:(const char*)_root
+//             srcvfs:(shared_ptr<VFSHost>)_vfs
+//               dest:(const char*)_dest
+//             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
+//            options:(const FileCopyOperationOptions&)_opts;
 
 
 - (void)Update;

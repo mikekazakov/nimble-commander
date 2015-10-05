@@ -16,6 +16,10 @@
 #import "NativeFSManager.h"
 #import "RoutedIO.h"
 
+// TODO:
+// do some research about this new function:
+// int getattrlistbulk(int, void *, void *, size_t, uint64_t) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+
 const char *VFSNativeHost::Tag = "native";
 
 class VFSNativeHostConfiguration

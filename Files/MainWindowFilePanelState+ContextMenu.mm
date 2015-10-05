@@ -635,35 +635,35 @@ proceed:;
     FileCopyOperationOptions opts;
     opts.docopy = true;
     
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    if(m_CurrentController.vfs->IsNativeFS())
-        op = [op initWithFiles:vector<string>(1, m_Items[0])
-                          root:m_DirPath.c_str()
-                          dest:target
-                       options:opts];
-    else
-        op = [op initWithFiles:vector<string>(1, m_Items[0])
-                          root:m_DirPath.c_str()
-                        srcvfs:m_CurrentController.vfs
-                          dest:target
-                        dstvfs:m_CurrentController.vfs
-                       options:opts];
-    
-    char target_fn[MAXPATHLEN];
-    GetFilenameFromPath(target, target_fn);
-    string target_fns = target_fn;
-    string current_pan_path = m_CurrentController.currentDirectoryPath;
-    [op AddOnFinishHandler:^{
-        if(m_CurrentController.currentDirectoryPath == current_pan_path)
-            dispatch_to_main_queue( [=]{
-                PanelControllerDelayedSelection req;
-                req.filename = target_fns;
-                [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
-            });
-        }
-     ];
-    
-    [m_MainWnd AddOperation:op];
+//    FileCopyOperation *op = [FileCopyOperation alloc];
+//    if(m_CurrentController.vfs->IsNativeFS())
+//        op = [op initWithFiles:vector<string>(1, m_Items[0])
+//                          root:m_DirPath.c_str()
+//                          dest:target
+//                       options:opts];
+//    else
+//        op = [op initWithFiles:vector<string>(1, m_Items[0])
+//                          root:m_DirPath.c_str()
+//                        srcvfs:m_CurrentController.vfs
+//                          dest:target
+//                        dstvfs:m_CurrentController.vfs
+//                       options:opts];
+//    
+//    char target_fn[MAXPATHLEN];
+//    GetFilenameFromPath(target, target_fn);
+//    string target_fns = target_fn;
+//    string current_pan_path = m_CurrentController.currentDirectoryPath;
+//    [op AddOnFinishHandler:^{
+//        if(m_CurrentController.currentDirectoryPath == current_pan_path)
+//            dispatch_to_main_queue( [=]{
+//                PanelControllerDelayedSelection req;
+//                req.filename = target_fns;
+//                [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
+//            });
+//        }
+//     ];
+//    
+//    [m_MainWnd AddOperation:op];
 }
 
 @end

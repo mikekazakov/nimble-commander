@@ -4492,6 +4492,7 @@
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
+				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
@@ -4538,6 +4539,7 @@
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
+				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (

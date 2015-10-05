@@ -204,7 +204,7 @@ void FileCopyOperationJobNew::test3(string _dir, string _filename, VFSHostPtr _h
 //        remove("/users/migun/2/newbigfile.avi");
 //    }
     
-    FileCopyOperationJobNew job;
+//    FileCopyOperationJobNew job;
 //    job.test2("/users/migun/ABRA/", VFSNativeHost::SharedHost());
     
 //    job.test3("/Users/migun/", /*"Applications"*/ "!!", VFSNativeHost::SharedHost());

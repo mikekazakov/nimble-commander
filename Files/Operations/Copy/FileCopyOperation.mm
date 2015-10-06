@@ -84,6 +84,18 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
     return self;
 }
 
++ (instancetype) singleItemRenameOperation:(VFSFlexibleListingItem)_item
+                                   newName:(const string&)_path
+{
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    return [[FileCopyOperation alloc] initWithItems:{_item}
+                                    destinationPath:_item.Directory() + _path
+                                    destinationHost:_item.Host()
+                                            options:opts];
+}
+
+
 
 //- (id)initWithFiles:(vector<string>)_files
 //               root:(const char*)_root

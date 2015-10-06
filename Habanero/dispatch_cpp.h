@@ -4,6 +4,7 @@
 #include <utility>
 #include <atomic>
 #include <chrono>
+#include <iostream>
 
 // synopsis
 
@@ -180,7 +181,22 @@ inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queu
                      new T( std::move(f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
-                         (*f)();
+                         try
+                         {
+                             (*f)();
+                         }
+                         catch(std::exception &e)
+                         {
+                             std::cerr << "Exception caught: " << e.what() << std::endl;
+                         }
+                         catch(std::exception *e)
+                         {
+                             std::cerr << "Exception caught: " << e->what() << std::endl;
+                         }
+                         catch(...)
+                         {
+                             std::cerr << "Caught an unhandled exception!" << std::endl;
+                         }
                          delete f;
                      });
 }

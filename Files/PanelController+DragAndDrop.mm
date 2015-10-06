@@ -468,7 +468,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             if(mask & NSDragOperationCopy)
                 result = NSDragOperationCopy;
         }
-        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && self.vfs->IsNativeFS() ) {
+        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && destination.Host()->IsNativeFS() ) {
             // tell we can accept file promises drags
             valid_items = [self countAcceptableDraggingItemsExt:sender forType:g_PasteboardFileURLPromiseUTI];
             NSDragOperation mask = sender.draggingSourceOperationMask;
@@ -542,8 +542,8 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             return false;
         
         if( opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink) ||
-           opmask == (NSDragOperationMove|NSDragOperationLink) ||
-           opmask == (NSDragOperationMove|NSDragOperationCopy) )
+            opmask == (NSDragOperationMove|NSDragOperationLink) ||
+            opmask == (NSDragOperationMove|NSDragOperationCopy) )
             opmask = source_broker.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
         
         if( opmask == NSDragOperationCopy ) {
@@ -552,54 +552,44 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
                                                        options:opts];
+            __weak PanelController *dst_cntr = self;
             [op AddOnFinishHandler:^{
-                dispatch_to_main_queue([=]{
-                    [self RefreshDirectory];
+                dispatch_to_main_queue([dst_cntr]{
+                    if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
                 });
             }];
             [self.state.OperationsController AddOperation:op];
             return true;
         }
-//        else if( opmask == NSDragOperationMove ) {
-//            if( !source_broker.vfs->IsWriteable() )
-//                return false; // should not happen!
-//            FileCopyOperationOptions opts;
-//            opts.docopy = false;
-//            FileCopyOperation *op;
-//            if( source_broker.vfs->IsNativeFS() && self.vfs->IsNativeFS() )
-//                op = [[FileCopyOperation alloc] initWithFiles:move(files)
-//                                                         root:source_broker.root_path.c_str()
-//                                                         dest:destination_dir.c_str()
-//                                                      options:opts]; // native->native
-//            // TODO: implement moving vfs->native !!!!!
-//            else
-//                op = [[FileCopyOperation alloc] initWithFiles:move(files)
-//                                                         root:source_broker.root_path.c_str()
-//                                                       srcvfs:source_broker.vfs
-//                                                         dest:destination_dir.c_str()
-//                                                       dstvfs:self.vfs
-//                                                      options:opts]; // vfs->vfs
-//            __weak PanelController *src_cntr = source_controller;
-//            __weak PanelController *dst_cntr = self;
-//            [op AddOnFinishHandler:^{
-//                dispatch_to_main_queue([=]{
-//                    if(PanelController *pc = src_cntr) [pc RefreshDirectory];
-//                    if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
-//                });
-//            }];
-//            [self.state.OperationsController AddOperation:op];
-//            return true;
-//        }
-//        else if(opmask == NSDragOperationLink &&
-//                files.size() == 1 &&
-//                source_broker.vfs->IsNativeFS() ) {
-//            string source_path = source_broker.root_path + files.front().c_str();
-//            string dest_path = self.currentDirectoryPath + files.front().c_str();
-//            [self.state.OperationsController AddOperation:
-//             [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
-//                                                        linkname:dest_path.c_str()]];
-//            return true;
-//        }
+        else if( opmask == NSDragOperationMove ) {
+            FileCopyOperationOptions opts;
+            opts.docopy = false;
+            auto op = [[FileCopyOperation alloc] initWithItems:move(files)
+                                               destinationPath:destination.Path()
+                                               destinationHost:destination.Host()
+                                                       options:opts];
+            __weak PanelController *src_cntr = source_broker.controller;
+            __weak PanelController *dst_cntr = self;
+            [op AddOnFinishHandler:^{
+                dispatch_to_main_queue([src_cntr, dst_cntr]{
+                    if(PanelController *pc = src_cntr) [pc RefreshDirectory];
+                    if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
+                });
+            }];
+            [self.state.OperationsController AddOperation:op];
+            return true;
+        }
+        else if( opmask == NSDragOperationLink &&
+                 files.size() == 1 &&
+                 source_broker.areAllHostsNative &&
+                 destination.Host()->IsNativeFS() ) {
+            path source_path = files.front().Path();
+            path dest_path = path(destination.Path()) / files.front().Filename();
+            auto op = [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
+                                                                 linkname:dest_path.c_str()];
+            [self.state.OperationsController AddOperation:op];
+            return true;
+        }
     }
 //    else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI]) {
 //        NSArray *fileURLs = [sender.draggingPasteboard

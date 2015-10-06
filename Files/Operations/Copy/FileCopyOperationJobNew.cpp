@@ -74,6 +74,8 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
 {
     m_VFSListingItems = move(_source_items);
     m_InitialDestinationPath = _dest_path;
+    if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
+        throw invalid_argument("FileCopyOperationJobNew::Init: m_InitialDestinationPath should be an absolute path");
     m_DestinationHost = _dest_host;
     m_Options = _opts;
 }
@@ -104,6 +106,13 @@ void FileCopyOperationJobNew::Do()
 void FileCopyOperationJobNew::ProcessItems()
 {
     const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
+    auto &nfsm = NativeFSManager::Instance();
+    shared_ptr<const NativeFileSystemInfo> dest_fs_info;
+    if( dest_host_is_native )
+        if( !(dest_fs_info = nfsm.VolumeFromPath(m_DestinationPath)) )
+            dest_fs_info = nfsm.VolumeFromPathFast(m_DestinationPath); // this may be wrong in case of symlinks
+    
+    
     for( int i = 0, e = m_SourceItems.ItemsAmount(); i != e; ++i ) {
         auto mode = m_SourceItems.ItemMode(i);
         auto&host = m_SourceItems.ItemHost(i);
@@ -115,8 +124,13 @@ void FileCopyOperationJobNew::ProcessItems()
                 if( m_Options.docopy ) {
                     auto step_result = CopyNativeFileToNativeFile(source_path, destination_path, nullptr);
                 }
-                else
-                    assert(0);
+                else {
+                    bool same_volume = nfsm.VolumeFromPath(source_path) == dest_fs_info;
+                    auto step_result = same_volume ?
+                        RenameNativeFile(source_path, destination_path) :
+                        StepResult::Stop; // move
+
+                }
             
             }
             else
@@ -143,18 +157,42 @@ void FileCopyOperationJobNew::ProcessItems()
 
 string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_index ) const
 {
-// !!! need "m_IsSingleEntryCopy" flag !!!
-    
-    
 //    PathPreffix, // path = dest_path + source_rel_path
-//    FixedPath    // path = dest_path
+//    FixedPath    // path = dest_path + [source_rel_path without heading]
     if( m_PathCompositionType == PathCompositionType::PathPreffix ) {
         auto path = m_SourceItems.ComposeRelativePath(_src_item_index);
         path.insert(0, m_DestinationPath);
         return path;
     }
     else {
-        assert(0); // later
+        auto result = m_DestinationPath;
+        auto src = m_SourceItems.ComposeRelativePath(_src_item_index);
+        if( m_IsSingleItemProcessing ) {
+            // for top level we need to just leave path without changes - skip top level's entry name.
+            // for nested entries we need to cut first part of a path.
+            //            if(strchr(_path, '/') != 0)
+            //                strcat(destinationpath, strchr(_path, '/'));
+            //        }
+            auto sl = src.find('/');
+            if( sl != src.npos )
+                result += src.c_str() + sl;
+        }
+        return result;
+        
+        
+        
+//        // compose dest name
+//        strcpy(destinationpath, m_Destination.c_str());
+//        // here we need to find if user wanted just to copy a single top-level directory
+//        // if so - don't touch destination name. otherwise - add an original path there
+//        if(m_IsSingleEntryCopy) {
+//            // for top level we need to just leave path without changes - skip top level's entry name
+//            // for nested entries we need to cut first part of a path
+//            if(strchr(_path, '/') != 0)
+//                strcat(destinationpath, strchr(_path, '/'));
+//        }
+//
+//        assert(0); // later
     }
 }
 
@@ -227,9 +265,6 @@ void FileCopyOperationJobNew::test3(string _dir, string _filename, VFSHostPtr _h
 
 FileCopyOperationJobNew::PathCompositionType FileCopyOperationJobNew::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
 {
-    if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
-        throw invalid_argument("FileCopyOperationJobNew::AnalizeDestination: m_InitialDestinationPath should be an absolute path");
-  
     VFSStat st;
     if( m_DestinationHost->Stat(m_InitialDestinationPath.c_str(), st, 0, nullptr ) == 0) {
         // destination entry already exist
@@ -243,11 +278,12 @@ FileCopyOperationJobNew::PathCompositionType FileCopyOperationJobNew::AnalyzeIni
         }
     }
     else {
+        // TODO: check single-item mode here?
         // destination entry is non-existent
         _need_to_build = true;
         if( m_InitialDestinationPath.back() == '/' || m_VFSListingItems.size() > 1 ) {
             // user want to copy/rename/move file(s) to some directory, like "/bin/Abra/Carabra/"
-            // OR user want to copy/rename/move file(s) to some directory, like "/bin/Abra/Carabra" and have MANY item to copy/rename/move
+            // OR user want to copy/rename/move file(s) to some directory, like "/bin/Abra/Carabra" and have MANY items to copy/rename/move
             _result_destination = EnsureTrailingSlash( m_InitialDestinationPath );
             return PathCompositionType::PathPreffix;
         }
@@ -713,7 +749,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                     read_return = StepResult::Skipped;
                     break;
                 }
-                switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _src_path) ) {
+                switch( m_OnSourceFileReadError(VFSError::FromErrno(), _src_path) ) {
                     case OperationDialogResult::Retry:      continue;
                     case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
                     case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
@@ -799,7 +835,7 @@ void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int
 }
 
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectoryToNativeDirectory(const string& _src_path,
-                                                                                                  const string& _dst_path)
+                                                                                                  const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;
     
@@ -901,6 +937,64 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectory
 //    return opres;
     
 }
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(const string& _src_path,
+                                                                              const string& _dst_path) const
+{
+    auto &io = RoutedIO::Default;    
+    
+    // check if destination file already exist
+    struct stat dst_stat_buffer;
+    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+        // Destination file already exists.
+        // Check if destination and source paths reference the same file. In this case,
+        // silently rename the file.
+        
+        struct stat src_stat_buffer;
+        while( io.lstat(_src_path.c_str(), &src_stat_buffer) == -1) {
+            // failed to stat source
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
+                case FileCopyOperationDR::Retry:    continue;
+                case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+                case FileCopyOperationDR::Stop:     return StepResult::Stop;
+                default:                            return StepResult::Stop;
+            }
+        }
+        
+        if( src_stat_buffer.st_dev != dst_stat_buffer.st_dev || // actually st_dev should ALWAYS be the same for this routine
+            src_stat_buffer.st_ino != dst_stat_buffer.st_ino ) {
+            // files are different, so renaming into _dst_path will erase it.
+            // need to ask user what to do
+
+            switch( m_OnRenameDestinationAlreadyExists( _src_path, _dst_path ) ) {
+                case FileCopyOperationDR::Skip:       	return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:      return StepResult::SkipAll;
+                case FileCopyOperationDR::Stop:         return StepResult::Stop;
+                case FileCopyOperationDR::Overwrite:    break;
+                default:                                return StepResult::Stop;
+            }
+        }
+    }
+    
+    // do rename itself
+    while( io.rename(_src_path.c_str(), _dst_path.c_str()) == -1 ) {
+        // failed to rename
+        if( m_SkipAll ) return StepResult::Skipped;
+        
+        // ask user what to do
+        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            default:                            return StepResult::Stop;
+        }
+    }
+    
+    return StepResult::Ok;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 //  FileCopyOperationJobNew::SourceItems

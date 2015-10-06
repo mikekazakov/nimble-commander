@@ -114,7 +114,10 @@ private:
                                           function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
                                           ) const;
     StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
-                                                    const string& _dst_path);
+                                                    const string& _dst_path) const;
+    StepResult RenameNativeFile(const string& _src_path,
+                                const string& _dst_path) const;
+    
     
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
     void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
@@ -160,6 +163,9 @@ private:
     
     function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationDir
         = [](int, string){ return OperationDialogResult::Stop; };
+    
+    function<int(string _source, string _destination)> m_OnRenameDestinationAlreadyExists
+        = [](string, string){ return OperationDialogResult::Stop; };
     
     
 //            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];

@@ -642,7 +642,7 @@ void panel::GenericCursorPersistance::Restore() const
 {
     if( !_view.item ||
        _view.item.IsDotDot() ||
-       !self.vfs->IsWriteable())
+       !_view.item.Host()->IsWriteable())
         return false;
     return true;
 }
@@ -678,41 +678,22 @@ void panel::GenericCursorPersistance::Restore() const
     
     FileCopyOperationOptions opts;
     opts.docopy = false;
-    
-    FileCopyOperation *op = [[FileCopyOperation alloc] initWithItems:{item}
-                                                     destinationPath:item.Directory()+target_fn
-                                                     destinationHost:item.Host()
-                                                             options:opts
-                             ];
-    
-//    if(self.vfs->IsNativeFS())
-//        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
-//                          root:self.currentDirectoryPath.c_str()
-//                          dest:target_fn.c_str()
-//                       options:opts];
-//    else if( self.vfs->IsWriteable() )
-//        op = [op initWithFiles:vector<string>( 1, m_View.item.Name() )
-//                          root:self.currentDirectoryPath.c_str()
-//                        srcvfs:self.vfs
-//                          dest:target_fn.c_str()
-//                        dstvfs:self.vfs
-//                       options:opts];
-//    else
-//        return;
-    
-    
-    // TODO: this will crash on non-uniform listing
-    string curr_path = self.currentDirectoryPath;
-    auto curr_vfs = self.vfs;
-    [op AddOnFinishHandler:^{
-        if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
-            dispatch_to_main_queue( [=]{
-                PanelControllerDelayedSelection req;
-                req.filename = target_fn;
-                [self ScheduleDelayedSelectionChangeFor:req];
-                [self RefreshDirectory];
-            } );
-    }];
+
+    FileCopyOperation *op = [FileCopyOperation singleItemRenameOperation:item newName:target_fn];
+
+    if( self.isUniform ) {
+        string curr_path = self.currentDirectoryPath;
+        auto curr_vfs = self.vfs;
+        [op AddOnFinishHandler:^{
+            if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
+                dispatch_to_main_queue( [=]{
+                    PanelControllerDelayedSelection req;
+                    req.filename = target_fn;
+                    [self ScheduleDelayedSelectionChangeFor:req];
+                    [self RefreshDirectory];
+                } );
+        }];
+    }
     
     [self.state AddOperation:op];
 }

@@ -22,6 +22,10 @@
     destinationHost:(const VFSHostPtr&)_host
             options:(const FileCopyOperationOptions&)_options;
 
++ (instancetype) singleItemRenameOperation:(VFSFlexibleListingItem)_item
+                                   newName:(const string&)_path;
+
+
 // native->native copying
 //- (id)initWithFiles:(vector<string>)_files
 //               root:(const char*)_root

@@ -9,6 +9,7 @@
 
 #include "path_manip.h"
 
+// TODO: remove it.
 struct DialogResult
 {
     enum

@@ -37,8 +37,11 @@ static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
 {
+    if(!_input)
+        return {};
     map<string, vector<string>> filenames; // root directory to containing filenames map
     for( NSString *ns_filename in _input ) {
+        if( !objc_cast<NSString>(ns_filename) ) continue; // guard againts malformed input
         // filenames are without trailing slashes for dirs here
         char dir[MAXPATHLEN], fn[MAXPATHLEN];
         if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
@@ -48,6 +51,17 @@ static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *
         filenames[dir].push_back(fn);
     }
     return filenames;
+}
+
+static vector<VFSFlexibleListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
+{
+    vector<VFSFlexibleListingItem> source_items;
+    for( auto &dir: _input ) {
+        vector<VFSFlexibleListingItem> items_for_dir;
+        if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
+            move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
+    }
+    return source_items;
 }
 
 @implementation MainWindowFilePanelState
@@ -741,38 +755,21 @@ static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *
     // check what's inside pasteboard
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
+        // input should be an array of filepaths as NSStrings
+        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
 
-        // input should be an array of filepaths
-        auto ns_filenames = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
-        if( !ns_filenames )
-            return;
-
-        // root directory to containing filenames map
-        map<string, vector<string>> filenames = LayoutPathsByContainingDirectories(ns_filenames);
-        if( filenames.empty() ) // invalid pasteboard?
-            return;
-    
-        auto source_host = VFSNativeHost::SharedHost();
-    
         // currently fetching listings synchronously, which is BAAAD
-        vector<VFSFlexibleListingItem> source_items;
-        for( auto &dir: filenames ) {
-            vector<VFSFlexibleListingItem> items_for_dir;
-            if( source_host->FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
-                 move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
-        }
-        
+        auto source_items = FetchVFSListingsItemsFromDirectories(LayoutPathsByContainingDirectories(filepaths),
+                                                                 *VFSNativeHost::SharedHost());
         if( source_items.empty() )
             return; // errors on fetching listings?
         
-        auto destination_path = self.activePanelController.currentDirectoryPath;
-        auto destination_host = self.activePanelController.vfs;
-        
         FileCopyOperationOptions opts;
         opts.docopy = true;
+        
         auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                           destinationPath:destination_path
-                                           destinationHost:destination_host
+                                           destinationPath:self.activePanelController.currentDirectoryPath
+                                           destinationHost:self.activePanelController.vfs
                                                    options:opts];
 
         __weak PanelController *wpc = self.activePanelController;

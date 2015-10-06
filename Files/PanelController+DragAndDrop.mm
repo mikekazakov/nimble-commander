@@ -96,7 +96,31 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 }
 
 
+static map<string, vector<string>> LayoutArraysOfURLsByDirectories(NSArray *_file_urls)
+{
+    if(!_file_urls)
+        return {};
+    map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
+    for(NSURL *url in _file_urls) {
+        if( !objc_cast<NSURL>(url) ) continue; // guard agains malformed input data
+        path source_path = url.path.fileSystemRepresentation;
+        string root = source_path.parent_path().native() + "/";
+        files[root].emplace_back(source_path.filename().native());
+    }
+    return files;
+}
 
+// consumes result of code above
+static vector<VFSFlexibleListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
+{
+    vector<VFSFlexibleListingItem> source_items;
+    for( auto &dir: _input ) {
+        vector<VFSFlexibleListingItem> items_for_dir;
+        if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
+            move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
+    }
+    return source_items;
+}
 
 @implementation PanelDraggingItem
 {
@@ -591,43 +615,35 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
             return true;
         }
     }
-//    else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI]) {
-//        NSArray *fileURLs = [sender.draggingPasteboard
-//                             readObjectsForClasses:@[NSURL.class]
-//                             options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
-//                             ];
-//        
-//        map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
-//  
-//        for(NSURL *url in fileURLs) {
-//            path source_path = url.path.fileSystemRepresentation;
-//            string root = source_path.parent_path().native() + "/";
-//            string filename = source_path.filename().native();
-//            files[root].emplace_back(filename);
-//        }
-//
-//        for(auto &t: files) {            
-//            FileCopyOperationOptions opts;
-//            opts.docopy = true; // TODO: support move from other apps someday?
-//            FileCopyOperation *op;
-//
-//            if(!self.vfs->IsNativeFS() && self.vfs->IsWriteable() ) // vfs->vfs path
-//                op = [[FileCopyOperation alloc] initWithFiles:t.second
-//                                                         root:t.first.c_str()
-//                                                       srcvfs:VFSNativeHost::SharedHost()
-//                                                         dest:destination_dir.c_str()
-//                                                       dstvfs:self.vfs
-//                                                      options:opts];
-//            else // native -> native path
-//                op = [[FileCopyOperation alloc] initWithFiles:t.second
-//                                                         root:t.first.c_str()
-//                                                         dest:destination_dir.c_str()
-//                                                      options:opts];
-//            [self.state.OperationsController AddOperation:op];
-//        }
-//        
-//        return true;
-//    }
+    else if( [sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI] && destination.Host()->IsWriteable() ) {
+        auto fileURLs = [sender.draggingPasteboard
+                         readObjectsForClasses:@[NSURL.class]
+                         options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
+                         ];
+
+        // currently fetching listings synchronously, which is BAAAD
+        auto source_items = FetchVFSListingsItemsFromDirectories(LayoutArraysOfURLsByDirectories(fileURLs),
+                                                                 *VFSNativeHost::SharedHost());
+  
+        if( source_items.empty() )
+            return false; // errors on fetching listings?
+        
+        FileCopyOperationOptions opts;
+        opts.docopy = true; // TODO: support move from other apps someday?
+        auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
+                                           destinationPath:destination.Path()
+                                           destinationHost:destination.Host()
+                                                   options:opts];
+        
+        __weak PanelController *dst_cntr = self;
+        [op AddOnFinishHandler:^{
+            dispatch_to_main_queue([dst_cntr]{
+                if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
+            });
+        }];
+        [self.state.OperationsController AddOperation:op];
+        return true;
+    }
     else if( [sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && destination.Host()->IsNativeFS() ) {
         // accept file promises drags
         NSURL *drop_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:destination.Path()]];

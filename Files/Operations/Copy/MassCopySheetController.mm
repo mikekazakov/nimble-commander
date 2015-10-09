@@ -38,12 +38,6 @@ static string MakeCanonicPath(string _input)
 
 @implementation MassCopySheetController
 {
-//    MassCopySheetCompletionHandler m_Handler;
-//    shared_ptr<vector<VFSFlexibleListingItem>> m_Items;
-    //    NSString                        *m_InitialPath;
-    //    bool m_IsCopying;
-
-    
     vector<VFSFlexibleListingItem>  m_SourceItems;
     VFSHostPtr                      m_SourceHost; // can be nullptr in case of non-uniform listing
     string                          m_SourceDirectory; // may be "" if SourceHost is nullptr
@@ -53,7 +47,6 @@ static string MakeCanonicPath(string _input)
     
     string                          m_ResultDestination;
     VFSHostPtr                      m_ResultHost;
-//    bool                            m_ValidInput;
 }
 
 @synthesize resultDestination = m_ResultDestination;
@@ -75,10 +68,6 @@ static string MakeCanonicPath(string _input)
         m_InitialDestination = _initial_destination;
         m_DestinationHost = _destination_host;
         m_Options = _options;
-
-//        m_ValidInput = false;
-        
-        
         self.isValidInput = [self validateInput:_initial_destination];
     }
     return self;
@@ -99,26 +88,25 @@ static string MakeCanonicPath(string _input)
             self.TextField.currentEditor.selectedRange = NSMakeRange(0, r.location);
     }
     
-    
-//    int amount = (int)m_Items->size();
-//    if(m_IsCopying) {
-//        if(amount > 1)
-//            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
-//                                                [NSNumber numberWithInt:amount]];
-//        else
-//            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file"),
-//                                                [NSString stringWithUTF8String:m_Items->front().Name()]];
-//        self.CopyButton.title = self.CopyButtonStringStub.title;
-//    }
-//    else {
-//        if(amount > 1)
-//            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:", "Move files sheet prompt, moving many files"),
-//                                                [NSNumber numberWithInt:amount]];
-//        else
-//            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file"),
-//                                                [NSString stringWithUTF8String:m_Items->front().Name()]];
-//        self.CopyButton.title = self.RenameButtonStringStub.title;
-//    }
+    int amount = (int)m_SourceItems.size();
+    if( m_Options.docopy ) {
+        if(amount > 1)
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
+                                                [NSNumber numberWithInt:amount]];
+        else
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file"),
+                                                [NSString stringWithUTF8String:m_SourceItems.front().Name()]];
+        self.CopyButton.title = self.CopyButtonStringStub.title;
+    }
+    else {
+        if(amount > 1)
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:", "Move files sheet prompt, moving many files"),
+                                                [NSNumber numberWithInt:amount]];
+        else
+            self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file"),
+                                                [NSString stringWithUTF8String:m_SourceItems.front().Name()]];
+        self.CopyButton.title = self.RenameButtonStringStub.title;
+    }
     
     [self OnDisclosureTriangle:self];
 }
@@ -184,6 +172,7 @@ static string MakeCanonicPath(string _input)
 
 - (IBAction)OnDisclosureTriangle:(id)sender
 {
+    // TODO: remove this shit and make it again with auto-layout
     NSSize new_size;
     if(self.DisclosureTriangle.state == NSOnState) {
         new_size = NSMakeSize(370, 270);
@@ -223,32 +212,6 @@ static string MakeCanonicPath(string _input)
     [window setMinSize:NSMakeSize(370, newFrame.size.height-10)];
     [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
 }
-
-//- (void)ShowSheet:(NSWindow *)_window initpath:(NSString*)_path iscopying:(bool)_iscopying items:(shared_ptr<vector<VFSFlexibleListingItem>>)_items handler:(MassCopySheetCompletionHandler)_handler
-//{
-//    if( _items->empty() )
-//        throw invalid_argument("MassCopySheetController.ShowSheet: _items can't be empty");
-//    
-//    m_Handler = _handler;
-//    m_InitialPath = _path;
-////    m_IsCopying = _iscopying;
-////    m_Items = _items;
-//
-//    [NSApp beginSheet: self.window
-//       modalForWindow: _window
-//        modalDelegate: self
-//       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-//          contextInfo: nil];
-//}
-
-//- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-//{
-//    [self.window orderOut:self];
-//    
-//    if(m_Handler)
-//        m_Handler((int)returnCode);
-//    m_Handler = nil;
-//}
 
 - (void)fillOptions
 {

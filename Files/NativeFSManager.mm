@@ -453,6 +453,7 @@ shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromDevID(dev_t _d
 
 shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path) const
 {
+    // TODO: compare performance with stat() and searching for fs with dev_id
     struct statfs info;
     if(statfs(_path.c_str(), &info) < 0)
         return nullptr;

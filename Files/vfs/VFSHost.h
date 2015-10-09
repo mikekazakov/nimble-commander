@@ -146,13 +146,13 @@ public:
                               VFSCancelChecker _cancel_checker);
     
     /**
-     * Unlinkes(deletes) a file. Dont follow last symlink, in case of.
-     * Don't delete a directories, similar to POSIX.
+     * Unlinks(deletes) a file. Dont follow last symlink, in case of.
+     * Don't delete directories, similar to POSIX.
      */
     virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
 
     /**
-     * Deletes and empty directory. Will fail on non-empty ones.
+     * Deletes an empty directory. Will fail on non-empty ones.
      */
     virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
     

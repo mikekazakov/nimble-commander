@@ -65,6 +65,16 @@ private:
         FixedPath    // path = dest_path
     };
     
+    struct ChecksumExpectation
+    {
+        ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 );
+        int original_item;
+        string destination_path;
+        struct {
+            uint8_t buf[16];
+        } md5;
+    };
+    
     class SourceItems
     {
     public:
@@ -75,6 +85,7 @@ private:
         string          ComposeFullPath( int _item_no ) const;
         string          ComposeRelativePath( int _item_no ) const;
         mode_t          ItemMode( int _item_no ) const;
+        dev_t           ItemDev( int _item_no ) const; // meaningful only for native vfs (yet?)
         VFSHost        &ItemHost( int _item_no ) const;
         
         VFSHost &Host( uint16_t _host_ind ) const;
@@ -117,17 +128,22 @@ private:
                                                     const string& _dst_path) const;
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;
+    StepResult VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const;
+    void        CleanSourceItems() const;
     
     
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
     void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
     
-    vector<VFSFlexibleListingItem> m_VFSListingItems;
-    SourceItems             m_SourceItems;
-    VFSHostPtr              m_DestinationHost;
-    string                  m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
-    string                  m_DestinationPath;
-    PathCompositionType     m_PathCompositionType;
+    vector<VFSFlexibleListingItem>  m_VFSListingItems;
+    SourceItems                     m_SourceItems;
+    vector<ChecksumExpectation>     m_Checksums;
+    vector<unsigned>                m_SourceItemsToDelete;
+    VFSHostPtr                      m_DestinationHost;
+    shared_ptr<const NativeFileSystemInfo> m_DestinationNativeFSInfo; // used only for native vfs
+    string                          m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
+    string                          m_DestinationPath;
+    PathCompositionType             m_PathCompositionType;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers
@@ -155,6 +171,9 @@ private:
     function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
         = [](int, string){ return OperationDialogResult::Stop; };
 
+    function<int(int _vfs_error, string _path)> m_OnDestinationFileReadError
+        = [](int, string){ return OperationDialogResult::Stop; };
+    
     function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError
         = [](int, string){ return OperationDialogResult::Stop; };
 

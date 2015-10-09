@@ -561,6 +561,8 @@ public:
     
 private:
     NativeFSManager();
+    NativeFSManager(const NativeFSManager&) = delete;
+    void operator=(const NativeFSManager&) = delete;
     
     static void GetAllInfos(NativeFileSystemInfo &_volume);
     static bool GetBasicInfo(NativeFileSystemInfo &_volume);

@@ -8,6 +8,7 @@
 
 #include <sys/xattr.h>
 #include <Habanero/algo.h>
+#include <Habanero/Hash.h>
 
 //#include <sys/sendfile.h>
 //
@@ -67,6 +68,13 @@ static void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
     fsetattrlist(_target_fd, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
 }
 
+FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
+    original_item( _source_ind ),
+    destination_path( move(_destination) )
+{
+    copy(begin(_md5), end(_md5), begin(md5.buf)); // no buffer overflow check here
+}
+
 void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
                                    const string &_dest_path,
                                    const VFSHostPtr &_dest_host,
@@ -78,6 +86,7 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
         throw invalid_argument("FileCopyOperationJobNew::Init: m_InitialDestinationPath should be an absolute path");
     m_DestinationHost = _dest_host;
     m_Options = _opts;
+    
 }
 
 void FileCopyOperationJobNew::Do()
@@ -88,6 +97,15 @@ void FileCopyOperationJobNew::Do()
     if( need_to_build )
         BuildDestinationDirectory();
     m_PathCompositionType = comp_type;
+ 
+    if( m_DestinationHost->IsNativeFS() )
+        if( !(m_DestinationNativeFSInfo = NativeFSManager::Instance().VolumeFromPath(m_DestinationPath)) ) {
+            m_DestinationNativeFSInfo = NativeFSManager::Instance().VolumeFromPathFast(m_DestinationPath); // this may be wrong in case of symlinks
+            if( !m_DestinationNativeFSInfo ) {
+                SetStopped(); // we're totally fucked. can't go on
+                return;
+            }
+        }
     
     auto scan_result = ScanSourceItems();
     if( get<0>(scan_result) != StepResult::Ok ) {
@@ -106,53 +124,97 @@ void FileCopyOperationJobNew::Do()
 void FileCopyOperationJobNew::ProcessItems()
 {
     const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
-    auto &nfsm = NativeFSManager::Instance();
-    shared_ptr<const NativeFileSystemInfo> dest_fs_info;
-    if( dest_host_is_native )
-        if( !(dest_fs_info = nfsm.VolumeFromPath(m_DestinationPath)) )
-            dest_fs_info = nfsm.VolumeFromPathFast(m_DestinationPath); // this may be wrong in case of symlinks
+    auto is_same_native_volume = [this, &nfsm = NativeFSManager::Instance()]( int _index ) {
+        return nfsm.VolumeFromDevID( m_SourceItems.ItemDev(_index) ) == m_DestinationNativeFSInfo;
+    };
     
-    
-    for( int i = 0, e = m_SourceItems.ItemsAmount(); i != e; ++i ) {
-        auto mode = m_SourceItems.ItemMode(i);
-        auto&host = m_SourceItems.ItemHost(i);
-        auto destination_path = ComposeDestinationNameForItem(i);
-        auto source_path = m_SourceItems.ComposeFullPath(i);
+    for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {
+        auto mode = m_SourceItems.ItemMode(index);
+        auto&host = m_SourceItems.ItemHost(index);
+        auto destination_path = ComposeDestinationNameForItem(index);
+        auto source_path = m_SourceItems.ComposeFullPath(index);
+        
+        StepResult step_result = StepResult::Stop;
         
         if( S_ISREG(mode) ) {
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+            // Regular files
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+            optional<Hash> hash;
+            auto hash_feedback = [&](const void *_data, unsigned _sz) {
+                if( !hash ) hash.emplace(Hash::MD5);
+                hash->Feed( _data, _sz );
+            };
+            function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
+            
             if( host.IsNativeFS() && dest_host_is_native ) {
+                // native fs processing
                 if( m_Options.docopy ) {
-                    auto step_result = CopyNativeFileToNativeFile(source_path, destination_path, nullptr);
+                    if( m_Options.verification == FileCopyOperationOptions::ChecksumVerification::Always )
+                        data_feedback = hash_feedback;
+                    step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
                 }
                 else {
-                    bool same_volume = nfsm.VolumeFromPath(source_path) == dest_fs_info;
-                    auto step_result = same_volume ?
-                        RenameNativeFile(source_path, destination_path) :
-                        StepResult::Stop; // move
-
+                    if( is_same_native_volume(index) ) { // rename
+                        step_result = RenameNativeFile(source_path, destination_path);
+                    }
+                    else { // move
+                        if( m_Options.verification >= FileCopyOperationOptions::ChecksumVerification::WhenMoves )
+                            data_feedback = hash_feedback;
+                        step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
+                        if( step_result == StepResult::Ok )
+                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                    }
                 }
             
             }
             else
                 assert(0);
             
+            
+            // check step result?
+            if( hash )
+                m_Checksums.emplace_back( index, destination_path, hash->Final() );
         }
         else if( S_ISDIR(mode) ) {
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+            // Directories
+            /////////////////////////////////////////////////////////////////////////////////////////////////
             if( host.IsNativeFS() && dest_host_is_native ) {
+                // native fs processing
                 if( m_Options.docopy ) {
-                    auto step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
-                    
+                    step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
                 }
-                else
-                    assert(0);
-                
+                else {
+                    if( is_same_native_volume(index) ) { // rename
+                        step_result = RenameNativeFile(source_path, destination_path);
+                    }
+                    else { // move
+                        step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
+                        if( step_result == StepResult::Ok )
+                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                    }
+                }
             }
             else
                 assert(0);
-            
-            
         }
+        
+        
+        /// do something about step_result here
+        if( step_result != StepResult::Ok )
+            cout << source_path << " fucked up" << endl;
+        
     }
+  
+    for( auto &item: m_Checksums ) {
+        bool matched;
+        auto step_result = VerifyCopiedFile(item, matched);
+        cout << item.destination_path << " | " << (matched ? "checksum match" : "checksum mismatch") << endl;
+    }
+    
+    // be sure to all it only if ALL previous steps wre OK.
+    CleanSourceItems();
 }
 
 string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_index ) const
@@ -421,8 +483,13 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
             else if( S_ISDIR(st.mode) ) {
                 int my_indx = db.InsertItem(host_indx, base_dir_indx, _parent_ind, _item_name, st);
                 
-                vector<string> dir_ents;
-                while( (ret = host.IterateDirectoryListing(path.c_str(), [&](auto &_) { return dir_ents.emplace_back(_.name), true; })) < 0 ) {
+                bool should_go_inside =
+                    m_Options.docopy ||
+                    &host != &*m_DestinationHost || // comparing hosts by their addresses. which is NOT GREAT at all
+                    (m_DestinationHost->IsNativeFS() && m_DestinationNativeFSInfo != NativeFSManager::Instance().VolumeFromDevID(st.dev) );
+                if( should_go_inside ) {
+                    vector<string> dir_ents;
+                    while( (ret = host.IterateDirectoryListing(path.c_str(), [&](auto &_) { return dir_ents.emplace_back(_.name), true; })) < 0 ) {
                         if( m_SkipAll ) return StepResult::Skipped;
                         switch( m_OnCantAccessSourceItem(ret, path) ) {
                             case OperationDialogResult::Skip:       return StepResult::Skipped;
@@ -430,16 +497,17 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
                             case OperationDialogResult::Stop:       return StepResult::Stop;
                         }
                         dir_ents.clear();
-                }
-                
-                for( auto &entry: dir_ents ) {
-                    if( CheckPauseOrStop() )
-                        return StepResult::Stop;
+                    }
                     
-                    // go into recursion
-                    scan_item(my_indx,
-                              _full_relative_path + '/' + entry,
-                              entry);
+                    for( auto &entry: dir_ents ) {
+                        if( CheckPauseOrStop() )
+                            return StepResult::Stop;
+                        
+                        // go into recursion
+                        scan_item(my_indx,
+                                  _full_relative_path + '/' + entry,
+                                  entry);
+                    }
                 }
             }
             
@@ -738,11 +806,11 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         while( to_read != 0 ) {
             int64_t read_result = read(source_fd, read_buffer + has_read, src_preffered_io_size);
             if( read_result > 0 ) {
+                if(_source_data_feedback)
+                    _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
                 source_bytes_read += read_result;
                 has_read += read_result;
                 to_read -= read_result;
-                if(_source_data_feedback)
-                    _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
                 if(m_SkipAll) {
@@ -995,94 +1063,84 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(co
     return StepResult::Ok;
 }
 
-
-////////////////////////////////////////////////////////////////////////////
-//  FileCopyOperationJobNew::SourceItems
-////////////////////////////////////////////////////////////////////////////
-
-
-int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )
+void FileCopyOperationJobNew::CleanSourceItems() const
 {
-    if( _host_index >= m_SourceItemsHosts.size() ||
-        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
-        (_parent_index >= 0 && _parent_index >= m_Items.size() ) )
-        throw invalid_argument("FileCopyOperationJobNew::SourceItems::InsertItem: invalid index");
-
-// TODO: stats
-    
-    SourceItem it;
-    it.item_name = S_ISDIR(_stat.mode) ? EnsureTrailingSlash( move(_item_name) ) : move( _item_name );
-    it.parent_index = _parent_index;
-    it.base_dir_index = _base_dir_index;
-    it.host_index = _host_index;
-    it.mode = _stat.mode;
-    it.dev_num = _stat.dev;
-    
-    m_Items.emplace_back( move(it) );
-
-//    cout << ComposeFullPath(m_Items.size() - 1) << endl << endl;
-    
-    return int(m_Items.size() - 1);
+    for( int i = m_SourceItems.ItemsAmount()-1; i >= 0; --i ) {
+        auto mode = m_SourceItems.ItemMode(i);
+        auto&host = m_SourceItems.ItemHost(i);
+        auto source_path = m_SourceItems.ComposeFullPath(i);
+        
+        // maybe any error handling here?
+        if( S_ISDIR(mode) )
+            host.RemoveDirectory( source_path.c_str() );
+        else
+            host.Unlink( source_path.c_str() );
+    }
 }
 
-string FileCopyOperationJobNew::SourceItems::ComposeFullPath( int _item_no ) const
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const
 {
-    auto rel_path = ComposeRelativePath( _item_no );
-    rel_path.insert(0, m_SourceItemsBaseDirectories[ m_Items[_item_no].base_dir_index] );
-    return rel_path;
-}
+    _matched = false;
+    VFSFilePtr file;
+    int rc;
+    while( (rc = m_DestinationHost->CreateFile( _exp.destination_path.c_str(), file, nullptr )) != 0) {
+        // failed to create dest file object
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnDestinationFileReadError( rc, _exp.destination_path ) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:     return StepResult::Stop;
+            default:                            return StepResult::Stop;
+        }
+    }
 
-string FileCopyOperationJobNew::SourceItems::ComposeRelativePath( int _item_no ) const
-{
-    auto &meta = m_Items.at(_item_no);
-    array<int, 128> parents;
-    int parents_num = 0;
-
-    int parent = meta.parent_index;
-    while( parent >= 0 ) {
-        parents[parents_num++] = parent;
-        parent = m_Items[parent].parent_index;
+    while( (rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache )) != 0) {
+        // failed to open dest file
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnDestinationFileReadError( rc, _exp.destination_path ) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:     return StepResult::Stop;
+            default:                            return StepResult::Stop;
+        }
     }
     
-    string path;
-    for( int i = parents_num - 1; i >= 0; i-- )
-        path += m_Items[ parents[i] ].item_name;
-        
-    path += meta.item_name;
-    return path;
-}
+    Hash hash(Hash::MD5);
+    
+    uint64_t sz = file->Size();
+    uint64_t szleft = sz;
+    void *buf = m_Buffers[0].get();
+    uint64_t buf_sz = m_BufferSize;
 
-int FileCopyOperationJobNew::SourceItems::ItemsAmount() const noexcept
-{
-    return (int)m_Items.size();
-}
+    while( szleft > 0 ) {
+        // check user decided to pause operation or discard it
+        if( CheckPauseOrStop() )
+            return StepResult::Stop;
+        ssize_t r = file->Read(buf, min(szleft, buf_sz));
+        if(r < 0) {
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch( m_OnDestinationFileReadError( (int)r, _exp.destination_path ) ) {
+                case FileCopyOperationDR::Retry:    continue;
+                case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+                case FileCopyOperationDR::Stop:     return StepResult::Stop;
+                default:                            return StepResult::Stop;
+            }
+        }
+        else {
+            szleft -= r;
+            hash.Feed(buf, r);
+        }
+    }
+    file->Close();
 
-mode_t FileCopyOperationJobNew::SourceItems::ItemMode( int _item_no ) const
-{
-    return m_Items.at(_item_no).mode;
-}
-
-VFSHost &FileCopyOperationJobNew::SourceItems::ItemHost( int _item_no ) const
-{
-    return *m_SourceItemsHosts[ m_Items.at(_item_no).host_index ];
-}
-
-uint16_t FileCopyOperationJobNew::SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
-{
-    return (uint16_t)linear_find_or_insert(m_SourceItemsHosts, _host);
-}
-
-unsigned FileCopyOperationJobNew::SourceItems::InsertOrFindBaseDir( const string &_dir )
-{
-    return (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, _dir);
-}
-
-const string &FileCopyOperationJobNew::SourceItems::BaseDir( unsigned _ind ) const
-{
-    return m_SourceItemsBaseDirectories.at(_ind);
-}
-
-VFSHost &FileCopyOperationJobNew::SourceItems::Host( uint16_t _ind ) const
-{
-    return *m_SourceItemsHosts.at(_ind);
+    auto md5 = hash.Final();
+    bool checksum_match = equal(begin(md5), end(md5), begin(_exp.md5.buf));
+    _matched = checksum_match;
+    
+    // show a dialog?
+    
+    return StepResult::Ok;
 }

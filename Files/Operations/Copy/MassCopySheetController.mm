@@ -226,7 +226,7 @@ static string MakeCanonicPath(string _input)
 - (void)validate
 {
     NSString *val = self.TextField.stringValue;
-    self.isValidInput = [self validateInput:(val ? val.UTF8String : "")];
+    self.isValidInput = [self validateInput:(val ? val.fileSystemRepresentationSafe : "")];
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification

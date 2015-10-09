@@ -1065,10 +1065,11 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(co
 
 void FileCopyOperationJobNew::CleanSourceItems() const
 {
-    for( int i = m_SourceItems.ItemsAmount()-1; i >= 0; --i ) {
-        auto mode = m_SourceItems.ItemMode(i);
-        auto&host = m_SourceItems.ItemHost(i);
-        auto source_path = m_SourceItems.ComposeFullPath(i);
+    for( auto i = rbegin(m_SourceItemsToDelete), e = rend(m_SourceItemsToDelete); i != e; ++i ) {
+        auto index = *i;
+        auto mode = m_SourceItems.ItemMode(index);
+        auto&host = m_SourceItems.ItemHost(index);
+        auto source_path = m_SourceItems.ComposeFullPath(index);
         
         // maybe any error handling here?
         if( S_ISDIR(mode) )

@@ -69,6 +69,16 @@ T* objc_cast(id from) noexcept {
     return nil;
 }
 
+
+/**
+ * Returns a weak pointer, just a syntax sugar for auto type deduction
+ */
+template <typename T>
+__weak T* objc_weak(T* from) noexcept {
+    __weak T* weak = from;
+    return weak;
+}
+
 void SyncMessageBoxNS(NSString *_ns_string);
 
 typedef enum

@@ -77,3 +77,11 @@ auto at_scope_end( T _l )
     
     return guard( std::move(_l) );
 }
+
+inline bool has_prefix( const std::string &_string, const std::string &_prefix )
+{
+    return _string.size() >= _prefix.size() &&
+        std::equal( begin(_prefix),
+                    end(_prefix),
+                    begin(_string));
+}

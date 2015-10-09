@@ -6,21 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "chained_strings.h"
 #import "VFS.h"
+#import "SheetController.h"
+
 struct FileCopyOperationOptions;
 
-typedef void (^MassCopySheetCompletionHandler)(int result);
-
-@interface MassCopySheetController : NSWindowController
+@interface MassCopySheetController : SheetController<NSTextFieldDelegate>
 @property (strong) IBOutlet NSButton *CopyButton;
 @property (strong) IBOutlet NSTextField *TextField;
-- (IBAction)OnCopy:(id)sender;
-- (IBAction)OnCancel:(id)sender;
 @property (strong) IBOutlet NSTextField *DescriptionText;
 @property (strong) IBOutlet NSButton *DisclosureTriangle;
-- (IBAction)OnDisclosureTriangle:(id)sender;
 @property (strong) IBOutlet NSTextField *DisclosureLabel;
 @property (strong) IBOutlet NSButton *PreserveSymlinksCheckbox;
 @property (strong) IBOutlet NSButton *CopyXattrsCheckbox;
@@ -29,17 +24,22 @@ typedef void (^MassCopySheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSButton *CopyUnixOwnersCheckbox;
 @property (strong) IBOutlet NSButton *CopyButtonStringStub;
 @property (strong) IBOutlet NSButton *RenameButtonStringStub;
-
-
-
 @property (strong) IBOutlet NSBox *DisclosureGroup;
+@property bool isValidInput;
 
-- (void)ShowSheet:(NSWindow *)_window
-         initpath:(NSString*)_path
-        iscopying:(bool)_iscopying
-            items:(shared_ptr<vector<VFSFlexibleListingItem>>)_items
-          handler:(MassCopySheetCompletionHandler)_handler;
-// if _iscopying is false than dialog will think that user attempt to rename/move files
-- (void)FillOptions:(FileCopyOperationOptions*) _opts;
+@property (readonly) string                     resultDestination;
+@property (readonly) VFSHostPtr                 resultHost;
+@property (readonly) FileCopyOperationOptions   resultOptions;
+
+- (instancetype) initWithItems:(vector<VFSFlexibleListingItem>)_source_items
+                     sourceVFS:(const VFSHostPtr&)_source_host
+               sourceDirectory:(const string&)_source_directory
+            initialDestination:(const string&)_initial_destination
+                destinationVFS:(const VFSHostPtr&)_destination_host
+              operationOptions:(const FileCopyOperationOptions&)_options;
+
+- (IBAction)OnDisclosureTriangle:(id)sender;
+- (IBAction)OnCopy:(id)sender;
+- (IBAction)OnCancel:(id)sender;
 
 @end

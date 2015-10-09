@@ -135,29 +135,28 @@ private:
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
     void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
     
-    vector<VFSFlexibleListingItem>  m_VFSListingItems;
-    SourceItems                     m_SourceItems;
-    vector<ChecksumExpectation>     m_Checksums;
-    vector<unsigned>                m_SourceItemsToDelete;
-    VFSHostPtr                      m_DestinationHost;
-    shared_ptr<const NativeFileSystemInfo> m_DestinationNativeFSInfo; // used only for native vfs
-    string                          m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
-    string                          m_DestinationPath;
-    PathCompositionType             m_PathCompositionType;
+    vector<VFSFlexibleListingItem>              m_VFSListingItems;
+    SourceItems                                 m_SourceItems;
+    vector<ChecksumExpectation>                 m_Checksums;
+    vector<unsigned>                            m_SourceItemsToDelete;
+    VFSHostPtr                                  m_DestinationHost;
+    shared_ptr<const NativeFileSystemInfo>      m_DestinationNativeFSInfo; // used only for native vfs
+    string                                      m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
+    string                                      m_DestinationPath;
+    PathCompositionType                         m_PathCompositionType;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers
-    static const int        m_BufferSize    = 2*1024*1024;
-    unique_ptr<uint8_t[]>   m_Buffers[2]    = { make_unique<uint8_t[]>(m_BufferSize), make_unique<uint8_t[]>(m_BufferSize) };
+    static const int                            m_BufferSize    = 2*1024*1024;
+    const unique_ptr<uint8_t[]>                 m_Buffers[2]    = { make_unique<uint8_t[]>(m_BufferSize), make_unique<uint8_t[]>(m_BufferSize) };
     
-    DispatchGroup           m_IOGroup;
-    bool                    m_IsSingleItemProcessing = false;
-    bool                    m_SkipAll       = false;
-    bool                    m_OverwriteAll  = false;
-    bool                    m_AppendAll     = false;
+    const DispatchGroup                         m_IOGroup;
+    bool                                        m_IsSingleItemProcessing = false;
+    bool                                        m_SkipAll       = false;
+    bool                                        m_OverwriteAll  = false;
+    bool                                        m_AppendAll     = false;
     
-    
-    FileCopyOperationOptions m_Options;
+    FileCopyOperationOptions                    m_Options;
     
     function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
         = [](int, string){ return OperationDialogResult::Stop; };

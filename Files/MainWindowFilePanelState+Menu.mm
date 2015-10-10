@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Carbon/Carbon.h>
 #import <Habanero/CommonPaths.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "ActionsShortcutsManager.h"

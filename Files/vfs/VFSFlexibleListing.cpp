@@ -230,7 +230,7 @@ void VFSFlexibleListing::BuildFilenames()
         if( dot_it != string::npos &&
             dot_it != 0 &&
             dot_it != current.size()-1 )
-            offset = dot_it;
+            offset = dot_it+1;
         m_ExtensionOffsets[i] = offset;
         
         
@@ -270,6 +270,20 @@ CFStringRef VFSFlexibleListing::FilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return *m_FilenamesCF[_ind];
+}
+
+string VFSFlexibleListing::Path(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_Directories[_ind] + m_Filenames[_ind];
+}
+
+string VFSFlexibleListing::FilenameWithoutExt(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    if( m_ExtensionOffsets[_ind] == 0 )
+        return m_Filenames[_ind];
+    return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind]-1);
 }
 
 const VFSHostPtr& VFSFlexibleListing::Host() const

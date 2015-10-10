@@ -119,6 +119,8 @@ public:
     const VFSHostPtr&   Host                () const; // will throw if there's no common host
     const VFSHostPtr&   Host                (unsigned _ind) const;
     
+    string              Path                (unsigned _ind) const;
+    
     const string&       Filename            (unsigned _ind) const;
     CFStringRef         FilenameCF          (unsigned _ind) const;
 #ifdef __OBJC__
@@ -131,6 +133,8 @@ public:
     bool                HasExtension        (unsigned _ind) const;
     uint16_t            ExtensionOffset     (unsigned _ind) const;
     const char*         Extension           (unsigned _ind) const;
+    
+    string              FilenameWithoutExt  (unsigned _ind) const;
     
     bool                HasSize             (unsigned _ind) const;
     uint64_t            Size                (unsigned _ind) const;
@@ -220,7 +224,7 @@ public:
     auto&           Listing()           const { return L;                           }
     unsigned        Index()             const { return I;                           }
     
-    string          Path()              const { return Directory() + Filename();    }
+    string          Path()              const { return L->Path(I);                  }
     const VFSHostPtr& Host()            const { return L->Host(I);                  }
     const string&   Directory()         const { return L->Directory(I);             }
     
@@ -233,12 +237,16 @@ public:
     NSString*       NSName()            const { return L->FilenameNS(I);            }
 #endif
 
-
     bool            HasDisplayName()    const { return L->HasDisplayFilename(I);    }
     CFStringRef     CFDisplayName()     const { return L->DisplayFilenameCF(I);     }
 #ifdef __OBJC__
     NSString*       NSDisplayName()     const { return L->DisplayFilenameNS(I);     }
 #endif
+
+    bool            HasExtension()      const { return L->HasExtension(I);          }
+    uint16_t        ExtensionOffset()   const { return L->ExtensionOffset(I);       }
+    const char*     Extension()         const { return L->Extension(I);             }
+    string          FilenameWithoutExt()const { return L->FilenameWithoutExt(I);    }
     
     mode_t          UnixMode()          const { return L->UnixMode(I);              } // resolved for symlinks
     uint8_t         UnixType()          const { return L->UnixType(I);              } // type is _original_ directory entry, without symlinks resolving
@@ -279,10 +287,6 @@ public:
     bool            IsDotDot()          const { return L->IsDotDot(I);              }
     bool            IsHidden()          const { return L->IsHidden(I);              }
     
-    bool            HasExtension()      const { return L->HasExtension(I);          }
-    uint16_t        ExtensionOffset()   const { return L->ExtensionOffset(I);       }
-    const char*     Extension()         const { return L->Extension(I);             }
-
 private:
     shared_ptr<const VFSFlexibleListing>    L;
     unsigned                                I;

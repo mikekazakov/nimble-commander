@@ -131,8 +131,8 @@ inline NSError* ErrnoToNSError() { return ErrnoToNSError(errno); }
 
 #endif
 
-inline bool strisdotdot(const char *s) { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
-inline bool strisdotdot(const string &s) { return s.length() == 2 && s[0] == '.' && s[1] == '.'; }
+inline bool strisdotdot(const char *s) noexcept { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
+inline bool strisdotdot(const string &s) noexcept { return strisdotdot( s.c_str() ); }
 
 /**
  * return max(lower, min(n, upper));

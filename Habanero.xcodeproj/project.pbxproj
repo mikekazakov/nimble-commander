@@ -33,6 +33,7 @@
 		CF86292C1B96C79700B33CFD /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */; };
 		CF86293D1B986C4300B33CFD /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86293B1B986C4300B33CFD /* CFString.cpp */; };
 		CF86293E1B986C4300B33CFD /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CF86293C1B986C4300B33CFD /* CFString.h */; };
+		CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE14A661BCA982400CD7B92 /* spinlock.h */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VariableContainer_Tests.mm; sourceTree = "<group>"; };
 		CF86293B1B986C4300B33CFD /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFString.cpp; sourceTree = "<group>"; };
 		CF86293C1B986C4300B33CFD /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFString.h; sourceTree = "<group>"; };
+		CFE14A661BCA982400CD7B92 /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spinlock.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		CF2D2F3A1B8B238A00111C75 /* Habanero */ = {
 			isa = PBXGroup;
 			children = (
+				CFE14A661BCA982400CD7B92 /* spinlock.h */,
 				CF2D2F801B8B451B00111C75 /* dispatch_cpp.h */,
 				CF2D2F7F1B8B451B00111C75 /* dispatch_cpp.cpp */,
 				CF2D2F8D1B8B6B7800111C75 /* dispatch_cpp.mm */,
@@ -191,6 +194,7 @@
 				CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */,
 				CF86293E1B986C4300B33CFD /* CFString.h in Headers */,
 				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
+				CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

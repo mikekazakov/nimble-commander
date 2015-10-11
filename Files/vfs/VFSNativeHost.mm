@@ -158,7 +158,9 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     listing_source.gids.reset( variable_container<>::type::dense );
     listing_source.sizes.reset( variable_container<>::type::dense );
     listing_source.symlinks.reset( variable_container<>::type::sparse );
-    mutex symlinks_guard;
+    listing_source.display_filenames.reset( variable_container<>::type::sparse );
+    spinlock symlinks_guard;
+    spinlock display_names_guard;
     
     unsigned amount = (unsigned)dirents.size();
     listing_source.filenames.resize(amount);
@@ -182,14 +184,15 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     }
     
     // stat files, find extenstions any any and create CFString name representations in several threads
+    auto &dnc = DisplayNamesCache::Instance();
     dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
         if(_cancel_checker && _cancel_checker()) return;
 
-        string filename = listing_source.directories[0] + listing_source.filenames[n];
+        string filepath = listing_source.directories[0] + listing_source.filenames[n];
         
         // stat the file
         struct stat stat_buffer;
-        if(io.stat(filename.c_str(), &stat_buffer) == 0) {
+        if(io.stat(filepath.c_str(), &stat_buffer) == 0) {
             listing_source.atimes[n]        = stat_buffer.st_atimespec.tv_sec;
             listing_source.mtimes[n]        = stat_buffer.st_mtimespec.tv_sec;
             listing_source.ctimes[n]        = stat_buffer.st_ctimespec.tv_sec;
@@ -205,48 +208,28 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         // if we're dealing with a symlink - read it's content to know the real file path
         if( listing_source.unix_types[n] == DT_LNK ) {
             char linkpath[MAXPATHLEN];
-            ssize_t sz = io.readlink(filename.c_str(), linkpath, MAXPATHLEN);
+            ssize_t sz = io.readlink(filepath.c_str(), linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
-                lock_guard<mutex> guard(symlinks_guard);
+                lock_guard<spinlock> guard(symlinks_guard);
                 listing_source.symlinks.insert(n, linkpath);
             }
             
             // stat the original file so we can extract some interesting info from it
             struct stat link_stat_buffer;
-            if( io.lstat(filename.c_str(), &link_stat_buffer) == 0 &&
+            if( io.lstat(filepath.c_str(), &link_stat_buffer) == 0 &&
                 (link_stat_buffer.st_flags & UF_HIDDEN) )
                 listing_source.unix_flags[n] |= UF_HIDDEN; // currently using only UF_HIDDEN flag
         }
+        
+        if( _flags & VFSFlags::F_LoadDisplayNames )
+            if( S_ISDIR(listing_source.unix_modes[n]) &&
+                !strisdotdot(listing_source.filenames[n]) )
+                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, filepath) ) {
+                    lock_guard<spinlock> guard(display_names_guard);
+                    listing_source.display_filenames.insert(n, display_name);
+                }
     });
-    
-    
-    // TODO:
-    // load display names
-//    if(_flags & VFSFlags::F_LoadDisplayNames)
-//        if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(_path)) {
-//            auto &dnc = DisplayNamesCache::Instance();
-//            lock_guard<mutex> lock(dnc);
-//            for(unsigned n = 0, e = amount; n != e; ++n) {
-////                auto &it = m_Items[n];
-////                if(it.IsDir() && !it.IsDotDot()) {
-////    return (m_UnixModes[_ind] & S_IFMT) == S_IFDIR;
-//                const static string dotdot = "..";
-//                if( (listing_source.unix_modes[n] & S_IFMT) == S_IFDIR &&
-//                     listing_source.filenames[n] != dotdot )
-//                    auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
-//                                                          it.Inode(),
-//                                                          RelativePath(),
-//                                                          it.Name(),
-//                                                          it.CFName()
-//                                                          );
-//                    if(dn.str != nullptr) {
-//                        it.cf_displayname = dn.str;
-//                        CFRetain(it.cf_displayname);
-//                    }
-//                }
-//            }
-//        }
     
     _target = VFSFlexibleListing::Build(move(listing_source));
     

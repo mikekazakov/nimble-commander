@@ -211,6 +211,7 @@ static const int g_MaximumSearchResults = 16384;
     sheet.onCtrlT = [sheet makeFocusHotkey:self.TextComboBox];
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
+    sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
 }
 
 - (void) dealloc
@@ -477,6 +478,9 @@ static const int g_MaximumSearchResults = 16384;
         results[d->dir_path].emplace_back( d->filename );
     }
 
+    if( results.empty() )
+        return;
+    
     if( m_OnPanelize )
         m_OnPanelize( results );
     

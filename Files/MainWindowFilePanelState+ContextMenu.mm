@@ -254,8 +254,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         bool any_handlers_added = false;
         bool any_non_default_handlers_added = false;
         for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if(m_OpenWithHandlers[i].is_default)
-            {
+            if(m_OpenWithHandlers[i].is_default) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = [NSString stringWithFormat:@"%@ (%@)",
                               m_OpenWithHandlers[i].app_name,
@@ -277,9 +276,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
             }
 
         // show other handlers
-        for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if(!m_OpenWithHandlers[i].is_default)
-            {
+        for( int i = 0; i < m_OpenWithHandlers.size(); ++i )
+            if( !m_OpenWithHandlers[i].is_default ) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = m_OpenWithHandlers[i].app_name;
                 item.image = m_OpenWithHandlers[i].app_icon;

@@ -165,26 +165,26 @@ int VFSNativeListing::LoadListingData(int _flags, VFSCancelChecker _checker)
     });
 
     // load display names
-    if(_flags & VFSFlags::F_LoadDisplayNames)
-        if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath())) {
-            auto &dnc = DisplayNamesCache::Instance();
-            lock_guard<mutex> lock(dnc);
-            for(unsigned n = 0, e = m_Count; n != e; ++n) {
-                auto &it = m_Items[n];
-                if(it.IsDir() && !it.IsDotDot()) {
-                    auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
-                                                          it.Inode(),
-                                                          RelativePath(),
-                                                          it.Name(),
-                                                          it.CFName()
-                                                          );
-                    if(dn.str != nullptr) {
-                        it.cf_displayname = dn.str;
-                        CFRetain(it.cf_displayname);
-                    }
-                }
-            }
-        }
+//    if(_flags & VFSFlags::F_LoadDisplayNames)
+//        if(auto native_fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath())) {
+//            auto &dnc = DisplayNamesCache::Instance();
+//            lock_guard<mutex> lock(dnc);
+//            for(unsigned n = 0, e = m_Count; n != e; ++n) {
+//                auto &it = m_Items[n];
+//                if(it.IsDir() && !it.IsDotDot()) {
+//                    auto &dn = dnc.DisplayNameForNativeFS(native_fs_info->basic.fs_id,
+//                                                          it.Inode(),
+//                                                          RelativePath(),
+//                                                          it.Name(),
+//                                                          it.CFName()
+//                                                          );
+//                    if(dn.str != nullptr) {
+//                        it.cf_displayname = dn.str;
+//                        CFRetain(it.cf_displayname);
+//                    }
+//                }
+//            }
+//        }
 
     if(_checker && _checker())
         return VFSError::Cancelled;

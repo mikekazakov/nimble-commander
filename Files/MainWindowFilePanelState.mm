@@ -340,7 +340,8 @@ static vector<VFSFlexibleListingItem> FetchVFSListingsItemsFromDirectories( cons
     if(([sendType isEqualToString:NSFilenamesPboardType] ||
         [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) &&
        self.isPanelActive &&
-       self.activePanelData->Host()->IsNativeFS() )
+       self.activePanelData->Listing().HasCommonHost() &&
+       self.activePanelData->Listing().Host()->IsNativeFS() )
         return self;
     
     return [super validRequestorForSendType:sendType returnType:returnType];

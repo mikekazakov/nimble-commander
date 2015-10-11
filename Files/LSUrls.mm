@@ -142,15 +142,13 @@ void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>& _input, L
         }
 }
 
-bool LauchServicesHandlers::SetDefaultHandler(const char *_uti, const char* _path)
+bool LauchServicesHandlers::SetDefaultHandler(const string &_uti, const string &_path)
 {
-    assert(_uti != 0 && _path != 0);
-    
-    NSString *path = [NSString stringWithUTF8String:_path];
+    NSString *path = [NSString stringWithUTF8StdString:_path];
     if(!path)
         return false;
     
-    NSString *uti = [NSString stringWithUTF8String:_uti];
+    NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if(!uti)
         return false;
     

@@ -80,6 +80,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
     });
 }
 
+// TODO: write version with FlexListingItem as an input - it would be much simplier
 void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
                                        shared_ptr<VFSHost> _host,
                                        NSString *_with_app_bundle // can be nil, use default app in such case

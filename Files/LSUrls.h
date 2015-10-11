@@ -27,5 +27,5 @@ struct LauchServicesHandlers
     
     static LauchServicesHandlers GetForItem(const VFSFlexibleListingItem &_item);
     static void DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
-    static bool SetDefaultHandler(const char *_uti, const char* _path);
+    static bool SetDefaultHandler(const string &_uti, const string &_path);
 };

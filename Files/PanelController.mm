@@ -623,14 +623,7 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
-    auto items = self.selectedEntriesOrFocusedEntries;
-    if( items.empty() )
-        return nil;
-    
-    return [self.state RequestContextMenuOn:move(items)
-                                       path:self.currentDirectoryPath.c_str()
-                                        vfs:self.vfs
-                                     caller:self];
+    return [self.state RequestContextMenuOn:self.selectedEntriesOrFocusedEntries caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

@@ -126,81 +126,90 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
     return target;
 }
 
+static void ShowOpenPanel( NSOpenPanel *_panel, NSWindow *_window, function<void(const string&_path)> _on_ok )
+{
+    [_panel beginSheetModalForWindow:_window
+                  completionHandler:^(NSInteger result) {
+                      if(result == NSFileHandlingPanelOKButton)
+                          _on_ok( _panel.URL.path.fileSystemRepresentation );
+                  }];
+}
+
+template <typename T, typename E, typename C>
+T common_or_default_element(const C& _container, const T& _default, E _extract)
+{
+    auto i = begin(_container), e = end(_container);
+    if( i == e )
+        return _default;
+    auto &first = *i;
+    ++i;
+    
+    for( ; i != e; ++i )
+        if( _extract(*i) != _extract(first) )
+            return _default;
+
+    return _extract(first);
+}
+
 @interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
-
-- (id) initWithData:(vector<VFSFlexibleListingItem>) _items
-             OnPath:(const char*)_path
-                vfs:(shared_ptr<VFSHost>) _host
-            mainWnd:(MainWindowFilePanelState*)_wnd
-             myCont:(PanelController*)_my_cont
-            oppCont:(PanelController*)_opp_cont;
-
 @end
 
 @implementation MainWindowFilePanelContextMenu
 {
-    string                              m_DirPath;  // may be "" in case of non-uniform listing
-    VFSHostPtr                          m_Host;     // may be nullptr in case of non-uniform listing
+    string                              m_CommonDir;  // may be "" in case of non-uniform listing
+    VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
     vector<VFSFlexibleListingItem>      m_Items;
     vector<OpenWithHandler>             m_OpenWithHandlers;
     string                              m_ItemsUTI;
-    MainWindowFilePanelState    *m_MainWnd;
-    PanelController             *m_CurrentController;
-    PanelController             *m_OppositeController;
-    NSMutableArray              *m_ShareItemsURLs;
-    
-    int                         m_DirsCount;
-    int                         m_FilesCount;
+    MainWindowFilePanelState           *m_MainWnd;
+    PanelController                    *m_CurrentController;
+    PanelController                    *m_OppositeController;
+    NSMutableArray                     *m_ShareItemsURLs;
+    int                                 m_DirsCount;
+    int                                 m_FilesCount;
 }
 
 - (id) initWithData:(vector<VFSFlexibleListingItem>) _items
-             OnPath:(const char*)_path
-                vfs:(shared_ptr<VFSHost>) _host
             mainWnd:(MainWindowFilePanelState*)_wnd
              myCont:(PanelController*)_my_cont
             oppCont:(PanelController*)_opp_cont
 {
+    if( _items.empty() )
+        throw invalid_argument("MainWindowFilePanelContextMenu.initWithData - there's no items");
     self = [super init];
-    if(self)
-    {
-        assert(IsPathWithTrailingSlash(_path));
-        assert(!_items.empty());
-        m_Host = _host;
-        m_DirPath = _path;
+    if(self) {
         m_MainWnd = _wnd;
         m_CurrentController = _my_cont;
         m_OppositeController = _opp_cont;
         m_DirsCount = m_FilesCount = 0;
-        self.delegate = self;
-        
         m_Items = move(_items);
-        for(auto &i: m_Items)
-            if(i.IsDir())
-                m_DirsCount++;
-            else if(i.IsReg())
-                m_FilesCount++;
+        m_DirsCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
+        m_FilesCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsReg(); });
+        m_CommonHost = common_or_default_element( m_Items, VFSHostPtr{}, [](auto &_) -> const VFSHostPtr& { return _.Host(); } );
+        m_CommonDir = common_or_default_element( m_Items, ""s, [](auto &_) -> const string& { return _.Directory(); } );
+
+        self.delegate = self;
+        self.minimumWidth = 200; // hardcoding is bad!
     
-        [self setMinimumWidth:200]; // hardcoding is bad!
+
         [self doStuffing];
-    
-        
     }
     return self;
 }
 
 - (void) doStuffing
 {
-    // cur_pnl_path should be the same as m_DirPath!!!
-    string cur_pnl_path = m_CurrentController.currentDirectoryPath;
-    string opp_pnl_path = m_OppositeController.currentDirectoryPath;
-    bool cur_pnl_native = m_CurrentController.vfs->IsNativeFS();
-    bool cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath(cur_pnl_path.c_str());
-    bool opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath(opp_pnl_path.c_str());
+    bool cur_pnl_native = m_CommonHost && m_CommonHost->IsNativeFS();
+    bool cur_pnl_writable = true;
+    if( m_CurrentController.isUniform  )
+        cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
+    bool opp_pnl_writable = true;
+    if( m_OppositeController.isUniform )
+        opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath( m_OppositeController.currentDirectoryPath.c_str() );
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
-    if(m_FilesCount > 0 || m_Host->IsNativeFS())
-    {
+    if(m_FilesCount > 0 || ( m_CommonHost && m_CommonHost->IsNativeFS() ) ) {
         NSMenuItem *item = [NSMenuItem new];
         item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
         item.target = self;
@@ -408,7 +417,7 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
     // Share stuff
     {
         NSMenu *share_submenu = [NSMenu new];
-        bool eligible = m_Host->IsNativeFS();
+        bool eligible = m_CommonHost && m_CommonHost->IsNativeFS();
         if(eligible) {
             m_ShareItemsURLs = [NSMutableArray new];
             for( auto &i:m_Items )
@@ -450,10 +459,10 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
         else
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
                           [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
-//        if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
+        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {  // such thing works only on native file systems
             item.target = self;
             item.action = @selector(OnCopyPaths:);
-//        }
+        }
         [self addItem:item];
     }
 
@@ -479,57 +488,48 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
     [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
     
     if(!m_ItemsUTI.empty())
-        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), m_OpenWithHandlers[app_no].path.c_str());
+        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, m_OpenWithHandlers[app_no].path);
 }
 
 - (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
 {
     if(m_Items.size() > 1) {
-        vector<string> items;
-        for(auto &i: m_Items)
-            items.emplace_back( i.Path() );
-            
-        PanelVFSFileWorkspaceOpener::Open(items, m_Host, _app_id);
+        if( m_CommonHost ) {
+            vector<string> items;
+            for(auto &i: m_Items)
+                items.emplace_back( i.Path() );
+            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id);
+        }
     }
     else if(m_Items.size() == 1)
-        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Host, _app_path);
+        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path);
 }
 
 - (void)OnOpenWithOther:(id)sender
 {
-    NSOpenPanel *panel = BuildAppChoose();
-    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
-                  completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton)
-                      {
-                          OpenWithHandler hndl;
-                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
-                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
-                      }
-                  }];
+    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+        OpenWithHandler hndl;
+        if( ExposeOpenWithHandler(_path, hndl) )
+            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+    });
 }
 
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
-    NSOpenPanel *panel = BuildAppChoose();
-    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
-                  completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton)
-                      {
-                          if(!m_ItemsUTI.empty())
-                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), panel.URL.path.fileSystemRepresentation);
-                          
-                          OpenWithHandler hndl;
-                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
-                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
-                      }
-                  }];
+    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+        if( !m_ItemsUTI.empty() )
+            LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, _path);
+        
+        OpenWithHandler hndl;
+        if(ExposeOpenWithHandler(_path, hndl))
+            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+    });
 }
 
 - (void)OnMoveToTrash:(id)sender
 {
     // TODO: rewrite
-    if( m_CurrentController.vfs->IsNativeFS() ) {
+    if( m_CommonHost && !m_CommonDir.empty() ) {
         vector<string> filenames;
         for(auto &i: m_Items)
             filenames.emplace_back( i.Filename() );
@@ -537,7 +537,7 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
         FileDeletionOperation *op = [[FileDeletionOperation alloc]
                                      initWithFiles:move(filenames)
                                      type:FileDeletionOperationType::MoveToTrash
-                                     dir:m_DirPath];
+                                     dir:m_CommonDir];
         [m_MainWnd AddOperation:op];
     }
 }
@@ -545,23 +545,23 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
 - (void)OnDeletePermanently:(id)sender
 {
     // TODO: rewrite
-
-    vector<string> filenames;
-    for(auto &i: m_Items)
-        filenames.emplace_back( i.Filename() );
-    
-    
-    FileDeletionOperation *op = [FileDeletionOperation alloc];
-    if(m_CurrentController.vfs->IsNativeFS())
-        op = [op initWithFiles:move(filenames)
-                          type:FileDeletionOperationType::Delete
-                           dir:m_DirPath];
-    else
-        op = [op initWithFiles:move(filenames)
-                           dir:m_DirPath
-                            at:m_CurrentController.vfs];
-
-    [m_MainWnd AddOperation:op];
+    if( m_CommonHost && !m_CommonDir.empty() ) {
+        vector<string> filenames;
+        for(auto &i: m_Items)
+            filenames.emplace_back( i.Filename() );
+        
+        FileDeletionOperation *op = [FileDeletionOperation alloc];
+        if(m_CommonHost->IsNativeFS())
+            op = [op initWithFiles:move(filenames)
+                              type:FileDeletionOperationType::Delete
+                               dir:m_CommonDir];
+        else
+            op = [op initWithFiles:move(filenames)
+                               dir:m_CommonDir
+                                at:m_CommonHost];
+        
+        [m_MainWnd AddOperation:op];
+    }
 }
 
 - (void)OnCopyPaths:(id)sender
@@ -642,10 +642,11 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
 @implementation MainWindowFilePanelState (ContextMenu)
 
 - (NSMenu*) RequestContextMenuOn:(vector<VFSFlexibleListingItem>) _items
-                         path:(const char*) _path
-                          vfs:(shared_ptr<VFSHost>) _host
-                       caller:(PanelController*) _caller
+                          caller:(PanelController*) _caller
 {
+    if( _items.empty() )
+        return nil;
+    
     PanelController *current_cont = _caller;
     PanelController *opp_cont;
     if(current_cont == self.leftPanelController)
@@ -657,8 +658,6 @@ static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
     
     MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
     menu = [menu initWithData:move(_items)
-                       OnPath:_path
-                          vfs:_host
                       mainWnd:self
                        myCont:current_cont
                       oppCont:opp_cont];

@@ -580,26 +580,24 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-//    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-//                                                                     srcroot:m_DirPath
-//                                                                      srcvfs:m_CurrentController.vfs
-//                                                                     dstroot:m_OppositeController.currentDirectoryPath
-//                                                                      dstvfs:m_OppositeController.vfs
-//                                 ];
-//    op.TargetPanel = m_OppositeController;
-//    [m_MainWnd AddOperation:op];
+    if( !m_OppositeController.isUniform )
+        return;
+    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
+                                                   dstroot:m_OppositeController.currentDirectoryPath
+                                                    dstvfs:m_OppositeController.vfs];
+    op.TargetPanel = m_OppositeController;
+    [m_MainWnd AddOperation:op];
 }
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-//    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-//                                                                     srcroot:m_DirPath
-//                                                                      srcvfs:m_CurrentController.vfs
-//                                                                     dstroot:m_DirPath
-//                                                                      dstvfs:m_CurrentController.vfs
-//                                 ];
-//    op.TargetPanel = m_CurrentController;
-//    [m_MainWnd AddOperation:op];
+    if( !m_CommonHost || m_CommonDir.empty() )
+        return;
+    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
+                                                   dstroot:m_CommonDir
+                                                    dstvfs:m_CommonHost];
+    op.TargetPanel = m_CurrentController;
+    [m_MainWnd AddOperation:op];
 }
 
 - (void)OnShareWithService:(id)sender

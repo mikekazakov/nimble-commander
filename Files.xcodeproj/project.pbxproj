@@ -154,9 +154,6 @@
 		CF50B6F01A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
 		CF50B6F11A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
 		CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
-		CF50B6F31A1516B000E3D96D /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E91A1516B000E3D96D /* VFSArchiveListing.mm */; };
-		CF50B6F41A1516B000E3D96D /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E91A1516B000E3D96D /* VFSArchiveListing.mm */; };
-		CF50B6F51A1516B000E3D96D /* VFSArchiveListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E91A1516B000E3D96D /* VFSArchiveListing.mm */; };
 		CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.mm */; };
 		CF50B6FF1A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.mm */; };
 		CF50B7001A1516C800E3D96D /* VFSArchiveUnRARFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.mm */; };
@@ -1214,8 +1211,6 @@
 		CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveHost.mm; path = vfs/VFSArchiveHost.mm; sourceTree = "<group>"; };
 		CF50B6E61A1516B000E3D96D /* VFSArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveInternal.h; path = vfs/VFSArchiveInternal.h; sourceTree = "<group>"; };
 		CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveInternal.mm; path = vfs/VFSArchiveInternal.mm; sourceTree = "<group>"; };
-		CF50B6E81A1516B000E3D96D /* VFSArchiveListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveListing.h; path = vfs/VFSArchiveListing.h; sourceTree = "<group>"; };
-		CF50B6E91A1516B000E3D96D /* VFSArchiveListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveListing.mm; path = vfs/VFSArchiveListing.mm; sourceTree = "<group>"; };
 		CF50B6F61A1516C800E3D96D /* VFSArchiveUnRARFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARFile.h; path = vfs/VFSArchiveUnRARFile.h; sourceTree = "<group>"; };
 		CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveUnRARFile.mm; path = vfs/VFSArchiveUnRARFile.mm; sourceTree = "<group>"; };
 		CF50B6F81A1516C800E3D96D /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARHost.h; path = vfs/VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
@@ -2165,8 +2160,6 @@
 				CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */,
 				CF50B6E61A1516B000E3D96D /* VFSArchiveInternal.h */,
 				CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */,
-				CF50B6E81A1516B000E3D96D /* VFSArchiveListing.h */,
-				CF50B6E91A1516B000E3D96D /* VFSArchiveListing.mm */,
 			);
 			name = libarchive;
 			sourceTree = "<group>";
@@ -3320,7 +3313,6 @@
 				CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */,
 				CF50B6EE1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
-				CF50B6F41A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
 				CF50B6DA1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
@@ -3562,7 +3554,6 @@
 				CF826B4E1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */,
 				CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */,
 				CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */,
-				CF50B6F31A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.cpp in Sources */,
@@ -3770,7 +3761,6 @@
 				CF9069871BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */,
 				CF50B6DB1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */,
-				CF50B6F51A1516B000E3D96D /* VFSArchiveListing.mm in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFF6F2841A13567C00011177 /* OperationsController.mm in Sources */,

@@ -65,6 +65,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
                                         int _flags,
                                         VFSCancelChecker _cancel_checker)
 {
+    static const auto dirents_reserve_amount = 64;
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     
     DIR *dirp = io.opendir(_path);
@@ -76,15 +77,13 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         return VFSError::Cancelled;
     }
     
-    dirent *entp;
-    
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
     if(_flags & VFSFlags::F_NoDotDot)
         need_to_add_dot_dot = false;    
     
     vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
-    dirents.reserve(64);
-    while((entp = io.readdir(dirp)) != NULL) {
+    dirents.reserve( dirents_reserve_amount );
+    while( auto entp = io.readdir(dirp) ) {
         if(_cancel_checker && _cancel_checker()) {
             io.closedir(dirp);
             return 0;

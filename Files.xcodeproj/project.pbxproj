@@ -145,9 +145,6 @@
 		CF50B6DC1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
 		CF50B6DD1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
 		CF50B6DE1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
-		CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D71A15169300E3D96D /* VFSPSListing.cpp */; };
-		CF50B6E01A15169300E3D96D /* VFSPSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D71A15169300E3D96D /* VFSPSListing.cpp */; };
-		CF50B6E11A15169300E3D96D /* VFSPSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D71A15169300E3D96D /* VFSPSListing.cpp */; };
 		CF50B6EA1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
 		CF50B6EB1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
 		CF50B6EC1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
@@ -1211,8 +1208,6 @@
 		CF50B6D41A15169300E3D96D /* VFSPSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSHost.h; path = vfs/VFSPSHost.h; sourceTree = "<group>"; };
 		CF50B6D51A15169300E3D96D /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = vfs/VFSPSHost.mm; sourceTree = "<group>"; };
 		CF50B6D61A15169300E3D96D /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = vfs/VFSPSInternal.h; sourceTree = "<group>"; };
-		CF50B6D71A15169300E3D96D /* VFSPSListing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPSListing.cpp; path = vfs/VFSPSListing.cpp; sourceTree = "<group>"; };
-		CF50B6D81A15169300E3D96D /* VFSPSListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSListing.h; path = vfs/VFSPSListing.h; sourceTree = "<group>"; };
 		CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveFile.cpp; path = vfs/VFSArchiveFile.cpp; sourceTree = "<group>"; };
 		CF50B6E31A1516B000E3D96D /* VFSArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveFile.h; path = vfs/VFSArchiveFile.h; sourceTree = "<group>"; };
 		CF50B6E41A1516B000E3D96D /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveHost.h; path = vfs/VFSArchiveHost.h; sourceTree = "<group>"; };
@@ -2338,8 +2333,6 @@
 				CF50B6D41A15169300E3D96D /* VFSPSHost.h */,
 				CF50B6D51A15169300E3D96D /* VFSPSHost.mm */,
 				CF50B6D61A15169300E3D96D /* VFSPSInternal.h */,
-				CF50B6D71A15169300E3D96D /* VFSPSListing.cpp */,
-				CF50B6D81A15169300E3D96D /* VFSPSListing.h */,
 			);
 			name = PS;
 			sourceTree = "<group>";
@@ -3323,7 +3316,6 @@
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
-				CF50B6E01A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF50B7261A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
 				CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */,
 				CF50B6EE1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
@@ -3553,7 +3545,6 @@
 				CF0A401A1B60BA00002A092B /* BlinkingCaret.mm in Sources */,
 				CF90697C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
-				CF50B6DF1A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
 				CF50B7251A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
@@ -3761,7 +3752,6 @@
 				CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFF6F26C1A13567C00011177 /* path_manip.c in Sources */,
 				CFF6F2701A13567C00011177 /* TermParser.mm in Sources */,
-				CF50B6E11A15169300E3D96D /* VFSPSListing.cpp in Sources */,
 				CF90697E1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
 				CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */,

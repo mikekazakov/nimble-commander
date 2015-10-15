@@ -931,79 +931,42 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectory
                 default:                                return StepResult::Stop;
             }
         }
-        
-        
-//
     }
     
-    // TODO: do attributes stuff
+    // do attributes stuff
+    // we currently ignore possible errors on attributes copying, which is not great at all
+    int src_fd = io.open(_src_path.c_str(), O_RDONLY);
+    if( src_fd == -1 )
+        return StepResult::Ok;
+    auto clean_src_fd = at_scope_end([&]{ close(src_fd); });
+
+    int dst_fd = io.open(_dst_path.c_str(), O_RDONLY); // strangely this works
+    if( dst_fd == -1 )
+        return StepResult::Ok;
+    auto clean_dst_fd = at_scope_end([&]{ close(dst_fd); });
     
+    struct stat src_stat;
+    if( fstat(src_fd, &src_stat) != 0 )
+        return StepResult::Ok;
     
+    if(m_Options.copy_unix_flags) {
+        // change unix mode
+        fchmod(dst_fd, src_stat.st_mode);
+        
+        // change flags
+        fchflags(dst_fd, src_stat.st_flags);
+    }
+    
+    if(m_Options.copy_unix_owners) // change ownage
+        io.chown(_dst_path.c_str(), src_stat.st_uid, src_stat.st_gid);
+    
+    if(m_Options.copy_xattrs) // copy xattrs
+        CopyXattrsFromNativeFDToNativeFD(src_fd, dst_fd);
+    
+    if(m_Options.copy_file_times) // adjust destination times
+        AdjustFileTimesForNativeFD(dst_fd, src_stat);
     
     return StepResult::Ok;
-    
-//    auto &io = RoutedIO::Default;
-//    
-//    // TODO: need to handle errors on attributes somehow. but I don't know how.
-//    struct stat src_stat, dst_stat;
-//    bool opres = false;
-//    int src_fd = -1, dst_fd = -1;
-//    
-//    // check if target already exist
-//    if( io.lstat(_dest, &dst_stat) != -1 )
-//    {
-//        // target exists; check that it's a directory
-//        
-//        if( (dst_stat.st_mode & S_IFMT) != S_IFDIR )
-//        {
-//            // TODO: ask user what to do
-//            goto end;
-//        }
-//    }
-//    else
-//    {
-//    domkdir:
-//        if(io.mkdir(_dest, 0777))
-//        {
-//            if(m_SkipAll) goto end;
-//            int result = [[m_Operation OnCantCreateDir:ErrnoToNSError() ForDir:_dest] WaitForResult];
-//            if(result == OperationDialogResult::Retry) goto domkdir;
-//            if(result == OperationDialogResult::Skip) goto end;
-//            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; goto end;}
-//            if(result == OperationDialogResult::Stop)  { RequestStop(); goto end; }
-//        }
-//    }
-//    
-//    // do attributes stuff
-//    if((src_fd = io.open(_src, O_RDONLY)) == -1) goto end;
-//    if((dst_fd = io.open(_dest, O_RDONLY)) == -1) goto end;
-//    if(fstat(src_fd, &src_stat) != 0) goto end;
-//    
-//    
-//    if(m_Options.copy_unix_flags)
-//    {
-//        // change unix mode
-//        fchmod(dst_fd, src_stat.st_mode);
-//        
-//        // change flags
-//        fchflags(dst_fd, src_stat.st_flags);
-//    }
-//    
-//    if(m_Options.copy_unix_owners) // change ownage
-//        io.chown(_dest, src_stat.st_uid, src_stat.st_gid);
-//    
-//    if(m_Options.copy_xattrs) // copy xattrs
-//        CopyXattrs(src_fd, dst_fd);
-//    
-//    if(m_Options.copy_file_times) // adjust destination times
-//        AdjustFileTimes(dst_fd, &src_stat);
-//    
-//    opres = true;
-//end:
-//    if(src_fd != -1) io.close(src_fd);
-//    if(dst_fd != -1) io.close(dst_fd);
-//    return opres;
-    
 }
 
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(const string& _src_path,

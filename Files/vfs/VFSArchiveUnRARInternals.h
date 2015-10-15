@@ -12,15 +12,8 @@
 
 struct VFSArchiveUnRAREntry
 {
-    VFSArchiveUnRAREntry();
-    ~VFSArchiveUnRAREntry();
-    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&) = delete;
-    VFSArchiveUnRAREntry(const VFSArchiveUnRAREntry&&) = delete;
-    void operator=(const VFSArchiveUnRAREntry&) = delete;
-    
     string      rar_name;       // original full name in rar archive, for search and comparisons
     string      name;           // utf-8
-    CFStringRef cfname = 0;     // no allocations, pointing at name
     uint64_t    packed_size = 0;
     uint64_t    unpacked_size = 0;
     time_t      time = 0;

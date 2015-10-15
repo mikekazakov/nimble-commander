@@ -163,9 +163,6 @@
 		CF50B7041A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.mm */; };
 		CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.mm */; };
 		CF50B7061A1516C800E3D96D /* VFSArchiveUnRARInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.mm */; };
-		CF50B7071A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FD1A1516C800E3D96D /* VFSArchiveUnRARListing.mm */; };
-		CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FD1A1516C800E3D96D /* VFSArchiveUnRARListing.mm */; };
-		CF50B7091A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FD1A1516C800E3D96D /* VFSArchiveUnRARListing.mm */; };
 		CF50B7101A1516E700E3D96D /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B70A1A1516E700E3D96D /* VFSNativeFile.cpp */; };
 		CF50B7111A1516E700E3D96D /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B70A1A1516E700E3D96D /* VFSNativeFile.cpp */; };
 		CF50B7121A1516E700E3D96D /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B70A1A1516E700E3D96D /* VFSNativeFile.cpp */; };
@@ -1217,8 +1214,6 @@
 		CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveUnRARHost.mm; path = vfs/VFSArchiveUnRARHost.mm; sourceTree = "<group>"; };
 		CF50B6FA1A1516C800E3D96D /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARInternals.h; path = vfs/VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
 		CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveUnRARInternals.mm; path = vfs/VFSArchiveUnRARInternals.mm; sourceTree = "<group>"; };
-		CF50B6FC1A1516C800E3D96D /* VFSArchiveUnRARListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARListing.h; path = vfs/VFSArchiveUnRARListing.h; sourceTree = "<group>"; };
-		CF50B6FD1A1516C800E3D96D /* VFSArchiveUnRARListing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveUnRARListing.mm; path = vfs/VFSArchiveUnRARListing.mm; sourceTree = "<group>"; };
 		CF50B70A1A1516E700E3D96D /* VFSNativeFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNativeFile.cpp; path = vfs/VFSNativeFile.cpp; sourceTree = "<group>"; };
 		CF50B70B1A1516E700E3D96D /* VFSNativeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNativeFile.h; path = vfs/VFSNativeFile.h; sourceTree = "<group>"; };
 		CF50B70C1A1516E700E3D96D /* VFSNativeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNativeHost.h; path = vfs/VFSNativeHost.h; sourceTree = "<group>"; };
@@ -2145,8 +2140,6 @@
 				CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.mm */,
 				CF50B6FA1A1516C800E3D96D /* VFSArchiveUnRARInternals.h */,
 				CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.mm */,
-				CF50B6FC1A1516C800E3D96D /* VFSArchiveUnRARListing.h */,
-				CF50B6FD1A1516C800E3D96D /* VFSArchiveUnRARListing.mm */,
 			);
 			name = UnRAR;
 			sourceTree = "<group>";
@@ -3303,7 +3296,6 @@
 				CF50B7291A15170600E3D96D /* VFSNetFTPHost.mm in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
-				CF50B7081A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF50B7361A15171600E3D96D /* VFSNetSFTPHost.cpp in Sources */,
@@ -3522,7 +3514,6 @@
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
-				CF50B7071A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
@@ -3731,7 +3722,6 @@
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
-				CF50B7091A1516C800E3D96D /* VFSArchiveUnRARListing.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
 				CFA57B271B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,

@@ -348,9 +348,8 @@ int VFSArchiveHost::FetchFlexibleListing(const char *_path,
     if( !(_flags & VFSFlags::F_NoDotDot) ) {
         listing_source.filenames.emplace_back( ".." );
         listing_source.unix_types.emplace_back( DT_DIR );
-        listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
+        listing_source.unix_modes.emplace_back( S_IRUSR | S_IXUSR | S_IFDIR );
         auto curtime = time(0); // it's better to show date of archive itself
-        listing_source.sizes.insert(0, 0 );
         listing_source.atimes.insert(0, curtime );
         listing_source.btimes.insert(0, curtime );
         listing_source.ctimes.insert(0, curtime );

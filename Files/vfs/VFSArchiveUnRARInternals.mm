@@ -22,19 +22,6 @@ int VFSArchiveUnRARErrorToVFSError(int _rar_error)
     return VFSError::GenericError;
 }
 
-VFSArchiveUnRAREntry::VFSArchiveUnRAREntry()
-{
-}
-
-VFSArchiveUnRAREntry::~VFSArchiveUnRAREntry()
-{
-    if(cfname != 0)
-    {
-        CFRelease(cfname);
-        cfname = 0;
-    }
-}
-
 VFSArchiveUnRARSeekCache::~VFSArchiveUnRARSeekCache()
 {
     if(rar_handle)

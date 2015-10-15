@@ -23,7 +23,7 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 @implementation GoToFolderSheetController
 {
     function<void()>        m_Handler; // return VFS error code
-    unique_ptr<VFSListing>  m_LastListing;
+//    unique_ptr<VFSListing>  m_LastListing;
 }
 
 - (id)init
@@ -83,73 +83,73 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
-    if(commandSelector == @selector(insertTab:)) {
-        auto p = self.currentDirectory;
-        auto f = self.currentFilename;
-        auto l = [self listingFromDir:p];
-        if( !l ) {
-            NSBeep();
-            return true;
-        }
-        
-        auto inds = [self listDirsFrom:*l withPrefix:f];
-        if( inds.empty() ) {
-            NSBeep();
-            return true;
-        }
-        
-        if( inds.size() == 1 ) {
-            [self updateUserInputWithAutocompetion:l->At(inds.front()).Name() ];
-        }
-        else {
-            auto menu = [self buildMenuWithElements:inds ofListing:*l];
-            [menu popUpMenuPositioningItem:nil
-                                atLocation:NSMakePoint(self.Text.frame.origin.x,
-                                                       self.Text.frame.origin.y - 10)
-                                    inView:self.window.contentView];
-        }
-        
-        return true;
-    }
+//    if(commandSelector == @selector(insertTab:)) {
+//        auto p = self.currentDirectory;
+//        auto f = self.currentFilename;
+//        auto l = [self listingFromDir:p];
+//        if( !l ) {
+//            NSBeep();
+//            return true;
+//        }
+//        
+//        auto inds = [self listDirsFrom:*l withPrefix:f];
+//        if( inds.empty() ) {
+//            NSBeep();
+//            return true;
+//        }
+//        
+//        if( inds.size() == 1 ) {
+//            [self updateUserInputWithAutocompetion:l->At(inds.front()).Name() ];
+//        }
+//        else {
+//            auto menu = [self buildMenuWithElements:inds ofListing:*l];
+//            [menu popUpMenuPositioningItem:nil
+//                                atLocation:NSMakePoint(self.Text.frame.origin.x,
+//                                                       self.Text.frame.origin.y - 10)
+//                                    inView:self.window.contentView];
+//        }
+//        
+//        return true;
+//    }
     return false;
 }
 
-- (NSMenu*) buildMenuWithElements:(const vector<unsigned>&)_inds ofListing:(const VFSListing&)_listing
-{
-    vector<NSString *> filenames;
-    for(auto i:_inds)
-        filenames.emplace_back( _listing[i].NSName().copy );
-
-    sort( begin(filenames), end(filenames), [](auto _1st, auto _2nd) {
-        static auto opts = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
-        return [_1st compare:_2nd options:opts] < 0;
-    });
-    
-    
-    NSMenu *menu = [NSMenu new];
-    static const auto icon_size = NSMakeSize(NSFont.systemFontSize, NSFont.systemFontSize);
-    
-    for(auto i:filenames) {
-        NSMenuItem *it = [NSMenuItem new];
-        it.title =  i;
-        it.target = self;
-        it.action = @selector(menuItemClicked:);
-        it.representedObject = i;
-        
-        NSImage *image = nil;
-        if( _listing.Host()->IsNativeFS() )
-            image = [NSWorkspace.sharedWorkspace iconForFile:
-                     [[NSString stringWithUTF8String:_listing.RelativePath()] stringByAppendingString:i]];
-        else
-            image = [NSImage imageNamed:NSImageNameFolder];
-        image.size = icon_size;
-        it.image = image;
-        
-        [menu addItem:it];
-    }
-    
-    return menu;
-}
+//- (NSMenu*) buildMenuWithElements:(const vector<unsigned>&)_inds ofListing:(const VFSListing&)_listing
+//{
+//    vector<NSString *> filenames;
+//    for(auto i:_inds)
+//        filenames.emplace_back( _listing[i].NSName().copy );
+//
+//    sort( begin(filenames), end(filenames), [](auto _1st, auto _2nd) {
+//        static auto opts = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
+//        return [_1st compare:_2nd options:opts] < 0;
+//    });
+//    
+//    
+//    NSMenu *menu = [NSMenu new];
+//    static const auto icon_size = NSMakeSize(NSFont.systemFontSize, NSFont.systemFontSize);
+//    
+//    for(auto i:filenames) {
+//        NSMenuItem *it = [NSMenuItem new];
+//        it.title =  i;
+//        it.target = self;
+//        it.action = @selector(menuItemClicked:);
+//        it.representedObject = i;
+//        
+//        NSImage *image = nil;
+//        if( _listing.Host()->IsNativeFS() )
+//            image = [NSWorkspace.sharedWorkspace iconForFile:
+//                     [[NSString stringWithUTF8String:_listing.RelativePath()] stringByAppendingString:i]];
+//        else
+//            image = [NSImage imageNamed:NSImageNameFolder];
+//        image.size = icon_size;
+//        it.image = image;
+//        
+//        [menu addItem:it];
+//    }
+//    
+//    return menu;
+//}
 
 - (void)menuItemClicked:(id)sender
 {
@@ -195,58 +195,58 @@ static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 }
 
 // sync operation with simple caching
-- (VFSListing*) listingFromDir:(const string&)_path
-{
-    if( _path.empty() )
-        return nullptr;
+//- (VFSListing*) listingFromDir:(const string&)_path
+//{
+//    if( _path.empty() )
+//        return nullptr;
+//
+//    auto path = _path;
+//    if( path.back() != '/' )
+//        path += '/';
+//    
+//    if(m_LastListing &&
+//       m_LastListing->RelativePath() == path)
+//        return m_LastListing.get();
+//    
+//    unique_ptr<VFSListing> listing;
+//    int ret = self.panel.vfs->FetchDirectoryListing(path.c_str(),
+//                                                    listing,
+//                                                    VFSFlags::F_NoDotDot,
+//                                                    nullptr);
+//    if( ret == 0 ) {
+//        m_LastListing = move(listing);
+//        return m_LastListing.get();
+//    } else
+//        return nullptr;
+//}
 
-    auto path = _path;
-    if( path.back() != '/' )
-        path += '/';
-    
-    if(m_LastListing &&
-       m_LastListing->RelativePath() == path)
-        return m_LastListing.get();
-    
-    unique_ptr<VFSListing> listing;
-    int ret = self.panel.vfs->FetchDirectoryListing(path.c_str(),
-                                                    listing,
-                                                    VFSFlags::F_NoDotDot,
-                                                    nullptr);
-    if( ret == 0 ) {
-        m_LastListing = move(listing);
-        return m_LastListing.get();
-    } else
-        return nullptr;
-}
-
-- (vector<unsigned>)listDirsFrom:(const VFSListing&)_listing withPrefix:(const string&)_prefix
-{
-    unsigned i = 0;
-    unsigned e = _listing.Count();
-    vector<unsigned> result;
-    
-    NSString *prefix = [NSString stringWithUTF8StdString:_prefix];
-    NSRange range = NSMakeRange(0, prefix.length);
-
-    for( ;i!=e;++i ) {
-        auto &e = _listing[i];
-        
-        if( !e.IsDir() )
-            continue;
-        
-        if( e.NSName().length < range.length )
-            continue;
-        
-        auto compare = [e.NSName() compare:prefix
-                                   options:NSCaseInsensitiveSearch
-                                     range:range];
-        
-        if( compare == 0 )
-            result.emplace_back( i );
-    }
-
-    return result;
-}
+//- (vector<unsigned>)listDirsFrom:(const VFSListing&)_listing withPrefix:(const string&)_prefix
+//{
+//    unsigned i = 0;
+//    unsigned e = _listing.Count();
+//    vector<unsigned> result;
+//    
+//    NSString *prefix = [NSString stringWithUTF8StdString:_prefix];
+//    NSRange range = NSMakeRange(0, prefix.length);
+//
+//    for( ;i!=e;++i ) {
+//        auto &e = _listing[i];
+//        
+//        if( !e.IsDir() )
+//            continue;
+//        
+//        if( e.NSName().length < range.length )
+//            continue;
+//        
+//        auto compare = [e.NSName() compare:prefix
+//                                   options:NSCaseInsensitiveSearch
+//                                     range:range];
+//        
+//        if( compare == 0 )
+//            result.emplace_back( i );
+//    }
+//
+//    return result;
+//}
 
 @end

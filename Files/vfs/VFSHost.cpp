@@ -187,16 +187,6 @@ bool VFSHost::IsWriteableAtPath(const char *_dir) const
     return false;
 }
 
-int VFSHost::FetchDirectoryListing(
-                                  const char *_path,
-                                  unique_ptr<VFSListing> &_target,
-                                  int _flags,                                   
-                                  VFSCancelChecker _cancel_checker
-                                  )
-{
-    return VFSError::NotSupported;
-}
-
 int VFSHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
                        VFSCancelChecker _cancel_checker)

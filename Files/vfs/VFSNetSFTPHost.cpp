@@ -11,7 +11,6 @@
 #import <Habanero/algo.h>
 #import "Common.h"
 #import "VFSNetSFTPHost.h"
-#import "VFSListing.h"
 #import "VFSNetSFTPFile.h"
 
 VFSNetSFTPHost::Connection::~Connection()

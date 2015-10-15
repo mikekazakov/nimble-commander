@@ -145,7 +145,6 @@ private:
     string  m_Verb;
 };
 
-class VFSListing;
 class VFSHost;
 class VFSFile;
 class VFSPath;

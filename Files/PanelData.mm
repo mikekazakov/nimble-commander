@@ -363,7 +363,7 @@ struct SortPredLessIndToKeys : public SortPredLessBase
     bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
     {
         using _ = PanelSortMode::Mode;
-        const auto invalid_size = VFSListingItem::InvalidSize;
+        const auto invalid_size = PanelVolatileData::invalid_size;
         
         if(sort_mode.sep_dirs) {
             if( l.IsDir(_1) && !_val2.is_dir) return true;
@@ -620,7 +620,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
 {
     if(_entry    == nullptr ||
        _entry[0] == 0       ||
-       _size == VFSListingItem::InvalidSize )
+       _size == PanelVolatileData::invalid_size )
         return false;
     
     int n = RawIndexForName(_entry);

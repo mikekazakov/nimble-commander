@@ -83,11 +83,6 @@ public:
     virtual bool IsSymlink(const char *_path,
                            int _flags,
                            VFSCancelChecker _cancel_checker);
-
-    virtual int FetchDirectoryListing(const char *_path,
-                                      unique_ptr<VFSListing> &_target,
-                                      int _flags,
-                                      VFSCancelChecker _cancel_checker);
     
     virtual int FetchFlexibleListing(const char *_path,
                                       shared_ptr<VFSFlexibleListing> &_target,

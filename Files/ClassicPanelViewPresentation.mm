@@ -122,38 +122,38 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const
-{
-    if( _dirent.IsDir() )
-    {
-        if( _dirent.Size() != VFSListingItem::InvalidSize)
-        {
-            return FormHumanReadableSizeRepresentation(_dirent.Size());
-        }
-        else
-        {
-            char buf[32];
-            memset(buf, 0, sizeof(buf));
-            if( !_dirent.IsDotDot()) {
-                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_FOLDER_WORD", "Fixed-length (6 chars) string for folders, for English is 'Folder'").UTF8String;
-                strcpy(buf, st.c_str());
-            }
-            else {
-                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_UP_WORD", "Fixed-length (6 chars) string for upper-dir, for English is '    Up'").UTF8String;
-                strcpy(buf, st.c_str());
-            }
-            oms::StringBuf<32> tmp;
-            tmp.FromUTF8(buf, strlen(buf));
-            oms::StringBuf<6> r;
-            r.FromUniChars(tmp.Chars(), min(tmp.Size(), uint16_t(6)));
-            return r;
-        }
-    }
-    else
-    {
-        return FormHumanReadableSizeRepresentation(_dirent.Size());
-    }
-}
+//oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const
+//{
+//    if( _dirent.IsDir() )
+//    {
+//        if( _dirent.Size() != VFSListingItem::InvalidSize)
+//        {
+//            return FormHumanReadableSizeRepresentation(_dirent.Size());
+//        }
+//        else
+//        {
+//            char buf[32];
+//            memset(buf, 0, sizeof(buf));
+//            if( !_dirent.IsDotDot()) {
+//                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_FOLDER_WORD", "Fixed-length (6 chars) string for folders, for English is 'Folder'").UTF8String;
+//                strcpy(buf, st.c_str());
+//            }
+//            else {
+//                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_UP_WORD", "Fixed-length (6 chars) string for upper-dir, for English is '    Up'").UTF8String;
+//                strcpy(buf, st.c_str());
+//            }
+//            oms::StringBuf<32> tmp;
+//            tmp.FromUTF8(buf, strlen(buf));
+//            oms::StringBuf<6> r;
+//            r.FromUniChars(tmp.Chars(), min(tmp.Size(), uint16_t(6)));
+//            return r;
+//        }
+//    }
+//    else
+//    {
+//        return FormHumanReadableSizeRepresentation(_dirent.Size());
+//    }
+//}
 
 static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
 {
@@ -231,21 +231,21 @@ oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     return out;
 }
 
-static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
-{   // output is a direct filename or symlink path in ->filename form
-    oms::StringBuf<256> out;
-    if(!_dirent.IsSymlink())
-        out.FromUTF8(_dirent.Name(), _dirent.NameLen());
-    else if(_dirent.Symlink() != 0)
-        {
-            string str("->");
-            str += _dirent.Symlink();
-            out.FromUTF8(str);
-        }
-    if(out.CanBeComposed())
-        out.NormalizeToFormC();
-    return out;
-}
+//static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+//{   // output is a direct filename or symlink path in ->filename form
+//    oms::StringBuf<256> out;
+//    if(!_dirent.IsSymlink())
+//        out.FromUTF8(_dirent.Name(), _dirent.NameLen());
+//    else if(_dirent.Symlink() != 0)
+//        {
+//            string str("->");
+//            str += _dirent.Symlink();
+//            out.FromUTF8(str);
+//        }
+//    if(out.CanBeComposed())
+//        out.NormalizeToFormC();
+//    return out;
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // ClassicPanelViewPresentation class
@@ -346,16 +346,16 @@ void ClassicPanelViewPresentation::BuildAppearance()
                 m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
 }
 
-const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
-{
-    
-    // TODO:::: 
-//    for(auto &r: m_ColoringRules)
-//        if(r.filter.Filter(_dirent))
-//            return _is_focused ? r.focused : r.unfocused;
-    static DoubleColor def;
-    return def;
-}
+//const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
+//{
+//    
+//    // TODO:::: 
+////    for(auto &r: m_ColoringRules)
+////        if(r.filter.Filter(_dirent))
+////            return _is_focused ? r.focused : r.unfocused;
+//    static DoubleColor def;
+//    return def;
+//}
 
 void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
 {

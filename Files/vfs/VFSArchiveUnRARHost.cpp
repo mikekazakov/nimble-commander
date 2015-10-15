@@ -90,7 +90,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSCon
 VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
 {
     dispatch_sync(m_SeekCacheControl, ^{});
-    //dispatch_release(m_SeekCacheControl);
+    dispatch_release(m_SeekCacheControl);
 }
 
 const char *VFSArchiveUnRARHost::FSTag() const

@@ -44,6 +44,7 @@
     #include <numeric>
     #include <memory>
     #include <atomic>
+    #include <iostream>
     #include <mutex>
     #include <chrono>
     #include <thread>

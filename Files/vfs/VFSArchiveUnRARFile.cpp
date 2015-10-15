@@ -75,8 +75,8 @@ int VFSArchiveUnRARFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         // hold shared_this in this block.
          RARSetCallback(m_Archive->rar_handle, ProcessRAR, (long)this);
          m_RarError = RARProcessFile(m_Archive->rar_handle, RAR_TEST, NULL, NULL);
-         if(m_RarError != 0)
-             NSLog(@"RARProcessFile returned %d", m_RarError);
+        if(m_RarError != 0)
+             cerr << "RARProcessFile returned " << m_RarError << endl;
 
          m_ExtractionRunning = false;
          dispatch_semaphore_signal(m_FinishUnpackSemaphore);

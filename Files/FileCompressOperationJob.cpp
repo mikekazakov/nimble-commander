@@ -56,13 +56,6 @@ static bool WriteEAsIfAny(shared_ptr<VFSFile> _src, struct archive *_a, const ch
     return true;
 }
 
-static string EnsureTrailingSlash( string _s )
-{
-    if( _s.empty() || _s.back() != '/')
-        _s += '/';
-    return _s;
-}
-
 FileCompressOperationJob::FileCompressOperationJob():
     m_SkipAll(0),
     m_SourceTotalBytes(0),

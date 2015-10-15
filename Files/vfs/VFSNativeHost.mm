@@ -8,7 +8,6 @@
 
 #import "DisplayNamesCache.h"
 #import "VFSNativeHost.h"
-#import "VFSNativeListing.h"
 #import "VFSNativeFile.h"
 #import "VFSError.h"
 #import "FSEventsDirUpdate.h"
@@ -41,13 +40,6 @@ public:
     }
 };
 
-static string EnsureTrailingSlash(string _s)
-{
-    if( _s.empty() || _s.back() != '/' )
-        _s.push_back('/');
-    return _s;
-}
-
 VFSMeta VFSNativeHost::Meta()
 {
     VFSMeta m;
@@ -66,25 +58,6 @@ VFSNativeHost::VFSNativeHost():
 const char *VFSNativeHost::FSTag() const
 {
     return Tag;
-}
-
-int VFSNativeHost::FetchDirectoryListing(const char *_path,
-                                         unique_ptr<VFSListing> &_target,
-                                         int _flags,
-                                         VFSCancelChecker _cancel_checker)
-{
-    auto listing = make_unique<VFSNativeListing>(_path);
-    
-    int result = listing->LoadListingData(_flags, _cancel_checker);
-    if(result != VFSError::Ok)
-        return result;
-    
-    if(_cancel_checker && _cancel_checker())
-        return VFSError::Cancelled;
-    
-    _target = move(listing);
-    
-    return VFSError::Ok;
 }
 
 int VFSNativeHost::FetchFlexibleListing(const char *_path,

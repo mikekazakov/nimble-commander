@@ -11,13 +11,6 @@
 #include "VFS.h"
 #include "FileCopyOperationJobNew.h"
 
-static string EnsureTrailingSlash(string _s)
-{
-    if( _s.empty() || _s.back() != '/' )
-        _s.push_back('/');
-    return _s;
-}
-
 int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )
 {
     if( _host_index >= m_SourceItemsHosts.size() ||

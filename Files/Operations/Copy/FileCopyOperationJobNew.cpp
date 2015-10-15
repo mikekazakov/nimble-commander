@@ -21,13 +21,6 @@
 #include "FileCopyOperationJobNew.h"
 #include "DialogResults.h"
 
-static string EnsureTrailingSlash(string _s)
-{
-    if( _s.empty() || _s.back() != '/' )
-        _s.push_back('/');
-    return _s;
-}
-
 static bool ShouldPreallocateSpace(int64_t _bytes_to_write, const NativeFileSystemInfo &_fs_info)
 {
     const auto min_prealloc_size = 4096;

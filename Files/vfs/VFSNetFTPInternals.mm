@@ -231,69 +231,6 @@ shared_ptr<Directory> ParseListing(const char *_str)
 
     return directory;
 }
-        
-Listing::Listing(shared_ptr<Directory> _dir,
-                 const char *_path,
-                 int _flags,
-                 shared_ptr<VFSHost> _host):
-    VFSListing(_path, _host),
-    m_Directory(_dir)
-{
-    size_t shift = (_flags & VFSFlags::F_NoDotDot) ? 0 : 1;
-    if(strcmp(_path, "/") == 0)
-        shift = 0; // no dot-dot dir for root dir
-        
-    size_t i = 0, e = _dir->entries.size();
-    m_Items.resize(_dir->entries.size() + shift);
-    for(;i!=e;++i)
-    {
-        auto &source = _dir->entries[i];
-        auto &dest = m_Items[i + shift];
-        
-        dest.m_Name = source.name.c_str();
-        dest.m_NameLen = source.name.length();
-        dest.m_CFName = source.cfname;
-        dest.m_Size = (source.mode & S_IFDIR) ? VFSListingItem::InvalidSize : source.size;
-        dest.m_ATime = source.time;
-        dest.m_MTime = source.time;
-        dest.m_CTime = source.time;
-        dest.m_BTime = source.time;
-        dest.m_Mode = source.mode;
-        dest.m_Type = (source.mode & S_IFDIR) ? DT_DIR : DT_REG;
-        dest.FindExtension();
-    }
-    
-    if(shift)
-    {
-        auto &dest = m_Items[0];
-        dest.m_Name = "..";
-        dest.m_NameLen = 2;
-        dest.m_Mode = S_IRUSR | S_IWUSR | S_IFDIR;
-        dest.m_CFName = CFSTR("..");
-        dest.m_Size = VFSListingItem::InvalidSize;
-        
-        auto curtime = time(0);
-        dest.m_ATime = curtime;
-        dest.m_MTime = curtime;
-        dest.m_CTime = curtime;
-        dest.m_BTime = curtime;
-    }
-}
-
-VFSListingItem& Listing::At(size_t _position)
-{
-    return m_Items[_position];
-};
-    
-const VFSListingItem& Listing::At(size_t _position) const
-{
-    return m_Items[_position];
-};
-
-int Listing::Count() const
-{
-    return (int)m_Items.size();
-}
 
 CURLInstance::~CURLInstance()
 {

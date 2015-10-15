@@ -181,23 +181,6 @@ struct WriteBuffer
     uint32_t              feed_size = 0; // amount of bytes fed to CURL
 };
 
-class Listing : public VFSListing
-{
-public:
-    Listing(shared_ptr<Directory> _dir,
-            const char *_path,
-            int _flags,
-            shared_ptr<VFSHost> _host);
-    
-    virtual VFSListingItem& At(size_t _position) override;
-    virtual const VFSListingItem& At(size_t _position) const override;
-    virtual int Count() const override;
-        
-private:
-    vector<VFSGenericListingItem> m_Items;
-    shared_ptr<Directory>         m_Directory; // hold a link to dir to ensure that it will be alive
-};
-
 /**
  * User data should be a pointer to std::string
  */

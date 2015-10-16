@@ -38,10 +38,10 @@ public:
     };
     
     enum class WriteParadigm {
-        Random      = 3,
-        Seek        = 2,
-        Sequential  = 1,
-        /* Upload - for fixed-length files upload to network servers with some protocols/APIs */
+        Random      = 4,
+        Seek        = 3,
+        Sequential  = 2,
+        Upload      = 1,
         NoWrite     = 0
     };
     

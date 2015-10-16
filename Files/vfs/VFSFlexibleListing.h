@@ -73,15 +73,15 @@ struct VFSFlexibleListingInput
     /**
      * can be dense, sparse or common.
      */
-    variable_container<uid_t>       uids{variable_container<>::type::common};
-    variable_container<gid_t>       gids{variable_container<>::type::common};
+    variable_container<uid_t>       uids{variable_container<>::type::sparse};
+    variable_container<gid_t>       gids{variable_container<>::type::sparse};
     
     /**
      * st_flags field from stat, see chflags(2).
      * can be dense, sparse or common.
      * if client ask for an item's flags with no such information - listing will return zero.
      */
-    variable_container<uint32_t>    unix_flags{variable_container<>::type::common};
+    variable_container<uint32_t>    unix_flags{variable_container<>::type::sparse};
  
     /**
      * symlink values for such directory entries.

@@ -392,7 +392,15 @@ void panel::GenericCursorPersistance::Restore() const
         
         if(keycode == 3 ) { // 'F' button
             if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-                [self testNonUniformListing];
+//                [self testNonUniformListing];
+                
+                auto host = make_shared<VFSXAttrHost>( self.view.item.Path(), self.view.item.Host() );
+
+                auto context = make_shared<PanelControllerGoToDirContext>();
+                context->VFS = host;
+                context->RequestedDirectory = "/";
+                
+                [self GoToDirWithContext:context];
                 return true;
             }
         }

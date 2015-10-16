@@ -60,6 +60,7 @@
     using namespace std::chrono;
 
     #include <experimental/optional>
+    #include <experimental/string_view>
     using namespace std::experimental;
 
     #include "3rd_party/built/include/boost/filesystem.hpp"

@@ -492,6 +492,7 @@
 		CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA58398170EA3C400E508CF /* FileDeletionOperation.mm */; };
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
+		CFA7751E1BD08D630045072A /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA7751C1BD08D630045072A /* xattr.cpp */; settings = {ASSET_TAGS = (); }; };
 		CFAA2AB2196BA56B0036B388 /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */; };
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFABA8461B403AA3008DF6D1 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFABA8441B403AA3008DF6D1 /* TermTask.cpp */; };
@@ -1393,6 +1394,8 @@
 		CFA5839B170EA40F00E508CF /* FileDeletionOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDeletionOperationJob.h; sourceTree = "<group>"; };
 		CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockAnalysis.h; sourceTree = "<group>"; };
+		CFA7751C1BD08D630045072A /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xattr.cpp; path = vfs/XAttr/xattr.cpp; sourceTree = "<group>"; };
+		CFA7751D1BD08D630045072A /* xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xattr.h; path = vfs/XAttr/xattr.h; sourceTree = "<group>"; };
 		CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermShellTask_Tests.mm; sourceTree = "<group>"; };
 		CFAADAB01930E02200D30699 /* PanelController+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+Menu.h"; sourceTree = "<group>"; };
 		CFAADAB11930E02200D30699 /* PanelController+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+Menu.mm"; sourceTree = "<group>"; };
@@ -2341,6 +2344,15 @@
 			name = FileDeletionOperation;
 			sourceTree = "<group>";
 		};
+		CFA7751B1BD08D400045072A /* XAttr */ = {
+			isa = PBXGroup;
+			children = (
+				CFA7751D1BD08D630045072A /* xattr.h */,
+				CFA7751C1BD08D630045072A /* xattr.cpp */,
+			);
+			name = XAttr;
+			sourceTree = "<group>";
+		};
 		CFAC50CD1714016800A3E5C5 /* FileCopyOperation */ = {
 			isa = PBXGroup;
 			children = (
@@ -2541,6 +2553,7 @@
 				CFA0B23B186BE36F00501C35 /* PS */,
 				CF9D0B6117CC5F9D00CB8146 /* Archive */,
 				CFB8F23217CA5373004574FE /* Native */,
+				CFA7751B1BD08D400045072A /* XAttr */,
 				CFB7099C18D7007D00A83E61 /* Net */,
 				CF9D0EE017CE11A000CB8146 /* Wrapping */,
 				CF50B6B71A15164100E3D96D /* VFS.h */,
@@ -3590,6 +3603,7 @@
 				CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
+				CFA7751E1BD08D630045072A /* xattr.cpp in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				B5606E6B17301D7000DDA33A /* OperationStats.mm in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,

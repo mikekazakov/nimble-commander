@@ -275,7 +275,14 @@ CFStringRef VFSFlexibleListing::FilenameCF(unsigned _ind) const
 string VFSFlexibleListing::Path(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return m_Directories[_ind] + m_Filenames[_ind];
+    if( !IsDotDot(_ind) )
+        return m_Directories[_ind] + m_Filenames[_ind];
+    else {
+        string p = m_Directories[_ind];
+        if( p.length() > 1 )
+            p.pop_back();
+        return p;
+    }
 }
 
 string VFSFlexibleListing::FilenameWithoutExt(unsigned _ind) const
@@ -493,7 +500,6 @@ bool VFSFlexibleListing::IsDotDot(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
-//    return s.length() == 2 && s[0]=='.' && s[1] == '.';
     return s[0]=='.' && s[1] == '.' && s[2] == 0;
 }
 
@@ -534,20 +540,3 @@ VFSFlexibleListing::iterator VFSFlexibleListing::end() const
     it.i = VFSFlexibleListingItem(shared_from_this(), m_ItemsCount);
     return it;
 }
-
-//auto aa = []{
-//    VFSFlexibleListingInput inp;
-//    inp.directories[0] = "/";
-//    inp.filenames.emplace_back("filename.txt");
-//    
-//    auto l = VFSFlexibleListing::Build(move(inp));
-//    
-//    l->Filename(0);
-//    l->Filename(10);
-//    
-//    
-//    
-//    
-//    
-//    return 0;
-//}();

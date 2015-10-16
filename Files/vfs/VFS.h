@@ -21,6 +21,7 @@
 #import "VFSNetFTPHost.h"
 #import "VFSNetSFTPHost.h"
 #import "VFSPSHost.h"
+#import "XAttr/xattr.h"
 #import "VFSEasyOps.h"
 #import "VFSArchiveProxy.h"
 #import "VFSSeqToRandomWrapper.h"

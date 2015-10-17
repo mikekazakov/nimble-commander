@@ -39,7 +39,7 @@ public:
 };
 
 VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
-    VFSHost(_path.c_str(), _parent)
+    VFSHost(_path.c_str(), _parent, Tag)
 {
     assert(_parent);
     {
@@ -59,7 +59,7 @@ VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
 }
 
 VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent),
+    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, Tag),
     m_Configuration(_config)
 {
     assert(_parent);
@@ -77,11 +77,6 @@ VFSArchiveHost::~VFSArchiveHost()
 {
     if(m_Arc != 0)
         archive_read_free(m_Arc);
-}
-
-const char *VFSArchiveHost::FSTag() const
-{
-    return Tag;
 }
 
 bool VFSArchiveHost::IsImmutableFS() const noexcept

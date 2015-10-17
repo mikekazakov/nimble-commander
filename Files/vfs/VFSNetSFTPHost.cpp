@@ -92,11 +92,6 @@ public:
     }
 };
 
-const char *VFSNetSFTPHost::FSTag() const
-{
-    return Tag;
-}
-
 VFSConfiguration VFSNetSFTPHost::Configuration() const
 {
     return m_Config;
@@ -113,7 +108,7 @@ VFSMeta VFSNetSFTPHost::Meta()
 }
 
 VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr),
+    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
     m_Config(_config)
 {
     int rc = DoInit();
@@ -126,7 +121,7 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
                                const string &_passwd,
                                const string &_keypath,
                                long   _port):
-    VFSHost(_serv_url.c_str(), nullptr)
+    VFSHost(_serv_url.c_str(), nullptr, Tag)
 {
     {
         VFSNetSFTPHostConfiguration config;

@@ -8,11 +8,11 @@
 
 #pragma once
 
-#import "VFSError.h"
-#import "VFSDeclarations.h"
-#import "VFSConfiguration.h"
-#import "VFSFactory.h"
-#import "VFSFlexibleListing.h"
+#include "VFSError.h"
+#include "VFSDeclarations.h"
+#include "VFSConfiguration.h"
+#include "VFSFactory.h"
+#include "VFSFlexibleListing.h"
 
 class VFSHostDirObservationTicket
 {
@@ -37,17 +37,20 @@ private:
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
 public:
+    static const char *Tag;    
+    
     VFSHost(const char *_junction_path,         // junction path and parent can be nil
-            shared_ptr<VFSHost> _parent);
+            shared_ptr<VFSHost> _parent,
+            const char *_fs_tag);
     virtual ~VFSHost();
     
     virtual bool IsWriteable() const;
     virtual bool IsWriteableAtPath(const char *_dir) const;
     
     /**
-     * Each virtual file system must return a unique statically allocated identifier string.
+     * Each virtual file system must return a unique statically allocated identifier string, specified at construction time.
      */
-    virtual const char *FSTag() const;
+    const char *FSTag() const noexcept;
     
     /** Returns false for any VFS but native filesystem. */
     virtual bool IsNativeFS() const noexcept;
@@ -60,8 +63,8 @@ public:
      * It may be a filepath for archive or network address for remote filesystem
      * or even zero thing for special virtual filesystems.
      */
-    const char *JunctionPath() const;
-    shared_ptr<VFSHost> Parent() const;
+    const char *JunctionPath() const noexcept;
+    const VFSHostPtr& Parent() const noexcept;
     
     
     virtual int StatFS(const char *_path, // path may be a file path, or directory path
@@ -212,8 +215,9 @@ public:
     shared_ptr<_cl> SharedPtr() {return static_pointer_cast<_cl>(VFSHost::SharedPtr());}
 
 private:
-    string m_JunctionPath;         // path in Parent VFS, relative to it's root
-    shared_ptr<VFSHost> m_Parent;
+    const string                m_JunctionPath;         // path in Parent VFS, relative to it's root
+    const shared_ptr<VFSHost>   m_Parent;
+    const char*                 m_Tag;
     
     // forbid copying
     VFSHost(const VFSHost& _r) = delete;

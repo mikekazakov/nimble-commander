@@ -91,15 +91,43 @@ static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
     return 0;
 }
 
-//static int aa = []{
-//    VFSXAttrHost h("/users/migun/car4.jpg", VFSNativeHost::SharedHost());
-//    
-//    
-//    return 0;
-//}();
+const char *VFSXAttrHost::Tag = "xattr";
+
+class VFSXAttrHostConfiguration
+{
+public:
+    VFSXAttrHostConfiguration(const string &_path):
+        path(_path),
+        verbose_junction("[xattr]:"s + _path)
+    {
+    }
+    
+    string path;
+    string verbose_junction;
+    
+    const char *Tag() const
+    {
+        return VFSXAttrHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return path.c_str();
+    }
+    
+    const char *VerboseJunction() const
+    {
+        return verbose_junction.c_str();
+    }
+    
+    bool operator==(const VFSXAttrHostConfiguration&_rhs) const
+    {
+        return path == _rhs.path;
+    }
+};
 
 VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
-    VFSHost( _file_path.c_str(), _host )
+    VFSHost( _file_path.c_str(), _host, Tag )
 {
     if( !_host->IsNativeFS() )
         throw VFSErrorException(VFSError::InvalidCall);
@@ -128,12 +156,18 @@ VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
         throw VFSErrorException(ret);
     }
     
-    m_FD = fd;
+    m_FD = fd;    
+    m_Configuration = VFSConfiguration( VFSXAttrHostConfiguration(_file_path) );
 }
 
 VFSXAttrHost::~VFSXAttrHost()
 {
     close(m_FD);
+}
+
+VFSConfiguration VFSXAttrHost::Configuration() const
+{
+    return m_Configuration;
 }
 
 int VFSXAttrHost::FetchFlexibleListing(const char *_path,
@@ -163,6 +197,13 @@ int VFSXAttrHost::FetchFlexibleListing(const char *_path,
     if( ret != 0)
         return ret;
 
+    if( !(_flags & VFSFlags::F_NoDotDot) ) {
+        listing_source.filenames.emplace_back( ".." );
+        listing_source.unix_types.emplace_back( DT_DIR );
+        listing_source.unix_modes.emplace_back( S_IRUSR | S_IXUSR | S_IFDIR );
+        listing_source.sizes.insert( 0, 0 );
+    }
+    
     for( auto &i: attrs ) {
         listing_source.filenames.emplace_back( move(i.first) );
         listing_source.unix_types.emplace_back( DT_REG );
@@ -292,6 +333,15 @@ int VFSXAttrFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     return VFSError::Ok;
 }
 
+int VFSXAttrFile::Close()
+{
+    m_Size = 0;
+    m_FileBuf.reset();
+    m_OpenFlags = 0;
+    m_Position = 0;
+    return 0;
+}
+
 bool VFSXAttrFile::IsOpened() const
 {
     return m_OpenFlags != 0;
@@ -317,15 +367,69 @@ bool VFSXAttrFile::Eof() const
     return m_Position >= m_Size;
 }
 
+off_t VFSXAttrFile::Seek(off_t _off, int _basis)
+{
+    if(!IsOpened())
+        return VFSError::InvalidCall;
+    
+    off_t req_pos = 0;
+    if(_basis == VFSFile::Seek_Set)
+        req_pos = _off;
+    else if(_basis == VFSFile::Seek_End)
+        req_pos = m_Size + _off;
+    else if(_basis == VFSFile::Seek_Cur)
+        req_pos = m_Position + _off;
+    else
+        return VFSError::InvalidCall;
+    
+    if(req_pos < 0)
+        return VFSError::InvalidCall;
+    if(req_pos > m_Size)
+        req_pos = m_Size;
+    m_Position = req_pos;
+    
+    return m_Position;
+}
+
+ssize_t VFSXAttrFile::Read(void *_buf, size_t _size)
+{
+    if( !IsOpened() || !IsOpenedForReading() )
+        return SetLastError(VFSError::InvalidCall);
+
+    if( m_Position == m_Size )
+        return 0;
+    
+    ssize_t to_read = min( m_Size - m_Position, ssize_t(_size) );
+    if( to_read <= 0 )
+        return 0;
+    
+    memcpy( _buf, m_FileBuf.get() + m_Position, to_read );
+    m_Position += to_read;
+    
+    return to_read;
+}
+
 ssize_t VFSXAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
-    if( !IsOpened() )
+    if( !IsOpened() || !IsOpenedForReading() )
         return SetLastError(VFSError::InvalidCall);
     
     if( _pos < 0 || _pos > m_Size )
         return SetLastError( VFSError::FromErrno(EINVAL) );
     
     auto sz = min( m_Size - _pos, off_t(_size) );
-    memcpy(_buf, m_FileBuf.get() + _pos, sz);
+    memcpy(_buf, m_FileBuf.get() + _pos, sz );
     return sz;
 }
+
+bool VFSXAttrFile::IsOpenedForReading() const noexcept
+{
+    return m_OpenFlags & VFSFlags::OF_Read;
+}
+
+bool VFSXAttrFile::IsOpenedForWriting() const noexcept
+{
+    return m_OpenFlags & VFSFlags::OF_Write;
+    
+}
+

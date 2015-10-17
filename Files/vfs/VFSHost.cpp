@@ -12,7 +12,7 @@
 #import "path_manip.h"
 
 static_assert(sizeof(VFSStat) == 128, "");
-static const char *g_ThisTag = "nullfs";
+const char *VFSHost::Tag = "nullfs";
 
 bool VFSStatFS::operator==(const VFSStatFS& _r) const
 {
@@ -133,7 +133,7 @@ public:
     
     const char *Tag() const
     {
-        return g_ThisTag;
+        return VFSHost::Tag;
     }
     
     const char *Junction() const
@@ -152,9 +152,11 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 VFSHost::VFSHost(const char *_junction_path,
-                 shared_ptr<VFSHost> _parent):
+                 shared_ptr<VFSHost> _parent,
+                 const char *_fs_tag):
     m_JunctionPath(_junction_path ? _junction_path : ""),
-    m_Parent(_parent)
+    m_Parent(_parent),
+    m_Tag(_fs_tag)
 {
 }
 
@@ -162,17 +164,17 @@ VFSHost::~VFSHost()
 {
 }
 
-const char *VFSHost::FSTag() const
+const char *VFSHost::FSTag() const noexcept
 {
-    return g_ThisTag;
+    return m_Tag;
 }
 
-shared_ptr<VFSHost> VFSHost::Parent() const
+const VFSHostPtr& VFSHost::Parent() const noexcept
 {
     return m_Parent;    
 }
 
-const char* VFSHost::JunctionPath() const
+const char* VFSHost::JunctionPath() const noexcept
 {
     return m_JunctionPath.c_str();
 }
@@ -402,7 +404,7 @@ int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>>
 
 const shared_ptr<VFSHost> &VFSHost::DummyHost()
 {
-    static shared_ptr<VFSHost> host = make_shared<VFSHost>("", nullptr);
+    static auto host = make_shared<VFSHost>("", nullptr, VFSHost::Tag);
     return host;
 }
 

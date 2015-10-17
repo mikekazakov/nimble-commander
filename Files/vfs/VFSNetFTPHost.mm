@@ -62,7 +62,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
                              const string &_passwd,
                              const string &_start_dir,
                              long   _port):
-    VFSHost(_serv_url.c_str(), nullptr),
+    VFSHost(_serv_url.c_str(), nullptr, Tag),
     m_Cache(make_unique<VFSNetFTP::Cache>())
 {
     {
@@ -82,7 +82,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
 }
 
 VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr),
+    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
     m_Cache(make_unique<VFSNetFTP::Cache>()),
     m_Configuration(_config)
 {
@@ -94,11 +94,6 @@ VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
 const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const
 {
     return m_Configuration.GetUnchecked<VFSNetFTPHostConfiguration>();
-}
-
-const char *VFSNetFTPHost::FSTag() const
-{
-    return Tag;
 }
 
 VFSMeta VFSNetFTPHost::Meta()

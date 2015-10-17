@@ -24,7 +24,6 @@ public:
     VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSArchiveUnRARHost();
     
-    virtual const char *FSTag() const override;
     virtual bool IsImmutableFS() const noexcept override;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();

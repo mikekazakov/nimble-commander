@@ -267,7 +267,7 @@ public:
 };
 
 VFSPSHost::VFSPSHost():
-    VFSHost("", shared_ptr<VFSHost>(0)),
+    VFSHost("", shared_ptr<VFSHost>(0), Tag),
     m_UpdateQ(make_shared<SerialQueueT>(__FILES_IDENTIFIER__".VFSPSHost"))
 {
     CommitProcs(GetProcs());
@@ -276,11 +276,6 @@ VFSPSHost::VFSPSHost():
 VFSPSHost::~VFSPSHost()
 {
     m_UpdateQ->Stop();
-}
-
-const char *VFSPSHost::FSTag() const
-{
-    return Tag;
 }
 
 VFSConfiguration VFSPSHost::Configuration() const

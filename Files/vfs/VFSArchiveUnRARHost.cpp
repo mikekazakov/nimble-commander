@@ -60,7 +60,7 @@ public:
 
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
-    VFSHost(_path.c_str(), VFSNativeHost::SharedHost()),
+    VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), Tag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL))
 {
     {
@@ -75,7 +75,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
 }
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent),
+    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, Tag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration(_config)
 {
@@ -91,11 +91,6 @@ VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
 {
     dispatch_sync(m_SeekCacheControl, ^{});
     dispatch_release(m_SeekCacheControl);
-}
-
-const char *VFSArchiveUnRARHost::FSTag() const
-{
-    return Tag;
 }
 
 bool VFSArchiveUnRARHost::IsImmutableFS() const noexcept

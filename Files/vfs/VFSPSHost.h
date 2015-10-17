@@ -19,7 +19,6 @@ public:
     ~VFSPSHost();
     
     static const char *Tag;    
-    virtual const char *FSTag() const override;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     

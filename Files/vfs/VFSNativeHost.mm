@@ -51,13 +51,8 @@ VFSMeta VFSNativeHost::Meta()
 }
 
 VFSNativeHost::VFSNativeHost():
-    VFSHost("", 0)
+    VFSHost("", 0, Tag)
 {
-}
-
-const char *VFSNativeHost::FSTag() const
-{
-    return Tag;
 }
 
 int VFSNativeHost::FetchFlexibleListing(const char *_path,

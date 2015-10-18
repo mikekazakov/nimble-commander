@@ -6,14 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "DisplayNamesCache.h"
-#import "VFSNativeHost.h"
-#import "VFSNativeFile.h"
-#import "VFSError.h"
-#import "FSEventsDirUpdate.h"
-#import "Common.h"
-#import "NativeFSManager.h"
-#import "RoutedIO.h"
+#include <Habanero/algo.h>
+#include "DisplayNamesCache.h"
+#include "VFSNativeHost.h"
+#include "VFSNativeFile.h"
+#include "VFSError.h"
+#include "FSEventsDirUpdate.h"
+#include "Common.h"
+#include "NativeFSManager.h"
+#include "RoutedIO.h"
 
 // TODO:
 // do some research about this new function:
@@ -61,52 +62,56 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
                                         VFSCancelChecker _cancel_checker)
 {
     static const auto dirents_reserve_amount = 64;
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
+    const bool is_native_io = !io.isrouted();
     
-    DIR *dirp = io.opendir(_path);
-    if(!dirp)
-        return VFSError::FromErrno(errno);
-    
-    if(_cancel_checker && _cancel_checker()) {
-        io.closedir(dirp);
-        return VFSError::Cancelled;
-    }
+    int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
+    if( fd < 0 )
+        return VFSError::FromErrno();
+    auto close_fd = at_scope_end([fd]{
+        close(fd);
+    });
     
     bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
     if(_flags & VFSFlags::F_NoDotDot)
-        need_to_add_dot_dot = false;    
+        need_to_add_dot_dot = false;
     
     vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
     dirents.reserve( dirents_reserve_amount );
-    while( auto entp = io.readdir(dirp) ) {
-        if(_cancel_checker && _cancel_checker()) {
-            io.closedir(dirp);
-            return 0;
-        }
-        
-        if(entp->d_ino == 0)
-            continue; // apple's documentation suggest to skip such files
-        if(entp->d_namlen == 1 && entp->d_name[0] ==  '.')
-            continue; // do not process self entry
-        if(entp->d_namlen == 2 && entp->d_name[0] ==  '.' && entp->d_name[1] ==  '.' ) { // special case for dot-dot directory
-            if(_flags & VFSFlags::F_NoDotDot)
+    
+    // initial directory lookup
+    if( auto dirp = fdopendir(dup(fd)) ) {
+        auto close_dir = at_scope_end([=]{ closedir(dirp); });
+    
+        if(_cancel_checker && _cancel_checker())
+            return VFSError::Cancelled;
+    
+        while( auto entp = io.readdir(dirp) ) {
+            if(_cancel_checker && _cancel_checker())
+                return VFSError::Cancelled;
+            
+            if( entp->d_ino == 0 ||      // apple's documentation suggest to skip such files
+                strisdot(entp->d_name) ) // do not process self entry
                 continue;
-            need_to_add_dot_dot = false;
+               
+            if( strisdotdot( entp->d_name) && need_to_add_dot_dot ) { // special case for dot-dot directory
+                // TODO: handle situation when ".." is not the #0 entry
+                need_to_add_dot_dot = false;
+                
+                if(strcmp(_path, "/") == 0)
+                    continue; // skip .. for root directory
+                
+                // it's very nice that sometimes OSX can not set a valid flags on ".." file in a mount point
+                // so for now - just fix it by hand
+                if(entp->d_type == 0)
+                    entp->d_type = DT_DIR; // a very-very strange bugfix
+            }
             
-            if(strcmp(_path, "/") == 0)
-                continue; // skip .. for root directory
-            
-            // TODO: handle situation when ".." is not the #0 entry
-            
-            // it's very nice that sometimes OSX can not set a valid flags on ".." file in a mount point
-            // so for now - just fix it by hand
-            if(entp->d_type == 0)
-                entp->d_type = DT_DIR; // a very-very strange bugfix
+            dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
         }
-        
-        dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
     }
-    io.closedir(dirp);
+    else
+        return VFSError::FromErrno();
     
     if(need_to_add_dot_dot)
         dirents.insert(begin(dirents), make_tuple("..", 0, DT_DIR)); // add ".." entry by hand
@@ -150,16 +155,15 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         listing_source.unix_types[n] = get<2>(i);
     }
     
-    // stat files, find extenstions any any and create CFString name representations in several threads
-    auto &dnc = DisplayNamesCache::Instance();
-    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
+    // stat files, read info about symlinks ands possible display names
+    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&, fd, is_native_io](size_t n) {
         if(_cancel_checker && _cancel_checker()) return;
-
-        string filepath = listing_source.directories[0] + listing_source.filenames[n];
+        auto filename = listing_source.filenames[n].c_str();
         
         // stat the file
         struct stat stat_buffer;
-        if(io.stat(filepath.c_str(), &stat_buffer) == 0) {
+        if( (is_native_io && fstatat(fd, filename, &stat_buffer, 0) == 0) ||
+           (!is_native_io && io.stat((listing_source.directories[0] + filename).c_str(), &stat_buffer) == 0 ) ) {
             listing_source.atimes[n]        = stat_buffer.st_atimespec.tv_sec;
             listing_source.mtimes[n]        = stat_buffer.st_mtimespec.tv_sec;
             listing_source.ctimes[n]        = stat_buffer.st_ctimespec.tv_sec;
@@ -175,7 +179,9 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         // if we're dealing with a symlink - read it's content to know the real file path
         if( listing_source.unix_types[n] == DT_LNK ) {
             char linkpath[MAXPATHLEN];
-            ssize_t sz = io.readlink(filepath.c_str(), linkpath, MAXPATHLEN);
+            ssize_t sz = is_native_io ?
+                readlinkat(fd, filename, linkpath, MAXPATHLEN) :
+                io.readlink((listing_source.directories[0] + filename).c_str(), linkpath, MAXPATHLEN);
             if(sz != -1) {
                 linkpath[sz] = 0;
                 lock_guard<spinlock> guard(symlinks_guard);
@@ -184,18 +190,21 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             
             // stat the original file so we can extract some interesting info from it
             struct stat link_stat_buffer;
-            if( io.lstat(filepath.c_str(), &link_stat_buffer) == 0 &&
-                (link_stat_buffer.st_flags & UF_HIDDEN) )
+            if( (is_native_io && fstatat(fd, filename, &link_stat_buffer, AT_SYMLINK_NOFOLLOW) == 0) ||
+               (!is_native_io && io.lstat((listing_source.directories[0] + filename).c_str(), &link_stat_buffer) == 0 ) )
+               if(link_stat_buffer.st_flags & UF_HIDDEN)
                 listing_source.unix_flags[n] |= UF_HIDDEN; // currently using only UF_HIDDEN flag
         }
         
         if( _flags & VFSFlags::F_LoadDisplayNames )
             if( S_ISDIR(listing_source.unix_modes[n]) &&
-                !strisdotdot(listing_source.filenames[n]) )
-                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, filepath) ) {
+               !strisdotdot(listing_source.filenames[n]) ) {
+                static auto &dnc = DisplayNamesCache::Instance();
+                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, listing_source.directories[0] + filename) ) {
                     lock_guard<spinlock> guard(display_names_guard);
                     listing_source.display_filenames.insert(n, display_name);
                 }
+            }
     });
     
     _target = VFSFlexibleListing::Build(move(listing_source));

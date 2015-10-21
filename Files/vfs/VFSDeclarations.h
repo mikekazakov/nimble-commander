@@ -131,6 +131,7 @@ struct VFSStat
     } meaning;
     static void FromSysStat(const struct stat &_from, VFSStat &_to);
     static void ToSysStat(const VFSStat &_from, struct stat &_to);
+    struct stat SysStat() const noexcept;
     inline static meaningT AllMeaning() { const uint64_t t = ~0; return *(meaningT*)&t; }
 };
 

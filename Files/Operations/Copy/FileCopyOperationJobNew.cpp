@@ -122,14 +122,14 @@ void FileCopyOperationJobNew::ProcessItems()
     };
     
     for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {
-        auto mode = m_SourceItems.ItemMode(index);
-        auto&host = m_SourceItems.ItemHost(index);
+        auto source_mode = m_SourceItems.ItemMode(index);
+        auto&source_host = m_SourceItems.ItemHost(index);
         auto destination_path = ComposeDestinationNameForItem(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
         
         StepResult step_result = StepResult::Stop;
         
-        if( S_ISREG(mode) ) {
+        if( S_ISREG(source_mode) ) {
             /////////////////////////////////////////////////////////////////////////////////////////////////
             // Regular files
             /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,10 +140,10 @@ void FileCopyOperationJobNew::ProcessItems()
             };
             function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
             
-            if( host.IsNativeFS() && dest_host_is_native ) {
+            if( source_host.IsNativeFS() && dest_host_is_native ) {
                 // native fs processing
                 if( m_Options.docopy ) {
-                    if( m_Options.verification == FileCopyOperationOptions::ChecksumVerification::Always )
+                    if( m_Options.verification == ChecksumVerification::Always )
                         data_feedback = hash_feedback;
                     step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
                 }
@@ -152,14 +152,25 @@ void FileCopyOperationJobNew::ProcessItems()
                         step_result = RenameNativeFile(source_path, destination_path);
                     }
                     else { // move
-                        if( m_Options.verification >= FileCopyOperationOptions::ChecksumVerification::WhenMoves )
+                        if( m_Options.verification >= ChecksumVerification::WhenMoves )
                             data_feedback = hash_feedback;
                         step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
                         if( step_result == StepResult::Ok )
                             m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
                     }
                 }
-            
+            }
+            else if( dest_host_is_native  ) {
+                if( m_Options.docopy ) {
+                    if( m_Options.verification == ChecksumVerification::Always )
+                        data_feedback = hash_feedback;
+
+//                    step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
+                    step_result = CopyVFSFileToNativeFile(source_host, source_path, destination_path, data_feedback);
+                    
+                    
+                }
+                
             }
             else
                 assert(0);
@@ -169,11 +180,11 @@ void FileCopyOperationJobNew::ProcessItems()
             if( hash )
                 m_Checksums.emplace_back( index, destination_path, hash->Final() );
         }
-        else if( S_ISDIR(mode) ) {
+        else if( S_ISDIR(source_mode) ) {
             /////////////////////////////////////////////////////////////////////////////////////////////////
             // Directories
             /////////////////////////////////////////////////////////////////////////////////////////////////
-            if( host.IsNativeFS() && dest_host_is_native ) {
+            if( source_host.IsNativeFS() && dest_host_is_native ) {
                 // native fs processing
                 if( m_Options.docopy ) {
                     step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
@@ -192,6 +203,7 @@ void FileCopyOperationJobNew::ProcessItems()
             else
                 assert(0);
         }
+//        else if( LINK )
         
         
         /// do something about step_result here
@@ -201,7 +213,7 @@ void FileCopyOperationJobNew::ProcessItems()
     }
   
     for( auto &item: m_Checksums ) {
-        bool matched;
+        bool matched = false;
         auto step_result = VerifyCopiedFile(item, matched);
         cout << item.destination_path << " | " << (matched ? "checksum match" : "checksum mismatch") << endl;
     }
@@ -518,6 +530,10 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
     return {StepResult::Ok, move(db)};
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// native file -> native file copying routine
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNativeFile(const string& _src_path,
                                                                                         const string& _dst_path,
                                                                                         function<void(const void *_data, unsigned _sz)> _source_data_feedback) const
@@ -618,11 +634,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             total_dst_size += dst_stat_buffer.st_size;
             initial_writing_offset = dst_stat_buffer.st_size;
             preallocate_delta = src_stat_buffer.st_size;
-            
-            // TODO:
-            //        adjust_dst_time = false;
-            //        copy_xattrs = false;
-
         };
         
         if( m_OverwriteAll )
@@ -868,6 +879,314 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             fchown(destination_fd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
     }
     
+    return StepResult::Ok;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// vfs file -> native file copying routine
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
+                                                                                     const string& _src_path,
+                                                                                     const string& _dst_path,
+                                                                                     function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
+                                                                                    ) const
+{
+    auto &io = RoutedIO::Default;
+    int ret = 0;
+    
+    // get information about source file
+    VFSStat src_stat_buffer;
+    while( (ret = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, nullptr)) < 0 ) {
+        // failed to stat source
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+
+    // create source file object
+    VFSFilePtr src_file;
+    while( (ret = _src_vfs.CreateFile(_src_path.c_str(), src_file)) < 0 ) {
+        // failed to create file object
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+
+    // open source file
+    while( (ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache)) < 0 ) {
+        // failed to open source file
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+    
+    
+    // setting up copying scenario
+    int     dst_open_flags          = 0;
+    bool    do_erase_xattrs         = false,
+            do_copy_xattrs          = true,
+            do_unlink_on_stop       = false,
+            do_set_times            = true,
+            do_set_unix_flags       = true,
+            need_dst_truncate       = false,
+            dst_existed_before      = false,
+            dst_is_a_symlink        = false;
+    int64_t dst_size_on_stop        = 0,
+            total_dst_size          = src_stat_buffer.size,
+            preallocate_delta       = 0,
+            initial_writing_offset  = 0;
+    
+    // stat destination
+    struct stat dst_stat_buffer;
+    if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+        // file already exist. what should we do now?
+        dst_existed_before = true;
+        
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        auto setup_overwrite = [&]{
+            dst_open_flags = O_WRONLY;
+            do_unlink_on_stop = true;
+            dst_size_on_stop = 0;
+            do_erase_xattrs = true;
+            preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size; // negative value is ok here
+            need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.st_size;
+        };
+        auto setup_append = [&]{
+            dst_open_flags = O_WRONLY;
+            do_unlink_on_stop = false;
+            do_copy_xattrs = false;
+            do_set_times = false;
+            do_set_unix_flags = false;
+            dst_size_on_stop = dst_stat_buffer.st_size;
+            total_dst_size += dst_stat_buffer.st_size;
+            initial_writing_offset = dst_stat_buffer.st_size;
+            preallocate_delta = src_stat_buffer.size;
+        };
+        
+        if( m_OverwriteAll )
+            setup_overwrite();
+        else if( m_AppendAll )
+            setup_append();
+        else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) {
+            case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
+            case FileCopyOperationDR::Append:       setup_append(); break;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            default:                                return StepResult::Stop;
+        }
+        
+        // we need to check if existining destination is actually a symlink
+        struct stat dst_lstat_buffer;
+        if( io.lstat(_dst_path.c_str(), &dst_lstat_buffer) == 0 && S_ISLNK(dst_lstat_buffer.st_mode) )
+            dst_is_a_symlink = true;
+    }
+    else {
+        // no dest file - just create it
+        dst_open_flags = O_WRONLY|O_CREAT;
+        do_unlink_on_stop = true;
+        dst_size_on_stop = 0;
+        preallocate_delta = src_stat_buffer.size;
+    }
+    
+    // open file descriptor for destination
+    int destination_fd = -1;
+    
+    while( true ) {
+        // we want to copy src permissions if options say so or just put default ones
+        mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.mode : S_IRUSR | S_IWUSR | S_IRGRP;
+        mode_t old_umask = umask( 0 );
+        destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
+        umask(old_umask);
+        
+        if( destination_fd != -1 )
+            break; // we're good to go
+        
+        // failed to open destination file
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
+            case OperationDialogResult::Retry:      continue;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            default:                                return StepResult::Stop;
+        }
+    }
+    
+    // don't forget ot close destination file descriptor anyway
+    auto close_destination = at_scope_end([&]{
+        if(destination_fd != -1) {
+            close(destination_fd);
+            destination_fd = -1;
+        }
+    });
+    
+    // for some circumstances we have to clean up remains if anything goes wrong
+    // and do it BEFORE close_destination fires
+    auto clean_destination = at_scope_end([&]{
+        if( destination_fd != -1 ) {
+            // we need to revert what we've done
+            ftruncate(destination_fd, dst_size_on_stop);
+            close(destination_fd);
+            destination_fd = -1;
+            if( do_unlink_on_stop )
+                io.unlink( _dst_path.c_str() );
+        }
+    });
+    
+    // caching is meaningless here
+    fcntl( destination_fd, F_NOCACHE, 1 );
+    
+    // find fs info for destination file.
+    auto dst_fs_info_holder = NativeFSManager::Instance().VolumeFromFD( destination_fd );
+    if( !dst_fs_info_holder )
+        return StepResult::Stop; // something VERY BAD has happened, can't go on
+    auto &dst_fs_info = *dst_fs_info_holder;
+    
+    if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
+        // tell systme to preallocate space for data since we dont want to trash our disk
+        PreallocateSpace(preallocate_delta, destination_fd);
+        
+        // truncate is needed for actual preallocation
+        need_dst_truncate = true;
+    }
+    
+    // set right size for destination file for preallocating itself and for reducing file size if necessary
+    if( need_dst_truncate )
+        while( ftruncate(destination_fd, total_dst_size) == -1 ) {
+            // failed to set dest file size
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            
+            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    
+    // find the right position in destination file
+    if( initial_writing_offset > 0 ) {
+        while( lseek(destination_fd, initial_writing_offset, SEEK_SET) == -1  ) {
+            // failed seek in a file. lolwut?
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            
+            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    }
+    
+    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    const uint32_t dst_preffered_io_size = dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
+    const uint32_t src_preffered_io_size = dst_preffered_io_size; // not sure if this is a good idea, but seems to be ok
+    constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
+    uint32_t bytes_to_write = 0;
+    uint64_t source_bytes_read = 0;
+    uint64_t destination_bytes_written = 0;
+    
+    // read from source within current thread and write to destination within secondary queue
+    while( src_stat_buffer.size != destination_bytes_written ) {
+        
+        // check user decided to pause operation or discard it
+        if( CheckPauseOrStop() )
+            return StepResult::Stop;
+        
+        // <<<--- writing in secondary thread --->>>
+        optional<StepResult> write_return; // optional storage for error returning
+        m_IOGroup.Run([this, bytes_to_write, destination_fd, write_buffer, dst_preffered_io_size, &destination_bytes_written, &write_return, &_dst_path]{
+            uint32_t left_to_write = bytes_to_write;
+            uint32_t has_written = 0; // amount of bytes written into destination this time
+            int write_loops = 0;
+            while( left_to_write > 0 ) {
+                int64_t n_written = write(destination_fd, write_buffer + has_written, min(left_to_write, dst_preffered_io_size) );
+                if( n_written > 0 ) {
+                    has_written += n_written;
+                    left_to_write -= n_written;
+                    destination_bytes_written += n_written;
+                }
+                else if( n_written < 0 || (++write_loops > max_io_loops) ) {
+                    if(m_SkipAll) {
+                        write_return = StepResult::Skipped;
+                        return;
+                    }
+                    switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+                        case OperationDialogResult::Retry:      continue;
+                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
+                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        default:                                write_return = StepResult::Stop; return;
+                    }
+                }
+            }
+        });
+        
+        // <<<--- reading in current thread --->>>
+        // here we handle the case in which source io size is much smaller than dest's io size
+        uint32_t to_read = max( src_preffered_io_size, dst_preffered_io_size );
+        if( src_stat_buffer.size - source_bytes_read < to_read )
+            to_read = uint32_t(src_stat_buffer.size - source_bytes_read);
+        uint32_t has_read = 0; // amount of bytes read into buffer this time
+        int read_loops = 0; // amount of zero-resulting reads
+        optional<StepResult> read_return; // optional storage for error returning
+        while( to_read != 0 ) {
+            int64_t read_result =  src_file->Read(read_buffer + has_read, src_preffered_io_size);
+            if( read_result > 0 ) {
+                if(_source_data_feedback)
+                    _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
+                source_bytes_read += read_result;
+                has_read += read_result;
+                to_read -= read_result;
+            }
+            else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
+                if(m_SkipAll) {
+                    read_return = StepResult::Skipped;
+                    break;
+                }
+                switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
+                    case OperationDialogResult::Retry:      continue;
+                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
+                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    default:                                read_return = StepResult::Stop; break;
+                }
+                break;
+            }
+        }
+        
+        m_IOGroup.Wait();
+        
+        // if something bad happened in reading or writing - return from this routine
+        if( write_return )
+            return *write_return;
+        if( read_return )
+            return *read_return;
+        
+        // swap buffers ang go again
+        bytes_to_write = has_read;
+        swap( read_buffer, write_buffer );
+    }
+    
+    // we're ok, turn off destination cleaning
+    clean_destination.disengage();
+    
+    
+
+
+
     return StepResult::Ok;
 }
 

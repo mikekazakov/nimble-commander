@@ -1,6 +1,33 @@
 #include <sys/xattr.h>
 #include "xattr.h"
 #include "../VFSNativeHost.h"
+#include "../VFSFile.h"
+
+class VFSXAttrFile final: public VFSFile
+{
+public:
+    VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttrHost> &_parent, int _fd );
+    virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker = nullptr) override;
+    virtual int  Close() override;
+    virtual bool IsOpened() const override;
+    virtual ReadParadigm  GetReadParadigm() const override;
+    virtual ssize_t Pos() const override;
+    virtual off_t Seek(off_t _off, int _basis) override;
+    virtual ssize_t Size() const override;
+    virtual bool Eof() const override;
+    virtual ssize_t Read(void *_buf, size_t _size) override;
+    virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    
+private:
+    bool IsOpenedForReading() const noexcept;
+    bool IsOpenedForWriting() const noexcept;
+    
+    const int               m_FD; // non-owning
+    int                     m_OpenFlags;
+    unique_ptr<uint8_t[]>   m_FileBuf;
+    ssize_t                 m_Position;
+    ssize_t                 m_Size;
+};
 
 //The maximum supported size of extended attribute can be found out using pathconf(2) with
 //_PC_XATTR_SIZE_BITS option.
@@ -92,6 +119,8 @@ static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
 }
 
 const char *VFSXAttrHost::Tag = "xattr";
+static const mode_t g_RegMode = S_IRUSR | S_IWUSR | S_IFREG;
+static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 
 class VFSXAttrHostConfiguration
 {
@@ -102,8 +131,8 @@ public:
     {
     }
     
-    string path;
-    string verbose_junction;
+    const string path;
+    const string verbose_junction;
     
     const char *Tag() const
     {
@@ -200,14 +229,14 @@ int VFSXAttrHost::FetchFlexibleListing(const char *_path,
     if( !(_flags & VFSFlags::F_NoDotDot) ) {
         listing_source.filenames.emplace_back( ".." );
         listing_source.unix_types.emplace_back( DT_DIR );
-        listing_source.unix_modes.emplace_back( S_IRUSR | S_IXUSR | S_IFDIR );
+        listing_source.unix_modes.emplace_back( g_RootMode );
         listing_source.sizes.insert( 0, 0 );
     }
     
     for( auto &i: attrs ) {
         listing_source.filenames.emplace_back( move(i.first) );
         listing_source.unix_types.emplace_back( DT_REG );
-        listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFREG );
+        listing_source.unix_modes.emplace_back( g_RegMode );
         listing_source.sizes.insert( listing_source.filenames.size()-1, i.second );
     }
     
@@ -234,7 +263,7 @@ int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChe
     
     auto path = string_view(_path);
     if( path == "/" ) {
-        _st.mode = S_IRUSR | S_IXUSR | S_IFDIR;
+        _st.mode = g_RootMode;
         _st.size = 0;
         return VFSError::Ok;
     }
@@ -242,7 +271,7 @@ int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChe
         path.remove_prefix(1);    
         for( auto &i: m_Attrs )
             if( path == i.first ) {
-                _st.mode = S_IRUSR | S_IXUSR | S_IFREG;
+                _st.mode = g_RegMode;
                 _st.size = i.second;
                 return 0;
             }

@@ -20,6 +20,10 @@
 // do some research about this new function:
 // int getattrlistbulk(int, void *, void *, size_t, uint64_t) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
 
+// hack to access function from libc implementation directly.
+// this func does readdir but without mutex locking
+struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
+
 const char *VFSNativeHost::Tag = "native";
 
 class VFSNativeHostConfiguration
@@ -65,7 +69,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
     const bool is_native_io = !io.isrouted();
     
-    int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
+    const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
         return VFSError::FromErrno();
     auto close_fd = at_scope_end([fd]{
@@ -86,7 +90,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         if(_cancel_checker && _cancel_checker())
             return VFSError::Cancelled;
     
-        while( auto entp = io.readdir(dirp) ) {
+        while( auto entp = ::_readdir_unlocked(dirp, 1) ) {
             if(_cancel_checker && _cancel_checker())
                 return VFSError::Cancelled;
             
@@ -156,7 +160,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     }
     
     // stat files, read info about symlinks ands possible display names
-    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&, fd, is_native_io](size_t n) {
+    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
         if(_cancel_checker && _cancel_checker()) return;
         auto filename = listing_source.filenames[n].c_str();
         

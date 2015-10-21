@@ -44,6 +44,8 @@ public:
 private:
     virtual void Do() override;
     
+    using ChecksumVerification = FileCopyOperationOptions::ChecksumVerification;
+    
     enum class StepResult
     {
         // operation was successful
@@ -124,6 +126,12 @@ private:
                                           const string& _dst_path,
                                           function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
                                           ) const;
+    StepResult CopyVFSFileToNativeFile(VFSHost &_src_vfs,
+                                       const string& _src_path,
+                                       const string& _dst_path,
+                                       function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
+                                        ) const;
+
     StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                     const string& _dst_path) const;
     StepResult RenameNativeFile(const string& _src_path,

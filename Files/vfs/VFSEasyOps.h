@@ -54,4 +54,4 @@ int VFSEasyCopyNode(const char *_src_full_path,
                     shared_ptr<VFSHost> _dst_host
                     );
 
-int VFSEasyCreateEmptyFile(const char *_path, VFSHostPtr _vfs);
+int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs);

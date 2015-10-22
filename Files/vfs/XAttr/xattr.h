@@ -28,11 +28,20 @@ public:
     virtual int Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker) override;
     
     virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
+    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
+    
+    virtual bool ShouldProduceThumbnails() const override;
+
+    
+    void    ReportChange(); // will cause host to reload xattrs list
     
 private:
+    int     Fetch();
+    
     VFSConfiguration                m_Configuration;    
     int                             m_FD = -1;
     struct stat                     m_Stat;
+    spinlock                        m_AttrsLock;
     vector< pair<string, unsigned>> m_Attrs;
 };
 

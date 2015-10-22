@@ -21,7 +21,7 @@ VFSFile::~VFSFile()
 {
 }
 
-const char* VFSFile::RelativePath() const
+const char* VFSFile::RelativePath() const noexcept
 {
     return m_RelativePath.c_str();
 }

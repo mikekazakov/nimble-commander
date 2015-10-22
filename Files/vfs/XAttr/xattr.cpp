@@ -22,6 +22,7 @@ public:
     virtual int SetUploadSize(size_t _size) override;
     
 private:
+    const char *XAttrName() const noexcept;
     bool IsOpenedForReading() const noexcept;
     bool IsOpenedForWriting() const noexcept;
     
@@ -92,19 +93,6 @@ static bool TurnOffBlockingMode( int _fd ) noexcept
     return true;
 }
 
-//void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const
-//{
-//    auto xnames = (char*)m_Buffers[0].get();
-//    auto xdata = m_Buffers[1].get();
-//    auto xnamesizes = flistxattr(_fd_from, xnames, m_BufferSize, 0);
-//    for( auto s = xnames, e = xnames + xnamesizes; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
-//        auto xattrsize = fgetxattr(_fd_from, s, xdata, m_BufferSize, 0, 0); // and read all these xattrs
-//        if( xattrsize >= 0 ) // xattr can be zero-length, just a tag itself
-//            fsetxattr(_fd_to, s, xdata, xattrsize, 0, 0); // write them into _fd_to
-//    }
-//}
-
-
 static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
 {
     const auto buf_sz = 65536;
@@ -117,8 +105,6 @@ static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
         auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
         if( xattr_size >= 0 )
             _attrs.emplace_back(s, xattr_size);
-//        cout << s << ": " << xattr_size << endl;
-        
     }
     
     return 0;
@@ -210,6 +196,18 @@ bool VFSXAttrHost::IsWriteable() const
     return true;
 }
 
+int VFSXAttrHost::Fetch()
+{
+    vector<pair<string, unsigned>> info;
+    int ret = EnumerateAttrs(m_FD, info);
+    if( ret != 0)
+        return ret;
+    
+    lock_guard<spinlock> lock(m_AttrsLock);
+    m_Attrs = move(info);
+    return VFSError::Ok;
+}
+
 int VFSXAttrHost::FetchFlexibleListing(const char *_path,
                                        shared_ptr<VFSFlexibleListing> &_target,
                                        int _flags,
@@ -232,23 +230,22 @@ int VFSXAttrHost::FetchFlexibleListing(const char *_path,
     listing_source.btimes[0] = m_Stat.st_birthtime;
     listing_source.mtimes[0] = m_Stat.st_mtime;
     
-    vector< pair<string, unsigned>> attrs;
-    int ret = EnumerateAttrs( m_FD, attrs );
-    if( ret != 0)
-        return ret;
-
-    if( !(_flags & VFSFlags::F_NoDotDot) ) {
-        listing_source.filenames.emplace_back( ".." );
-        listing_source.unix_types.emplace_back( DT_DIR );
-        listing_source.unix_modes.emplace_back( g_RootMode );
-        listing_source.sizes.insert( 0, 0 );
-    }
-    
-    for( auto &i: attrs ) {
-        listing_source.filenames.emplace_back( move(i.first) );
-        listing_source.unix_types.emplace_back( DT_REG );
-        listing_source.unix_modes.emplace_back( g_RegMode );
-        listing_source.sizes.insert( listing_source.filenames.size()-1, i.second );
+    {
+        lock_guard<spinlock> lock(m_AttrsLock);
+        
+        if( !(_flags & VFSFlags::F_NoDotDot) ) {
+            listing_source.filenames.emplace_back( ".." );
+            listing_source.unix_types.emplace_back( DT_DIR );
+            listing_source.unix_modes.emplace_back( g_RootMode );
+            listing_source.sizes.insert( 0, 0 );
+        }
+        
+        for( const auto &i: m_Attrs ) {
+            listing_source.filenames.emplace_back( i.first );
+            listing_source.unix_types.emplace_back( DT_REG );
+            listing_source.unix_modes.emplace_back( g_RegMode );
+            listing_source.sizes.insert( listing_source.filenames.size()-1, i.second );
+        }
     }
     
     _target = VFSFlexibleListing::Build(move(listing_source));
@@ -304,14 +301,55 @@ int VFSXAttrHost::CreateFile(const char* _path,
 
 int VFSXAttrHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
 {
-    if( !_path || _path[0] == 0 )
+    if( !_path || _path[0] != '/' )
         return VFSError::FromErrno(ENOENT);
     
-    int ret = fremovexattr(m_FD, _path+1, 0);
-    if( ret == -1 )
+    if( fremovexattr(m_FD, _path+1, 0) == -1 )
         return VFSError::FromErrno();
     
+    ReportChange();
+    
     return VFSError::Ok;
+}
+
+int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
+{
+    if( !_old_path || _old_path[0] != '/' ||
+        !_new_path || _new_path[0] != '/' )
+        return VFSError::FromErrno(ENOENT);
+    
+    const auto old_path = _old_path+1;
+    const auto new_path = _new_path+1;
+    
+    const auto xattr_size = fgetxattr(m_FD, old_path, nullptr, 0, 0, 0);
+    if( xattr_size < 0 )
+        return VFSError::FromErrno();
+    
+    const auto buf = make_unique<uint8_t[]>(xattr_size);
+    if( fgetxattr(m_FD, old_path, buf.get(), xattr_size, 0, 0) < 0 )
+        return VFSError::FromErrno();
+    
+    if( fsetxattr(m_FD, new_path, buf.get(), xattr_size, 0, 0) < 0 )
+        return VFSError::FromErrno();
+    
+    if( fremovexattr(m_FD, old_path, 0) < 0 )
+        return VFSError::FromErrno();
+    
+    ReportChange();
+    
+    return VFSError::Ok;
+}
+
+bool VFSXAttrHost::ShouldProduceThumbnails() const
+{
+    return false;
+}
+
+void VFSXAttrHost::ReportChange()
+{
+    Fetch();
+
+    // observers
 }
 
 // hardly needs own version of this, since xattr will happily work with abra:cadabra filenames
@@ -330,6 +368,10 @@ int VFSXAttrFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return VFSError::InvalidCall;
     
     Close();
+
+    const auto path = XAttrName();
+    if( !path )
+        return VFSError::FromErrno(ENOENT);
     
     if( _open_flags & VFSFlags::OF_Write ) {
         if( _open_flags & VFSFlags::OF_Append )
@@ -339,17 +381,12 @@ int VFSXAttrFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         m_OpenFlags = _open_flags;
     }
     else if( _open_flags & VFSFlags::OF_Read ) {
-        string path = RelativePath();
-        if( path.length() <= 1 )
-            return VFSError::FromErrno(ENOENT);
-        path.erase(0, 1);
-        
-        auto xattr_size = fgetxattr(m_FD, path.c_str(), nullptr, 0, 0, 0);
+        auto xattr_size = fgetxattr(m_FD, path, nullptr, 0, 0, 0);
         if( xattr_size < 0 )
             return VFSError::FromErrno(ENOENT);
     
         m_FileBuf = make_unique<uint8_t[]>(xattr_size);
-        if( fgetxattr(m_FD, path.c_str(), m_FileBuf.get(), xattr_size, 0, 0) < 0 )
+        if( fgetxattr(m_FD, path, m_FileBuf.get(), xattr_size, 0, 0) < 0 )
             return VFSError::FromErrno();
         
         m_Size = xattr_size;
@@ -480,6 +517,15 @@ int VFSXAttrFile::SetUploadSize(size_t _size)
     m_UploadSize = _size;
     m_FileBuf = make_unique<uint8_t[]>(_size);
     
+    if( _size == 0 ) {
+        // for zero-size uploading - do it right here        
+        char buf[1];
+        if( fsetxattr(m_FD, XAttrName(), buf, 0, 0, 0) != 0 )
+            return VFSError::FromErrno();
+        
+        dynamic_pointer_cast<VFSXAttrHost>(Host())->ReportChange();        
+    }
+    
     return 0;
 }
 
@@ -497,16 +543,20 @@ ssize_t VFSXAttrFile::Write(const void *_buf, size_t _size)
         if( m_Position == m_UploadSize ) {
             // time to flush
 
-            string path = RelativePath();
-            if( path.length() <= 1 )
-                return VFSError::FromErrno(EIO);
-            path.erase(0, 1);
-
-            int result = fsetxattr(m_FD, path.c_str(), m_FileBuf.get(), m_UploadSize, 0, 0);
-            if( result != 0 )
+            if( fsetxattr(m_FD, XAttrName(), m_FileBuf.get(), m_UploadSize, 0, 0) != 0 )
                 return VFSError::FromErrno();
+            
+            dynamic_pointer_cast<VFSXAttrHost>(Host())->ReportChange();
         }
         return to_write;
     }
     return 0;
+}
+
+const char *VFSXAttrFile::XAttrName() const noexcept
+{
+    const char *path = RelativePath();
+    if( path[0] != '/' )
+        return nullptr;
+    return path + 1;
 }

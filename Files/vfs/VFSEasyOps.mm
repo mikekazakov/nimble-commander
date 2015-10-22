@@ -389,7 +389,7 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
         return _host->Unlink(_full_path, 0);
 }
 
-int VFSEasyCreateEmptyFile(const char *_path, VFSHostPtr _vfs)
+int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
 {
     VFSFilePtr file;
     int ret = _vfs->CreateFile(_path, file, 0);
@@ -403,5 +403,8 @@ int VFSEasyCreateEmptyFile(const char *_path, VFSHostPtr _vfs)
     if( ret != 0 )
         return ret;
     
+    if( file->GetWriteParadigm() == VFSFile::WriteParadigm::Upload )
+        file->SetUploadSize(0);
+        
     return file->Close();
 }

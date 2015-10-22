@@ -64,6 +64,7 @@ public:
      * For Upload write paradigm: sets upload size in advance, to file object can set up it's data structures and 
      * do an actual upload on Write() call when client hits stated size.
      * May be ignored by other write paradigms.
+     * If _size is zero - file may perform an actual upload.
      * Default implementation returns Ok.
      */
     virtual int SetUploadSize(size_t _size);
@@ -170,7 +171,7 @@ public:
     
     inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
-    const char* RelativePath() const;
+    const char* RelativePath() const noexcept;
     const shared_ptr<VFSHost> &Host() const;
 protected:
     /**

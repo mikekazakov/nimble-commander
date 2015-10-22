@@ -141,6 +141,9 @@ private:
                                                     const string& _dst_path) const;
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;
+    StepResult RenameVFSFile(VFSHost &_common_host,
+                             const string& _src_path,
+                             const string& _dst_path) const;
     StepResult VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const;
     void        CleanSourceItems() const;
     

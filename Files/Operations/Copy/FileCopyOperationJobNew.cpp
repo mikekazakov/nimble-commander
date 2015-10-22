@@ -180,8 +180,12 @@ void FileCopyOperationJobNew::ProcessItems()
                     step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);
         
                 }
-                
-                
+                else {
+                    if( &source_host == m_DestinationHost.get() ) {
+                        // moving on the same host - lets do rename
+                        step_result = RenameVFSFile(source_host, source_path, destination_path);
+                    }
+                }
                 
             }
             
@@ -1672,6 +1676,58 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(co
         
         // ask user what to do
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            default:                            return StepResult::Stop;
+        }
+    }
+    
+    return StepResult::Ok;
+}
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameVFSFile(VFSHost &_common_host,
+                                                                           const string& _src_path,
+                                                                           const string& _dst_path) const
+{
+    // check if destination file already exist
+    int ret = 0;
+    
+    VFSStat dst_stat_buffer;
+    if( _common_host.Stat(_dst_path.c_str(), dst_stat_buffer, VFSFlags::F_NoFollow, nullptr) == 0 ) {
+        // Destination file already exists.
+        
+        VFSStat src_stat_buffer;
+        while( (ret = _common_host.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow, nullptr)) != 0 ) {
+            // failed to stat source
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+                case FileCopyOperationDR::Retry:    continue;
+                case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+                case FileCopyOperationDR::Stop:     return StepResult::Stop;
+                default:                            return StepResult::Stop;
+            }
+        }
+        
+        // renaming into _dst_path will erase it. need to ask user what to do
+        switch( m_OnRenameDestinationAlreadyExists( _src_path, _dst_path ) ) {
+            case FileCopyOperationDR::Skip:       	return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:      return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:         return StepResult::Stop;
+            case FileCopyOperationDR::Overwrite:    break;
+            default:                                return StepResult::Stop;
+        }
+    }
+
+    // do rename itself
+    while( (ret = _common_host.Rename(_src_path.c_str(), _dst_path.c_str())) != 0 ) {
+    
+        // failed to rename
+        if( m_SkipAll ) return StepResult::Skipped;
+        
+        // ask user what to do
+        switch( m_OnDestinationFileWriteError(ret, _dst_path) ) {
             case FileCopyOperationDR::Retry:    continue;
             case FileCopyOperationDR::Skip:     return StepResult::Skipped;
             case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;

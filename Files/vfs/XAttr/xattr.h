@@ -8,6 +8,7 @@ class VFSXAttrHost final: public VFSHost
 {
 public:
     VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ); // _host must be native currently
+    VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSXAttrHost();
 
     static const char *Tag;

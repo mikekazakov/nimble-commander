@@ -148,14 +148,23 @@ public:
 };
 
 VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
-    VFSHost( _file_path.c_str(), _host, Tag )
+    VFSXAttrHost( _host,
+                 VFSConfiguration( VFSXAttrHostConfiguration(_file_path) )
+                 )
 {
-    if( !_host->IsNativeFS() )
-        throw VFSErrorException(VFSError::InvalidCall);
+}
 
-    int fd =          open( _file_path.c_str(), O_RDONLY|O_NONBLOCK|O_EXLOCK);
-    if( fd < 0 ) fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK);
-    if( fd < 0 ) fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK);
+VFSXAttrHost::VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+    VFSHost( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, Tag ),
+    m_Configuration(_config)
+{
+    auto path = JunctionPath();
+    if( !_parent->IsNativeFS() )
+        throw VFSErrorException(VFSError::InvalidCall);
+    
+    int fd =          open( path, O_RDONLY|O_NONBLOCK|O_EXLOCK);
+    if( fd < 0 ) fd = open( path, O_RDONLY|O_NONBLOCK|O_SHLOCK);
+    if( fd < 0 ) fd = open( path, O_RDONLY|O_NONBLOCK);
     if( fd < 0 )
         throw VFSErrorException( VFSError::FromErrno(EIO) );
     
@@ -163,8 +172,6 @@ VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
         close(fd);
         throw VFSErrorException( VFSError::FromErrno(EIO) );
     }
-//    vector< pair<string, unsigned>> attrs;
-//    EnumerateAttrs( fd, attrs );
     
     if( fstat(fd, &m_Stat) != 0) {
         close(fd);
@@ -173,12 +180,11 @@ VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
     
     int ret = EnumerateAttrs( fd, m_Attrs );
     if( ret != 0) {
-        close(fd);        
+        close(fd);
         throw VFSErrorException(ret);
     }
     
-    m_FD = fd;    
-    m_Configuration = VFSConfiguration( VFSXAttrHostConfiguration(_file_path) );
+    m_FD = fd;
 }
 
 VFSXAttrHost::~VFSXAttrHost()
@@ -189,6 +195,16 @@ VFSXAttrHost::~VFSXAttrHost()
 VFSConfiguration VFSXAttrHost::Configuration() const
 {
     return m_Configuration;
+}
+
+VFSMeta VFSXAttrHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+        return make_shared<VFSXAttrHost>(_parent, _config);
+    };
+    return m;
 }
 
 bool VFSXAttrHost::IsWriteable() const

@@ -193,7 +193,7 @@ bool VFSHost::IsWriteable() const
 
 bool VFSHost::IsWriteableAtPath(const char *_dir) const
 {
-    return false;
+    return IsWriteable();
 }
 
 int VFSHost::CreateFile(const char* _path,

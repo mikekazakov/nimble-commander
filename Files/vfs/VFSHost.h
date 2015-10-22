@@ -45,6 +45,10 @@ public:
     virtual ~VFSHost();
     
     virtual bool IsWriteable() const;
+    
+    /**
+     * Default implementation returns IsWriteable();
+     */
     virtual bool IsWriteableAtPath(const char *_dir) const;
     
     /**

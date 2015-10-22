@@ -165,3 +165,8 @@ ssize_t VFSFile::Skip(size_t _size)
     }
     return skipped;
 }
+
+int VFSFile::SetUploadSize(size_t _size)
+{
+    return 0;
+}

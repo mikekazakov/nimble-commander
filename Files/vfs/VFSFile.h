@@ -61,6 +61,14 @@ public:
     virtual ssize_t Read(void *_buf, size_t _size);
     
     /**
+     * For Upload write paradigm: sets upload size in advance, to file object can set up it's data structures and 
+     * do an actual upload on Write() call when client hits stated size.
+     * May be ignored by other write paradigms.
+     * Default implementation returns Ok.
+     */
+    virtual int SetUploadSize(size_t _size);
+    
+    /**
      * Writes _size bytes from _buf to a file in blocking mode.
      * Returnes amount of bytes written or negative value for errors.
      */

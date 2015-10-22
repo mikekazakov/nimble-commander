@@ -11,23 +11,29 @@ public:
     virtual int  Close() override;
     virtual bool IsOpened() const override;
     virtual ReadParadigm  GetReadParadigm() const override;
+    virtual WriteParadigm GetWriteParadigm() const override;
     virtual ssize_t Pos() const override;
     virtual off_t Seek(off_t _off, int _basis) override;
     virtual ssize_t Size() const override;
     virtual bool Eof() const override;
     virtual ssize_t Read(void *_buf, size_t _size) override;
     virtual ssize_t ReadAt(off_t _pos, void *_buf, size_t _size) override;
+    virtual ssize_t Write(const void *_buf, size_t _size) override;
+    virtual int SetUploadSize(size_t _size) override;
     
 private:
     bool IsOpenedForReading() const noexcept;
     bool IsOpenedForWriting() const noexcept;
     
     const int               m_FD; // non-owning
-    int                     m_OpenFlags;
+    int                     m_OpenFlags = 0;
     unique_ptr<uint8_t[]>   m_FileBuf;
-    ssize_t                 m_Position;
-    ssize_t                 m_Size;
+    ssize_t                 m_Position = 0;
+    ssize_t                 m_Size = 0;
+    ssize_t                 m_UploadSize = -1;
 };
+
+// XATTR_MAXNAMELEN
 
 //The maximum supported size of extended attribute can be found out using pathconf(2) with
 //_PC_XATTR_SIZE_BITS option.
@@ -161,9 +167,9 @@ VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
     if( !_host->IsNativeFS() )
         throw VFSErrorException(VFSError::InvalidCall);
 
-    int fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK);
-    if( fd < 0 )
-        fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK);
+    int fd =          open( _file_path.c_str(), O_RDONLY|O_NONBLOCK|O_EXLOCK);
+    if( fd < 0 ) fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK);
+    if( fd < 0 ) fd = open( _file_path.c_str(), O_RDONLY|O_NONBLOCK);
     if( fd < 0 )
         throw VFSErrorException( VFSError::FromErrno(EIO) );
     
@@ -197,6 +203,11 @@ VFSXAttrHost::~VFSXAttrHost()
 VFSConfiguration VFSXAttrHost::Configuration() const
 {
     return m_Configuration;
+}
+
+bool VFSXAttrHost::IsWriteable() const
+{
+    return true;
 }
 
 int VFSXAttrHost::FetchFlexibleListing(const char *_path,
@@ -291,6 +302,17 @@ int VFSXAttrHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
+int VFSXAttrHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
+{
+    if( !_path || _path[0] == 0 )
+        return VFSError::FromErrno(ENOENT);
+    
+    int ret = fremovexattr(m_FD, _path+1, 0);
+    if( ret == -1 )
+        return VFSError::FromErrno();
+    
+    return VFSError::Ok;
+}
 
 // hardly needs own version of this, since xattr will happily work with abra:cadabra filenames
 //bool VFSHost::ValidateFilename(const char *_filename) const
@@ -298,50 +320,25 @@ int VFSXAttrHost::CreateFile(const char* _path,
 
 VFSXAttrFile::VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttrHost> &_parent, int _fd ):
     VFSFile(_xattr_path.c_str(), _parent),
-    m_FD(_fd),
-    m_OpenFlags(0),
-    m_Size(0),
-    m_Position(0)
+    m_FD(_fd)
 {
 }
 
 int VFSXAttrFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
-//    OF_IXOth    = 0x00000001, // = S_IXOTH
-//    OF_IWOth    = 0x00000002, // = S_IWOTH
-//    OF_IROth    = 0x00000004, // = S_IROTH
-//    OF_IXGrp    = 0x00000008, // = S_IXGRP
-//    OF_IWGrp    = 0x00000010, // = S_IWGRP
-//    OF_IRGrp    = 0x00000020, // = S_IRGRP
-//    OF_IXUsr    = 0x00000040, // = S_IXUSR
-//    OF_IWUsr    = 0x00000080, // = S_IWUSR
-//    OF_IRUsr    = 0x00000100, // = S_IRUSR
-//    OF_Read     = 0x00010000,
-//    OF_Write    = 0x00020000,
-//    OF_Create   = 0x00040000,
-//    OF_NoExist  = 0x00080000, // POSIX O_EXCL actucally, for clarity
-//    OF_ShLock   = 0x00100000, // not yet implemented
-//    OF_ExLock   = 0x00200000, // not yet implemented
-//    OF_NoCache  = 0x00400000, // turns off caching if supported
-//    OF_Append   = 0x00800000, // appends file on writing
-//    OF_Truncate = 0x01000000, // truncates files upon opening
-//    
-//    // Flags altering host behaviour
-//    /** do not follow symlinks when resolving item name */
-//    F_NoFollow  = 0x02000000,
-//    
-//    // Flags altering listing building
-//    /** for listing. don't fetch dot-dot entry in directory listing */
-//    F_NoDotDot  = 0x04000000,
-//    /** for listing. ask system to provide localized display names */
-//    F_LoadDisplayNames  = 0x08000000
     if( IsOpened() )
         return VFSError::InvalidCall;
     
-    if( _open_flags & VFSFlags::OF_Write )
-        return VFSError::NotSupported;
+    Close();
     
-    if( _open_flags & VFSFlags::OF_Read ) {
+    if( _open_flags & VFSFlags::OF_Write ) {
+        if( _open_flags & VFSFlags::OF_Append )
+            return VFSError::NotSupported;
+        // TODO: OF_NoExist
+        
+        m_OpenFlags = _open_flags;
+    }
+    else if( _open_flags & VFSFlags::OF_Read ) {
         string path = RelativePath();
         if( path.length() <= 1 )
             return VFSError::FromErrno(ENOENT);
@@ -368,6 +365,7 @@ int VFSXAttrFile::Close()
     m_FileBuf.reset();
     m_OpenFlags = 0;
     m_Position = 0;
+    m_UploadSize = -1;
     return 0;
 }
 
@@ -379,6 +377,11 @@ bool VFSXAttrFile::IsOpened() const
 VFSFile::ReadParadigm VFSXAttrFile::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Random;
+}
+
+VFSFile::WriteParadigm VFSXAttrFile::GetWriteParadigm() const
+{
+    return VFSFile::WriteParadigm::Upload;
 }
 
 ssize_t VFSXAttrFile::Pos() const
@@ -401,6 +404,9 @@ off_t VFSXAttrFile::Seek(off_t _off, int _basis)
     if(!IsOpened())
         return VFSError::InvalidCall;
     
+    if( !IsOpenedForReading() )
+        return VFSError::InvalidCall;
+        
     off_t req_pos = 0;
     if(_basis == VFSFile::Seek_Set)
         req_pos = _off;
@@ -459,6 +465,48 @@ bool VFSXAttrFile::IsOpenedForReading() const noexcept
 bool VFSXAttrFile::IsOpenedForWriting() const noexcept
 {
     return m_OpenFlags & VFSFlags::OF_Write;
-    
 }
 
+int VFSXAttrFile::SetUploadSize(size_t _size)
+{
+    if( !IsOpenedForWriting() )
+        return VFSError::FromErrno( EINVAL );
+    
+    if( m_UploadSize >= 0 )
+        return VFSError::FromErrno( EINVAL ); // already reported before
+    
+    // TODO: check max xattr size and reject huge ones
+
+    m_UploadSize = _size;
+    m_FileBuf = make_unique<uint8_t[]>(_size);
+    
+    return 0;
+}
+
+ssize_t VFSXAttrFile::Write(const void *_buf, size_t _size)
+{
+    if( !IsOpenedForWriting() ||
+        !m_FileBuf )
+        return VFSError::FromErrno(EIO);
+    
+    if( m_Position < m_UploadSize ) {
+        ssize_t to_write = min( m_UploadSize - m_Position, (ssize_t)_size );
+        memcpy( m_FileBuf.get() + m_Position, _buf, to_write );
+        m_Position += to_write;
+        
+        if( m_Position == m_UploadSize ) {
+            // time to flush
+
+            string path = RelativePath();
+            if( path.length() <= 1 )
+                return VFSError::FromErrno(EIO);
+            path.erase(0, 1);
+
+            int result = fsetxattr(m_FD, path.c_str(), m_FileBuf.get(), m_UploadSize, 0, 0);
+            if( result != 0 )
+                return VFSError::FromErrno();
+        }
+        return to_write;
+    }
+    return 0;
+}

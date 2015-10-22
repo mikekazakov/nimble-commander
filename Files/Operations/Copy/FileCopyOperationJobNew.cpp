@@ -172,8 +172,18 @@ void FileCopyOperationJobNew::ProcessItems()
                 }
                 
             }
-            else
-                assert(0);
+            else {
+                if( m_Options.docopy ) {
+                    if( m_Options.verification == ChecksumVerification::Always )
+                        data_feedback = hash_feedback;
+                    
+                    step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);
+        
+                }
+                
+                
+                
+            }
             
             
             // check step result?
@@ -600,8 +610,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             do_set_times            = true,
             do_set_unix_flags       = true,
             need_dst_truncate       = false,
-            dst_existed_before      = false,
-            dst_is_a_symlink        = false;
+            dst_existed_before      = false;
     int64_t dst_size_on_stop        = 0,
             total_dst_size          = src_stat_buffer.st_size,
             preallocate_delta       = 0,
@@ -646,11 +655,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                 case OperationDialogResult::Skip:       return StepResult::Skipped;
                 default:                                return StepResult::Stop;
         }
-        
-        // we need to check if existining destination is actually a symlink
-        struct stat dst_lstat_buffer;
-        if( io.lstat(_dst_path.c_str(), &dst_lstat_buffer) == 0 && S_ISLNK(dst_lstat_buffer.st_mode) )
-            dst_is_a_symlink = true;
     }
     else {
         // no dest file - just create it
@@ -938,8 +942,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
             do_set_times            = true,
             do_set_unix_flags       = true,
             need_dst_truncate       = false,
-            dst_existed_before      = false,
-            dst_is_a_symlink        = false;
+            dst_existed_before      = false;
     int64_t dst_size_on_stop        = 0,
             total_dst_size          = src_stat_buffer.size,
             preallocate_delta       = 0,
@@ -984,11 +987,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
             case OperationDialogResult::Skip:       return StepResult::Skipped;
             default:                                return StepResult::Stop;
         }
-        
-        // we need to check if existining destination is actually a symlink
-        struct stat dst_lstat_buffer;
-        if( io.lstat(_dst_path.c_str(), &dst_lstat_buffer) == 0 && S_ISLNK(dst_lstat_buffer.st_mode) )
-            dst_is_a_symlink = true;
     }
     else {
         // no dest file - just create it
@@ -1184,9 +1182,355 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
     clean_destination.disengage();
     
     
+    // TODO: all attrs
+    
 
 
+    return StepResult::Ok;
+}
 
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
+                                                                                  const string& _src_path,
+                                                                                  const string& _dst_path,
+                                                                                  function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
+                                                                                    ) const
+{
+    auto &io = RoutedIO::Default;
+    int ret = 0;
+    
+    // get information about source file
+    VFSStat src_stat_buffer;
+    while( (ret = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, nullptr)) < 0 ) {
+        // failed to stat source
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+    
+    // create source file object
+    VFSFilePtr src_file;
+    while( (ret = _src_vfs.CreateFile(_src_path.c_str(), src_file)) < 0 ) {
+        // failed to create file object
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+    
+    // open source file
+    while( (ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache)) < 0 ) {
+        // failed to open source file
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case OperationDialogResult::Stop:       return StepResult::Stop;
+        }
+    }
+    
+    
+    // setting up copying scenario
+    int     dst_open_flags          = 0;
+    bool    do_erase_xattrs         = false,
+    do_copy_xattrs          = true,
+    do_unlink_on_stop       = false,
+    do_set_times            = true,
+    do_set_unix_flags       = true,
+    need_dst_truncate       = false,
+    dst_existed_before      = false;
+    int64_t dst_size_on_stop        = 0,
+    total_dst_size          = src_stat_buffer.size,
+    initial_writing_offset  = 0;
+    
+    // stat destination
+    VFSStat dst_stat_buffer;
+//    if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+    if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, 0) == 0) {
+        // file already exist. what should we do now?
+        dst_existed_before = true;
+        
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        auto setup_overwrite = [&]{
+            dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
+            do_unlink_on_stop = true;
+            dst_size_on_stop = 0;
+            do_erase_xattrs = true;
+            need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.size;
+        };
+        auto setup_append = [&]{
+            dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
+            do_unlink_on_stop = false;
+            do_copy_xattrs = false;
+            do_set_times = false;
+            do_set_unix_flags = false;
+            dst_size_on_stop = dst_stat_buffer.size;
+            total_dst_size += dst_stat_buffer.size;
+            initial_writing_offset = dst_stat_buffer.size;
+        };
+        
+        if( m_OverwriteAll )
+            setup_overwrite();
+        else if( m_AppendAll )
+            setup_append();
+        else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) {
+            case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
+            case FileCopyOperationDR::Append:       setup_append(); break;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            default:                                return StepResult::Stop;
+        }
+    }
+    else {
+        // no dest file - just create it
+        dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
+        do_unlink_on_stop = true;
+        dst_size_on_stop = 0;
+    }
+    
+//    ret = m_DstHost->Stat(_dest_full_path.c_str(), dst_stat, 0, 0);
+//    if(ret == 0) { //file already exist - what should we do?
+//        int result;
+//        if(m_SkipAll) goto cleanup;
+//        if(m_OverwriteAll) goto dec_overwrite;
+//        if(m_AppendAll) goto dec_append;
+//        
+//        result = [[m_Operation OnFileExist:_dest_full_path.c_str()
+//                                   newsize:src_stat.size
+//                                   newtime:src_stat.mtime.tv_sec
+//                                   exisize:dst_stat.size
+//                                   exitime:dst_stat.mtime.tv_sec
+//                                  remember:&remember_choice] WaitForResult];
+//        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto dec_overwrite; }
+//        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto dec_append;    }
+//        if(result == OperationDialogResult::Skip)   { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
+//        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
+//        
+//        // decisions about what to do with existing destination
+//    dec_overwrite:
+//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
+//        unlink_on_stop = true;
+//        goto dec_end;
+//    dec_append:
+//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
+//        totaldestsize += dst_stat.size;
+//        startwriteoff = dst_stat.size;
+//        unlink_on_stop = false;
+//    dec_end:;
+//    } else {
+//        // no dest file - just create it
+//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
+//        unlink_on_stop = true;
+//    }
+    
+    
+    // open file object for destination
+    VFSFilePtr dst_file;
+    while( (ret = m_DestinationHost->CreateFile(_dst_path.c_str(), dst_file)) != 0 ) {
+        // failed to create destination file
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
+            case OperationDialogResult::Retry:      continue;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            default:                                return StepResult::Stop;
+        }
+        
+    }
+    
+    // open file itself
+    while( true ) {
+        dst_open_flags |= m_Options.copy_unix_flags ?
+            (src_stat_buffer.mode & (S_IRWXU | S_IRWXG | S_IRWXO)) :
+            (S_IRUSR | S_IWUSR | S_IRGRP);
+        
+        ret = dst_file->Open(dst_open_flags);
+        if( ret == 0 )
+            break; // ok
+        
+        // failed to open dest file
+        if( m_SkipAll )
+            return StepResult::Skipped;
+        
+        switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
+            case OperationDialogResult::Retry:      continue;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            default:                                return StepResult::Stop;
+        }
+    }
+    
+
+//    
+//    // for some circumstances we have to clean up remains if anything goes wrong
+//    // and do it BEFORE close_destination fires
+//    auto clean_destination = at_scope_end([&]{
+//        if( destination_fd != -1 ) {
+//            // we need to revert what we've done
+//            ftruncate(destination_fd, dst_size_on_stop);
+//            close(destination_fd);
+//            destination_fd = -1;
+//            if( do_unlink_on_stop )
+//                io.unlink( _dst_path.c_str() );
+//        }
+//    });
+
+    // tell upload-only vfs'es how much we're going to write
+    dst_file->SetUploadSize( src_stat_buffer.size );
+    
+    // find the right position in destination file
+    if( dst_file->Pos() != initial_writing_offset ) {
+        auto seek_ret = dst_file->Seek(initial_writing_offset, VFSFile::Seek_Set);
+        if(seek_ret < 0)
+            return StepResult::Skipped; // BAD!
+    }
+    
+    auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
+    const uint32_t dst_preffered_io_size = m_BufferSize;
+    const uint32_t src_preffered_io_size = m_BufferSize;
+    constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
+    uint32_t bytes_to_write = 0;
+    uint64_t source_bytes_read = 0;
+    uint64_t destination_bytes_written = 0;
+    
+    // read from source within current thread and write to destination within secondary queue
+    while( src_stat_buffer.size != destination_bytes_written ) {
+        
+        // check user decided to pause operation or discard it
+        if( CheckPauseOrStop() )
+            return StepResult::Stop;
+        
+        // <<<--- writing in secondary thread --->>>
+        optional<StepResult> write_return; // optional storage for error returning
+        m_IOGroup.Run([this, bytes_to_write, &dst_file, write_buffer, dst_preffered_io_size, &destination_bytes_written, &write_return, &_dst_path]{
+            uint32_t left_to_write = bytes_to_write;
+            uint32_t has_written = 0; // amount of bytes written into destination this time
+            int write_loops = 0;
+            while( left_to_write > 0 ) {
+//                int64_t n_written = write(destination_fd, write_buffer + has_written, min(left_to_write, dst_preffered_io_size) );
+                int64_t n_written = dst_file->Write( write_buffer + has_written, min(left_to_write, dst_preffered_io_size) );
+                if( n_written > 0 ) {
+                    has_written += n_written;
+                    left_to_write -= n_written;
+                    destination_bytes_written += n_written;
+                }
+                else if( n_written < 0 || (++write_loops > max_io_loops) ) {
+                    if(m_SkipAll) {
+                        write_return = StepResult::Skipped;
+                        return;
+                    }
+                    switch( m_OnDestinationFileWriteError((int)n_written, _dst_path) ) {
+                        case OperationDialogResult::Retry:      continue;
+                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
+                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        default:                                write_return = StepResult::Stop; return;
+                    }
+                }
+            }
+        });
+        
+        // <<<--- reading in current thread --->>>
+        // here we handle the case in which source io size is much smaller than dest's io size
+        uint32_t to_read = max( src_preffered_io_size, dst_preffered_io_size );
+        if( src_stat_buffer.size - source_bytes_read < to_read )
+            to_read = uint32_t(src_stat_buffer.size - source_bytes_read);
+        uint32_t has_read = 0; // amount of bytes read into buffer this time
+        int read_loops = 0; // amount of zero-resulting reads
+        optional<StepResult> read_return; // optional storage for error returning
+        while( to_read != 0 ) {
+            int64_t read_result =  src_file->Read(read_buffer + has_read, src_preffered_io_size);
+            if( read_result > 0 ) {
+                if(_source_data_feedback)
+                    _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
+                source_bytes_read += read_result;
+                has_read += read_result;
+                to_read -= read_result;
+            }
+            else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
+                if(m_SkipAll) {
+                    read_return = StepResult::Skipped;
+                    break;
+                }
+                switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
+                    case OperationDialogResult::Retry:      continue;
+                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
+                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    default:                                read_return = StepResult::Stop; break;
+                }
+                break;
+            }
+        }
+        
+        m_IOGroup.Wait();
+        
+        // if something bad happened in reading or writing - return from this routine
+        if( write_return )
+            return *write_return;
+        if( read_return )
+            return *read_return;
+        
+        // swap buffers ang go again
+        bytes_to_write = has_read;
+        swap( read_buffer, write_buffer );
+    }
+    
+    
+//    while( total_wrote < src_stat.size )
+//    {
+//        if(CheckPauseOrStop()) goto cleanup;
+//        
+//    doread: ssize_t read_amount = src_file->Read(m_Buffer.get(), m_BufferSize);
+//        if(read_amount < 0)
+//        {
+//            if(m_SkipAll) goto cleanup;
+//            int result = [[m_Operation OnCopyReadError:VFSError::ToNSError((int)read_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
+//            if(result == OperationDialogResult::Retry) goto doread;
+//            if(result == OperationDialogResult::Skip) goto cleanup;
+//            if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
+//            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+//        }
+//        
+//        size_t to_write = read_amount;
+//        while(to_write > 0)
+//        {
+//        dowrite: ssize_t write_amount = dst_file->Write(m_Buffer.get(), to_write);
+//            if(write_amount < 0)
+//            {
+//                if(m_SkipAll) goto cleanup;
+//                int result = [[m_Operation OnCopyWriteError:VFSError::ToNSError((int)write_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
+//                if(result == OperationDialogResult::Retry) goto dowrite;
+//                if(result == OperationDialogResult::Skip) goto cleanup;
+//                if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
+//                if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
+//            }
+//            
+//            to_write -= write_amount;
+//            total_wrote += write_amount;
+//            m_TotalCopied += write_amount;
+//        }
+//        
+//        // update statistics
+//        m_Stats.SetValue(m_TotalCopied);
+//    }
+    
+    
+    // we're ok, turn off destination cleaning
+//    clean_destination.disengage();
+    
+    
+    // TODO: all attrs
+    
+    
+    
+    
     return StepResult::Ok;
 }
 

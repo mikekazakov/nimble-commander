@@ -38,7 +38,8 @@ int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     if(res < 0)
         return res;
 
-    if(host->IsDirectory(file_path, _open_flags, _cancel_checker))
+    if( host->IsDirectory(file_path, _open_flags, _cancel_checker) &&
+      !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
     
     unique_ptr<VFSArchiveState> state;

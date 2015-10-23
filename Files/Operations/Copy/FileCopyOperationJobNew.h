@@ -139,6 +139,10 @@ private:
 
     StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                     const string& _dst_path) const;
+    StepResult CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
+                                                 const string& _src_path,
+                                                 const string& _dst_path) const;
+    
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;
     StepResult RenameVFSFile(VFSHost &_common_host,
@@ -151,6 +155,7 @@ private:
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
     void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
     void                    CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const;
+    void                    CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const;
     
     vector<VFSFlexibleListingItem>              m_VFSListingItems;
     SourceItems                                 m_SourceItems;

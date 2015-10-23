@@ -31,7 +31,8 @@ namespace VFSFlags
     OF_NoCache  = 0x00400000, // turns off caching if supported
     OF_Append   = 0x00800000, // appends file on writing
     OF_Truncate = 0x01000000, // truncates files upon opening
-    
+    OF_Directory= 0x02000000, // opens directory for xattr reading
+        
     // Flags altering host behaviour
     /** do not follow symlinks when resolving item name */
     F_NoFollow  = 0x02000000,

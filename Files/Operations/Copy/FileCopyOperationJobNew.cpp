@@ -41,6 +41,32 @@ static void PreallocateSpace(int64_t _preallocate_delta, int _file_des)
     }
 }
 
+static void AdjustFileTimesForNativePath(const char* _target_path, struct stat &_with_times)
+{
+    struct attrlist attrs;
+    memset(&attrs, 0, sizeof(attrs));
+    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
+    
+    attrs.commonattr = ATTR_CMN_MODTIME;
+    setattrlist(_target_path, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CRTIME;
+    setattrlist(_target_path, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
+    
+    //  do we really need atime to be changed?
+    //    attrs.commonattr = ATTR_CMN_ACCTIME;
+    //    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
+    
+    attrs.commonattr = ATTR_CMN_CHGTIME;
+    setattrlist(_target_path, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
+}
+
+static void AdjustFileTimesForNativePath(const char* _target_path, const VFSStat &_with_times)
+{
+    auto st = _with_times.SysStat();
+    AdjustFileTimesForNativePath(_target_path, st);
+}
+
 static void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
 {
     struct attrlist attrs;
@@ -204,8 +230,7 @@ void FileCopyOperationJobNew::ProcessItems()
             /////////////////////////////////////////////////////////////////////////////////////////////////
             // Directories
             /////////////////////////////////////////////////////////////////////////////////////////////////
-            if( source_host.IsNativeFS() && dest_host_is_native ) {
-                // native fs processing
+            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
                 if( m_Options.docopy ) {
                     step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
                 }
@@ -219,6 +244,18 @@ void FileCopyOperationJobNew::ProcessItems()
                             m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
                     }
                 }
+            }
+            else if( dest_host_is_native  ) { // vfs -> native
+                if( m_Options.docopy ) { // copy
+                    step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
+                }
+                else { // move
+                    step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
+                    if( step_result == StepResult::Ok )
+                        m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                }
+                
+                
             }
             else
                 assert(0);
@@ -1525,6 +1562,19 @@ void FileCopyOperationJobNew::CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, 
     });
 }
 
+void FileCopyOperationJobNew::CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const
+{
+    auto buf = m_Buffers[0].get();
+    size_t buf_sz = m_BufferSize;
+    
+    _file.XAttrIterateNames(^bool(const char *name){
+        ssize_t res = _file.XAttrGet(name, buf, buf_sz);
+        if(res >= 0)
+            setxattr(_fn_to, name, buf, res, 0, 0);
+        return true;
+    });
+}
+
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                                                                   const string& _dst_path) const
 {
@@ -1588,6 +1638,73 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectory
     
     if(m_Options.copy_file_times) // adjust destination times
         AdjustFileTimesForNativeFD(dst_fd, src_stat);
+    
+    return StepResult::Ok;
+}
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
+                                                                                               const string& _src_path,
+                                                                                               const string& _dst_path) const
+{
+    auto &io = RoutedIO::Default;
+    
+    struct stat src_stat_buf;
+    if( io.stat(_dst_path.c_str(), &src_stat_buf) != -1 ) {
+        // target already exists
+        
+        if( !S_ISDIR(src_stat_buf.st_mode) ) {
+            // ouch - existing entry is not a directory
+            // TODO: ask user about this and remove this entry if he agrees
+            return StepResult::Ok;
+        }
+    }
+    else {
+        // create target directory
+        constexpr mode_t new_dir_mode = S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR;
+        while( io.mkdir(_dst_path.c_str(), new_dir_mode) == -1  ) {
+            // failed to create a directory
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    }
+    
+    
+    // do attributes stuff
+    // we currently ignore possible errors on attributes copying, which is not great at all
+    
+    VFSStat src_stat_buffer;
+    if( _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, 0) < 0 )
+        return StepResult::Ok;
+    
+    if( m_Options.copy_file_times )
+        AdjustFileTimesForNativePath( _dst_path.c_str(), src_stat_buffer );
+    
+    if(m_Options.copy_unix_flags) {
+        // change unix mode
+        mode_t mode = src_stat_buffer.mode;
+        if( (mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0)
+            mode |= S_IRWXU | S_IRGRP | S_IXGRP; // guard against malformed(?) archives
+        io.chmod(_dst_path.c_str(), mode);
+        
+        // change flags
+        if( src_stat_buffer.meaning.flags )
+            io.chflags(_dst_path.c_str(), src_stat_buffer.flags);
+    }
+    
+    // xattr processing
+    if( m_Options.copy_xattrs ) {
+        shared_ptr<VFSFile> src_file;
+        if(_src_vfs.CreateFile(_src_path.c_str(), src_file, 0) >= 0)
+            if( src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_Directory | VFSFlags::OF_ShLock) >= 0 )
+                if( src_file->XAttrCount() > 0 )
+                    CopyXattrsFromVFSFileToPath(*src_file, _dst_path.c_str() );
+    }
     
     return StepResult::Ok;
 }

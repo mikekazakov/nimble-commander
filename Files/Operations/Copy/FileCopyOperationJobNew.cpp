@@ -171,12 +171,19 @@ void FileCopyOperationJobNew::ProcessItems()
                 hash->Feed( _data, _sz );
             };
             function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
+
+            if( m_Options.docopy ) {
+                if( m_Options.verification == ChecksumVerification::Always )
+                    data_feedback = hash_feedback;
+            }
+            else {
+                if( m_Options.verification >= ChecksumVerification::WhenMoves )
+                    data_feedback = hash_feedback;
+            }
             
-            if( source_host.IsNativeFS() && dest_host_is_native ) {
+            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native ///////////////////////
                 // native fs processing
-                if( m_Options.docopy ) {
-                    if( m_Options.verification == ChecksumVerification::Always )
-                        data_feedback = hash_feedback;
+                if( m_Options.docopy ) { // copy
                     step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
                 }
                 else {
@@ -184,43 +191,38 @@ void FileCopyOperationJobNew::ProcessItems()
                         step_result = RenameNativeFile(source_path, destination_path);
                     }
                     else { // move
-                        if( m_Options.verification >= ChecksumVerification::WhenMoves )
-                            data_feedback = hash_feedback;
                         step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
                         if( step_result == StepResult::Ok )
                             m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
                     }
                 }
             }
-            else if( dest_host_is_native  ) {
-                if( m_Options.docopy ) {
-                    if( m_Options.verification == ChecksumVerification::Always )
-                        data_feedback = hash_feedback;
-
-//                    step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
+            else if( dest_host_is_native  ) { // vfs -> native ///////////////////////////////////////////////
+                if( m_Options.docopy ) { // copy
                     step_result = CopyVFSFileToNativeFile(source_host, source_path, destination_path, data_feedback);
-                    
-                    
                 }
-                
+                else { // move
+                    step_result = CopyVFSFileToNativeFile(source_host, source_path, destination_path, data_feedback);
+                    if( step_result == StepResult::Ok )
+                        m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                }
             }
-            else {
-                if( m_Options.docopy ) {
-                    if( m_Options.verification == ChecksumVerification::Always )
-                        data_feedback = hash_feedback;
-                    
+            else { // vfs -> vfs /////////////////////////////////////////////////////////////////////////////
+                if( m_Options.docopy ) { // copy
                     step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);
-        
                 }
-                else {
-                    if( &source_host == m_DestinationHost.get() ) {
+                else { // move
+                    if( &source_host == m_DestinationHost.get() ) { // rename
                         // moving on the same host - lets do rename
                         step_result = RenameVFSFile(source_host, source_path, destination_path);
                     }
+                    else { // move
+                        step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);
+                        if( step_result == StepResult::Ok )
+                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                    }
                 }
-                
             }
-            
             
             // check step result?
             if( hash )
@@ -231,10 +233,10 @@ void FileCopyOperationJobNew::ProcessItems()
             // Directories
             /////////////////////////////////////////////////////////////////////////////////////////////////
             if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
-                if( m_Options.docopy ) {
+                if( m_Options.docopy ) { // copy
                     step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
                 }
-                else {
+                else { // move
                     if( is_same_native_volume(index) ) { // rename
                         step_result = RenameNativeFile(source_path, destination_path);
                     }
@@ -246,21 +248,41 @@ void FileCopyOperationJobNew::ProcessItems()
                 }
             }
             else if( dest_host_is_native  ) { // vfs -> native
+                step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
+                if( !m_Options.docopy && step_result == StepResult::Ok )
+                    m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+            }
+            else {
                 if( m_Options.docopy ) { // copy
-                    step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
+                    step_result = CopyVFSDirectoryToVFSDirectory(source_host, source_path, destination_path);
                 }
                 else { // move
-                    step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
-                    if( step_result == StepResult::Ok )
-                        m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                    if( &source_host == m_DestinationHost.get() ) { // moving on the same host - lets do rename
+                        step_result = RenameVFSFile(source_host, source_path, destination_path);
+                    }
+                    else {
+                        step_result = CopyVFSDirectoryToVFSDirectory(source_host, source_path, destination_path);
+                        if( !m_Options.docopy && step_result == StepResult::Ok )
+                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
+                    }
                 }
                 
-                
             }
-            else
-                assert(0);
         }
-//        else if( LINK )
+        else if( S_ISLNK(source_mode) ) {
+            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
+                step_result = CopyNativeSymlinkToNative(source_path, destination_path);
+            }
+            else if( dest_host_is_native  ) { // vfs -> native
+                step_result = CopyVFSSymlinkToNative(source_host, source_path, destination_path);
+            }
+            else {
+                /* NOT SUPPORTED YET */
+            }
+            
+            
+            
+        }
         
         
         /// do something about step_result here
@@ -302,90 +324,8 @@ string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_ind
                 result += src.c_str() + sl;
         }
         return result;
-        
-        
-        
-//        // compose dest name
-//        strcpy(destinationpath, m_Destination.c_str());
-//        // here we need to find if user wanted just to copy a single top-level directory
-//        // if so - don't touch destination name. otherwise - add an original path there
-//        if(m_IsSingleEntryCopy) {
-//            // for top level we need to just leave path without changes - skip top level's entry name
-//            // for nested entries we need to cut first part of a path
-//            if(strchr(_path, '/') != 0)
-//                strcat(destinationpath, strchr(_path, '/'));
-//        }
-//
-//        assert(0); // later
     }
 }
-
-void FileCopyOperationJobNew::test(string _from, string _to)
-{
-    CopyNativeFileToNativeFile(_from, _to, nullptr);
-}
-
-void FileCopyOperationJobNew::test2(string _dest, VFSHostPtr _host)
-{
-    m_InitialDestinationPath = _dest;
-    m_DestinationHost = _host;
-    bool need_to_build = false;
-    auto comp_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
-    if( need_to_build )
-        BuildDestinationDirectory();
-    
-    
-    
-    int a = 10;
-}
-
-void FileCopyOperationJobNew::Do_Hack()
-{
-    Do();
-}
-
-void FileCopyOperationJobNew::test3(string _dir, string _filename, VFSHostPtr _host)
-{
-    vector<VFSFlexibleListingItem> items;
-    int ret = _host->FetchFlexibleListingItems(_dir, {_filename}, 0, items, nullptr);
-    m_VFSListingItems = items;
-    
-    auto result = ScanSourceItems();
-
-    
-    int a = 10;
-}
-
-//static auto run_test = []{
-    
-//    for( int i = 0; i < 2; ++i ) {
-//        FileCopyOperationJobNew job;
-//        MachTimeBenchmark mtb;
-//        job.test("/users/migun/1/bigfile.avi", "/users/migun/2/newbigfile.avi");
-//        mtb.ResetMilli();
-//        remove("/users/migun/2/newbigfile.avi");
-//    }
-    
-//    FileCopyOperationJobNew job;
-//    job.test2("/users/migun/ABRA/", VFSNativeHost::SharedHost());
-    
-//    job.test3("/Users/migun/", /*"Applications"*/ "!!", VFSNativeHost::SharedHost());
-//    
-//    auto host = VFSNativeHost::SharedHost();
-//    vector<VFSFlexibleListingItem> items;
-////    int ret = host->FetchFlexibleListingItems("/Users/migun/Downloads", {"gimp-2.8.14.dmg", "PopcornTime-latest.dmg", "TorBrowser-5.0.1-osx64_en-US.dmg"}, 0, items, nullptr);
-////    int ret = host->FetchFlexibleListingItems("/Users/migun", {"Source"}, 0, items, nullptr);
-//    int ret = host->FetchFlexibleListingItems("/Users/migun/Documents/Files/source/Files/3rd_party/built/include", {"boost"}, 0, items, nullptr);
-//    
-//
-//    job.Init(move(items), "/Users/migun/!TEST", host, {});
-//    job.Do_Hack();
-//    
-//    
-//    
-//    int a = 10;
-//    return 0;
-//}();
 
 FileCopyOperationJobNew::PathCompositionType FileCopyOperationJobNew::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
 {
@@ -1709,6 +1649,49 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToN
     return StepResult::Ok;
 }
 
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
+                                                                                            const string& _src_path,
+                                                                                            const string& _dst_path) const
+{
+    int ret = 0;
+    VFSStat src_st, dest_st;
+    
+    while( (ret = _src_vfs.Stat(_src_path.c_str(), src_st, 0, 0)) != 0) {
+        // failed to stat source directory
+        if(m_SkipAll)
+            return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem(ret, _dst_path) ) {
+            case OperationDialogResult::Retry:      continue;
+            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            default:                                return StepResult::Stop;
+        }
+        
+        
+    }
+
+    if( m_DestinationHost->Stat( _dst_path.c_str(), dest_st, VFSFlags::F_NoFollow, 0) == 0) {
+        // this directory already exist. currently do nothing, later - update it's attrs.
+    }
+    else {
+        while( (ret = m_DestinationHost->CreateDirectory(_dst_path.c_str(), src_st.mode, 0)) != 0) {
+            // failed to create a directory
+            if(m_SkipAll)
+                return StepResult::Skipped;
+            switch( m_OnCantCreateDestinationDir(ret, _dst_path) ) {
+                case OperationDialogResult::Retry:      continue;
+                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    }
+    
+    // no attrs currently
+    
+    return StepResult::Ok;
+}
+
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(const string& _src_path,
                                                                               const string& _dst_path) const
 {
@@ -1897,6 +1880,77 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::VerifyCopiedFile(co
     _matched = checksum_match;
     
     // show a dialog?
+    
+    return StepResult::Ok;
+}
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeSymlinkToNative(const string& _src_path,
+                                                                                       const string& _dst_path) const
+{
+    auto &io = RoutedIO::Default;
+    
+    char linkpath[MAXPATHLEN];
+    int result;
+    ssize_t sz;
+    
+    while( (sz = io.readlink(_src_path.c_str(), linkpath, MAXPATHLEN)) == -1 ) {
+        // failed to read symlink from source
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:     return StepResult::Stop;
+            default:                            return StepResult::Stop;
+        }
+    }
+    linkpath[sz] = 0;    
+    
+    while( (result = io.symlink(linkpath, _dst_path.c_str())) == -1 ) {
+        // failed to create a symlink
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            default:                            return StepResult::Stop;
+        }
+    }
+    
+    return StepResult::Ok;
+}
+
+FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
+                                                                                    const string& _src_path,
+                                                                                    const string& _dst_path) const
+{
+    auto &io = RoutedIO::Default;
+    
+    char linkpath[MAXPATHLEN];
+    int result;
+    
+    while( (result = _src_vfs.ReadSymlink(_src_path.c_str(), linkpath, MAXPATHLEN)) < 0 ) {
+        // failed to read symlink from source
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantAccessSourceItem( result, _src_path ) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:     return StepResult::Stop;
+            default:                            return StepResult::Stop;
+        }
+    }
+    
+    while( (result = io.symlink(linkpath, _dst_path.c_str())) == -1 ) {
+        // failed to create a symlink
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
+            case FileCopyOperationDR::Retry:    continue;
+            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
+            default:                            return StepResult::Stop;
+        }
+    }
     
     return StepResult::Ok;
 }

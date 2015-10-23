@@ -32,15 +32,6 @@ public:
     void ToggleOverwriteAll() { m_OverwriteAll = true; }
     void ToggleAppendAll() { m_AppendAll = true; }
     
-    
-    void test(string _from, string _to);
-    void test2(string _dest, VFSHostPtr _host);
-    
-    void test3(string _dir, string _filename, VFSHostPtr _host);
-   
-    void Do_Hack();
-    
-    
 private:
     virtual void Do() override;
     
@@ -142,6 +133,14 @@ private:
     StepResult CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
                                                  const string& _src_path,
                                                  const string& _dst_path) const;
+    StepResult CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
+                                              const string& _src_path,
+                                              const string& _dst_path) const;
+    StepResult CopyNativeSymlinkToNative(const string& _src_path,
+                                 const string& _dst_path) const;
+    StepResult CopyVFSSymlinkToNative(VFSHost &_src_vfs,
+                                      const string& _src_path,
+                                      const string& _dst_path) const;
     
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;

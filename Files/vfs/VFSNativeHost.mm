@@ -98,7 +98,10 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
                 strisdot(entp->d_name) ) // do not process self entry
                 continue;
                
-            if( strisdotdot( entp->d_name) && need_to_add_dot_dot ) { // special case for dot-dot directory
+            if( strisdotdot( entp->d_name) ) { // special case for dot-dot directory
+                if( !need_to_add_dot_dot )
+                    continue;
+                
                 // TODO: handle situation when ".." is not the #0 entry
                 need_to_add_dot_dot = false;
                 

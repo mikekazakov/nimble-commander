@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "PanelController.h"
+#pragma once
+#include "PanelController.h"
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 

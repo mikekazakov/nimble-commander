@@ -179,8 +179,8 @@ public:
     bool                IsHidden            (unsigned _ind) const;
     
     struct iterator;
-    iterator            begin() const;
-    iterator            end()   const;
+    iterator            begin() const noexcept;
+    iterator            end()   const noexcept;
     
 private:
     VFSFlexibleListing();
@@ -295,12 +295,16 @@ private:
 
 struct VFSFlexibleListing::iterator
 {
-    VFSFlexibleListingItem i;
-
-    void operator--() noexcept { i.I--; }
-    void operator++() noexcept { i.I++; }
+    iterator &operator--() noexcept { i.I--; return *this; } // prefix decrement
+    iterator &operator++() noexcept { i.I++; return *this; } // prefix increment
+    iterator operator--(int) noexcept { auto p = *this; i.I--; return p; } // posfix decrement
+    iterator operator++(int) noexcept { auto p = *this; i.I++; return p; } // posfix increment
     
     bool operator==(const iterator& _r) const noexcept { return i.I == _r.i.I && i.L == _r.i.L; }
     bool operator!=(const iterator& _r) const noexcept { return !(*this == _r); }
     const VFSFlexibleListingItem& operator*() const noexcept { return i; }
+
+private:
+    VFSFlexibleListingItem i;
+    friend class VFSFlexibleListing;
 };

@@ -527,14 +527,14 @@ VFSFlexibleListingItem VFSFlexibleListing::Item(unsigned _ind) const
     return VFSFlexibleListingItem(shared_from_this(), _ind);
 }
 
-VFSFlexibleListing::iterator VFSFlexibleListing::begin() const
+VFSFlexibleListing::iterator VFSFlexibleListing::begin() const noexcept
 {
     iterator it;
     it.i = VFSFlexibleListingItem(shared_from_this(), 0);
     return it;
 }
 
-VFSFlexibleListing::iterator VFSFlexibleListing::end() const
+VFSFlexibleListing::iterator VFSFlexibleListing::end() const noexcept
 {
     iterator it;
     it.i = VFSFlexibleListingItem(shared_from_this(), m_ItemsCount);

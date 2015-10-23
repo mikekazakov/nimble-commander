@@ -112,6 +112,8 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
     m_DestinationHost = _dest_host;
     m_Options = _opts;
     
+    if(m_Options.force_overwrite)
+        m_OverwriteAll = true;
 }
 
 void FileCopyOperationJobNew::Do()

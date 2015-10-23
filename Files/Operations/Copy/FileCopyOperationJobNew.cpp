@@ -61,6 +61,12 @@ static void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
     fsetattrlist(_target_fd, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
 }
 
+static void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)
+{
+    auto st = _with_times.SysStat();
+    AdjustFileTimesForNativeFD(_target_fd, st);
+}
+
 FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
     original_item( _source_ind ),
     destination_path( move(_destination) )
@@ -1185,11 +1191,34 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
     // we're ok, turn off destination cleaning
     clean_destination.disengage();
     
+    // erase destination's xattrs
+    if(m_Options.copy_xattrs && do_erase_xattrs)
+        EraseXattrsFromNativeFD(destination_fd);
     
-    // TODO: all attrs
+    // copy xattrs from src to dst
+    if( m_Options.copy_xattrs && src_file->XAttrCount() > 0 )
+        CopyXattrsFromVFSFileToNativeFD(*src_file, destination_fd);
     
-
-
+    // adjust destination time as source
+    if(m_Options.copy_file_times && do_set_times)
+        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+    
+    // change flags
+    if( m_Options.copy_unix_flags && src_stat_buffer.meaning.flags ) {
+        if(io.isrouted()) // long path
+            io.chflags(_dst_path.c_str(), src_stat_buffer.flags);
+        else
+            fchflags(destination_fd, src_stat_buffer.flags);
+    }
+    
+    // change ownage
+    if(m_Options.copy_unix_owners) {
+        if(io.isrouted()) // long path
+            io.chown(_dst_path.c_str(), src_stat_buffer.uid, src_stat_buffer.gid);
+        else
+            fchown(destination_fd, src_stat_buffer.uid, src_stat_buffer.gid);
+    }
+    
     return StepResult::Ok;
 }
 
@@ -1200,7 +1229,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
                                                                                   function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
                                                                                     ) const
 {
-    auto &io = RoutedIO::Default;
     int ret = 0;
     
     // get information about source file
@@ -1242,19 +1270,18 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
     // setting up copying scenario
     int     dst_open_flags          = 0;
     bool    do_erase_xattrs         = false,
-    do_copy_xattrs          = true,
-    do_unlink_on_stop       = false,
-    do_set_times            = true,
-    do_set_unix_flags       = true,
-    need_dst_truncate       = false,
-    dst_existed_before      = false;
-    int64_t dst_size_on_stop        = 0,
-    total_dst_size          = src_stat_buffer.size,
-    initial_writing_offset  = 0;
+            do_copy_xattrs          = true,
+            do_unlink_on_stop       = false,
+            do_set_times            = true,
+            do_set_unix_flags       = true,
+            need_dst_truncate       = false,
+            dst_existed_before      = false;
+            int64_t dst_size_on_stop= 0,
+            total_dst_size          = src_stat_buffer.size,
+            initial_writing_offset  = 0;
     
     // stat destination
     VFSStat dst_stat_buffer;
-//    if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
     if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, 0) == 0) {
         // file already exist. what should we do now?
         dst_existed_before = true;
@@ -1298,42 +1325,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         dst_size_on_stop = 0;
     }
     
-//    ret = m_DstHost->Stat(_dest_full_path.c_str(), dst_stat, 0, 0);
-//    if(ret == 0) { //file already exist - what should we do?
-//        int result;
-//        if(m_SkipAll) goto cleanup;
-//        if(m_OverwriteAll) goto dec_overwrite;
-//        if(m_AppendAll) goto dec_append;
-//        
-//        result = [[m_Operation OnFileExist:_dest_full_path.c_str()
-//                                   newsize:src_stat.size
-//                                   newtime:src_stat.mtime.tv_sec
-//                                   exisize:dst_stat.size
-//                                   exitime:dst_stat.mtime.tv_sec
-//                                  remember:&remember_choice] WaitForResult];
-//        if(result == FileCopyOperationDR::Overwrite){ if(remember_choice) m_OverwriteAll = true;  goto dec_overwrite; }
-//        if(result == FileCopyOperationDR::Append)   { if(remember_choice) m_AppendAll = true;     goto dec_append;    }
-//        if(result == OperationDialogResult::Skip)   { if(remember_choice) m_SkipAll = true;       goto cleanup;      }
-//        if(result == OperationDialogResult::Stop)   { RequestStop(); goto cleanup; }
-//        
-//        // decisions about what to do with existing destination
-//    dec_overwrite:
-//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
-//        unlink_on_stop = true;
-//        goto dec_end;
-//    dec_append:
-//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
-//        totaldestsize += dst_stat.size;
-//        startwriteoff = dst_stat.size;
-//        unlink_on_stop = false;
-//    dec_end:;
-//    } else {
-//        // no dest file - just create it
-//        dstopenflags = VFSFlags::OF_Write | VFSFlags::OF_Create | VFSFlags::OF_NoCache;
-//        unlink_on_stop = true;
-//    }
-    
-    
     // open file object for destination
     VFSFilePtr dst_file;
     while( (ret = m_DestinationHost->CreateFile(_dst_path.c_str(), dst_file)) != 0 ) {
@@ -1373,19 +1364,18 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
     }
     
 
-//    
-//    // for some circumstances we have to clean up remains if anything goes wrong
-//    // and do it BEFORE close_destination fires
-//    auto clean_destination = at_scope_end([&]{
-//        if( destination_fd != -1 ) {
-//            // we need to revert what we've done
-//            ftruncate(destination_fd, dst_size_on_stop);
-//            close(destination_fd);
-//            destination_fd = -1;
-//            if( do_unlink_on_stop )
-//                io.unlink( _dst_path.c_str() );
-//        }
-//    });
+    
+    // for some circumstances we have to clean up remains if anything goes wrong
+    // and do it BEFORE close_destination fires
+    auto clean_destination = at_scope_end([&]{
+        if( dst_file && dst_file->IsOpened() ) {
+            // we need to revert what we've done
+            dst_file->Close();
+            dst_file.reset();
+            if( do_unlink_on_stop == true )
+                m_DestinationHost->Unlink(_dst_path.c_str(), 0);
+        }
+    });
 
     // tell upload-only vfs'es how much we're going to write
     dst_file->SetUploadSize( src_stat_buffer.size );
@@ -1486,54 +1476,15 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         swap( read_buffer, write_buffer );
     }
     
-    
-//    while( total_wrote < src_stat.size )
-//    {
-//        if(CheckPauseOrStop()) goto cleanup;
-//        
-//    doread: ssize_t read_amount = src_file->Read(m_Buffer.get(), m_BufferSize);
-//        if(read_amount < 0)
-//        {
-//            if(m_SkipAll) goto cleanup;
-//            int result = [[m_Operation OnCopyReadError:VFSError::ToNSError((int)read_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
-//            if(result == OperationDialogResult::Retry) goto doread;
-//            if(result == OperationDialogResult::Skip) goto cleanup;
-//            if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
-//            if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-//        }
-//        
-//        size_t to_write = read_amount;
-//        while(to_write > 0)
-//        {
-//        dowrite: ssize_t write_amount = dst_file->Write(m_Buffer.get(), to_write);
-//            if(write_amount < 0)
-//            {
-//                if(m_SkipAll) goto cleanup;
-//                int result = [[m_Operation OnCopyWriteError:VFSError::ToNSError((int)write_amount) ForFile:_dest_full_path.c_str()] WaitForResult];
-//                if(result == OperationDialogResult::Retry) goto dowrite;
-//                if(result == OperationDialogResult::Skip) goto cleanup;
-//                if(result == OperationDialogResult::SkipAll) { m_SkipAll = true; goto cleanup; }
-//                if(result == OperationDialogResult::Stop) { RequestStop(); goto cleanup; }
-//            }
-//            
-//            to_write -= write_amount;
-//            total_wrote += write_amount;
-//            m_TotalCopied += write_amount;
-//        }
-//        
-//        // update statistics
-//        m_Stats.SetValue(m_TotalCopied);
-//    }
-    
-    
     // we're ok, turn off destination cleaning
-//    clean_destination.disengage();
+    clean_destination.disengage();
     
     
-    // TODO: all attrs
-    
-    
-    
+    // TODO:
+    // xattrs
+    // owners
+    // flags
+    // file times
     
     return StepResult::Ok;
 }
@@ -1560,6 +1511,18 @@ void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int
         if( xattrsize >= 0 ) // xattr can be zero-length, just a tag itself
             fsetxattr(_fd_to, s, xdata, xattrsize, 0, 0); // write them into _fd_to
     }
+}
+
+void FileCopyOperationJobNew::CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const
+{
+    auto buf = m_Buffers[0].get();
+    size_t buf_sz = m_BufferSize;
+    _source.XAttrIterateNames([&](const char *name){
+        ssize_t res = _source.XAttrGet(name, buf, buf_sz);
+        if(res >= 0)
+            fsetxattr(_fd_to, name, buf, res, 0, 0);
+        return true;
+    });
 }
 
 FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectoryToNativeDirectory(const string& _src_path,

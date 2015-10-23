@@ -179,8 +179,8 @@ public:
     bool                IsHidden            (unsigned _ind) const;
     
     struct iterator;
-    iterator            begin() const noexcept;
-    iterator            end()   const noexcept;
+    iterator            begin               () const noexcept;
+    iterator            end                 () const noexcept;
     
 private:
     VFSFlexibleListing();
@@ -214,15 +214,15 @@ private:
 class VFSFlexibleListingItem
 {
 public:
-    VFSFlexibleListingItem():
+    VFSFlexibleListingItem() noexcept:
         I( numeric_limits<unsigned>::max() ),
         L( nullptr ) {}
-    VFSFlexibleListingItem(const shared_ptr<const VFSFlexibleListing>& _listing, unsigned _ind):
+    VFSFlexibleListingItem(const shared_ptr<const VFSFlexibleListing>& _listing, unsigned _ind) noexcept:
         I(_ind),
         L(_listing) {}
-    operator        bool()              const { return (bool)L;                     }
-    auto&           Listing()           const { return L;                           }
-    unsigned        Index()             const { return I;                           }
+    operator        bool()              const noexcept { return (bool)L;            }
+    auto&           Listing()           const noexcept { return L;                  }
+    unsigned        Index()             const noexcept { return I;                  }
     
     string          Path()              const { return L->Path(I);                  }
     const VFSHostPtr& Host()            const { return L->Host(I);                  }

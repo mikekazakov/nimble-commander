@@ -150,6 +150,7 @@ private:
     
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
     void                    CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const;
+    void                    CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const;
     
     vector<VFSFlexibleListingItem>              m_VFSListingItems;
     SourceItems                                 m_SourceItems;

@@ -114,6 +114,9 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
     
     if(m_Options.force_overwrite)
         m_OverwriteAll = true;
+    
+    if( m_VFSListingItems.empty() )
+        cerr << "FileCopyOperationJobNew::Init(..) was called with an empty entries list!" << endl;
 }
 
 void FileCopyOperationJobNew::Do()
@@ -167,21 +170,18 @@ void FileCopyOperationJobNew::ProcessItems()
             /////////////////////////////////////////////////////////////////////////////////////////////////
             // Regular files
             /////////////////////////////////////////////////////////////////////////////////////////////////
-            optional<Hash> hash;
+            optional<Hash> hash; // this optional will be filled with the first call of hash_feedback
             auto hash_feedback = [&](const void *_data, unsigned _sz) {
-                if( !hash ) hash.emplace(Hash::MD5);
+                if( !hash )
+                    hash.emplace(Hash::MD5);
                 hash->Feed( _data, _sz );
             };
-            function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
 
-            if( m_Options.docopy ) {
-                if( m_Options.verification == ChecksumVerification::Always )
-                    data_feedback = hash_feedback;
-            }
-            else {
-                if( m_Options.verification >= ChecksumVerification::WhenMoves )
-                    data_feedback = hash_feedback;
-            }
+            function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
+            if( m_Options.verification == ChecksumVerification::Always )
+                data_feedback = hash_feedback;
+            else if( !m_Options.docopy && m_Options.verification >= ChecksumVerification::WhenMoves )
+                data_feedback = hash_feedback;
             
             if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native ///////////////////////
                 // native fs processing

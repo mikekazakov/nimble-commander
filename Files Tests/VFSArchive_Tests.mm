@@ -15,6 +15,15 @@ static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";
 static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 
+static vector<VFSFlexibleListingItem> FetchItems(const string& _directory_path,
+                                                 const vector<string> &_filenames,
+                                                 VFSHost &_host)
+{
+    vector<VFSFlexibleListingItem> items;
+    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
+    return items;
+}
+
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
                              const path& _file2_full_path,
@@ -241,12 +250,10 @@ static int VFSCompareEntries(const path& _file1_full_path,
     }
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Adium.app")
-                      root:"/"
-                   rootvfs:host
-                      dest:dir.c_str()
-                   options:FileCopyOperationOptions()];
-    
+    op = [op initWithItems:FetchItems("/", {"Adium.app"}, *host)
+           destinationPath:dir.native()
+           destinationHost:VFSNativeHost::SharedHost()
+                   options:{}];    
 
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];

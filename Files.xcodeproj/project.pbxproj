@@ -59,8 +59,6 @@
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
 		CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100D9191B46BD00E170FC /* FileDeletionOperationVFSJob.mm */; };
-		CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; };
-		CF1100E2191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
 		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
 		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
 		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
@@ -70,6 +68,21 @@
 		CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1D17D316FAA58F0050B13F /* filesysinfo.mm */; };
+		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295C1BDCEBA40092BCAD /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295D1BDCEC600092BCAD /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295E1BDCECA00092BCAD /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; settings = {ASSET_TAGS = (); }; };
+		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; settings = {ASSET_TAGS = (); }; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414E1803F6A2006D6687 /* sysinfo.mm */; };
@@ -97,13 +110,10 @@
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
-		CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
-		CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
-		CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
 		CF4E33D21B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
@@ -219,17 +229,16 @@
 		CF55CDDD1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF55CDDA1B29F1DE001B4F91 /* BatchRenameOperation.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913C9191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm */; };
-		CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
 		CF5C1E221B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
 		CF5C1E231B04A0E4005DE19F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E1F1B04A0E4005DE19F /* BatchRename.mm */; };
-		CF5C1E281B05B679005DE19F /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF5C1E321B075057005DE19F /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E301B075057005DE19F /* BatchRenameSheetController.mm */; };
 		CF5C1E331B075057005DE19F /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E301B075057005DE19F /* BatchRenameSheetController.mm */; };
 		CF5C1E341B075057005DE19F /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E301B075057005DE19F /* BatchRenameSheetController.mm */; };
 		CF5C1E3E1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF5C1E3F1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF5C1E401B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E3C1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
+		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; settings = {ASSET_TAGS = (); }; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -406,7 +415,6 @@
 		CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
-		CF7C93C31A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF826B4F1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF826B501BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -417,14 +425,12 @@
 		CF8629331B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
 		CF8629341B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
 		CF8629351B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8629311B98006800B33CFD /* VFSFlexibleListing.cpp */; };
-		CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CF8E76C21B353A1000BA16AD /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E76C11B353A1000BA16AD /* TermScrollView.mm */; };
 		CF8E76C31B353A1000BA16AD /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E76C11B353A1000BA16AD /* TermScrollView.mm */; };
 		CF8E76C41B353A1000BA16AD /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E76C11B353A1000BA16AD /* TermScrollView.mm */; };
 		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
-		CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */; };
 		CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
@@ -465,7 +471,6 @@
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF9B49DB1B494E5500C59677 /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B49DA1B494E5500C59677 /* TermScreenTests.mm */; };
-		CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -493,16 +498,13 @@
 		CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5839A170EA40F00E508CF /* FileDeletionOperationJob.mm */; };
 		CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
 		CFA7751E1BD08D630045072A /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA7751C1BD08D630045072A /* xattr.cpp */; settings = {ASSET_TAGS = (); }; };
-		CFAA2AB2196BA56B0036B388 /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */; };
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFABA8461B403AA3008DF6D1 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFABA8441B403AA3008DF6D1 /* TermTask.cpp */; };
 		CFABA8471B403AA3008DF6D1 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFABA8441B403AA3008DF6D1 /* TermTask.cpp */; };
 		CFABA8481B403AA3008DF6D1 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFABA8441B403AA3008DF6D1 /* TermTask.cpp */; };
-		CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
+		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; settings = {ASSET_TAGS = (); }; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */; };
-		CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */; };
-		CFB1E08619F93B6000AD567A /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */; };
 		CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4791844AC8A00D375E2 /* MainWindowTerminalState.mm */; };
 		CFB3E4831844ACD700D375E2 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47B1844ACD700D375E2 /* TermShellTask.cpp */; };
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
@@ -535,7 +537,6 @@
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C4196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C3196E3A4400D4C108 /* pref_hotkeys_icon.png */; };
 		CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C3196E3A4400D4C108 /* pref_hotkeys_icon.png */; };
-		CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709C718E99B7100A83E61 /* ExternalEditorInfo.mm */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
@@ -629,7 +630,6 @@
 		CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
-		CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCD8800181537A800D82455 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FF181537A800D82455 /* FileCompressOperation.mm */; };
@@ -3265,25 +3265,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF1100DF191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm in Sources */,
+				CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */,
+				CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */,
 				CFA57B291B43014900AC5EDF /* TermScreenBufferTests.mm in Sources */,
-				CFAA2AB2196BA56B0036B388 /* TermShellTask_Tests.mm in Sources */,
-				CF47A997186C743A00745C4C /* VFSPS_Tests.mm in Sources */,
-				CFCD3B6F18AA5CEE00028B41 /* FileWindow_Tests.mm in Sources */,
-				CF1100E2191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm in Sources */,
-				CFB709AF18DAAC2D00A83E61 /* VFSFTP_Tests.mm in Sources */,
-				CF47A993186C61A600745C4C /* chained_strings_Tests.mm in Sources */,
-				CF89533218795030001C0391 /* PanelData_Tests.mm in Sources */,
-				CFABC4AD1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm in Sources */,
-				CF5C1E281B05B679005DE19F /* BatchRename_Tests.mm in Sources */,
-				CF7C93C31A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm in Sources */,
-				CFB1E08319F8ED4300AD567A /* Encodings_Tests.mm in Sources */,
-				CF9066C019AB7324001DC687 /* VFSSFTP_Tests.mm in Sources */,
-				CF42E3641910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
+				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
+				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
+				CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */,
+				CF23295C1BDCEBA40092BCAD /* TermShellTask_Tests.mm in Sources */,
+				CF23295E1BDCECA00092BCAD /* Encodings_Tests.mm in Sources */,
 				CF9B49DB1B494E5500C59677 /* TermScreenTests.mm in Sources */,
-				CF9BB36319A7DC5500B9B0FF /* FileMask_Tests.mm in Sources */,
-				CFB1E08619F93B6000AD567A /* VFSArchive_Tests.mm in Sources */,
-				CF5913CE191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
+				CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */,
+				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
+				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
+				CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
+				CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */,
+				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
+				CF23295D1BDCEC600092BCAD /* FileMask_Tests.mm in Sources */,
+				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
+				CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */,
+				CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

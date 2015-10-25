@@ -9,6 +9,9 @@
 #include "VFSFlexibleListing.h"
 #include "VFSHost.h"
 
+static_assert( is_move_constructible<VFSFlexibleListingItem>::value, "" );
+static_assert( is_move_constructible<VFSFlexibleListing::iterator>::value, "" );
+
 static bool BasicDirectoryCheck(const string& _str)
 {
     if( _str.empty() )

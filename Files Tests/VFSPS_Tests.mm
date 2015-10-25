@@ -17,14 +17,13 @@
 - (void)testBasic
 {
     auto host = make_shared<VFSPSHost>();
-    unique_ptr<VFSListing> list;
-    host->FetchDirectoryListing("/", list, 0, 0);
+    VFSFlexibleListingPtr list;
+    host->FetchFlexibleListing("/", list, 0, 0);
 
     bool has_launchd = false;
     bool has_kernel_task = false;
     //    int a =10;
-    for(auto &i: *list)
-    {
+    for(auto &i: *list) {
         if("    0 - kernel_task.txt"s == i.Name())
             has_kernel_task = true;
         if("    1 - launchd.txt"s == i.Name())

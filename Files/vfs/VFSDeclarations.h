@@ -148,11 +148,13 @@ private:
 };
 
 class VFSHost;
+class VFSFlexibleListing;
 class VFSFile;
 class VFSPath;
 class VFSConfiguration;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
 typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
+typedef shared_ptr<VFSFlexibleListing> VFSFlexibleListingPtr;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

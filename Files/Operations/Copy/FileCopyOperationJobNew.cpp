@@ -97,7 +97,9 @@ FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_i
     original_item( _source_ind ),
     destination_path( move(_destination) )
 {
-    copy(begin(_md5), end(_md5), begin(md5.buf)); // no buffer overflow check here
+    if(_md5.size() != 16)
+        throw invalid_argument("FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation: _md5 should be 16 bytes long!");
+    copy(begin(_md5), end(_md5), begin(md5.buf));
 }
 
 void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
@@ -148,11 +150,15 @@ void FileCopyOperationJobNew::Do()
     
     ProcessItems();
     
+    if( CheckPauseOrStop() ) { SetStopped(); return; }
     SetCompleted();
 }
 
 void FileCopyOperationJobNew::ProcessItems()
 {
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue( m_SourceItems.TotalRegBytes() );
+    
     const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
     auto is_same_native_volume = [this, &nfsm = NativeFSManager::Instance()]( int _index ) {
         return nfsm.VolumeFromDevID( m_SourceItems.ItemDev(_index) ) == m_DestinationNativeFSInfo;
@@ -291,6 +297,7 @@ void FileCopyOperationJobNew::ProcessItems()
         if( step_result != StepResult::Ok )
             cout << source_path << " fucked up" << endl;
         
+        if(CheckPauseOrStop()) return;
     }
   
     for( auto &item: m_Checksums ) {
@@ -298,6 +305,10 @@ void FileCopyOperationJobNew::ProcessItems()
         auto step_result = VerifyCopiedFile(item, matched);
         cout << item.destination_path << " | " << (matched ? "checksum match" : "checksum mismatch") << endl;
     }
+    
+    // TODO: use checksum results somehow
+
+    if( CheckPauseOrStop() ) return;
     
     // be sure to all it only if ALL previous steps wre OK.
     CleanSourceItems();
@@ -457,8 +468,6 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
                                                                                           const string &_full_relative_path,
                                                                                           const string &_item_name
                                                                                           ) -> StepResult {
-//            cout << _full_relative_path << " | " << _item_name << endl;
-            
             // compose a full path for current entry
             string path = db.BaseDir(base_dir_indx) + _full_relative_path;
             
@@ -831,6 +840,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             return *write_return;
         if( read_return )
             return *read_return;
+
+        // update statistics
+        m_Stats.AddValue( bytes_to_write );
         
         // swap buffers ang go again
         bytes_to_write = has_read;
@@ -1162,6 +1174,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
         if( read_return )
             return *read_return;
         
+        // update statistics
+        m_Stats.AddValue( bytes_to_write );
+        
         // swap buffers ang go again
         bytes_to_write = has_read;
         swap( read_buffer, write_buffer );
@@ -1449,6 +1464,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
             return *write_return;
         if( read_return )
             return *read_return;
+        
+        // update statistics
+        m_Stats.AddValue( bytes_to_write );
         
         // swap buffers ang go again
         bytes_to_write = has_read;

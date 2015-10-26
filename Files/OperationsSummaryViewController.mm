@@ -119,6 +119,7 @@
         progress.controlSize = NSMiniControlSize;
         progress.minValue = 0;
         progress.maxValue = 1;
+        progress.doubleValue = 0;
         [progress bind:@"value" toObject:self withKeyPath:@"CurrentOperation.Progress" options:nil];
         [progress bind:@"toolTip" toObject:self withKeyPath:@"CurrentOperation.ShortInfo" options:nil];
         [progress bind:@"isIndeterminate" toObject:self withKeyPath:@"CurrentOperation.IsIndeterminate" options:nil];

@@ -18,7 +18,8 @@ int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsi
        (_parent_index >= 0 && _parent_index >= m_Items.size() ) )
         throw invalid_argument("FileCopyOperationJobNew::SourceItems::InsertItem: invalid index");
     
-    // TODO: stats
+    if( S_ISREG(_stat.mode) )
+        m_TotalRegBytes += _stat.size;
     
     SourceItem it;
     it.item_name = S_ISDIR(_stat.mode) ? EnsureTrailingSlash( move(_item_name) ) : move( _item_name );
@@ -29,8 +30,6 @@ int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsi
     it.dev_num = _stat.dev;
     
     m_Items.emplace_back( move(it) );
-    
-    //    cout << ComposeFullPath(m_Items.size() - 1) << endl << endl;
     
     return int(m_Items.size() - 1);
 }
@@ -65,6 +64,11 @@ string FileCopyOperationJobNew::SourceItems::ComposeRelativePath( int _item_no )
 int FileCopyOperationJobNew::SourceItems::ItemsAmount() const noexcept
 {
     return (int)m_Items.size();
+}
+
+uint64_t FileCopyOperationJobNew::SourceItems::TotalRegBytes() const noexcept
+{
+    return m_TotalRegBytes;
 }
 
 mode_t FileCopyOperationJobNew::SourceItems::ItemMode( int _item_no ) const

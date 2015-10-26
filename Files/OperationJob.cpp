@@ -93,14 +93,16 @@ OperationStats& OperationJob::GetStats()
 
 void OperationJob::SetStopped()
 {
-    assert(m_State == State::Running);
+    if( m_State != State::Running )
+        throw logic_error("OperationJob::SetStopped() was called when state is not Running");
     
     m_State = State::Stopped;
 }
 
 void OperationJob::SetCompleted()
 {
-    assert(m_State == State::Running);
+    if( m_State != State::Running )
+        throw logic_error("OperationJob::SetCompleted() was called when state is not Running");
     
     m_State = State::Completed;
     

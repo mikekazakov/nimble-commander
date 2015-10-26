@@ -20,7 +20,7 @@ class OperationJob;
  * Value from 0 to 1, showing current Operation's progress.
  *
  */
-@property (nonatomic) float Progress;
+@property (nonatomic) double Progress;
 
 /**
  * Flag that show that Progress not appropriate currently.

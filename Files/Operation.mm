@@ -78,7 +78,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
     OperationJob        *m_Job;
     vector<id<OperationDialogProtocol>> m_Dialogs;
     vector<void(^)()>   m_Handlers;
-    float               m_Progress;
+    double              m_Progress;
     bool                m_IsPaused;
     bool                m_IsIndeterminate;
     
@@ -299,7 +299,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
 }
 
 
-- (void)setProgress:(float)Progress
+- (void)setProgress:(double)Progress
 {
     OperationsProgressReporter::Report((__bridge void*)self, Progress);
     

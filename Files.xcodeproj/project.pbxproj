@@ -440,18 +440,6 @@
 		CF9069761BB54035000C3CBB /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; settings = {ASSET_TAGS = (); }; };
 		CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; settings = {ASSET_TAGS = (); }; };
 		CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069791BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696A1BB54035000C3CBB /* FileCopyOperationJob.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697A1BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696A1BB54035000C3CBB /* FileCopyOperationJob.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697B1BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696A1BB54035000C3CBB /* FileCopyOperationJob.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697D1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697E1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF90697F1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696E1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069801BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696E1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069811BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90696E1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069821BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069701BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069831BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069701BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm */; settings = {ASSET_TAGS = (); }; };
-		CF9069841BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069701BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm */; settings = {ASSET_TAGS = (); }; };
 		CF9069851BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9069711BB54035000C3CBB /* FileCopyOperationJobNew.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF9069861BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9069711BB54035000C3CBB /* FileCopyOperationJobNew.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF9069871BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9069711BB54035000C3CBB /* FileCopyOperationJobNew.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -3330,7 +3318,6 @@
 				CF6D9C731966780D0077B146 /* FontCache.cpp in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF6D9BDD196678000077B146 /* Common.mm in Sources */,
-				CF90697D1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CF6D9BDF196678000077B146 /* filesysinfo.mm in Sources */,
 				CF6D9BE0196678000077B146 /* EncodingsAdditions.mm in Sources */,
 				CF6D9BE1196678000077B146 /* FSEventsDirUpdate.cpp in Sources */,
@@ -3409,7 +3396,6 @@
 				CF6D9C33196678010077B146 /* BigFileViewDataBackend.mm in Sources */,
 				CF6D9C34196678010077B146 /* BigFileViewHex.mm in Sources */,
 				CF6D9C35196678010077B146 /* BigFileViewText.mm in Sources */,
-				CF90697A1BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */,
 				CF6D9C36196678010077B146 /* BigFileViewHistory.mm in Sources */,
 				CF6D9C37196678010077B146 /* MainWindowBigFileViewState.mm in Sources */,
 				CF6D9C39196678010077B146 /* TermShellTask.cpp in Sources */,
@@ -3447,7 +3433,6 @@
 				CF6D9C56196678010077B146 /* PanelViewPresentation.mm in Sources */,
 				CFABA8471B403AA3008DF6D1 /* TermTask.cpp in Sources */,
 				CF6D9C57196678010077B146 /* ClassicPanelViewPresentation.mm in Sources */,
-				CF9069801BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
 				CF6D9C58196678010077B146 /* ModernPanelViewPresentation.mm in Sources */,
 				CF6D9C59196678010077B146 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF6D9C5A196678010077B146 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
@@ -3482,7 +3467,6 @@
 				CF55CDD31B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CF6D9BDA196677CA0077B146 /* main.m in Sources */,
 				CF5C1E221B04A0E4005DE19F /* BatchRename.mm in Sources */,
-				CF9069831BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3531,7 +3515,6 @@
 				CFA57B251B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CF0A401A1B60BA00002A092B /* BlinkingCaret.mm in Sources */,
-				CF90697C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
@@ -3611,7 +3594,6 @@
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
-				CF9069791BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
@@ -3647,7 +3629,6 @@
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF1100DB191B46BD00E170FC /* FileDeletionOperationVFSJob.mm in Sources */,
 				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CF90697F1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
 				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
@@ -3682,7 +3663,6 @@
 				CF305DCA1946D50400840F25 /* NSArray+SSYMutations.m in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,
 				CF09857018EEA8CF006E6410 /* TermSingleTask.mm in Sources */,
-				CF9069821BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3738,7 +3718,6 @@
 				CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFF6F26C1A13567C00011177 /* path_manip.c in Sources */,
 				CFF6F2701A13567C00011177 /* TermParser.mm in Sources */,
-				CF90697E1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
 				CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */,
 				CF50B7271A15170600E3D96D /* VFSNetFTPFile.mm in Sources */,
@@ -3818,7 +3797,6 @@
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
 				CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
-				CF90697B1BB54035000C3CBB /* FileCopyOperationJob.mm in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
@@ -3854,7 +3832,6 @@
 				CFF6F31C1A13567C00011177 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CFABA8481B403AA3008DF6D1 /* TermTask.cpp in Sources */,
-				CF9069811BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm in Sources */,
 				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
@@ -3889,7 +3866,6 @@
 				CF55CDD41B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */,
 				CF5C1E231B04A0E4005DE19F /* BatchRename.mm in Sources */,
-				CF9069841BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

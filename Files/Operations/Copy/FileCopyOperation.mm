@@ -185,6 +185,13 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
 
 - (void)Update
 {
+    auto progress = m_Job.GetStats().GetProgress();
+    if( self.Progress != progress )
+        self.Progress = progress;
+    
+    
+    
+    
 //    if(m_NativeToNativeJob)
 //        [self UpdateNativeToNative];
 //    if(m_GenericToNativeJob)

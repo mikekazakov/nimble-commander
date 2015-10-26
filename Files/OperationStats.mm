@@ -39,19 +39,19 @@ void OperationStats::SetValue(uint64_t _value)
 
 void OperationStats::AddValue(uint64_t _value)
 {
+    if(m_Value + _value > m_MaxValue)
+        throw logic_error("OperationStats::AddValue resulting value is greater than m_MaxValue");
     m_Value += _value;
-    if(m_Value > m_MaxValue)
-        throw logic_error("OperationStats::AddValue m_Value is greater than m_MaxValue");
 }
 
-uint64_t OperationStats::GetValue() const
+uint64_t OperationStats::GetValue() const noexcept
 {
     return m_Value;
 }
 
-float OperationStats::GetProgress() const
+double OperationStats::GetProgress() const noexcept
 {
-    return (float)m_Value/m_MaxValue;
+    return m_MaxValue != 0 ? (double)m_Value/(double)m_MaxValue : 0.;
 }
 
 void OperationStats::SetCurrentItem(string _item)

@@ -61,8 +61,8 @@ private:
     struct ChecksumExpectation
     {
         ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 );
-        int original_item;
         string destination_path;
+        int original_item;        
         struct {
             uint8_t buf[16];
         } md5;
@@ -71,9 +71,10 @@ private:
     class SourceItems
     {
     public:
-        int InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat );
+        int             InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat );
 
-        int ItemsAmount() const noexcept;
+        uint64_t        TotalRegBytes() const noexcept;
+        int             ItemsAmount() const noexcept;
         
         string          ComposeFullPath( int _item_no ) const;
         string          ComposeRelativePath( int _item_no ) const;
@@ -103,6 +104,7 @@ private:
         vector<SourceItem>                      m_Items;
         vector<VFSHostPtr>                      m_SourceItemsHosts;
         vector<string>                          m_SourceItemsBaseDirectories;
+        uint64_t                                m_TotalRegBytes = 0;
     };
     
     void                    ProcessItems();

@@ -34,7 +34,6 @@ public:
     
     void SetCurrentItem(string _item);
     shared_ptr<const string> GetCurrentItem() const; // never returns nullptr
-    void SetOnCurrentItemChanged(function<void()> _callback); // _callback will be called from main thread
     
     void StartTimeTracking();
     // Pauses the time tracking. Keeps track of how many times it was invoked.
@@ -57,7 +56,6 @@ private:
     mutable mutex   m_Lock;
 
     shared_ptr<const string> m_CurrentItem = make_shared<string>("");
-    function<void()>m_OnCurrentItemChanged;
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

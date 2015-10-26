@@ -78,14 +78,14 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
     if (self) {
         m_Job.Init(move(_files), _path, _host, _options);
         
-        auto weak_self = objc_weak(self);
+        __weak auto weak_self = self;
         m_Job.GetStats().RegisterObserver(OperationStats::Nofity::Value,
                                           nullptr,
-                                          [weak_self]{ if(auto me = objc_strong(weak_self) ) [me updateOnProgressChanged]; }
+                                          [weak_self]{ if(auto me = weak_self) [me updateOnProgressChanged]; }
                                           );
         m_Job.GetStats().RegisterObserver(OperationStats::Nofity::Value,
                                           nullptr,
-                                          [weak_self]{ if(auto me = objc_strong(weak_self) ) [me updateOnProgressChangedSlow]; },
+                                          [weak_self]{ if(auto me = weak_self) [me updateOnProgressChangedSlow]; },
                                           true,
                                           500ms
                                           );

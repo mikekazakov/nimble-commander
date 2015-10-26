@@ -226,7 +226,9 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 // when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:
 - (void (^)()) refreshBothCurrentControllersLambda
 {
-    auto update_both_panels = [cur = objc_weak(self.activePanelController), opp = objc_weak(self.oppositePanelController)] {
+    __weak auto cur = self.activePanelController;
+    __weak auto opp = self.oppositePanelController;
+    auto update_both_panels = [=] {
         dispatch_to_main_queue( [=]{
             [(PanelController*)cur RefreshDirectory];
             [(PanelController*)opp RefreshDirectory];

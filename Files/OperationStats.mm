@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationStats.h"
-#import "Common.h"
+#include <Habanero/algo.h>
+#include "OperationStats.h"
+#include "Common.h"
 
 OperationStats::OperationStats()
 {
@@ -67,24 +68,24 @@ double OperationStats::GetProgress() const noexcept
 
 void OperationStats::SetCurrentItem(string _item)
 {
-    lock_guard<mutex> lock(m_Lock);
-    if( *m_CurrentItem != _item ) {
-        m_CurrentItem = make_shared<string>(move(_item));
-        if( m_OnCurrentItemChanged )
-            dispatch_to_main_queue( m_OnCurrentItemChanged );
+    if( *GetCurrentItem() == _item )
+        return;
+        
+    NotifyWillChange(Nofity::CurrentItem);
+    
+    {
+        auto item = to_shared_ptr( move(_item) );
+        lock_guard<mutex> lock(m_Lock);
+        m_CurrentItem = item;
     }
+    
+    NotifyDidChange(Nofity::CurrentItem);
 }
 
 shared_ptr<const string> OperationStats::GetCurrentItem() const
 {
     lock_guard<mutex> lock(m_Lock);
     return m_CurrentItem;
-}
-
-void OperationStats::SetOnCurrentItemChanged(function<void()> _callback)
-{
-    lock_guard<mutex> lock(m_Lock);
-    m_OnCurrentItemChanged = move(_callback);
 }
 
 void OperationStats::StartTimeTracking()

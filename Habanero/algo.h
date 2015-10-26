@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <memory>
+#include <string>
 #include <stdio.h>
 
 template <typename T>
@@ -30,6 +33,12 @@ size_t linear_find_or_insert( C &_c, const T &_v )
     
     _c.emplace_back( _v );
     return _c.size() - 1;
+}
+
+template <typename C>
+std::shared_ptr<C> to_shared_ptr( C &&_object )
+{
+    return std::make_shared<C>( std::move(_object) );
 }
 
 template <typename T>

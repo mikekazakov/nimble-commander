@@ -78,6 +78,7 @@ private:
         
         string          ComposeFullPath( int _item_no ) const;
         string          ComposeRelativePath( int _item_no ) const;
+        const string&   ItemName( int _item_no ) const;
         mode_t          ItemMode( int _item_no ) const;
         dev_t           ItemDev( int _item_no ) const; // meaningful only for native vfs (yet?)
         VFSHost        &ItemHost( int _item_no ) const;

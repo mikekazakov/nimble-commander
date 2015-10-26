@@ -79,6 +79,11 @@ __weak T* objc_weak(T* from) noexcept {
     return weak;
 }
 
+template <typename T>
+T *objc_strong( T *_object ) noexcept {
+    return (T*) _object;
+}
+
 void SyncMessageBoxNS(NSString *_ns_string);
 
 typedef enum

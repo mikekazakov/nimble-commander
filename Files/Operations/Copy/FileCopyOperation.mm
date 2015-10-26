@@ -78,8 +78,17 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
     if (self) {
         m_Job.Init(move(_files), _path, _host, _options);
         
-        
-    
+        auto weak_self = objc_weak(self);
+        m_Job.GetStats().RegisterObserver(OperationStats::Nofity::Value,
+                                          nullptr,
+                                          [weak_self]{ if(auto me = objc_strong(weak_self) ) [me updateOnProgressChanged]; }
+                                          );
+        m_Job.GetStats().RegisterObserver(OperationStats::Nofity::Value,
+                                          nullptr,
+                                          [weak_self]{ if(auto me = objc_strong(weak_self) ) [me updateOnProgressChangedSlow]; },
+                                          true,
+                                          500ms
+                                          );
     }
     return self;
 }
@@ -183,11 +192,66 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
 //    return self;
 //}
 
-- (void)Update
+- (void)updateOnProgressChanged
 {
     auto progress = m_Job.GetStats().GetProgress();
     if( self.Progress != progress )
         self.Progress = progress;
+}
+
+- (void)updateOnProgressChangedSlow
+{
+    auto &stats = m_Job.GetStats();
+    
+    auto time = stats.GetTime();
+    uint64_t copy_speed = time.count() > 0 ? stats.GetValue()*1000/time.count() : 0;
+    
+    auto &f = ByteCountFormatter::Instance();
+    if (copy_speed) {
+        uint64_t eta_value =  stats.RemainingValue() / copy_speed;
+        char eta[18] = {0};
+        FormHumanReadableTimeRepresentation(eta_value, eta);
+        self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s - %s",
+                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive6),
+                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive6),
+                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive6),
+                          eta];
+    }
+    else
+        self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s",
+                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive6),
+                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive6),
+                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive6)];
+}
+
+- (void)Update
+{
+//    auto abra = __COUNTER__;
+    
+//    auto &stats = m_Job.GetStats();
+//    auto progress = m_Job.GetStats().GetProgress();
+//    if( self.Progress != progress )
+//        self.Progress = progress;
+//    
+//    auto time = stats.GetTime();
+//    uint64_t copy_speed = time.count() > 0 ? stats.GetValue()*1000/time.count() : 0;
+//
+//    auto &f = ByteCountFormatter::Instance();
+//    if (copy_speed) {
+//        uint64_t eta_value =  stats.RemainingValue() / copy_speed;
+//        char eta[18] = {0};
+//        FormHumanReadableTimeRepresentation(eta_value, eta);
+//        self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s - %s",
+//                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive6),
+//                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive6),
+//                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive6),
+//                          eta];
+//    }
+//    else
+//        self.ShortInfo = [NSString stringWithFormat:@"%@ of %@ - %@/s",
+//                          f.ToNSString(stats.GetValue(), ByteCountFormatter::Adaptive6),
+//                          f.ToNSString(stats.GetMaxValue(), ByteCountFormatter::Adaptive6),
+//                          f.ToNSString(copy_speed, ByteCountFormatter::Adaptive6)];
     
     
     

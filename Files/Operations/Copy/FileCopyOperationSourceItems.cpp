@@ -76,6 +76,11 @@ mode_t FileCopyOperationJobNew::SourceItems::ItemMode( int _item_no ) const
     return m_Items.at(_item_no).mode;
 }
 
+const string& FileCopyOperationJobNew::SourceItems::ItemName( int _item_no ) const
+{
+    return m_Items.at(_item_no).item_name;
+}
+
 dev_t FileCopyOperationJobNew::SourceItems::ItemDev( int _item_no ) const
 {
     return m_Items.at(_item_no).dev_num;

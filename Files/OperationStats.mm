@@ -34,19 +34,30 @@ void OperationStats::SetValue(uint64_t _value)
 {
     if(_value > m_MaxValue)
         throw logic_error("OperationStats::SetValue _value is greater than m_MaxValue");
+
+    NotifyWillChange(Nofity::Value);
     m_Value = _value;
+    NotifyDidChange(Nofity::Value);
 }
 
 void OperationStats::AddValue(uint64_t _value)
 {
     if(m_Value + _value > m_MaxValue)
         throw logic_error("OperationStats::AddValue resulting value is greater than m_MaxValue");
+    
+    NotifyWillChange(Nofity::Value);
     m_Value += _value;
+    NotifyDidChange(Nofity::Value);
 }
 
 uint64_t OperationStats::GetValue() const noexcept
 {
     return m_Value;
+}
+
+uint64_t OperationStats::RemainingValue() const noexcept
+{
+    return GetMaxValue() - GetValue();
 }
 
 double OperationStats::GetProgress() const noexcept

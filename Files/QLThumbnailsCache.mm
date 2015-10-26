@@ -8,6 +8,7 @@
 
 #import <Quartz/Quartz.h>
 #include <sys/stat.h>
+#include <Habanero/algo.h>
 #include "Common.h"
 #include "QLThumbnailsCache.h"
 
@@ -31,19 +32,25 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
         // check if cache is up-to-date
         bool is_uptodate = false;
         struct stat st;
-        if(stat(_filename.c_str(), &st) == 0)
-        {
+        if(stat(_filename.c_str(), &st) == 0) {
             if( i->second.file_size == st.st_size &&
-                i->second.mtime == st.st_mtime )
-            {
+                i->second.mtime == st.st_mtime ) {
                 is_uptodate = true;
             }
-            else if(NSImageRep *img = BuildRep(_filename, _size))
-            {
-                info.image = img;
-                info.file_size = st.st_size;
-                info.mtime = st.st_mtime;
-                is_uptodate = true;
+            else {
+                if( !info.is_in_work ) { // this is not a well-synchronized lock, but in a low chance of fuck-up there should be no harm
+                    info.is_in_work = true;
+                    auto clear_lock = at_scope_end([&]{ info.is_in_work = false; });
+                    if( auto img = BuildRep(_filename, _size) ) {
+                        info.image = img;
+                        info.file_size = st.st_size;
+                        info.mtime = st.st_mtime;
+                        is_uptodate = true;
+                    }
+                }
+                else { // item is currently in updating state, let's use current image
+                    return info.image;
+                }
             }
         }
         

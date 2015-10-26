@@ -172,6 +172,8 @@ void FileCopyOperationJobNew::ProcessItems()
         
         StepResult step_result = StepResult::Stop;
         
+        m_Stats.SetCurrentItem( m_SourceItems.ItemName(index) );
+        
         if( S_ISREG(source_mode) ) {
             /////////////////////////////////////////////////////////////////////////////////////////////////
             // Regular files
@@ -305,6 +307,8 @@ void FileCopyOperationJobNew::ProcessItems()
         auto step_result = VerifyCopiedFile(item, matched);
         cout << item.destination_path << " | " << (matched ? "checksum match" : "checksum mismatch") << endl;
     }
+    
+    m_Stats.SetCurrentItem("");
     
     // TODO: use checksum results somehow
 

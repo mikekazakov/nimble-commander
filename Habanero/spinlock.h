@@ -1,3 +1,4 @@
+#pragma once
 
 #include <mach/mach.h>
 #include <atomic>

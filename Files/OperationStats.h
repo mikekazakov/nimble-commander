@@ -6,17 +6,27 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-class OperationStats
+#include <Habanero/KVO.h>
+
+class OperationStats : public KeyValueObservation
 {
 public:
     OperationStats();
     ~OperationStats();
+    
+    enum class Nofity : short
+    {
+        Value,
+        CurrentItem
+    };
     
     void SetMaxValue(uint64_t _max_value);
     uint64_t GetMaxValue() const;
     
     void SetValue(uint64_t _value);
     void AddValue(uint64_t _value);
+    
+    uint64_t RemainingValue() const noexcept;
     uint64_t GetValue() const noexcept;
     
     // Retruns value in range from 0 to 1. Equals to current value divided by max value.

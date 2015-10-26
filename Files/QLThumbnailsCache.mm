@@ -49,13 +49,12 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
                     }
                 }
                 else { // item is currently in updating state, let's use current image
-                    return info.image;
+                    result = info.image;
                 }
             }
         }
         
-        if(is_uptodate)
-        {
+        if(is_uptodate) {
             result = info.image;
             m_ItemsLock.unlock_shared();
             
@@ -64,8 +63,7 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             m_MRU.erase(find(begin(m_MRU), end(m_MRU), i));
             m_MRU.emplace_back(i);
         }
-        else
-        {
+        else {
             m_ItemsLock.unlock_shared();
         }
     }

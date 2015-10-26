@@ -104,6 +104,9 @@ void OperationJob::SetCompleted()
     if( m_State != State::Running )
         throw logic_error("OperationJob::SetCompleted() was called when state is not Running");
     
+    if( m_Stats.GetProgress() < 1.0 )
+        cerr << "OperationJob::SetCompleted() was called with Progress<1!" << endl;
+    
     m_State = State::Completed;
     
     if(m_OnFinish)

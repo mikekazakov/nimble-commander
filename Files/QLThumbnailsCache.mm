@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Quartz/Quartz.h>
+#include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include "Common.h"
@@ -25,22 +25,21 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
     NSImageRep *result = nil;
     
     auto i = m_Items.find(_filename);
-    if(i != end(m_Items))
-    { // check what do we have in a cache
-        Info &info = i->second;
+    if(i != end(m_Items)) {
+        // check what do we have in a cache
+        Info &info = *i->second;
 
         // check if cache is up-to-date
         bool is_uptodate = false;
         struct stat st;
         if(stat(_filename.c_str(), &st) == 0) {
-            if( i->second.file_size == st.st_size &&
-                i->second.mtime == st.st_mtime ) {
+            if( info.file_size == st.st_size &&
+                info.mtime == st.st_mtime ) {
                 is_uptodate = true;
             }
             else {
-                if( !info.is_in_work ) { // this is not a well-synchronized lock, but in a low chance of fuck-up there should be no harm
-                    info.is_in_work = true;
-                    auto clear_lock = at_scope_end([&]{ info.is_in_work = false; });
+                if( !info.is_in_work.test_and_set() ) { // we're first to take control of this item
+                    auto clear_lock = at_scope_end([&]{ info.is_in_work.clear(); });
                     if( auto img = BuildRep(_filename, _size) ) {
                         info.image = img;
                         info.file_size = st.st_size;
@@ -67,36 +66,44 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             m_ItemsLock.unlock_shared();
         }
     }
-    else
-    { // build from scratch
+    else {
+        // build from scratch
         m_ItemsLock.unlock_shared();
         
-        result = BuildRep(_filename, _size); // img may be nil - it's ok
-        
+        // file should exist and be accessible
         struct stat st;
-        if(stat(_filename.c_str(), &st) == 0) // but file should exist and be accessible
-        { // put in a cache
-        
-            lock_guard<mutex> mru_lock(m_MRULock);
-            lock_guard<ting::shared_mutex> items_lock(m_ItemsLock);
+        if( stat(_filename.c_str(), &st) == 0) {
+            // insert dummy info into struct, so no one else can try to produce it concurrently - prohibit wasting of resources
+            auto info = make_shared<Info>();
+            info->file_size = st.st_size;
+            info->mtime = st.st_mtime;
+            info->image_size = _size;
+            info->is_in_work.test_and_set();
             
-            while(m_MRU.size() >= m_CacheSize)
-            { // wipe out old ones if cache is too fat
-                m_Items.erase(m_MRU.front());
-                m_MRU.pop_front();
-            }
-            
-            auto emp = m_Items.emplace(_filename, Info());
-            if(emp.second)
-            {
+            m_ItemsLock.lock();
+            auto emp = m_Items.emplace( _filename, info );
+            if( emp.second ) {
                 auto it = emp.first;
-                Info &info = it->second;
-                info.image = result;
-                info.file_size = st.st_size;
-                info.mtime = st.st_mtime;
-                info.image_size = _size;
+                
+                m_ItemsLock.unlock();
+                
+                // put in a cache
+                result = BuildRep(_filename, _size); // img may be nil - it's ok
+                info->image = result;
+                info->is_in_work.clear();
             
-                m_MRU.emplace_back(it);
+                lock_guard<mutex> mru_lock(m_MRULock);
+                while( m_MRU.size() >= m_CacheSize ) {
+                    // wipe out old ones if cache is too fat
+                    m_ItemsLock.lock();
+                    m_Items.erase(m_MRU.front());
+                    m_ItemsLock.unlock();
+                    m_MRU.pop_front();
+                }
+                m_MRU.emplace_back( it );
+            }
+            else {
+                m_ItemsLock.unlock();
             }
         }
     }
@@ -105,11 +112,11 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
 
 NSImageRep *QLThumbnailsCache::ThumbnailIfHas(const string &_filename)
 {
-    ting::shared_lock<ting::shared_mutex> lock(m_ItemsLock);
+    shared_lock<shared_timed_mutex> lock(m_ItemsLock);
     
     auto i = m_Items.find(_filename);
     if(i != end(m_Items))
-        return (*i).second.image;
+        return (*i).second->image;
     return nil;
 }
 
@@ -120,8 +127,7 @@ NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size)
     static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
     static void *values[] = {(void*)kCFBooleanTrue};
     static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-    if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _size, dict))
-    {
+    if( auto thumbnail = QLThumbnailImageCreate(0, url, _size, dict) ) {
         result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
         CGImageRelease(thumbnail);
     }

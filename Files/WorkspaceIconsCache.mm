@@ -18,7 +18,7 @@ WorkspaceIconsCache& WorkspaceIconsCache::Instance()
 
 NSImageRep *WorkspaceIconsCache::IconIfHas(const string &_filename)
 {
-    ting::shared_lock<ting::shared_mutex> lock(m_ItemsLock);
+    shared_lock<shared_timed_mutex> lock(m_ItemsLock);
     
     auto i = m_Items.find(_filename);
     if(i != end(m_Items))
@@ -98,7 +98,7 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
         { // put in a cache
             
             lock_guard<mutex> mru_lock(m_MRULock);
-            lock_guard<ting::shared_mutex> items_lock(m_ItemsLock);
+            lock_guard<shared_timed_mutex> items_lock(m_ItemsLock);
             
             while(m_MRU.size() >= m_CacheSize)
             { // wipe out old ones if cache is too fat

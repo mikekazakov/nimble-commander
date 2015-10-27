@@ -167,6 +167,7 @@ void FileCopyOperationJobNew::ProcessItems()
     for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {
         auto source_mode = m_SourceItems.ItemMode(index);
         auto&source_host = m_SourceItems.ItemHost(index);
+        auto source_size = m_SourceItems.ItemSize(index);
         auto destination_path = ComposeDestinationNameForItem(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
         
@@ -199,6 +200,8 @@ void FileCopyOperationJobNew::ProcessItems()
                 else {
                     if( is_same_native_volume(index) ) { // rename
                         step_result = RenameNativeFile(source_path, destination_path);
+                        if( step_result == StepResult::Ok )
+                            m_Stats.AddValue( source_size );
                     }
                     else { // move
                         step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
@@ -225,6 +228,8 @@ void FileCopyOperationJobNew::ProcessItems()
                     if( &source_host == m_DestinationHost.get() ) { // rename
                         // moving on the same host - lets do rename
                         step_result = RenameVFSFile(source_host, source_path, destination_path);
+                        if( step_result == StepResult::Ok )
+                            m_Stats.AddValue( source_size );
                     }
                     else { // move
                         step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);

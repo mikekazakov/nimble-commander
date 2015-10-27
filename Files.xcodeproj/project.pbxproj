@@ -109,7 +109,6 @@
 		CF3C720C195EC2DB00DE165A /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C720B195EC2DB00DE165A /* DisplayNamesCache.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
-		CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
@@ -352,7 +351,6 @@
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
-		CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CF6D9C711966780D0077B146 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
@@ -498,6 +496,7 @@
 		CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47D1844ACD700D375E2 /* TermParser.mm */; };
 		CFB3E4851844ACD700D375E2 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E47E1844ACD700D375E2 /* TermView.mm */; };
 		CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB3E4801844ACD700D375E2 /* TermScreen.cpp */; };
+		CFB518001BDF53D0000AAE89 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; settings = {ASSET_TAGS = (); }; };
 		CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */; };
 		CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
 		CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
@@ -725,7 +724,6 @@
 		CFF6F2B31A13567C00011177 /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9DF216171320D40008CBAE /* CreateDirectoryOperationJob.mm */; };
 		CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B55DB1A0171B33D000E3610E /* FileDeletionSheetController.mm */; };
-		CFF6F2BF1A13567C00011177 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */; };
 		CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
@@ -1147,8 +1145,6 @@
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelController.mm; sourceTree = "<group>"; };
 		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLThumbnailsCache.h; sourceTree = "<group>"; };
-		CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/shared_mutex/shared_mutex.cpp; sourceTree = "<group>"; };
-		CF3FCE0C190EB96000E55698 /* shared_mutex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shared_mutex; path = 3rd_party/shared_mutex/shared_mutex; sourceTree = "<group>"; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -1405,6 +1401,7 @@
 		CFB3E4801844ACD700D375E2 /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TermScreen.cpp; sourceTree = "<group>"; };
 		CFB3E4811844ACD700D375E2 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermParser.h; sourceTree = "<group>"; };
 		CFB3E4821844ACD700D375E2 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermView.h; sourceTree = "<group>"; };
+		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB56283194ECA1B00A3B70E /* FPSLimitedDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPSLimitedDrawer.h; sourceTree = "<group>"; };
 		CFB56284194ECA1B00A3B70E /* FPSLimitedDrawer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FPSLimitedDrawer.mm; sourceTree = "<group>"; };
 		CFB5989B196E38E400D4C108 /* eject_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eject_icon.png; path = Resource/eject_icon.png; sourceTree = "<group>"; };
@@ -2027,15 +2024,6 @@
 			name = BigFileViewMainWindowState;
 			sourceTree = "<group>";
 		};
-		CF3FCE0A190EB93600E55698 /* shared_mutex */ = {
-			isa = PBXGroup;
-			children = (
-				CF3FCE0B190EB96000E55698 /* shared_mutex.cpp */,
-				CF3FCE0C190EB96000E55698 /* shared_mutex */,
-			);
-			name = shared_mutex;
-			sourceTree = "<group>";
-		};
 		CF47A983186C607C00745C4C /* Files Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -2464,6 +2452,14 @@
 			name = TerminalMainWindowState;
 			sourceTree = "<group>";
 		};
+		CFB517F91BDF53C1000AAE89 /* LLVM */ = {
+			isa = PBXGroup;
+			children = (
+				CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */,
+			);
+			name = LLVM;
+			sourceTree = "<group>";
+		};
 		CFB5989A196E38C700D4C108 /* Art */ = {
 			isa = PBXGroup;
 			children = (
@@ -2751,9 +2747,9 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CFB517F91BDF53C1000AAE89 /* LLVM */,
 				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF305DC21946D4F700840F25 /* CategoriesObjC */,
-				CF3FCE0A190EB93600E55698 /* shared_mutex */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
 				CF29313117D9914700648A90 /* rdrand */,
@@ -3308,7 +3304,6 @@
 				CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFA57B261B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF6D9CFD19667BA20077B146 /* path_manip.c in Sources */,
-				CF6D9C6E1966780D0077B146 /* shared_mutex.cpp in Sources */,
 				CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */,
 				CF50B7441A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
@@ -3567,7 +3562,6 @@
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
-				CF3FCE0D190EB96000E55698 /* shared_mutex.cpp in Sources */,
 				CF50B6EA1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
@@ -3616,6 +3610,7 @@
 				CFB3E4831844ACD700D375E2 /* TermShellTask.cpp in Sources */,
 				CF07DE3C175D997A00757DE1 /* MainWindowBigFileViewState.mm in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
+				CFB518001BDF53D0000AAE89 /* shared_mutex.cpp in Sources */,
 				CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */,
 				CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
@@ -3771,7 +3766,6 @@
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */,
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
-				CFF6F2BF1A13567C00011177 /* shared_mutex.cpp in Sources */,
 				CF50B6EC1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,

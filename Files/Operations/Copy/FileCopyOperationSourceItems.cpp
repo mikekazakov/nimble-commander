@@ -28,6 +28,7 @@ int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsi
     it.host_index = _host_index;
     it.mode = _stat.mode;
     it.dev_num = _stat.dev;
+    it.item_size = _stat.size;
     
     m_Items.emplace_back( move(it) );
     
@@ -74,6 +75,11 @@ uint64_t FileCopyOperationJobNew::SourceItems::TotalRegBytes() const noexcept
 mode_t FileCopyOperationJobNew::SourceItems::ItemMode( int _item_no ) const
 {
     return m_Items.at(_item_no).mode;
+}
+
+uint64_t FileCopyOperationJobNew::SourceItems::ItemSize( int _item_no ) const
+{
+    return m_Items.at(_item_no).item_size;
 }
 
 const string& FileCopyOperationJobNew::SourceItems::ItemName( int _item_no ) const

@@ -80,6 +80,7 @@ private:
         string          ComposeRelativePath( int _item_no ) const;
         const string&   ItemName( int _item_no ) const;
         mode_t          ItemMode( int _item_no ) const;
+        uint64_t        ItemSize( int _item_no ) const;
         dev_t           ItemDev( int _item_no ) const; // meaningful only for native vfs (yet?)
         VFSHost        &ItemHost( int _item_no ) const;
         
@@ -95,6 +96,7 @@ private:
         {
             // full path = m_SourceItemsBaseDirectories[base_dir_index] + ... + m_Items[m_Items[parent_index].parent_index].item_name +  m_Items[parent_index].item_name + item_name;
             string      item_name;
+            uint64_t    item_size;
             int         parent_index;
             unsigned    base_dir_index;
             uint16_t    host_index;

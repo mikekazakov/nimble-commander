@@ -48,6 +48,7 @@
     #include <mutex>
     #include <chrono>
     #include <thread>
+    #include <shared_mutex>
     #include <functional>
     #include <future>
     #include <random>

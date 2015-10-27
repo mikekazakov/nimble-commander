@@ -8,12 +8,6 @@
 
 #pragma once
 
-// when llvm/clang will fix c++1y libs, change this:
-#include "3rd_party/shared_mutex/shared_mutex"
-// to that:
-// #include <shared_mutex>
-
-
 class WorkspaceIconsCache
 {
 public:
@@ -41,7 +35,7 @@ private:
         CGSize      image_size; // currently not accouning when deciding if cache is outdated
     };
     map<string, Info>                   m_Items;
-    ting::shared_mutex                  m_ItemsLock;
+    shared_timed_mutex                  m_ItemsLock;
     deque<map<string, Info>::iterator>  m_MRU;
     mutex                               m_MRULock;
 };

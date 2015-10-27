@@ -58,15 +58,17 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
             _to];
 }
 
+static NSString *ExtractCopyToName(const string&_s)
+{
+    char buff[MAXPATHLEN] = {0};
+    bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
+    NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
+    return to;
+}
+
 @implementation FileCopyOperation
 {
-//    unique_ptr<FileCopyOperationJobNativeToNative> m_NativeToNativeJob;
-//    unique_ptr<FileCopyOperationJobFromGeneric> m_GenericToNativeJob;
-//    unique_ptr<FileCopyOperationJobGenericToGeneric> m_GenericToGenericJob;
-    
     FileCopyOperationJobNew m_Job;
-    
-    milliseconds m_LastInfoUpdateTime;
 }
 
 - (id)initWithItems:(vector<VFSFlexibleListingItem>)_files
@@ -76,6 +78,17 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
 {
     self = [super initWithJob:&m_Job];
     if (self) {
+        // Set caption.
+        if ( _files.size() == 1)
+            self.Caption = OpTitleForSingleItem(_options.docopy,
+                                                [NSString stringWithUTF8StdString:_files.front().Filename()],
+                                                ExtractCopyToName(_path));
+        else
+            self.Caption = OpTitleForMultipleItems(_options.docopy,
+                                                   (int)_files.size(),
+                                                   ExtractCopyToName(_path));
+        
+        
         m_Job.Init(move(_files), _path, _host, _options);
         
         __weak auto weak_self = self;

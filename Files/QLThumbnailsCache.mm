@@ -59,7 +59,9 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             
             // make this item MRU
             lock_guard<mutex> mru_lock(m_MRULock);
-            m_MRU.erase(find(begin(m_MRU), end(m_MRU), i));
+            auto mru_it = find(begin(m_MRU), end(m_MRU), i);
+            assert( mru_it != end(m_MRU) ); // <-- is this happens we're deep in shit, since cache is not well-synchronized and we gonna fuck up soon anyway
+            m_MRU.erase(mru_it);
             m_MRU.emplace_back(i);
         }
         else {
@@ -78,33 +80,26 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             info->file_size = st.st_size;
             info->mtime = st.st_mtime;
             info->image_size = _size;
+            info->image = nil;
             info->is_in_work.test_and_set();
+            auto clear_lock = at_scope_end([&]{ info->is_in_work.clear(); });
             
-            m_ItemsLock.lock();
-            auto emp = m_Items.emplace( _filename, info );
-            if( emp.second ) {
-                auto it = emp.first;
-                
-                m_ItemsLock.unlock();
-                
+            {
                 // put in a cache
-                result = BuildRep(_filename, _size); // img may be nil - it's ok
-                info->image = result;
-                info->is_in_work.clear();
-            
-                lock_guard<mutex> mru_lock(m_MRULock);
+                lock_guard<shared_timed_mutex> items_lock(m_ItemsLock); // make sure no one else access items for writing
+                auto it = m_Items.emplace( _filename, info ).first;
+                lock_guard<mutex> mru_lock(m_MRULock); // make sure no one else access MRU for writing
                 while( m_MRU.size() >= m_CacheSize ) {
                     // wipe out old ones if cache is too fat
-                    m_ItemsLock.lock();
                     m_Items.erase(m_MRU.front());
-                    m_ItemsLock.unlock();
                     m_MRU.pop_front();
                 }
                 m_MRU.emplace_back( it );
             }
-            else {
-                m_ItemsLock.unlock();
-            }
+            
+            // this operation may be long, not blocking anything for it
+            result = BuildRep(_filename, _size); // img may be nil - it's ok
+            info->image = result;
         }
     }
     return result;

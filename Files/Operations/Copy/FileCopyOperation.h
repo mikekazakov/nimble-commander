@@ -6,62 +6,20 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "chained_strings.h"
-#import "VFS.h"
-#include "DialogResults.h"
-#import "Operation.h"
-#import "OperationDialogAlert.h"
-#import "FileAlreadyExistSheetController.h"
-#import "Options.h"
+#include "VFS.h"
+#include "Operation.h"
+#include "Options.h"
 
 @interface FileCopyOperation : Operation
 
-// new and the only copying operation init
 - (id)initWithItems:(vector<VFSFlexibleListingItem>)_files
     destinationPath:(const string&)_path
     destinationHost:(const VFSHostPtr&)_host
             options:(const FileCopyOperationOptions&)_options;
 
 + (instancetype) singleItemRenameOperation:(VFSFlexibleListingItem)_item
-                                   newName:(const string&)_path;
-
-
-// native->native copying
-//- (id)initWithFiles:(vector<string>)_files
-//               root:(const char*)_root
-//               dest:(const char*)_dest
-//            options:(const FileCopyOperationOptions&)_opts;
-//
-//// VFS->native copying
-//- (id)initWithFiles:(vector<string>)_files
-//               root:(const char*)_root
-//            rootvfs:(shared_ptr<VFSHost>)_vfs
-//               dest:(const char*)_dest
-//            options:(const FileCopyOperationOptions&)_opts;
-//
-//// VFS->VFS copying
-//- (id)initWithFiles:(vector<string>)_files
-//               root:(const char*)_root
-//             srcvfs:(shared_ptr<VFSHost>)_vfs
-//               dest:(const char*)_dest
-//             dstvfs:(shared_ptr<VFSHost>)_dst_vfs
-//            options:(const FileCopyOperationOptions&)_opts;
-
+                                   newName:(const string&)_filename;
 
 - (void)Update;
-
-- (OperationDialogAlert *)OnCantCreateDir:(NSError*)_error ForDir:(const char *)_path;
-- (OperationDialogAlert *)OnCopyCantAccessSrcFile:(NSError*)_error ForFile:(const char *)_path;
-- (OperationDialogAlert *)OnCopyCantOpenDestFile:(NSError*)_error ForFile:(const char *)_path;
-- (OperationDialogAlert *)OnCopyReadError:(NSError*)_error ForFile:(const char *)_path;
-- (OperationDialogAlert *)OnCopyWriteError:(NSError*)_error ForFile:(const char *)_path;
-- (FileAlreadyExistSheetController *)OnFileExist: (const char*)_path
-                                         newsize: (unsigned long)_newsize
-                                         newtime: (time_t) _newtime
-                                         exisize: (unsigned long)_exisize
-                                         exitime: (time_t) _exitime
-                                        remember: (bool*)  _remb;
-- (OperationDialogAlert *)OnRenameDestinationExists:(const char *)_dest
-                                             Source:(const char *)_src;
 
 @end

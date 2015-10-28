@@ -121,6 +121,26 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
         cerr << "FileCopyOperationJobNew::Init(..) was called with an empty entries list!" << endl;
 }
 
+bool FileCopyOperationJobNew::IsSingleItemProcessing() const noexcept
+{
+    return m_IsSingleItemProcessing;
+}
+
+void FileCopyOperationJobNew::ToggleSkipAll()
+{
+    m_SkipAll = true;
+}
+
+void FileCopyOperationJobNew::ToggleOverwriteAll()
+{
+    m_OverwriteAll = true;
+}
+
+void FileCopyOperationJobNew::ToggleAppendAll()
+{
+    m_AppendAll = true;
+}
+
 void FileCopyOperationJobNew::Do()
 {
     m_IsSingleItemProcessing = m_VFSListingItems.size() == 1;
@@ -298,29 +318,32 @@ void FileCopyOperationJobNew::ProcessItems()
             
             
         }
+
+        // check current item result
+        if( step_result == StepResult::Stop || CheckPauseOrStop() )
+            return;
         
-        
-        /// do something about step_result here
-        if( step_result != StepResult::Ok )
-            cout << source_path << " fucked up" << endl;
-        
-        if(CheckPauseOrStop()) return;
+        if( step_result == StepResult::SkipAll )
+            ToggleSkipAll();
     }
-  
+
+    m_Stats.SetCurrentItem("");
+    
+    bool all_matched = true;
     for( auto &item: m_Checksums ) {
         bool matched = false;
         auto step_result = VerifyCopiedFile(item, matched);
-        cout << item.destination_path << " | " << (matched ? "checksum match" : "checksum mismatch") << endl;
+        if( step_result != StepResult::Ok || matched != true ) {
+            m_OnFileVerificationFailed( item.destination_path );
+            all_matched = false;
+        }
     }
     
-    m_Stats.SetCurrentItem("");
-    
-    // TODO: use checksum results somehow
-
     if( CheckPauseOrStop() ) return;
     
     // be sure to all it only if ALL previous steps wre OK.
-    CleanSourceItems();
+    if( all_matched )
+        CleanSourceItems();
 }
 
 string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_index ) const
@@ -421,8 +444,8 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::BuildDestinationDir
         int ret = 0;
         while( (ret = m_DestinationHost->CreateDirectory(path.c_str(), new_dir_mode, nullptr)) < 0 ) {
             switch( m_OnCantCreateDestinationRootDir( ret, path ) ) {
-                case OperationDialogResult::Stop:   return StepResult::Stop;
-                default:                            continue;
+                case FileCopyOperationDR::Retry:    continue;
+                default:                            return StepResult::Stop;
             }
         }
     }
@@ -486,9 +509,9 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
             while( (ret = host.Stat(path.c_str(), st, stat_flags, nullptr)) < 0 ) {
                 if( m_SkipAll ) return StepResult::Skipped;
                 switch( m_OnCantAccessSourceItem(ret, path) ) {
-                    case OperationDialogResult::Skip:       return StepResult::Skipped;
-                    case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-                    case OperationDialogResult::Stop:       return StepResult::Stop;
+                    case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                    case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+                    case FileCopyOperationDR::Stop:       return StepResult::Stop;
                 }
             }
             
@@ -514,9 +537,9 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
                     while( (ret = host.IterateDirectoryListing(path.c_str(), [&](auto &_) { return dir_ents.emplace_back(_.name), true; })) < 0 ) {
                         if( m_SkipAll ) return StepResult::Skipped;
                         switch( m_OnCantAccessSourceItem(ret, path) ) {
-                            case OperationDialogResult::Skip:       return StepResult::Skipped;
-                            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-                            case OperationDialogResult::Stop:       return StepResult::Stop;
+                            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+                            case FileCopyOperationDR::Stop:       return StepResult::Stop;
                         }
                         dir_ents.clear();
                     }
@@ -564,9 +587,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         // failed to open source file
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
 
@@ -597,9 +620,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         // failed to stat source
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
   
@@ -659,7 +682,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
         else switch( m_OnFileAlreadyExist( src_stat_buffer, dst_stat_buffer, _dst_path) ) {
                 case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
                 case FileCopyOperationDR::Append:       setup_append(); break;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
                 default:                                return StepResult::Stop;
         }
     }
@@ -689,10 +712,10 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
             return StepResult::Skipped;
         
         switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
-            case OperationDialogResult::Retry:      continue;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            default:                                return StepResult::Stop;
+            case FileCopyOperationDR::Retry:      continue;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            default:                              return StepResult::Stop;
         }
     }
     
@@ -742,9 +765,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                 return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -757,9 +780,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                 return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -801,9 +824,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                         return;
                     }
                     switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                        case OperationDialogResult::Retry:      continue;
-                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
-                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        case FileCopyOperationDR::Retry:      continue;
+                        case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
+                        case FileCopyOperationDR::SkipAll:    write_return = StepResult::SkipAll; return;
                         default:                                write_return = StepResult::Stop; return;
                     }
                 }
@@ -833,9 +856,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
                     break;
                 }
                 switch( m_OnSourceFileReadError(VFSError::FromErrno(), _src_path) ) {
-                    case OperationDialogResult::Retry:      continue;
-                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
-                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    case FileCopyOperationDR::Retry:      continue;
+                    case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
+                    case FileCopyOperationDR::SkipAll:    read_return = StepResult::SkipAll; break;
                     default:                                read_return = StepResult::Stop; break;
                 }
                 break;
@@ -914,9 +937,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
         // failed to stat source
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
 
@@ -926,9 +949,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
         // failed to create file object
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
 
@@ -937,9 +960,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
         // failed to open source file
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
     
@@ -994,7 +1017,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
         else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) {
             case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
             case FileCopyOperationDR::Append:       setup_append(); break;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
             default:                                return StepResult::Stop;
         }
     }
@@ -1024,9 +1047,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
             return StepResult::Skipped;
         
         switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
-            case OperationDialogResult::Retry:      continue;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Retry:      continue;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
             default:                                return StepResult::Stop;
         }
     }
@@ -1077,9 +1100,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
                 return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -1092,9 +1115,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
                 return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -1134,9 +1157,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
                         return;
                     }
                     switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
-                        case OperationDialogResult::Retry:      continue;
-                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
-                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        case FileCopyOperationDR::Retry:      continue;
+                        case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
+                        case FileCopyOperationDR::SkipAll:    write_return = StepResult::SkipAll; return;
                         default:                                write_return = StepResult::Stop; return;
                     }
                 }
@@ -1166,9 +1189,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
                     break;
                 }
                 switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
-                    case OperationDialogResult::Retry:      continue;
-                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
-                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    case FileCopyOperationDR::Retry:      continue;
+                    case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
+                    case FileCopyOperationDR::SkipAll:    read_return = StepResult::SkipAll; break;
                     default:                                read_return = StepResult::Stop; break;
                 }
                 break;
@@ -1240,9 +1263,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         // failed to stat source
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
     
@@ -1252,9 +1275,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         // failed to create file object
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
     
@@ -1263,9 +1286,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         // failed to open source file
         if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
-            case OperationDialogResult::Stop:       return StepResult::Stop;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Stop:       return StepResult::Stop;
         }
     }
     
@@ -1317,7 +1340,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
         else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) {
             case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
             case FileCopyOperationDR::Append:       setup_append(); break;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
             default:                                return StepResult::Stop;
         }
     }
@@ -1336,9 +1359,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
             return StepResult::Skipped;
         
         switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
-            case OperationDialogResult::Retry:      continue;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Retry:      continue;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
             default:                                return StepResult::Stop;
         }
         
@@ -1359,9 +1382,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
             return StepResult::Skipped;
         
         switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
-            case OperationDialogResult::Retry:      continue;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Retry:      continue;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
             default:                                return StepResult::Stop;
         }
     }
@@ -1425,9 +1448,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
                         return;
                     }
                     switch( m_OnDestinationFileWriteError((int)n_written, _dst_path) ) {
-                        case OperationDialogResult::Retry:      continue;
-                        case OperationDialogResult::Skip:       write_return = StepResult::Skipped; return;
-                        case OperationDialogResult::SkipAll:    write_return = StepResult::SkipAll; return;
+                        case FileCopyOperationDR::Retry:      continue;
+                        case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
+                        case FileCopyOperationDR::SkipAll:    write_return = StepResult::SkipAll; return;
                         default:                                write_return = StepResult::Stop; return;
                     }
                 }
@@ -1457,9 +1480,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
                     break;
                 }
                 switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
-                    case OperationDialogResult::Retry:      continue;
-                    case OperationDialogResult::Skip:       read_return = StepResult::Skipped; break;
-                    case OperationDialogResult::SkipAll:    read_return = StepResult::SkipAll; break;
+                    case FileCopyOperationDR::Retry:      continue;
+                    case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
+                    case FileCopyOperationDR::SkipAll:    read_return = StepResult::SkipAll; break;
                     default:                                read_return = StepResult::Stop; break;
                 }
                 break;
@@ -1567,9 +1590,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectory
             if(m_SkipAll)
                 return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -1635,9 +1658,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToN
             if(m_SkipAll)
                 return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -1690,9 +1713,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToV
         if(m_SkipAll)
             return StepResult::Skipped;
         switch( m_OnCantAccessSourceItem(ret, _dst_path) ) {
-            case OperationDialogResult::Retry:      continue;
-            case OperationDialogResult::Skip:       return StepResult::Skipped;
-            case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+            case FileCopyOperationDR::Retry:      continue;
+            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
             default:                                return StepResult::Stop;
         }
         
@@ -1708,9 +1731,9 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToV
             if(m_SkipAll)
                 return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(ret, _dst_path) ) {
-                case OperationDialogResult::Retry:      continue;
-                case OperationDialogResult::Skip:       return StepResult::Skipped;
-                case OperationDialogResult::SkipAll:    return StepResult::SkipAll;
+                case FileCopyOperationDR::Retry:      continue;
+                case FileCopyOperationDR::Skip:       return StepResult::Skipped;
+                case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
                 default:                                return StepResult::Stop;
             }
         }
@@ -1907,8 +1930,6 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::VerifyCopiedFile(co
     auto md5 = hash.Final();
     bool checksum_match = equal(begin(md5), end(md5), begin(_exp.md5.buf));
     _matched = checksum_match;
-    
-    // show a dialog?
     
     return StepResult::Ok;
 }

@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileCopyOperation.h"
-//#import "FileCopyOperationJobNativeToNative.h"
-//#import "FileCopyOperationJobFromGeneric.h"
-//#import "FileCopyOperationJobGenericToGeneric.h"
-#import "FileCopyOperationJobNew.h"
-#import "Common.h"
-#import "ByteCountFormatter.h"
+#include "FileCopyOperation.h"
+#include "FileCopyOperationJobNew.h"
+#include "Common.h"
+#include "ByteCountFormatter.h"
+#include "OperationDialogAlert.h"
+#include "FileAlreadyExistSheetController.h"
+#include "DialogResults.h"
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {
@@ -102,17 +102,19 @@ static NSString *ExtractCopyToName(const string&_s)
                                           true,
                                           500ms
                                           );
+        
+        [self setupDialogs];
     }
     return self;
 }
 
 + (instancetype) singleItemRenameOperation:(VFSFlexibleListingItem)_item
-                                   newName:(const string&)_path
+                                   newName:(const string&)_filename
 {
     FileCopyOperationOptions opts;
     opts.docopy = false;
     return [[FileCopyOperation alloc] initWithItems:{_item}
-                                    destinationPath:_item.Directory() + _path
+                                    destinationPath:_item.Directory() + _filename
                                     destinationHost:_item.Host()
                                             options:opts];
 }
@@ -419,11 +421,58 @@ static NSString *ExtractCopyToName(const string&_s)
 //    }
 //}
 
-- (bool) IsSingleFileCopy
+- (bool) isSingleFileCopy
 {
     return m_Job.IsSingleItemProcessing();
-//    if(!m_NativeToNativeJob) return false;
-//    return m_NativeToNativeJob->IsSingleFileCopy();
+}
+
+- (void) setupDialogs
+{
+    __weak auto weak_self = self;
+    m_Job.m_OnFileAlreadyExist = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
+        auto self = weak_self; // what a wonderful dirty code!
+        bool remember_choice = false;
+        auto result = [[self OnFileExist:_path.c_str()
+                                newsize:_src_stat.st_size
+                                newtime:_src_stat.st_mtime
+                                exisize:_dst_stat.st_size
+                                exitime:_dst_stat.st_mtime
+                                remember:&remember_choice]
+                       WaitForResult];
+        if( remember_choice ) switch (result) {
+                case FileCopyOperationDR::Skip:         m_Job.ToggleSkipAll();      break;
+                case FileCopyOperationDR::Overwrite:    m_Job.ToggleOverwriteAll(); break;
+                case FileCopyOperationDR::Append:       m_Job.ToggleAppendAll();    break;
+            }
+        return result;
+    };
+    m_Job.m_OnRenameDestinationAlreadyExists = [weak_self](string _source, string _destination){
+        auto self = weak_self;
+        return [[self OnRenameDestinationExists:_destination.c_str() Source:_source.c_str()] WaitForResult];
+    };
+    m_Job.m_OnCantOpenDestinationFile = [weak_self](int _vfs_error, string _path){
+        auto self = weak_self;
+        return [[self OnCopyCantOpenDestFile:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+    };
+    m_Job.m_OnSourceFileReadError = [weak_self](int _vfs_error, string _path){
+        auto self = weak_self;
+        return [[self OnCopyReadError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+    };
+    m_Job.m_OnDestinationFileWriteError = [weak_self](int _vfs_error, string _path){
+        auto self = weak_self;
+        return [[self OnCopyWriteError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+    };
+    m_Job.m_OnCantCreateDestinationDir = [weak_self](int _vfs_error, string _path){
+        auto self = weak_self;
+        return [[self OnCantCreateDir:VFSError::ToNSError(_vfs_error) ForDir:_path.c_str()] WaitForResult];
+    };
+    m_Job.m_OnFileVerificationFailed = [weak_self](string _path){
+        auto self = weak_self;
+        return [[self OnFileVerificationFailed:_path.c_str()] WaitForResult];
+    };
+    
+    m_Job.m_OnCantCreateDestinationRootDir = m_Job.m_OnCantCreateDestinationDir; // it's better to show another dialog in this case... later
+    m_Job.m_OnDestinationFileReadError = m_Job.m_OnSourceFileReadError; // -""-
 }
 
 - (NSString*) buildInformativeStringForError:(NSError*)_error onPath:(const char *)_path
@@ -449,7 +498,7 @@ static NSString *ExtractCopyToName(const string&_s)
 - (OperationDialogAlert *)OnCopyCantAccessSrcFile:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
+                                   initRetrySkipSkipAllAbortHide:!self.isSingleFileCopy];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a file", @"Operations", "Title on error when source file is inaccessible")];
@@ -462,7 +511,7 @@ static NSString *ExtractCopyToName(const string&_s)
 - (OperationDialogAlert *)OnCopyCantOpenDestFile:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
+                                   initRetrySkipSkipAllAbortHide:!self.isSingleFileCopy];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to open destination file", @"Operations", "Title on error when destination file can't be opened")];
@@ -476,7 +525,7 @@ static NSString *ExtractCopyToName(const string&_s)
 - (OperationDialogAlert *)OnCopyReadError:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
+                                   initRetrySkipSkipAllAbortHide:!self.isSingleFileCopy];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to read a file", @"Operations", "Error when reading failed")];
@@ -490,11 +539,27 @@ static NSString *ExtractCopyToName(const string&_s)
 - (OperationDialogAlert *)OnCopyWriteError:(NSError*)_error ForFile:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:![self IsSingleFileCopy]];
+                                   initRetrySkipSkipAllAbortHide:!self.isSingleFileCopy];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to write a file", @"Operations", "Error when writing failed")];
     [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
+    
+    [self EnqueueDialog:alert];
+    
+    return alert;
+}
+
+- (OperationDialogAlert *)OnFileVerificationFailed:(const char *)_path
+{
+    OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
+    [alert AddButtonWithTitle:@"OK" andResult:FileCopyOperationDR::Continue];
+    [alert SetAlertStyle:NSCriticalAlertStyle];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Chechsum verification failed!", @"Operations", "Error when verification failed")];
+    [alert SetInformativeText:
+     [NSString stringWithFormat:NSLocalizedStringFromTable(@"MD5 checksum mismatch found for path:\n%@", @"Operations", "Informative text for checksum verification failed"),
+                  [NSString stringWithUTF8String:_path]]
+     ];
     
     [self EnqueueDialog:alert];
     
@@ -515,7 +580,7 @@ static NSString *ExtractCopyToName(const string&_s)
                                               exisize:_exisize
                                               exitime:_exitime
                                               remember:_remb
-                                              single:[self IsSingleFileCopy]];
+                                              single:self.isSingleFileCopy];
 
     [self EnqueueDialog:sheet];
     return sheet;
@@ -528,11 +593,11 @@ static NSString *ExtractCopyToName(const string&_s)
     // why we use here a different dialog, not one that used on copy operation?
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Rewrite", @"Operations", "User action button title to rewrite a file")
-                    andResult:OperationDialogResult::Continue];
+                    andResult:FileCopyOperationDR::Overwrite];
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Abort", @"Operations", "User action button title to abort an operation")
-                    andResult:OperationDialogResult::Stop];
+                    andResult:FileCopyOperationDR::Stop];
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Hide", @"Operations", "User action button title to hide an error sheet")
-                    andResult:OperationDialogResult::None];
+                    andResult:FileCopyOperationDR::None];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Destination already exists. Do you want to rewrite it?",

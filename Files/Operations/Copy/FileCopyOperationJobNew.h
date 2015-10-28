@@ -14,11 +14,13 @@
 #include "Options.h"
 #include "OperationJob.h"
 #include "OperationDialogProtocol.h"
-
+#include "DialogResults.h"
 
 class FileCopyOperationJobNew : public OperationJob
 {
 public:
+    
+    // TODO: current job's state: Preparing, Copying, Verification, Cleaning Up
     
     void Init(vector<VFSFlexibleListingItem> _source_items,
               const string &_dest_path,
@@ -26,11 +28,10 @@ public:
               FileCopyOperationOptions _opts
               );
     
-    bool IsSingleItemProcessing() const noexcept { return m_IsSingleItemProcessing; }
-    
-    void ToggleSkipAll() { m_SkipAll = true; }
-    void ToggleOverwriteAll() { m_OverwriteAll = true; }
-    void ToggleAppendAll() { m_AppendAll = true; }
+    bool IsSingleItemProcessing() const noexcept;
+    void ToggleSkipAll();
+    void ToggleOverwriteAll();
+    void ToggleAppendAll();
     
 private:
     virtual void Do() override;
@@ -184,44 +185,43 @@ private:
     
     FileCopyOperationOptions                    m_Options;
     
+public: // yep, ITS VERY BAD to open access to object members, but adding trivial setters makes no sense here
     function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
         = [](int, string){ return OperationDialogResult::Stop; };
 
+    // expect: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::Append
     function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnFileAlreadyExist
-        = [](const struct stat&, const struct stat&, string) { return OperationDialogResult::Stop; };
-
+        = [](const struct stat&, const struct stat&, string) { return FileCopyOperationDR::Stop; };
+    
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile
-        = [](int, string){ return OperationDialogResult::Stop; };
-
+        = [](int, string){ return FileCopyOperationDR::Stop; };
+    
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
-        = [](int, string){ return OperationDialogResult::Stop; };
+        = [](int, string){ return FileCopyOperationDR::Stop; };
 
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnDestinationFileReadError
-        = [](int, string){ return OperationDialogResult::Stop; };
+        = [](int, string){ return FileCopyOperationDR::Stop; };
     
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError
-        = [](int, string){ return OperationDialogResult::Stop; };
+        = [](int, string){ return FileCopyOperationDR::Stop; };
 
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationRootDir
-        = [](int, string){ return OperationDialogResult::Stop; };
-    
+        = [](int, string){ return FileCopyOperationDR::Stop; };
+
+    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationDir
-        = [](int, string){ return OperationDialogResult::Stop; };
+        = [](int, string){ return FileCopyOperationDR::Stop; };
     
+    // expects: FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite
     function<int(string _source, string _destination)> m_OnRenameDestinationAlreadyExists
-        = [](string, string){ return OperationDialogResult::Stop; };
-    
-    
-//            int result = [[m_Operation OnCopyWriteError:ErrnoToNSError() ForFile:_dest] WaitForResult];
-    
-//        int result = [[m_Operation OnCopyCantOpenDestFile:ErrnoToNSError() ForFile:_dest] WaitForResult];
-    
-    //        result = [[m_Operation OnFileExist:_dest
-    //                                   newsize:src_stat_buffer.st_size
-    //                                   newtime:src_stat_buffer.st_mtimespec.tv_sec
-    //                                   exisize:dst_stat_buffer.st_size
-    //                                   exitime:dst_stat_buffer.st_mtimespec.tv_sec
-    //                                  remember:&remember_choice] WaitForResult];
-    
-//        int result = [[m_Operation OnCopyCantAccessSrcFile:ErrnoToNSError() ForFile:_src] WaitForResult];
+        = [](string, string){ return FileCopyOperationDR::Stop; };
+
+    // expects: FileCopyOperationDR::Continue
+    function<int(string _path)> m_OnFileVerificationFailed
+        = [](string){ return FileCopyOperationDR::Continue; };
 };

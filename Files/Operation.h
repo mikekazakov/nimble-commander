@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "OperationDialogProtocol.h"
+#pragma once
+#include "OperationDialogProtocol.h"
 
 class OperationStats;
 class OperationJob;

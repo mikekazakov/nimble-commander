@@ -10,6 +10,7 @@
 #import "FileCopyOperation.h"
 #import "Operation.h"
 #import "Common.h"
+#include "DialogResults.h"
 
 @implementation FileAlreadyExistSheetController
 {

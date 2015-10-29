@@ -505,7 +505,7 @@ void PanelData::UpdateStatictics()
     }
 }
 
-int PanelData::RawIndexForSortIndex(int _index) const
+int PanelData::RawIndexForSortIndex(int _index) const noexcept
 {
     if(_index < 0 || _index >= m_EntriesByCustomSort.size())
         return -1;

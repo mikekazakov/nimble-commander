@@ -283,7 +283,7 @@ public:
     /**
      * Converts sorted index into raw index. Returns -1 on any errors.
      */
-    int RawIndexForSortIndex(int _index) const;
+    int RawIndexForSortIndex(int _index) const noexcept;
     
     /**
      * Performs a binary case-sensivitive search.

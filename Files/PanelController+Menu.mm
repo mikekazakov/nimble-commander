@@ -133,6 +133,7 @@ static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<stri
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.batch_rename")            return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.open_xattr")              return m_View.item;
     
     return true; // will disable some items in the future
 }
@@ -1030,6 +1031,25 @@ static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<stri
             [self.state AddOperation:op];
         }
     }];    
+}
+
+- (IBAction) OnOpenExtendedAttributes:(id)sender
+{
+    if( !self.view.item )
+        return;
+    
+    try {
+        auto host = make_shared<VFSXAttrHost>(self.view.item.Path(), self.view.item.Host() );
+        auto context = make_shared<PanelControllerGoToDirContext>();
+        context->VFS = host;
+        context->RequestedDirectory = "/";
+        [self GoToDirWithContext:context];
+    } catch (const VFSErrorException &e) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Failed to open extended attributes", "Alert message text when failed to open xattr vfs");
+        alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+        [alert runModal];
+    }
 }
 
 @end

@@ -106,7 +106,10 @@ static NSString *ExtractCopyToName(const string&_s)
                                           nullptr,
                                           [weak_self]{ if(auto me = weak_self) [me updateOnItemChanged]; }
                                           );
-        
+        m_Job.RegisterObserver(FileCopyOperationJobNew::Notify::Stage,
+                               nullptr,
+                               [weak_self]{ if(auto me = weak_self) [me updateOnStageChanged]; }
+                               );
         
         [self setupDialogs];
     }
@@ -211,6 +214,14 @@ static NSString *ExtractCopyToName(const string&_s)
 //    }
 //    return self;
 //}
+
+- (void)updateOnStageChanged
+{
+    if( m_Job.Stage() == FileCopyOperationJobNew::JobStage::Cleaning )
+        self.ShortInfo = NSLocalizedStringFromTable(@"Cleaning up",
+                                                    @"Operations",
+                                                    "ShortInfo text for file copy operation when it's cleaning source files");
+}
 
 - (void)updateOnItemChanged
 {

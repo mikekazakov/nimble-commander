@@ -16,8 +16,6 @@ struct FileCopyOperationOptions;
 @property (strong) IBOutlet NSButton *CopyButton;
 @property (strong) IBOutlet NSTextField *TextField;
 @property (strong) IBOutlet NSTextField *DescriptionText;
-@property (strong) IBOutlet NSButton *DisclosureTriangle;
-@property (strong) IBOutlet NSTextField *DisclosureLabel;
 @property (strong) IBOutlet NSButton *PreserveSymlinksCheckbox;
 @property (strong) IBOutlet NSButton *CopyXattrsCheckbox;
 @property (strong) IBOutlet NSButton *CopyFileTimesCheckbox;
@@ -25,7 +23,6 @@ struct FileCopyOperationOptions;
 @property (strong) IBOutlet NSButton *CopyUnixOwnersCheckbox;
 @property (strong) IBOutlet NSButton *CopyButtonStringStub;
 @property (strong) IBOutlet NSButton *RenameButtonStringStub;
-@property (strong) IBOutlet NSBox *DisclosureGroup;
 @property bool isValidInput;
 @property (strong) IBOutlet DisclosureViewController *DisclosedViewController;
 @property (strong) IBOutlet NSStackView *StackView;
@@ -44,7 +41,6 @@ struct FileCopyOperationOptions;
                 destinationVFS:(const VFSHostPtr&)_destination_host
               operationOptions:(const FileCopyOperationOptions&)_options;
 
-- (IBAction)OnDisclosureTriangle:(id)sender;
 - (IBAction)OnCopy:(id)sender;
 - (IBAction)OnCancel:(id)sender;
 

@@ -165,55 +165,12 @@ static string MakeCanonicPath(string _input)
         // do '..'/'.' stuff
         input = MakeCanonicPath(input);
         
-//        cout << input << endl;
-
         m_ResultDestination = input;
         m_ResultHost = m_SourceHost;   
     }
     
     return true;
 }
-
-//- (IBAction)OnDisclosureTriangle:(id)sender
-//{
-//    // TODO: remove this shit and make it again with auto-layout
-//    NSSize new_size;
-//    if(self.DisclosureTriangle.state == NSOnState) {
-//        new_size = NSMakeSize(370, 270);
-//        self.DisclosureLabel.stringValue = NSLocalizedString(@"Hide advanced settings", "");
-//    }
-//    else {
-//        new_size = NSMakeSize(370, 140);
-//        self.DisclosureLabel.stringValue = NSLocalizedString(@"Show advanced settings", "");
-//        self.DisclosureGroup.hidden = true;
-//    }
-//    
-//    NSWindow *window = [self window];
-//    NSRect frame = [window contentRectForFrameRect:[window frame]];
-//    NSRect newFrame = [window frameRectForContentRect:
-//                       NSMakeRect(frame.origin.x, NSMaxY(frame) - new_size.height,
-//                                  frame.size.width, new_size.height)];
-//
-//    if(sender != self) {
-//        double hDifference = fabs(new_size.height - ((NSView*)[window contentView]).bounds.size.height);
-//        double duration = MAX(0.0005 * hDifference, 0.10); // we always want a slight animation
-//        nanoseconds nduration(uint64_t(duration * NSEC_PER_SEC));
-//        
-//        [NSAnimationContext beginGrouping];
-//        [[NSAnimationContext currentContext] setDuration:duration];
-//        [[window animator] setFrame:newFrame display:YES];
-//        [NSAnimationContext endGrouping];
-//        if(self.DisclosureTriangle.state == NSOnState)
-//            dispatch_to_main_queue_after(nduration, [=]{
-//                               [self.DisclosureGroup setHidden:false];
-//                           });
-//    }
-//    else {
-//        [window setFrame:newFrame display:YES];
-//    }
-//    [window setMinSize:NSMakeSize(370, newFrame.size.height-10)];
-//    [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
-//}
 
 - (void)fillOptions
 {

@@ -93,6 +93,17 @@ static void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_time
     AdjustFileTimesForNativeFD(_target_fd, st);
 }
 
+static string FilenameFromPath(string _str)
+{
+    if( _str.empty() )
+        return _str;
+    auto sl = _str.find_last_of('/');
+    if( sl == _str.npos )
+        return _str;
+    _str.erase(begin(_str), begin(_str)+sl+1);
+    return _str;
+}
+
 FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
     original_item( _source_ind ),
     destination_path( move(_destination) )
@@ -108,6 +119,7 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
                                    FileCopyOperationOptions _opts)
 {
     m_VFSListingItems = move(_source_items);
+    m_IsSingleItemProcessing = m_VFSListingItems.size() == 1;
     m_InitialDestinationPath = _dest_path;
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
         throw invalid_argument("FileCopyOperationJobNew::Init: m_InitialDestinationPath should be an absolute path");
@@ -124,6 +136,11 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
 bool FileCopyOperationJobNew::IsSingleItemProcessing() const noexcept
 {
     return m_IsSingleItemProcessing;
+}
+
+FileCopyOperationJobNew::JobStage FileCopyOperationJobNew::Stage() const noexcept
+{
+    return m_Stage;
 }
 
 void FileCopyOperationJobNew::ToggleSkipAll()
@@ -143,7 +160,8 @@ void FileCopyOperationJobNew::ToggleAppendAll()
 
 void FileCopyOperationJobNew::Do()
 {
-    m_IsSingleItemProcessing = m_VFSListingItems.size() == 1;
+    SetState(JobStage::Preparing);
+
     bool need_to_build = false;
     auto comp_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
     if( need_to_build )
@@ -176,6 +194,7 @@ void FileCopyOperationJobNew::Do()
 
 void FileCopyOperationJobNew::ProcessItems()
 {
+    SetState(JobStage::Process);
     m_Stats.StartTimeTracking();
     m_Stats.SetMaxValue( m_SourceItems.TotalRegBytes() );
     
@@ -330,20 +349,26 @@ void FileCopyOperationJobNew::ProcessItems()
     m_Stats.SetCurrentItem("");
     
     bool all_matched = true;
-    for( auto &item: m_Checksums ) {
-        bool matched = false;
-        auto step_result = VerifyCopiedFile(item, matched);
-        if( step_result != StepResult::Ok || matched != true ) {
-            m_OnFileVerificationFailed( item.destination_path );
-            all_matched = false;
+    if( !m_Checksums.empty() ) {
+        SetState(JobStage::Verify);
+        for( auto &item: m_Checksums ) {
+            bool matched = false;
+            m_Stats.SetCurrentItem( FilenameFromPath(item.destination_path) );
+            auto step_result = VerifyCopiedFile(item, matched);
+            if( step_result != StepResult::Ok || matched != true ) {
+                m_OnFileVerificationFailed( item.destination_path );
+                all_matched = false;
+            }
         }
     }
     
     if( CheckPauseOrStop() ) return;
     
     // be sure to all it only if ALL previous steps wre OK.
-    if( all_matched )
+    if( all_matched ) {
+        SetState(JobStage::Cleaning);
         CleanSourceItems();
+    }
 }
 
 string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_index ) const
@@ -2003,4 +2028,11 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSSymlinkToNat
     }
     
     return StepResult::Ok;
+}
+
+void FileCopyOperationJobNew::SetState(FileCopyOperationJobNew::JobStage _state)
+{
+    NotifyWillChange(Notify::Stage);
+    m_Stage = _state;
+    NotifyDidChange(Notify::Stage);
 }

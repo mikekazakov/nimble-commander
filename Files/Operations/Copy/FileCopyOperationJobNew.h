@@ -20,7 +20,19 @@ class FileCopyOperationJobNew : public OperationJob
 {
 public:
     
-    // TODO: current job's state: Preparing, Copying, Verification, Cleaning Up
+    enum class Notify
+    {
+        Stage
+    };
+    
+    enum class JobStage
+    {
+        None,
+        Preparing,
+        Process,
+        Verify,
+        Cleaning
+    };
     
     void Init(vector<VFSFlexibleListingItem> _source_items,
               const string &_dest_path,
@@ -28,6 +40,7 @@ public:
               FileCopyOperationOptions _opts
               );
     
+    JobStage Stage() const noexcept;
     bool IsSingleItemProcessing() const noexcept;
     void ToggleSkipAll();
     void ToggleOverwriteAll();
@@ -155,6 +168,7 @@ private:
                              const string& _dst_path) const;
     StepResult VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const;
     void        CleanSourceItems() const;
+    void        SetState(JobStage _state);
     
     
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
@@ -182,6 +196,7 @@ private:
     bool                                        m_SkipAll       = false;
     bool                                        m_OverwriteAll  = false;
     bool                                        m_AppendAll     = false;
+    JobStage                                    m_Stage         = JobStage::None;
     
     FileCopyOperationOptions                    m_Options;
     

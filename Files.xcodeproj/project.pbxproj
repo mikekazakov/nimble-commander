@@ -659,6 +659,10 @@
 		CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; settings = {ASSET_TAGS = (); }; };
+		CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; settings = {ASSET_TAGS = (); }; };
+		CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; settings = {ASSET_TAGS = (); }; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1569,6 +1573,9 @@
 		CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelsTabbedHolder.mm; sourceTree = "<group>"; };
 		CFE3E8501A011218009ADE5E /* MainWindowFilePanelState+TabsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+TabsSupport.h"; sourceTree = "<group>"; };
 		CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+TabsSupport.mm"; sourceTree = "<group>"; };
+		CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = 3rd_party/DisclosureViewController/DisclosureViewController.h; sourceTree = "<group>"; };
+		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
+		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetDisclosureViewController.xib; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileStorage.cpp; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -2332,6 +2339,7 @@
 		CFAC50CD1714016800A3E5C5 /* FileCopyOperation */ = {
 			isa = PBXGroup;
 			children = (
+				CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */,
 				CF9069981BB542A5000C3CBB /* DialogResults.h */,
 				CF9069991BB55A22000C3CBB /* Options.h */,
 				CF90698D1BB54077000C3CBB /* MassCopySheetController.h */,
@@ -2747,6 +2755,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */,
 				CFB517F91BDF53C1000AAE89 /* LLVM */,
 				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF305DC21946D4F700840F25 /* CategoriesObjC */,
@@ -2763,6 +2772,15 @@
 			);
 			name = 3rd_party;
 			path = Files;
+			sourceTree = "<group>";
+		};
+		CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */ = {
+			isa = PBXGroup;
+			children = (
+				CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */,
+				CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */,
+			);
+			name = DisclosureViewController;
 			sourceTree = "<group>";
 		};
 		CFF6F3A31A1356F700011177 /* Files Pro */ = {
@@ -3132,6 +3150,7 @@
 				CFB598B1196E38E400D4C108 /* pref_general_icon.png in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFB598B7196E38E400D4C108 /* pref_viewer_icon.png in Resources */,
+				CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CFB598AD196E38E400D4C108 /* pause_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3364,6 +3383,7 @@
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */,
 				CF6D9C1A196678000077B146 /* FileLinkOperationJob.mm in Sources */,
+				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF6D9C1B196678000077B146 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF6D9C1C196678000077B146 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF6D9C1D196678000077B146 /* FileLinkNewHardlinkSheetController.mm in Sources */,
@@ -3646,6 +3666,7 @@
 				CF50B7221A15170600E3D96D /* VFSNetFTPCache.mm in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 				CFABA8461B403AA3008DF6D1 /* TermTask.cpp in Sources */,
+				CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CFB56285194ECA1B00A3B70E /* FPSLimitedDrawer.mm in Sources */,
@@ -3762,6 +3783,7 @@
 				CFF6F2AE1A13567C00011177 /* OperationDialogAlert.mm in Sources */,
 				CFF6F2B01A13567C00011177 /* CreateDirectoryOperation.mm in Sources */,
 				CFF6F2B31A13567C00011177 /* CreateDirectoryOperationJob.mm in Sources */,
+				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
 				CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */,
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */,

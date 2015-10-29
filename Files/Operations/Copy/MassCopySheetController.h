@@ -8,6 +8,7 @@
 
 #import "VFS.h"
 #import "SheetController.h"
+#include "DisclosureViewController.h"
 
 struct FileCopyOperationOptions;
 
@@ -26,6 +27,11 @@ struct FileCopyOperationOptions;
 @property (strong) IBOutlet NSButton *RenameButtonStringStub;
 @property (strong) IBOutlet NSBox *DisclosureGroup;
 @property bool isValidInput;
+@property (strong) IBOutlet DisclosureViewController *DisclosedViewController;
+@property (strong) IBOutlet NSStackView *StackView;
+@property (strong) IBOutlet NSView *PathPart;
+@property (strong) IBOutlet NSView *ButtonsPart;
+@property (strong) IBOutlet NSPopUpButton *VerifySetting;
 
 @property (readonly) string                     resultDestination;
 @property (readonly) VFSHostPtr                 resultHost;

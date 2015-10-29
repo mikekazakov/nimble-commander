@@ -11,7 +11,7 @@
 #include <Habanero/IdleSleepPreventer.h>
 #include "OperationStats.h"
 
-class OperationJob
+class OperationJob : public KeyValueObservation
 {
 public:
     enum class State

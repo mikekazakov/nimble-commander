@@ -77,6 +77,11 @@ static string MakeCanonicPath(string _input)
 {
     [super windowDidLoad];
     [self.window makeFirstResponder:self.TextField];
+    [self.DisclosedViewController toggleDisclosure:self];
+    [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
+    [self.StackView insertView:self.DisclosedViewController.view atIndex:0 inGravity:NSStackViewGravityBottom];
+    [self.StackView insertView:self.ButtonsPart atIndex:1 inGravity:NSStackViewGravityBottom];
+    [self.window.contentView updateConstraintsForSubtreeIfNeeded];
     
     auto initial_path = [NSString stringWithUTF8StdString:m_InitialDestination];
     
@@ -107,8 +112,7 @@ static string MakeCanonicPath(string _input)
                                                 [NSString stringWithUTF8String:m_SourceItems.front().Name()]];
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
-    
-    [self OnDisclosureTriangle:self];
+    [self.VerifySetting selectItemWithTag:(int)m_Options.verification];
 }
 
 - (IBAction)OnCopy:(id)sender
@@ -170,48 +174,46 @@ static string MakeCanonicPath(string _input)
     return true;
 }
 
-- (IBAction)OnDisclosureTriangle:(id)sender
-{
-    // TODO: remove this shit and make it again with auto-layout
-    NSSize new_size;
-    if(self.DisclosureTriangle.state == NSOnState) {
-        new_size = NSMakeSize(370, 270);
-        self.DisclosureLabel.stringValue = NSLocalizedString(@"Hide advanced settings", "");
-    }
-    else {
-        new_size = NSMakeSize(370, 140);
-        self.DisclosureLabel.stringValue = NSLocalizedString(@"Show advanced settings", "");
-        self.DisclosureGroup.hidden = true;
-    }
-    
-    NSWindow *window = [self window];
-    NSRect frame = [window contentRectForFrameRect:[window frame]];
-    NSRect newFrame = [window frameRectForContentRect:
-                       NSMakeRect(frame.origin.x, NSMaxY(frame) - new_size.height,
-                                  frame.size.width, new_size.height)];
-
-    if(sender != self)
-    {
-        double hDifference = fabs(new_size.height - ((NSView*)[window contentView]).bounds.size.height);
-        double duration = MAX(0.0005 * hDifference, 0.10); // we always want a slight animation
-        nanoseconds nduration(uint64_t(duration * NSEC_PER_SEC));
-        
-        [NSAnimationContext beginGrouping];
-        [[NSAnimationContext currentContext] setDuration:duration];
-        [[window animator] setFrame:newFrame display:YES];
-        [NSAnimationContext endGrouping];
-        if([self.DisclosureTriangle state] == NSOnState)
-            dispatch_to_main_queue_after(nduration, [=]{
-                               [self.DisclosureGroup setHidden:false];
-                           });
-    }
-    else
-    {
-        [window setFrame:newFrame display:YES];
-    }
-    [window setMinSize:NSMakeSize(370, newFrame.size.height-10)];
-    [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
-}
+//- (IBAction)OnDisclosureTriangle:(id)sender
+//{
+//    // TODO: remove this shit and make it again with auto-layout
+//    NSSize new_size;
+//    if(self.DisclosureTriangle.state == NSOnState) {
+//        new_size = NSMakeSize(370, 270);
+//        self.DisclosureLabel.stringValue = NSLocalizedString(@"Hide advanced settings", "");
+//    }
+//    else {
+//        new_size = NSMakeSize(370, 140);
+//        self.DisclosureLabel.stringValue = NSLocalizedString(@"Show advanced settings", "");
+//        self.DisclosureGroup.hidden = true;
+//    }
+//    
+//    NSWindow *window = [self window];
+//    NSRect frame = [window contentRectForFrameRect:[window frame]];
+//    NSRect newFrame = [window frameRectForContentRect:
+//                       NSMakeRect(frame.origin.x, NSMaxY(frame) - new_size.height,
+//                                  frame.size.width, new_size.height)];
+//
+//    if(sender != self) {
+//        double hDifference = fabs(new_size.height - ((NSView*)[window contentView]).bounds.size.height);
+//        double duration = MAX(0.0005 * hDifference, 0.10); // we always want a slight animation
+//        nanoseconds nduration(uint64_t(duration * NSEC_PER_SEC));
+//        
+//        [NSAnimationContext beginGrouping];
+//        [[NSAnimationContext currentContext] setDuration:duration];
+//        [[window animator] setFrame:newFrame display:YES];
+//        [NSAnimationContext endGrouping];
+//        if(self.DisclosureTriangle.state == NSOnState)
+//            dispatch_to_main_queue_after(nduration, [=]{
+//                               [self.DisclosureGroup setHidden:false];
+//                           });
+//    }
+//    else {
+//        [window setFrame:newFrame display:YES];
+//    }
+//    [window setMinSize:NSMakeSize(370, newFrame.size.height-10)];
+//    [window setMaxSize:NSMakeSize(800, newFrame.size.height+10)];
+//}
 
 - (void)fillOptions
 {
@@ -220,7 +222,7 @@ static string MakeCanonicPath(string _input)
     m_Options.copy_file_times      = self.CopyFileTimesCheckbox.state == NSOnState;
     m_Options.copy_unix_flags      = self.CopyUNIXFlagsCheckbox.state == NSOnState;
     m_Options.copy_unix_owners     = self.CopyUnixOwnersCheckbox.state == NSOnState;
-    // TODO: verification options
+    m_Options.verification         = (FileCopyOperationOptions::ChecksumVerification) self.VerifySetting.selectedTag;
 }
 
 - (void)validate

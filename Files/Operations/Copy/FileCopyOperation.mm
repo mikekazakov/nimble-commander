@@ -102,6 +102,11 @@ static NSString *ExtractCopyToName(const string&_s)
                                           true,
                                           500ms
                                           );
+        m_Job.GetStats().RegisterObserver(OperationStats::Nofity::CurrentItem,
+                                          nullptr,
+                                          [weak_self]{ if(auto me = weak_self) [me updateOnItemChanged]; }
+                                          );
+        
         
         [self setupDialogs];
     }
@@ -206,6 +211,16 @@ static NSString *ExtractCopyToName(const string&_s)
 //    }
 //    return self;
 //}
+
+- (void)updateOnItemChanged
+{
+    if( m_Job.Stage() == FileCopyOperationJobNew::JobStage::Verify )
+        self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Verifying \u201c%@\u201d",
+                                                                               @"Operations",
+                                                                               "ShortInfo text for file copy operation when veryfying a copy result"),
+                          [NSString stringWithUTF8StdString:*self.Stats.GetCurrentItem()]
+                          ];
+}
 
 - (void)updateOnProgressChanged
 {

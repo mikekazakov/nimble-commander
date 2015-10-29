@@ -16,5 +16,5 @@ struct FileCopyOperationOptions
     bool copy_unix_flags = true;
     bool copy_unix_owners = true;
     bool force_overwrite = false;
-    ChecksumVerification verification = ChecksumVerification::WhenMoves;
+    ChecksumVerification verification = configuration::version >= configuration::Version::Pro ? ChecksumVerification::WhenMoves : ChecksumVerification::Never;
 };

@@ -122,38 +122,34 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-//oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const
-//{
-//    if( _dirent.IsDir() )
-//    {
-//        if( _dirent.Size() != VFSListingItem::InvalidSize)
-//        {
-//            return FormHumanReadableSizeRepresentation(_dirent.Size());
-//        }
-//        else
-//        {
-//            char buf[32];
-//            memset(buf, 0, sizeof(buf));
-//            if( !_dirent.IsDotDot()) {
-//                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_FOLDER_WORD", "Fixed-length (6 chars) string for folders, for English is 'Folder'").UTF8String;
-//                strcpy(buf, st.c_str());
-//            }
-//            else {
-//                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_UP_WORD", "Fixed-length (6 chars) string for upper-dir, for English is '    Up'").UTF8String;
-//                strcpy(buf, st.c_str());
-//            }
-//            oms::StringBuf<32> tmp;
-//            tmp.FromUTF8(buf, strlen(buf));
-//            oms::StringBuf<6> r;
-//            r.FromUniChars(tmp.Chars(), min(tmp.Size(), uint16_t(6)));
-//            return r;
-//        }
-//    }
-//    else
-//    {
-//        return FormHumanReadableSizeRepresentation(_dirent.Size());
-//    }
-//}
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd) const
+{
+    if( _dirent.IsDir() ) {
+        if( _vd.is_size_calculated() ) {
+            return FormHumanReadableSizeRepresentation( _vd.size );
+        }
+        else {
+            char buf[32];
+            memset(buf, 0, sizeof(buf));
+            if( !_dirent.IsDotDot()) {
+                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_FOLDER_WORD", "Fixed-length (6 chars) string for folders, for English is 'Folder'").UTF8String;
+                strcpy(buf, st.c_str());
+            }
+            else {
+                static string st = NSLocalizedString(@"__CLASSICPRESENTATION_UP_WORD", "Fixed-length (6 chars) string for upper-dir, for English is '    Up'").UTF8String;
+                strcpy(buf, st.c_str());
+            }
+            oms::StringBuf<32> tmp;
+            tmp.FromUTF8(buf, strlen(buf));
+            oms::StringBuf<6> r;
+            r.FromUniChars(tmp.Chars(), min(tmp.Size(), uint16_t(6)));
+            return r;
+        }
+    }
+    else {
+        return FormHumanReadableSizeRepresentation(_dirent.Size());
+    }
+}
 
 static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
 {
@@ -231,21 +227,21 @@ oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     return out;
 }
 
-//static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
-//{   // output is a direct filename or symlink path in ->filename form
-//    oms::StringBuf<256> out;
-//    if(!_dirent.IsSymlink())
-//        out.FromUTF8(_dirent.Name(), _dirent.NameLen());
-//    else if(_dirent.Symlink() != 0)
-//        {
-//            string str("->");
-//            str += _dirent.Symlink();
-//            out.FromUTF8(str);
-//        }
-//    if(out.CanBeComposed())
-//        out.NormalizeToFormC();
-//    return out;
-//}
+static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSFlexibleListingItem &_dirent)
+{   // output is a direct filename or symlink path in ->filename form
+    oms::StringBuf<256> out;
+    if(!_dirent.IsSymlink())
+        out.FromUTF8(_dirent.Name(), _dirent.NameLen());
+    else if(_dirent.Symlink() != 0)
+        {
+            string str("->");
+            str += _dirent.Symlink();
+            out.FromUTF8(str);
+        }
+    if(out.CanBeComposed())
+        out.NormalizeToFormC();
+    return out;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // ClassicPanelViewPresentation class
@@ -346,16 +342,14 @@ void ClassicPanelViewPresentation::BuildAppearance()
                 m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
 }
 
-//const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
-//{
-//    
-//    // TODO:::: 
-////    for(auto &r: m_ColoringRules)
-////        if(r.filter.Filter(_dirent))
-////            return _is_focused ? r.focused : r.unfocused;
-//    static DoubleColor def;
-//    return def;
-//}
+const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
+{
+    for(auto &r: m_ColoringRules)
+        if(r.filter.Filter(_dirent, _vd))
+            return _is_focused ? r.focused : r.unfocused;
+    static DoubleColor def;
+    return def;
+}
 
 void ClassicPanelViewPresentation::Draw(NSRect _dirty_rect)
 {
@@ -586,282 +580,277 @@ int ClassicPanelViewPresentation::Granularity()
 
 void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
 {
-//    // layout preparation
-//    const int columns = GetNumberOfItemColumns();
-//    int entries_in_column = GetMaxItemsPerColumn();
-//    int max_files_to_show = entries_in_column * columns;
-//    int column_width = (m_SymbWidth - 1) / columns;
-//    if(m_State->ViewType==PanelViewType::ViewWide) column_width = m_SymbWidth - 8;
-//    int columns_rest = m_SymbWidth - 1 - column_width*columns;
-//    int columns_width[] = {column_width, column_width, column_width};
-//    if(m_State->ViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
-//    if(columns_rest) { columns_width[1]++;  columns_rest--; }
-//    
-//    int full_fn_column_width = m_SymbWidth - 23; if(full_fn_column_width < 0) full_fn_column_width = 0;
-//    int full_columns_width[] = {full_fn_column_width, 6, 8, 5};
-//    int full_column_fr_pos[] = {full_columns_width[0],
-//        full_columns_width[0] + full_columns_width[1] + 1,
-//        full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
-//    
-//    auto &listing = m_State->Data->Listing();
-//    auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
-//    int path_name_start_pos = 0, path_name_end_pos = 0;
-//    int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
-//    int bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
-//    int volume_info_start_pos = 0, volume_info_end_pos = 0;
-//    auto fontcache = m_FontCache.get();
-//    
-//    oms::Context omsc(context, fontcache);
-//    
-//    /////////////////////////////////////////////////////////////////////////////////////////////////
-//    // draw file names
-//    omsc.SetupForText();
-//    oms::StringBuf<MAXPATHLEN> fn;
-//    for(int n = 0, i = m_State->ItemsDisplayOffset;
-//        n < max_files_to_show && i < sorted_entries.size();
-//        ++n, ++i)
-//    {
-////        const auto& current = listing[ sorted_entries[i] ];
-//        auto current = listing.Item( sorted_entries[i] );
-//        if(current.CFDisplayName() == current.CFName())
-//            // entry has no altered display name, so just use it's real filename
-//            fn.FromUTF8(current.Name(), current.NameLen());
-//        else
-//            // entry is localized, load buffer from given display name
-//            fn.FromCFString(current.CFDisplayName());
-//        
-//        if(fn.CanBeComposed())// <-- this check usually takes 100-300 nanoseconds per filename
-//            fn.NormalizeToFormC();
-//            // ^^^^^^^^^^^^^^^^
-//            // long way to go - perform on-the-fly unicode normalization to form C
-//            // takes usually ~5microseconds on my 2012 mbp i7.
-//            // so it can take at max 5*100 filenames on screen = 500 microseconds, ie 0,5 millisecond per panel draw
-//            // can just forgive this overhead.
-//
-//        int CN = n / entries_in_column;
-//        int Y = (n % entries_in_column + 1);
-//        int X = 1;
-//        for(int i = 0; i < CN; ++i) X += columns_width[i];
-//        
-//        bool focused = (i == m_State->CursorPos) && View().active;
-//        auto text_color = GetDirectoryEntryTextColor(current, focused);
-//        
-//        if(m_State->ViewType != PanelViewType::ViewFull)
-//        {
-//            if(focused)
-//                omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
-//        
-//            omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
-//        
-//            if(m_State->ViewType==PanelViewType::ViewWide)
-//            { // draw entry size on right side, only for this mode
-//                auto size_info = FormHumanReadableSizeReprentationForDirEnt(current);
-//            
-//                if(focused)
-//                    omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, size_info.Capacity);
-//            
-//                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, columns_width[0]+1, Y, text_color);
-//            }
-//        }
-//        else
-//        {
-//            UniChar time_info[5];;
-//            auto size_info = FormHumanReadableSizeReprentationForDirEnt(current);
-//            auto date_info = FormHumanReadableDateRepresentation(current.MTime());
-//            FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
-//            
-//            if(focused)
-//            {
-//                if(full_columns_width[0] > 0)
-//                    omsc.DrawBackground(m_CursorBackgroundColor, X, Y, full_columns_width[0] - 1);
-//                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[0], Y, 6);
-//                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[1], Y, 8);
-//                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[2], Y, 5);
-//            }
-//            
-//            if(full_columns_width[0] > 0)
-//                omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(full_columns_width[0] - 1), X, Y, text_color);
-//            omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1 + full_column_fr_pos[0], Y, text_color);
-//            omsc.DrawString(date_info.Chars(), 0, date_info.Capacity, 1 + full_column_fr_pos[1], Y, text_color);
-//            omsc.DrawString(time_info, 0, 5, 1 + full_column_fr_pos[2], Y, text_color);
-//        }
-//    }
-//    
-//    /////////////////////////////////////////////////////////////////////////////////////////////////
-//    // draw header and footer data
-//    {
-//        const VFSListingItem *current_entry = 0;
-//        if(m_State->CursorPos >= 0) current_entry = &listing[sorted_entries[m_State->CursorPos]];
-//        oms::StringBuf<14> time_info;
-//        oms::StringBuf<6> size_info;
-//        oms::StringBuf<256> footer_entry;
-//        auto sort_mode = FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort);
-//        if(current_entry)
-//        {
-//            time_info = FormHumanReadableTimeRepresentation(current_entry->MTime());
-//            size_info = FormHumanReadableSizeReprentationForDirEnt(*current_entry);
-//            footer_entry = ComposeFooterFileNameForEntry(*current_entry);
-//        }
-//        
-//        // draw sorting mode in left-upper corner
-//        oms::DrawSingleUniCharXY(sort_mode.Chars()[0], 1, 0, context, fontcache, m_HighlightTextColor);
-//        
-//        if(m_SymbWidth > 14) { // need to draw a path name on header
-//            oms::StringBuf<MAXPATHLEN*2> path;
-//            if(m_QuickSearchPrompt.empty())
-//                path.FromUTF8(m_State->Data->VerboseDirectoryFullPath());
-//            else
-//                path.FromUTF8(m_QuickSearchPrompt);                
-//            if(path.CanBeComposed())
-//                path.NormalizeToFormC();
-//            path.TrimEllipsisLeft(m_SymbWidth - 7);
-//            
-//            int symbs = path.Space() + 2;
-//            path_name_start_pos = (m_SymbWidth-symbs) / 2;
-//            path_name_end_pos = path_name_start_pos + symbs;
-//            
-//            if(View().active)
-//                omsc.DrawBackground(m_CursorBackgroundColor, path_name_start_pos, 0, symbs);
-//                
-//            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, View().active ? m_ActiveTextColor : m_TextColor);
-//        }
-//        
-//        // entry footer info
-//        if(current_entry && m_State->ViewType != PanelViewType::ViewFull)
-//        {
-//            if(m_SymbWidth > 2 + 14 + 6)
-//            {   // draw current entry time info, size info and maybe filename
-//                int Y = m_EntryFooterVPos;
-//                omsc.DrawString(time_info.Chars(), 0, time_info.Capacity, m_SymbWidth - 15, Y, m_TextColor);
-//                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, m_SymbWidth - 15 - 7, Y, m_TextColor);
-//                
-//                int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
-//                if(symbs_for_name > 0) {
-//                    auto chars = footer_entry.MaxForSpaceRight(symbs_for_name);
-//                    omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, Y, m_TextColor);
-//                }
-//            }
-//            else if(m_SymbWidth >= 2 + 6)
-//            {   // draw current entry size info and maybe time info
-//                int Y = m_EntryFooterVPos;
-//                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1, Y, m_TextColor);
-//                int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
-//                if(symbs_for_name > 0)
-//                    omsc.DrawString(time_info.Chars(), 0, time_info.MaxForSpaceLeft(symbs_for_name), 8, Y, m_TextColor);
-//            }
-//        }
-//        else if(current_entry)
-//        {
-//            auto chars = footer_entry.MaxForSpaceRight(m_SymbWidth-2);
-//            omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, m_EntryFooterVPos, m_TextColor);
-//        }
-//        
-//        if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)
-//        { // process selection if any
-//            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount);
-//            str.TrimEllipsisLeft(m_SymbWidth - 2);
-//            
-//            int symbs = str.Space();
-//            selected_bytes_start_pos = (m_SymbWidth-symbs) / 2;
-//            selected_bytes_end_pos   = selected_bytes_start_pos + symbs;
-//            omsc.DrawBackground(m_CursorBackgroundColor, selected_bytes_start_pos, m_SelectionVPos, symbs);
-//            omsc.DrawString(str.Chars(), 0, str.Size(), selected_bytes_start_pos, m_SelectionVPos, m_HighlightTextColor);
-//        }
-//        
-//        if(m_SymbWidth > 14)
-//        { // process bytes in directory
-//            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount);
-//            str.TrimEllipsisLeft(m_SymbWidth - 2);
-//            
-//            int symbs = str.Space();
-//            bytes_in_dir_start_pos = (m_SymbWidth-symbs) / 2;
-//            bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs;
-//            omsc.DrawString(str.Chars(), 0, str.Size(), bytes_in_dir_start_pos, m_BytesInDirectoryVPos, m_TextColor);
-//        }
-//        
-//        if(m_DrawVolumeInfo && m_SymbWidth > 14)
-//        {
-//            char bytes[256], buf[1024];
-//            UpdateStatFS();
-//            ByteCountFormatter::Instance().ToUTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256, ByteCountFormatter::Adaptive6);
-//            static string fmt = " "s + NSLocalizedString(@"%s: %s available", "Volume information bar, showing volume name and free space").UTF8String + " "s;
-//            sprintf(buf, fmt.c_str(), StatFS().volume_name.c_str(), bytes);
-//            oms::StringBuf<1024> str;
-//            str.FromUTF8(buf, strlen(buf));
-//            str.TrimEllipsisLeft(m_SymbWidth - 2);
-//            
-//            int symbs = str.Space();
-//            volume_info_start_pos = (m_SymbWidth-symbs) / 2;
-//            volume_info_end_pos   = volume_info_start_pos + symbs;
-//            omsc.DrawString(str.Chars(), 0, str.Size(), volume_info_start_pos, m_SymbHeight-1, m_TextColor);
-//        }
-//    }
-//    
-//    /////////////////////////////////////////////////////////////////////////////////////////////////
-//    // draw frames
-//    omsc.SetupForASCIIArt();
-//    omsc.SetFillColor(m_TextColor);
-//    oms::unichars_draw_batch b;
-//    
-//    for(int i = 1; i < m_SymbHeight - 1; ++i)
-//    {
-//        uint16_t l[] = {u'║', u'╟', u'╠'};
-//        uint16_t r[] = {u'║', u'╢', u'╣'};
-//        int n = 0;
-//        if(i == m_SelectionVPos) n = 1;
-//        else if(m_DrawVolumeInfo && i == m_BytesInDirectoryVPos) n = 2;
-//        b.put(l[n], 0, i);
-//        b.put(r[n], m_SymbWidth-1, i);
-//    }
-//    b.put(u'╔', 0, 0);
-//    b.put(u'╚', 0, m_SymbHeight-1);
-//    b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
-//    b.put(u'╗', m_SymbWidth-1, 0);
-//    for(int i = 1; i < m_SelectionVPos; ++i)
-//    {
-//        if(m_State->ViewType != PanelViewType::ViewFull)
-//            b.put(u'│', columns_width[0], i);
-//        if(m_State->ViewType == PanelViewType::ViewShort)
-//            b.put(u'│', columns_width[0]+columns_width[1], i);
-//        else if(m_State->ViewType == PanelViewType::ViewFull) {
-//            if(full_column_fr_pos[0] > 0)
-//                b.put(u'│', full_column_fr_pos[0], i);
-//            if(full_column_fr_pos[1] > 0)
-//                b.put(u'│', full_column_fr_pos[1], i);
-//            if(full_column_fr_pos[2] > 0)
-//                b.put(u'│', full_column_fr_pos[2], i);
-//        }
-//    }
-//    for(int i = 1; i < m_SymbWidth - 1; ++i)
-//    {
-//        bool is_col = false;
-//        if(m_State->ViewType != PanelViewType::ViewFull &&
-//           ((i == columns_width[0]) || (i == columns_width[0] + columns_width[1])))
-//            is_col = true;
-//        else if(m_State->ViewType == PanelViewType::ViewFull &&
-//            ((i == full_column_fr_pos[0]) || (i == full_column_fr_pos[1]) || (i == full_column_fr_pos[2])))
-//            is_col = true;
-//        
-//        if(!is_col)
-//        {
-//            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
-//                b.put(u'═', i, 0);
-//            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-//                b.put(u'─', i, m_SelectionVPos);
-//        }
-//        else
-//        {
-//            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
-//                b.put(u'┴', i, m_SelectionVPos);
-//            if( (i!=1) && (i < path_name_start_pos || i>= path_name_end_pos) )
-//                b.put(u'╤', i, 0);
-//        }
-//        if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
-//            b.put(u'═', i, m_BytesInDirectoryVPos);
-//        if(m_DrawVolumeInfo && (i < volume_info_start_pos || i >= volume_info_end_pos))
-//            b.put(u'═', i, m_SymbHeight - 1);
-//    }
-//    oms::DrawUniCharsXY(b, context, fontcache);
+    // layout preparation
+    const int columns = GetNumberOfItemColumns();
+    int entries_in_column = GetMaxItemsPerColumn();
+    int max_files_to_show = entries_in_column * columns;
+    int column_width = (m_SymbWidth - 1) / columns;
+    if(m_State->ViewType==PanelViewType::ViewWide) column_width = m_SymbWidth - 8;
+    int columns_rest = m_SymbWidth - 1 - column_width*columns;
+    int columns_width[] = {column_width, column_width, column_width};
+    if(m_State->ViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
+    if(columns_rest) { columns_width[1]++;  columns_rest--; }
+    
+    int full_fn_column_width = m_SymbWidth - 23; if(full_fn_column_width < 0) full_fn_column_width = 0;
+    int full_columns_width[] = {full_fn_column_width, 6, 8, 5};
+    int full_column_fr_pos[] = {full_columns_width[0],
+        full_columns_width[0] + full_columns_width[1] + 1,
+        full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
+    
+    const auto sorted_entries_size = m_State->Data->SortedDirectoryEntries().size();
+    int path_name_start_pos = 0, path_name_end_pos = 0;
+    int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
+    int bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
+    int volume_info_start_pos = 0, volume_info_end_pos = 0;
+    auto fontcache = m_FontCache.get();
+    
+    oms::Context omsc(context, fontcache);
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw file names
+    omsc.SetupForText();
+    oms::StringBuf<MAXPATHLEN> fn;
+    for(int n = 0, i = m_State->ItemsDisplayOffset;
+        n < max_files_to_show && i < sorted_entries_size;
+        ++n, ++i)
+    {
+        auto current = m_State->Data->EntryAtSortPosition(i);
+        auto current_vd = m_State->Data->VolatileDataAtSortPosition(i);
+        if(current.CFDisplayName() == current.CFName())
+            // entry has no altered display name, so just use it's real filename
+            fn.FromUTF8(current.Name(), current.NameLen());
+        else
+            // entry is localized, load buffer from given display name
+            fn.FromCFString(current.CFDisplayName());
+        
+        if(fn.CanBeComposed())// <-- this check usually takes 100-300 nanoseconds per filename
+            fn.NormalizeToFormC();
+            // ^^^^^^^^^^^^^^^^
+            // long way to go - perform on-the-fly unicode normalization to form C
+            // takes usually ~5microseconds on my 2012 mbp i7.
+            // so it can take at max 5*100 filenames on screen = 500 microseconds, ie 0,5 millisecond per panel draw
+            // can just forgive this overhead.
+
+        int CN = n / entries_in_column;
+        int Y = (n % entries_in_column + 1);
+        int X = 1;
+        for(int i = 0; i < CN; ++i) X += columns_width[i];
+        
+        bool focused = (i == m_State->CursorPos) && View().active;
+        auto text_color = GetDirectoryEntryTextColor(current, current_vd, focused);
+        
+        if(m_State->ViewType != PanelViewType::ViewFull) {
+            if(focused)
+                omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
+        
+            omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
+        
+            if(m_State->ViewType==PanelViewType::ViewWide) {
+                // draw entry size on right side, only for this mode
+                auto size_info = FormHumanReadableSizeReprentationForDirEnt(current, current_vd);
+            
+                if(focused)
+                    omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, size_info.Capacity);
+            
+                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, columns_width[0]+1, Y, text_color);
+            }
+        }
+        else {
+            UniChar time_info[5];
+            auto size_info = FormHumanReadableSizeReprentationForDirEnt(current, current_vd);
+            auto date_info = FormHumanReadableDateRepresentation(current.MTime());
+            FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
+            
+            if(focused) {
+                if(full_columns_width[0] > 0)
+                    omsc.DrawBackground(m_CursorBackgroundColor, X, Y, full_columns_width[0] - 1);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[0], Y, 6);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[1], Y, 8);
+                omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[2], Y, 5);
+            }
+            
+            if(full_columns_width[0] > 0)
+                omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(full_columns_width[0] - 1), X, Y, text_color);
+            omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1 + full_column_fr_pos[0], Y, text_color);
+            omsc.DrawString(date_info.Chars(), 0, date_info.Capacity, 1 + full_column_fr_pos[1], Y, text_color);
+            omsc.DrawString(time_info, 0, 5, 1 + full_column_fr_pos[2], Y, text_color);
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw header and footer data
+    {
+        auto current_entry = m_State->Data->EntryAtSortPosition( m_State->CursorPos );
+        
+        oms::StringBuf<14> time_info;
+        oms::StringBuf<6> size_info;
+        oms::StringBuf<256> footer_entry;
+        auto sort_mode = FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort);
+        if(current_entry) {
+            time_info = FormHumanReadableTimeRepresentation( current_entry.MTime() );
+            size_info = FormHumanReadableSizeReprentationForDirEnt( current_entry, m_State->Data->VolatileDataAtSortPosition(m_State->CursorPos) );
+            footer_entry = ComposeFooterFileNameForEntry( current_entry );
+        }
+        
+        // draw sorting mode in left-upper corner
+        oms::DrawSingleUniCharXY(sort_mode.Chars()[0], 1, 0, context, fontcache, m_HighlightTextColor);
+        
+        if(m_SymbWidth > 14) { // need to draw a path name on header
+            oms::StringBuf<MAXPATHLEN*2> path;
+            if(m_QuickSearchPrompt.empty())
+                path.FromUTF8(m_State->Data->VerboseDirectoryFullPath());
+            else
+                path.FromUTF8(m_QuickSearchPrompt);                
+            if(path.CanBeComposed())
+                path.NormalizeToFormC();
+            path.TrimEllipsisLeft(m_SymbWidth - 7);
+            
+            int symbs = path.Space() + 2;
+            path_name_start_pos = (m_SymbWidth-symbs) / 2;
+            path_name_end_pos = path_name_start_pos + symbs;
+            
+            if(View().active)
+                omsc.DrawBackground(m_CursorBackgroundColor, path_name_start_pos, 0, symbs);
+                
+            omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, View().active ? m_ActiveTextColor : m_TextColor);
+        }
+
+        // entry footer info
+        if(current_entry && m_State->ViewType != PanelViewType::ViewFull)
+        {
+            if(m_SymbWidth > 2 + 14 + 6)
+            {   // draw current entry time info, size info and maybe filename
+                int Y = m_EntryFooterVPos;
+                omsc.DrawString(time_info.Chars(), 0, time_info.Capacity, m_SymbWidth - 15, Y, m_TextColor);
+                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, m_SymbWidth - 15 - 7, Y, m_TextColor);
+                
+                int symbs_for_name = m_SymbWidth - 2 - 14 - 6 - 2;
+                if(symbs_for_name > 0) {
+                    auto chars = footer_entry.MaxForSpaceRight(symbs_for_name);
+                    omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, Y, m_TextColor);
+                }
+            }
+            else if(m_SymbWidth >= 2 + 6)
+            {   // draw current entry size info and maybe time info
+                int Y = m_EntryFooterVPos;
+                omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1, Y, m_TextColor);
+                int symbs_for_name = m_SymbWidth - 2 - 6 - 1;
+                if(symbs_for_name > 0)
+                    omsc.DrawString(time_info.Chars(), 0, time_info.MaxForSpaceLeft(symbs_for_name), 8, Y, m_TextColor);
+            }
+        }
+        else if(current_entry)
+        {
+            auto chars = footer_entry.MaxForSpaceRight(m_SymbWidth-2);
+            omsc.DrawString(footer_entry.Chars(), chars.loc, chars.len, 1, m_EntryFooterVPos, m_TextColor);
+        }
+        
+        if(m_State->Data->Stats().selected_entries_amount != 0 && m_SymbWidth > 14)
+        { // process selection if any
+            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_selected_entries, m_State->Data->Stats().selected_entries_amount);
+            str.TrimEllipsisLeft(m_SymbWidth - 2);
+            
+            int symbs = str.Space();
+            selected_bytes_start_pos = (m_SymbWidth-symbs) / 2;
+            selected_bytes_end_pos   = selected_bytes_start_pos + symbs;
+            omsc.DrawBackground(m_CursorBackgroundColor, selected_bytes_start_pos, m_SelectionVPos, symbs);
+            omsc.DrawString(str.Chars(), 0, str.Size(), selected_bytes_start_pos, m_SelectionVPos, m_HighlightTextColor);
+        }
+        
+        if(m_SymbWidth > 14)
+        { // process bytes in directory
+            auto str = FormHumanReadableBytesAndFiles(m_State->Data->Stats().bytes_in_raw_reg_files, (int)m_State->Data->Stats().raw_reg_files_amount);
+            str.TrimEllipsisLeft(m_SymbWidth - 2);
+            
+            int symbs = str.Space();
+            bytes_in_dir_start_pos = (m_SymbWidth-symbs) / 2;
+            bytes_in_dir_end_pos   = bytes_in_dir_start_pos + symbs;
+            omsc.DrawString(str.Chars(), 0, str.Size(), bytes_in_dir_start_pos, m_BytesInDirectoryVPos, m_TextColor);
+        }
+        
+        if(m_DrawVolumeInfo && m_SymbWidth > 14)
+        {
+            char bytes[256], buf[1024];
+            UpdateStatFS();
+            ByteCountFormatter::Instance().ToUTF8(StatFS().avail_bytes, (unsigned char*)bytes, 256, ByteCountFormatter::Adaptive6);
+            static string fmt = " "s + NSLocalizedString(@"%s: %s available", "Volume information bar, showing volume name and free space").UTF8String + " "s;
+            sprintf(buf, fmt.c_str(), StatFS().volume_name.c_str(), bytes);
+            oms::StringBuf<1024> str;
+            str.FromUTF8(buf, strlen(buf));
+            str.TrimEllipsisLeft(m_SymbWidth - 2);
+            
+            int symbs = str.Space();
+            volume_info_start_pos = (m_SymbWidth-symbs) / 2;
+            volume_info_end_pos   = volume_info_start_pos + symbs;
+            omsc.DrawString(str.Chars(), 0, str.Size(), volume_info_start_pos, m_SymbHeight-1, m_TextColor);
+        }
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // draw frames
+    omsc.SetupForASCIIArt();
+    omsc.SetFillColor(m_TextColor);
+    oms::unichars_draw_batch b;
+    
+    for(int i = 1; i < m_SymbHeight - 1; ++i)
+    {
+        uint16_t l[] = {u'║', u'╟', u'╠'};
+        uint16_t r[] = {u'║', u'╢', u'╣'};
+        int n = 0;
+        if(i == m_SelectionVPos) n = 1;
+        else if(m_DrawVolumeInfo && i == m_BytesInDirectoryVPos) n = 2;
+        b.put(l[n], 0, i);
+        b.put(r[n], m_SymbWidth-1, i);
+    }
+    b.put(u'╔', 0, 0);
+    b.put(u'╚', 0, m_SymbHeight-1);
+    b.put(u'╝', m_SymbWidth-1, m_SymbHeight-1);
+    b.put(u'╗', m_SymbWidth-1, 0);
+    for(int i = 1; i < m_SelectionVPos; ++i)
+    {
+        if(m_State->ViewType != PanelViewType::ViewFull)
+            b.put(u'│', columns_width[0], i);
+        if(m_State->ViewType == PanelViewType::ViewShort)
+            b.put(u'│', columns_width[0]+columns_width[1], i);
+        else if(m_State->ViewType == PanelViewType::ViewFull) {
+            if(full_column_fr_pos[0] > 0)
+                b.put(u'│', full_column_fr_pos[0], i);
+            if(full_column_fr_pos[1] > 0)
+                b.put(u'│', full_column_fr_pos[1], i);
+            if(full_column_fr_pos[2] > 0)
+                b.put(u'│', full_column_fr_pos[2], i);
+        }
+    }
+    for(int i = 1; i < m_SymbWidth - 1; ++i)
+    {
+        bool is_col = false;
+        if(m_State->ViewType != PanelViewType::ViewFull &&
+           ((i == columns_width[0]) || (i == columns_width[0] + columns_width[1])))
+            is_col = true;
+        else if(m_State->ViewType == PanelViewType::ViewFull &&
+            ((i == full_column_fr_pos[0]) || (i == full_column_fr_pos[1]) || (i == full_column_fr_pos[2])))
+            is_col = true;
+        
+        if(!is_col)
+        {
+            if( (i!=1) && (i < path_name_start_pos || i >= path_name_end_pos))
+                b.put(u'═', i, 0);
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                b.put(u'─', i, m_SelectionVPos);
+        }
+        else
+        {
+            if(i < selected_bytes_start_pos || i >= selected_bytes_end_pos )
+                b.put(u'┴', i, m_SelectionVPos);
+            if( (i!=1) && (i < path_name_start_pos || i>= path_name_end_pos) )
+                b.put(u'╤', i, 0);
+        }
+        if(i < bytes_in_dir_start_pos || i >= bytes_in_dir_end_pos)
+            b.put(u'═', i, m_BytesInDirectoryVPos);
+        if(m_DrawVolumeInfo && (i < volume_info_start_pos || i >= volume_info_end_pos))
+            b.put(u'═', i, m_SymbHeight - 1);
+    }
+    oms::DrawUniCharsXY(b, context, fontcache);
 }
 
 double ClassicPanelViewPresentation::GetSingleItemHeight()

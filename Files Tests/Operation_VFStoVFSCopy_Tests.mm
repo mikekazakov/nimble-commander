@@ -10,6 +10,15 @@
 #include "VFS.h"
 #include "FileCopyOperation.h"
 
+static vector<VFSFlexibleListingItem> FetchItems(const string& _directory_path,
+                                                 const vector<string> &_filenames,
+                                                 VFSHost &_host)
+{
+    vector<VFSFlexibleListingItem> items;
+    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
+    return items;
+}
+
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
                              const path& _file2_full_path,
@@ -82,12 +91,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:fn2 at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "kernel")
-                      root:"/System/Library/Kernels/"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:"/Public/!FilesTesting/"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    op = [op initWithItems:FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost())
+           destinationPath:"/Public/!FilesTesting/"
+           destinationHost:host options:{}
+          ];
+    
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -118,12 +126,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(begin(files), end(files))
-                      root:"/Applications/Mail.app/Contents"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:"/Public/!FilesTesting/"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems("/Applications/Mail.app/Contents", {begin(files), end(files)}, *VFSNativeHost::SharedHost())
+           destinationPath:"/Public/!FilesTesting/"
+           destinationHost:host options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -156,12 +163,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "bin")
-                      root:"/"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:"/Public/!FilesTesting/"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems("/", {"bin"}, *VFSNativeHost::SharedHost())
+           destinationPath:"/Public/!FilesTesting/"
+           destinationHost:host options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -183,12 +189,12 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     auto dir = self.makeTmpDir;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:"/Applications/"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:dir.c_str()
-                    dstvfs:VFSNativeHost::SharedHost()
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost())
+           destinationPath:dir.native()
+           destinationHost:VFSNativeHost::SharedHost()
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -210,15 +216,15 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     // just like testCopyGenericToGeneric_Modes_CopyToPrefix but file copy operation should build a destination path
     auto dir = self.makeTmpDir;
-    path dst_dir = path(dir) / "Some" / "Absent" / "Dir" / "Is" / "Here";
+    path dst_dir = path(dir) / "Some" / "Absent" / "Dir" / "Is" / "Here/";
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:"/Applications/"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:dst_dir.c_str()
-                    dstvfs:VFSNativeHost::SharedHost()
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost())
+           destinationPath:dst_dir.native()
+           destinationHost:VFSNativeHost::SharedHost()
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -236,6 +242,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
 }
 
+// this test is now actually outdated, since FileCopyOperation now requires that destination path is absolute
 - (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithLocalDir
 {
     // works on single host - In and Out same as where source files are
@@ -248,12 +255,12 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                host) == 0);
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:dir.c_str()
-                    srcvfs:host
-                      dest:"SomeDirectoryName/"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems(dir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost())
+           destinationPath:(dir / "SomeDirectoryName/").native()
+           destinationHost:VFSNativeHost::SharedHost()
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -266,6 +273,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+// this test is now somewhat outdated, since FileCopyOperation now requires that destination path is absolute
 - (void)testCopyGenericToGeneric_Modes_CopyToPathName_WithLocalDir
 {
     // works on single host - In and Out same as where source files are
@@ -279,12 +287,12 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                host) == 0);
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:dir.c_str()
-                    srcvfs:host
-                      dest:"Mail2.app"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    
+    op = [op initWithItems:FetchItems(dir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost())
+           destinationPath:(dir / "Mail2.app").native()
+           destinationHost:VFSNativeHost::SharedHost()
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -296,6 +304,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( result == 0 );
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
+
 
 - (void)testCopyGenericToGeneric_Modes_CopyToPathName_SingleFile
 {
@@ -315,12 +324,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:fn3 at:host];
     
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "kernel")
-                      root:"/System/Library/Kernels/"
-                    srcvfs:VFSNativeHost::SharedHost()
-                      dest:"/Public/!FilesTesting/"
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    op = [op initWithItems:FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost())
+           destinationPath:"/Public/!FilesTesting/"
+           destinationHost:host
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -333,12 +341,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     
     op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "kernel")
-                      root:"/Public/!FilesTesting/"
-                    srcvfs:host
-                      dest:fn3
-                    dstvfs:host
-                   options:FileCopyOperationOptions()];
+    op = [op initWithItems:FetchItems("/Public/!FilesTesting/", {"kernel"}, *host)
+           destinationPath:fn3
+           destinationHost:host
+                   options:{}
+          ];
     
     finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -357,7 +364,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
     auto dir = self.makeTmpDir;
-    auto dir2 = dir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed";
+    auto dir2 = dir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = VFSNativeHost::SharedHost();
     
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (path(dir) / "Mail.app").c_str(), host) == 0);
@@ -365,12 +372,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     FileCopyOperationOptions opts;
     opts.docopy = false;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:dir.c_str()
-                    srcvfs:host
-                      dest:dir2.c_str()
-                    dstvfs:host
-                   options:opts];
+    op = [op initWithItems:FetchItems(dir.native(), {"Mail.app"}, *host)
+           destinationPath:dir2.native()
+           destinationHost:host
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -382,6 +388,8 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( result == 0 );
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
+
+
 
 - (void)testCopyGenericToGeneric_Modes_RenameToPathName
 {
@@ -395,12 +403,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     FileCopyOperationOptions opts;
     opts.docopy = false;
     FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithFiles:vector<string>(1, "Mail.app")
-                      root:dir.c_str()
-                    srcvfs:host
-                      dest:"Mail2.app"
-                    dstvfs:host
-                   options:opts];
+    op = [op initWithItems:FetchItems(dir.native(), {"Mail.app"}, *host)
+           destinationPath:(dir / "Mail2.app").native()
+           destinationHost:host
+                   options:{}
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];
@@ -412,6 +419,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( result == 0 );
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
+
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {

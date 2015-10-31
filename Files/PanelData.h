@@ -3,6 +3,8 @@
 #include "VFS.h"
 #import "chained_strings.h"
 
+struct PanelVolatileData;
+
 struct PanelSortMode
 {
     enum Mode
@@ -111,7 +113,7 @@ struct PanelDataTextFiltering
         return filter;
     }
     
-    bool IsValidItem(const VFSListingItem& _item) const;
+    bool IsValidItem(const VFSFlexibleListingItem& _item) const;
     
     void OnPanelDataLoad()
     {
@@ -129,7 +131,7 @@ struct PanelDataHardFiltering
 {
     bool show_hidden = true;
     PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
-    bool IsValidItem(const VFSListingItem& _item) const;
+    bool IsValidItem(const VFSFlexibleListingItem& _item) const;
 
     bool IsFiltering() const
     {
@@ -188,6 +190,25 @@ struct PanelDataStatistics
     }
 };
 
+struct PanelVolatileData
+{
+    enum {
+        invalid_size = (0xFFFFFFFFFFFFFFFFu),
+        flag_selected   = 1 << 0,
+        flag_shown      = 1 << 1
+    };
+    
+    uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
+    uint32_t flags = 0;
+    uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
+    
+    bool is_selected()          const { return (flags & flag_selected) != 0; };
+    bool is_shown()             const { return (flags & flag_shown) != 0; }
+    bool is_size_calculated()   const { return size != invalid_size; }
+    void toggle_selected( bool _v )   { flags = (flags & ~flag_selected) | (_v ? flag_selected : 0); }
+    void toggle_shown( bool _v )      { flags = (flags & ~flag_shown)    | (_v ? flag_shown    : 0); }
+};
+
 /**
  * PanelData actually does the following things:
  * - sorting provided data
@@ -211,6 +232,7 @@ public:
         time_t      mtime;
         time_t      btime;
         bool        is_dir;
+        bool        is_valid() const noexcept;
     };
     
     PanelData();
@@ -219,11 +241,14 @@ public:
     // PanelData is solely sync class - it does not give a fuck about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-    void Load(unique_ptr<VFSListing> _listing);
-    void ReLoad(unique_ptr<VFSListing> _listing);
+    void Load  (const shared_ptr<VFSFlexibleListing> &_listing);
+    void ReLoad(const shared_ptr<VFSFlexibleListing> &_listing);
 
-    const shared_ptr<VFSHost>     &Host() const;
-    const VFSListing&       Listing() const;
+    /**
+     * Will throw logic_error if called on listing with no common host.
+     */
+    const shared_ptr<VFSHost>&  Host() const;
+    const VFSFlexibleListing&   Listing() const;
     
     const DirSortIndT&      SortedDirectoryEntries() const;
     
@@ -232,10 +257,18 @@ public:
      * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
-    const VFSListingItem*   EntryAtRawPosition(int _pos) const;
-    const VFSListingItem*   EntryAtSortPosition(int _pos) const;
+    
+//    const VFSListingItem*   EntryAtRawPosition(int _pos) const;
+    VFSFlexibleListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
+    PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
+    const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
+    
+    VFSFlexibleListingItem   EntryAtSortPosition(int _pos) const; // will return an "empty" item upon invalid index
+    PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
+    const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
+    vector<VFSFlexibleListingItem> SelectedEntries() const;
     
     /**
      * Will throw an invalid_argument on invalid _pos.
@@ -250,7 +283,7 @@ public:
     /**
      * Converts sorted index into raw index. Returns -1 on any errors.
      */
-    int RawIndexForSortIndex(int _index) const;
+    int RawIndexForSortIndex(int _index) const noexcept;
     
     /**
      * Performs a binary case-sensivitive search.
@@ -324,7 +357,6 @@ public:
     void CustomFlagsSelectInvert();
     int  CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
-    void CustomIconSet(size_t _at_raw_pos, unsigned short _icon_id);
     void CustomIconClearAll();
     
     /**
@@ -342,16 +374,15 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
-    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item);
+    static EntrySortKeys ExtractSortKeysFromEntry(const VFSFlexibleListingItem& _item, const PanelVolatileData &_item_vd);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    unique_ptr<VFSListing>  m_Listing;
-
+    shared_ptr<VFSFlexibleListing>  m_Listing;
+    vector<PanelVolatileData>       m_VolatileData;
     DirSortIndT             m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT             m_EntriesByCustomSort; // custom defined sort
     DirSortIndT             m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
-    vector<bool>            m_EntriesShownFlags;
     
     PanelSortMode           m_CustomSortMode;
     PanelDataHardFiltering  m_HardFiltering;

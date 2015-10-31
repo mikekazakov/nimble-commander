@@ -6,15 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#ifndef Directories_OperationJob_h
-#define Directories_OperationJob_h
+#pragma once
 
-#import "OperationStats.h"
-#import <Habanero/IdleSleepPreventer.h>
+#include <Habanero/IdleSleepPreventer.h>
+#include "OperationStats.h"
 
-@class Operation;
-
-class OperationJob
+class OperationJob : public KeyValueObservation
 {
 public:
     enum class State
@@ -41,7 +38,8 @@ public:
     
     OperationStats& GetStats();
     
-    void SetBaseOperation(Operation *_op); // should be called only by Operation class
+    template <typename T>
+    void SetOnFinish(T _t) { m_OnFinish = move(_t); } // should be called only by Operation class
     
 protected:
     virtual void Do() = 0;
@@ -61,9 +59,9 @@ protected:
     //      SetStopped();
     //      return;
     // }
-    bool CheckPauseOrStop(int _sleep_in_ms = 100);
+    bool CheckPauseOrStop(int _sleep_in_ms = 100) const;
     
-    OperationStats m_Stats;
+    mutable OperationStats m_Stats;
     
 private:
     // Current state of the job.
@@ -80,11 +78,10 @@ private:
     // preventing system from idle when any Job object is present
     unique_ptr<IdleSleepPreventer::Promise> m_NoIdlePromise;
     
-    __weak Operation *m_BaseOperation;
+    // called in SetCompleted only
+    function<void()> m_OnFinish;
     
     // Disable copy constructor and operator.
     OperationJob(const OperationJob&) = delete;
     const OperationJob& operator=(const OperationJob&) = delete;
 };
-
-#endif

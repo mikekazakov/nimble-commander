@@ -56,19 +56,17 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 @synthesize filenamesSource = m_ResultSource;
 @synthesize filenamesDestination = m_ResultDestination;
 
-- (instancetype) initWithListing:(const VFSListing&)_listing
-                      andIndeces:(vector<unsigned>)_inds
+- (instancetype) initWithItems:(vector<VFSFlexibleListingItem>)_items
 {
     self = [[BatchRenameSheetController alloc] init];
     if(self) {
-        if(_inds.empty())
+        if(_items.empty())
             throw logic_error("empty files list");
         
-        for( auto i: _inds ) {
-            auto &e = _listing.At(i);
+        for( auto &e: _items ) {
             
             BatchRename::FileInfo fi;
-            fi.parent_path = [NSString stringWithUTF8String:_listing.RelativePath()];
+            fi.parent_path = [NSString stringWithUTF8StdString:e.Directory()];
             fi.mod_time = e.MTime();
             localtime_r(&fi.mod_time, &fi.mod_time_tm);
             fi.filename = e.NSName().copy;
@@ -86,16 +84,15 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             }
             
             m_FileInfos.emplace_back(fi);
-            m_ResultSource.emplace_back( string(_listing.RelativePath()) +  e.Name() );
+            m_ResultSource.emplace_back( e.Directory() + e.Name() );
         }
         
         
-        for(auto i: _inds) {
-            auto &e = _listing.At(i);
+        for(auto &e: _items) {
             
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-                tf.stringValue = e.NSName().copy;
+                tf.stringValue = e.NSName();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
@@ -105,7 +102,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-                tf.stringValue = e.NSName().copy;
+                tf.stringValue = e.NSName();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;

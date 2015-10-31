@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationStats.h"
-#import "Common.h"
+#include <Habanero/algo.h>
+#include "OperationStats.h"
+#include "Common.h"
 
 OperationStats::OperationStats()
 {
@@ -34,46 +35,57 @@ void OperationStats::SetValue(uint64_t _value)
 {
     if(_value > m_MaxValue)
         throw logic_error("OperationStats::SetValue _value is greater than m_MaxValue");
+
+    NotifyWillChange(Nofity::Value);
     m_Value = _value;
+    NotifyDidChange(Nofity::Value);
 }
 
 void OperationStats::AddValue(uint64_t _value)
 {
+    if(m_Value + _value > m_MaxValue)
+        throw logic_error("OperationStats::AddValue resulting value is greater than m_MaxValue");
+    
+    NotifyWillChange(Nofity::Value);
     m_Value += _value;
-    if(m_Value > m_MaxValue)
-        throw logic_error("OperationStats::AddValue m_Value is greater than m_MaxValue");
+    NotifyDidChange(Nofity::Value);
 }
 
-uint64_t OperationStats::GetValue() const
+uint64_t OperationStats::GetValue() const noexcept
 {
     return m_Value;
 }
 
-float OperationStats::GetProgress() const
+uint64_t OperationStats::RemainingValue() const noexcept
 {
-    return (float)m_Value/m_MaxValue;
+    return GetMaxValue() - GetValue();
+}
+
+double OperationStats::GetProgress() const noexcept
+{
+    return m_MaxValue != 0 ? (double)m_Value/(double)m_MaxValue : 0.;
 }
 
 void OperationStats::SetCurrentItem(string _item)
 {
-    lock_guard<mutex> lock(m_Lock);
-    if( *m_CurrentItem != _item ) {
-        m_CurrentItem = make_shared<string>(move(_item));
-        if( m_OnCurrentItemChanged )
-            dispatch_to_main_queue( m_OnCurrentItemChanged );
+    if( *GetCurrentItem() == _item )
+        return;
+        
+    NotifyWillChange(Nofity::CurrentItem);
+    
+    {
+        auto item = to_shared_ptr( move(_item) );
+        lock_guard<mutex> lock(m_Lock);
+        m_CurrentItem = item;
     }
+    
+    NotifyDidChange(Nofity::CurrentItem);
 }
 
 shared_ptr<const string> OperationStats::GetCurrentItem() const
 {
     lock_guard<mutex> lock(m_Lock);
     return m_CurrentItem;
-}
-
-void OperationStats::SetOnCurrentItemChanged(function<void()> _callback)
-{
-    lock_guard<mutex> lock(m_Lock);
-    m_OnCurrentItemChanged = move(_callback);
 }
 
 void OperationStats::StartTimeTracking()

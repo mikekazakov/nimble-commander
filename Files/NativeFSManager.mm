@@ -9,6 +9,7 @@
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/mount.h>
+#include <sys/stat.h>
 #include "NativeFSManager.h"
 #include "FSEventsDirUpdate.h"
 #include "sysinfo.h"
@@ -162,6 +163,14 @@ bool NativeFSManager::GetBasicInfo(NativeFileSystemInfo &_volume)
     _volume.mount_flags.defer_writes        = stat.f_flags & MNT_DEFWRITE;
     _volume.mount_flags.multi_label         = stat.f_flags & MNT_MULTILABEL;
     _volume.mount_flags.cprotect            = stat.f_flags & MNT_CPROTECT;
+    
+    
+    struct stat entry_stat;
+    if( ::stat(_volume.mounted_at_path.c_str(), &entry_stat) != 0 )
+        return false;
+
+    _volume.basic.dev_id = entry_stat.st_dev;
+    
     return true;
 }
 
@@ -385,6 +394,14 @@ void NativeFSManager::UpdateSpaceInformation(const shared_ptr<NativeFileSystemIn
     UpdateSpaceInfo(*_volume.get());
 }
 
+shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromFD(int _fd) const
+{
+    struct stat st;
+    if( fstat(_fd, &st) < 0 )
+        return nullptr;
+    return VolumeFromDevID( st.st_dev );
+}
+
 shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path) const
 {
     shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
@@ -425,8 +442,18 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const cha
     return nullptr;
 }
 
+shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromDevID(dev_t _dev_id) const
+{
+    lock_guard<recursive_mutex> lock(m_Lock);
+    auto it = find_if(begin(m_Volumes), end(m_Volumes), [=](auto&_){ return _->basic.dev_id == _dev_id; } );
+    if(it != end(m_Volumes))
+        return *it;
+    return nullptr;
+}
+
 shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path) const
 {
+    // TODO: compare performance with stat() and searching for fs with dev_id
     struct statfs info;
     if(statfs(_path.c_str(), &info) < 0)
         return nullptr;

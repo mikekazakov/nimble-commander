@@ -12,6 +12,7 @@
 #include "PanelData.h"
 
 class VFSListingItem;
+struct PanelVolatileData;
 struct PanelDataStatistics;
 class ModernPanelViewPresentation;
 
@@ -20,7 +21,8 @@ class ModernPanelViewPresentationItemsFooter
 public:
     ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent);
     
-    void Draw(const VFSListingItem* _current_item,
+    void Draw(const VFSFlexibleListingItem &_current_item,
+              const PanelVolatileData &_current_item_vd,
               const PanelDataStatistics &_stats,
               PanelViewType _view_type,
               bool _active,
@@ -33,7 +35,7 @@ public:
     
 private:
     NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files);
-    void PrepareToDraw(const VFSListingItem* _current_item, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active);
+    void PrepareToDraw(const VFSFlexibleListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active);
     
     
     NSFont                          *m_Font = nil;

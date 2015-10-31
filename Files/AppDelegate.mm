@@ -106,6 +106,7 @@ static SUUpdater *g_Sparkle = nil;
     VFSFactory::Instance().RegisterVFS(       VFSNetFTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(      VFSArchiveHost::Meta() );
     VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(        VFSXAttrHost::Meta() );
     
     NativeFSManager::Instance();
     

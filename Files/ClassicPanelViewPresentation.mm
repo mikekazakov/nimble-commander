@@ -122,16 +122,13 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent) const
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd) const
 {
-    if( _dirent.IsDir() )
-    {
-        if( _dirent.Size() != VFSListingItem::InvalidSize)
-        {
-            return FormHumanReadableSizeRepresentation(_dirent.Size());
+    if( _dirent.IsDir() ) {
+        if( _vd.is_size_calculated() ) {
+            return FormHumanReadableSizeRepresentation( _vd.size );
         }
-        else
-        {
+        else {
             char buf[32];
             memset(buf, 0, sizeof(buf));
             if( !_dirent.IsDotDot()) {
@@ -149,8 +146,7 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentatio
             return r;
         }
     }
-    else
-    {
+    else {
         return FormHumanReadableSizeRepresentation(_dirent.Size());
     }
 }
@@ -231,7 +227,7 @@ oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     return out;
 }
 
-static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSFlexibleListingItem &_dirent)
 {   // output is a direct filename or symlink path in ->filename form
     oms::StringBuf<256> out;
     if(!_dirent.IsSymlink())
@@ -346,10 +342,10 @@ void ClassicPanelViewPresentation::BuildAppearance()
                 m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
 }
 
-const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, bool _is_focused)
+const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
-        if(r.filter.Filter(_dirent))
+        if(r.filter.Filter(_dirent, _vd))
             return _is_focused ? r.focused : r.unfocused;
     static DoubleColor def;
     return def;
@@ -601,8 +597,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         full_columns_width[0] + full_columns_width[1] + 1,
         full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
     
-    auto &listing = m_State->Data->Listing();
-    auto &sorted_entries = m_State->Data->SortedDirectoryEntries();
+    const auto sorted_entries_size = m_State->Data->SortedDirectoryEntries().size();
     int path_name_start_pos = 0, path_name_end_pos = 0;
     int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
@@ -616,10 +611,11 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     omsc.SetupForText();
     oms::StringBuf<MAXPATHLEN> fn;
     for(int n = 0, i = m_State->ItemsDisplayOffset;
-        n < max_files_to_show && i < sorted_entries.size();
+        n < max_files_to_show && i < sorted_entries_size;
         ++n, ++i)
     {
-        const auto& current = listing[ sorted_entries[i] ];
+        auto current = m_State->Data->EntryAtSortPosition(i);
+        auto current_vd = m_State->Data->VolatileDataAtSortPosition(i);
         if(current.CFDisplayName() == current.CFName())
             // entry has no altered display name, so just use it's real filename
             fn.FromUTF8(current.Name(), current.NameLen());
@@ -641,18 +637,17 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         for(int i = 0; i < CN; ++i) X += columns_width[i];
         
         bool focused = (i == m_State->CursorPos) && View().active;
-        auto text_color = GetDirectoryEntryTextColor(current, focused);
+        auto text_color = GetDirectoryEntryTextColor(current, current_vd, focused);
         
-        if(m_State->ViewType != PanelViewType::ViewFull)
-        {
+        if(m_State->ViewType != PanelViewType::ViewFull) {
             if(focused)
                 omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
         
             omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
         
-            if(m_State->ViewType==PanelViewType::ViewWide)
-            { // draw entry size on right side, only for this mode
-                auto size_info = FormHumanReadableSizeReprentationForDirEnt(current);
+            if(m_State->ViewType==PanelViewType::ViewWide) {
+                // draw entry size on right side, only for this mode
+                auto size_info = FormHumanReadableSizeReprentationForDirEnt(current, current_vd);
             
                 if(focused)
                     omsc.DrawBackground(m_CursorBackgroundColor, columns_width[0]+1, Y, size_info.Capacity);
@@ -660,15 +655,13 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
                 omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, columns_width[0]+1, Y, text_color);
             }
         }
-        else
-        {
-            UniChar time_info[5];;
-            auto size_info = FormHumanReadableSizeReprentationForDirEnt(current);
+        else {
+            UniChar time_info[5];
+            auto size_info = FormHumanReadableSizeReprentationForDirEnt(current, current_vd);
             auto date_info = FormHumanReadableDateRepresentation(current.MTime());
             FormHumanReadableTimeRepresentation5(current.MTime(), time_info);
             
-            if(focused)
-            {
+            if(focused) {
                 if(full_columns_width[0] > 0)
                     omsc.DrawBackground(m_CursorBackgroundColor, X, Y, full_columns_width[0] - 1);
                 omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[0], Y, 6);
@@ -687,17 +680,16 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw header and footer data
     {
-        const VFSListingItem *current_entry = 0;
-        if(m_State->CursorPos >= 0) current_entry = &listing[sorted_entries[m_State->CursorPos]];
+        auto current_entry = m_State->Data->EntryAtSortPosition( m_State->CursorPos );
+        
         oms::StringBuf<14> time_info;
         oms::StringBuf<6> size_info;
         oms::StringBuf<256> footer_entry;
         auto sort_mode = FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort);
-        if(current_entry)
-        {
-            time_info = FormHumanReadableTimeRepresentation(current_entry->MTime());
-            size_info = FormHumanReadableSizeReprentationForDirEnt(*current_entry);
-            footer_entry = ComposeFooterFileNameForEntry(*current_entry);
+        if(current_entry) {
+            time_info = FormHumanReadableTimeRepresentation( current_entry.MTime() );
+            size_info = FormHumanReadableSizeReprentationForDirEnt( current_entry, m_State->Data->VolatileDataAtSortPosition(m_State->CursorPos) );
+            footer_entry = ComposeFooterFileNameForEntry( current_entry );
         }
         
         // draw sorting mode in left-upper corner
@@ -722,7 +714,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
                 
             omsc.DrawString(path.Chars(), 0, path.Size(), path_name_start_pos+1, 0, View().active ? m_ActiveTextColor : m_TextColor);
         }
-        
+
         // entry footer info
         if(current_entry && m_State->ViewType != PanelViewType::ViewFull)
         {

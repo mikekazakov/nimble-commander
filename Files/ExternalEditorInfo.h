@@ -20,7 +20,7 @@
 @property (nonatomic) bool terminal;
 
 
-- (bool) isValidItem:(const VFSListingItem&)_item;
+- (bool) isValidItem:(const VFSFlexibleListingItem&)_item;
 
 /**
  * Returns arguments in UTF8 form where %% appearances are changed to specified file path.
@@ -35,7 +35,7 @@
 
 + (ExternalEditorsList*) sharedList;
 
-- (ExternalEditorInfo*) FindViableEditorForItem:(const VFSListingItem&)_item;
+- (ExternalEditorInfo*) FindViableEditorForItem:(const VFSFlexibleListingItem&)_item;
 - (NSMutableArray*) Editors;
 - (void) setEditors:(NSMutableArray*)_editors;
 

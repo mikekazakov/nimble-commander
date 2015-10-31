@@ -8,8 +8,9 @@
 
 #import "../3rd_party/built/include/libssh2.h"
 #import "../3rd_party/built/include/libssh2_sftp.h"
+#import <Habanero/algo.h>
+#import "Common.h"
 #import "VFSNetSFTPHost.h"
-#import "VFSListing.h"
 #import "VFSNetSFTPFile.h"
 
 VFSNetSFTPHost::Connection::~Connection()
@@ -91,11 +92,6 @@ public:
     }
 };
 
-const char *VFSNetSFTPHost::FSTag() const
-{
-    return Tag;
-}
-
 VFSConfiguration VFSNetSFTPHost::Configuration() const
 {
     return m_Config;
@@ -112,7 +108,7 @@ VFSMeta VFSNetSFTPHost::Meta()
 }
 
 VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr),
+    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
     m_Config(_config)
 {
     int rc = DoInit();
@@ -125,7 +121,7 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
                                const string &_passwd,
                                const string &_keypath,
                                long   _port):
-    VFSHost(_serv_url.c_str(), nullptr)
+    VFSHost(_serv_url.c_str(), nullptr, Tag)
 {
     {
         VFSNetSFTPHostConfiguration config;
@@ -327,10 +323,7 @@ in_addr_t VFSNetSFTPHost::InetAddr() const
     return m_HostAddr;
 }
 
-int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
-                                          unique_ptr<VFSListing> &_target,
-                                          int _flags,
-                                          VFSCancelChecker _cancel_checker)
+int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -339,115 +332,86 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     
     AutoConnectionReturn acr(conn, this);
     
-    LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
-    if (!sftp_handle) {
-        return VFSErrorForConnection(*conn);
-    }
- 
-    auto dir = make_unique<VFSGenericListing>(_path, shared_from_this());
-    bool need_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && strcmp(_path, "/") != 0;
-    bool need_dummy_dot_dot = need_dot_dot;
-    
-    if(need_dot_dot)
-        dir->m_Items.emplace_back(); // reserve a space for dot-dot entry
-    
-    while (true) {
-        char mem[MAXPATHLEN];
+    // setup of listing structure
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.sizes.reset( variable_container<>::type::dense );
+    listing_source.uids.reset( variable_container<>::type::dense );
+    listing_source.gids.reset( variable_container<>::type::dense );
+    listing_source.atimes.reset( variable_container<>::type::dense );
+    listing_source.mtimes.reset( variable_container<>::type::dense );
+    listing_source.ctimes.reset( variable_container<>::type::dense );
+    listing_source.btimes.reset( variable_container<>::type::dense );
+    listing_source.symlinks.reset( variable_container<>::type::sparse );
+
+    {
+        // fetch listing using readdir
+        LIBSSH2_SFTP_HANDLE *sftp_handle = libssh2_sftp_open_ex(conn->sftp, _path, (unsigned)strlen(_path), 0, 0, LIBSSH2_SFTP_OPENDIR);
+        if( !sftp_handle )
+            return VFSErrorForConnection(*conn);
+        auto close_sftp_handle = at_scope_end([=]{ libssh2_sftp_closedir(sftp_handle); } );
+        
+        bool should_have_dot_dot = !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/";
+        if( should_have_dot_dot ) {
+            // create space for dot-dot entry in advance
+            listing_source.filenames.emplace_back("..");
+            listing_source.unix_modes.emplace_back(S_IFDIR | S_IRWXU);
+            listing_source.unix_types.emplace_back(DT_DIR);
+        }
+
+        char filename[MAXPATHLEN];
         LIBSSH2_SFTP_ATTRIBUTES attrs;
-        if(libssh2_sftp_readdir_ex(sftp_handle, mem, sizeof(mem), nullptr, 0, &attrs) <= 0)
-            break;
-        
-        bool isdotdot = false;
-        if( mem[0] == '.' && mem[1] == 0 )
-            continue; // do not process self entry
-        else if( mem[0] == '.' && mem[1] == '.' && mem[2] == 0 ) // special case for dot-dot directory
-        {
-            if(_flags & VFSFlags::F_NoDotDot) continue;
+        while( libssh2_sftp_readdir_ex(sftp_handle, filename, sizeof(filename), nullptr, 0, &attrs) > 0 ) {
+            int index = 0;
+            if( strisdot(filename) )
+                continue; // do not process self entry
+            else if( strisdotdot(filename) ) { // special case for dot-dot directory
+                if( !should_have_dot_dot )
+                    continue; // skip .. for root directory or if there's an option to exclude dot-dot entries
+            }
+            else { // all other cases
+                listing_source.filenames.emplace_back();
+                listing_source.unix_modes.emplace_back();
+                listing_source.unix_types.emplace_back();
+                index = int(listing_source.filenames.size() - 1);
+            }
             
-            if(strcmp(_path, "/") == 0)
-                continue; // skip .. for root directory
-            
-            isdotdot = true;
-            need_dummy_dot_dot = false;
+            listing_source.filenames[index] = filename;
+            listing_source.unix_modes[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? attrs.permissions : (S_IFREG | S_IRUSR);
+            listing_source.unix_types[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? IFTODT(attrs.permissions) : DT_REG;
+            listing_source.sizes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) ? attrs.filesize : 0);
+            listing_source.uids.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) ? (uid_t)attrs.uid : 0);
+            listing_source.gids.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) ? (uid_t)attrs.gid : 0);
+            listing_source.atimes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) ? attrs.atime : 0);
+            listing_source.mtimes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) ? attrs.mtime : 0);
+            listing_source.btimes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) ? attrs.mtime : 0);
+            listing_source.ctimes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) ? attrs.mtime : 0);
         }
-        else { // all other cases
-            dir->m_Items.emplace_back();
-        }
-
-        auto &it = isdotdot ? dir->m_Items[0] : dir->m_Items.back();
-        
-        it.m_Name = strdup(mem);
-        it.m_NameLen = strlen(mem);
-        it.m_CFName = CFStringCreateWithCString(0, mem, kCFStringEncodingUTF8);
-        it.m_NeedReleaseName = true;
-        it.m_NeedReleaseCFName = true;
-
-        if(attrs.flags & LIBSSH2_SFTP_ATTR_SIZE)
-            it.m_Size = attrs.filesize;
-        if(attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) {
-            it.m_UID = (uid_t)attrs.uid;
-            it.m_GID = (uid_t)attrs.gid;
-        }
-        if(attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) {
-            it.m_ATime = attrs.atime;
-            it.m_MTime = attrs.mtime;
-            it.m_CTime = attrs.mtime;
-            it.m_BTime = attrs.mtime;
-        }
-        if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
-            it.m_Mode = attrs.permissions;
-            it.m_Type = IFTODT(attrs.permissions);
-        }
-        
-        if(it.IsDir())
-            it.m_Size = VFSListingItem::InvalidSize;
-        
-        it.FindExtension();
     }
     
-    libssh2_sftp_closedir(sftp_handle);
-    
-    if( need_dummy_dot_dot ) {
-        auto &it = dir->m_Items[0];
-        it.m_Name = strdup("..");
-        it.m_NameLen = strlen("..");
-        it.m_CFName = CFStringCreateWithCString(0, "..", kCFStringEncodingUTF8);
-        it.m_NeedReleaseName = true;
-        it.m_NeedReleaseCFName = true;
-        it.m_Mode = S_IFDIR|S_IRWXU;
-        it.m_Type = DT_DIR;
-        it.m_Size = VFSListingItem::InvalidSize;
-        it.FindExtension();
-    }
-
-    // check for a symlinks and read additional info
-    for(auto &i: *dir ){
-        if(i.IsSymlink()) {
-            char path[MAXPATHLEN], symlink[MAXPATHLEN];
-            strcpy(path, _path);
-            if( path[strlen(path)-1] != '/' ) strcat(path, "/");
-            strcat(path, i.Name());
-            
+    // check for symlinks and read additional info
+    for( int index = 0, index_e = (int)listing_source.filenames.size(); index != index_e; ++index )
+        if( listing_source.unix_types[index] == DT_LNK ) {
+            string path = listing_source.directories[0] + listing_source.filenames[index];
+        
             // read where symlink points at
-            rc = libssh2_sftp_symlink_ex(conn->sftp, path, (unsigned)strlen(path), symlink, MAXPATHLEN, LIBSSH2_SFTP_READLINK);
+            char symlink[MAXPATHLEN];
+            rc = libssh2_sftp_symlink_ex(conn->sftp, path.c_str(), (unsigned)path.length(), symlink, MAXPATHLEN, LIBSSH2_SFTP_READLINK);
             if(rc >= 0)
-                ((VFSGenericListingItem*)&i)->m_Symlink = symlink;
-
+                listing_source.symlinks.insert(index, symlink);
+            
             // read info about real object
             LIBSSH2_SFTP_ATTRIBUTES stat;
-            if(libssh2_sftp_stat_ex(conn->sftp, path, (unsigned)strlen(path), LIBSSH2_SFTP_STAT, &stat) >= 0) {
-                ((VFSGenericListingItem*)&i)->m_Mode = stat.permissions;
-                if(!i.IsDir())
-                    ((VFSGenericListingItem*)&i)->m_Size = stat.filesize;
-                else
-                    ((VFSGenericListingItem*)&i)->m_Size = VFSListingItem::InvalidSize;
+            if(libssh2_sftp_stat_ex(conn->sftp, path.c_str(), (unsigned)path.length(), LIBSSH2_SFTP_STAT, &stat) >= 0) {
+                listing_source.unix_modes[index] = stat.permissions;
+                listing_source.sizes.insert(index, stat.filesize);
             }
         }
-    }
     
-    _target = move(dir);
+    _target = VFSFlexibleListing::Build(move(listing_source));
     
-    return 0;
+    return 0;    
 }
 
 int VFSNetSFTPHost::Stat(const char *_path,

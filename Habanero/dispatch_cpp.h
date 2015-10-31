@@ -1,7 +1,10 @@
 #pragma once
 
 #include <dispatch/dispatch.h>
+#include <utility>
+#include <atomic>
 #include <chrono>
+#include <iostream>
 
 // synopsis
 
@@ -74,7 +77,50 @@ private:
     dispatch_queue_t m_queue;
 };
 
-
+class DispatchGroup
+{
+public:
+    enum Priority
+    {
+        High        = DISPATCH_QUEUE_PRIORITY_HIGH,
+        Default     = DISPATCH_QUEUE_PRIORITY_DEFAULT,
+        Low         = DISPATCH_QUEUE_PRIORITY_LOW,
+        Background  = DISPATCH_QUEUE_PRIORITY_BACKGROUND
+    };
+    
+    /**
+     * Creates a dispatch group and gets a shared oncurrent queue.
+     */
+    DispatchGroup(Priority _priority = Default);
+    
+    /**
+     * Will wait for completion before destruction.
+     */
+    ~DispatchGroup();
+    
+    /**
+     * Run _block in group on queue with prioriry specified at construction time.
+     */
+    template <class T>
+    void Run( T _f ) const;
+    
+    /**
+     * Wait indefinitely until all tasks in group will finish.
+     */
+    void Wait() const noexcept;
+    
+    /**
+     * Returnes amount of blocks currently running in this group.
+     */
+    unsigned Count() const noexcept;
+    
+private:
+    DispatchGroup(const DispatchGroup&) = delete;
+    void operator=(const DispatchGroup&) = delete;
+    dispatch_queue_t m_Queue;
+    dispatch_group_t m_Group;
+    mutable std::atomic_uint m_Count{0};
+};
 
 // implementation details
 
@@ -135,7 +181,22 @@ inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queu
                      new T( std::move(f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
-                         (*f)();
+                         try
+                         {
+                             (*f)();
+                         }
+                         catch(std::exception &e)
+                         {
+                             std::cerr << "Exception caught: " << e.what() << std::endl;
+                         }
+                         catch(std::exception *e)
+                         {
+                             std::cerr << "Exception caught: " << e->what() << std::endl;
+                         }
+                         catch(...)
+                         {
+                             std::cerr << "Caught an unhandled exception!" << std::endl;
+                         }
                          delete f;
                      });
 }
@@ -236,4 +297,21 @@ inline void dispatch_queue::apply(size_t iterations, void (^block)(size_t))
 inline void dispatch_queue::after( std::chrono::nanoseconds when, dispatch_block_t block )
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, when.count()), m_queue, block);
+}
+
+template <class T>
+inline void DispatchGroup::Run( T _f ) const
+{
+    using CT = std::pair<T, const DispatchGroup*>;
+    auto *context = new CT( std::move(_f), this );
+    ++m_Count;
+    dispatch_group_async_f(m_Group,
+                           m_Queue,
+                           context,
+                           [](void* _p) {
+                               auto context = static_cast<CT*>(_p);
+                               context->first();
+                               --context->second->m_Count;
+                               delete context;
+                           });
 }

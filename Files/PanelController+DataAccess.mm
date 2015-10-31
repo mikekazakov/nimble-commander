@@ -17,7 +17,7 @@
         return "";
     
     if(auto item = m_View.item)
-        return item->Name();
+        return item.Name();
     
     return "";
 }
@@ -39,8 +39,8 @@
         return m_Data.SelectedEntriesFilenames();
     
     auto item = m_View.item;
-    if(item && !item->IsDotDot())
-        return vector<string>{ item->Name() };
+    if(item && !item.IsDotDot())
+        return vector<string>{ item.Name() };
     
     return {};
 }
@@ -51,14 +51,14 @@
     auto &d = self.data;
     for( auto ind: d.SortedDirectoryEntries() ) {
         auto e = d.EntryAtRawPosition(ind);
-        if( !e || !e->CFIsSelected() || e->IsDotDot() )
+        if( !e || e.IsDotDot() || d.VolatileDataAtRawPosition(ind).is_selected() )
             continue;
         inds.emplace_back(ind);
     }
     
     if( inds.empty() ) {
         if(!self.view.item ||
-           self.view.item->IsDotDot() ||
+           self.view.item.IsDotDot() ||
            self.view.curpos < 0)
             return {};
 
@@ -71,6 +71,23 @@
     return inds;
 }
 
+- (vector<VFSFlexibleListingItem>)selectedEntriesOrFocusedEntries
+{
+    vector<VFSFlexibleListingItem> items;
+    auto &d = self.data;
+    for( auto ind: d.SortedDirectoryEntries() )
+        if( d.VolatileDataAtRawPosition(ind).is_selected() )
+            if( auto e = d.EntryAtRawPosition(ind) )
+                if( !e.IsDotDot() )
+                    items.emplace_back( move(e) );
+    
+    if( items.empty() )
+        if( auto e = d.EntryAtSortPosition(self.view.curpos) )
+            if( !e.IsDotDot() )
+                items.emplace_back( move(e) );
+    return items;
+}
+
 - (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
 {
     if(!m_View)
@@ -80,7 +97,7 @@
         return m_Data.SelectedEntriesFilenames();
     
     if(auto item = m_View.item)
-        return vector<string>{ item->Name() };
+        return vector<string>{ item.Name() };
     
     return {};
 }

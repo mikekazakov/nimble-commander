@@ -32,7 +32,7 @@ static NSString* FormHumanReadableDateTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+static NSString *ComposeFooterFileNameForEntry(const VFSFlexibleListingItem &_dirent)
 {
     // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink())
@@ -111,7 +111,8 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
                 [NSNumber numberWithInt:_total_files]];
 }
 
-void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current_entry,
+void ModernPanelViewPresentationItemsFooter::Draw(const VFSFlexibleListingItem &_current_entry,
+                                                  const PanelVolatileData &_current_item_vd,
                                                   const PanelDataStatistics &_stats,
                                                   PanelViewType _view_type,
                                                   bool _active,
@@ -124,7 +125,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current
     if(!_wnd_active)
         _active = false;
     
-    PrepareToDraw(_current_entry, _stats, _view_type, _active);
+    PrepareToDraw(_current_entry, _current_item_vd, _stats, _view_type, _active);
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
@@ -155,7 +156,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current
         [m_StatsStr drawWithRect:NSMakeRect(gap, text_y_off, _width - 2.*gap, m_FontHeight)
                          options:0];
     }
-    else if(_current_entry != nullptr)
+    else if(_current_entry)
     {
         if (_view_type != PanelViewType::ViewFull)
         {
@@ -175,7 +176,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem* _current
     }
 }
 
-void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem* _current_item, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
+void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFlexibleListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
 {
     if(_stats.selected_entries_amount != 0)
     {
@@ -200,28 +201,28 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem*
         m_LastStatistics = _stats;
         m_LastActive = _active;
     }
-    else if(_current_item != nullptr)
+    else if(_current_item)
     {
         if(m_LastActive == _active &&
-           m_LastItemName == _current_item->Name() &&
-           m_LastItemSize == _current_item->Size() &&
-           m_LastItemDate == _current_item->MTime() &&
-           m_LastItemSymlink.empty() == !_current_item->IsSymlink() &&
-           (!_current_item->IsSymlink() || m_LastItemSymlink == _current_item->Symlink()) &&
-           m_LastItemIsDir == _current_item->IsDir() &&
-           m_LastItemIsDotDot == _current_item->IsDotDot()
+           m_LastItemName == _current_item.Name() &&
+           m_LastItemSize == _current_item_vd.size &&
+           m_LastItemDate == _current_item.MTime() &&
+           m_LastItemSymlink.empty() == !_current_item.IsSymlink() &&
+           (!_current_item.IsSymlink() || m_LastItemSymlink == _current_item.Symlink()) &&
+           m_LastItemIsDir == _current_item.IsDir() &&
+           m_LastItemIsDotDot == _current_item.IsDotDot()
            )
             return; // ok, we're up to date
         
         // nope, we're outdated, need to rebuild info
         m_LastActive = _active;
-        m_LastItemName = _current_item->Name();
-        m_LastItemSize = _current_item->Size();
-        m_LastItemDate = _current_item->MTime();
-        m_LastItemIsDir = _current_item->IsDir();
-        m_LastItemIsDotDot = _current_item->IsDotDot();
-        if(_current_item->IsSymlink())
-            m_LastItemSymlink = _current_item->Symlink();
+        m_LastItemName = _current_item.Name();
+        m_LastItemSize = _current_item_vd.size;
+        m_LastItemDate = _current_item.MTime();
+        m_LastItemIsDir = _current_item.IsDir();
+        m_LastItemIsDotDot = _current_item.IsDotDot();
+        if(_current_item.IsSymlink())
+            m_LastItemSymlink = _current_item.Symlink();
         else
             m_LastItemSymlink.clear();
         
@@ -245,11 +246,11 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem*
         m_ItemDateStr = [[NSAttributedString alloc] initWithString:date_str
                                                         attributes:attr1];
         
-        NSString *size_str = m_Parent->FileSizeToString(*_current_item);
+        NSString *size_str = m_Parent->FileSizeToString(_current_item, _current_item_vd);
         m_ItemSizeStr = [[NSAttributedString alloc] initWithString:size_str
                                                         attributes:attr1];
 
-        NSString *file_str = ComposeFooterFileNameForEntry(*_current_item);
+        NSString *file_str = ComposeFooterFileNameForEntry(_current_item);
         m_ItemNameStr = [[NSAttributedString alloc] initWithString:file_str
                                                         attributes:attr2];
         

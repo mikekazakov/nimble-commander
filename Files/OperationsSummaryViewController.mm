@@ -41,10 +41,11 @@
     NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
     mouseLocation = [self convertPoint:mouseLocation fromView: nil];
  
+    static auto dummy_event = [NSEvent otherEventWithType:NSApplicationDefined location:{0,0} modifierFlags:0 timestamp:0 windowNumber:0 context:nil subtype:0 data1:0 data2:0];
     if (NSPointInRect(mouseLocation, [self bounds]))
-        [self mouseEntered: nil];
+        [self mouseEntered:dummy_event];
     else
-        [self mouseExited: nil];
+        [self mouseExited:dummy_event];
  
     [self addTrackingArea:trackingArea];
 }
@@ -118,6 +119,7 @@
         progress.controlSize = NSMiniControlSize;
         progress.minValue = 0;
         progress.maxValue = 1;
+        progress.doubleValue = 0;
         [progress bind:@"value" toObject:self withKeyPath:@"CurrentOperation.Progress" options:nil];
         [progress bind:@"toolTip" toObject:self withKeyPath:@"CurrentOperation.ShortInfo" options:nil];
         [progress bind:@"isIndeterminate" toObject:self withKeyPath:@"CurrentOperation.IsIndeterminate" options:nil];

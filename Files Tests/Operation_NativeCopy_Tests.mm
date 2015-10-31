@@ -10,6 +10,17 @@
 #include "VFS.h"
 #include "FileCopyOperation.h"
 
+
+static vector<VFSFlexibleListingItem> FetchItems(const string& _directory_path,
+                                                 const vector<string> &_filenames,
+                                                 VFSHost &_host)
+{
+    vector<VFSFlexibleListingItem> items;
+    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
+    return items;
+}
+
+
 @interface Operation_NativeCopy_Tests : XCTestCase
 @end
 
@@ -26,14 +37,14 @@
     __block bool finished = false;
     
     {
+
         FileCopyOperationOptions opts;
         opts.docopy = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:vector<string>(1, "overwrite_test_big.zzz")
-                          root:(g_DataPref / "operations/copying/").c_str()
-                          dest:dst.c_str()
+        op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_big.zzz"}, *host)
+               destinationPath:dst.native()
+               destinationHost:host
                        options:opts];
-    
         [op AddOnFinishHandler:^{ finished = true; }];
         [op Start];
         [self waitUntilFinish:finished];
@@ -48,9 +59,9 @@
         opts.docopy = true;
         opts.force_overwrite = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:vector<string>(1, "overwrite_test_small.zzz")
-                          root:(g_DataPref / "operations/copying/").c_str()
-                          dest:dst.c_str()
+        op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_small.zzz"}, *host)
+               destinationPath:dst.native()
+               destinationHost:host
                        options:opts];
         
         [op AddOnFinishHandler:^{ finished = true; }];
@@ -78,9 +89,9 @@
         FileCopyOperationOptions opts;
         opts.docopy = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:vector<string>(1, "overwrite_test_small.zzz")
-                          root:(g_DataPref / "operations/copying/").c_str()
-                          dest:dst.c_str()
+        op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_small.zzz"}, *host)
+               destinationPath:dst.native()
+               destinationHost:host
                        options:opts];
         
         [op AddOnFinishHandler:^{ finished = true; }];
@@ -97,9 +108,9 @@
         opts.docopy = true;
         opts.force_overwrite = true;
         FileCopyOperation *op = [FileCopyOperation alloc];
-        op = [op initWithFiles:vector<string>(1, "overwrite_test_big.zzz")
-                          root:(g_DataPref / "operations/copying/").c_str()
-                          dest:dst.c_str()
+        op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_big.zzz"}, *host)
+               destinationPath:dst.native()
+               destinationHost:host
                        options:opts];
         
         [op AddOnFinishHandler:^{ finished = true; }];

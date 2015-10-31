@@ -21,7 +21,7 @@ VFSFile::~VFSFile()
 {
 }
 
-const char* VFSFile::RelativePath() const
+const char* VFSFile::RelativePath() const noexcept
 {
     return m_RelativePath.c_str();
 }
@@ -164,4 +164,9 @@ ssize_t VFSFile::Skip(size_t _size)
         skipped += r;
     }
     return skipped;
+}
+
+int VFSFile::SetUploadSize(size_t _size)
+{
+    return 0;
 }

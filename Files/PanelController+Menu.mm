@@ -35,6 +35,34 @@
 #import "BatchRenameSheetController.h"
 #import "BatchRenameOperation.h"
 
+
+static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
+{
+    vector<shared_ptr<VFSFlexibleListing>> listings;
+    vector<vector<unsigned>> indeces;
+    
+    for(auto &directory: _dir_to_filenames) {
+        shared_ptr<VFSFlexibleListing> listing;
+        if( _vfs->FetchFlexibleListing(directory.first.c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
+            listings.emplace_back(listing);
+            indeces.emplace_back();
+            auto &ind = indeces.back();
+            
+            unordered_map<string, unsigned> listing_fn_ind;
+            for(unsigned i = 0, e = listing->Count(); i != e; ++i)
+                listing_fn_ind[ listing->Filename(i) ] = i;
+                
+                for( auto &filename: directory.second ) {
+                    auto it = listing_fn_ind.find(filename);
+                    if( it != end(listing_fn_ind) )
+                        ind.emplace_back( it->second );
+                        }
+        }
+    }
+    
+    return VFSFlexibleListing::Build( VFSFlexibleListing::Compose(listings, indeces) );
+}
+
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -87,24 +115,25 @@
     
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
-    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || self.vfs->Parent() != nullptr;
-    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.volume_information")      return self.vfs->IsNativeFS();
-    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item->IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return self.vfs->IsNativeFS() && m_View.item && !m_View.item->IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
-    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item != nullptr;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.create_directory")        return self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item->IsDir() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.batch_rename")            return self.vfs->IsWriteable() && m_View.item && (!m_View.item->IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
+    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.file_attributes")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
+    IF_MENU_TAG("menu.command.external_editor")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
+    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
+    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
+    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.open_xattr")              return m_View.item;
     
     return true; // will disable some items in the future
 }
@@ -202,7 +231,7 @@
 
 - (IBAction)OnGoIntoDirectory:(id)sender { // cmd+down
     auto item = m_View.item;
-    if(item != nullptr && item->IsDotDot() == false)
+    if(item && !item.IsDotDot() == false)
         [self HandleGoIntoDirOrArchive];
 }
 
@@ -430,7 +459,7 @@
     
     if(m_Data.Stats().selected_entries_amount > 0 )
         [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-    else if(m_View.item && !m_View.item->IsDotDot())
+    else if(m_View.item && !m_View.item.IsDotDot())
         [sheet ShowSheet:self.window
                     data:&m_Data
                    index:m_Data.RawIndexForSortIndex(m_View.curpos)
@@ -442,8 +471,8 @@
         return; // currently support volume info only on native fs
     
     string path = self.currentDirectoryPath;
-    if(m_View.item && !m_View.item->IsDotDot())
-        path += m_View.item->Name();
+    if(m_View.item && !m_View.item.IsDotDot())
+        path += m_View.item.Name();
     
     [[DetailedVolumeInformationSheetController new] ShowSheet:self.window destpath:path.c_str()];
 }
@@ -452,6 +481,21 @@
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
+    sheet.OnPanelize = [=](const map<string, vector<string>> &_dir_to_filenames) {
+        auto host = sheet.host;
+        m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
+            auto l = FetchSearchResultsAsListing(_dir_to_filenames,
+                                                 host,
+                                                 m_VFSFetchingFlags,
+                                                 [=]{ return  _queue->IsStopped(); }
+                                                 );
+            if( l )
+                dispatch_to_main_queue([=]{
+                    [self loadNonUniformListing:l];
+                });
+        });
+    };
+    
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(auto item = sheet.SelectedItem)
             [self GoToDir:item->dir_path vfs:self.vfs select_entry:item->filename async:true];
@@ -459,10 +503,11 @@
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
-    if(!m_View.item || m_View.item->IsDir())
-        return;
-    string path = m_Data.DirectoryPathWithTrailingSlash() + m_View.item->Name();
-    [(MainWindowController*)self.window.delegate RequestBigFileView:path with_fs:self.vfs];
+    if( auto i = self.view.item ) {
+        if( i.IsDir() )
+            return;
+        [self.mainWindowController RequestBigFileView:i.Path() with_fs:i.Host()];
+    }
 }
 
 - (IBAction)DoSelectByMask:(bool)_select {
@@ -627,22 +672,18 @@
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {
-    if(self.vfs->IsNativeFS() == false)
-        return;
-    
     auto item = m_View.item;
-    if(item == nullptr || item->IsDotDot())
+    if( !item || item.IsDotDot() || !item.Host()->IsNativeFS() )
         return;
     
-    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:*item];
+    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:item];
     if(ed == nil) {
         NSBeep();
         return;
     }
     
-    string fn_path = self.currentDirectoryPath + item->Name();
     if(ed.terminal == false) {
-        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8String:fn_path.c_str()]
+        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8StdString:item.Path()]
                                    withApplication:ed.path
                                      andDeactivate:true])
             NSBeep();
@@ -650,8 +691,8 @@
     else {
         MainWindowController* wnd = (MainWindowController*)self.window.delegate;
         [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
-                                             params:[ed substituteFileName:fn_path]
-                                               file:fn_path
+                                             params:[ed substituteFileName:item.Path()]
+                                               file:item.Path()
          ];
     }
 }
@@ -780,18 +821,19 @@
     // grab selected regular files if any
     for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
         auto item = m_Data.EntryAtSortPosition(i);
-        if( item->CFIsSelected() && item->IsReg() && !item->IsSymlink() ) {
-            filenames.emplace_back(item->Name());
-            sizes.emplace_back(item->Size());
+        auto item_vd = m_Data.VolatileDataAtSortPosition(i);
+        if( item_vd.is_selected() && item.IsReg() && !item.IsSymlink() ) {
+            filenames.emplace_back(item.Name());
+            sizes.emplace_back(item.Size());
         }
     }
     
     // if have no - try focused item
     if( filenames.empty() )
         if( auto item = m_View.item )
-            if( !item->IsDir() && !item->IsSymlink() ) {
-                filenames.emplace_back(item->Name());
-                sizes.emplace_back(item->Size());
+            if( !item.IsDir() && !item.IsSymlink() ) {
+                filenames.emplace_back(item.Name());
+                sizes.emplace_back(item.Size());
             }
 
     if( filenames.empty() )
@@ -859,7 +901,10 @@
 
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender
 {
-    auto files = self.selectedEntriesOrFocusedEntryFilenames;
+    if( !self.isUniform )
+        return;
+    
+    auto files = self.selectedEntriesOrFocusedEntries;
     if(files.empty())
         return;
     NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
@@ -883,11 +928,7 @@
     
     FileCopyOperationOptions opts;
     opts.docopy = false;
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    if(self.vfs->IsNativeFS())
-        op = [op initWithFiles:move(files) root:src.c_str() dest:dst.c_str() options:opts];
-    else
-        op = [op initWithFiles:move(files) root:src.c_str() srcvfs:self.vfs dest:dst.c_str() dstvfs:self.vfs options:opts];
+    auto op = [[FileCopyOperation alloc] initWithItems:files destinationPath:dst.native() destinationHost:self.vfs options:opts];
 
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
@@ -970,14 +1011,16 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-    vector<unsigned> inds = self.selectedEntriesOrFocusedEntryIndeces;
-    if(inds.empty())
+    if( !self.isUniform )
+        return;
+    
+    auto items = self.selectedEntriesOrFocusedEntries;
+    if( items.empty() )
         return;
     
     auto vfs = self.vfs;
     
-    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithListing:self.data.Listing()
-                                                                                 andIndeces:inds];
+    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithItems:move(items)];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode == NSModalResponseOK) {
             auto src_paths = sheet.filenamesSource;
@@ -988,6 +1031,25 @@
             [self.state AddOperation:op];
         }
     }];    
+}
+
+- (IBAction) OnOpenExtendedAttributes:(id)sender
+{
+    if( !self.view.item )
+        return;
+    
+    try {
+        auto host = make_shared<VFSXAttrHost>(self.view.item.Path(), self.view.item.Host() );
+        auto context = make_shared<PanelControllerGoToDirContext>();
+        context->VFS = host;
+        context->RequestedDirectory = "/";
+        [self GoToDirWithContext:context];
+    } catch (const VFSErrorException &e) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"Failed to open extended attributes", "Alert message text when failed to open xattr vfs");
+        alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+        [alert runModal];
+    }
 }
 
 @end

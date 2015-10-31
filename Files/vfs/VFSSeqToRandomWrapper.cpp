@@ -6,18 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#import <Habanero/algo.h>
 #import "VFSSeqToRandomWrapper.h"
 #import "VFSError.h"
 #import "Common.h"
-
-namespace {
-struct at_return
-{
-    inline at_return(function<void()> _f): f(_f) {};
-    inline ~at_return() { if(f) f(); }
-    function<void()> f;
-};
-}
 
 VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
@@ -34,7 +26,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
                                       VFSCancelChecker _cancel_checker,
                                       function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
-    at_return ggg( [=]{ m_SeqFile.reset(); } ); // ony any result wrapper won't hold any reference to VFSFile after this function ends
+    auto ggg = at_scope_end( [=]{ m_SeqFile.reset(); } ); // ony any result wrapper won't hold any reference to VFSFile after this function ends
     if(!m_SeqFile)
         return VFSError::InvalidCall;
     if(m_SeqFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential)

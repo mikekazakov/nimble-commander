@@ -129,8 +129,8 @@ loadPreviousState:(bool)_load_state
             return;
         }
         
-        unique_ptr<VFSListing> listing;
-        c->LoadingResultCode = c->VFS->FetchDirectoryListing(c->RequestedDirectory.c_str(),
+        shared_ptr<VFSFlexibleListing> listing;
+        c->LoadingResultCode = c->VFS->FetchFlexibleListing(c->RequestedDirectory.c_str(),
                                                                     listing,
                                                                     m_VFSFetchingFlags,
                                                                     [&] {
@@ -144,13 +144,13 @@ loadPreviousState:(bool)_load_state
         // TODO: need an ability to show errors at least        
         
         [self CancelBackgroundOperations]; // clean running operations if any
-        dispatch_or_run_in_main_queue([=,listing=move(listing)]()mutable {
+        dispatch_or_run_in_main_queue([=]{
+            m_UpperDirectory.Reset();
             [m_View SavePathState];
-            m_Data.Load(move(listing));
+            m_Data.Load(listing);
             [m_View dataUpdated];
             [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];
-            [m_View setNeedsDisplay];
             [self OnPathChanged];
         });
     };
@@ -163,6 +163,21 @@ loadPreviousState:(bool)_load_state
         m_DirectoryLoadingQ->Run(workblock);
         return 0;
     }
+}
+
+- (void) loadNonUniformListing:(const shared_ptr<VFSFlexibleListing>&)_listing
+{
+    [self CancelBackgroundOperations]; // clean running operations if any
+    dispatch_or_run_in_main_queue([=]{
+        if( self.isUniform )
+            m_UpperDirectory = VFSPath( self.vfs, self.currentDirectoryPath );
+        
+        [m_View SavePathState];
+        m_Data.Load(_listing);
+        [m_View dataUpdated];
+        [m_View directoryChangedWithFocusedFilename:"" loadPreviousState:false];
+        [self OnPathChanged];
+    });
 }
 
 - (void) RecoverFromInvalidDirectory

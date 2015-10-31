@@ -10,27 +10,34 @@
 #include "VFS.h"
 #include "PanelData.h"
 
-struct DummyVFSListingTestItem : public VFSListingItem
+static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<string> &_filenames )
 {
-    DummyVFSListingTestItem(NSString *_name): name(_name) { }
+    VFSFlexibleListingInput l;
     
-    NSString *name;
+    l.directories.reset( variable_container<>::type::common );
+    l.directories[0] = "/";
 
-    virtual const char     *Name()      const override { return [name UTF8String]; }
-    virtual CFStringRef     CFName()    const override { return (__bridge CFStringRef)name; }
-};
+    l.hosts.reset( variable_container<>::type::common );
+    l.hosts[0] = VFSHost::DummyHost();
+    
+    for(auto &i: _filenames) {
+        l.filenames.emplace_back(i);
+        l.unix_modes.emplace_back(0);
+        l.unix_types.emplace_back(0);
+    }
+    
+    return VFSFlexibleListing::Build(move(l));
+}
 
-struct DummyVFSTestListing : public VFSListing
+
+static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<NSString*> &_filenames )
 {
-    DummyVFSTestListing(): VFSListing("/", 0) { }
+    vector<string> t;
+    for( auto &i: _filenames )
+        t.emplace_back( i.fileSystemRepresentation );
     
-    vector<DummyVFSListingTestItem> items;
-    
-    virtual VFSListingItem& At(size_t _position) override { return items[_position]; }
-    virtual const VFSListingItem& At(size_t _position) const override { return items[_position]; }
-    virtual int Count() const override {return (int)items.size(); };
-};
-
+    return ProduceDummyListing(t);
+}
 
 @interface PanelData_Tests : XCTestCase
 
@@ -41,43 +48,35 @@ struct DummyVFSTestListing : public VFSListing
 
 - (void)testBasic
 {
-    auto listing = make_unique<DummyVFSTestListing>();
-    listing->items.emplace_back(@"..");
-    listing->items.emplace_back(@"some filename");
-    listing->items.emplace_back(@"another filename");
-    listing->items.emplace_back(@"even written with какие-то буквы");
+    auto listing = ProduceDummyListing({@"..",
+                                        @"some filename",
+                                        @"another filename",
+                                        @"even written with какие-то буквы"});
     
     PanelData data;
-    data.Load(move(listing));
-    
-    listing = make_unique<DummyVFSTestListing>();
-    listing->items.emplace_back(@"..");
-    listing->items.emplace_back(@"some filename");
-    listing->items.emplace_back(@"another filename");
-    listing->items.emplace_back(@"even written with какие-то буквы");
+    data.Load(listing);
     
     // testing raw C sorting facility
-    for(int i = 0; i < listing->items.size(); ++i)
-        XCTAssert(data.RawIndexForName(listing->items[i].Name()) == i);
+    for(int i = 0; i < listing->Count(); ++i)
+        XCTAssert(data.RawIndexForName( listing->Filename(i).c_str() ) == i);
     
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();
     sorting.sort = PanelSortMode::SortByName;
     data.SetSortMode(sorting);
     
-    XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
-    XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 1);
-    XCTAssert(data.SortedIndexForName(listing->items[3].Name()) == 2);
-    XCTAssert(data.SortedIndexForName(listing->items[1].Name()) == 3);
+    XCTAssert(data.SortedIndexForName(listing->Filename(0).c_str()) == 0);
+    XCTAssert(data.SortedIndexForName(listing->Filename(2).c_str()) == 1);
+    XCTAssert(data.SortedIndexForName(listing->Filename(3).c_str()) == 2);
+    XCTAssert(data.SortedIndexForName(listing->Filename(1).c_str()) == 3);
 }
 
 - (void)testSortingWithCases
 {
-    auto listing = make_unique<DummyVFSTestListing>();
-    listing->items.emplace_back(@"аааа");
-    listing->items.emplace_back(@"бббб");
-    listing->items.emplace_back(@"АААА");
-    listing->items.emplace_back(@"ББББ");
+    auto listing = ProduceDummyListing({@"аааа",
+                                        @"бббб",
+                                        @"АААА",
+                                        @"ББББ"});
 
     PanelData data;
     auto sorting = data.SortMode();
@@ -86,60 +85,56 @@ struct DummyVFSTestListing : public VFSListing
     data.SetSortMode(sorting);
     data.Load(move(listing));
     
-    listing = make_unique<DummyVFSTestListing>();
-    listing->items.emplace_back(@"аааа");
-    listing->items.emplace_back(@"бббб");
-    listing->items.emplace_back(@"АААА");
-    listing->items.emplace_back(@"ББББ");
-    XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 0);
-    XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 1);
-    XCTAssert(data.SortedIndexForName(listing->items[1].Name()) == 2);
-    XCTAssert(data.SortedIndexForName(listing->items[3].Name()) == 3);
+    XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 0);
+    XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 1);
+    XCTAssert(data.SortedIndexForName(listing->Item(1).Name()) == 2);
+    XCTAssert(data.SortedIndexForName(listing->Item(3).Name()) == 3);
     
     sorting.case_sens = true;
     data.SetSortMode(sorting);
-    XCTAssert(data.SortedIndexForName(listing->items[2].Name()) == 0);
-    XCTAssert(data.SortedIndexForName(listing->items[3].Name()) == 1);
-    XCTAssert(data.SortedIndexForName(listing->items[0].Name()) == 2);
-    XCTAssert(data.SortedIndexForName(listing->items[1].Name()) == 3);
+    XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 0);
+    XCTAssert(data.SortedIndexForName(listing->Item(3).Name()) == 1);
+    XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 2);
+    XCTAssert(data.SortedIndexForName(listing->Item(1).Name()) == 3);
 }
 
 - (void)testHardFiltering
 {
-    auto listing = make_unique<DummyVFSTestListing>();
     // just my home dir below
-    listing->items.emplace_back(@"..");
-    listing->items.emplace_back(@".cache");
-    listing->items.emplace_back(@".config");
-    listing->items.emplace_back(@".cups");
-    listing->items.emplace_back(@".dropbox");
-    listing->items.emplace_back(@".dvdcss");
-    listing->items.emplace_back(@".local");
-    listing->items.emplace_back(@".mplayer");
-    listing->items.emplace_back(@".ssh");
-    listing->items.emplace_back(@".subversion");
-    listing->items.emplace_back(@".Trash");
-    listing->items.emplace_back(@"Applications");
-    listing->items.emplace_back(@"Another app");
-    listing->items.emplace_back(@"Another app number two");
-    listing->items.emplace_back(@"Applications (Parallels)");
-    listing->items.emplace_back(@"что-то на русском языке");
-    listing->items.emplace_back(@"ЕЩЕ РУССКИЙ ЯЗЫК");
-    listing->items.emplace_back(@"Desktop");
-    listing->items.emplace_back(@"Documents");
-    listing->items.emplace_back(@"Downloads");
-    listing->items.emplace_back(@"Dropbox");
-    listing->items.emplace_back(@"Games");
-    listing->items.emplace_back(@"Library");
-    listing->items.emplace_back(@"Movies");
-    listing->items.emplace_back(@"Music");
-    listing->items.emplace_back(@"Pictures");
-    listing->items.emplace_back(@"Public");
-
-    auto empty_listing = make_unique<DummyVFSTestListing>();
+    auto listing = ProduceDummyListing({@"..",
+        @".cache",
+        @"АААА",
+        @"ББББ",
+        @".config",
+        @".cups",
+        @".dropbox",
+        @".dvdcss",
+        @".local",
+        @".mplayer",
+        @".ssh",
+        @".subversion",
+        @".Trash",
+        @"Applications",
+        @"Another app",
+        @"Another app number two",
+        @"Applications (Parallels)",
+        @"что-то на русском языке",
+        @"ЕЩЕ РУССКИЙ ЯЗЫК",
+        @"Desktop",
+        @"Documents",
+        @"Downloads",
+        @"Dropbox",
+        @"Games",
+        @"Library",
+        @"Movies",
+        @"Music",
+        @"Pictures",
+        @"Public"
+    });
     
-    auto almost_empty_listing = make_unique<DummyVFSTestListing>();
-    almost_empty_listing->items.emplace_back(@"какой-то файл");
+    auto empty_listing = VFSFlexibleListing::EmptyListing();
+    
+    auto almost_empty_listing = ProduceDummyListing({@"какой-то файл"});
     
     PanelData data;
     PanelSortMode sorting = data.SortMode();
@@ -150,7 +145,7 @@ struct DummyVFSTestListing : public VFSListing
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     
-    data.Load(move(listing));
+    data.Load(listing);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName(".Trash") >= 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
@@ -177,47 +172,18 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedDirectoryEntries().size() == 1);
     
     // now test what will happen on empty listing
-    data.Load(move(empty_listing));
+    data.Load(empty_listing);
     XCTAssert(data.SortedIndexForName("..") < 0);
 
     // now test what will happen on almost empty listing (will became empty after filtering)
-    data.Load(move(almost_empty_listing));
+    data.Load(almost_empty_listing);
     XCTAssert(data.SortedIndexForName("..") < 0);
     
     // now more comples situations
     filtering.text.text = @"IC";
     data.SetHardFiltering(filtering);
-    listing = make_unique<DummyVFSTestListing>();
-    // just my home dir below
-    listing->items.emplace_back(@"..");
-    listing->items.emplace_back(@".cache");
-    listing->items.emplace_back(@".config");
-    listing->items.emplace_back(@".cups");
-    listing->items.emplace_back(@".dropbox");
-    listing->items.emplace_back(@".dvdcss");
-    listing->items.emplace_back(@".local");
-    listing->items.emplace_back(@".mplayer");
-    listing->items.emplace_back(@".ssh");
-    listing->items.emplace_back(@".subversion");
-    listing->items.emplace_back(@".Trash");
-    listing->items.emplace_back(@"Applications");
-    listing->items.emplace_back(@"Another app");
-    listing->items.emplace_back(@"Another app number two");
-    listing->items.emplace_back(@"Applications (Parallels)");
-    listing->items.emplace_back(@"что-то на русском языке");
-    listing->items.emplace_back(@"ЕЩЕ РУССКИЙ ЯЗЫК");
-    listing->items.emplace_back(@"Desktop");
-    listing->items.emplace_back(@"Documents");
-    listing->items.emplace_back(@"Downloads");
-    listing->items.emplace_back(@"Dropbox");
-    listing->items.emplace_back(@"Games");
-    listing->items.emplace_back(@"Library");
-    listing->items.emplace_back(@"Movies");
-    listing->items.emplace_back(@"Music");
-    listing->items.emplace_back(@"Pictures");
-    listing->items.emplace_back(@"Public");
     auto count = listing->Count();
-    data.Load(move(listing));
+    data.Load(listing);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Music") >= 0);
     XCTAssert(data.SortedIndexForName("Pictures") >= 0);
@@ -229,8 +195,8 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Pictures") < 0);
     XCTAssert(data.SortedIndexForName("Public") < 0);
-    XCTAssert(data.SortedIndexForName(@"что-то на русском языке".UTF8String) >= 0);
-    XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".UTF8String) >= 0);
+    XCTAssert(data.SortedIndexForName(@"что-то на русском языке".fileSystemRepresentation) >= 0);
+    XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".fileSystemRepresentation) >= 0);
     
     filtering.text.type = PanelDataTextFiltering::Beginning;
     filtering.text.text = @"APP";
@@ -251,7 +217,5 @@ struct DummyVFSTestListing : public VFSListing
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedDirectoryEntries().size() == count);
 }
-
-
 
 @end

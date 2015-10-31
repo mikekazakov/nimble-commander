@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "OperationDialogProtocol.h"
+#pragma once
+#include "OperationDialogProtocol.h"
 
 class OperationStats;
 class OperationJob;
@@ -20,7 +20,7 @@ class OperationJob;
  * Value from 0 to 1, showing current Operation's progress.
  *
  */
-@property (nonatomic) float Progress;
+@property (nonatomic) double Progress;
 
 /**
  * Flag that show that Progress not appropriate currently.

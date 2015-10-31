@@ -52,6 +52,9 @@ public:
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous;
 
+// sync operation
+- (void) loadNonUniformListing:(const shared_ptr<VFSFlexibleListing>&)_listing;
+
 // will load previous view state if any
 - (void) GoToVFSPathStack:(const VFSPathStack&)_stack;
 // some params later

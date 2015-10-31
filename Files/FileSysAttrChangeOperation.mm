@@ -40,11 +40,11 @@
                             [NSString stringWithUTF8String:buff]];
         }
         
-        __weak FileSysAttrChangeOperation* wself = self;
-        self.Stats.SetOnCurrentItemChanged([wself]{
-            if(FileSysAttrChangeOperation* sself = wself)
-                [sself updateShortInfo];
-        });
+        __weak auto wself = self;
+        self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
+                                    nullptr,
+                                    [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+                                    );
     }
     return self;
 }

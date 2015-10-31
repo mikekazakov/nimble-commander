@@ -19,7 +19,6 @@ public:
     ~VFSPSHost();
     
     static const char *Tag;    
-    virtual const char *FSTag() const override;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     
@@ -35,10 +34,11 @@ public:
     
     virtual int StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker) override;
     
-    virtual int FetchDirectoryListing(const char *_path,
-                                      unique_ptr<VFSListing> &_target,
-                                      int _flags,
-                                      VFSCancelChecker _cancel_checker) override;
+    virtual int FetchFlexibleListing(const char *_path,
+                                     shared_ptr<VFSFlexibleListing> &_target,
+                                     int _flags,
+                                     VFSCancelChecker _cancel_checker) override;
+    
     virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    

@@ -14,6 +14,7 @@
 @class PanelView;
 class PanelData;
 class PanelViewPresentation;
+struct PanelVolatileData;
 
 @protocol PanelViewDelegate<NSObject>
 @optional
@@ -37,7 +38,8 @@ class PanelViewPresentation;
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
-@property (nonatomic, readonly) const VFSListingItem* item; // return an item at current cursor position if any or nullptr
+@property (nonatomic, readonly) VFSFlexibleListingItem item; // return an item at current cursor position if any or nullptr
+@property (nonatomic, readonly) PanelVolatileData&     item_vd; // will throw if currently there's no item under cursor
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;

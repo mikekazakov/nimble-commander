@@ -75,11 +75,11 @@
         }
     }];
     
-    __weak FileDeletionOperation* wself = self;
-    self.Stats.SetOnCurrentItemChanged([wself]{
-        if(FileDeletionOperation* sself = wself)
-            [sself updateShortInfo];
-    });
+    __weak auto wself = self;
+    self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
+                                nullptr,
+                                [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+                                );
 }
 
 - (void)Update

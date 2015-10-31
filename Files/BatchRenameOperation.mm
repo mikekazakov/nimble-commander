@@ -29,11 +29,11 @@
         
         m_Job.Init(move(_src_paths), move(_dst_paths), _src_vfs, self);
         
-        __weak BatchRenameOperation* wself = self;
-        self.Stats.SetOnCurrentItemChanged([wself]{
-            if(BatchRenameOperation* sself = wself)
-                [sself updateShortInfo];
-        });
+        __weak auto wself = self;
+        self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
+                                    nullptr,
+                                    [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+                                    );
     }
     return self;
 }

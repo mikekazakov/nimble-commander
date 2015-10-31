@@ -12,7 +12,6 @@
 #import "VFSArchiveHost.h"
 #import "VFSArchiveInternal.h"
 #import "VFSArchiveFile.h"
-#import "VFSArchiveListing.h"
 #import "Common.h"
 #import "AppleDoubleEA.h"
 
@@ -40,7 +39,7 @@ public:
 };
 
 VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
-    VFSHost(_path.c_str(), _parent)
+    VFSHost(_path.c_str(), _parent, Tag)
 {
     assert(_parent);
     {
@@ -60,7 +59,7 @@ VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
 }
 
 VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent),
+    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, Tag),
     m_Configuration(_config)
 {
     assert(_parent);
@@ -78,11 +77,6 @@ VFSArchiveHost::~VFSArchiveHost()
 {
     if(m_Arc != 0)
         archive_read_free(m_Arc);
-}
-
-const char *VFSArchiveHost::FSTag() const
-{
-    return Tag;
 }
 
 bool VFSArchiveHost::IsImmutableFS() const noexcept
@@ -316,10 +310,10 @@ int VFSArchiveHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int VFSArchiveHost::FetchDirectoryListing(const char *_path,
-                                          unique_ptr<VFSListing> &_target,
-                                          int _flags,
-                                          VFSCancelChecker _cancel_checker)
+int VFSArchiveHost::FetchFlexibleListing(const char *_path,
+                                         shared_ptr<VFSFlexibleListing> &_target,
+                                         int _flags,
+                                         VFSCancelChecker _cancel_checker)
 {
     char path[MAXPATHLEN*2];
     int res = ResolvePathIfNeeded(_path, path, _flags);
@@ -332,15 +326,62 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     auto i = m_PathToDir.find(path);
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
+    
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.atimes.reset( variable_container<>::type::dense );
+    listing_source.mtimes.reset( variable_container<>::type::dense );
+    listing_source.ctimes.reset( variable_container<>::type::dense );
+    listing_source.btimes.reset( variable_container<>::type::dense );
+    listing_source.unix_flags.reset( variable_container<>::type::dense );
+    listing_source.uids.reset( variable_container<>::type::dense );
+    listing_source.gids.reset( variable_container<>::type::dense );
+    listing_source.sizes.reset( variable_container<>::type::dense );
+    listing_source.symlinks.reset( variable_container<>::type::sparse );
 
-    auto listing = make_unique<VFSArchiveListing>(i->second, _path, _flags, SharedPtr());
+    if( !(_flags & VFSFlags::F_NoDotDot) ) {
+        listing_source.filenames.emplace_back( ".." );
+        listing_source.unix_types.emplace_back( DT_DIR );
+        listing_source.unix_modes.emplace_back( S_IRUSR | S_IXUSR | S_IFDIR );
+        auto curtime = time(0); // it's better to show date of archive itself
+        listing_source.atimes.insert(0, curtime );
+        listing_source.btimes.insert(0, curtime );
+        listing_source.ctimes.insert(0, curtime );
+        listing_source.mtimes.insert(0, curtime );
+        listing_source.sizes.insert( 0, 0 );
+        listing_source.uids.insert( 0, 0 );
+        listing_source.gids.insert( 0, 0 );
+        listing_source.unix_flags.insert( 0, 0);
+    }
     
-    if(_cancel_checker && _cancel_checker())
-        return VFSError::Cancelled;
+    for( auto &entry: i->second.entries ) {
+        listing_source.filenames.emplace_back( entry.name );
+        listing_source.unix_types.emplace_back( IFTODT(entry.st.st_mode) );
+
+        int index = int(listing_source.filenames.size() - 1);
+        auto stat = entry.st;
+        if( S_ISLNK(entry.st.st_mode) )
+            if( auto symlink = ResolvedSymlink(entry.aruid) ) {
+                listing_source.symlinks.insert( index, symlink->value );
+                if( symlink->state == SymlinkState::Resolved )
+                    if( auto target_entry = FindEntry(symlink->target_uid) )
+                        stat = target_entry->st;
+            }
+        
+        listing_source.unix_modes.emplace_back( stat.st_mode );
+        listing_source.sizes.insert( index, stat.st_size );
+        listing_source.atimes.insert( index, stat.st_atime );
+        listing_source.ctimes.insert( index, stat.st_ctime );
+        listing_source.mtimes.insert( index, stat.st_mtime );
+        listing_source.btimes.insert( index, stat.st_birthtime );
+        listing_source.uids.insert( index, stat.st_uid );
+        listing_source.gids.insert( index, stat.st_gid );
+        listing_source.unix_flags.insert( index, stat.st_flags );
+    }
     
-    _target = move(listing);
-    
-    return VFSError::Ok;
+    _target = VFSFlexibleListing::Build(move(listing_source));
+    return 0;
 }
 
 bool VFSArchiveHost::IsDirectory(const char *_path,

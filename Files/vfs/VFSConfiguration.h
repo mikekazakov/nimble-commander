@@ -49,7 +49,7 @@ public:
     inline bool operator !=(const VFSConfiguration &_rhs) const { return !Equal(_rhs); }
     
     template <class T>
-    bool IsType() const
+    bool IsType() const noexcept
     {
         return dynamic_pointer_cast<const Model<T>>( m_Object ) != nullptr;
     }
@@ -75,12 +75,12 @@ private:
         virtual const char *Tag() const = 0;
         virtual const char *Junction() const = 0;
         virtual const char *VerboseJunction() const = 0;
-        virtual const type_info &TypeID() const = 0;
+        virtual const type_info &TypeID() const noexcept = 0;
         virtual bool Equal( const Concept &_rhs ) const = 0;
     };
     
     template <class T>
-    struct Model : Concept
+    struct Model final : Concept
     {
         T obj;
         
@@ -98,7 +98,7 @@ private:
             return obj.Junction();
         }
         
-        virtual const type_info &TypeID() const
+        virtual const type_info &TypeID() const noexcept
         {
             return typeid( T );
         }

@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Carbon/Carbon.h>
 #import <Habanero/CommonPaths.h>
 #import "MainWindowFilePanelState+Menu.h"
 #import "ActionsShortcutsManager.h"
@@ -34,11 +33,11 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item->IsDir();
-    IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot();
-    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item->IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
-    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item->IsDir();
-    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && self.activePanelView.item->IsSymlink();
+    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item.IsDir();
+    IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot();
+    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item.IsDir();
+    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelController.vfs->IsNativeFS() && self.activePanelView.item.IsSymlink();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
@@ -112,7 +111,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
-    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item->IsDir()) return;
+    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item.IsDir()) return;
     auto cur = self.activePanelController;
     auto opp = self.oppositePanelController;
     [opp GoToDir:cur.currentFocusedEntryPath
@@ -125,13 +124,11 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
     
-    auto files = self.activePanelController.selectedEntriesOrFocusedEntryFilenames;
-    if(files.empty())
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    if(entries.empty())
         return;
 
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(files)
-                                                                     srcroot:self.activePanelController.currentDirectoryPath
-                                                                      srcvfs:self.activePanelController.vfs
+    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(entries)
                                                                      dstroot:self.oppositePanelController.currentDirectoryPath
                                                                       dstvfs:self.oppositePanelController.vfs];
     op.TargetPanel = self.oppositePanelController;
@@ -143,18 +140,18 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if(!self.activePanelController || !self.oppositePanelController)
         return;
     
-    auto const *item = self.activePanelView.item;
+    auto item = self.activePanelView.item;
     if(!item)
         return;
     
     string source_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    if(!item->IsDotDot())
-        source_path += item->Name();
+    if(!item.IsDotDot())
+        source_path += item.Name();
     
     string link_path = self.oppositePanelController.currentDirectoryPath;
     
-    if(!item->IsDotDot())
-        link_path += item->Name();
+    if(!item.IsDotDot())
+        link_path += item.Name();
     else
         link_path += [self activePanelData]->DirectoryPathShort();
     
@@ -175,16 +172,16 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
     auto data = self.activePanelData;
-    auto const *item = self.activePanelView.item;
-    assert(item->IsSymlink());
+    auto item = self.activePanelView.item;
+    assert(item.IsSymlink());
     
-    string link_path = data->DirectoryPathWithTrailingSlash() + item->Name();
+    string link_path = data->DirectoryPathWithTrailingSlash() + item.Name();
     NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:item->Symlink()]
-            linkname:[NSString stringWithUTF8String:item->Name()]
+          sourcepath:[NSString stringWithUTF8String:item.Symlink()]
+            linkname:[NSString stringWithUTF8String:item.Name()]
              handler:^(int _result){
                  if(_result == DialogResult::OK)
                  {
@@ -198,17 +195,17 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
-    auto const *item = self.activePanelView.item;
-    assert(not item->IsDir());
+    auto item = self.activePanelView.item;
+    assert(not item.IsDir());
     
     string dir_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    string src_path = dir_path + item->Name();
+    string src_path = dir_path + item.Name();
     NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
     NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
     
     FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
     [sheet ShowSheet:[self window]
-          sourcename:[NSString stringWithUTF8String:item->Name()]
+          sourcename:[NSString stringWithUTF8String:item.Name()]
              handler:^(int _result){
                  if(_result == DialogResult::Create)
                  {
@@ -226,268 +223,173 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
              }];
 }
 
+// when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:
+- (void (^)()) refreshBothCurrentControllersLambda
+{
+    __weak auto cur = self.activePanelController;
+    __weak auto opp = self.oppositePanelController;
+    auto update_both_panels = [=] {
+        dispatch_to_main_queue( [=]{
+            [(PanelController*)cur RefreshDirectory];
+            [(PanelController*)opp RefreshDirectory];
+        });
+    };
+    return update_both_panels;
+}
+
 - (IBAction)OnFileCopyCommand:(id)sender{
-    if(!self.activePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView anyCollapsedOrOverlayed])
+    if(!self.activePanelController ||
+       !self.oppositePanelController ||
+       [m_MainSplitView anyCollapsedOrOverlayed])
         return;
     
-    const PanelData *source, *destination;
-    source = &self.activePanelController.data;
-    destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.activePanelController;
-    __weak PanelController *opp = self.oppositePanelController;
-    
-    auto filenames_vector = make_shared<vector<string>>(self.activePanelController.selectedEntriesOrFocusedEntryFilenames);
-    if(filenames_vector->empty())
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    if( entries.empty() )
         return;
     
-    string dest_path = destination->DirectoryPathWithTrailingSlash();
-    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
-    MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:nsdirpath iscopying:true items:filenames_vector handler:^(int _ret)
-     {
-         path root_path = source->DirectoryPathWithTrailingSlash();
-         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
-         if(_ret == DialogResult::Copy && !req_path.empty())
-         {
-             FileCopyOperationOptions opts;
-             opts.docopy = true;
-             [mc FillOptions:&opts];
-             
-             FileCopyOperation *op = [FileCopyOperation alloc];
-             if(source->Host()->IsNativeFS() && destination->Host()->IsNativeFS())
-                 op = [op initWithFiles:move(*filenames_vector.get())
-                                   root:root_path.c_str()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
-                 op = [op initWithFiles:move(*filenames_vector.get())
-                                   root:root_path.c_str()
-                                rootvfs:source->Host()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if( ( req_path.is_absolute() && destination->Host()->IsWriteable()) ||
-                     (!req_path.is_absolute() && source->Host()->IsWriteable() )      )
-                 op = [op initWithFiles:move(*filenames_vector.get())
-                                   root:root_path.c_str()
-                                 srcvfs:source->Host()
-                                   dest:req_path.c_str()
-                                 dstvfs:destination->Host()
-                                options:opts];
-             else
-                 op = nil;
-             
-             if(op) {
-                 [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( [=]{
-                         [(PanelController*)act RefreshDirectory];
-                         [(PanelController*)opp RefreshDirectory];
-                     });
-                 }];
-                 [m_OperationsController AddOperation:op];
-             }
-         }
-     }];
+    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+
+    FileCopyOperationOptions opts;
+    opts.docopy = true;
+    
+    auto mc = [[MassCopySheetController alloc] initWithItems:entries
+                                                   sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
+                                             sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
+                                          initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
+                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                            operationOptions:opts];
+    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+        
+        auto path = mc.resultDestination;
+        auto host = mc.resultHost;
+        auto opts = mc.resultOptions;
+        if( !host || path.empty() )
+            return; // ui possibly has fucked up
+        
+        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
+        [op AddOnFinishHandler:update_both_panels];        
+        [m_OperationsController AddOperation:op];
+    }];
 }
 
 - (IBAction)OnFileCopyAsCommand:(id)sender{
+    if(!self.activePanelController ||
+       !self.oppositePanelController ||
+       [m_MainSplitView anyCollapsedOrOverlayed])
+        return;
+    
     // process only current cursor item
-    if(!self.activePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
+    auto item = self.activePanelView.item;
+    if( !item || item.IsDotDot() )
         return;
-    const PanelData *source, *destination;
-    source = &self.activePanelController.data;
-    destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.activePanelController;
-    __weak PanelController *opp = self.oppositePanelController;
+
+    auto entries = vector<VFSFlexibleListingItem>({item});
     
-    auto const *item = self.activePanelView.item;
-    if(!item || item->IsDotDot())
-        return;
+    auto update_both_panels = self.refreshBothCurrentControllersLambda;
     
-    auto filenames = make_shared< vector<string> >(1, item->Name());
+    FileCopyOperationOptions opts;
+    opts.docopy = true;
     
-    MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:true items:filenames handler:^(int _ret)
-     {
-         path root_path = self.activePanelData->DirectoryPathWithTrailingSlash();
-         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
-         if(_ret == DialogResult::Copy && !req_path.empty())
-         {
-             FileCopyOperationOptions opts;
-             opts.docopy = true;
-             [mc FillOptions:&opts];
-             
-             FileCopyOperation *op = [FileCopyOperation alloc];
-             if(source->Host()->IsNativeFS() &&
-                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if(destination->Host()->IsNativeFS() && req_path.is_absolute() )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                rootvfs:source->Host()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if( (destination->Host()->IsWriteable() && req_path.is_absolute()) ||
-                     (source->Host()->IsWriteable()      &&!req_path.is_absolute())  )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                 srcvfs:source->Host()
-                                   dest:req_path.c_str()
-                                 dstvfs:destination->Host()
-                                options:opts];
-             else
-                 op = nil;
-             
-             if(op)
-             {
-                 [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( [=]{
-                         [(PanelController*)act RefreshDirectory];
-                         [(PanelController*)opp RefreshDirectory];
-                     });
-                 }];
-                 [m_OperationsController AddOperation:op];
-             }
-         }
-     }];
+    auto mc = [[MassCopySheetController alloc] initWithItems:entries
+                                                   sourceVFS:item.Host()
+                                             sourceDirectory:item.Directory()
+                                          initialDestination:item.Filename()
+                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                            operationOptions:opts];
+    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+        
+        auto path = mc.resultDestination;
+        auto host = mc.resultHost;
+        auto opts = mc.resultOptions;
+        if( !host || path.empty() )
+            return; // ui possibly has fucked up
+        
+        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
+        [op AddOnFinishHandler:update_both_panels];
+        [m_OperationsController AddOperation:op];
+    }];
 }
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
-    if(!self.activePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView anyCollapsedOrOverlayed])
-        return;
-    const PanelData *source, *destination;
-    source = &self.activePanelController.data;
-    destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.activePanelController;
-    __weak PanelController *opp = self.oppositePanelController;
-    
-    if(!source->Host()->IsWriteable())
+    if(!self.activePanelController ||
+       !self.oppositePanelController ||
+       [m_MainSplitView anyCollapsedOrOverlayed])
         return;
     
-    auto filenames = make_shared<vector<string>>(self.activePanelController.selectedEntriesOrFocusedEntryFilenames);
-    if( filenames->empty() )
+    if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWriteable() )
         return;
     
-    string dest_path = destination->DirectoryPathWithTrailingSlash();
-    NSString *nsdirpath = [NSString stringWithUTF8String:dest_path.c_str()];
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    if( entries.empty() )
+        return;
     
-    MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:nsdirpath iscopying:false items:filenames handler:^(int _ret)
-     {
-         path root_path = source->DirectoryPathWithTrailingSlash();
-         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
-         if(_ret == DialogResult::Copy && !req_path.empty())
-         {
-             FileCopyOperationOptions opts;
-             opts.docopy = false;
-             [mc FillOptions:&opts];
-             
-             FileCopyOperation *op = [FileCopyOperation alloc];
-             if(source->Host()->IsNativeFS() &&
-                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ) )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if( destination->Host()->IsWriteable() )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                 srcvfs:source->Host()
-                                   dest:req_path.c_str()
-                                 dstvfs:destination->Host()
-                                options:opts];
-             else
-                 op = nil;
-             
-             
-             if(op) {
-                 [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( [=]{
-                         [(PanelController*)act RefreshDirectory];
-                         [(PanelController*)opp RefreshDirectory];
-                     });
-                 }];
-                 [m_OperationsController AddOperation:op];
-             }
-         }
-     }];
+    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    
+    auto mc = [[MassCopySheetController alloc] initWithItems:entries
+                                                   sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
+                                             sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
+                                          initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
+                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                            operationOptions:opts];
+    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+        
+        auto path = mc.resultDestination;
+        auto host = mc.resultHost;
+        auto opts = mc.resultOptions;
+        if( !host || path.empty() )
+            return; // ui possibly has fucked up
+        
+        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
+        [op AddOnFinishHandler:update_both_panels];
+        [m_OperationsController AddOperation:op];
+    }];
 }
 
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender {
+    if(!self.activePanelController ||
+       !self.oppositePanelController ||
+       [m_MainSplitView anyCollapsedOrOverlayed])
+        return;
     
     // process only current cursor item
-    if(!self.activePanelController || !self.oppositePanelController) return;
-    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
+    auto item = self.activePanelView.item;
+    if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
         return;
     
-    const PanelData *source, *destination;
-    source = &self.activePanelController.data;
-    destination = &self.oppositePanelController.data;
-    __weak PanelController *act = self.activePanelController;
-    __weak PanelController *opp = self.oppositePanelController;
-    
-    if(!source->Host()->IsWriteable())
-        return;
-    
-    auto const *item = self.activePanelView.item;
-    if(!item || item->IsDotDot())
-        return;
-    
-    auto filenames = make_shared< vector<string> >(1, item->Name());
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+
+    auto entries = vector<VFSFlexibleListingItem>({item});
+    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    auto mc = [[MassCopySheetController alloc] initWithItems:entries
+                                                   sourceVFS:item.Host()
+                                             sourceDirectory:item.Directory()
+                                          initialDestination:item.Filename()
+                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                            operationOptions:opts];
+    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
         
-    MassCopySheetController *mc = [MassCopySheetController new];
-    [mc ShowSheet:self.window initpath:[NSString stringWithUTF8String:item->Name()] iscopying:false items:filenames handler:^(int _ret)
-     {
-         path root_path = source->DirectoryPathWithTrailingSlash();
-         path req_path = mc.TextField.stringValue.fileSystemRepresentation;
-         if(_ret == DialogResult::Copy && !req_path.empty())
-         {
-             FileCopyOperationOptions opts;
-             opts.docopy = false;
-             [mc FillOptions:&opts];
-             
-             FileCopyOperation *op = [FileCopyOperation alloc];
-             
-             if(source->Host()->IsNativeFS() &&
-                ( destination->Host()->IsNativeFS() || !req_path.is_absolute() ))
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                   dest:req_path.c_str()
-                                options:opts];
-             else if( destination->Host()->IsWriteable() )
-                 op = [op initWithFiles:move(*filenames.get())
-                                   root:root_path.c_str()
-                                 srcvfs:source->Host()
-                                   dest:req_path.c_str()
-                                 dstvfs:destination->Host()
-                                options:opts];
-             else
-                 op = nil;
-             
-             if(op) {
-                 string single_fn_rename;
-                 if( req_path.native().find('/') == string::npos )
-                     single_fn_rename = req_path.filename().native();
-                 
-                 [op AddOnFinishHandler:^{
-                     dispatch_to_main_queue( [=]{
-                         PanelController* active = act;
-                         [active RefreshDirectory];
-                         [(PanelController*)opp RefreshDirectory];
-                         PanelControllerDelayedSelection req;
-                         req.filename = single_fn_rename;
-                         [active ScheduleDelayedSelectionChangeFor:req];
-                     });
-                 }];
-                 [m_OperationsController AddOperation:op];
-             }
-         }
-     }];
+        auto path = mc.resultDestination;
+        auto host = mc.resultHost;
+        auto opts = mc.resultOptions;
+        if( !host || path.empty() )
+            return; // ui possibly has fucked up
+        
+        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
+        [op AddOnFinishHandler:update_both_panels];
+        [m_OperationsController AddOperation:op];
+    }];
 }
 
 - (IBAction)OnFileNewTab:(id)sender

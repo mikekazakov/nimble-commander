@@ -8,31 +8,32 @@
 
 #pragma once
 
-#include <sys/mount.h>
-
 /**
  * Presumably should be used only on directories.
- * STA design, no internal locks included, but can be locked at whole object level.
  */
-class DisplayNamesCache : public mutex
+class DisplayNamesCache
 {
 public:
     static DisplayNamesCache& Instance();
 
-    struct DisplayName
-    {
-        string filename = "";
-        CFStringRef str = nullptr;
-    };
+    const char* DisplayNameByStat( const struct stat &_st, const string &_path ); // nullptr string means that there's no dispay string for this
     
-    const DisplayName &DisplayNameForNativeFS(fsid_t _fs,
-                                              uint64_t _inode,
-                                              const char *_directory,
-                                              const char *_c_filename,
-                                              CFStringRef _cf_filename
-                                              );
 private:
-    enum { MaxSize = 1024 };
-    map<uint64_t, DisplayName> &ByFSID(uint64_t _id);
-    vector< pair<uint64_t, map<uint64_t, DisplayName>>> m_DB;
+#pragma pack(1)
+    struct Tag
+    {
+        ino_t ino;
+        dev_t dev;
+    };
+#pragma pack()
+    static_assert( sizeof(Tag) == 12, "" );
+
+    bool TryToFind( const struct stat &_st, const string &_path, const char *&_result ) const noexcept;
+    const char* Commit( const struct stat &_st, const char *_dispay_name );
+    
+    atomic_int          m_Readers{0};
+    spinlock            m_ReadLock;
+    spinlock            m_WriteLock;
+    vector<Tag>         m_Tags;
+    vector<const char*> m_DisplayNames;
 };

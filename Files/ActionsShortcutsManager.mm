@@ -120,6 +120,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.link_create_soft",           u8""        },
         {"menu.command.link_create_hard",           u8""        },
         {"menu.command.link_edit",                  u8""        },
+        {"menu.command.open_xattr",                 u8"⌥⌘x"     }, // // alt+cmd+x
 
         {"menu.window.minimize",                    u8"⌘m"      }, // cmd+m
         {"menu.window.fullscreen",                  u8"^⌘f"     }, // ctrl+cmd+f

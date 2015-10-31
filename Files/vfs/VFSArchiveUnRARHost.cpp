@@ -11,7 +11,6 @@
 #include "VFSNativeHost.h"
 #include "VFSArchiveUnRARHost.h"
 #include "VFSArchiveUnRARInternals.h"
-#include "VFSArchiveUnRARListing.h"
 #include "VFSArchiveUnRARFile.h"
 
 static time_t DosTimeToUnixTime(uint32_t _dos_time)
@@ -61,7 +60,7 @@ public:
 
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
-    VFSHost(_path.c_str(), VFSNativeHost::SharedHost()),
+    VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), Tag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL))
 {
     {
@@ -76,7 +75,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
 }
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent),
+    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, Tag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration(_config)
 {
@@ -91,12 +90,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSCon
 VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
 {
     dispatch_sync(m_SeekCacheControl, ^{});
-    //dispatch_release(m_SeekCacheControl);
-}
-
-const char *VFSArchiveUnRARHost::FSTag() const
-{
-    return Tag;
+    dispatch_release(m_SeekCacheControl);
 }
 
 bool VFSArchiveUnRARHost::IsImmutableFS() const noexcept
@@ -231,7 +225,6 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
             entry->name = entry_short_name;
         }
         
-        entry->cfname       = CFStringCreateWithUTF8StdStringNoCopy(entry->name);
         entry->rar_name     = header.FileName;
         entry->isdir        = is_directory;
         entry->packed_size  = uint64_t(header.PackSize) | ( uint64_t(header.PackSizeHigh) << 32 );
@@ -289,22 +282,49 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
     return &dir.first->second;
 }
 
-int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
-                                               unique_ptr<VFSListing> &_target,
-                                               int _flags,
-                                               VFSCancelChecker _cancel_checker)
+int VFSArchiveUnRARHost::FetchFlexibleListing(const char *_path,
+                                              shared_ptr<VFSFlexibleListing> &_target,
+                                              int _flags,
+                                              VFSCancelChecker _cancel_checker)
 {
     auto dir = FindDirectory(_path);
     if(!dir)
         return VFSError::NotFound;
 
-    auto listing = make_unique<VFSArchiveUnRARListing>(*dir, _path, _flags, SharedPtr());
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.atimes.reset( variable_container<>::type::dense );
+    listing_source.mtimes.reset( variable_container<>::type::dense );
+    listing_source.ctimes.reset( variable_container<>::type::dense );
+    listing_source.btimes.reset( variable_container<>::type::dense );
+    listing_source.sizes.reset( variable_container<>::type::dense );
     
-    if(_cancel_checker && _cancel_checker())
-        return VFSError::Cancelled;
+    if( !(_flags & VFSFlags::F_NoDotDot) ) {
+        listing_source.filenames.emplace_back( ".." );
+        listing_source.unix_types.emplace_back( DT_DIR );
+        listing_source.unix_modes.emplace_back( S_IRUSR | S_IXUSR | S_IFDIR );
+        auto curtime = time(0); // it's better to show date of archive itself
+        listing_source.atimes.insert(0, curtime );
+        listing_source.btimes.insert(0, curtime );
+        listing_source.ctimes.insert(0, curtime );
+        listing_source.mtimes.insert(0, curtime );
+        listing_source.sizes.insert( 0, 0 );
+    }
     
-    _target = move(listing);
+    for( auto &entry: dir->entries ) {
+        listing_source.filenames.emplace_back( entry.name );
+        listing_source.unix_types.emplace_back( entry.isdir ? DT_DIR : DT_REG );
+        listing_source.unix_modes.emplace_back( S_IRUSR | (entry.isdir ? S_IFDIR : S_IFREG) );
+        int index = int(listing_source.filenames.size() - 1);
+        listing_source.sizes.insert( index, entry.unpacked_size );
+        listing_source.atimes.insert( index, entry.time );
+        listing_source.ctimes.insert( index, entry.time );
+        listing_source.btimes.insert( index, entry.time );
+        listing_source.mtimes.insert( index, entry.time );
+    }
     
+    _target = VFSFlexibleListing::Build(move(listing_source));
     return VFSError::Ok;
 }
 

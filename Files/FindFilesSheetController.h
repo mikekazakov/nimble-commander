@@ -32,6 +32,7 @@ struct FindFilesSheetControllerFoundItem
 
 @property (strong) IBOutlet NSButton *CloseButton;
 @property (strong) IBOutlet NSButton *SearchButton;
+@property (strong) IBOutlet NSButton *PanelButton;
 @property (strong) IBOutlet NSComboBox *MaskComboBox;
 @property (strong) IBOutlet NSComboBox *TextComboBox;
 
@@ -48,6 +49,7 @@ struct FindFilesSheetControllerFoundItem
 @property (strong) IBOutlet NSButton *SearchInSubDirsButton;
 @property (strong) IBOutlet NSPopUpButton *EncodingsPopUp;
 @property FindFilesSheetFoundItem* focusedItem; // may be nullptr
+@property function<void(const map<string, vector<string>>&_dir_to_filenames)> OnPanelize;
 
 - (FindFilesSheetControllerFoundItem*) SelectedItem; // may be nullptr
 

@@ -95,82 +95,121 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     }
 }
 
+static NSOpenPanel* BuildAppChoose()
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.allowsMultipleSelection = NO;
+    panel.canChooseFiles = YES;
+    panel.canChooseDirectories = NO;
+    panel.allowedFileTypes = @[@"app"];
+    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:@"/Applications" isDirectory:true];
+    return panel;
+}
+
+static string FindFreeFilenameToDuplicateIn(const VFSFlexibleListingItem& _item)
+{
+    string filename = _item.FilenameWithoutExt();
+    string ext = _item.HasExtension() ? "."s + _item.Extension() : ""s;
+    string target = _item.Directory() + filename + " copy" + ext;
+    
+    VFSStat st;
+    if( _item.Host()->Stat(target.c_str(), st, VFSFlags::F_NoFollow, 0) == 0 ) {
+        // this file already exists, will try another ones
+        for(int i = 2; i < 100; ++i) {
+            target = _item.Directory() + filename + " copy " + to_string(i) + ext;
+            if( _item.Host()->Stat(target.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
+                return target;
+    
+        }
+        return ""; // we're full of such filenames, no reason to go on
+    }
+    return target;
+}
+
+static void ShowOpenPanel( NSOpenPanel *_panel, NSWindow *_window, function<void(const string&_path)> _on_ok )
+{
+    [_panel beginSheetModalForWindow:_window
+                  completionHandler:^(NSInteger result) {
+                      if(result == NSFileHandlingPanelOKButton)
+                          _on_ok( _panel.URL.path.fileSystemRepresentation );
+                  }];
+}
+
+template <typename T, typename E, typename C>
+T common_or_default_element(const C& _container, const T& _default, E _extract)
+{
+    auto i = begin(_container), e = end(_container);
+    if( i == e )
+        return _default;
+    auto &first = *i;
+    ++i;
+    
+    for( ; i != e; ++i )
+        if( _extract(*i) != _extract(first) )
+            return _default;
+
+    return _extract(first);
+}
+
 @interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
-
-- (id) initWithData:(const vector<const VFSListingItem*>&) _items
-             OnPath:(const char*)_path
-                vfs:(shared_ptr<VFSHost>) _host
-            mainWnd:(MainWindowFilePanelState*)_wnd
-             myCont:(PanelController*)_my_cont
-            oppCont:(PanelController*)_opp_cont;
-
 @end
 
 @implementation MainWindowFilePanelContextMenu
 {
-    string                 m_DirPath;
-    shared_ptr<VFSHost>    m_Host;
-    vector<string>    m_Items;
-    vector<OpenWithHandler> m_OpenWithHandlers;
-    string                 m_ItemsUTI;
-    MainWindowFilePanelState    *m_MainWnd;
-    PanelController             *m_CurrentController;
-    PanelController             *m_OppositeController;
-    NSMutableArray              *m_ShareItemsURLs;
-    
-    int                         m_DirsCount;
-    int                         m_FilesCount;
+    string                              m_CommonDir;  // may be "" in case of non-uniform listing
+    VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
+    vector<VFSFlexibleListingItem>      m_Items;
+    vector<OpenWithHandler>             m_OpenWithHandlers;
+    string                              m_ItemsUTI;
+    MainWindowFilePanelState           *m_MainWnd;
+    PanelController                    *m_CurrentController;
+    PanelController                    *m_OppositeController;
+    NSMutableArray                     *m_ShareItemsURLs;
+    int                                 m_DirsCount;
+    int                                 m_FilesCount;
 }
 
-- (id) initWithData:(const vector<const VFSListingItem*>&) _items
-             OnPath:(const char*)_path
-                vfs:(shared_ptr<VFSHost>) _host
+- (id) initWithData:(vector<VFSFlexibleListingItem>) _items
             mainWnd:(MainWindowFilePanelState*)_wnd
              myCont:(PanelController*)_my_cont
             oppCont:(PanelController*)_opp_cont
 {
+    if( _items.empty() )
+        throw invalid_argument("MainWindowFilePanelContextMenu.initWithData - there's no items");
     self = [super init];
-    if(self)
-    {
-        assert(IsPathWithTrailingSlash(_path));
-        assert(!_items.empty());
-        m_Host = _host;
-        m_DirPath = _path;
+    if(self) {
         m_MainWnd = _wnd;
         m_CurrentController = _my_cont;
         m_OppositeController = _opp_cont;
         m_DirsCount = m_FilesCount = 0;
+        m_Items = move(_items);
+        m_DirsCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
+        m_FilesCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsReg(); });
+        m_CommonHost = common_or_default_element( m_Items, VFSHostPtr{}, [](auto &_) -> const VFSHostPtr& { return _.Host(); } );
+        m_CommonDir = common_or_default_element( m_Items, ""s, [](auto &_) -> const string& { return _.Directory(); } );
+
         self.delegate = self;
-        
-        for(auto &i: _items)
-        {
-            m_Items.push_back(i->Name());
-            
-            if(i->IsDir()) m_DirsCount++;
-            if(i->IsReg()) m_FilesCount++;
-        }
+        self.minimumWidth = 200; // hardcoding is bad!
     
-        [self setMinimumWidth:200]; // hardcoding is bad!
-        [self Stuffing:_items];
-    
-        
+
+        [self doStuffing];
     }
     return self;
 }
 
-- (void) Stuffing:(const vector<const VFSListingItem*>&) _items
+- (void) doStuffing
 {
-    // cur_pnl_path should be the same as m_DirPath!!!
-    string cur_pnl_path = m_CurrentController.currentDirectoryPath;
-    string opp_pnl_path = m_OppositeController.currentDirectoryPath;
-    bool cur_pnl_native = m_CurrentController.vfs->IsNativeFS();
-    bool cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath(cur_pnl_path.c_str());
-    bool opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath(opp_pnl_path.c_str());
+    bool cur_pnl_native = m_CommonHost && m_CommonHost->IsNativeFS();
+    bool cur_pnl_writable = true;
+    if( m_CurrentController.isUniform  )
+        cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
+    bool opp_pnl_writable = true;
+    if( m_OppositeController.isUniform )
+        opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath( m_OppositeController.currentDirectoryPath.c_str() );
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
-    if(m_FilesCount > 0 || m_Host->IsNativeFS())
-    {
+    if(m_FilesCount > 0 || ( m_CommonHost && m_CommonHost->IsNativeFS() ) ) {
         NSMenuItem *item = [NSMenuItem new];
         item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
         item.target = self;
@@ -182,19 +221,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // Open With... stuff
     {
         list<LauchServicesHandlers> per_item_handlers;
-        for(auto &i: _items)
-        {
-            char full_path[MAXPATHLEN];
-            sprintf(full_path, "%s%s", m_DirPath.c_str(), i->Name());
-            auto lsh = LauchServicesHandlers::GetForItem(*i, m_Host, full_path);
-            per_item_handlers.emplace_back(move(lsh));
-            
-            // check if there is no need to investigate types further since there's already no intersection
-            LauchServicesHandlers items_check;
-            LauchServicesHandlers::DoMerge(per_item_handlers, items_check);
-            if(items_check.paths.empty() && items_check.uti.empty())
-                break;
-        }
+        for(auto &i: m_Items)
+            per_item_handlers.emplace_back( LauchServicesHandlers::GetForItem(i) );
         
         LauchServicesHandlers items_handlers;
         LauchServicesHandlers::DoMerge(per_item_handlers, items_handlers);
@@ -226,8 +254,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
         bool any_handlers_added = false;
         bool any_non_default_handlers_added = false;
         for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if(m_OpenWithHandlers[i].is_default)
-            {
+            if(m_OpenWithHandlers[i].is_default) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = [NSString stringWithFormat:@"%@ (%@)",
                               m_OpenWithHandlers[i].app_name,
@@ -249,9 +276,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
             }
 
         // show other handlers
-        for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if(!m_OpenWithHandlers[i].is_default)
-            {
+        for( int i = 0; i < m_OpenWithHandlers.size(); ++i )
+            if( !m_OpenWithHandlers[i].is_default ) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = m_OpenWithHandlers[i].app_name;
                 item.image = m_OpenWithHandlers[i].app_icon;
@@ -348,7 +374,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                           m_Items.size()];
         else
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item"),
-                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
+                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
         if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
             item.target = self;
             item.action = @selector(OnCompressToOppositePanel:);
@@ -362,7 +388,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                           m_Items.size()];
         else
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d Here", @"FilePanelsContextMenu", "Compress one item here"),
-                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
+                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
         if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
             item.target = self;
             item.action = @selector(OnCompressToCurrentPanel:);
@@ -378,7 +404,7 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     {
         NSMenuItem *item = [NSMenuItem new];
         item.title = NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
-        if(m_Items.size() == 1 && cur_pnl_writable) {
+        if( m_Items.size() == 1 && cur_pnl_writable ) {
             item.target = self;
             item.action = @selector(OnDuplicateItem:);
         }
@@ -389,18 +415,13 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     // Share stuff
     {
         NSMenu *share_submenu = [NSMenu new];
-        bool eligible = m_Host->IsNativeFS();
-        if(eligible)
-        {
+        bool eligible = m_CommonHost && m_CommonHost->IsNativeFS();
+        if(eligible) {
             m_ShareItemsURLs = [NSMutableArray new];
-            for(auto &i:m_Items) {
-                char path[MAXPATHLEN];
-                strcpy(path, m_DirPath.c_str());
-                strcat(path, i.c_str());
-                if(NSString *s = [NSString stringWithUTF8String:path])
-                    if(NSURL *url = [[NSURL alloc] initFileURLWithPath:s])
+            for( auto &i:m_Items )
+                if( NSString *s = [NSString stringWithUTF8StdString:i.Path()] )
+                    if( NSURL *url = [[NSURL alloc] initFileURLWithPath:s] )
                         [m_ShareItemsURLs addObject:url];
-            }
             
             NSArray *sharingServices = [NSSharingService sharingServicesForItems:m_ShareItemsURLs];
             if (sharingServices.count > 0)
@@ -435,8 +456,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
                           m_Items.size()];
         else
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
-                          [NSString stringWithUTF8StdStringNoCopy:m_Items[0]]];
-        if(m_Host->IsNativeFS()) {  // such thing works only on native file systems
+                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {  // such thing works only on native file systems
             item.target = self;
             item.action = @selector(OnCopyPaths:);
         }
@@ -465,88 +486,80 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
     
     if(!m_ItemsUTI.empty())
-        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), m_OpenWithHandlers[app_no].path.c_str());
+        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, m_OpenWithHandlers[app_no].path);
 }
 
 - (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
 {
-    if(m_Items.size() > 1)
-    {
-        vector<string> items;
-        for(auto &i: m_Items)
-            items.push_back(m_DirPath + i);
-            
-        PanelVFSFileWorkspaceOpener::Open(items, m_Host, _app_id);
+    if(m_Items.size() > 1) {
+        if( m_CommonHost ) {
+            vector<string> items;
+            for(auto &i: m_Items)
+                items.emplace_back( i.Path() );
+            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id);
+        }
     }
     else if(m_Items.size() == 1)
-        PanelVFSFileWorkspaceOpener::Open(m_DirPath + m_Items.front(), m_Host, _app_path);
-}
-
-- (NSOpenPanel*) BuildAppChoose
-{
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    [panel setAllowsMultipleSelection:NO];
-    [panel setCanChooseFiles:YES];
-    [panel setCanChooseDirectories:NO];
-    [panel setDirectoryURL:[[NSURL alloc] initFileURLWithPath:@"/Applications" isDirectory:true]];
-    [panel setAllowedFileTypes:[NSArray arrayWithObject:@"app"]];
-    return panel;
+        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path);
 }
 
 - (void)OnOpenWithOther:(id)sender
 {
-    NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
-                  completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton)
-                      {
-                          OpenWithHandler hndl;
-                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
-                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
-                      }
-                  }];
+    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+        OpenWithHandler hndl;
+        if( ExposeOpenWithHandler(_path, hndl) )
+            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+    });
 }
 
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
-    NSOpenPanel *panel = [self BuildAppChoose];
-    [panel beginSheetModalForWindow:m_MainWnd.windowContentView.window
-                  completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton)
-                      {
-                          if(!m_ItemsUTI.empty())
-                              LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI.c_str(), panel.URL.path.fileSystemRepresentation);
-                          
-                          OpenWithHandler hndl;
-                          if(ExposeOpenWithHandler(panel.URL.path.fileSystemRepresentation, hndl))
-                              [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
-                      }
-                  }];
+    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+        if( !m_ItemsUTI.empty() )
+            LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, _path);
+        
+        OpenWithHandler hndl;
+        if(ExposeOpenWithHandler(_path, hndl))
+            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+    });
 }
 
 - (void)OnMoveToTrash:(id)sender
 {
-    assert(m_CurrentController.vfs->IsNativeFS());
-    FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:vector<string>(m_Items)
-                                 type:FileDeletionOperationType::MoveToTrash
-                                 dir:m_DirPath];
-    [m_MainWnd AddOperation:op];
+    // TODO: rewrite
+    if( m_CommonHost && !m_CommonDir.empty() ) {
+        vector<string> filenames;
+        for(auto &i: m_Items)
+            filenames.emplace_back( i.Filename() );
+        
+        FileDeletionOperation *op = [[FileDeletionOperation alloc]
+                                     initWithFiles:move(filenames)
+                                     type:FileDeletionOperationType::MoveToTrash
+                                     dir:m_CommonDir];
+        [m_MainWnd AddOperation:op];
+    }
 }
 
 - (void)OnDeletePermanently:(id)sender
 {
-    FileDeletionOperation *op = [FileDeletionOperation alloc];
-    if(m_CurrentController.vfs->IsNativeFS())
-        op = [op initWithFiles:vector<string>(m_Items)
-                          type:FileDeletionOperationType::Delete
-                           dir:m_DirPath];
-    else
-        op = [op initWithFiles:vector<string>(m_Items)
-                           dir:m_DirPath
-                            at:m_CurrentController.vfs];
-
-    [m_MainWnd AddOperation:op];
+    // TODO: rewrite
+    if( m_CommonHost && !m_CommonDir.empty() ) {
+        vector<string> filenames;
+        for(auto &i: m_Items)
+            filenames.emplace_back( i.Filename() );
+        
+        FileDeletionOperation *op = [FileDeletionOperation alloc];
+        if(m_CommonHost->IsNativeFS())
+            op = [op initWithFiles:move(filenames)
+                              type:FileDeletionOperationType::Delete
+                               dir:m_CommonDir];
+        else
+            op = [op initWithFiles:move(filenames)
+                               dir:m_CommonDir
+                                at:m_CommonHost];
+        
+        [m_MainWnd AddOperation:op];
+    }
 }
 
 - (void)OnCopyPaths:(id)sender
@@ -554,7 +567,8 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
     NSMutableArray *filenames = [[NSMutableArray alloc] initWithCapacity:m_Items.size()];
     
     for(auto &i: m_Items)
-        [filenames addObject:[NSString stringWithUTF8String:(m_DirPath + i).c_str()]];
+        if(i.Host()->IsNativeFS())
+            [filenames addObject:[NSString stringWithUTF8StdString:i.Path()]];
     
     NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
@@ -564,24 +578,22 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-                                                                     srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.vfs
-                                                                     dstroot:m_OppositeController.currentDirectoryPath
-                                                                      dstvfs:m_OppositeController.vfs
-                                 ];
+    if( !m_OppositeController.isUniform )
+        return;
+    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
+                                                   dstroot:m_OppositeController.currentDirectoryPath
+                                                    dstvfs:m_OppositeController.vfs];
     op.TargetPanel = m_OppositeController;
     [m_MainWnd AddOperation:op];
 }
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-    FileCompressOperation* op = [[FileCompressOperation alloc] initWithFiles:vector<string>(m_Items)
-                                                                     srcroot:m_DirPath
-                                                                      srcvfs:m_CurrentController.vfs
-                                                                     dstroot:m_DirPath
-                                                                      dstvfs:m_CurrentController.vfs
-                                 ];
+    if( !m_CommonHost || m_CommonDir.empty() )
+        return;
+    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
+                                                   dstroot:m_CommonDir
+                                                    dstvfs:m_CommonHost];
     op.TargetPanel = m_CurrentController;
     [m_MainWnd AddOperation:op];
 }
@@ -595,83 +607,28 @@ static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 - (void)OnDuplicateItem:(id)sender
 {
     // currently duplicating only first file in a selected set
-    char filename[MAXPATHLEN], ext[MAXPATHLEN];
-    bool has_ext = false;
-    {
-        const char *orig = m_Items[0].c_str();
-        char *last_dot = strrchr(orig, '.');
-        if(last_dot == 0) {
-            strcpy(filename, orig);
-        }
-        else
-        {
-            if(last_dot == orig || last_dot == orig + strlen(orig) - 1) {
-                strcpy(filename, orig);
-            }
-            else {
-                memcpy(filename, orig, last_dot - orig);
-                filename[last_dot - orig] = 0;
-                strcpy(ext, last_dot+1);
-                has_ext = true;
-            }
-        }
-    }
+    auto &item = m_Items.front();
+    if( !item.Host()->IsWriteable() )
+        return;
     
-    char target[MAXPATHLEN];
-    sprintf(target, "%s%s copy", m_DirPath.c_str(), filename);
-    if(has_ext) {
-        strcat(target, ".");
-        strcat(target, ext);
-    }
-    
-    VFSStat st;
-    if(m_Host->Stat(target, st, VFSFlags::F_NoFollow, 0) == 0)
-    { // this file already exists, will try another ones
-        for(int i = 2; i < 100; ++i) {
-            sprintf(target, "%s%s copy %d", m_DirPath.c_str(), filename, i);
-            if(has_ext) {
-                strcat(target, ".");
-                strcat(target, ext);
-            }
-            if(m_Host->Stat(target, st, VFSFlags::F_NoFollow, 0) != 0)
-                goto proceed;
-            
-        }
-        return; // we're full of such filenames, no reason to go on
-    }
-    
-proceed:;
+    auto target = FindFreeFilenameToDuplicateIn(item);
+    if( target.empty() )
+        return;
+
     FileCopyOperationOptions opts;
     opts.docopy = true;
     
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    if(m_CurrentController.vfs->IsNativeFS())
-        op = [op initWithFiles:vector<string>(1, m_Items[0])
-                          root:m_DirPath.c_str()
-                          dest:target
-                       options:opts];
-    else
-        op = [op initWithFiles:vector<string>(1, m_Items[0])
-                          root:m_DirPath.c_str()
-                        srcvfs:m_CurrentController.vfs
-                          dest:target
-                        dstvfs:m_CurrentController.vfs
-                       options:opts];
+    auto op = [[FileCopyOperation alloc] initWithItems:{item} destinationPath:target destinationHost:item.Host() options:opts];
     
-    char target_fn[MAXPATHLEN];
-    GetFilenameFromPath(target, target_fn);
-    string target_fns = target_fn;
-    string current_pan_path = m_CurrentController.currentDirectoryPath;
+    auto filename = target.substr( target.find_last_of('/') + 1 );
     [op AddOnFinishHandler:^{
-        if(m_CurrentController.currentDirectoryPath == current_pan_path)
-            dispatch_to_main_queue( [=]{
-                PanelControllerDelayedSelection req;
-                req.filename = target_fns;
-                [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
-            });
-        }
+        dispatch_to_main_queue( [=]{
+            PanelControllerDelayedSelection req;
+            req.filename = filename;
+            [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
+        });
+      }
      ];
-    
     [m_MainWnd AddOperation:op];
 }
 
@@ -680,11 +637,12 @@ proceed:;
 
 @implementation MainWindowFilePanelState (ContextMenu)
 
-- (NSMenu*) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
-                         path:(const char*) _path
-                          vfs:(shared_ptr<VFSHost>) _host
-                       caller:(PanelController*) _caller
+- (NSMenu*) RequestContextMenuOn:(vector<VFSFlexibleListingItem>) _items
+                          caller:(PanelController*) _caller
 {
+    if( _items.empty() )
+        return nil;
+    
     PanelController *current_cont = _caller;
     PanelController *opp_cont;
     if(current_cont == self.leftPanelController)
@@ -695,9 +653,7 @@ proceed:;
         return nil;
     
     MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
-    menu = [menu initWithData:_items
-                       OnPath:_path
-                          vfs:_host
+    menu = [menu initWithData:move(_items)
                       mainWnd:self
                        myCont:current_cont
                       oppCont:opp_cont];

@@ -78,7 +78,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
     OperationJob        *m_Job;
     vector<id<OperationDialogProtocol>> m_Dialogs;
     vector<void(^)()>   m_Handlers;
-    float               m_Progress;
+    double              m_Progress;
     bool                m_IsPaused;
     bool                m_IsIndeterminate;
     
@@ -123,7 +123,11 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
         m_IsIndeterminate = true;
         m_IsPaused = false;
         
-        m_Job->SetBaseOperation(self);
+        __weak Operation *weak_self = self;
+        m_Job->SetOnFinish([=]{
+            if( Operation* strong_self = weak_self )
+               [strong_self OnFinish];
+        });
         
         OperationsProgressReporter::Register((__bridge void*)self);
     }
@@ -295,7 +299,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
 }
 
 
-- (void)setProgress:(float)Progress
+- (void)setProgress:(double)Progress
 {
     OperationsProgressReporter::Report((__bridge void*)self, Progress);
     

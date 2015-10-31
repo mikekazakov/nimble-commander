@@ -9,17 +9,13 @@
 #define __APPLE_API_PRIVATE
 #import "../3rd_party/apple_sandbox.h"
 #import <libproc.h>
-#import <sys/sysctl.h>
 #import <sys/resource.h>
 #import <sys/proc_info.h>
 #import <pwd.h>
-#import <stdio.h>
-#import <stdlib.h>
 #import "sysinfo.h"
 #import "Common.h"
 #import "VFSPSHost.h"
 #import "VFSPSInternal.h"
-#import "VFSPSListing.h"
 #import "VFSPSFile.h"
 
 const char *VFSPSHost::Tag = "psfs";
@@ -27,11 +23,13 @@ const char *VFSPSHost::Tag = "psfs";
 static NSDateFormatter *ProcDateFormatter()
 {
     static NSDateFormatter *formatter = nil;
-    if(formatter == nil) {
-        formatter = [[NSDateFormatter alloc] init];
-        [formatter setTimeStyle:NSDateFormatterShortStyle];
-        [formatter setDateStyle:NSDateFormatterShortStyle];
-    }
+    once_flag flag;
+    call_once(flag, []{
+        auto fmt = [[NSDateFormatter alloc] init];
+        [fmt setTimeStyle:NSDateFormatterShortStyle];
+        [fmt setDateStyle:NSDateFormatterShortStyle];
+        formatter = fmt;
+    });
     return formatter;
 }
 
@@ -269,7 +267,7 @@ public:
 };
 
 VFSPSHost::VFSPSHost():
-    VFSHost("", shared_ptr<VFSHost>(0)),
+    VFSHost("", shared_ptr<VFSHost>(0), Tag),
     m_UpdateQ(make_shared<SerialQueueT>(__FILES_IDENTIFIER__".VFSPSHost"))
 {
     CommitProcs(GetProcs());
@@ -278,11 +276,6 @@ VFSPSHost::VFSPSHost():
 VFSPSHost::~VFSPSHost()
 {
     m_UpdateQ->Stop();
-}
-
-const char *VFSPSHost::FSTag() const
-{
-    return Tag;
 }
 
 VFSConfiguration VFSPSHost::Configuration() const
@@ -475,19 +468,41 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     return result;
 }
 
-int VFSPSHost::FetchDirectoryListing(const char *_path,
-                                  unique_ptr<VFSListing> &_target,
-                                  int _flags,
-                                  VFSCancelChecker _cancel_checker)
+int VFSPSHost::FetchFlexibleListing(const char *_path,
+                                 shared_ptr<VFSFlexibleListing> &_target,
+                                 int _flags,
+                                 VFSCancelChecker _cancel_checker)
 {
     EnsureUpdateRunning();
     
     if(!_path || strcmp(_path, "/") != 0)
         return VFSError::NotFound;
     
-    _target = make_unique<VFSPSListing>(_path, SharedPtr(), m_Data);
-
-    return VFSError::Ok;
+    auto data = m_Data;
+    
+    // set up or listing structure
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = _path;
+    listing_source.sizes.reset( variable_container<>::type::dense );
+    listing_source.atimes.reset( variable_container<>::type::common );
+    listing_source.atimes[0] = data->taken_time;
+    listing_source.btimes.reset( variable_container<>::type::common );
+    listing_source.btimes[0] = data->taken_time;
+    listing_source.ctimes.reset( variable_container<>::type::common );
+    listing_source.ctimes[0] = data->taken_time;
+    listing_source.mtimes.reset( variable_container<>::type::common );
+    listing_source.mtimes[0] = data->taken_time;
+    
+    for( int index = 0, index_e = (int)data->procs.size(); index != index_e; ++index ) {
+        listing_source.filenames.emplace_back( data->plain_filenames[index] );
+        listing_source.unix_modes.emplace_back( S_IFREG | S_IRUSR | S_IRGRP );
+        listing_source.unix_types.emplace_back( DT_REG );
+        listing_source.sizes.insert( index, data->files[index].size() );
+    }
+    
+    _target = VFSFlexibleListing::Build(move(listing_source));
+    return 0;
 }
 
 bool VFSPSHost::IsDirectory(const char *_path,

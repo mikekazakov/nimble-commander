@@ -11,13 +11,7 @@
 
 @interface MainWindowFilePanelState (ContextMenu)
 
-/**
- * _items: temporary items info for quick decisions, will not be stored
- *
- */
-- (NSMenu*) RequestContextMenuOn:(const vector<const VFSListingItem*>&) _items
-                            path:(const char*) _path
-                             vfs:(shared_ptr<VFSHost>) _host
+- (NSMenu*) RequestContextMenuOn:(vector<VFSFlexibleListingItem>) _items
                           caller:(PanelController*) _caller;
 
 @end

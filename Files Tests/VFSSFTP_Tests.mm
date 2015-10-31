@@ -48,21 +48,21 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 - (void)testBasicWithHost:(VFSHostPtr)host
 {
-    unique_ptr<VFSListing> listing;
-    XCTAssert( host->FetchDirectoryListing("/", listing, 0, 0) == 0);
+    VFSFlexibleListingPtr listing;
+    XCTAssert( host->FetchFlexibleListing("/", listing, 0, 0) == 0);
     
     if(!listing)
         return;
     
     PanelData data;
-    data.Load(move(listing));
+    data.Load(listing);
     XCTAssert( data.Listing().Count() == 22);
-    XCTAssert( "bin"s == data.EntryAtSortPosition(0)->Name() );
-    XCTAssert( "var"s == data.EntryAtSortPosition(19)->Name() );
-    XCTAssert( "initrd.img"s == data.EntryAtSortPosition(20)->Name() );
-    XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(21)->Name() );
+    XCTAssert( "bin"s == data.EntryAtSortPosition(0).Name() );
+    XCTAssert( "var"s == data.EntryAtSortPosition(19).Name() );
+    XCTAssert( "initrd.img"s == data.EntryAtSortPosition(20).Name() );
+    XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(21).Name() );
     
-    XCTAssert( data.EntryAtSortPosition(0)->IsDir() );
+    XCTAssert( data.EntryAtSortPosition(0).IsDir() );
     // need to check symlinks
 }
 

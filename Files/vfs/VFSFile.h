@@ -38,10 +38,10 @@ public:
     };
     
     enum class WriteParadigm {
-        Random      = 3,
-        Seek        = 2,
-        Sequential  = 1,
-        /* Upload - for fixed-length files upload to network servers with some protocols/APIs */
+        Random      = 4,
+        Seek        = 3,
+        Sequential  = 2,
+        Upload      = 1,
         NoWrite     = 0
     };
     
@@ -59,6 +59,15 @@ public:
     virtual ReadParadigm  GetReadParadigm() const;
     virtual WriteParadigm GetWriteParadigm() const;
     virtual ssize_t Read(void *_buf, size_t _size);
+    
+    /**
+     * For Upload write paradigm: sets upload size in advance, to file object can set up it's data structures and 
+     * do an actual upload on Write() call when client hits stated size.
+     * May be ignored by other write paradigms.
+     * If _size is zero - file may perform an actual upload.
+     * Default implementation returns Ok.
+     */
+    virtual int SetUploadSize(size_t _size);
     
     /**
      * Writes _size bytes from _buf to a file in blocking mode.
@@ -162,7 +171,7 @@ public:
     
     inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
     inline shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
-    const char* RelativePath() const;
+    const char* RelativePath() const noexcept;
     const shared_ptr<VFSHost> &Host() const;
 protected:
     /**

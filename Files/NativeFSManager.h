@@ -39,6 +39,11 @@ struct NativeFileSystemInfo
         fsid_t fs_id;
         
         /**
+         * ID of device, used in stat() syscall
+         */
+        dev_t dev_id;
+        
+        /**
          * User that mounted the filesystem.
          */
         uid_t owner;
@@ -492,6 +497,8 @@ struct NativeFileSystemInfo
 };
 
 
+// TODO: return volumes by shared_ptr<const ...> so clients can't modify it in theory
+
 
 class NativeFSManager
 {
@@ -503,6 +510,8 @@ public:
      */
     vector<shared_ptr<NativeFileSystemInfo>> Volumes() const;
     
+    shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;
+    shared_ptr<const NativeFileSystemInfo> VolumeFromDevID(dev_t _dev_id) const;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
@@ -552,6 +561,8 @@ public:
     
 private:
     NativeFSManager();
+    NativeFSManager(const NativeFSManager&) = delete;
+    void operator=(const NativeFSManager&) = delete;
     
     static void GetAllInfos(NativeFileSystemInfo &_volume);
     static bool GetBasicInfo(NativeFileSystemInfo &_volume);

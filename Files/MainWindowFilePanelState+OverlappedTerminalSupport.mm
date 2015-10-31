@@ -145,7 +145,8 @@
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc
 {
-    if( _pc.vfs->IsNativeFS() &&
+    if(_pc.isUniform &&
+       _pc.vfs->IsNativeFS() &&
        self.overlappedTerminalVisible &&
        m_OverlappedTerminal.terminal.isShellVirgin == true )
         [m_OverlappedTerminal.terminal changeWorkingDirectory:_pc.currentDirectoryPath];
@@ -174,11 +175,11 @@
         pc = m_LastFocusedPanelController;
     if( pc && pc.vfs->IsNativeFS() )
         if( auto entry = pc.view.item ) {
-            if( panel::IsEligbleToTryToExecuteInConsole(*entry) &&
+            if( panel::IsEligbleToTryToExecuteInConsole(entry) &&
                 m_OverlappedTerminal.terminal.isShellVirgin )
-                [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + entry->Name()];
+                [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + entry.Name()];
             else
-                [m_OverlappedTerminal.terminal feedShellWithInput:entry->Name()];
+                [m_OverlappedTerminal.terminal feedShellWithInput:entry.Name()];
         }
 }
 

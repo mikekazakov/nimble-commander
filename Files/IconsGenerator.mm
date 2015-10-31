@@ -246,20 +246,19 @@ void IconsGenerator::BuildGenericIcons()
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
-NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
+NSImageRep *IconsGenerator::ImageFor(const VFSFlexibleListingItem &_item, PanelVolatileData &_item_vd)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
-    auto &entry = _listing.At(_no);
-    if( entry.CIcon() > 0 ) {
-        int number = entry.CIcon() - 1;
+    if( _item_vd.icon > 0 ) {
+        int number = _item_vd.icon - 1;
         // sanity check - not founding meta with such number means sanity breach in calling module
         assert( number < m_Icons.size() );
         const auto &is = m_Icons[number];
         
         // check if Icon meta stored here is outdated
-        if( is.file_size == entry.Size() &&
-           is.mtime == entry.MTime() )
+        if( is.file_size == _item.Size() &&
+           is.mtime == _item.MTime() )
             return is.Any(); // short path - return a stored icon from stash
     }
     
@@ -267,25 +266,25 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
     // need to collect the appropriate info and put request into generating queue
     
     if(m_Icons.size() >= MaxIcons ||
-       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_listing.Host()) )
-        return entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
+       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_item.Host()) )
+        return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
 
     // build IconStorage
     unsigned short is_no = m_Icons.size();
     m_Icons.emplace_back();
     auto &is = m_Icons.back();
-    is.file_size = entry.Size();
-    is.mtime = entry.MTime();
-    is.generic = entry.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
-    if( m_IconsMode >= IconMode::Icons && entry.HasExtension() ) {
+    is.file_size = _item.Size();
+    is.mtime = _item.MTime();
+    is.generic = _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+    if( m_IconsMode >= IconMode::Icons && _item.HasExtension() ) {
         lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
-        auto it = m_ExtensionIconsCache.find(entry.Extension());
+        auto it = m_ExtensionIconsCache.find(_item.Extension());
         if(it != end(m_ExtensionIconsCache))
             is.filetype = it->second;
     }
     
-    auto rel_path = entry.IsDotDot() ? _listing.RelativePath() : _listing.ComposeFullPathForEntry(_no);
-    bool is_native_fs = _listing.Host()->IsNativeFS();
+    auto rel_path = _item.IsDotDot() ? _item.Directory() : string(_item.Directory()) + _item.Name();
+    bool is_native_fs = _item.Host()->IsNativeFS();
     
     // check if we already have thumbnail built
     if(m_IconsMode == IconMode::Thumbnails && is_native_fs)
@@ -297,16 +296,16 @@ NSImageRep *IconsGenerator::ImageFor(unsigned _no, VFSListing &_listing)
         if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(rel_path))
             is.filetype = th;
         
-    entry.SetCIcon(is_no+1);
+    _item_vd.icon = is_no+1;
     
 //  build BuildRequest
     BuildRequest br;
     br.generation = m_Generation;
     br.file_size = is.file_size;
     br.mtime = is.mtime;
-    br.unix_mode = entry.UnixMode();
-    br.host = _listing.Host();
-    br.extension = entry.Extension();
+    br.unix_mode = _item.UnixMode();
+    br.host = _item.Host();
+    br.extension = _item.Extension();
     br.relative_path = move(rel_path);
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;

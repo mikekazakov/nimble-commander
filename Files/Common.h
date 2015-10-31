@@ -9,6 +9,7 @@
 
 #include "path_manip.h"
 
+// TODO: remove it.
 struct DialogResult
 {
     enum
@@ -61,8 +62,9 @@ private:
  * If _from_ is nil - returns nil.
  */
 template<typename T>
-inline T* objc_cast(id from) noexcept {
-    if ( [from isKindOfClass:[T class]] )
+T* objc_cast(id from) noexcept {
+    static const auto class_meta = [T class];
+    if( [from isKindOfClass:class_meta] )
         return static_cast<T*>(from);
     return nil;
 }
@@ -119,8 +121,16 @@ inline NSError* ErrnoToNSError() { return ErrnoToNSError(errno); }
 
 #endif
 
-inline bool strisdotdot(const char *s) { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
-inline bool strisdotdot(const string &s) { return s.length() == 2 && s[0] == '.' && s[1] == '.'; }
+inline bool strisdot(const char *s) noexcept { return s && s[0] == '.' && s[1] == 0; }
+inline bool strisdotdot(const char *s) noexcept { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
+inline bool strisdotdot(const string &s) noexcept { return strisdotdot( s.c_str() ); }
+
+inline string EnsureTrailingSlash(string _s)
+{
+    if( _s.empty() || _s.back() != '/' )
+        _s.push_back('/');
+    return _s;
+}
 
 /**
  * return max(lower, min(n, upper));

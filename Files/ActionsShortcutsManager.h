@@ -161,6 +161,7 @@ private:
         {"menu.command.system_overview",        15000},
         {"menu.command.volume_information",     15010},
         {"menu.command.file_attributes",        15020},
+        {"menu.command.open_xattr",             15230},
         {"menu.command.copy_file_name",         15030},
         {"menu.command.copy_file_path",         15040},
         {"menu.command.select_with_mask",       15050},

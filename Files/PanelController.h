@@ -15,6 +15,7 @@
 @class QuickLookView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
+@class MainWindowController;
 
 struct PanelQuickSearchMode
 {
@@ -56,6 +57,9 @@ namespace panel
     // Main controller's possessions
     PanelData                   m_Data;   // owns
     PanelView                   *m_View;  // create and owns
+    
+    // Handmade upper directory for non-uniform listings like search results
+    VFSPath                     m_UpperDirectory;
     
     // VFS changes observation
     VFSHostDirObservationTicket  m_UpdatesObservationTicket;
@@ -123,9 +127,11 @@ namespace panel
 }
 
 @property (nonatomic) MainWindowFilePanelState* state;
+@property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
 @property (nonatomic, readonly) bool isActive;
+@property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;
 @property (nonatomic) NSDictionary* options;
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;

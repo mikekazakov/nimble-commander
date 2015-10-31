@@ -349,7 +349,7 @@ struct OtherAttrs
         
 - (void)ShowSheet: (NSWindow *)_window data: (const PanelData*)_data index: (unsigned)_ind handler: (FileSysEntryAttrSheetCompletionHandler) handler
 {
-    auto &item = *_data->EntryAtRawPosition(_ind);
+    auto item = _data->EntryAtRawPosition(_ind);
     typedef FileSysAttrAlterCommand _;
     m_State[0].fsfstate[_::fsf_unix_usr_r] = item.UnixMode() & S_IRUSR;
     m_State[0].fsfstate[_::fsf_unix_usr_w] = item.UnixMode() & S_IWUSR;

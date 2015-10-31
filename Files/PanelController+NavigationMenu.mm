@@ -15,12 +15,15 @@
 static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
 //static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
 
-static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing &_listing  )
+static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSFlexibleListing &_listing  )
 {
+    if( !_listing.IsUniform() )
+        throw invalid_argument("ProduceStacksForParentDirectories: _listing should be uniform");
+        
     vector<VFSPathStack> result;
     
     auto host = _listing.Host();
-    path dir = _listing.RelativePath();
+    path dir = _listing.Directory();
     if(dir.filename() == ".")
         dir.remove_filename();
     while( host ) {
@@ -182,6 +185,9 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
 
 - (void) popUpQuickListWithParentFolders
 {
+    if( !self.isUniform )
+        return;
+    
     auto stacks = ProduceStacksForParentDirectories( self.data.Listing() );
     
     NSMenu *menu = [[NSMenu alloc] init];

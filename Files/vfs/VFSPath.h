@@ -10,6 +10,22 @@
 
 #include "VFSDeclarations.h"
 
+class VFSPath
+{
+public:
+    VFSPath();
+    VFSPath(const VFSHostPtr &_host, string _path);
+    
+    const VFSHostPtr& Host() const noexcept;
+    const string&     Path() const noexcept;
+    operator          bool() const noexcept;
+    void              Reset();
+    
+private:
+    VFSHostPtr m_Host;
+    string     m_Path;
+};
+
 class VFSPathStack
 {
 public:
@@ -36,7 +52,6 @@ public:
     };
     
     VFSPathStack();
-    VFSPathStack(const VFSListing &_listing);
     VFSPathStack(const VFSHostPtr &_vfs, const string &_path);
     
     inline bool operator==(const VFSPathStack& _r) const {

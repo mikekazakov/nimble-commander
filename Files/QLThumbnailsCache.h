@@ -8,11 +8,6 @@
 
 #pragma once
 
-// when llvm/clang will fix c++1y libs, change this:
-#include "3rd_party/shared_mutex/shared_mutex"
-// to that:
-// #include <shared_mutex>
-
 class QLThumbnailsCache
 {
 public:
@@ -31,9 +26,9 @@ public:
      */
     NSImageRep *ProduceThumbnail(const string &_filename, CGSize _size);
     
-    static NSImageRep *BuildRep(const string &_filename, CGSize _size);    
-    
 private:
+    static NSImageRep *BuildRep(const string &_filename, CGSize _size);
+    
     enum { m_CacheSize = 4096 };
     
     struct Info
@@ -42,9 +37,11 @@ private:
         uint64_t    mtime;
         NSImageRep *image;      // may be nil - it means that QL can't produce thumbnail for this file
         CGSize      image_size; // currently not accouning when deciding if cache is outdated
+        atomic_flag is_in_work = {false}; // item is currenly updating it's image
     };
-    map<string, Info>                   m_Items;
-    ting::shared_mutex                  m_ItemsLock;
-    deque<map<string, Info>::iterator>  m_MRU;
+    using Container = map<string, shared_ptr<Info>>;
+    Container                           m_Items;
+    shared_timed_mutex                  m_ItemsLock;
+    deque<Container::iterator>          m_MRU;
     mutex                               m_MRULock;    
 };

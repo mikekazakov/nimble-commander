@@ -62,7 +62,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
                              const string &_passwd,
                              const string &_start_dir,
                              long   _port):
-    VFSHost(_serv_url.c_str(), nullptr),
+    VFSHost(_serv_url.c_str(), nullptr, Tag),
     m_Cache(make_unique<VFSNetFTP::Cache>())
 {
     {
@@ -82,7 +82,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
 }
 
 VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr),
+    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
     m_Cache(make_unique<VFSNetFTP::Cache>()),
     m_Configuration(_config)
 {
@@ -94,11 +94,6 @@ VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
 const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const
 {
     return m_Configuration.GetUnchecked<VFSNetFTPHostConfiguration>();
-}
-
-const char *VFSNetFTPHost::FSTag() const
-{
-    return Tag;
 }
 
 VFSMeta VFSNetFTPHost::Meta()
@@ -283,19 +278,54 @@ int VFSNetFTPHost::Stat(const char *_path,
     return VFSError::NotFound;
 }
 
-int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
-                                         unique_ptr<VFSListing> &_target,
-                                         int _flags,
-                                         VFSCancelChecker _cancel_checker)
+int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
+                                        shared_ptr<VFSFlexibleListing> &_target,
+                                        int _flags,
+                                        VFSCancelChecker _cancel_checker)
 {
     shared_ptr<VFSNetFTP::Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
     if(result != 0)
         return result;
     
-    assert(dir);
-    auto listing = make_unique<Listing>(dir, _path, _flags, SharedPtr());
-    _target = move(listing);
+    // setup of listing structure
+    VFSFlexibleListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.sizes.reset( variable_container<>::type::dense );
+    listing_source.atimes.reset( variable_container<>::type::dense );
+    listing_source.mtimes.reset( variable_container<>::type::dense );
+    listing_source.ctimes.reset( variable_container<>::type::dense );
+    listing_source.btimes.reset( variable_container<>::type::dense );
+
+    if( !(_flags & VFSFlags::F_NoDotDot) && listing_source.directories[0] != "/" ) {
+        // synthesize dot-dot
+        listing_source.filenames.emplace_back( ".." );
+        listing_source.unix_types.emplace_back( DT_DIR );
+        listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
+        auto curtime = time(0);
+        listing_source.sizes.insert(0, 0 );
+        listing_source.atimes.insert(0, curtime );
+        listing_source.btimes.insert(0, curtime );
+        listing_source.ctimes.insert(0, curtime );
+        listing_source.mtimes.insert(0, curtime );
+    }
+    
+    for( const auto &entry: dir->entries ) {
+        listing_source.filenames.emplace_back( entry.name );
+        listing_source.unix_types.emplace_back( (entry.mode & S_IFDIR) ? DT_DIR : DT_REG );
+        listing_source.unix_modes.emplace_back( entry.mode );
+        int index = int(listing_source.filenames.size()-1);
+        
+        listing_source.sizes.insert(index, entry.size );
+        listing_source.atimes.insert(index, entry.time );
+        listing_source.btimes.insert(index, entry.time );
+        listing_source.ctimes.insert(index, entry.time );
+        listing_source.mtimes.insert(index, entry.time );
+    }
+    
+    _target = VFSFlexibleListing::Build(move(listing_source));
+    
     return 0;
 }
 

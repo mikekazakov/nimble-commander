@@ -6,8 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationJob.h"
-#import "Operation.h"
+#include "OperationJob.h"
 
 OperationJob::OperationJob():
     m_NoIdlePromise( IdleSleepPreventer::Instance().GetPromise() )
@@ -16,7 +15,8 @@ OperationJob::OperationJob():
 
 OperationJob::~OperationJob()
 {
-    assert(IsFinished());
+    if( !IsFinished() )
+        fprintf(stderr, "OperationJob::~OperationJob(): operation was destroyed in a non-finished state!\n");
 }
 
 void OperationJob::Start()
@@ -93,21 +93,27 @@ OperationStats& OperationJob::GetStats()
 
 void OperationJob::SetStopped()
 {
-    assert(m_State == State::Running);
+    if( m_State != State::Running )
+        throw logic_error("OperationJob::SetStopped() was called when state is not Running");
     
     m_State = State::Stopped;
 }
 
 void OperationJob::SetCompleted()
 {
-    assert(m_State == State::Running);
+    if( m_State != State::Running )
+        throw logic_error("OperationJob::SetCompleted() was called when state is not Running");
+    
+    if( m_Stats.GetMaxValue() > 0 && m_Stats.GetProgress() < 1.0 )
+        cerr << "OperationJob::SetCompleted() was called with Progress<1!" << endl;
     
     m_State = State::Completed;
     
-    [(Operation*)m_BaseOperation OnFinish];
+    if(m_OnFinish)
+        m_OnFinish();
 }
 
-bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
+bool OperationJob::CheckPauseOrStop(int _sleep_in_ms) const
 {
     if (m_Paused && !m_RequestStop)
     {
@@ -120,9 +126,4 @@ bool OperationJob::CheckPauseOrStop(int _sleep_in_ms)
     }
     
     return m_RequestStop;
-}
-
-void OperationJob::SetBaseOperation(Operation *_op)
-{
-    m_BaseOperation = _op;
 }

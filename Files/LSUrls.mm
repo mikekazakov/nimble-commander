@@ -34,74 +34,77 @@ inline T all_equal_or_default(InputIterator _first,
     return val;
 }
 
-LauchServicesHandlers LauchServicesHandlers::GetForItem(const VFSListingItem &_it, const VFSHostPtr &_host, const char* _path)
+static string UTIForExtenstion(const string& _extension)
+{
+    static mutex guard;
+    static vector< pair<string, string> > ext_to_uti;
+    
+    // TODO: sorting and binary search, O(logN) instead of O(N)
+    lock_guard<mutex> lock(guard);
+    auto it = find_if( begin(ext_to_uti), end(ext_to_uti), [&](auto &e){ return e.first == _extension; } );
+    if( it != end(ext_to_uti) )
+        return it->second;
+    
+    string uti;
+    if( CFStringRef ext = CFStringCreateWithUTF8StdStringNoCopy( _extension ) ) {
+        if( CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL) ) {
+            uti = ((__bridge NSString*)UTI).UTF8String;
+            ext_to_uti.emplace_back( _extension, uti );
+            CFRelease(UTI);
+        }
+        CFRelease(ext);
+    }
+
+    return uti;
+}
+
+LauchServicesHandlers LauchServicesHandlers::GetForItem( const VFSFlexibleListingItem &_it )
 {
     LauchServicesHandlers result;
     
-    if(_host->IsNativeFS())
-    {
-        if(_it.HasExtension()) {
-            if(CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it.Extension())) {
-                if(CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL)) {
-                    result.uti = ((__bridge NSString*)UTI).UTF8String;
-                    CFRelease(UTI);
-                }
-                CFRelease(ext);
-            }
-        }
-        
-        if(CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_path, strlen(_path), false))
-        {
+    if( _it.Host()->IsNativeFS() ) {
+        if( _it.HasExtension() )
+            result.uti = UTIForExtenstion( _it.Extension() );
+
+        string path = _it.Directory() + _it.Filename();
+        if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)path.c_str(), path.length(), false) ) {
             CFURLRef default_app_url;
-            if(LSGetApplicationForURL(url, kLSRolesAll, 0, &default_app_url) == 0)
-            {
-                NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyApplicationURLsForURL(url, kLSRolesAll));
-                int ind = 0;
-                for(NSURL *url in apps)
-                {
-                    result.paths.push_back(url.path.fileSystemRepresentation);
-                    if([(__bridge NSURL*)(default_app_url) isEqual: url])
-                        result.default_path = ind;
-                    ++ind;
+            if( LSGetApplicationForURL(url, kLSRolesAll, 0, &default_app_url) == 0 ) {
+                NSArray *apps = (NSArray *)CFBridgingRelease( LSCopyApplicationURLsForURL(url, kLSRolesAll) );
+                for( NSURL *url in apps ) {
+                    result.paths.emplace_back( url.path.fileSystemRepresentation );
+                    if( [(__bridge NSURL*)(default_app_url) isEqual:url] )
+                        result.default_path = (int)result.paths.size() - 1;
                 }
                 CFRelease(default_app_url);
             }
             CFRelease(url);
         }
     }
-    else
-    {
+    else {
         if(_it.IsDir())
-            return move(result);
+            return result;
                 
-        if(_it.HasExtension())
-        {
+        if( _it.HasExtension() ) {
             CFStringRef ext = CFStringCreateWithUTF8StringNoCopy(_it.Extension());
-            CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL);
-            CFRelease(ext);
-            if(UTI != 0)
-            {
+            if( CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL) ) {
                 result.uti = [((__bridge NSString*)UTI) UTF8String];
                 NSString *default_bundle = (__bridge_transfer id)LSCopyDefaultRoleHandlerForContentType(UTI,kLSRolesAll);
-                NSArray *apps = (NSArray *)CFBridgingRelease(LSCopyAllRoleHandlersForContentType(UTI,kLSRolesAll));
-                int ind = 0;
+                
+                NSArray *apps = (NSArray *)CFBridgingRelease( LSCopyAllRoleHandlersForContentType(UTI,kLSRolesAll) );
                 for (NSString* bundleIdentifier in apps)
-                {
-                    NSString* nspath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: bundleIdentifier];
-                    if(nspath)
-                    {
-                        const char *path = [nspath fileSystemRepresentation];
-                        result.paths.push_back(path);
+                    if( auto nspath = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundleIdentifier] ) {
+                        result.paths.push_back( nspath.fileSystemRepresentation );
                         if([bundleIdentifier isEqualToString:default_bundle])
-                            result.default_path = ind;
-                        ++ind;
+                            result.default_path = (int)result.paths.size() - 1;
                     }
-                }
+                
                 CFRelease(UTI);
             }
+            CFRelease(ext);
         }
     }
-    return move(result);
+    return result;
 }
 
 void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result)
@@ -139,15 +142,13 @@ void LauchServicesHandlers::DoMerge(const list<LauchServicesHandlers>& _input, L
         }
 }
 
-bool LauchServicesHandlers::SetDefaultHandler(const char *_uti, const char* _path)
+bool LauchServicesHandlers::SetDefaultHandler(const string &_uti, const string &_path)
 {
-    assert(_uti != 0 && _path != 0);
-    
-    NSString *path = [NSString stringWithUTF8String:_path];
+    NSString *path = [NSString stringWithUTF8StdString:_path];
     if(!path)
         return false;
     
-    NSString *uti = [NSString stringWithUTF8String:_uti];
+    NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if(!uti)
         return false;
     

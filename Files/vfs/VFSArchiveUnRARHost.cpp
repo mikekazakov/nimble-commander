@@ -6,9 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include <string.h>
-#include "Common.h"
-#include "VFSNativeHost.h"
+#include "../Common.h"
+#include "Native/VFSNativeHost.h"
 #include "VFSArchiveUnRARHost.h"
 #include "VFSArchiveUnRARInternals.h"
 #include "VFSArchiveUnRARFile.h"

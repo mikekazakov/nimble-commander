@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/xattr.h>
-#import "VFSNativeFile.h"
-#import "VFSNativeHost.h"
-#import "NativeFSManager.h"
-#import "RoutedIO.h"
+#include <sys/xattr.h>
+#include "VFSNativeFile.h"
+#include "VFSNativeHost.h"
+#include "../../NativeFSManager.h"
+#include "../../RoutedIO.h"
 
 VFSNativeFile::VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host):
     VFSFile(_relative_path, _host),

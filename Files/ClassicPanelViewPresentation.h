@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelViewPresentation.h"
-#import "OrthodoxMonospace.h"
-#import "ObjcToCppObservingBridge.h"
-#import "VFS.h"
-#import "PanelViewPresentationItemsColoringFilter.h"
+#pragma once
+
+#include "PanelViewPresentation.h"
+#include "OrthodoxMonospace.h"
+#include "ObjcToCppObservingBridge.h"
+#include "vfs/VFS.h"
+#include "PanelViewPresentationItemsColoringFilter.h"
 
 class FontCache;
 @class PanelView;

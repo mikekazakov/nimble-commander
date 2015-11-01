@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 @interface SheetController : NSWindowController
 
 - (void) beginSheetForWindow:(NSWindow*)_wnd

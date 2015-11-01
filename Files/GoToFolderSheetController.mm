@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "vfs/VFS.h"
 #include "GoToFolderSheetController.h"
 #include "Common.h"
-#include "VFS.h"
+
 
 static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 

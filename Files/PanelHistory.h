@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#import "VFS.h"
+#include "vfs/VFS.h"
 
 class PanelHistory
 {

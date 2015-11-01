@@ -6,8 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFS.h"
-#import "SavedNetworkConnectionsManager.h"
+#pragma once
+
+#include "vfs/VFS.h"
+#include "SavedNetworkConnectionsManager.h"
 
 @class MainWindowFilePanelState;
 

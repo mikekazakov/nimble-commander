@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#pragma once
 
 typedef void (*ObjcToCppObservingBridge_Handler)(void *_cpp_object,
                                                 NSString *_key_path,

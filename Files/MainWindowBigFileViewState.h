@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "MainWindowStateProtocol.h"
-#import "BigFileView.h"
-#import "VFS.h"
+#pragma once
+
+#include "MainWindowStateProtocol.h"
+#include "BigFileView.h"
+#include "vfs/VFS.h"
 
 @interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol, NSTextFieldDelegate, NSToolbarDelegate, NSSearchFieldDelegate>
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFS.h"
-#include "Operation.h"
+#include "../../vfs/VFS.h"
+#include "../../Operation.h"
 #include "Options.h"
 
 @interface FileCopyOperation : Operation

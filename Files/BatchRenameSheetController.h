@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "SheetController.h"
+#pragma once
 
-#import "VFS.h"
+#include "SheetController.h"
+#include "vfs/VFS.h"
 
 @interface BatchRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSTextFieldDelegate,NSComboBoxDelegate>
 - (instancetype) initWithItems:(vector<VFSFlexibleListingItem>)_items;

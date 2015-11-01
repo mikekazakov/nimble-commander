@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "VFS.h"
+#include "vfs/VFS.h"
 
 @interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>
 

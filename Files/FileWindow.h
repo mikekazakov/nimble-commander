@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VFSFile.h"
+#include "vfs/VFSFile.h"
 
 class FileWindow
 {

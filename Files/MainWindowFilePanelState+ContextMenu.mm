@@ -16,7 +16,7 @@
 #import "FileDeletionOperation.h"
 #import "PanelController.h"
 #import "FileCompressOperation.h"
-#import "FileCopyOperation.h"
+#import "Operations/Copy/FileCopyOperation.h"
 
 struct OpenWithHandler
 {

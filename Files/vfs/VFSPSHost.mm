@@ -7,16 +7,16 @@
 //
 
 #define __APPLE_API_PRIVATE
-#import "../3rd_party/apple_sandbox.h"
-#import <libproc.h>
-#import <sys/resource.h>
-#import <sys/proc_info.h>
-#import <pwd.h>
-#import "sysinfo.h"
-#import "Common.h"
-#import "VFSPSHost.h"
-#import "VFSPSInternal.h"
-#import "VFSPSFile.h"
+#include "../3rd_party/apple_sandbox.h"
+#include <libproc.h>
+#include <sys/resource.h>
+#include <sys/proc_info.h>
+#include <pwd.h>
+#include "../sysinfo.h"
+#include "../Common.h"
+#include "VFSPSHost.h"
+#include "VFSPSInternal.h"
+#include "VFSPSFile.h"
 
 const char *VFSPSHost::Tag = "psfs";
 

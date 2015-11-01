@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#import "VFSFile.h"
+#include "../VFSFile.h"
 
 class VFSNativeHost;
 

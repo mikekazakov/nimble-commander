@@ -15,7 +15,7 @@
 #import "VFSHost.h"
 #import "VFSFile.h"
 #import "VFSPath.h"
-#import "VFSNativeHost.h"
+#import "Native/VFSNativeHost.h"
 #import "VFSArchiveHost.h"
 #import "VFSArchiveUnRARHost.h"
 #import "VFSNetFTPHost.h"

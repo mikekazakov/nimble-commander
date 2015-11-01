@@ -9,11 +9,12 @@
 #pragma once
 
 #include <Habanero/algo.h>
-#include "NativeFSManager.h"
-#include "DispatchQueue.h"
+#include "../../vfs/VFS.h"
+#include "../../NativeFSManager.h"
+#include "../../DispatchQueue.h"
 #include "Options.h"
-#include "OperationJob.h"
-#include "OperationDialogProtocol.h"
+#include "../../OperationJob.h"
+#include "../../OperationDialogProtocol.h"
 #include "DialogResults.h"
 
 class FileCopyOperationJobNew : public OperationJob

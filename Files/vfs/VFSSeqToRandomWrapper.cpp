@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/algo.h>
-#import "VFSSeqToRandomWrapper.h"
-#import "VFSError.h"
-#import "Common.h"
+#include <Habanero/algo.h>
+#include "../Common.h"
+#include "VFSSeqToRandomWrapper.h"
+#include "VFSError.h"
 
 VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),

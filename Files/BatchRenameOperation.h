@@ -6,9 +6,11 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFS.h"
-#import "Operation.h"
-#import "OperationDialogAlert.h"
+#pragma once
+
+#include "vfs/VFS.h"
+#include "Operation.h"
+#include "OperationDialogAlert.h"
 
 @interface BatchRenameOperation : Operation
 

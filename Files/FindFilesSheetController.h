@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFS.h"
-#import "SheetController.h"
+#pragma once
+
+#include "vfs/VFS.h"
+#include "SheetController.h"
 
 @class FindFilesSheetFoundItem;
 

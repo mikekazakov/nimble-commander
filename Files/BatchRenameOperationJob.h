@@ -8,8 +8,8 @@
 
 #pragma once
 
-#import "VFS.h"
-#import "OperationJob.h"
+#include "vfs/VFS.h"
+#include "OperationJob.h"
 
 @class BatchRenameOperation;
 

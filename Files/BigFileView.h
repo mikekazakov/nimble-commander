@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "FileWindow.h"
-#import "Encodings.h"
-#import "OrthodoxMonospace.h"
+#pragma once
+
+#include "FileWindow.h"
+#include "Encodings.h"
+#include "OrthodoxMonospace.h"
 
 enum class BigFileViewModes
 { // changing this values may cause stored history corruption

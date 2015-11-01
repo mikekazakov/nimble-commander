@@ -7,8 +7,7 @@
 //
 
 #include <Habanero/algo.h>
-#include "Common.h"
-#include "VFS.h"
+#include "../../Common.h"
 #include "FileCopyOperationJobNew.h"
 
 int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )

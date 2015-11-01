@@ -7,7 +7,7 @@
 //
 
 #import "MainWindowFilePanelState.h"
-#import "VFS.h"
+#import "vfs/VFS.h"
 
 @interface MainWindowFilePanelState (ContextMenu)
 

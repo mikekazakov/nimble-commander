@@ -1,6 +1,6 @@
 #pragma once
 #include "DispatchQueue.h"
-#include "VFS.h"
+#include "vfs/VFS.h"
 #import "chained_strings.h"
 
 struct PanelVolatileData;

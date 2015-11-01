@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "chained_strings.h"
-#import "VFS.h"
+#pragma once
+
+#include "vfs/VFS.h"
 
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 

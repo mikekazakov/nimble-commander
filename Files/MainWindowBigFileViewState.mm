@@ -6,20 +6,18 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "MainWindowBigFileViewState.h"
-#import "BigFileView.h"
-#import "FileWindow.h"
-#import "MainWindowController.h"
-#import "Common.h"
-#import "SearchInFile.h"
-#import "BigFileViewHistory.h"
-#import "DispatchQueue.h"
-#import "VFSFile.h"
-#import "VFSNativeHost.h"
-#import "VFSArchiveHost.h"
-#import "ProcessSheetController.h"
-#import "ActionsShortcutsManager.h"
-#import "ByteCountFormatter.h"
+#include "vfs/VFS.h"
+#include "MainWindowBigFileViewState.h"
+#include "BigFileView.h"
+#include "FileWindow.h"
+#include "MainWindowController.h"
+#include "Common.h"
+#include "SearchInFile.h"
+#include "BigFileViewHistory.h"
+#include "DispatchQueue.h"
+#include "ProcessSheetController.h"
+#include "ActionsShortcutsManager.h"
+#include "ByteCountFormatter.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {

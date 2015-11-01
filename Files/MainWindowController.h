@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "chained_strings.h"
 #import "ApplicationSkins.h"
-#import "VFS.h"
+#import "vfs/VFS.h"
 #import "MainWindowStateProtocol.h"
 
 @class OperationsController;

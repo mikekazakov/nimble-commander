@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFS.h"
-#import "Operation.h"
-#import "OperationDialogAlert.h"
+#include "vfs/VFS.h"
+#include "Operation.h"
+#include "OperationDialogAlert.h"
 
 @interface FileCompressOperation : Operation
 

@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/stat.h>
-#import "Common.h"
-#import "VFSHost.h"
-#import "path_manip.h"
+#include <sys/stat.h>
+#include "../Common.h"
+#include "../path_manip.h"
+#include "VFSHost.h"
+
 
 static_assert(sizeof(VFSStat) == 128, "");
 const char *VFSHost::Tag = "nullfs";

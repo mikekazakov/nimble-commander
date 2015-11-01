@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/FontExtras.h>
-#import "ModernPanelViewPresentationItemsFooter.h"
-#import "ModernPanelViewPresentation.h"
-#import "PanelData.h"
-#import "VFS.h"
-#import "ByteCountFormatter.h"
-#import "Common.h"
+#include <Habanero/FontExtras.h>
+#include "vfs/VFS.h"
+#include "ModernPanelViewPresentationItemsFooter.h"
+#include "ModernPanelViewPresentation.h"
+#include "PanelData.h"
+#include "ByteCountFormatter.h"
+#include "Common.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_FooterStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);

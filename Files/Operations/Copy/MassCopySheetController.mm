@@ -8,9 +8,9 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
-#import "MassCopySheetController.h"
-#import "Common.h"
-#import "FileCopyOperation.h"
+#include "MassCopySheetController.h"
+#include "../../Common.h"
+#include "FileCopyOperation.h"
 
 // removes entries of ".." and "."
 // quite a bad implementation with O(n^2) complexity and possibly some allocations

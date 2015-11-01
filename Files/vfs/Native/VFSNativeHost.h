@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import "VFSHost.h"
+#include "../VFSHost.h"
 
 class VFSNativeHost : public VFSHost
 {

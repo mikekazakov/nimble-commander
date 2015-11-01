@@ -6,18 +6,18 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/algo.h>
-#import "PanelController.h"
-#import "Common.h"
-#import "MainWindowController.h"
-#import "QuickPreview.h"
-#import "MainWindowFilePanelState.h"
-#import "PanelAux.h"
-#import "SharingService.h"
-#import "BriefSystemOverview.h"
-#import "ActionsShortcutsManager.h"
-#import "FileCopyOperation.h"
-#import "SandboxManager.h"
+#include <Habanero/algo.h>
+#include "PanelController.h"
+#include "Common.h"
+#include "MainWindowController.h"
+#include "QuickPreview.h"
+#include "MainWindowFilePanelState.h"
+#include "PanelAux.h"
+#include "SharingService.h"
+#include "BriefSystemOverview.h"
+#include "ActionsShortcutsManager.h"
+#include "Operations/Copy/FileCopyOperation.h"
+#include "SandboxManager.h"
 
 static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";

@@ -10,7 +10,7 @@
 
 #import "VFSHost.h"
 #import "VFSFile.h"
-#import "DispatchQueue.h"
+#import "../DispatchQueue.h"
 
 struct VFSArchiveUnRAREntry;
 struct VFSArchiveUnRARDirectory;

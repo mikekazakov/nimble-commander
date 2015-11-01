@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "VFS.h"
+#include "vfs/VFS.h"
 #include "DispatchQueue.h"
 #include "FileMask.h"
 #include "Encodings.h"

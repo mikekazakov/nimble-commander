@@ -6,14 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelView.h"
-#import "PanelData.h"
-#import "PanelViewPresentation.h"
-#import "ModernPanelViewPresentation.h"
-#import "ClassicPanelViewPresentation.h"
-#import "Common.h"
-#import "VFS.h"
-#import "AppDelegate.h"
+#include "PanelView.h"
+#include "PanelData.h"
+#include "PanelViewPresentation.h"
+#include "ModernPanelViewPresentation.h"
+#include "ClassicPanelViewPresentation.h"
+#include "Common.h"
+#include "vfs/VFS.h"
+#include "AppDelegate.h"
 
 enum class CursorSelectionType
 {

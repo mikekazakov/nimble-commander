@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "../3rd_party/built/include/libssh2.h"
-#import "../3rd_party/built/include/libssh2_sftp.h"
-#import <Habanero/algo.h>
-#import "Common.h"
-#import "VFSNetSFTPHost.h"
-#import "VFSNetSFTPFile.h"
+#include <Habanero/algo.h>
+#include "../3rd_party/built/include/libssh2.h"
+#include "../3rd_party/built/include/libssh2_sftp.h"
+#include "../Common.h"
+#include "VFSNetSFTPHost.h"
+#include "VFSNetSFTPFile.h"
 
 VFSNetSFTPHost::Connection::~Connection()
 {

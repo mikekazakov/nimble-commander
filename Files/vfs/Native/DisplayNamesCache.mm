@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../Common.h"
 #include "DisplayNamesCache.h"
-#include "Common.h"
 
 DisplayNamesCache& DisplayNamesCache::Instance()
 {

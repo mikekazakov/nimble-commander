@@ -1,6 +1,5 @@
 #include <sys/xattr.h>
 #include "xattr.h"
-#include "../VFSNativeHost.h"
 #include "../VFSFile.h"
 
 class VFSXAttrFile final: public VFSFile

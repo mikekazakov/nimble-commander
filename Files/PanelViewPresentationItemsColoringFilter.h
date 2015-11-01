@@ -8,9 +8,9 @@
 
 #pragma once
 
-#import "VFSFlexibleListing.h"
-#import "FileMask.h"
-#import "PanelData.h"
+#include "vfs/vfs.h"
+#include "FileMask.h"
+#include "PanelData.h"
 
 struct PanelViewPresentationItemsColoringFilter
 {

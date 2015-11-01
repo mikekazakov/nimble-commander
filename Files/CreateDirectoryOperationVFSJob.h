@@ -8,9 +8,9 @@
 
 #pragma once
 
-#import "OperationJob.h"
-#import "CreateDirectoryOperation.h"
-#import "VFS.h"
+#include "OperationJob.h"
+#include "CreateDirectoryOperation.h"
+#include "vfs/VFS.h"
 
 class CreateDirectoryOperationVFSJob : public OperationJob
 {

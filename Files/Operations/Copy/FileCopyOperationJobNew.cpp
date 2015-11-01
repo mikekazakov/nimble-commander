@@ -14,10 +14,10 @@
 //
 //#include <copyfile.h>
 
-#include "Common.h"
+#include "../../Common.h"
 
-#include "VFS.h"
-#include "RoutedIO.h"
+
+#include "../../RoutedIO.h"
 #include "FileCopyOperationJobNew.h"
 #include "DialogResults.h"
 

@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "VFS.h"
+#pragma once
+
+#include "vfs/VFS.h"
 
 @interface BriefSystemOverview : NSView
 

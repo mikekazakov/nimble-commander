@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "VFS.h"
+#include "vfs/VFS.h"
 
 struct AppleDoubleEA
 {

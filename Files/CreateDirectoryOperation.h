@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "Operation.h"
-#import "OperationDialogAlert.h"
-#import "VFS.h"
+#pragma once
+
+#include "Operation.h"
+#include "OperationDialogAlert.h"
+#include "vfs/VFS.h"
 
 @interface CreateDirectoryOperation : Operation
 

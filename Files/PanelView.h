@@ -8,7 +8,7 @@
 #pragma once
 
 #import "PanelViewTypes.h"
-#import "VFS.h"
+#import "vfs/VFS.h"
 #import "FPSLimitedDrawer.h"
 
 @class PanelView;

@@ -6,14 +6,13 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/stat.h>
-#import <sys/dirent.h>
-#import "VFSEasyOps.h"
-#import "VFSError.h"
-#import "path_manip.h"
-#import "DispatchQueue.h"
-
-#import "Common.h"
+#include <sys/stat.h>
+#include <sys/dirent.h>
+#include "VFSEasyOps.h"
+#include "VFSError.h"
+#include "../path_manip.h"
+#include "../DispatchQueue.h"
+#include "../Common.h"
 
 static int CopyNodeAttrs(const char *_src_full_path,
                          shared_ptr<VFSHost> _src_host,

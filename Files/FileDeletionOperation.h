@@ -7,7 +7,7 @@
 //
 
 #import "Operation.h"
-#import "VFS.h"
+#import "vfs/VFS.h"
 
 @class OperationDialogAlert;
 

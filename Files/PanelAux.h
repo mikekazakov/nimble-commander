@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFS.h"
+#include "vfs/VFS.h"
 
 // this class allows opening file in VFS with regular [NSWorkspace open]
 // after refactoring the need to keep this class at all is in doubts

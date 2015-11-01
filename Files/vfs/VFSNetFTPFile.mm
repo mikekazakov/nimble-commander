@@ -6,11 +6,11 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "VFSNetFTPFile.h"
-#import "VFSNetFTPHost.h"
-#import "VFSNetFTPInternals.h"
-#import "VFSNetFTPCache.h"
-#import "path_manip.h"
+#include "VFSNetFTPFile.h"
+#include "VFSNetFTPHost.h"
+#include "VFSNetFTPInternals.h"
+#include "VFSNetFTPCache.h"
+#include "../path_manip.h"
 
 // implementation highly inspired by curlftpfs.
 

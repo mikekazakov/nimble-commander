@@ -21,8 +21,8 @@
 #import "FileLinkAlterSymlinkSheetController.h"
 #import "FileLinkNewHardlinkSheetController.h"
 #import "FileLinkOperation.h"
-#import "FileCopyOperation.h"
-#import "MassCopySheetController.h"
+#import "Operations/Copy/FileCopyOperation.h"
+#import "Operations/Copy/MassCopySheetController.h"
 
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 

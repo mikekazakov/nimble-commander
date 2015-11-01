@@ -10,11 +10,11 @@
 #include "DisplayNamesCache.h"
 #include "VFSNativeHost.h"
 #include "VFSNativeFile.h"
-#include "VFSError.h"
-#include "FSEventsDirUpdate.h"
-#include "Common.h"
-#include "NativeFSManager.h"
-#include "RoutedIO.h"
+#include "../VFSError.h"
+#include "../../FSEventsDirUpdate.h"
+#include "../../Common.h"
+#include "../../NativeFSManager.h"
+#include "../../RoutedIO.h"
 
 // TODO:
 // do some research about this new function:

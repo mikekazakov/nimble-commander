@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SheetController.h"
-#import "VFS.h"
+#pragma once
+
+#include "SheetController.h"
+#include "vfs/VFS.h"
 
 @interface CalculateChecksumSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate>
 

@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelViewTypes.h"
-#import "VFS.h"
-#import "DispatchQueue.h"
-#import "ObjcToCppObservingBridge.h"
-#import "ByteCountFormatter.h"
+#include "PanelViewTypes.h"
+#include "vfs/VFS.h"
+#include "DispatchQueue.h"
+#include "ObjcToCppObservingBridge.h"
+#include "ByteCountFormatter.h"
 
 @class PanelView;
 

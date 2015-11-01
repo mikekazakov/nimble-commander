@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "OperationDialogProtocol.h"
+#import "../../OperationDialogProtocol.h"
 
 @interface FileAlreadyExistSheetController : NSWindowController <OperationDialogProtocol>
 

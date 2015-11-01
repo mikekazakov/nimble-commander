@@ -10,7 +10,7 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #import "MainWindowStateProtocol.h"
 #import "chained_strings.h"
-#import "VFS.h"
+#import "vfs/VFS.h"
 
 class PanelData;
 @class Operation;

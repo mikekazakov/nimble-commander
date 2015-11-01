@@ -8,9 +8,9 @@
 
 #include "FileCopyOperation.h"
 #include "FileCopyOperationJobNew.h"
-#include "Common.h"
-#include "ByteCountFormatter.h"
-#include "OperationDialogAlert.h"
+#include "../../Common.h"
+#include "../../ByteCountFormatter.h"
+#include "../../OperationDialogAlert.h"
 #include "FileAlreadyExistSheetController.h"
 #include "DialogResults.h"
 

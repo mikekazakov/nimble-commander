@@ -7,10 +7,10 @@
 //
 
 #pragma once
-#import "DispatchQueue.h"
-#import "VFS.h"
+#include "DispatchQueue.h"
+#include "vfs/VFS.h"
 
-#import "PanelData.h"
+#include "PanelData.h"
 
 class IconsGenerator
 {

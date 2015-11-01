@@ -6,14 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/dirent.h>
-#import "../3rd_party/libarchive/archive.h"
-#import "../3rd_party/libarchive/archive_entry.h"
-#import "VFSArchiveHost.h"
-#import "VFSArchiveInternal.h"
-#import "VFSArchiveFile.h"
-#import "Common.h"
-#import "AppleDoubleEA.h"
+#include <sys/dirent.h>
+#include "../3rd_party/libarchive/archive.h"
+#include "../3rd_party/libarchive/archive_entry.h"
+#include "VFSArchiveHost.h"
+#include "VFSArchiveInternal.h"
+#include "VFSArchiveFile.h"
+#include "../Common.h"
+#include "../AppleDoubleEA.h"
 
 const char *VFSArchiveHost::Tag = "arc_libarchive";
 

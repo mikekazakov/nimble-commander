@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/FontExtras.h>
-#import "PanelController+DragAndDrop.h"
-#import "MainWindowFilePanelState.h"
-#import "FileCopyOperation.h"
-#import "FileLinkOperation.h"
-#import "OperationsController.h"
-#import "path_manip.h"
-#import "Common.h"
+#include <Habanero/FontExtras.h>
+#include "PanelController+DragAndDrop.h"
+#include "MainWindowFilePanelState.h"
+#include "Operations/Copy/FileCopyOperation.h"
+#include "FileLinkOperation.h"
+#include "OperationsController.h"
+#include "path_manip.h"
+#include "Common.h"
 
 static NSString *g_PrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;

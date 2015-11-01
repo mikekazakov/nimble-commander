@@ -1243,6 +1243,13 @@
 		CF73D2021BE61AAC0014C88F /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARHost.h; path = vfs/ArcUnRAR/VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
 		CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARInternals.cpp; path = vfs/ArcUnRAR/VFSArchiveUnRARInternals.cpp; sourceTree = "<group>"; };
 		CF73D2041BE61AAC0014C88F /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARInternals.h; path = vfs/ArcUnRAR/VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
+		CF73D2081BE61BEB0014C88F /* vfs_arc_la.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_arc_la.h; path = vfs/vfs_arc_la.h; sourceTree = "<group>"; };
+		CF73D2091BE61BEB0014C88F /* vfs_arc_unrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_arc_unrar.h; path = vfs/vfs_arc_unrar.h; sourceTree = "<group>"; };
+		CF73D20A1BE61BEB0014C88F /* vfs_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_native.h; path = vfs/vfs_native.h; sourceTree = "<group>"; };
+		CF73D20B1BE61BEB0014C88F /* vfs_net_ftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_net_ftp.h; path = vfs/vfs_net_ftp.h; sourceTree = "<group>"; };
+		CF73D20C1BE61BEB0014C88F /* vfs_net_sftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_net_sftp.h; path = vfs/vfs_net_sftp.h; sourceTree = "<group>"; };
+		CF73D20D1BE61BEB0014C88F /* vfs_ps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_ps.h; path = vfs/vfs_ps.h; sourceTree = "<group>"; };
+		CF73D20E1BE61BEB0014C88F /* vfs_xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_xattr.h; path = vfs/vfs_xattr.h; sourceTree = "<group>"; };
 		CF76B30417000C090066A49F /* filesysattr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysattr.mm; sourceTree = "<group>"; };
 		CF76B30517000C090066A49F /* filesysattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysattr.h; sourceTree = "<group>"; };
 		CF76B307170146240066A49F /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericOperationView.h; sourceTree = "<group>"; };
@@ -2515,6 +2522,13 @@
 				CFB7099C18D7007D00A83E61 /* Net */,
 				CF9D0EE017CE11A000CB8146 /* Wrapping */,
 				CF50B6B71A15164100E3D96D /* VFS.h */,
+				CF73D2081BE61BEB0014C88F /* vfs_arc_la.h */,
+				CF73D2091BE61BEB0014C88F /* vfs_arc_unrar.h */,
+				CF73D20A1BE61BEB0014C88F /* vfs_native.h */,
+				CF73D20B1BE61BEB0014C88F /* vfs_net_ftp.h */,
+				CF73D20C1BE61BEB0014C88F /* vfs_net_sftp.h */,
+				CF73D20D1BE61BEB0014C88F /* vfs_ps.h */,
+				CF73D20E1BE61BEB0014C88F /* vfs_xattr.h */,
 			);
 			name = VFS;
 			sourceTree = "<group>";

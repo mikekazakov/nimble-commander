@@ -10,6 +10,13 @@
 #import <Habanero/CommonPaths.h>
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+#include "vfs/vfs_native.h"
+#include "vfs/vfs_arc_la.h"
+#include "vfs/vfs_arc_unrar.h"
+#include "vfs/vfs_ps.h"
+#include "vfs/vfs_xattr.h"
+#include "vfs/vfs_net_ftp.h"
+#include "vfs/vfs_net_sftp.h"
 #import "AppDelegate.h"
 #import "MainWindowController.h"
 #import "OperationsController.h"

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include "vfs/vfs_native.h"
 #import "NativeFSManager.h"
 #import "Common.h"
 #import "PanelController+NavigationMenu.h"

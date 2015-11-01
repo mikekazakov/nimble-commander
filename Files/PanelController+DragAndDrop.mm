@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/FontExtras.h>
+#include "vfs/vfs_native.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
 #include "Operations/Copy/FileCopyOperation.h"

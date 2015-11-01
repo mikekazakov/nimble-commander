@@ -6,14 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "MainWndGoToButton.h"
-#import "AppDelegate.h"
-#import "Common.h"
-#import "MainWindowFilePanelState.h"
-#import "MainWindowController.h"
-#import "NativeFSManager.h"
-#import "PanelController.h"
+#include <Habanero/CommonPaths.h>
+#include "vfs/vfs_native.h"
+#include "MainWndGoToButton.h"
+#include "AppDelegate.h"
+#include "Common.h"
+#include "MainWindowFilePanelState.h"
+#include "MainWindowController.h"
+#include "NativeFSManager.h"
+#include "PanelController.h"
 
 static NSString *g_ConnLimitKey = @"FilePanelsGeneralGoToConnectionsLimit";
 static NSString *g_ConnShowKey  = @"FilePanelsGeneralGoToShowConnections";

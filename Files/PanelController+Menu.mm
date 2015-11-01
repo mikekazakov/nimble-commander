@@ -7,6 +7,11 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include "vfs/vfs_native.h"
+#include "vfs/vfs_ps.h"
+#include "vfs/vfs_net_ftp.h"
+#include "vfs/vfs_net_sftp.h"
+#include "vfs/vfs_xattr.h"
 #include "Operations/Copy/FileCopyOperation.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController+Menu.h"

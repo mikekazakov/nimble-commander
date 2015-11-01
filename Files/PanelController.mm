@@ -727,28 +727,4 @@ void panel::GenericCursorPersistance::Restore() const
     return [PanelController ensureCanGoToNativeFolderSync:_path];
 }
 
-- (void) testNonUniformListing
-{
-    shared_ptr<VFSFlexibleListing> l1, l2;
-    VFSNativeHost::SharedHost()->FetchFlexibleListing("/users/migun/", l1, 0, 0);
-    VFSNativeHost::SharedHost()->FetchFlexibleListing("/users/migun/downloads/", l2, 0, 0);
-  
-    vector<shared_ptr<VFSFlexibleListing>> original_listings = {l1, l2};
-    vector<vector<unsigned>> indeces;
-    
-    indeces.emplace_back();
-    indeces.back().resize(l1->Count());
-    generate(begin(indeces.back()), end(indeces.back()), linear_generator(0, 1));
-    
-    indeces.emplace_back();
-    indeces.back().resize(l2->Count()-1);
-    generate(begin(indeces.back()), end(indeces.back()), linear_generator(1, 1));
-
-    auto source = VFSFlexibleListing::Compose(original_listings, indeces);
-    
-    auto new_listing = VFSFlexibleListing::Build(move(source));
-    
-    [self loadNonUniformListing:new_listing];
-}
-
 @end

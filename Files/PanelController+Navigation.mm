@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "PanelController.h"
-#import "Common.h"
+#include <Habanero/CommonPaths.h>
+#include "vfs/vfs_native.h"
+#include "PanelController.h"
+#include "Common.h"
 
 @implementation PanelController (Navigation)
 

@@ -6,12 +6,13 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "MainWindowFilePanelState+OverlappedTerminalSupport.h"
-#import "FilePanelOverlappedTerminal.h"
-#import "FilePanelMainSplitView.h"
-#import "PanelView.h"
-#import "PanelController.h"
-#import "PanelAux.h"
+#include "vfs/vfs_native.h"
+#include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+#include "FilePanelOverlappedTerminal.h"
+#include "FilePanelMainSplitView.h"
+#include "PanelView.h"
+#include "PanelController.h"
+#include "PanelAux.h"
 
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
 

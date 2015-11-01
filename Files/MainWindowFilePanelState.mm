@@ -7,7 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
-#include "vfs/VFS.h"
+#include "vfs/vfs_native.h"
 #include "Operations/Copy/FileCopyOperation.h"
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"

@@ -7,6 +7,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "vfs/vfs_native.h"
 #import "MainWindowController.h"
 #import "MainWindow.h"
 #import "AppDelegate.h"

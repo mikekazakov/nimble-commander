@@ -18,11 +18,3 @@
 #include "VFSEasyOps.h"
 #include "VFSArchiveProxy.h"
 #include "VFSSeqToRandomWrapper.h"
-
-#include "Native/VFSNativeHost.h"
-#include "ArcLA/VFSArchiveHost.h"
-#include "ArcUnRAR/VFSArchiveUnRARHost.h"
-#include "NetFTP/VFSNetFTPHost.h"
-#include "NetSFTP/VFSNetSFTPHost.h"
-#include "PS/VFSPSHost.h"
-#include "XAttr/xattr.h"

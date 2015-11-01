@@ -8,8 +8,8 @@
 
 #pragma once
 
-#import "VFSFile.h"
-#import "VFSNetSFTPHost.h"
+#include "../VFSFile.h"
+#include "VFSNetSFTPHost.h"
 
 class VFSNetSFTPFile : public VFSFile
 {

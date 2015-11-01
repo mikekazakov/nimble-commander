@@ -7,9 +7,9 @@
 //
 
 #include <Habanero/algo.h>
-#include "../3rd_party/built/include/libssh2.h"
-#include "../3rd_party/built/include/libssh2_sftp.h"
-#include "../Common.h"
+#include "../../3rd_party/built/include/libssh2.h"
+#include "../../3rd_party/built/include/libssh2_sftp.h"
+#include "../../Common.h"
 #include "VFSNetSFTPHost.h"
 #include "VFSNetSFTPFile.h"
 

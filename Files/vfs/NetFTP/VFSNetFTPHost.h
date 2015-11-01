@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#import "VFSHost.h"
-#import "VFSNetFTPInternalsForward.h"
+#include "../VFSHost.h"
+#include "VFSNetFTPInternalsForward.h"
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 

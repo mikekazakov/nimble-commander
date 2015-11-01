@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "../3rd_party/built/include/libssh2.h"
-#import "../3rd_party/built/include/libssh2_sftp.h"
-#import "VFSNetSFTPFile.h"
-#import "VFSNetSFTPHost.h"
+#include "../../3rd_party/built/include/libssh2.h"
+#include "../../3rd_party/built/include/libssh2_sftp.h"
+#include "VFSNetSFTPFile.h"
+#include "VFSNetSFTPHost.h"
 
 VFSNetSFTPFile::VFSNetSFTPFile(const char* _relative_path,
                                shared_ptr<VFSNetSFTPHost> _host):

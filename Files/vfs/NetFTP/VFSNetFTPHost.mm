@@ -6,11 +6,11 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../path_manip.h"
 #include "VFSNetFTPHost.h"
 #include "VFSNetFTPInternals.h"
 #include "VFSNetFTPCache.h"
 #include "VFSNetFTPFile.h"
-#include "../path_manip.h"
 
 using namespace VFSNetFTP;
 

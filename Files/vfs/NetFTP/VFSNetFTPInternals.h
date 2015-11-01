@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "../3rd_party/built/include/curl/curl.h"
-#include "../Common.h"
-#include "VFSHost.h"
+#include "../../3rd_party/built/include/curl/curl.h"
+#include "../../Common.h"
+#include "../VFSHost.h"
 #include "VFSNetFTPCache.h"
 
 namespace VFSNetFTP

@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#include "../3rd_party/unrar/unrar-5.0.14/raros.hpp"
-#include "../3rd_party/unrar/unrar-5.0.14/dll.hpp"
+#include "../../3rd_party/unrar/unrar-5.0.14/raros.hpp"
+#include "../../3rd_party/unrar/unrar-5.0.14/dll.hpp"
 
 struct VFSArchiveUnRAREntry
 {

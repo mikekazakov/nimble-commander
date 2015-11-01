@@ -7,13 +7,13 @@
 //
 
 #include <sys/dirent.h>
-#include "../3rd_party/libarchive/archive.h"
-#include "../3rd_party/libarchive/archive_entry.h"
+#include "../../3rd_party/libarchive/archive.h"
+#include "../../3rd_party/libarchive/archive_entry.h"
+#include "../../Common.h"
+#include "../../AppleDoubleEA.h"
 #include "VFSArchiveHost.h"
 #include "VFSArchiveInternal.h"
 #include "VFSArchiveFile.h"
-#include "../Common.h"
-#include "../AppleDoubleEA.h"
 
 const char *VFSArchiveHost::Tag = "arc_libarchive";
 

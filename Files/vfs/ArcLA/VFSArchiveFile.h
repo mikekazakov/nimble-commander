@@ -8,8 +8,7 @@
 
 #pragma once
 
-#import "VFSArchiveHost.h"
-#import "VFSFile.h"
+#include "VFSArchiveHost.h"
 
 struct AppleDoubleEA;
 

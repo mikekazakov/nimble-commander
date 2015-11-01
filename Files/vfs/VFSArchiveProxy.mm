@@ -7,8 +7,8 @@
 //
 
 #include "VFSArchiveProxy.h"
-#include "VFSArchiveHost.h"
-#include "VFSArchiveUnRARHost.h"
+#include "ArcLA/VFSArchiveHost.h"
+#include "ArcUnRAR/VFSArchiveUnRARHost.h"
 
 bool VFSArchiveProxy::CanOpenFileAsArchive(const string &_path,
                                            shared_ptr<VFSHost> _parent)

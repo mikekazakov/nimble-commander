@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "VFSFile.h"
+#include "../VFSFile.h"
 
 class VFSArchiveUnRARHost;
 struct VFSArchiveUnRARSeekCache;

@@ -6,14 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#define __APPLE_API_PRIVATE
-#include "../3rd_party/apple_sandbox.h"
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
 #include <pwd.h>
-#include "../sysinfo.h"
-#include "../Common.h"
+#define __APPLE_API_PRIVATE
+#include "../../3rd_party/apple_sandbox.h"
+#undef __APPLE_API_PRIVATE
+#include "../../sysinfo.h"
+#include "../../Common.h"
 #include "VFSPSHost.h"
 #include "VFSPSInternal.h"
 #include "VFSPSFile.h"

@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include "../VFSGenericMemReadOnlyFile.h"
 #include "VFSPSHost.h"
-#include "VFSGenericMemReadOnlyFile.h"
 
 class VFSPSFile : public VFSGenericMemReadOnlyFile
 {

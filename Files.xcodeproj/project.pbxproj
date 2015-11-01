@@ -144,30 +144,6 @@
 		CF50B6CF1A15167800E3D96D /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6C11A15167800E3D96D /* VFSPath.cpp */; };
 		CF50B6D01A15167800E3D96D /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6C11A15167800E3D96D /* VFSPath.cpp */; };
 		CF50B6D11A15167800E3D96D /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6C11A15167800E3D96D /* VFSPath.cpp */; };
-		CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D21A15169300E3D96D /* VFSPSFile.cpp */; };
-		CF50B6DA1A15169300E3D96D /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D21A15169300E3D96D /* VFSPSFile.cpp */; };
-		CF50B6DB1A15169300E3D96D /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D21A15169300E3D96D /* VFSPSFile.cpp */; };
-		CF50B6DC1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
-		CF50B6DD1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
-		CF50B6DE1A15169300E3D96D /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6D51A15169300E3D96D /* VFSPSHost.mm */; };
-		CF50B6EA1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
-		CF50B6EB1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
-		CF50B6EC1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */; };
-		CF50B6ED1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */; };
-		CF50B6EE1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */; };
-		CF50B6EF1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */; };
-		CF50B6F01A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
-		CF50B6F11A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
-		CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */; };
-		CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.cpp */; };
-		CF50B6FF1A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.cpp */; };
-		CF50B7001A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.cpp */; };
-		CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.cpp */; };
-		CF50B7021A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.cpp */; };
-		CF50B7031A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.cpp */; };
-		CF50B7041A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp */; };
-		CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp */; };
-		CF50B7061A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp */; };
 		CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
 		CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
 		CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */; };
@@ -374,6 +350,14 @@
 		CF73D1E51BE6155E0014C88F /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E01BE6155E0014C88F /* VFSNetFTPInternals.mm */; settings = {ASSET_TAGS = (); }; };
 		CF73D1EA1BE616320014C88F /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E61BE616320014C88F /* VFSNetSFTPFile.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF73D1EB1BE616320014C88F /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E81BE616320014C88F /* VFSNetSFTPHost.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EC1BE6179A0014C88F /* VFSPSFile.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF73D1F21BE6179A0014C88F /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EF1BE6179A0014C88F /* VFSPSHost.mm */; settings = {ASSET_TAGS = (); }; };
+		CF73D1FB1BE619B20014C88F /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF73D1FC1BE619B20014C88F /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F61BE619B20014C88F /* VFSArchiveHost.mm */; settings = {ASSET_TAGS = (); }; };
+		CF73D1FD1BE619B20014C88F /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F81BE619B20014C88F /* VFSArchiveInternal.mm */; settings = {ASSET_TAGS = (); }; };
+		CF73D2051BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF73D2071BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF76B30617000C090066A49F /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
 		CF76B313170146240066A49F /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF76B314170146240066A49F /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
@@ -1161,23 +1145,6 @@
 		CF50B6BE1A15167800E3D96D /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSHost.h; path = vfs/VFSHost.h; sourceTree = "<group>"; };
 		CF50B6C11A15167800E3D96D /* VFSPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPath.cpp; path = vfs/VFSPath.cpp; sourceTree = "<group>"; };
 		CF50B6C21A15167800E3D96D /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPath.h; path = vfs/VFSPath.h; sourceTree = "<group>"; };
-		CF50B6D21A15169300E3D96D /* VFSPSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPSFile.cpp; path = vfs/VFSPSFile.cpp; sourceTree = "<group>"; };
-		CF50B6D31A15169300E3D96D /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSFile.h; path = vfs/VFSPSFile.h; sourceTree = "<group>"; };
-		CF50B6D41A15169300E3D96D /* VFSPSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSHost.h; path = vfs/VFSPSHost.h; sourceTree = "<group>"; };
-		CF50B6D51A15169300E3D96D /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = vfs/VFSPSHost.mm; sourceTree = "<group>"; };
-		CF50B6D61A15169300E3D96D /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = vfs/VFSPSInternal.h; sourceTree = "<group>"; };
-		CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveFile.cpp; path = vfs/VFSArchiveFile.cpp; sourceTree = "<group>"; };
-		CF50B6E31A1516B000E3D96D /* VFSArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveFile.h; path = vfs/VFSArchiveFile.h; sourceTree = "<group>"; };
-		CF50B6E41A1516B000E3D96D /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveHost.h; path = vfs/VFSArchiveHost.h; sourceTree = "<group>"; };
-		CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveHost.mm; path = vfs/VFSArchiveHost.mm; sourceTree = "<group>"; };
-		CF50B6E61A1516B000E3D96D /* VFSArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveInternal.h; path = vfs/VFSArchiveInternal.h; sourceTree = "<group>"; };
-		CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveInternal.mm; path = vfs/VFSArchiveInternal.mm; sourceTree = "<group>"; };
-		CF50B6F61A1516C800E3D96D /* VFSArchiveUnRARFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARFile.h; path = vfs/VFSArchiveUnRARFile.h; sourceTree = "<group>"; };
-		CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARFile.cpp; path = vfs/VFSArchiveUnRARFile.cpp; sourceTree = "<group>"; };
-		CF50B6F81A1516C800E3D96D /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARHost.h; path = vfs/VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
-		CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARHost.cpp; path = vfs/VFSArchiveUnRARHost.cpp; sourceTree = "<group>"; };
-		CF50B6FA1A1516C800E3D96D /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARInternals.h; path = vfs/VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
-		CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARInternals.cpp; path = vfs/VFSArchiveUnRARInternals.cpp; sourceTree = "<group>"; };
 		CF50B7381A15173100E3D96D /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = vfs/VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveProxy.mm; path = vfs/VFSArchiveProxy.mm; sourceTree = "<group>"; };
 		CF50B73A1A15173100E3D96D /* VFSEasyOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSEasyOps.h; path = vfs/VFSEasyOps.h; sourceTree = "<group>"; };
@@ -1259,6 +1226,23 @@
 		CF73D1E71BE616320014C88F /* VFSNetSFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPFile.h; path = vfs/NetSFTP/VFSNetSFTPFile.h; sourceTree = "<group>"; };
 		CF73D1E81BE616320014C88F /* VFSNetSFTPHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPHost.cpp; path = vfs/NetSFTP/VFSNetSFTPHost.cpp; sourceTree = "<group>"; };
 		CF73D1E91BE616320014C88F /* VFSNetSFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPHost.h; path = vfs/NetSFTP/VFSNetSFTPHost.h; sourceTree = "<group>"; };
+		CF73D1EC1BE6179A0014C88F /* VFSPSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPSFile.cpp; path = vfs/PS/VFSPSFile.cpp; sourceTree = "<group>"; };
+		CF73D1ED1BE6179A0014C88F /* VFSPSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSFile.h; path = vfs/PS/VFSPSFile.h; sourceTree = "<group>"; };
+		CF73D1EE1BE6179A0014C88F /* VFSPSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSHost.h; path = vfs/PS/VFSPSHost.h; sourceTree = "<group>"; };
+		CF73D1EF1BE6179A0014C88F /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = vfs/PS/VFSPSHost.mm; sourceTree = "<group>"; };
+		CF73D1F01BE6179A0014C88F /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = vfs/PS/VFSPSInternal.h; sourceTree = "<group>"; };
+		CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveFile.cpp; path = vfs/ArcLA/VFSArchiveFile.cpp; sourceTree = "<group>"; };
+		CF73D1F41BE619B20014C88F /* VFSArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveFile.h; path = vfs/ArcLA/VFSArchiveFile.h; sourceTree = "<group>"; };
+		CF73D1F51BE619B20014C88F /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveHost.h; path = vfs/ArcLA/VFSArchiveHost.h; sourceTree = "<group>"; };
+		CF73D1F61BE619B20014C88F /* VFSArchiveHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveHost.mm; path = vfs/ArcLA/VFSArchiveHost.mm; sourceTree = "<group>"; };
+		CF73D1F71BE619B20014C88F /* VFSArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveInternal.h; path = vfs/ArcLA/VFSArchiveInternal.h; sourceTree = "<group>"; };
+		CF73D1F81BE619B20014C88F /* VFSArchiveInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveInternal.mm; path = vfs/ArcLA/VFSArchiveInternal.mm; sourceTree = "<group>"; };
+		CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARFile.cpp; path = vfs/ArcUnRAR/VFSArchiveUnRARFile.cpp; sourceTree = "<group>"; };
+		CF73D2001BE61AAC0014C88F /* VFSArchiveUnRARFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARFile.h; path = vfs/ArcUnRAR/VFSArchiveUnRARFile.h; sourceTree = "<group>"; };
+		CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARHost.cpp; path = vfs/ArcUnRAR/VFSArchiveUnRARHost.cpp; sourceTree = "<group>"; };
+		CF73D2021BE61AAC0014C88F /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARHost.h; path = vfs/ArcUnRAR/VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
+		CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARInternals.cpp; path = vfs/ArcUnRAR/VFSArchiveUnRARInternals.cpp; sourceTree = "<group>"; };
+		CF73D2041BE61AAC0014C88F /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARInternals.h; path = vfs/ArcUnRAR/VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
 		CF76B30417000C090066A49F /* filesysattr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = filesysattr.mm; sourceTree = "<group>"; };
 		CF76B30517000C090066A49F /* filesysattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filesysattr.h; sourceTree = "<group>"; };
 		CF76B307170146240066A49F /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericOperationView.h; sourceTree = "<group>"; };
@@ -2097,12 +2081,12 @@
 		CF653C3A18C38CD700502920 /* UnRAR */ = {
 			isa = PBXGroup;
 			children = (
-				CF50B6F61A1516C800E3D96D /* VFSArchiveUnRARFile.h */,
-				CF50B6F71A1516C800E3D96D /* VFSArchiveUnRARFile.cpp */,
-				CF50B6F81A1516C800E3D96D /* VFSArchiveUnRARHost.h */,
-				CF50B6F91A1516C800E3D96D /* VFSArchiveUnRARHost.cpp */,
-				CF50B6FA1A1516C800E3D96D /* VFSArchiveUnRARInternals.h */,
-				CF50B6FB1A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp */,
+				CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */,
+				CF73D2001BE61AAC0014C88F /* VFSArchiveUnRARFile.h */,
+				CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */,
+				CF73D2021BE61AAC0014C88F /* VFSArchiveUnRARHost.h */,
+				CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */,
+				CF73D2041BE61AAC0014C88F /* VFSArchiveUnRARInternals.h */,
 			);
 			name = UnRAR;
 			sourceTree = "<group>";
@@ -2110,12 +2094,12 @@
 		CF653C3F18C38DBA00502920 /* libarchive */ = {
 			isa = PBXGroup;
 			children = (
-				CF50B6E21A1516B000E3D96D /* VFSArchiveFile.cpp */,
-				CF50B6E31A1516B000E3D96D /* VFSArchiveFile.h */,
-				CF50B6E41A1516B000E3D96D /* VFSArchiveHost.h */,
-				CF50B6E51A1516B000E3D96D /* VFSArchiveHost.mm */,
-				CF50B6E61A1516B000E3D96D /* VFSArchiveInternal.h */,
-				CF50B6E71A1516B000E3D96D /* VFSArchiveInternal.mm */,
+				CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */,
+				CF73D1F41BE619B20014C88F /* VFSArchiveFile.h */,
+				CF73D1F51BE619B20014C88F /* VFSArchiveHost.h */,
+				CF73D1F61BE619B20014C88F /* VFSArchiveHost.mm */,
+				CF73D1F71BE619B20014C88F /* VFSArchiveInternal.h */,
+				CF73D1F81BE619B20014C88F /* VFSArchiveInternal.mm */,
 			);
 			name = libarchive;
 			sourceTree = "<group>";
@@ -2275,11 +2259,11 @@
 		CFA0B23B186BE36F00501C35 /* PS */ = {
 			isa = PBXGroup;
 			children = (
-				CF50B6D21A15169300E3D96D /* VFSPSFile.cpp */,
-				CF50B6D31A15169300E3D96D /* VFSPSFile.h */,
-				CF50B6D41A15169300E3D96D /* VFSPSHost.h */,
-				CF50B6D51A15169300E3D96D /* VFSPSHost.mm */,
-				CF50B6D61A15169300E3D96D /* VFSPSInternal.h */,
+				CF73D1EC1BE6179A0014C88F /* VFSPSFile.cpp */,
+				CF73D1ED1BE6179A0014C88F /* VFSPSFile.h */,
+				CF73D1EE1BE6179A0014C88F /* VFSPSHost.h */,
+				CF73D1EF1BE6179A0014C88F /* VFSPSHost.mm */,
+				CF73D1F01BE6179A0014C88F /* VFSPSInternal.h */,
 			);
 			name = PS;
 			sourceTree = "<group>";
@@ -3282,17 +3266,13 @@
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFE3829219CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
-				CF50B7021A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
-				CF50B7051A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */,
-				CF50B6EE1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
-				CF50B6DA1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
@@ -3312,7 +3292,6 @@
 				CF6D9BE0196678000077B146 /* EncodingsAdditions.mm in Sources */,
 				CF6D9BE1196678000077B146 /* FSEventsDirUpdate.cpp in Sources */,
 				CF6D9BE2196678000077B146 /* NativeFSManager.mm in Sources */,
-				CF50B6EB1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF6D9BE4196678000077B146 /* SearchInFile.mm in Sources */,
@@ -3353,7 +3332,6 @@
 				CF6D9C13196678000077B146 /* OperationDialogAlert.mm in Sources */,
 				CF6D9C14196678000077B146 /* GenericOperationView.mm in Sources */,
 				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
-				CF50B6DD1A15169300E3D96D /* VFSPSHost.mm in Sources */,
 				CF6D9C15196678000077B146 /* OperationsSummaryViewController.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */,
@@ -3376,7 +3354,6 @@
 				CF6D9C2C196678010077B146 /* FileDeletionOperation.mm in Sources */,
 				CF6D9C2D196678010077B146 /* FileDeletionOperationJob.mm in Sources */,
 				CF6D9C2E196678010077B146 /* FileDeletionOperationVFSJob.mm in Sources */,
-				CF50B6FF1A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF6D9C2F196678010077B146 /* FileDeletionSheetController.mm in Sources */,
 				CF6D9C30196678010077B146 /* FileCompressOperation.mm in Sources */,
 				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
@@ -3403,7 +3380,6 @@
 				CF6D9C44196678010077B146 /* PanelController+QuickSearch.mm in Sources */,
 				CF6D9C45196678010077B146 /* PanelController+DragAndDrop.mm in Sources */,
 				CF6D9C46196678010077B146 /* PanelController+Menu.mm in Sources */,
-				CF50B6F11A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CF6D9C47196678010077B146 /* PanelHistory.mm in Sources */,
 				CF6D9C48196678010077B146 /* PanelAux.mm in Sources */,
 				CF6D9C49196678010077B146 /* MainWindowFilePanelState.mm in Sources */,
@@ -3481,7 +3457,6 @@
 				CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
-				CF50B7011A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFB3E47A1844AC8A00D375E2 /* MainWindowTerminalState.mm in Sources */,
@@ -3507,25 +3482,24 @@
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
-				CF50B7041A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
-				CF50B6ED1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
 				CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */,
 				CFB709C818E99B7100A83E61 /* ExternalEditorInfo.mm in Sources */,
+				CF73D1FC1BE619B20014C88F /* VFSArchiveHost.mm in Sources */,
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069851BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */,
 				CF5410191A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
 				CF826B4E1BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */,
 				CF5C1E211B04A0E4005DE19F /* BatchRename.mm in Sources */,
-				CF50B6D91A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				B528012316FCF361004E260D /* OperationsController.mm in Sources */,
 				B528012416FCF361004E260D /* OperationJob.cpp in Sources */,
 				B528012516FCF361004E260D /* Operation.mm in Sources */,
 				CF76B30617000C090066A49F /* filesysattr.mm in Sources */,
 				CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */,
+				CF73D1FD1BE619B20014C88F /* VFSArchiveInternal.mm in Sources */,
 				CF73D1EB1BE616320014C88F /* VFSNetSFTPHost.cpp in Sources */,
 				CF76B313170146240066A49F /* GenericOperationView.mm in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
@@ -3536,10 +3510,12 @@
 				CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */,
 				B51014D417078B2C0023FF24 /* OperationDialogController.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
+				CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */,
 				CFC058DB170B27C200A20CF2 /* FileSysAttrChangeOperation.mm in Sources */,
 				CFC058E0170B297200A20CF2 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF8629331B98006800B33CFD /* VFSFlexibleListing.cpp in Sources */,
+				CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CFA58399170EA3C400E508CF /* FileDeletionOperation.mm in Sources */,
 				CFA5839C170EA40F00E508CF /* FileDeletionOperationJob.mm in Sources */,
@@ -3553,7 +3529,6 @@
 				B55DB1A2171B33D100E3610E /* FileDeletionSheetController.mm in Sources */,
 				CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
-				CF50B6EA1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF5C1E3E1B0856D5005DE19F /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
@@ -3586,7 +3561,7 @@
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF55CDDB1B29F1DE001B4F91 /* BatchRenameOperation.mm in Sources */,
 				CF73D1EA1BE616320014C88F /* VFSNetSFTPFile.cpp in Sources */,
-				CF50B6DC1A15169300E3D96D /* VFSPSHost.mm in Sources */,
+				CF73D1F21BE6179A0014C88F /* VFSPSHost.mm in Sources */,
 				CFFE09C81B200CE40091ED4F /* Application.mm in Sources */,
 				CF2741501803F6A2006D6687 /* sysinfo.mm in Sources */,
 				CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
@@ -3606,8 +3581,8 @@
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
 				CFB518001BDF53D0000AAE89 /* shared_mutex.cpp in Sources */,
 				CF07DE41176985EF00757DE1 /* EncodingsAdditions.mm in Sources */,
-				CF50B6FE1A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
+				CF73D2071BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
 				CF8E76C21B353A1000BA16AD /* TermScrollView.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -3626,13 +3601,14 @@
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF29313417D9915600648A90 /* rdrand.c in Sources */,
 				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
-				CF50B6F01A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
+				CF73D2051BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */,
 				CF5913CB191BD422003007F1 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */,
 				CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */,
 				CF50B6C91A15167800E3D96D /* VFSHost.cpp in Sources */,
+				CF73D1FB1BE619B20014C88F /* VFSArchiveFile.cpp in Sources */,
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF039EB9179142A900DC85D6 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
@@ -3686,7 +3662,6 @@
 				CFF6F24F1A13567C00011177 /* TermView.mm in Sources */,
 				CFF6F2501A13567C00011177 /* MainWindowController.mm in Sources */,
 				CFF6F2511A13567C00011177 /* PanelController.mm in Sources */,
-				CF50B7031A1516C800E3D96D /* VFSArchiveUnRARHost.cpp in Sources */,
 				CFF6F2551A13567C00011177 /* MainWindowTerminalState.mm in Sources */,
 				CFF6F2581A13567C00011177 /* CreateDirectorySheetController.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
@@ -3707,17 +3682,14 @@
 				CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */,
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
-				CF50B7061A1516C800E3D96D /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
-				CF50B6EF1A1516B000E3D96D /* VFSArchiveHost.mm in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
 				CFF6F27D1A13567C00011177 /* ExternalEditorInfo.mm in Sources */,
 				CFF6F27F1A13567C00011177 /* PanelController+DelayedSelection.mm in Sources */,
 				CF8E76C41B353A1000BA16AD /* TermScrollView.mm in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069871BB54035000C3CBB /* FileCopyOperationJobNew.cpp in Sources */,
-				CF50B6DB1A15169300E3D96D /* VFSPSFile.cpp in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* FileCopyOperationSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
@@ -3754,7 +3726,6 @@
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFF6F2BC1A13567C00011177 /* FileDeletionSheetController.mm in Sources */,
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
-				CF50B6EC1A1516B000E3D96D /* VFSArchiveFile.cpp in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
@@ -3782,7 +3753,6 @@
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
-				CF50B6DE1A15169300E3D96D /* VFSPSHost.mm in Sources */,
 				CFF6F2F21A13567C00011177 /* sysinfo.mm in Sources */,
 				CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */,
 				CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */,
@@ -3799,7 +3769,6 @@
 				CFF6F3021A13567C00011177 /* MainWindowBigFileViewState.mm in Sources */,
 				CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */,
 				CFF6F3071A13567C00011177 /* EncodingsAdditions.mm in Sources */,
-				CF50B7001A1516C800E3D96D /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -3818,7 +3787,6 @@
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
-				CF50B6F21A1516B000E3D96D /* VFSArchiveInternal.mm in Sources */,
 				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
 				CFF6F32B1A13567C00011177 /* CreateDirectoryOperationVFSJob.mm in Sources */,

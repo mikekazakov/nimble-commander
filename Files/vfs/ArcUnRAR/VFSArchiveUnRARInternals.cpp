@@ -7,7 +7,7 @@
 //
 
 #include "VFSArchiveUnRARInternals.h"
-#include "VFSError.h"
+#include "../VFSError.h"
 
 int VFSArchiveUnRARErrorToVFSError(int _rar_error)
 {

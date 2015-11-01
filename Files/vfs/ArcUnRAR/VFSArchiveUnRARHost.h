@@ -8,9 +8,9 @@
 
 #pragma once
 
-#import "VFSHost.h"
-#import "VFSFile.h"
-#import "../DispatchQueue.h"
+#include "../../DispatchQueue.h"
+#include "../VFSHost.h"
+#include "../VFSFile.h"
 
 struct VFSArchiveUnRAREntry;
 struct VFSArchiveUnRARDirectory;

@@ -49,6 +49,8 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {
     path p = _controller.currentDirectoryPath;
     string name = p == "/" ? p.native() : p.parent_path().filename().native();
+    if( name == "/" && _controller.isUniform && _controller.vfs->Parent() )
+        name = path(_controller.vfs->JunctionPath()).filename().native(); // source file name for vfs like archives and xattr
     
     NSArray *tabs;
     if([self isLeftController:_controller])

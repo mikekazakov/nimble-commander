@@ -78,6 +78,7 @@ bool FileSearch::Go(string _from_path,
     m_Callback = _found_callback;
     m_FinishCallback = _finish_callback;
     m_SearchOptions = _options;
+    m_DirsFIFO.clear();
     
     m_Queue->Run([=]{
         AsyncProcPrologue(_from_path, _in_host);

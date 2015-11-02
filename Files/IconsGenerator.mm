@@ -305,7 +305,7 @@ NSImageRep *IconsGenerator::ImageFor(const VFSFlexibleListingItem &_item, PanelV
     br.mtime = is.mtime;
     br.unix_mode = _item.UnixMode();
     br.host = _item.Host();
-    br.extension = _item.Extension();
+    br.extension = _item.HasExtension() ? _item.Extension() : "";
     br.relative_path = move(rel_path);
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;

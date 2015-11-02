@@ -254,7 +254,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
     m_SeparatorLine.boxType = NSBoxSeparator;
-    [self addSubview:m_SeparatorLine];    
+    [self addSubview:m_SeparatorLine];
     
     m_EncodingSelect = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 120, 20)];
     ((NSPopUpButtonCell*)m_EncodingSelect.cell).controlSize = NSSmallControlSize;
@@ -316,9 +316,10 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     }
     
     NSDictionary *views = NSDictionaryOfVariableBindings(m_View, m_SeparatorLine);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(<=1)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(<=1)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_View]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_View]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[m_SeparatorLine]-(==1)-|" options:0 metrics:nil views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]]; // <-- 10.11 NSISEngine crashes with this variant
 }
 
 - (NSToolbar*)toolbar

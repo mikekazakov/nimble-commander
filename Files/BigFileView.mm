@@ -377,8 +377,8 @@ const static double g_BorderWidth = 1.0;
 
 - (void) UpdateVerticalScroll: (double) _pos prop:(double)prop
 {
-    [m_VerticalScroller setKnobProportion:prop];
-    [m_VerticalScroller setDoubleValue:_pos];
+    m_VerticalScroller.knobProportion = prop;
+    m_VerticalScroller.doubleValue = _pos;
 
     [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolled];
 }
@@ -386,7 +386,7 @@ const static double g_BorderWidth = 1.0;
 - (void)VerticalScroll:(id)sender
 {
     uint64_t was_vert_pos = self.verticalPositionInBytes;
-    switch ([m_VerticalScroller hitPart])
+    switch (m_VerticalScroller.hitPart)
     {
         case NSScrollerIncrementLine:
             m_ViewImpl->OnDownArrow();
@@ -471,7 +471,7 @@ const static double g_BorderWidth = 1.0;
 
 - (double) VerticalScrollPosition
 {
-    return  [m_VerticalScroller doubleValue];
+    return m_VerticalScroller.doubleValue;
 }
 
 - (void) ScrollToSelection

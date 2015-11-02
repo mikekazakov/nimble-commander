@@ -21,6 +21,7 @@ static NSString *g_EncodingArchiveKey = @"encoding";
 static NSString *g_SelPosArchiveKey = @"sel_position";
 static NSString *g_SelLenArchiveKey = @"sel_length";
 static BigFileViewHistory *g_SharedInstance = nil;
+static const auto g_MaximumEntries = 256;
 
 static NSString* StorageFileName()
 {
@@ -109,7 +110,7 @@ static NSString* StorageFileName()
     m_Queue = SerialQueueT::Make();
     
     // try to load history from file
-    m_History = [NSKeyedUnarchiver unarchiveObjectWithFile:StorageFileName()];
+    m_History = [[NSKeyedUnarchiver unarchiveObjectWithFile:StorageFileName()] mutableCopy];
         
     if(!m_History)
         m_History = [NSMutableArray new]; // failed to load it - ok, just create a new one
@@ -170,7 +171,10 @@ static NSString* StorageFileName()
                 [m_History removeObject:e];
                 break;
             }
-        [m_History insertObject:_entry atIndex:0]; 
+        [m_History insertObject:_entry atIndex:0];
+  
+        if( m_History.count > g_MaximumEntries )
+            [m_History removeObjectsInRange:NSMakeRange(g_MaximumEntries, m_History.count - g_MaximumEntries)];
     });
 }
 

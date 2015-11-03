@@ -119,7 +119,6 @@ void FileCopyOperationJobNew::Init(vector<VFSFlexibleListingItem> _source_items,
                                    FileCopyOperationOptions _opts)
 {
     m_VFSListingItems = move(_source_items);
-    m_IsSingleItemProcessing = m_VFSListingItems.size() == 1;
     m_InitialDestinationPath = _dest_path;
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
         throw invalid_argument("FileCopyOperationJobNew::Init: m_InitialDestinationPath should be an absolute path");
@@ -183,6 +182,8 @@ void FileCopyOperationJobNew::Do()
         return;
     }
     m_SourceItems = move( get<1>(scan_result) );
+    
+    m_IsSingleItemProcessing = m_SourceItems.ItemsAmount() == 1;
     
     m_VFSListingItems.clear(); // don't need them anymore
     

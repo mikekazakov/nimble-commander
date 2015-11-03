@@ -6,21 +6,20 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SheetWithHotkeys.h"
-#import "FindFilesSheetController.h"
-#import "Encodings.h"
-#import "FileSearch.h"
-#import "Common.h"
-#import "BigFileViewSheet.h"
-#import "ByteCountFormatter.h"
+#include <Habanero/dispatch_cpp.h>
+#include "SheetWithHotkeys.h"
+#include "FindFilesSheetController.h"
+#include "Encodings.h"
+#include "FileSearch.h"
+#include "Common.h"
+#include "BigFileViewSheet.h"
+#include "ByteCountFormatter.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
-static const int g_MaximumSearchResults = 16384;
+static const int g_MaximumSearchResults = 262144;
     
 @interface FindFilesSheetFoundItem : NSObject
-
-- (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item;
 @property (nonatomic, readonly) FindFilesSheetControllerFoundItem *data;
 @property (nonatomic, readonly) NSString *location;
 @property (nonatomic, readonly) NSString *filename;
@@ -38,13 +37,13 @@ static const int g_MaximumSearchResults = 16384;
 @synthesize location = m_Location;
 @synthesize filename = m_Filename;
 
-- (id) initWithFoundItem:(const FindFilesSheetControllerFoundItem&)_item
+- (id) initWithFoundItem:(FindFilesSheetControllerFoundItem&&)_item
 {
     self = [super init];
     if(self) {
-        m_Data = _item;
-        m_Location = [NSString stringWithUTF8StdStringNoCopy:m_Data.rel_path];
-        m_Filename = [NSString stringWithUTF8StdStringNoCopy:m_Data.filename];
+        m_Data = move(_item);
+        m_Location = [NSString stringWithUTF8StdString:m_Data.rel_path];
+        m_Filename = [NSString stringWithUTF8StdString:m_Data.filename];
     }
     return self;
 }
@@ -118,13 +117,16 @@ static const int g_MaximumSearchResults = 16384;
     unique_ptr<FileSearch>      m_FileSearch;
     NSDateFormatter            *m_DateFormatter;
     
-    NSMutableArray             *m_FoundItems;
+    NSMutableArray             *m_FoundItems; // is controlled by ArrayController
+    atomic_bool                 m_ControllerIsAdding;
     NSArray                    *m_MaskHistory;
     NSArray                    *m_TextHistory;
     
     NSMutableArray             *m_FoundItemsBatch;
     NSTimer                    *m_BatchDrainTimer;
     SerialQueue                 m_BatchQueue;
+    DispatchGroup               m_StatGroup;
+    
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
     void                        (^m_Handler)();
@@ -246,12 +248,15 @@ static const int g_MaximumSearchResults = 16384;
 
 - (void) OnFinishedSearch
 {
-    dispatch_to_main_queue([=]{
-        self.SearchButton.state = NSOffState;
+    m_StatGroup.Wait();
 
-        [self UpdateByTimer:m_BatchDrainTimer];
+    [self UpdateByTimer:m_BatchDrainTimer];
+    m_BatchQueue->Wait();
+    
+    dispatch_to_main_queue([=]{
         [m_BatchDrainTimer invalidate];
         m_BatchDrainTimer = nil;
+        self.SearchButton.state = NSOffState;
     });
 }
 
@@ -288,6 +293,7 @@ static const int g_MaximumSearchResults = 16384;
 
     NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
     [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
+    m_ControllerIsAdding = false;
     
     NSString *mask = self.MaskComboBox.stringValue;
     if(mask != nil &&
@@ -364,15 +370,16 @@ static const int g_MaximumSearchResults = 16384;
                                   if(m_Path.length() > 1 && it.rel_path.find(m_Path) == 0)
                                       it.rel_path.replace(0, m_Path.length(), "./");
                                   
-                                  // sync op - bad. better move it off the searching thread
-                                  memset(&it.st, 0, sizeof(it.st));
-                                  m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
-                                  
-                                  FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:it];
-                                  
-                                  m_BatchQueue->Run([=]{
-                                      [m_FoundItemsBatch addObject:item];
-                                    });
+                                  m_StatGroup.Run([=, it=move(it)]()mutable{
+                                      // doing stat()'ing item in async background thread
+                                      m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+                                      
+                                      FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
+                                      m_BatchQueue->Run([self, item]{
+                                          // dumping result entry into batch array in BatchQueue
+                                          [m_FoundItemsBatch addObject:item];
+                                      });
+                                  });
                                   
                                   if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
                                       m_FileSearch->Stop(); // gorshochek, ne vari!!!
@@ -383,7 +390,7 @@ static const int g_MaximumSearchResults = 16384;
                               );
     if(r) {
         self.SearchButton.state = NSOnState;
-        m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 // 0.2 sec update
+        m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 // 0.5 sec update
                                                              target:self
                                                            selector:@selector(UpdateByTimer:)
                                                            userInfo:nil
@@ -398,14 +405,18 @@ static const int g_MaximumSearchResults = 16384;
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
     m_BatchQueue->Run([=]{
-        if(m_FoundItemsBatch.count == 0)
-            return;
+        if( m_FoundItemsBatch.count == 0 )
+            return; // nothing to add
+        if( m_ControllerIsAdding )
+            return; // controller is already adding objects from a previous batch. skip this iteration to decrease main thread saturation
         
         NSArray *temp = m_FoundItemsBatch;
         m_FoundItemsBatch = [NSMutableArray new];
         
         dispatch_to_main_queue([=]{
+            m_ControllerIsAdding = true;
             [self.ArrayController addObjects:temp];
+            m_ControllerIsAdding = false;
         });
     });
 }

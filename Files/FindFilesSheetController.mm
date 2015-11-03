@@ -214,6 +214,7 @@ static const int g_MaximumSearchResults = 262144;
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
+    sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
 }
 
 - (void) dealloc
@@ -257,6 +258,9 @@ static const int g_MaximumSearchResults = 262144;
         [m_BatchDrainTimer invalidate];
         m_BatchDrainTimer = nil;
         self.SearchButton.state = NSOffState;
+  
+        if( [self.ArrayController.arrangedObjects count] > 0 )
+            [self.window makeFirstResponder:self.TableView];
     });
 }
 

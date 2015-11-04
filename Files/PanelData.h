@@ -223,6 +223,12 @@ class PanelData
 public:
     typedef vector<unsigned> DirSortIndT; // value in this array is an index for VFSListing
 
+    enum class PanelType
+    {
+        Directory,
+        TemporaryPanel
+    };
+    
     struct EntrySortKeys
     {
         string      name;
@@ -241,7 +247,7 @@ public:
     // PanelData is solely sync class - it does not give a fuck about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-    void Load  (const shared_ptr<VFSFlexibleListing> &_listing);
+    void Load  (const shared_ptr<VFSFlexibleListing> &_listing, PanelType _type);
     void ReLoad(const shared_ptr<VFSFlexibleListing> &_listing);
 
     /**
@@ -249,6 +255,7 @@ public:
      */
     const shared_ptr<VFSHost>&  Host() const;
     const VFSFlexibleListing&   Listing() const;
+    PanelType                        Type() const noexcept;
     
     const DirSortIndT&      SortedDirectoryEntries() const;
     
@@ -258,7 +265,6 @@ public:
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
-//    const VFSListingItem*   EntryAtRawPosition(int _pos) const;
     VFSFlexibleListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
@@ -389,6 +395,7 @@ private:
     PanelDataTextFiltering  m_SoftFiltering;
     DispatchGroup           m_SortExecGroup;
     PanelDataStatistics     m_Stats;
+    PanelType                    m_Type;
 };
 
 inline const PanelDataStatistics &PanelData::Stats() const

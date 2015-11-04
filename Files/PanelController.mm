@@ -342,7 +342,12 @@ void panel::GenericCursorPersistance::Restore() const
 - (void) RefreshDirectory
 {
     if(m_View == nil) return; // guard agains calls from init process
-    if(!self.isUniform) return; // currently we can't reload non-uniform listings. maybe later?
+    if(!self.isUniform) {
+        VFSFlexibleListing *l = (VFSFlexibleListing *) &m_Data.Listing();
+        m_Data.ReLoad( l->shared_from_this() );
+        
+        return; // currently we can't reload non-uniform listings. maybe later?
+    }
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())

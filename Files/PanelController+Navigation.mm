@@ -148,7 +148,7 @@ loadPreviousState:(bool)_load_state
         dispatch_or_run_in_main_queue([=]{
             m_UpperDirectory.Reset();
             [m_View SavePathState];
-            m_Data.Load(listing);
+            m_Data.Load(listing, PanelData::PanelType::Directory);
             [m_View dataUpdated];
             [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];
@@ -174,7 +174,7 @@ loadPreviousState:(bool)_load_state
             m_UpperDirectory = VFSPath( self.vfs, self.currentDirectoryPath );
         
         [m_View SavePathState];
-        m_Data.Load(_listing);
+        m_Data.Load(_listing, PanelData::PanelType::TemporaryPanel);
         [m_View dataUpdated];
         [m_View directoryChangedWithFocusedFilename:"" loadPreviousState:false];
         [self OnPathChanged];

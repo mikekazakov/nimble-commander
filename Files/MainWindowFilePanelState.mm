@@ -793,10 +793,10 @@ static vector<VFSFlexibleListingItem> FetchVFSListingsItemsFromDirectories( cons
 - (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
     vector<tuple<string, VFSHostPtr> > r;
-    for(auto p: m_LeftPanelControllers)
-        r.emplace_back( p.currentDirectoryPath, p.vfs);
-    for(auto p: m_RightPanelControllers)
-        r.emplace_back( p.currentDirectoryPath, p.vfs);
+    for( auto c: {&m_LeftPanelControllers, &m_RightPanelControllers} )
+        for( auto p: *c )
+            if( p.isUniform )
+                r.emplace_back( p.currentDirectoryPath, p.vfs);
     return r;
 }
 

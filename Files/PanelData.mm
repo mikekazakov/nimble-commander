@@ -16,6 +16,45 @@ static inline PanelSortMode DefaultSortMode()
     
 }
 
+// returned string IS NOT NULL TERMINATED and MAY CONTAIN ZEROES INSIDE
+// a bit overkill, need to consider some simplier kind of keys
+static string LongEntryKey(const VFSFlexibleListing& _l, unsigned _i)
+{
+    // host + dir + filename
+    union {
+        void *v;
+        char b[ sizeof(void*) ];
+    } host_addr;
+    host_addr.v = _l.Host(_i).get();
+    
+    auto &directory = _l.Directory(_i);
+    auto &filename = _l.Filename(_i);
+    
+    string key;
+    key.reserve( sizeof(host_addr) + directory.size() + filename.size() + 1 );
+    key.append( begin(host_addr.b), end(host_addr.b) );
+    key.append( directory );
+    key.append( filename );
+    return key;
+}
+
+static vector<string> ProduceLongKeysForListing( const VFSFlexibleListing& _l )
+{
+    vector<string> keys;
+    keys.reserve( _l.Count() );
+    for( unsigned i = 0, e = _l.Count(); i != e; ++i )
+        keys.emplace_back( LongEntryKey(_l, i) );
+    return keys;
+}
+
+static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<string>& _keys)
+{
+    vector<unsigned> src_keys_ind( _keys.size() );
+    generate( begin(src_keys_ind), end(src_keys_ind), linear_generator(0, 1) );
+    sort( begin(src_keys_ind), end(src_keys_ind), [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
+    return src_keys_ind;
+}
+
 bool PanelData::EntrySortKeys::is_valid() const noexcept
 {
     return !name.empty() && display_name != nil;
@@ -37,7 +76,7 @@ static void InitVolatileDataWithListing( vector<PanelVolatileData> &_vd, const V
             _vd[i].size = _listing.Size(i);
 }
 
-void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
+void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing, PanelType _type)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -45,6 +84,7 @@ void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing)
         throw logic_error("PanelData::Load: listing can't be nullptr");
     
     m_Listing = _listing;
+    m_Type = _type;
     InitVolatileDataWithListing(m_VolatileData, *m_Listing);
     
     m_HardFiltering.text.OnPanelDataLoad();
@@ -63,8 +103,6 @@ void PanelData::ReLoad(const shared_ptr<VFSFlexibleListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
-    // !!! this will work ONLY with plain directories listing since is based on that filenames are unique !!!!
-    
     // sort new entries by raw c name for sync-swapping needs
     DirSortIndT dirbyrawcname;
     DoRawSort(*_listing, dirbyrawcname);
@@ -72,27 +110,56 @@ void PanelData::ReLoad(const shared_ptr<VFSFlexibleListing> &_listing)
     vector<PanelVolatileData> new_vd;
     InitVolatileDataWithListing(new_vd, *_listing);
     
-    // transfer custom data to new array using sorted indeces arrays
-    unsigned dst_i = 0, dst_e = _listing->Count(),
-             src_i = 0, src_e = m_Listing->Count();
-    for( ;src_i < src_e && dst_i < dst_e; ++src_i ) {
-        int src = m_EntriesByRawName[src_i];
-check:  int dst = (dirbyrawcname)[dst_i];
-        int cmp = m_Listing->Filename(src).compare( _listing->Filename(dst) );
-        if( cmp == 0 ) {
-            new_vd[ dst ] = m_VolatileData[ src ];
-            
-            ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
-            if(dst_i == dst_e)
-                break;
-        }
-        else if( cmp > 0 ) {
-            dst_i++;
-            if(dst_i == dst_e)
-                break;
-            goto check;
+    if( _listing->IsUniform() && m_Listing->IsUniform() ) {
+        // transfer custom data to new array using sorted indeces arrays based in raw C filename.
+        // assumes that there can't be more than one file with same filenamr
+        unsigned dst_i = 0, dst_e = _listing->Count(),
+        src_i = 0, src_e = m_Listing->Count();
+        for( ;src_i != src_e && dst_i != dst_e; ++src_i ) {
+            int src = m_EntriesByRawName[src_i];
+        check:  int dst = (dirbyrawcname)[dst_i];
+            int cmp = m_Listing->Filename(src).compare( _listing->Filename(dst) );
+            if( cmp == 0 ) {
+                new_vd[ dst ] = m_VolatileData[ src ];
+                
+                ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
+            }
+            else if( cmp > 0 ) {
+                dst_i++;
+                if(dst_i == dst_e)
+                    break;
+                goto check;
+            }
         }
     }
+    else if( !_listing->IsUniform() && !m_Listing->IsUniform() ) {
+        auto src_keys = ProduceLongKeysForListing( *m_Listing );
+        auto src_keys_ind = ProduceSortedIndirectIndecesForLongKeys(src_keys);
+        auto dst_keys = ProduceLongKeysForListing( *_listing  );
+        auto dst_keys_ind = ProduceSortedIndirectIndecesForLongKeys(dst_keys);
+        
+        // TODO: consider moving into separate algorithm
+        unsigned dst_i = 0, dst_e = (unsigned)dst_keys.size(),
+                 src_i = 0, src_e = (unsigned)src_keys.size();
+        for( ;src_i != src_e && dst_i != dst_e; ++src_i ) {
+            int src = src_keys_ind[src_i];
+    check2: int dst = dst_keys_ind[dst_i];
+            int cmp = src_keys[src].compare( dst_keys[dst] );
+            if( cmp == 0 ) {
+                new_vd[ dst ] = m_VolatileData[ src ];
+                ++dst_i;
+            }
+            else if( cmp > 0 ) {
+                dst_i++;
+                if(dst_i == dst_e)
+                    break;
+                goto check2;
+            }
+        }
+    }
+    else
+        throw invalid_argument("PanelData::ReLoad: incompatible listing type!");
+
     
     // put a new data in a place
     m_Listing = move(_listing);
@@ -115,6 +182,11 @@ const shared_ptr<VFSHost> &PanelData::Host() const
 const VFSFlexibleListing &PanelData::Listing() const
 {
     return *m_Listing;
+}
+
+PanelData::PanelType PanelData::Type() const noexcept
+{
+    return m_Type;
 }
 
 const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
@@ -438,11 +510,6 @@ struct SortPredLessIndToKeys : public SortPredLessBase
 // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
 static void DoRawSort(const VFSFlexibleListing &_from, PanelData::DirSortIndT &_to)
 {
-    if(_from.Count() == 0) {
-        _to.clear();
-        return;
-    }
-  
     _to.resize(_from.Count());
     generate( begin(_to), end(_to), linear_generator(0, 1) );
     

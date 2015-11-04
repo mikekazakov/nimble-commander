@@ -33,6 +33,15 @@ static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuick
                                g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
                                g_DefaultsGeneralShowLocalizedFilenames];
 
+static VFSFlexibleListingPtr ProduceUpdatedTemporaryPanelListing( const VFSFlexibleListingPtr& _original )
+{
+    
+    
+    
+    
+}
+
+
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
     m_Data(_data)
@@ -342,44 +351,50 @@ void panel::GenericCursorPersistance::Restore() const
 - (void) RefreshDirectory
 {
     if(m_View == nil) return; // guard agains calls from init process
-    if(!self.isUniform) {
-        VFSFlexibleListing *l = (VFSFlexibleListing *) &m_Data.Listing();
-        m_Data.ReLoad( l->shared_from_this() );
-        
-        return; // currently we can't reload non-uniform listings. maybe later?
-    }
+
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
-    
-    string dirpath = m_Data.DirectoryPathWithTrailingSlash();
-    auto vfs = self.vfs;
-    
-    m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-        shared_ptr<VFSFlexibleListing> listing;
-        int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
-        if(ret >= 0) {
-            dispatch_to_main_queue( [=]{
-                panel::GenericCursorPersistance pers(m_View, m_Data);
-                
-                m_Data.ReLoad(listing);
-                [m_View dataUpdated];
-                
-                if(![self CheckAgainstRequestedSelection])
-                    pers.Restore();
 
-                [self OnCursorChanged];
-                [self QuickSearchUpdate];
-                [m_View setNeedsDisplay];
-            });
-        }
-        else {
-            dispatch_to_main_queue( [=]{
-                [self RecoverFromInvalidDirectory];
-            });
-        }
-    });
+    if( self.isUniform ) {
+        string dirpath = m_Data.DirectoryPathWithTrailingSlash();
+        auto vfs = self.vfs;
+        
+        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+            shared_ptr<VFSFlexibleListing> listing;
+            int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
+            if(ret >= 0) {
+                dispatch_to_main_queue( [=]{
+                    panel::GenericCursorPersistance pers(m_View, m_Data);
+                    
+                    m_Data.ReLoad(listing);
+                    [m_View dataUpdated];
+                    
+                    if(![self CheckAgainstRequestedSelection])
+                        pers.Restore();
+                    
+                    [self OnCursorChanged];
+                    [self QuickSearchUpdate];
+                    [m_View setNeedsDisplay];
+                });
+            }
+            else {
+                dispatch_to_main_queue( [=]{
+                    [self RecoverFromInvalidDirectory];
+                });
+            }
+        });
+    }
+    else {
+        // later: maybe check PanelType somehow
+        
+        
+        VFSFlexibleListing *l = (VFSFlexibleListing *) &m_Data.Listing();
+        m_Data.ReLoad( l->shared_from_this() );
+        
+        
+    }
 }
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSFlexibleListing.h"
+#include "VFSListing.h"
 #include "VFSHost.h"
 
 static_assert( is_move_constructible<VFSFlexibleListingItem>::value, "" );

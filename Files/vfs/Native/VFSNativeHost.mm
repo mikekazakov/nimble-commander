@@ -11,6 +11,7 @@
 #include "VFSNativeHost.h"
 #include "VFSNativeFile.h"
 #include "../VFSError.h"
+#include "../VFSListingInput.h"
 #include "../../FSEventsDirUpdate.h"
 #include "../../Common.h"
 #include "../../NativeFSManager.h"
@@ -61,7 +62,7 @@ VFSNativeHost::VFSNativeHost():
 }
 
 int VFSNativeHost::FetchFlexibleListing(const char *_path,
-                                        shared_ptr<VFSFlexibleListing> &_target,
+                                        shared_ptr<VFSListing> &_target,
                                         int _flags,
                                         VFSCancelChecker _cancel_checker)
 {
@@ -124,7 +125,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         dirents.insert(begin(dirents), make_tuple("..", 0, DT_DIR)); // add ".." entry by hand
     
     // set up or listing structure
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.inodes.reset( variable_container<>::type::dense );
@@ -214,7 +215,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             }
     });
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     
     return 0;
 }

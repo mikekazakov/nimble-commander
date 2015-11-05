@@ -42,7 +42,7 @@ static atomic<int> g_IsCurrentlySharing(0);
     }
 }
 
-+ (bool) SharingEnabledForItem:(const VFSFlexibleListingItem&)_item
++ (bool) SharingEnabledForItem:(const VFSFListingItem&)_item
 {
     if( !_item )
         return false;

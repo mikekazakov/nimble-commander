@@ -31,7 +31,7 @@ public:
     void SetIconSize(int _size);
     int IconSize() const { return m_IconSize; }
     
-    NSImageRep *ImageFor(const VFSFlexibleListingItem &_item, PanelVolatileData &_item_vd);
+    NSImageRep *ImageFor(const VFSFListingItem &_item, PanelVolatileData &_item_vd);
     void Flush(); // should be called on every directory changes thus loosing generated icons' ID
     
     

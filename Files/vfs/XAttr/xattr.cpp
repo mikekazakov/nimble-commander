@@ -1,6 +1,7 @@
 #include <sys/xattr.h>
 #include "xattr.h"
 #include "../VFSFile.h"
+#include "../VFSListingInput.h"
 
 class VFSXAttrFile final: public VFSFile
 {
@@ -224,7 +225,7 @@ int VFSXAttrHost::Fetch()
 }
 
 int VFSXAttrHost::FetchFlexibleListing(const char *_path,
-                                       shared_ptr<VFSFlexibleListing> &_target,
+                                       shared_ptr<VFSListing> &_target,
                                        int _flags,
                                        VFSCancelChecker _cancel_checker)
 {
@@ -232,7 +233,7 @@ int VFSXAttrHost::FetchFlexibleListing(const char *_path,
         return VFSError::InvalidCall;
     
     // set up or listing structure
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = "/";
     listing_source.atimes.reset( variable_container<>::type::common );
@@ -263,7 +264,7 @@ int VFSXAttrHost::FetchFlexibleListing(const char *_path,
         }
     }
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     return VFSError::Ok;
 }
 

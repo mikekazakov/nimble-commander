@@ -285,7 +285,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if( !item || item.IsDotDot() )
         return;
 
-    auto entries = vector<VFSFlexibleListingItem>({item});
+    auto entries = vector<VFSFListingItem>({item});
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
     
@@ -368,7 +368,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     FileCopyOperationOptions opts;
     opts.docopy = false;
 
-    auto entries = vector<VFSFlexibleListingItem>({item});
+    auto entries = vector<VFSFListingItem>({item});
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()

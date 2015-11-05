@@ -20,6 +20,6 @@
      PreferredEdge:(NSRectEdge)_preferredEdge;
 
 + (bool) IsCurrentlySharing; // use this to prohibit parallel sharing - this can cause significal system overload
-+ (bool) SharingEnabledForItem:(const VFSFlexibleListingItem&)_item;
++ (bool) SharingEnabledForItem:(const VFSFListingItem&)_item;
 
 @end

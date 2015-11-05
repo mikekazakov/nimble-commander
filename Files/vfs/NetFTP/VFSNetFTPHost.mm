@@ -7,6 +7,7 @@
 //
 
 #include "../../path_manip.h"
+#include "../VFSListingInput.h"
 #include "VFSNetFTPHost.h"
 #include "VFSNetFTPInternals.h"
 #include "VFSNetFTPCache.h"
@@ -279,7 +280,7 @@ int VFSNetFTPHost::Stat(const char *_path,
 }
 
 int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
-                                        shared_ptr<VFSFlexibleListing> &_target,
+                                        shared_ptr<VFSListing> &_target,
                                         int _flags,
                                         VFSCancelChecker _cancel_checker)
 {
@@ -289,7 +290,7 @@ int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
         return result;
     
     // setup of listing structure
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.sizes.reset( variable_container<>::type::dense );
@@ -324,7 +325,7 @@ int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
         listing_source.mtimes.insert(index, entry.time );
     }
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     
     return 0;
 }

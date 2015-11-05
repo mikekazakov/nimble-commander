@@ -17,7 +17,7 @@
 - (void)testBasic
 {
     auto host = make_shared<VFSPSHost>();
-    VFSFlexibleListingPtr list;
+    VFSListingPtr list;
     host->FetchFlexibleListing("/", list, 0, 0);
 
     bool has_launchd = false;

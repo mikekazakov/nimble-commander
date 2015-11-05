@@ -5,7 +5,7 @@
 #import "chained_strings.h"
 #import "FileMask.h"
 
-static void DoRawSort(const VFSFlexibleListing &_from, PanelData::DirSortIndT &_to);
+static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);
 
 static inline PanelSortMode DefaultSortMode()
 {
@@ -18,7 +18,7 @@ static inline PanelSortMode DefaultSortMode()
 
 // returned string IS NOT NULL TERMINATED and MAY CONTAIN ZEROES INSIDE
 // a bit overkill, need to consider some simplier kind of keys
-static string LongEntryKey(const VFSFlexibleListing& _l, unsigned _i)
+static string LongEntryKey(const VFSListing& _l, unsigned _i)
 {
     // host + dir + filename
     union {
@@ -38,7 +38,7 @@ static string LongEntryKey(const VFSFlexibleListing& _l, unsigned _i)
     return key;
 }
 
-static vector<string> ProduceLongKeysForListing( const VFSFlexibleListing& _l )
+static vector<string> ProduceLongKeysForListing( const VFSListing& _l )
 {
     vector<string> keys;
     keys.reserve( _l.Count() );
@@ -62,12 +62,12 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
-    m_Listing(VFSFlexibleListing::EmptyListing()),
+    m_Listing(VFSListing::EmptyListing()),
     m_CustomSortMode(DefaultSortMode())
 {
 }
 
-static void InitVolatileDataWithListing( vector<PanelVolatileData> &_vd, const VFSFlexibleListing &_listing)
+static void InitVolatileDataWithListing( vector<PanelVolatileData> &_vd, const VFSListing &_listing)
 {
     _vd.clear();
     _vd.resize(_listing.Count());
@@ -76,7 +76,7 @@ static void InitVolatileDataWithListing( vector<PanelVolatileData> &_vd, const V
             _vd[i].size = _listing.Size(i);
 }
 
-void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing, PanelType _type)
+void PanelData::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -99,7 +99,7 @@ void PanelData::Load(const shared_ptr<VFSFlexibleListing> &_listing, PanelType _
     UpdateStatictics();
 }
 
-void PanelData::ReLoad(const shared_ptr<VFSFlexibleListing> &_listing)
+void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -179,7 +179,7 @@ const shared_ptr<VFSHost> &PanelData::Host() const
     return m_Listing->Host(0);
 }
 
-const VFSFlexibleListing &PanelData::Listing() const
+const VFSListing &PanelData::Listing() const
 {
     return *m_Listing;
 }
@@ -335,12 +335,12 @@ string PanelData::VerboseDirectoryFullPath() const
 struct SortPredLessBase
 {
 protected:
-    const VFSFlexibleListing&       l;
+    const VFSListing&       l;
     const vector<PanelVolatileData>&vd;
     PanelSortMode                   sort_mode;
     CFStringCompareFlags            str_comp_flags;
 public:
-    SortPredLessBase(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode):
+    SortPredLessBase(const VFSListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode):
         l(_items),
         vd(_vd),
         sort_mode(sort_mode)
@@ -352,7 +352,7 @@ public:
 
 struct SortPredLessIndToInd : public SortPredLessBase
 {
-    SortPredLessIndToInd(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
+    SortPredLessIndToInd(const VFSListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
     
     bool operator()(unsigned _1, unsigned _2) const
     {
@@ -430,7 +430,7 @@ struct SortPredLessIndToInd : public SortPredLessBase
 
 struct SortPredLessIndToKeys : public SortPredLessBase
 {
-    SortPredLessIndToKeys(const VFSFlexibleListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
+    SortPredLessIndToKeys(const VFSListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
     
     bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
     {
@@ -508,7 +508,7 @@ struct SortPredLessIndToKeys : public SortPredLessBase
 };
 
 // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
-static void DoRawSort(const VFSFlexibleListing &_from, PanelData::DirSortIndT &_to)
+static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to)
 {
     _to.resize(_from.Count());
     generate( begin(_to), end(_to), linear_generator(0, 1) );
@@ -579,7 +579,7 @@ int PanelData::RawIndexForSortIndex(int _index) const noexcept
     return m_EntriesByCustomSort[_index];
 }
 
-VFSFlexibleListingItem PanelData::EntryAtRawPosition(int _pos) const
+VFSFListingItem PanelData::EntryAtRawPosition(int _pos) const
 {
     if( _pos >= 0 &&
         _pos < m_Listing->Count() )
@@ -587,7 +587,7 @@ VFSFlexibleListingItem PanelData::EntryAtRawPosition(int _pos) const
     return {};
 }
 
-VFSFlexibleListingItem PanelData::EntryAtSortPosition(int _pos) const
+VFSFListingItem PanelData::EntryAtSortPosition(int _pos) const
 {
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));
 }
@@ -674,9 +674,9 @@ vector<string> PanelData::SelectedEntriesFilenames() const
     return list;
 }
 
-vector<VFSFlexibleListingItem> PanelData::SelectedEntries() const
+vector<VFSFListingItem> PanelData::SelectedEntries() const
 {
-    vector<VFSFlexibleListingItem> list;
+    vector<VFSFListingItem> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Item(i) );
@@ -772,7 +772,7 @@ void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
     UpdateStatictics();
 }
 
-bool PanelDataTextFiltering::IsValidItem(const VFSFlexibleListingItem& _item) const
+bool PanelDataTextFiltering::IsValidItem(const VFSFListingItem& _item) const
 {
     if(text == nil)
         return true;
@@ -820,7 +820,7 @@ bool PanelDataTextFiltering::IsValidItem(const VFSFlexibleListingItem& _item) co
     return true;
 }
 
-bool PanelDataHardFiltering::IsValidItem(const VFSFlexibleListingItem& _item) const
+bool PanelDataHardFiltering::IsValidItem(const VFSFListingItem& _item) const
 {
     if(show_hidden == false && _item.IsHidden())
         return false;
@@ -897,7 +897,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSFlexibleListingItem& _item, const PanelVolatileData &_item_vd)
+PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSFListingItem& _item, const PanelVolatileData &_item_vd)
 {
     EntrySortKeys keys;
     keys.name = _item.Name();

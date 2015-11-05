@@ -1,5 +1,5 @@
 //
-//  VFSFlexibleListing.cpp
+//  VFSListing.cpp
 //  Files
 //
 //  Created by Michael G. Kazakov on 03/09/15.
@@ -8,9 +8,10 @@
 
 #include "VFSListing.h"
 #include "VFSHost.h"
+#include "VFSListingInput.h"
 
-static_assert( is_move_constructible<VFSFlexibleListingItem>::value, "" );
-static_assert( is_move_constructible<VFSFlexibleListing::iterator>::value, "" );
+static_assert( is_move_constructible<VFSFListingItem>::value, "" );
+static_assert( is_move_constructible<VFSListing::iterator>::value, "" );
 
 static bool BasicDirectoryCheck(const string& _str)
 {
@@ -21,57 +22,57 @@ static bool BasicDirectoryCheck(const string& _str)
     return true;
 }
 
-static void Validate(const VFSFlexibleListingInput& _source)
+static void Validate(const VFSListingInput& _source)
 {
     if( _source.hosts.mode() == variable_container<>::type::sparse )
-        throw logic_error("VFSFlexibleListingInput validation failed: hosts can't be sparse");
+        throw logic_error("VFSListingInput validation failed: hosts can't be sparse");
     
     for( auto i = 0u, e = _source.hosts.size(); i != e; ++i )
         if( _source.hosts[i] == nullptr )
-            throw logic_error("VFSFlexibleListingInput validation failed: host can't be nullptr");
+            throw logic_error("VFSListingInput validation failed: host can't be nullptr");
     
     if( _source.directories.mode() == variable_container<>::type::sparse )
-        throw logic_error("VFSFlexibleListingInput validation failed: directories can't be sparse");
+        throw logic_error("VFSListingInput validation failed: directories can't be sparse");
 
     for( auto i = 0u, e = _source.directories.size(); i != e; ++i )
         if( !BasicDirectoryCheck( _source.directories[i] ) )
-            throw logic_error("VFSFlexibleListingInput validation failed: invalid directory");
+            throw logic_error("VFSListingInput validation failed: invalid directory");
     
     for( auto &s: _source.filenames )
         if( s.empty() )
-            throw logic_error("VFSFlexibleListingInput validation failed: filename can't be empty");
+            throw logic_error("VFSListingInput validation failed: filename can't be empty");
     
     if( _source.display_filenames.mode() == variable_container<>::type::common )
-        throw logic_error("VFSFlexibleListingInput validation failed: dispay_filenames can't be common");
+        throw logic_error("VFSListingInput validation failed: dispay_filenames can't be common");
 
     if( _source.sizes.mode() == variable_container<>::type::common )
-        throw logic_error("VFSFlexibleListingInput validation failed: sizes can't be common");
+        throw logic_error("VFSListingInput validation failed: sizes can't be common");
 
     if( _source.inodes.mode() == variable_container<>::type::common )
-        throw logic_error("VFSFlexibleListingInput validation failed: inodes can't be common");
+        throw logic_error("VFSListingInput validation failed: inodes can't be common");
 
     if( _source.symlinks.mode() == variable_container<>::type::common )
-        throw logic_error("VFSFlexibleListingInput validation failed: symlinks can't be common");
+        throw logic_error("VFSListingInput validation failed: symlinks can't be common");
     
     unsigned items_no = (unsigned)_source.filenames.size();
     if(_source.hosts.mode() == variable_container<>::type::dense &&
        _source.hosts.size() != items_no )
-        throw logic_error("VFSFlexibleListingInput validation failed: hosts amount is inconsistent");
+        throw logic_error("VFSListingInput validation failed: hosts amount is inconsistent");
     
     if(_source.directories.mode() == variable_container<>::type::dense &&
        _source.directories.size() != items_no)
-        throw logic_error("VFSFlexibleListingInput validation failed: directories amount is inconsistent");
+        throw logic_error("VFSListingInput validation failed: directories amount is inconsistent");
     
     if(_source.unix_modes.size() != items_no)
-        throw logic_error("VFSFlexibleListingInput validation failed: unix_modes amount is inconsistent");
+        throw logic_error("VFSListingInput validation failed: unix_modes amount is inconsistent");
     
     if(_source.unix_types.size() != items_no)
-        throw logic_error("VFSFlexibleListingInput validation failed: unix_types amount is inconsistent");
+        throw logic_error("VFSListingInput validation failed: unix_types amount is inconsistent");
         
     
 }
 
-shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput &&_input)
+shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
 {
     Validate( _input ); // will throw an exception on error
 
@@ -99,12 +100,12 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Build(VFSFlexibleListingInput
     return l;
 }
 
-VFSFlexibleListingInput VFSFlexibleListing::Compose(const vector<shared_ptr<VFSFlexibleListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
+VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
 {
     if( _listings.size() != _items_indeces.size() )
-        throw invalid_argument("VFSFlexibleListing::Compose input containers has different sizes");
+        throw invalid_argument("VFSListing::Compose input containers has different sizes");
     
-    VFSFlexibleListingInput result;
+    VFSListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
     result.directories.reset( variable_container<>::type::dense );
     result.display_filenames.reset( variable_container<>::type::sparse );
@@ -125,7 +126,7 @@ VFSFlexibleListingInput VFSFlexibleListing::Compose(const vector<shared_ptr<VFSF
         auto &indeces = _items_indeces[l];
         for(auto i: indeces) {
             if( i >= listing.Count() )
-                throw invalid_argument("VFSFlexibleListing::Compose: invalid index");
+                throw invalid_argument("VFSListing::Compose: invalid index");
             
             result.filenames.emplace_back ( listing.Filename(i) );
             result.unix_modes.emplace_back( listing.UnixMode(i) );
@@ -171,9 +172,9 @@ VFSFlexibleListingInput VFSFlexibleListing::Compose(const vector<shared_ptr<VFSF
     return result;
 }
 
-shared_ptr<VFSFlexibleListing> VFSFlexibleListing::EmptyListing()
+shared_ptr<VFSListing> VFSListing::EmptyListing()
 {
-    static shared_ptr<VFSFlexibleListing> empty;
+    static shared_ptr<VFSListing> empty;
     once_flag once;
     call_once(once, []{
         empty = Alloc();
@@ -184,13 +185,13 @@ shared_ptr<VFSFlexibleListing> VFSFlexibleListing::EmptyListing()
     return empty;
 }
 
-shared_ptr<VFSFlexibleListing> VFSFlexibleListing::Alloc()
+shared_ptr<VFSListing> VFSListing::Alloc()
 {
-    struct make_shared_enabler: public VFSFlexibleListing {};
+    struct make_shared_enabler: public VFSListing {};
     return make_shared<make_shared_enabler>();
 }
 
-VFSFlexibleListing::VFSFlexibleListing()
+VFSListing::VFSListing()
 {
 }
 
@@ -202,7 +203,7 @@ static CFString UTF8WithFallback(const string &_s)
     return s;
 }
 
-void VFSFlexibleListing::BuildFilenames()
+void VFSListing::BuildFilenames()
 {
     size_t i = 0, e = m_Filenames.size();
     m_ItemsCount = (unsigned)e;
@@ -245,37 +246,37 @@ void VFSFlexibleListing::BuildFilenames()
     if( (a) >= m_ItemsCount ) \
         throw out_of_range(string(__PRETTY_FUNCTION__) + ": index out of range");
 
-bool VFSFlexibleListing::HasExtension(unsigned _ind) const
+bool VFSListing::HasExtension(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind] != 0;
 }
 
-uint16_t VFSFlexibleListing::ExtensionOffset(unsigned _ind) const
+uint16_t VFSListing::ExtensionOffset(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind];
 }
 
-const char *VFSFlexibleListing::Extension(unsigned _ind) const
+const char *VFSListing::Extension(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Filenames[_ind].c_str() + m_ExtensionOffsets[_ind];
 }
 
-const string& VFSFlexibleListing::Filename(unsigned _ind) const
+const string& VFSListing::Filename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Filenames[_ind];
 }
 
-CFStringRef VFSFlexibleListing::FilenameCF(unsigned _ind) const
+CFStringRef VFSListing::FilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return *m_FilenamesCF[_ind];
 }
 
-string VFSFlexibleListing::Path(unsigned _ind) const
+string VFSListing::Path(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     if( !IsDotDot(_ind) )
@@ -288,7 +289,7 @@ string VFSFlexibleListing::Path(unsigned _ind) const
     }
 }
 
-string VFSFlexibleListing::FilenameWithoutExt(unsigned _ind) const
+string VFSListing::FilenameWithoutExt(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     if( m_ExtensionOffsets[_ind] == 0 )
@@ -296,14 +297,14 @@ string VFSFlexibleListing::FilenameWithoutExt(unsigned _ind) const
     return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind]-1);
 }
 
-const VFSHostPtr& VFSFlexibleListing::Host() const
+const VFSHostPtr& VFSListing::Host() const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
-    throw logic_error("VFSFlexibleListing::Host() called for listing with no common host");
+    throw logic_error("VFSListing::Host() called for listing with no common host");
 }
 
-const VFSHostPtr& VFSFlexibleListing::Host(unsigned _ind) const
+const VFSHostPtr& VFSListing::Host(unsigned _ind) const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
@@ -313,14 +314,14 @@ const VFSHostPtr& VFSFlexibleListing::Host(unsigned _ind) const
     }
 }
 
-const string& VFSFlexibleListing::Directory() const
+const string& VFSListing::Directory() const
 {
     if( HasCommonDirectory() )
         return m_Directories[0];
-    throw logic_error("VFSFlexibleListing::Directory() called for listing with no common directory");
+    throw logic_error("VFSListing::Directory() called for listing with no common directory");
 }
 
-const string& VFSFlexibleListing::Directory(unsigned _ind) const
+const string& VFSListing::Directory(unsigned _ind) const
 {
     if( HasCommonDirectory() ) {
         return m_Directories[0];
@@ -331,215 +332,215 @@ const string& VFSFlexibleListing::Directory(unsigned _ind) const
     }
 }
 
-bool VFSFlexibleListing::IsUniform() const
+bool VFSListing::IsUniform() const
 {
     return m_Hosts.mode() == variable_container<>::type::common &&
      m_Directories.mode() == variable_container<>::type::common;
 }
 
-bool VFSFlexibleListing::HasCommonHost() const
+bool VFSListing::HasCommonHost() const
 {
     return m_Hosts.mode() == variable_container<>::type::common;
 }
 
-bool VFSFlexibleListing::HasCommonDirectory() const
+bool VFSListing::HasCommonDirectory() const
 {
     return m_Directories.mode() == variable_container<>::type::common;
 }
 
-bool VFSFlexibleListing::HasSize(unsigned _ind) const
+bool VFSListing::HasSize(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind);
 }
 
-uint64_t VFSFlexibleListing::Size(unsigned _ind) const
+uint64_t VFSListing::Size(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
 }
 
-bool VFSFlexibleListing::HasInode(unsigned _ind) const
+bool VFSListing::HasInode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Inodes.has(_ind);
 }
 
-uint64_t VFSFlexibleListing::Inode(unsigned _ind) const
+uint64_t VFSListing::Inode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
 }
 
-bool VFSFlexibleListing::HasATime(unsigned _ind) const
+bool VFSListing::HasATime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind);
 }
 
-time_t VFSFlexibleListing::ATime(unsigned _ind) const
+time_t VFSListing::ATime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind) ? m_ATimes[_ind] : m_CreationTime;
 }
 
-bool VFSFlexibleListing::HasMTime(unsigned _ind) const
+bool VFSListing::HasMTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind);
 }
 
-time_t VFSFlexibleListing::MTime(unsigned _ind) const
+time_t VFSListing::MTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind) ? m_MTimes[_ind] : m_CreationTime;
 }
 
-bool VFSFlexibleListing::HasCTime(unsigned _ind) const
+bool VFSListing::HasCTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind);
 }
 
-time_t VFSFlexibleListing::CTime(unsigned _ind) const
+time_t VFSListing::CTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind) ? m_CTimes[_ind] : m_CreationTime;
 }
 
-bool VFSFlexibleListing::HasBTime(unsigned _ind) const
+bool VFSListing::HasBTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind);
 }
 
-time_t VFSFlexibleListing::BTime(unsigned _ind) const
+time_t VFSListing::BTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
 }
 
-mode_t VFSFlexibleListing::UnixMode(unsigned _ind) const
+mode_t VFSListing::UnixMode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixModes[_ind];
 }
 
-uint8_t VFSFlexibleListing::UnixType(unsigned _ind) const
+uint8_t VFSListing::UnixType(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixTypes[_ind];
 }
 
-bool VFSFlexibleListing::HasUID(unsigned _ind) const
+bool VFSListing::HasUID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind);
 }
 
-uid_t VFSFlexibleListing::UID(unsigned _ind) const
+uid_t VFSListing::UID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind) ? m_UIDS[_ind] : 0;
 }
 
-bool VFSFlexibleListing::HasGID(unsigned _ind) const
+bool VFSListing::HasGID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind);
 }
 
-gid_t VFSFlexibleListing::GID(unsigned _ind) const
+gid_t VFSListing::GID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind) ? m_GIDS[_ind] : 0;
 }
 
-bool VFSFlexibleListing::HasUnixFlags(unsigned _ind) const
+bool VFSListing::HasUnixFlags(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind);
 }
 
-uint32_t VFSFlexibleListing::UnixFlags(unsigned _ind) const
+uint32_t VFSListing::UnixFlags(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind) ? m_UnixFlags[_ind] : 0;
 }
 
-bool VFSFlexibleListing::HasSymlink(unsigned _ind) const
+bool VFSListing::HasSymlink(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind);
 }
 
-const string& VFSFlexibleListing::Symlink(unsigned _ind) const
+const string& VFSListing::Symlink(unsigned _ind) const
 {
     static const string st = "";
     __CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
 }
 
-bool VFSFlexibleListing::HasDisplayFilename(unsigned _ind) const
+bool VFSListing::HasDisplayFilename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind);
 }
 
-const string& VFSFlexibleListing::DisplayFilename(unsigned _ind) const
+const string& VFSListing::DisplayFilename(unsigned _ind) const
 {
     static const string st = "";
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : st;
 }
 
-CFStringRef VFSFlexibleListing::DisplayFilenameCF(unsigned _ind) const
+CFStringRef VFSListing::DisplayFilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : FilenameCF(_ind);
 }
 
-bool VFSFlexibleListing::IsDotDot(unsigned _ind) const
+bool VFSListing::IsDotDot(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
     return s[0]=='.' && s[1] == '.' && s[2] == 0;
 }
 
-bool VFSFlexibleListing::IsDir(unsigned _ind) const
+bool VFSListing::IsDir(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & S_IFMT) == S_IFDIR;
 }
 
-bool VFSFlexibleListing::IsReg(unsigned _ind) const
+bool VFSListing::IsReg(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & S_IFMT) == S_IFREG;
 }
 
-bool VFSFlexibleListing::IsHidden(unsigned _ind) const
+bool VFSListing::IsHidden(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & UF_HIDDEN)) && !IsDotDot(_ind);
 }
 
-VFSFlexibleListingItem VFSFlexibleListing::Item(unsigned _ind) const
+VFSFListingItem VFSListing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return VFSFlexibleListingItem(shared_from_this(), _ind);
+    return VFSFListingItem(shared_from_this(), _ind);
 }
 
-VFSFlexibleListing::iterator VFSFlexibleListing::begin() const noexcept
+VFSListing::iterator VFSListing::begin() const noexcept
 {
     iterator it;
-    it.i = VFSFlexibleListingItem(shared_from_this(), 0);
+    it.i = VFSFListingItem(shared_from_this(), 0);
     return it;
 }
 
-VFSFlexibleListing::iterator VFSFlexibleListing::end() const noexcept
+VFSListing::iterator VFSListing::end() const noexcept
 {
     iterator it;
-    it.i = VFSFlexibleListingItem(shared_from_this(), m_ItemsCount);
+    it.i = VFSFListingItem(shared_from_this(), m_ItemsCount);
     return it;
 }

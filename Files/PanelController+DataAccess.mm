@@ -71,9 +71,9 @@
     return inds;
 }
 
-- (vector<VFSFlexibleListingItem>)selectedEntriesOrFocusedEntries
+- (vector<VFSFListingItem>)selectedEntriesOrFocusedEntries
 {
-    vector<VFSFlexibleListingItem> items;
+    vector<VFSFListingItem> items;
     auto &d = self.data;
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )

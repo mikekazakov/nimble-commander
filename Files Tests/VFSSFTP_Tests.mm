@@ -48,7 +48,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 - (void)testBasicWithHost:(VFSHostPtr)host
 {
-    VFSFlexibleListingPtr listing;
+    VFSListingPtr listing;
     XCTAssert( host->FetchFlexibleListing("/", listing, 0, 0) == 0);
     
     if(!listing)

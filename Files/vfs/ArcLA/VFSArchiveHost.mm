@@ -11,6 +11,7 @@
 #include "../../3rd_party/libarchive/archive_entry.h"
 #include "../../Common.h"
 #include "../../AppleDoubleEA.h"
+#include "../VFSListingInput.h"
 #include "VFSArchiveHost.h"
 #include "VFSArchiveInternal.h"
 #include "VFSArchiveFile.h"
@@ -311,7 +312,7 @@ int VFSArchiveHost::CreateFile(const char* _path,
 }
 
 int VFSArchiveHost::FetchFlexibleListing(const char *_path,
-                                         shared_ptr<VFSFlexibleListing> &_target,
+                                         shared_ptr<VFSListing> &_target,
                                          int _flags,
                                          VFSCancelChecker _cancel_checker)
 {
@@ -327,7 +328,7 @@ int VFSArchiveHost::FetchFlexibleListing(const char *_path,
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
     
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.atimes.reset( variable_container<>::type::dense );
@@ -380,7 +381,7 @@ int VFSArchiveHost::FetchFlexibleListing(const char *_path,
         listing_source.unix_flags.insert( index, stat.st_flags );
     }
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     return 0;
 }
 

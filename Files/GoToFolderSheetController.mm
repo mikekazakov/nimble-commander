@@ -13,7 +13,7 @@
 
 static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
 
-static vector<unsigned> ListDirsWithPrefix(const VFSFlexibleListing& _listing, const string& _prefix)
+static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const string& _prefix)
 {
     vector<unsigned> result;
     
@@ -50,7 +50,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSFlexibleListing& _listing, c
 @implementation GoToFolderSheetController
 {
     function<void()>                m_Handler; // return VFS error code
-    shared_ptr<VFSFlexibleListing>  m_LastListing;
+    shared_ptr<VFSListing>  m_LastListing;
 }
 
 - (id)init
@@ -146,7 +146,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSFlexibleListing& _listing, c
     return false;
 }
 
-- (NSMenu*) buildMenuWithElements:(const vector<unsigned>&)_inds ofListing:(const VFSFlexibleListing&)_listing
+- (NSMenu*) buildMenuWithElements:(const vector<unsigned>&)_inds ofListing:(const VFSListing&)_listing
 {
     vector<NSString *> filenames;
     for(auto i:_inds)
@@ -227,7 +227,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSFlexibleListing& _listing, c
 }
 
 // sync operation with simple caching
-- (VFSFlexibleListing*) listingFromDir:(const string&)_path
+- (VFSListing*) listingFromDir:(const string&)_path
 {
     if( _path.empty() )
         return nullptr;
@@ -244,7 +244,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSFlexibleListing& _listing, c
         return nullptr;
     auto vfs = self.panel.vfs;
     
-    shared_ptr<VFSFlexibleListing> listing;
+    shared_ptr<VFSListing> listing;
     int ret = vfs->FetchFlexibleListing(path.c_str(),
                                         listing,
                                         VFSFlags::F_NoDotDot,

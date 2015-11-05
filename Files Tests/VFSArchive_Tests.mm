@@ -15,11 +15,11 @@ static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";
 static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 
-static vector<VFSFlexibleListingItem> FetchItems(const string& _directory_path,
+static vector<VFSFListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
                                                  VFSHost &_host)
 {
-    vector<VFSFlexibleListingItem> items;
+    vector<VFSFListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }

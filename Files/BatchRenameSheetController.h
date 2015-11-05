@@ -12,7 +12,7 @@
 #include "vfs/VFS.h"
 
 @interface BatchRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSTextFieldDelegate,NSComboBoxDelegate>
-- (instancetype) initWithItems:(vector<VFSFlexibleListingItem>)_items;
+- (instancetype) initWithItems:(vector<VFSFListingItem>)_items;
 
 - (IBAction)OnCancel:(id)sender;
 

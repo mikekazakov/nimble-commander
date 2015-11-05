@@ -452,7 +452,7 @@ bool VFSHost::ValidateFilename(const char *_filename) const
     return find_first_of(i, e, begin(invalid_chars), end(invalid_chars)) == e;
 }
 
-int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
+int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -460,10 +460,10 @@ int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListi
 int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                                        const vector<string> &_filenames,
                                        int _flags,
-                                       vector<VFSFlexibleListingItem> &_result,
+                                       vector<VFSFListingItem> &_result,
                                        VFSCancelChecker _cancel_checker)
 {
-    shared_ptr<VFSFlexibleListing> listing;
+    shared_ptr<VFSListing> listing;
     int ret = FetchFlexibleListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;

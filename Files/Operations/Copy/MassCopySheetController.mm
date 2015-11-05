@@ -38,7 +38,7 @@ static string MakeCanonicPath(string _input)
 
 @implementation MassCopySheetController
 {
-    vector<VFSFlexibleListingItem>  m_SourceItems;
+    vector<VFSFListingItem>  m_SourceItems;
     VFSHostPtr                      m_SourceHost; // can be nullptr in case of non-uniform listing
     string                          m_SourceDirectory; // may be "" if SourceHost is nullptr
     string                          m_InitialDestination;
@@ -53,7 +53,7 @@ static string MakeCanonicPath(string _input)
 @synthesize resultHost = m_ResultHost;
 @synthesize resultOptions = m_Options;
 
-- (instancetype) initWithItems:(vector<VFSFlexibleListingItem>)_source_items
+- (instancetype) initWithItems:(vector<VFSFListingItem>)_source_items
                      sourceVFS:(const VFSHostPtr&)_source_host
                sourceDirectory:(const string&)_source_directory
             initialDestination:(const string&)_initial_destination

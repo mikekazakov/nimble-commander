@@ -130,7 +130,7 @@ loadPreviousState:(bool)_load_state
             return;
         }
         
-        shared_ptr<VFSFlexibleListing> listing;
+        shared_ptr<VFSListing> listing;
         c->LoadingResultCode = c->VFS->FetchFlexibleListing(c->RequestedDirectory.c_str(),
                                                                     listing,
                                                                     m_VFSFetchingFlags,
@@ -166,7 +166,7 @@ loadPreviousState:(bool)_load_state
     }
 }
 
-- (void) loadNonUniformListing:(const shared_ptr<VFSFlexibleListing>&)_listing
+- (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{

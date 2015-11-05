@@ -71,7 +71,7 @@ static NSString *ExtractCopyToName(const string&_s)
     FileCopyOperationJobNew m_Job;
 }
 
-- (id)initWithItems:(vector<VFSFlexibleListingItem>)_files
+- (id)initWithItems:(vector<VFSFListingItem>)_files
     destinationPath:(const string&)_path
     destinationHost:(const VFSHostPtr&)_host
             options:(const FileCopyOperationOptions&)_options
@@ -116,7 +116,7 @@ static NSString *ExtractCopyToName(const string&_s)
     return self;
 }
 
-+ (instancetype) singleItemRenameOperation:(VFSFlexibleListingItem)_item
++ (instancetype) singleItemRenameOperation:(VFSFListingItem)_item
                                    newName:(const string&)_filename
 {
     FileCopyOperationOptions opts;

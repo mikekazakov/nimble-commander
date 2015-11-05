@@ -12,7 +12,7 @@
 
 @interface FileCompressOperation : Operation
 
-- (id)initWithFiles:(vector<VFSFlexibleListingItem>)_src_files
+- (id)initWithFiles:(vector<VFSFListingItem>)_src_files
             dstroot:(const string&)_dst_root
              dstvfs:(VFSHostPtr)_dst_vfs;
 

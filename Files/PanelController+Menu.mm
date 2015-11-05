@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include "vfs/VFSListingInput.h"
 #include "vfs/vfs_native.h"
 #include "vfs/vfs_ps.h"
 #include "vfs/vfs_net_ftp.h"
@@ -40,13 +41,13 @@
 #include "BatchRenameSheetController.h"
 #include "BatchRenameOperation.h"
 
-static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
+static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
-    vector<shared_ptr<VFSFlexibleListing>> listings;
+    vector<shared_ptr<VFSListing>> listings;
     vector<vector<unsigned>> indeces;
     
     for(auto &directory: _dir_to_filenames) {
-        shared_ptr<VFSFlexibleListing> listing;
+        shared_ptr<VFSListing> listing;
         if( _vfs->FetchFlexibleListing(directory.first.c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
             listings.emplace_back(listing);
             indeces.emplace_back();
@@ -64,7 +65,7 @@ static shared_ptr<VFSFlexibleListing> FetchSearchResultsAsListing(const map<stri
         }
     }
     
-    return VFSFlexibleListing::Build( VFSFlexibleListing::Compose(listings, indeces) );
+    return VFSListing::Build( VFSListing::Compose(listings, indeces) );
 }
 
 @implementation PanelController (Menu)

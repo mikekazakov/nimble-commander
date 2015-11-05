@@ -10,9 +10,9 @@
 #include "VFS.h"
 #include "PanelData.h"
 
-static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<string> &_filenames )
+static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {
-    VFSFlexibleListingInput l;
+    VFSListingInput l;
     
     l.directories.reset( variable_container<>::type::common );
     l.directories[0] = "/";
@@ -26,11 +26,11 @@ static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<string> 
         l.unix_types.emplace_back(0);
     }
     
-    return VFSFlexibleListing::Build(move(l));
+    return VFSListing::Build(move(l));
 }
 
 
-static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<NSString*> &_filenames )
+static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_filenames )
 {
     vector<string> t;
     for( auto &i: _filenames )
@@ -132,7 +132,7 @@ static shared_ptr<VFSFlexibleListing> ProduceDummyListing( const vector<NSString
         @"Public"
     });
     
-    auto empty_listing = VFSFlexibleListing::EmptyListing();
+    auto empty_listing = VFSListing::EmptyListing();
     
     auto almost_empty_listing = ProduceDummyListing({@"какой-то файл"});
     

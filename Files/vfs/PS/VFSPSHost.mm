@@ -15,6 +15,7 @@
 #undef __APPLE_API_PRIVATE
 #include "../../sysinfo.h"
 #include "../../Common.h"
+#include "../VFSListingInput.h"
 #include "VFSPSHost.h"
 #include "VFSPSInternal.h"
 #include "VFSPSFile.h"
@@ -470,7 +471,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
 }
 
 int VFSPSHost::FetchFlexibleListing(const char *_path,
-                                 shared_ptr<VFSFlexibleListing> &_target,
+                                 shared_ptr<VFSListing> &_target,
                                  int _flags,
                                  VFSCancelChecker _cancel_checker)
 {
@@ -482,7 +483,7 @@ int VFSPSHost::FetchFlexibleListing(const char *_path,
     auto data = m_Data;
     
     // set up or listing structure
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = _path;
     listing_source.sizes.reset( variable_container<>::type::dense );
@@ -502,7 +503,7 @@ int VFSPSHost::FetchFlexibleListing(const char *_path,
         listing_source.sizes.insert( index, data->files[index].size() );
     }
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     return 0;
 }
 

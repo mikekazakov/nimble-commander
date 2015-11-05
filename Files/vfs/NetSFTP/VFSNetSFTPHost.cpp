@@ -10,6 +10,7 @@
 #include "../../3rd_party/built/include/libssh2.h"
 #include "../../3rd_party/built/include/libssh2_sftp.h"
 #include "../../Common.h"
+#include "../VFSListingInput.h"
 #include "VFSNetSFTPHost.h"
 #include "VFSNetSFTPFile.h"
 
@@ -323,7 +324,7 @@ in_addr_t VFSNetSFTPHost::InetAddr() const
     return m_HostAddr;
 }
 
-int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexibleListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
+int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -333,7 +334,7 @@ int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexib
     AutoConnectionReturn acr(conn, this);
     
     // setup of listing structure
-    VFSFlexibleListingInput listing_source;
+    VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.sizes.reset( variable_container<>::type::dense );
@@ -409,7 +410,7 @@ int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSFlexib
             }
         }
     
-    _target = VFSFlexibleListing::Build(move(listing_source));
+    _target = VFSListing::Build(move(listing_source));
     
     return 0;    
 }

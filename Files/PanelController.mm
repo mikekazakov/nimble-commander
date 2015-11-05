@@ -33,7 +33,7 @@ static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuick
                                g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
                                g_DefaultsGeneralShowLocalizedFilenames];
 
-static VFSFlexibleListingPtr ProduceUpdatedTemporaryPanelListing( const VFSFlexibleListingPtr& _original )
+static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListingPtr& _original )
 {
     
     
@@ -362,7 +362,7 @@ void panel::GenericCursorPersistance::Restore() const
         auto vfs = self.vfs;
         
         m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-            shared_ptr<VFSFlexibleListing> listing;
+            shared_ptr<VFSListing> listing;
             int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
             if(ret >= 0) {
                 dispatch_to_main_queue( [=]{
@@ -390,7 +390,7 @@ void panel::GenericCursorPersistance::Restore() const
         // later: maybe check PanelType somehow
         
         
-        VFSFlexibleListing *l = (VFSFlexibleListing *) &m_Data.Listing();
+        VFSListing *l = (VFSListing *) &m_Data.Listing();
         m_Data.ReLoad( l->shared_from_this() );
         
         

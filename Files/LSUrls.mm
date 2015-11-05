@@ -58,7 +58,7 @@ static string UTIForExtenstion(const string& _extension)
     return uti;
 }
 
-LauchServicesHandlers LauchServicesHandlers::GetForItem( const VFSFlexibleListingItem &_it )
+LauchServicesHandlers LauchServicesHandlers::GetForItem( const VFSFListingItem &_it )
 {
     LauchServicesHandlers result;
     

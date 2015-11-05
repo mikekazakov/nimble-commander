@@ -589,7 +589,7 @@ struct PanelViewStateStorage
         [self OnCursorPositionChanged];
 }
 
-- (VFSFlexibleListingItem)item
+- (VFSFListingItem)item
 {
     return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }

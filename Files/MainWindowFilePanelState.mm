@@ -53,11 +53,11 @@ static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *
     return filenames;
 }
 
-static vector<VFSFlexibleListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
+static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
 {
-    vector<VFSFlexibleListingItem> source_items;
+    vector<VFSFListingItem> source_items;
     for( auto &dir: _input ) {
-        vector<VFSFlexibleListingItem> items_for_dir;
+        vector<VFSFListingItem> items_for_dir;
         if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
             move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
     }

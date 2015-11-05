@@ -246,7 +246,7 @@ void IconsGenerator::BuildGenericIcons()
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
-NSImageRep *IconsGenerator::ImageFor(const VFSFlexibleListingItem &_item, PanelVolatileData &_item_vd)
+NSImageRep *IconsGenerator::ImageFor(const VFSFListingItem &_item, PanelVolatileData &_item_vd)
 {
     assert(dispatch_is_main_queue()); // STA api design
     

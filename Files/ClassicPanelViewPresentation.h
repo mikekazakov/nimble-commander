@@ -53,10 +53,10 @@ private:
     void BuildGeometry();
     void BuildAppearance();
     void DoDraw(CGContextRef _context);
-    const DoubleColor& GetDirectoryEntryTextColor(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused);
+    const DoubleColor& GetDirectoryEntryTextColor(const VFSFListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused);
     void CalcLayout(NSSize _from_px_size);
     oms::StringBuf<6> FormHumanReadableSizeRepresentation(unsigned long _sz) const;
-    oms::StringBuf<6> FormHumanReadableSizeReprentationForDirEnt(const VFSFlexibleListingItem &_dirent, const PanelVolatileData& _vd) const;
+    oms::StringBuf<6> FormHumanReadableSizeReprentationForDirEnt(const VFSFListingItem &_dirent, const PanelVolatileData& _vd) const;
     oms::StringBuf<256> FormHumanReadableBytesAndFiles(unsigned long _sz, int _total_files) const;
     
     array<int, 3>   ColumnWidthsShort() const;

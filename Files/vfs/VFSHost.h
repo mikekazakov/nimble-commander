@@ -92,14 +92,14 @@ public:
                            VFSCancelChecker _cancel_checker);
     
     virtual int FetchFlexibleListing(const char *_path,
-                                      shared_ptr<VFSFlexibleListing> &_target,
+                                      shared_ptr<VFSListing> &_target,
                                       int _flags,
                                       VFSCancelChecker _cancel_checker);
     
     int FetchFlexibleListingItems(const string& _directory_path,
                                   const vector<string> &_filenames,
                                   int _flags,
-                                  vector<VFSFlexibleListingItem> &_result,
+                                  vector<VFSFListingItem> &_result,
                                   VFSCancelChecker _cancel_checker);
     
     /**

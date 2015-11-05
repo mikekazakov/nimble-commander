@@ -16,7 +16,7 @@
 static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
 //static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
 
-static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSFlexibleListing &_listing  )
+static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing &_listing  )
 {
     if( !_listing.IsUniform() )
         throw invalid_argument("ProduceStacksForParentDirectories: _listing should be uniform");

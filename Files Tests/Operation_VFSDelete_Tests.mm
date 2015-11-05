@@ -7,8 +7,10 @@
 //
 
 #include "tests_common.h"
-#include "VFS.h"
-#include "FileDeletionOperation.h"
+#include "../Files/vfs/VFS.h"
+#include "../Files/vfs/vfs_net_ftp.h"
+#include "../Files/vfs/vfs_native.h"
+#include "../Files/FileDeletionOperation.h"
 
 @interface Operation_VFSDelete_Tests : XCTestCase
 @end

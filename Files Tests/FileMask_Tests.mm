@@ -7,7 +7,7 @@
 //
 
 #include "tests_common.h"
-#include "FileMask.h"
+#include "../Files/FileMask.h"
 
 @interface FileMask_Tests : XCTestCase
 

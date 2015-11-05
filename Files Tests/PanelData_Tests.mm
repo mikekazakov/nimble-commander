@@ -7,8 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "VFS.h"
-#include "PanelData.h"
+#include "../Files/VFS/VFS.h"
+#include "../Files/VFS/VFSListingInput.h"
+#include "../Files/PanelData.h"
 
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {
@@ -54,7 +55,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
                                         @"even written with какие-то буквы"});
     
     PanelData data;
-    data.Load(listing);
+    data.Load(listing, PanelData::PanelType::Directory);
     
     // testing raw C sorting facility
     for(int i = 0; i < listing->Count(); ++i)
@@ -83,7 +84,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     sorting.sort = PanelSortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
-    data.Load(move(listing));
+    data.Load(move(listing), PanelData::PanelType::Directory);
     
     XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 1);
@@ -145,7 +146,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     
-    data.Load(listing);
+    data.Load(listing, PanelData::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName(".Trash") >= 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
@@ -172,18 +173,18 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedDirectoryEntries().size() == 1);
     
     // now test what will happen on empty listing
-    data.Load(empty_listing);
+    data.Load(empty_listing, PanelData::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") < 0);
 
     // now test what will happen on almost empty listing (will became empty after filtering)
-    data.Load(almost_empty_listing);
+    data.Load(almost_empty_listing, PanelData::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") < 0);
     
     // now more comples situations
     filtering.text.text = @"IC";
     data.SetHardFiltering(filtering);
     auto count = listing->Count();
-    data.Load(listing);
+    data.Load(listing, PanelData::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Music") >= 0);
     XCTAssert(data.SortedIndexForName("Pictures") >= 0);

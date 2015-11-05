@@ -8,8 +8,8 @@
 
 #include <Habanero/CommonPaths.h>
 #include "tests_common.h"
-#include "TermShellTask.h"
-#include "common.h"
+#include "../Files/TermShellTask.h"
+#include "../Files/common.h"
 
 static void testMicrosleep(uint64_t _microseconds)
 {

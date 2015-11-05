@@ -7,9 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "VFS.h"
-#include "PanelData.h"
-#include "FileWindow.h"
+#include "../Files/VFS/VFS.h"
+#include "../Files/PanelData.h"
+#include "../Files/FileWindow.h"
 #include <random>
 
 class TestGenericMemReadOnlyFile : public VFSFile

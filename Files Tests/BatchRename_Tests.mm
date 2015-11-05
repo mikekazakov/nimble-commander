@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "tests_common.h"
-#import "BatchRename.h"
+#include "tests_common.h"
+#include "../Files/BatchRename.h"
 
 @interface BatchRename_Tests : XCTestCase
 

@@ -6,9 +6,11 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "tests_common.h"
-#import "VFS.h"
-#import "FileCopyOperation.h"
+#include "tests_common.h"
+#include "../Files/vfs/VFS.h"
+#include "../Files/vfs/vfs_arc_la.h"
+#include "../Files/vfs/vfs_native.h"
+#include "../Files/Operations/Copy/FileCopyOperation.h"
 
 static const string g_Preffix = "/.FilesTestingData/archives/";
 static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";

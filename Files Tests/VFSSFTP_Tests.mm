@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "tests_common.h"
-#import "VFS.h"
-#import "PanelData.h"
+#include "tests_common.h"
+#include "../Files/vfs/vfs_net_sftp.h"
+#include "../Files/PanelData.h"
 
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local";
@@ -55,7 +55,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         return;
     
     PanelData data;
-    data.Load(listing);
+    data.Load(listing, PanelData::PanelType::Directory);
     XCTAssert( data.Listing().Count() == 22);
     XCTAssert( "bin"s == data.EntryAtSortPosition(0).Name() );
     XCTAssert( "var"s == data.EntryAtSortPosition(19).Name() );

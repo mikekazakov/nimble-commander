@@ -7,8 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "VFS.h"
-#include "FileCopyOperation.h"
+#include "../Files/VFS/VFS.h"
+#include "../Files/VFS/vfs_native.h"
+#include "../Files/Operations/Copy/FileCopyOperation.h"
 
 
 static vector<VFSFListingItem> FetchItems(const string& _directory_path,

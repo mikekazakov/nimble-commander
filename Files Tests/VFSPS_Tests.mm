@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "tests_common.h"
-#import "VFS.h"
+#include "tests_common.h"
+#include "../Files/vfs/vfs_ps.h"
 
 @interface VFSPS_Tests : XCTestCase
 @end

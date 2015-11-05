@@ -7,7 +7,10 @@
 //
 
 #import "tests_common.h"
-#import "VFS.h"
+#include "../Files/vfs/VFS.h"
+#include "../Files/vfs/vfs_net_ftp.h"
+#include "../Files/vfs/vfs_native.h"
+
 
 static string g_LocalFTP = "192.168.2.5";
 static string g_LocalTestPath = "/Public/!FilesTesting/";

@@ -8,7 +8,7 @@
 
 #include <random>
 #include "tests_common.h"
-#include "chained_strings.h"
+#include "../Files/chained_strings.h"
 
 @interface chained_strings_Tests : XCTestCase
 @end

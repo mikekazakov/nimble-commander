@@ -117,7 +117,7 @@ void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
         src_i = 0, src_e = m_Listing->Count();
         for( ;src_i != src_e && dst_i != dst_e; ++src_i ) {
             int src = m_EntriesByRawName[src_i];
-        check:  int dst = (dirbyrawcname)[dst_i];
+        check:  int dst = dirbyrawcname[dst_i];
             int cmp = m_Listing->Filename(src).compare( _listing->Filename(dst) );
             if( cmp == 0 ) {
                 new_vd[ dst ] = m_VolatileData[ src ];
@@ -159,12 +159,11 @@ void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
     }
     else
         throw invalid_argument("PanelData::ReLoad: incompatible listing type!");
-
     
     // put a new data in a place
     m_Listing = move(_listing);
     m_VolatileData = move(new_vd);
-    m_EntriesByRawName.swap(dirbyrawcname);
+    m_EntriesByRawName = move(dirbyrawcname);
     
     // now sort our new data with custom sortings
     DoSortWithHardFiltering();

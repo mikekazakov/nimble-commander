@@ -72,10 +72,27 @@ static void Validate(const VFSListingInput& _source)
     
 }
 
+static void Compress( VFSListingInput &_input )
+{
+    if( _input.sizes.mode() == variable_container<>::type::sparse && _input.sizes.is_contiguous() )         _input.sizes.compress_contiguous();
+    if( _input.inodes.mode() == variable_container<>::type::sparse && _input.inodes.is_contiguous() )     	_input.inodes.compress_contiguous();
+    if( _input.atimes.mode() == variable_container<>::type::sparse && _input.atimes.is_contiguous() )       _input.atimes.compress_contiguous();
+    if( _input.mtimes.mode() == variable_container<>::type::sparse && _input.mtimes.is_contiguous() )       _input.mtimes.compress_contiguous();
+    if( _input.ctimes.mode() == variable_container<>::type::sparse && _input.ctimes.is_contiguous() )       _input.ctimes.compress_contiguous();
+    if( _input.btimes.mode() == variable_container<>::type::sparse && _input.btimes.is_contiguous() )       _input.btimes.compress_contiguous();
+    if( _input.uids.mode() == variable_container<>::type::sparse && _input.uids.is_contiguous() )           _input.uids.compress_contiguous();
+    if( _input.gids.mode() == variable_container<>::type::sparse && _input.gids.is_contiguous() )           _input.gids.compress_contiguous();
+    if( _input.unix_flags.mode() == variable_container<>::type::sparse && _input.unix_flags.is_contiguous() ) _input.unix_flags.compress_contiguous();
+
+    // todo: ability to compress hosts into common? dense is an overkill here in most cases
+    
+}
+
 shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
 {
     Validate( _input ); // will throw an exception on error
-
+    Compress( _input );
+    
     auto l = Alloc();
     l->m_Hosts = move(_input.hosts);
     l->m_Directories = move(_input.directories);
@@ -159,17 +176,68 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
             count++;
         }
     }
-    if( result.sizes.is_contiguous() )      result.sizes.compress_contiguous();
-    if( result.inodes.is_contiguous() )     result.inodes.compress_contiguous();
-    if( result.atimes.is_contiguous() )     result.atimes.compress_contiguous();
-    if( result.mtimes.is_contiguous() )     result.mtimes.compress_contiguous();
-    if( result.ctimes.is_contiguous() )     result.ctimes.compress_contiguous();
-    if( result.btimes.is_contiguous() )     result.btimes.compress_contiguous();
-    if( result.uids.is_contiguous() )       result.uids.compress_contiguous();
-    if( result.gids.is_contiguous() )       result.gids.compress_contiguous();
-    if( result.unix_flags.is_contiguous() ) result.unix_flags.compress_contiguous();
     
     return result;
+}
+
+VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker )
+{
+    VFSListingInput result;
+    unsigned count = 0;
+    result.hosts.reset( variable_container<>::type::dense );
+    result.directories.reset( variable_container<>::type::dense );
+    result.display_filenames.reset( variable_container<>::type::sparse );
+    result.sizes.reset( variable_container<>::type::sparse );
+    result.inodes.reset( variable_container<>::type::sparse );
+    result.atimes.reset( variable_container<>::type::sparse );
+    result.mtimes.reset( variable_container<>::type::sparse );
+    result.ctimes.reset( variable_container<>::type::sparse );
+    result.btimes.reset( variable_container<>::type::sparse );
+    result.uids.reset( variable_container<>::type::sparse );
+    result.gids.reset( variable_container<>::type::sparse );
+    result.unix_flags.reset( variable_container<>::type::sparse );
+    result.symlinks.reset( variable_container<>::type::sparse );
+    
+    for(unsigned i = 0, e = _original.Count(); i != e; ++i) {
+        if( _cancel_checker && _cancel_checker() )
+            return  nullptr;
+        
+        char path[MAXPATHLEN];
+        strcpy( path, _original.Directory(i).c_str() );
+        strcat( path, _original.Filename(i).c_str() );
+        
+        VFSStat st;
+        auto stat_flags = _original.IsSymlink(i) ? VFSFlags::F_NoFollow : 0;
+        if( _original.Host(i)->Stat(path, st, stat_flags, _cancel_checker) == 0 ) {
+            
+            result.filenames.emplace_back ( _original.Filename(i) );
+            result.unix_modes.emplace_back( _original.UnixMode(i) );
+            result.unix_types.emplace_back( _original.UnixType(i) );
+            result.hosts.insert      ( count, _original.Host(i) );
+            result.directories.insert( count, _original.Directory(i) );
+            
+            if( st.meaning.size )   result.sizes.insert( count, st.size );
+            if( st.meaning.inode )  result.inodes.insert( count, st.inode );
+            if( st.meaning.atime )  result.atimes.insert( count, st.atime.tv_sec );
+            if( st.meaning.btime )  result.btimes.insert( count, st.btime.tv_sec );
+            if( st.meaning.ctime )  result.ctimes.insert( count, st.ctime.tv_sec );
+            if( st.meaning.mtime )  result.mtimes.insert( count, st.mtime.tv_sec );
+            if( st.meaning.uid )    result.uids.insert( count, st.uid );
+            if( st.meaning.gid )    result.gids.insert( count, st.gid );
+            if( st.meaning.flags )  result.unix_flags.insert( count, st.flags );
+            
+            // mb update symlink too?
+            if( _original.HasSymlink(i) ) result.symlinks.insert( count, _original.Symlink(i) );
+            if( _original.HasDisplayFilename(i) ) result.display_filenames.insert( count, _original.DisplayFilename(i) );
+            
+            count++;
+        }
+    }
+    
+    if( _cancel_checker && _cancel_checker() )
+        return  nullptr;
+    
+    return Build( move(result) );
 }
 
 shared_ptr<VFSListing> VFSListing::EmptyListing()
@@ -517,6 +585,12 @@ bool VFSListing::IsReg(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & S_IFMT) == S_IFREG;
+}
+
+bool VFSListing::IsSymlink(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_UnixTypes[_ind] == DT_LNK;
 }
 
 bool VFSListing::IsHidden(unsigned _ind) const

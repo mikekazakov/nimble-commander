@@ -18,8 +18,8 @@ class VFSFListingItem;
 class VFSListing : public enable_shared_from_this<VFSListing>
 {
 public:
-    static shared_ptr<VFSListing> EmptyListing();
-    static shared_ptr<VFSListing> Build(VFSListingInput &&_input);
+    static VFSListingPtr    EmptyListing();
+    static VFSListingPtr    Build(VFSListingInput &&_input);
     
     /**
      * compose many listings into a new ListingInput.
@@ -27,6 +27,9 @@ public:
      * will throw on errors
      */
     static VFSListingInput Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces);
+    
+    
+    static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker );
     
     unsigned            Count               () const noexcept { return m_ItemsCount; };
     bool                IsUniform           () const;
@@ -97,6 +100,7 @@ public:
     bool                IsDotDot            (unsigned _ind) const;
     bool                IsDir               (unsigned _ind) const;
     bool                IsReg               (unsigned _ind) const;
+    bool                IsSymlink           (unsigned _ind) const;
     bool                IsHidden            (unsigned _ind) const;
     
     struct iterator;
@@ -204,7 +208,7 @@ public:
     
     bool            IsDir()             const { return L->IsDir(I);                 }
     bool            IsReg()             const { return L->IsReg(I);                 }
-    bool            IsSymlink()         const { return L->HasSymlink(I);            }
+    bool            IsSymlink()         const { return L->IsSymlink(I);             }
     bool            IsDotDot()          const { return L->IsDotDot(I);              }
     bool            IsHidden()          const { return L->IsHidden(I);              }
     

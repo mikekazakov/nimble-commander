@@ -33,15 +33,6 @@ static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuick
                                g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
                                g_DefaultsGeneralShowLocalizedFilenames];
 
-static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListingPtr& _original )
-{
-    
-    
-    
-    
-}
-
-
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
     m_Data(_data)
@@ -348,52 +339,57 @@ void panel::GenericCursorPersistance::Restore() const
     [self HandleOpenInSystem];
 }
 
+- (void) ReLoadRefreshedListing:(const VFSListingPtr &)_ptr
+{
+    assert(dispatch_is_main_queue());
+    
+    panel::GenericCursorPersistance pers(m_View, m_Data);
+    
+    m_Data.ReLoad(_ptr);
+    [m_View dataUpdated];
+    
+    if(![self CheckAgainstRequestedSelection])
+        pers.Restore();
+    
+    [self OnCursorChanged];
+    [self QuickSearchUpdate];
+    [m_View setNeedsDisplay];
+}
+
 - (void) RefreshDirectory
 {
     if(m_View == nil) return; // guard agains calls from init process
-
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())
         return; //reducing overhead
 
+    // later: maybe check PanelType somehow
+    
     if( self.isUniform ) {
         string dirpath = m_Data.DirectoryPathWithTrailingSlash();
         auto vfs = self.vfs;
-        
         m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-            shared_ptr<VFSListing> listing;
+            VFSListingPtr listing;
             int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
-            if(ret >= 0) {
+            if(ret >= 0)
                 dispatch_to_main_queue( [=]{
-                    panel::GenericCursorPersistance pers(m_View, m_Data);
-                    
-                    m_Data.ReLoad(listing);
-                    [m_View dataUpdated];
-                    
-                    if(![self CheckAgainstRequestedSelection])
-                        pers.Restore();
-                    
-                    [self OnCursorChanged];
-                    [self QuickSearchUpdate];
-                    [m_View setNeedsDisplay];
+                    [self ReLoadRefreshedListing:listing];
                 });
-            }
-            else {
+            else
                 dispatch_to_main_queue( [=]{
                     [self RecoverFromInvalidDirectory];
                 });
-            }
         });
     }
     else {
-        // later: maybe check PanelType somehow
-        
-        
-        VFSListing *l = (VFSListing *) &m_Data.Listing();
-        m_Data.ReLoad( l->shared_from_this() );
-        
-        
+        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+            auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing( m_Data.Listing(), [&]{ return _q->IsStopped(); } );
+            if( listing )
+                dispatch_to_main_queue( [=]{
+                    [self ReLoadRefreshedListing:listing];
+                });
+        });
     }
 }
 
@@ -489,6 +485,9 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) CalculateSizesWithNames:(const vector<string>&) _filenames
 {
+    if( !self.isUniform )
+        return; // not supported for temporary panels currently
+    
     function<void(const char*, uint64_t)> complet = [=](const char* _sub_dir, uint64_t _size) {
         string sub_dir = _sub_dir;
         dispatch_to_main_queue([=]{

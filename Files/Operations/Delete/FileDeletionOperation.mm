@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileDeletionOperation.h"
-#import "FileDeletionOperationJob.h"
-#import "FileDeletionOperationVFSJob.h"
-#import "OperationDialogAlert.h"
-#import "Common.h"
-#import "PanelController.h"
+#include "FileDeletionOperation.h"
+#include "FileDeletionOperationJob.h"
+#include "FileDeletionOperationVFSJob.h"
+#include "../../OperationDialogAlert.h"
+#include "../../Common.h"
+#include "../../PanelController.h"
 
 @implementation FileDeletionOperation
 {

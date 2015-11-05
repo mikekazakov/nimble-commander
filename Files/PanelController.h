@@ -123,6 +123,7 @@ namespace panel
     
     NSPopover            *m_SelectionWithMaskPopover;
     
+    
     __weak MainWindowFilePanelState* m_FilePanelState;
 }
 
@@ -135,6 +136,7 @@ namespace panel
 @property (nonatomic, readonly) NSWindow* window;
 @property (nonatomic) NSDictionary* options;
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;
+@property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;

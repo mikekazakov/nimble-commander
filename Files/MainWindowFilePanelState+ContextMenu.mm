@@ -6,17 +6,17 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/stat.h>
-#import <Sparkle/Sparkle.h>
-#import "MainWindowFilePanelState+ContextMenu.h"
-#import "Common.h"
-#import "sysinfo.h"
-#import "PanelAux.h"
-#import "LSUrls.h"
-#import "FileDeletionOperation.h"
-#import "PanelController.h"
-#import "FileCompressOperation.h"
-#import "Operations/Copy/FileCopyOperation.h"
+#include <sys/stat.h>
+#include <Sparkle/Sparkle.h>
+#include "MainWindowFilePanelState+ContextMenu.h"
+#include "Common.h"
+#include "sysinfo.h"
+#include "PanelAux.h"
+#include "LSUrls.h"
+#include "Operations/Delete/FileDeletionOperation.h"
+#include "PanelController.h"
+#include "FileCompressOperation.h"
+#include "Operations/Copy/FileCopyOperation.h"
 
 struct OpenWithHandler
 {

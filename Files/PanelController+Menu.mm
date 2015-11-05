@@ -25,7 +25,7 @@
 #include "FindFilesSheetController.h"
 #include "MainWindowController.h"
 #include "ExternalEditorInfo.h"
-#include "FileDeletionSheetController.h"
+#include "Operations/Delete/FileDeletionSheetController.h"
 #include "CreateDirectorySheetController.h"
 #include "CreateDirectoryOperation.h"
 #include "FTPConnectionSheetController.h"

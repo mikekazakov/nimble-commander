@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileDeletionSheetController.h"
-#import "Common.h"
+#include "FileDeletionSheetController.h"
+#include "../../Common.h"
 
 @implementation FileDeletionSheetController
 {

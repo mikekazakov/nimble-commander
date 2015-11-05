@@ -8,9 +8,9 @@
 
 #pragma once
 
-#import "OperationJob.h"
-#import "FileDeletionOperation.h"
-#import "chained_strings.h"
+#include "../../OperationJob.h"
+#include "FileDeletionOperation.h"
+#include "../../chained_strings.h"
 
 class FileDeletionOperationVFSJob : public OperationJob
 {

@@ -6,23 +6,23 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "MainWindowFilePanelState+Menu.h"
-#import "ActionsShortcutsManager.h"
-#import "PanelController.h"
-#import "FileDeletionOperation.h"
-#import "FilePanelMainSplitView.h"
-#import "OperationsController.h"
-#import "Common.h"
-#import "ExternalEditorInfo.h"
-#import "MainWindowController.h"
-#import "FileCompressOperation.h"
-#import "FileLinkNewSymlinkSheetController.h"
-#import "FileLinkAlterSymlinkSheetController.h"
-#import "FileLinkNewHardlinkSheetController.h"
-#import "FileLinkOperation.h"
-#import "Operations/Copy/FileCopyOperation.h"
-#import "Operations/Copy/MassCopySheetController.h"
+#include <Habanero/CommonPaths.h>
+#include "MainWindowFilePanelState+Menu.h"
+#include "ActionsShortcutsManager.h"
+#include "PanelController.h"
+#include "Operations/Delete/FileDeletionOperation.h"
+#include "FilePanelMainSplitView.h"
+#include "OperationsController.h"
+#include "Common.h"
+#include "ExternalEditorInfo.h"
+#include "MainWindowController.h"
+#include "FileCompressOperation.h"
+#include "FileLinkNewSymlinkSheetController.h"
+#include "FileLinkAlterSymlinkSheetController.h"
+#include "FileLinkNewHardlinkSheetController.h"
+#include "FileLinkOperation.h"
+#include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/Copy/MassCopySheetController.h"
 
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 

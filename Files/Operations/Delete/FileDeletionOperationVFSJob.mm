@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileDeletionOperationVFSJob.h"
-#import "OperationDialogAlert.h"
+#include "FileDeletionOperationVFSJob.h"
+#include "../../OperationDialogAlert.h"
 
 void FileDeletionOperationVFSJob::Init(vector<string>&& _files,
                                        const string &_root,

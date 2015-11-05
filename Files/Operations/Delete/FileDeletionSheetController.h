@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileDeletionOperation.h"
-#import "ButtonWithOptions.h"
+#include "FileDeletionOperation.h"
+#include "../../ButtonWithOptions.h"
 
 typedef void (^FileDeletionSheetCompletionHandler)(int result);
 

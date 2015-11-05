@@ -180,6 +180,11 @@ void panel::GenericCursorPersistance::Restore() const
     return m_Data.Listing().IsUniform();
 }
 
+- (bool) receivesUpdateNotifications
+{
+    return (bool)m_UpdatesObservationTicket;
+}
+
 - (void) setOptions:(NSDictionary *)options
 {
     auto hard_filtering = m_Data.HardFiltering();

@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../NativeFSManager.h"
+#include "../../OperationDialogAlert.h"
+#include "../../3rd_party/rdrand/rdrand.h"
+#include "../../Common.h"
+#include "../../RoutedIO.h"
 #include "FileDeletionOperationJob.h"
-#include "NativeFSManager.h"
-#include "OperationDialogAlert.h"
-#include "3rd_party/rdrand/rdrand.h"
-#include "Common.h"
-#include "RoutedIO.h"
 
 static void Randomize(unsigned char *_data, unsigned _size)
 {

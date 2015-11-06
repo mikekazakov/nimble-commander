@@ -99,7 +99,7 @@ public:
     int FetchFlexibleListingItems(const string& _directory_path,
                                   const vector<string> &_filenames,
                                   int _flags,
-                                  vector<VFSFListingItem> &_result,
+                                  vector<VFSListingItem> &_result,
                                   VFSCancelChecker _cancel_checker);
     
     /**

@@ -10,7 +10,7 @@
 #include "../Files/vfs/VFS.h"
 #include "../Files/vfs/vfs_net_ftp.h"
 #include "../Files/vfs/vfs_native.h"
-#include "../Files/FileDeletionOperation.h"
+#include "../Files/Operations/Delete/FileDeletionOperation.h"
 
 @interface Operation_VFSDelete_Tests : XCTestCase
 @end

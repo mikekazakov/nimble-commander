@@ -449,7 +449,7 @@ static NSString *ExtractCopyToName(const string&_s)
 
 - (bool) isSingleFileCopy
 {
-    return m_Job.IsSingleItemProcessing();
+    return m_Job.IsSingleScannedItemProcessing();
 }
 
 - (void) setupDialogs

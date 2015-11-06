@@ -124,6 +124,7 @@ void FileCopyOperationJob::Init(vector<VFSListingItem> _source_items,
         throw invalid_argument("FileCopyOperationJobNew::Init: m_InitialDestinationPath should be an absolute path");
     m_DestinationHost = _dest_host;
     m_Options = _opts;
+    m_IsSingleInitialItemProcessing = m_VFSListingItems.size() == 1;
     
     if(m_Options.force_overwrite)
         m_OverwriteAll = true;
@@ -132,9 +133,14 @@ void FileCopyOperationJob::Init(vector<VFSListingItem> _source_items,
         cerr << "FileCopyOperationJobNew::Init(..) was called with an empty entries list!" << endl;
 }
 
-bool FileCopyOperationJob::IsSingleItemProcessing() const noexcept
+bool FileCopyOperationJob::IsSingleInitialItemProcessing() const noexcept
 {
-    return m_IsSingleItemProcessing;
+    return m_IsSingleInitialItemProcessing;
+}
+
+bool FileCopyOperationJob::IsSingleScannedItemProcessing() const noexcept
+{
+    return m_IsSingleScannedItemProcessing;
 }
 
 FileCopyOperationJob::JobStage FileCopyOperationJob::Stage() const noexcept
@@ -183,7 +189,7 @@ void FileCopyOperationJob::Do()
     }
     m_SourceItems = move( get<1>(scan_result) );
     
-    m_IsSingleItemProcessing = m_SourceItems.ItemsAmount() == 1;
+    m_IsSingleScannedItemProcessing = m_SourceItems.ItemsAmount() == 1;
     
     m_VFSListingItems.clear(); // don't need them anymore
     
@@ -384,7 +390,7 @@ string FileCopyOperationJob::ComposeDestinationNameForItem( int _src_item_index 
     else {
         auto result = m_DestinationPath;
         auto src = m_SourceItems.ComposeRelativePath(_src_item_index);
-        if( m_IsSingleItemProcessing ) {
+        if( m_IsSingleInitialItemProcessing ) {
             // for top level we need to just leave path without changes - skip top level's entry name.
             // for nested entries we need to cut first part of a path.
             //            if(strchr(_path, '/') != 0)

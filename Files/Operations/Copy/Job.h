@@ -42,7 +42,8 @@ public:
               );
     
     JobStage Stage() const noexcept;
-    bool IsSingleItemProcessing() const noexcept;
+    bool IsSingleInitialItemProcessing() const noexcept;
+    bool IsSingleScannedItemProcessing() const noexcept;
     void ToggleSkipAll();
     void ToggleOverwriteAll();
     void ToggleAppendAll();
@@ -193,7 +194,8 @@ private:
     const unique_ptr<uint8_t[]>                 m_Buffers[2]    = { make_unique<uint8_t[]>(m_BufferSize), make_unique<uint8_t[]>(m_BufferSize) };
     
     const DispatchGroup                         m_IOGroup;
-    bool                                        m_IsSingleItemProcessing = false;
+    bool                                        m_IsSingleInitialItemProcessing = false;
+    bool                                        m_IsSingleScannedItemProcessing = false;
     bool                                        m_SkipAll       = false;
     bool                                        m_OverwriteAll  = false;
     bool                                        m_AppendAll     = false;

@@ -7,7 +7,7 @@
 //
 
 #include "FileCopyOperation.h"
-#include "FileCopyOperationJobNew.h"
+#include "Job.h"
 #include "../../Common.h"
 #include "../../ByteCountFormatter.h"
 #include "../../OperationDialogAlert.h"
@@ -68,7 +68,7 @@ static NSString *ExtractCopyToName(const string&_s)
 
 @implementation FileCopyOperation
 {
-    FileCopyOperationJobNew m_Job;
+    FileCopyOperationJob m_Job;
 }
 
 - (id)initWithItems:(vector<VFSListingItem>)_files
@@ -106,7 +106,7 @@ static NSString *ExtractCopyToName(const string&_s)
                                           nullptr,
                                           [weak_self]{ if(auto me = weak_self) [me updateOnItemChanged]; }
                                           );
-        m_Job.RegisterObserver(FileCopyOperationJobNew::Notify::Stage,
+        m_Job.RegisterObserver(FileCopyOperationJob::Notify::Stage,
                                nullptr,
                                [weak_self]{ if(auto me = weak_self) [me updateOnStageChanged]; }
                                );
@@ -217,7 +217,7 @@ static NSString *ExtractCopyToName(const string&_s)
 
 - (void)updateOnStageChanged
 {
-    if( m_Job.Stage() == FileCopyOperationJobNew::JobStage::Cleaning )
+    if( m_Job.Stage() == FileCopyOperationJob::JobStage::Cleaning )
         self.ShortInfo = NSLocalizedStringFromTable(@"Cleaning up",
                                                     @"Operations",
                                                     "ShortInfo text for file copy operation when it's cleaning source files");
@@ -225,7 +225,7 @@ static NSString *ExtractCopyToName(const string&_s)
 
 - (void)updateOnItemChanged
 {
-    if( m_Job.Stage() == FileCopyOperationJobNew::JobStage::Verify )
+    if( m_Job.Stage() == FileCopyOperationJob::JobStage::Verify )
         self.ShortInfo = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Verifying \u201c%@\u201d",
                                                                                @"Operations",
                                                                                "ShortInfo text for file copy operation when veryfying a copy result"),

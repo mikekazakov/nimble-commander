@@ -8,3 +8,9 @@ void FileDeletionOperationJobNew::Init(vector<VFSListingItem> _files, FileDeleti
     
     m_OriginalItems = move(_files);
 }
+
+void FileDeletionOperationJobNew::Do()
+{
+    
+    
+}

@@ -17,7 +17,7 @@
 #include "../../OperationDialogProtocol.h"
 #include "DialogResults.h"
 
-class FileCopyOperationJobNew : public OperationJob
+class FileCopyOperationJob : public OperationJob
 {
 public:
     

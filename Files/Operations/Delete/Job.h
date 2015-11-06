@@ -10,6 +10,9 @@ public:
     void Init(vector<VFSListingItem> _files, FileDeletionOperationType _type);
     
 private:
+    virtual void Do() override;
+    
+    
     vector<VFSListingItem>      m_OriginalItems;
     
 

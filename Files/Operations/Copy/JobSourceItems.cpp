@@ -8,9 +8,9 @@
 
 #include <Habanero/algo.h>
 #include "../../Common.h"
-#include "FileCopyOperationJobNew.h"
+#include "Job.h"
 
-int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )
+int FileCopyOperationJob::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )
 {
     if( _host_index >= m_SourceItemsHosts.size() ||
        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
@@ -34,14 +34,14 @@ int FileCopyOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, unsi
     return int(m_Items.size() - 1);
 }
 
-string FileCopyOperationJobNew::SourceItems::ComposeFullPath( int _item_no ) const
+string FileCopyOperationJob::SourceItems::ComposeFullPath( int _item_no ) const
 {
     auto rel_path = ComposeRelativePath( _item_no );
     rel_path.insert(0, m_SourceItemsBaseDirectories[ m_Items[_item_no].base_dir_index] );
     return rel_path;
 }
 
-string FileCopyOperationJobNew::SourceItems::ComposeRelativePath( int _item_no ) const
+string FileCopyOperationJob::SourceItems::ComposeRelativePath( int _item_no ) const
 {
     auto &meta = m_Items.at(_item_no);
     array<int, 128> parents;
@@ -61,57 +61,57 @@ string FileCopyOperationJobNew::SourceItems::ComposeRelativePath( int _item_no )
     return path;
 }
 
-int FileCopyOperationJobNew::SourceItems::ItemsAmount() const noexcept
+int FileCopyOperationJob::SourceItems::ItemsAmount() const noexcept
 {
     return (int)m_Items.size();
 }
 
-uint64_t FileCopyOperationJobNew::SourceItems::TotalRegBytes() const noexcept
+uint64_t FileCopyOperationJob::SourceItems::TotalRegBytes() const noexcept
 {
     return m_TotalRegBytes;
 }
 
-mode_t FileCopyOperationJobNew::SourceItems::ItemMode( int _item_no ) const
+mode_t FileCopyOperationJob::SourceItems::ItemMode( int _item_no ) const
 {
     return m_Items.at(_item_no).mode;
 }
 
-uint64_t FileCopyOperationJobNew::SourceItems::ItemSize( int _item_no ) const
+uint64_t FileCopyOperationJob::SourceItems::ItemSize( int _item_no ) const
 {
     return m_Items.at(_item_no).item_size;
 }
 
-const string& FileCopyOperationJobNew::SourceItems::ItemName( int _item_no ) const
+const string& FileCopyOperationJob::SourceItems::ItemName( int _item_no ) const
 {
     return m_Items.at(_item_no).item_name;
 }
 
-dev_t FileCopyOperationJobNew::SourceItems::ItemDev( int _item_no ) const
+dev_t FileCopyOperationJob::SourceItems::ItemDev( int _item_no ) const
 {
     return m_Items.at(_item_no).dev_num;
 }
 
-VFSHost &FileCopyOperationJobNew::SourceItems::ItemHost( int _item_no ) const
+VFSHost &FileCopyOperationJob::SourceItems::ItemHost( int _item_no ) const
 {
     return *m_SourceItemsHosts[ m_Items.at(_item_no).host_index ];
 }
 
-uint16_t FileCopyOperationJobNew::SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
+uint16_t FileCopyOperationJob::SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
 {
     return (uint16_t)linear_find_or_insert(m_SourceItemsHosts, _host);
 }
 
-unsigned FileCopyOperationJobNew::SourceItems::InsertOrFindBaseDir( const string &_dir )
+unsigned FileCopyOperationJob::SourceItems::InsertOrFindBaseDir( const string &_dir )
 {
     return (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, _dir);
 }
 
-const string &FileCopyOperationJobNew::SourceItems::BaseDir( unsigned _ind ) const
+const string &FileCopyOperationJob::SourceItems::BaseDir( unsigned _ind ) const
 {
     return m_SourceItemsBaseDirectories.at(_ind);
 }
 
-VFSHost &FileCopyOperationJobNew::SourceItems::Host( uint16_t _ind ) const
+VFSHost &FileCopyOperationJob::SourceItems::Host( uint16_t _ind ) const
 {
     return *m_SourceItemsHosts.at(_ind);
 }

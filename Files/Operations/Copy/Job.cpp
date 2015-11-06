@@ -18,7 +18,7 @@
 
 
 #include "../../RoutedIO.h"
-#include "FileCopyOperationJobNew.h"
+#include "Job.h"
 #include "DialogResults.h"
 
 static bool ShouldPreallocateSpace(int64_t _bytes_to_write, const NativeFileSystemInfo &_fs_info)
@@ -104,7 +104,7 @@ static string FilenameFromPath(string _str)
     return _str;
 }
 
-FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
+FileCopyOperationJob::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
     original_item( _source_ind ),
     destination_path( move(_destination) )
 {
@@ -113,7 +113,7 @@ FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_i
     copy(begin(_md5), end(_md5), begin(md5.buf));
 }
 
-void FileCopyOperationJobNew::Init(vector<VFSListingItem> _source_items,
+void FileCopyOperationJob::Init(vector<VFSListingItem> _source_items,
                                    const string &_dest_path,
                                    const VFSHostPtr &_dest_host,
                                    FileCopyOperationOptions _opts)
@@ -132,32 +132,32 @@ void FileCopyOperationJobNew::Init(vector<VFSListingItem> _source_items,
         cerr << "FileCopyOperationJobNew::Init(..) was called with an empty entries list!" << endl;
 }
 
-bool FileCopyOperationJobNew::IsSingleItemProcessing() const noexcept
+bool FileCopyOperationJob::IsSingleItemProcessing() const noexcept
 {
     return m_IsSingleItemProcessing;
 }
 
-FileCopyOperationJobNew::JobStage FileCopyOperationJobNew::Stage() const noexcept
+FileCopyOperationJob::JobStage FileCopyOperationJob::Stage() const noexcept
 {
     return m_Stage;
 }
 
-void FileCopyOperationJobNew::ToggleSkipAll()
+void FileCopyOperationJob::ToggleSkipAll()
 {
     m_SkipAll = true;
 }
 
-void FileCopyOperationJobNew::ToggleOverwriteAll()
+void FileCopyOperationJob::ToggleOverwriteAll()
 {
     m_OverwriteAll = true;
 }
 
-void FileCopyOperationJobNew::ToggleAppendAll()
+void FileCopyOperationJob::ToggleAppendAll()
 {
     m_AppendAll = true;
 }
 
-void FileCopyOperationJobNew::Do()
+void FileCopyOperationJob::Do()
 {
     SetState(JobStage::Preparing);
 
@@ -193,7 +193,7 @@ void FileCopyOperationJobNew::Do()
     SetCompleted();
 }
 
-void FileCopyOperationJobNew::ProcessItems()
+void FileCopyOperationJob::ProcessItems()
 {
     SetState(JobStage::Process);
     m_Stats.StartTimeTracking();
@@ -372,7 +372,7 @@ void FileCopyOperationJobNew::ProcessItems()
     }
 }
 
-string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_index ) const
+string FileCopyOperationJob::ComposeDestinationNameForItem( int _src_item_index ) const
 {
 //    PathPreffix, // path = dest_path + source_rel_path
 //    FixedPath    // path = dest_path + [source_rel_path without heading]
@@ -398,7 +398,7 @@ string FileCopyOperationJobNew::ComposeDestinationNameForItem( int _src_item_ind
     }
 }
 
-FileCopyOperationJobNew::PathCompositionType FileCopyOperationJobNew::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
+FileCopyOperationJob::PathCompositionType FileCopyOperationJob::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
 {
     VFSStat st;
     if( m_DestinationHost->Stat(m_InitialDestinationPath.c_str(), st, 0, nullptr ) == 0) {
@@ -448,7 +448,7 @@ static void ReverseForEachDirectoryInString(const string& _path, T _t)
 // build directories for every entrance of '/' in m_DestinationPath
 // for /bin/abra/cadabra/ will check and build: /bin, /bin/abra, /bin/abra/cadabra
 // for /bin/abra/cadabra  will check and build: /bin, /bin/abra
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::BuildDestinationDirectory() const
+FileCopyOperationJob::StepResult FileCopyOperationJob::BuildDestinationDirectory() const
 {
     // find directories to build
     vector<string> paths_to_build;
@@ -508,7 +508,7 @@ static bool IsAnExternalExtenedAttributesStorage( VFSHost &_host, const string &
     return _host.Exists( path );
 }
 
-tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems> FileCopyOperationJobNew::ScanSourceItems() const
+tuple<FileCopyOperationJob::StepResult, FileCopyOperationJob::SourceItems> FileCopyOperationJob::ScanSourceItems() const
 {
     
     SourceItems db;
@@ -600,7 +600,7 @@ tuple<FileCopyOperationJobNew::StepResult, FileCopyOperationJobNew::SourceItems>
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // native file -> native file copying routine
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNativeFile(const string& _src_path,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFile(const string& _src_path,
                                                                                         const string& _dst_path,
                                                                                         function<void(const void *_data, unsigned _sz)> _source_data_feedback) const
 {
@@ -948,7 +948,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeFileToNat
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // vfs file -> native file copying routine
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                                                                                      const string& _src_path,
                                                                                      const string& _dst_path,
                                                                                      function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
@@ -1275,7 +1275,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToNative
 }
 
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
                                                                                   const string& _src_path,
                                                                                   const string& _dst_path,
                                                                                   function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
@@ -1546,7 +1546,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSFileToVFSFil
 
 // uses m_Buffer[0] to reduce mallocs
 // currently there's no error handling or reporting here. may need this in the future. maybe.
-void FileCopyOperationJobNew::EraseXattrsFromNativeFD(int _fd_in) const
+void FileCopyOperationJob::EraseXattrsFromNativeFD(int _fd_in) const
 {
     auto xnames = (char*)m_Buffers[0].get();
     auto xnamesizes = flistxattr(_fd_in, xnames, m_BufferSize, 0);
@@ -1556,7 +1556,7 @@ void FileCopyOperationJobNew::EraseXattrsFromNativeFD(int _fd_in) const
 
 // uses m_Buffer[0] and m_Buffer[1] to reduce mallocs
 // currently there's no error handling or reporting here. may need this in the future. maybe.
-void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const
+void FileCopyOperationJob::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int _fd_to) const
 {
     auto xnames = (char*)m_Buffers[0].get();
     auto xdata = m_Buffers[1].get();
@@ -1568,7 +1568,7 @@ void FileCopyOperationJobNew::CopyXattrsFromNativeFDToNativeFD(int _fd_from, int
     }
 }
 
-void FileCopyOperationJobNew::CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const
+void FileCopyOperationJob::CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const
 {
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
@@ -1580,7 +1580,7 @@ void FileCopyOperationJobNew::CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, 
     });
 }
 
-void FileCopyOperationJobNew::CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const
+void FileCopyOperationJob::CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const
 {
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
@@ -1593,7 +1593,7 @@ void FileCopyOperationJobNew::CopyXattrsFromVFSFileToPath(VFSFile& _file, const 
     });
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectoryToNativeDirectory(const string& _src_path,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                                                                   const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;
@@ -1660,7 +1660,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeDirectory
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
                                                                                                const string& _src_path,
                                                                                                const string& _dst_path) const
 {
@@ -1727,7 +1727,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToN
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
                                                                                             const string& _src_path,
                                                                                             const string& _dst_path) const
 {
@@ -1770,7 +1770,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSDirectoryToV
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(const string& _src_path,
+FileCopyOperationJob::StepResult FileCopyOperationJob::RenameNativeFile(const string& _src_path,
                                                                               const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;    
@@ -1827,7 +1827,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameNativeFile(co
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameVFSFile(VFSHost &_common_host,
+FileCopyOperationJob::StepResult FileCopyOperationJob::RenameVFSFile(VFSHost &_common_host,
                                                                            const string& _src_path,
                                                                            const string& _dst_path) const
 {
@@ -1879,7 +1879,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::RenameVFSFile(VFSHo
     return StepResult::Ok;
 }
 
-void FileCopyOperationJobNew::CleanSourceItems() const
+void FileCopyOperationJob::CleanSourceItems() const
 {
     for( auto i = rbegin(m_SourceItemsToDelete), e = rend(m_SourceItemsToDelete); i != e; ++i ) {
         auto index = *i;
@@ -1895,7 +1895,7 @@ void FileCopyOperationJobNew::CleanSourceItems() const
     }
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const
+FileCopyOperationJob::StepResult FileCopyOperationJob::VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched) const
 {
     _matched = false;
     VFSFilePtr file;
@@ -1960,7 +1960,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::VerifyCopiedFile(co
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeSymlinkToNative(const string& _src_path,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeSymlinkToNative(const string& _src_path,
                                                                                        const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;
@@ -1996,7 +1996,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyNativeSymlinkTo
     return StepResult::Ok;
 }
 
-FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
+FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                                                                                     const string& _src_path,
                                                                                     const string& _dst_path) const
 {
@@ -2031,7 +2031,7 @@ FileCopyOperationJobNew::StepResult FileCopyOperationJobNew::CopyVFSSymlinkToNat
     return StepResult::Ok;
 }
 
-void FileCopyOperationJobNew::SetState(FileCopyOperationJobNew::JobStage _state)
+void FileCopyOperationJob::SetState(FileCopyOperationJob::JobStage _state)
 {
     NotifyWillChange(Notify::Stage);
     m_Stage = _state;

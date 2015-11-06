@@ -13,7 +13,7 @@
 #include "VFSDeclarations.h"
 
 struct VFSListingInput;
-class VFSFListingItem;
+class VFSListingItem;
 
 class VFSListing : public enable_shared_from_this<VFSListing>
 {
@@ -36,7 +36,7 @@ public:
     bool                HasCommonHost       () const;
     bool                HasCommonDirectory  () const;
 
-    VFSFListingItem     Item                (unsigned _ind) const;
+    VFSListingItem     Item                (unsigned _ind) const;
 
     const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;
@@ -135,14 +135,14 @@ private:
     variable_container<CFString>    m_DisplayFilenamesCF;
 };
 
-// VFSFListingItem class is a simple wrapper around (pointer;index) pair for object-oriented access to listing items with value semantics.
-class VFSFListingItem
+// VFSListingItem class is a simple wrapper around (pointer;index) pair for object-oriented access to listing items with value semantics.
+class VFSListingItem
 {
 public:
-    VFSFListingItem() noexcept:
+    VFSListingItem() noexcept:
         I( numeric_limits<unsigned>::max() ),
         L( nullptr ) {}
-    VFSFListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept:
+    VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept:
         I(_ind),
         L(_listing) {}
     operator        bool()              const noexcept { return (bool)L;            }
@@ -227,9 +227,9 @@ struct VFSListing::iterator
     
     bool operator==(const iterator& _r) const noexcept { return i.I == _r.i.I && i.L == _r.i.L; }
     bool operator!=(const iterator& _r) const noexcept { return !(*this == _r); }
-    const VFSFListingItem& operator*() const noexcept { return i; }
+    const VFSListingItem& operator*() const noexcept { return i; }
 
 private:
-    VFSFListingItem i;
+    VFSListingItem i;
     friend class VFSListing;
 };

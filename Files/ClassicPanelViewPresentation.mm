@@ -122,7 +122,7 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSFListingItem &_dirent, const PanelVolatileData& _vd) const
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelVolatileData& _vd) const
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -227,7 +227,7 @@ oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     return out;
 }
 
-static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSFListingItem &_dirent)
+static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {   // output is a direct filename or symlink path in ->filename form
     oms::StringBuf<256> out;
     if(!_dirent.IsSymlink())
@@ -342,7 +342,7 @@ void ClassicPanelViewPresentation::BuildAppearance()
                 m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
 }
 
-const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSFListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
+const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
         if(r.filter.Filter(_dirent, _vd))

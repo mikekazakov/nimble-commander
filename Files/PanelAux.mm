@@ -134,7 +134,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
     });
 }
 
-bool panel::IsEligbleToTryToExecuteInConsole(const VFSFListingItem& _item)
+bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     static vector<string> extensions;
     static once_flag once;

@@ -109,7 +109,7 @@ static NSString* StorageFileName()
     [encoder encodeBool:self.terminal forKey:@"terminal"];
 }
 
-- (bool) isValidItem:(const VFSFListingItem&)_it
+- (bool) isValidItem:(const VFSListingItem&)_it
 {
     if(m_FileMask == nullptr)
         return false;
@@ -242,7 +242,7 @@ static NSString* StorageFileName()
         [NSKeyedArchiver archiveRootObject:m_Editors toFile:StorageFileName()];
 }
 
-- (ExternalEditorInfo*) FindViableEditorForItem:(const VFSFListingItem&)_item
+- (ExternalEditorInfo*) FindViableEditorForItem:(const VFSListingItem&)_item
 {
     for(ExternalEditorInfo *ed in m_Editors)
         if([ed isValidItem:_item])

@@ -24,8 +24,8 @@ static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeC
 // item holds a link to listing
 // listing holds a link to vfs
 @interface PanelDraggingItem : NSPasteboardItem
-- (const VFSFListingItem&) item;
-- (void) setItem:(const VFSFListingItem&)_item;
+- (const VFSListingItem&) item;
+- (void) setItem:(const VFSListingItem&)_item;
 - (bool) IsValid;
 - (void) Clear;
 @end
@@ -112,11 +112,11 @@ static map<string, vector<string>> LayoutArraysOfURLsByDirectories(NSArray *_fil
 }
 
 // consumes result of code above
-static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
+static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
 {
-    vector<VFSFListingItem> source_items;
+    vector<VFSListingItem> source_items;
     for( auto &dir: _input ) {
-        vector<VFSFListingItem> items_for_dir;
+        vector<VFSListingItem> items_for_dir;
         if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
             move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
     }
@@ -125,15 +125,15 @@ static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<s
 
 @implementation PanelDraggingItem
 {
-    VFSFListingItem m_Item;
+    VFSListingItem m_Item;
 }
 
-- (const VFSFListingItem&) item
+- (const VFSListingItem&) item
 {
     return m_Item;
 }
 
-- (void) setItem:(const VFSFListingItem&)_item
+- (void) setItem:(const VFSListingItem&)_item
 {
     m_Item = _item;
 }
@@ -145,7 +145,7 @@ static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<s
 
 - (void) Clear
 {
-    m_Item = VFSFListingItem();
+    m_Item = VFSListingItem();
 }
 
 @end
@@ -323,7 +323,7 @@ static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<s
     
     NSMutableArray *drag_items = [NSMutableArray new];
     
-    vector<VFSFListingItem> vfs_items;
+    vector<VFSListingItem> vfs_items;
     
     if( m_View.item_vd.is_selected() == false)
         vfs_items.emplace_back(focus_item);
@@ -555,7 +555,7 @@ static vector<VFSFListingItem> FetchVFSListingsItemsFromDirectories( const map<s
         // we're dragging something here from another PanelView, lets understand what actually
         auto opmask = sender.draggingSourceOperationMask;
         
-        vector<VFSFListingItem> files;
+        vector<VFSListingItem> files;
         for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
                                                                                 options:nil])
             files.emplace_back( item.item );

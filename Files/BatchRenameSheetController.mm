@@ -56,7 +56,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 @synthesize filenamesSource = m_ResultSource;
 @synthesize filenamesDestination = m_ResultDestination;
 
-- (instancetype) initWithItems:(vector<VFSFListingItem>)_items
+- (instancetype) initWithItems:(vector<VFSListingItem>)_items
 {
     self = [[BatchRenameSheetController alloc] init];
     if(self) {

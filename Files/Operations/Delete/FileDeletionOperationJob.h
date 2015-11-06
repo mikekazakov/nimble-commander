@@ -29,7 +29,7 @@ protected:
     vector<string>  m_RequestedFiles;
     chained_strings m_Directories; // this container will store directories structure in direct order
     chained_strings m_ItemsToDelete; // this container will store files and directories to direct, they will use m_Directories to link path
-    FileDeletionOperationType   m_Type = FileDeletionOperationType::Invalid;
+    FileDeletionOperationType   m_Type = FileDeletionOperationType::MoveToTrash;
     string                      m_RootPath;
     unsigned                    m_CurrentItemNumber = 0;
     bool                        m_SkipAll = false;

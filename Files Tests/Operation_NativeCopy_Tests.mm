@@ -12,11 +12,11 @@
 #include "../Files/Operations/Copy/FileCopyOperation.h"
 
 
-static vector<VFSFListingItem> FetchItems(const string& _directory_path,
+static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
                                                  VFSHost &_host)
 {
-    vector<VFSFListingItem> items;
+    vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }

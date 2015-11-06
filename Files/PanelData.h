@@ -113,7 +113,7 @@ struct PanelDataTextFiltering
         return filter;
     }
     
-    bool IsValidItem(const VFSFListingItem& _item) const;
+    bool IsValidItem(const VFSListingItem& _item) const;
     
     void OnPanelDataLoad()
     {
@@ -131,7 +131,7 @@ struct PanelDataHardFiltering
 {
     bool show_hidden = true;
     PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
-    bool IsValidItem(const VFSFListingItem& _item) const;
+    bool IsValidItem(const VFSListingItem& _item) const;
 
     bool IsFiltering() const
     {
@@ -265,16 +265,16 @@ public:
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
-    VFSFListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
+    VFSListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
     
-    VFSFListingItem   EntryAtSortPosition(int _pos) const; // will return an "empty" item upon invalid index
+    VFSListingItem   EntryAtSortPosition(int _pos) const; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
-    vector<VFSFListingItem> SelectedEntries() const;
+    vector<VFSListingItem> SelectedEntries() const;
     
     /**
      * Will throw an invalid_argument on invalid _pos.
@@ -380,7 +380,7 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
-    static EntrySortKeys ExtractSortKeysFromEntry(const VFSFListingItem& _item, const PanelVolatileData &_item_vd);
+    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item, const PanelVolatileData &_item_vd);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing

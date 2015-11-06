@@ -34,7 +34,7 @@ struct FileCopyOperationOptions;
 @property (readonly) VFSHostPtr                 resultHost;
 @property (readonly) FileCopyOperationOptions   resultOptions;
 
-- (instancetype) initWithItems:(vector<VFSFListingItem>)_source_items
+- (instancetype) initWithItems:(vector<VFSListingItem>)_source_items
                      sourceVFS:(const VFSHostPtr&)_source_host
                sourceDirectory:(const string&)_source_directory
             initialDestination:(const string&)_initial_destination

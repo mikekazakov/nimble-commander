@@ -75,7 +75,7 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     NSString *m_ArchiveName;
 }
 
-- (id)initWithFiles:(vector<VFSFListingItem>)_src_files
+- (id)initWithFiles:(vector<VFSListingItem>)_src_files
             dstroot:(const string&)_dst_root
              dstvfs:(VFSHostPtr)_dst_vfs;
 {

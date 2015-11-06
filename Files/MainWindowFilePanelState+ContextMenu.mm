@@ -106,7 +106,7 @@ static NSOpenPanel* BuildAppChoose()
     return panel;
 }
 
-static string FindFreeFilenameToDuplicateIn(const VFSFListingItem& _item)
+static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item)
 {
     string filename = _item.FilenameWithoutExt();
     string ext = _item.HasExtension() ? "."s + _item.Extension() : ""s;
@@ -158,7 +158,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     string                              m_CommonDir;  // may be "" in case of non-uniform listing
     VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
-    vector<VFSFListingItem>      m_Items;
+    vector<VFSListingItem>      m_Items;
     vector<OpenWithHandler>             m_OpenWithHandlers;
     string                              m_ItemsUTI;
     MainWindowFilePanelState           *m_MainWnd;
@@ -169,7 +169,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     int                                 m_FilesCount;
 }
 
-- (id) initWithData:(vector<VFSFListingItem>) _items
+- (id) initWithData:(vector<VFSListingItem>) _items
             mainWnd:(MainWindowFilePanelState*)_wnd
              myCont:(PanelController*)_my_cont
             oppCont:(PanelController*)_opp_cont
@@ -637,7 +637,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 @implementation MainWindowFilePanelState (ContextMenu)
 
-- (NSMenu*) RequestContextMenuOn:(vector<VFSFListingItem>) _items
+- (NSMenu*) RequestContextMenuOn:(vector<VFSListingItem>) _items
                           caller:(PanelController*) _caller
 {
     if( _items.empty() )

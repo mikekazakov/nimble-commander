@@ -32,7 +32,7 @@ static NSString* FormHumanReadableDateTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static NSString *ComposeFooterFileNameForEntry(const VFSFListingItem &_dirent)
+static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink())
@@ -111,7 +111,7 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
                 [NSNumber numberWithInt:_total_files]];
 }
 
-void ModernPanelViewPresentationItemsFooter::Draw(const VFSFListingItem &_current_entry,
+void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current_entry,
                                                   const PanelVolatileData &_current_item_vd,
                                                   const PanelDataStatistics &_stats,
                                                   PanelViewType _view_type,
@@ -176,7 +176,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSFListingItem &_curren
     }
 }
 
-void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSFListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
+void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
 {
     if(_stats.selected_entries_amount != 0)
     {

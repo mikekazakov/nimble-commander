@@ -578,7 +578,7 @@ int PanelData::RawIndexForSortIndex(int _index) const noexcept
     return m_EntriesByCustomSort[_index];
 }
 
-VFSFListingItem PanelData::EntryAtRawPosition(int _pos) const
+VFSListingItem PanelData::EntryAtRawPosition(int _pos) const
 {
     if( _pos >= 0 &&
         _pos < m_Listing->Count() )
@@ -586,7 +586,7 @@ VFSFListingItem PanelData::EntryAtRawPosition(int _pos) const
     return {};
 }
 
-VFSFListingItem PanelData::EntryAtSortPosition(int _pos) const
+VFSListingItem PanelData::EntryAtSortPosition(int _pos) const
 {
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));
 }
@@ -673,9 +673,9 @@ vector<string> PanelData::SelectedEntriesFilenames() const
     return list;
 }
 
-vector<VFSFListingItem> PanelData::SelectedEntries() const
+vector<VFSListingItem> PanelData::SelectedEntries() const
 {
-    vector<VFSFListingItem> list;
+    vector<VFSListingItem> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Item(i) );
@@ -771,7 +771,7 @@ void PanelData::SetHardFiltering(PanelDataHardFiltering _filter)
     UpdateStatictics();
 }
 
-bool PanelDataTextFiltering::IsValidItem(const VFSFListingItem& _item) const
+bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
 {
     if(text == nil)
         return true;
@@ -819,7 +819,7 @@ bool PanelDataTextFiltering::IsValidItem(const VFSFListingItem& _item) const
     return true;
 }
 
-bool PanelDataHardFiltering::IsValidItem(const VFSFListingItem& _item) const
+bool PanelDataHardFiltering::IsValidItem(const VFSListingItem& _item) const
 {
     if(show_hidden == false && _item.IsHidden())
         return false;
@@ -896,7 +896,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSFListingItem& _item, const PanelVolatileData &_item_vd)
+PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item, const PanelVolatileData &_item_vd)
 {
     EntrySortKeys keys;
     keys.name = _item.Name();

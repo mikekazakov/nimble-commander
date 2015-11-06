@@ -69,7 +69,7 @@ FileCompressOperationJob::~FileCompressOperationJob()
 {
 }
 
-void FileCompressOperationJob::Init(vector<VFSFListingItem> _src_files,
+void FileCompressOperationJob::Init(vector<VFSListingItem> _src_files,
           const string&_dst_root,
           VFSHostPtr _dst_vfs)
 {

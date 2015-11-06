@@ -35,7 +35,7 @@ public:
         Cleaning
     };
     
-    void Init(vector<VFSFListingItem> _source_items,
+    void Init(vector<VFSListingItem> _source_items,
               const string &_dest_path,
               const VFSHostPtr &_dest_host,
               FileCopyOperationOptions _opts
@@ -177,7 +177,7 @@ private:
     void                    CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const;
     void                    CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const;
     
-    vector<VFSFListingItem>              m_VFSListingItems;
+    vector<VFSListingItem>              m_VFSListingItems;
     SourceItems                                 m_SourceItems;
     vector<ChecksumExpectation>                 m_Checksums;
     vector<unsigned>                            m_SourceItemsToDelete;

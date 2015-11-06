@@ -11,7 +11,7 @@
 
 @interface MainWindowFilePanelState (ContextMenu)
 
-- (NSMenu*) RequestContextMenuOn:(vector<VFSFListingItem>) _items
+- (NSMenu*) RequestContextMenuOn:(vector<VFSListingItem>) _items
                           caller:(PanelController*) _caller;
 
 @end

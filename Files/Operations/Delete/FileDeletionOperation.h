@@ -10,6 +10,7 @@
 
 #include "../../Operation.h"
 #include "../../vfs/VFS.h"
+#include "Options.h"
 
 @class OperationDialogAlert;
 
@@ -20,14 +21,6 @@ enum
     DeletePermanently = OperationDialogResult::Custom
 };
 }
-
-enum class FileDeletionOperationType // do not change ordering, there's a raw value persistancy in code
-{
-    MoveToTrash,
-    Delete,
-    SecureDelete,
-    Invalid
-};
 
 @interface FileDeletionOperation : Operation
 

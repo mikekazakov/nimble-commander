@@ -113,7 +113,7 @@ FileCopyOperationJobNew::ChecksumExpectation::ChecksumExpectation( int _source_i
     copy(begin(_md5), end(_md5), begin(md5.buf));
 }
 
-void FileCopyOperationJobNew::Init(vector<VFSFListingItem> _source_items,
+void FileCopyOperationJobNew::Init(vector<VFSListingItem> _source_items,
                                    const string &_dest_path,
                                    const VFSHostPtr &_dest_host,
                                    FileCopyOperationOptions _opts)

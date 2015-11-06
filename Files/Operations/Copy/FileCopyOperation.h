@@ -12,12 +12,12 @@
 
 @interface FileCopyOperation : Operation
 
-- (id)initWithItems:(vector<VFSFListingItem>)_files
+- (id)initWithItems:(vector<VFSListingItem>)_files
     destinationPath:(const string&)_path
     destinationHost:(const VFSHostPtr&)_host
             options:(const FileCopyOperationOptions&)_options;
 
-+ (instancetype) singleItemRenameOperation:(VFSFListingItem)_item
++ (instancetype) singleItemRenameOperation:(VFSListingItem)_item
                                    newName:(const string&)_filename;
 
 - (void)Update;

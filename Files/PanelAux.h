@@ -32,5 +32,5 @@ public:
 
 namespace panel
 {
-    bool IsEligbleToTryToExecuteInConsole(const VFSFListingItem& _item);
+    bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
 }

@@ -460,7 +460,7 @@ int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_ta
 int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                                        const vector<string> &_filenames,
                                        int _flags,
-                                       vector<VFSFListingItem> &_result,
+                                       vector<VFSListingItem> &_result,
                                        VFSCancelChecker _cancel_checker)
 {
     shared_ptr<VFSListing> listing;

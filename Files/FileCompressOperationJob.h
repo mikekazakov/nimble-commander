@@ -20,7 +20,7 @@ public:
     FileCompressOperationJob();
     ~FileCompressOperationJob();
     
-    void Init(vector<VFSFListingItem> _src_files,
+    void Init(vector<VFSListingItem> _src_files,
               const string&_dst_root,
               VFSHostPtr _dst_vfs);
     
@@ -67,7 +67,7 @@ private:
         uint8_t     flags;
     };
     
-    vector<VFSFListingItem>  m_InitialListingItems;
+    vector<VFSListingItem>  m_InitialListingItems;
     chained_strings                 m_ScannedItems;
     vector<SourceItemMeta>          m_ScannedItemsMeta;
     

@@ -38,7 +38,7 @@ struct PanelVolatileData;
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
-@property (nonatomic, readonly) VFSFListingItem item; // return an item at current cursor position if any or nullptr
+@property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
 @property (nonatomic, readonly) PanelVolatileData&     item_vd; // will throw if currently there's no item under cursor
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;

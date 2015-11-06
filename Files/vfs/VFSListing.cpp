@@ -10,7 +10,7 @@
 #include "VFSHost.h"
 #include "VFSListingInput.h"
 
-static_assert( is_move_constructible<VFSFListingItem>::value, "" );
+static_assert( is_move_constructible<VFSListingItem>::value, "" );
 static_assert( is_move_constructible<VFSListing::iterator>::value, "" );
 
 static bool BasicDirectoryCheck(const string& _str)
@@ -599,22 +599,22 @@ bool VFSListing::IsHidden(unsigned _ind) const
     return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & UF_HIDDEN)) && !IsDotDot(_ind);
 }
 
-VFSFListingItem VFSListing::Item(unsigned _ind) const
+VFSListingItem VFSListing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return VFSFListingItem(shared_from_this(), _ind);
+    return VFSListingItem(shared_from_this(), _ind);
 }
 
 VFSListing::iterator VFSListing::begin() const noexcept
 {
     iterator it;
-    it.i = VFSFListingItem(shared_from_this(), 0);
+    it.i = VFSListingItem(shared_from_this(), 0);
     return it;
 }
 
 VFSListing::iterator VFSListing::end() const noexcept
 {
     iterator it;
-    it.i = VFSFListingItem(shared_from_this(), m_ItemsCount);
+    it.i = VFSListingItem(shared_from_this(), m_ItemsCount);
     return it;
 }

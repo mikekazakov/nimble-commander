@@ -50,7 +50,7 @@ public:
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     void SetQuickSearchPrompt(NSString *_text) override;
     
-    NSString* FileSizeToString(const VFSFListingItem &_dirent, const PanelVolatileData &_vd) const;
+    NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelVolatileData &_vd) const;
 private:
     struct ColoringAttrs {
         NSDictionary *focused;
@@ -78,7 +78,7 @@ private:
     void OnDirectoryChanged() override;
     void BuildGeometry();
     void BuildAppearance();
-    const ColoringAttrs& AttrsForItem(const VFSFListingItem& _item, const PanelVolatileData& _item_vd) const;
+    const ColoringAttrs& AttrsForItem(const VFSListingItem& _item, const PanelVolatileData& _item_vd) const;
     
     NSFont *m_Font;
     FontGeometryInfo m_FontInfo;

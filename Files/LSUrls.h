@@ -25,7 +25,7 @@ struct LauchServicesHandlers
      */
     int             default_path = -1;
     
-    static LauchServicesHandlers GetForItem(const VFSFListingItem &_item);
+    static LauchServicesHandlers GetForItem(const VFSListingItem &_item);
     static void DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
     static bool SetDefaultHandler(const string &_uti, const string &_path);
 };

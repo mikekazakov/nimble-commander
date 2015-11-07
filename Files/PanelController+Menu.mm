@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <Habanero/algo.h>
 #include "vfs/VFSListingInput.h"
 #include "vfs/vfs_native.h"
 #include "vfs/vfs_ps.h"
@@ -130,9 +131,9 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0) && self.isUniform && (self.vfs->IsNativeFS() || self.vfs->IsWriteable());
+    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
@@ -702,93 +703,114 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
-- (void)DeleteFiles:(BOOL)_shift_behavior
+- (void)DeleteFiles:(bool)_shift_behavior
 {
-    auto files = make_shared<vector<string>>(move(self.selectedEntriesOrFocusedEntryFilenames));
-    if(files->empty())
+    auto items = to_shared_ptr(self.selectedEntriesOrFocusedEntries);
+    if( items->empty() )
         return;
+
+    unordered_set<string> dirs;
+    bool all_native = all_of(begin(*items), end(*items), [&](auto &i){
+        if( !i.Host()->IsNativeFS() )
+            return false;
+        dirs.emplace( i.Directory() );
+        return true;
+    });
     
-    if(self.vfs->IsNativeFS()) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] initWithItems:items];
+    if( all_native ) {
+        bool all_have_trash = all_of(begin(dirs), end(dirs), [](auto &i){
+            if( auto vol = NativeFSManager::Instance().VolumeFromPath(i) )
+                if( vol->interfaces.has_trash )
+                    return true;
+            return false;
+        });
         
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
                                                                      ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
                                                                      : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
-        
-        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
-        
-        if( auto vol = NativeFSManager::Instance().VolumeFromPath(self.currentDirectoryPath) )
-            if( vol->interfaces.has_trash == false )
-                sheet.allowMoveToTrash = false;
-        
-        [sheet ShowSheet:self.window Files:*files Type:type Handler:^(int result){
-                     if (result == DialogResult::Delete) {
-                         FileDeletionOperationType type = sheet.resultType;
-                                                  
-                         FileDeletionOperation *op = [FileDeletionOperation alloc];
-                         op = [op initWithFiles:move(*files)
-                                           type:type
-                                            dir:self.currentDirectoryPath];
-                         op.TargetPanel = self;
-                         [self.state AddOperation:op];
-                     }
-                 }];
+        sheet.allowSecureDelete = true;
+        sheet.allowMoveToTrash = all_have_trash;
+        sheet.defaultType = type;
     }
-    else if(self.vfs->IsWriteable()) {
-        FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] init];
+    else {
         sheet.allowMoveToTrash = false;
         sheet.allowSecureDelete = false;
-        [sheet ShowSheet:self.window Files:*files Type:FileDeletionOperationType::Delete Handler:^(int result){
-                           if (result == DialogResult::Delete) {
-                               FileDeletionOperation *op = [FileDeletionOperation alloc];
-                               op = [op initWithFiles:move(*files)
-                                                  dir:self.currentDirectoryPath
-                                                   at:self.vfs];
-                               op.TargetPanel = self;
-                               [self.state AddOperation:op];
-                           }
-                       }];
+        sheet.defaultType = FileDeletionOperationType::Delete;
     }
+
+    [sheet beginSheetForWindow:self.window
+             completionHandler:^(NSModalResponse returnCode) {
+                 if(returnCode == NSModalResponseOK){
+                     FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(*items)
+                                                                                         type:sheet.resultType];
+                     __weak PanelController *ws = self;
+                     if( !self.receivesUpdateNotifications )
+                         [op AddOnFinishHandler:^{
+                             dispatch_to_main_queue([=]{
+                                 if(auto ss = ws)
+                                     [ss RefreshDirectory];
+                             });
+                         }];
+                     [self.state AddOperation:op];
+                 }
+             }];
 }
 
 - (IBAction)OnDeleteCommand:(id)sender
 {
-    [self DeleteFiles:NO];
+    [self DeleteFiles:false];
 }
 
 - (IBAction)OnAlternativeDeleteCommand:(id)sender
 {
-    [self DeleteFiles:YES];
+    [self DeleteFiles:true];
 }
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
-    if(self.vfs->IsNativeFS() == false) {
-        if(self.vfs->IsWriteable() == true ) {
-            // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
-            // forward request as a regular F8 delete
-            [self OnDeleteCommand:self];
-        }
+    auto items = self.selectedEntriesOrFocusedEntries;
+    unordered_set<string> dirs;
+    bool all_native = all_of(begin(items), end(items), [&](auto &i){
+        if( !i.Host()->IsNativeFS() )
+            return false;
+        dirs.emplace( i.Directory() );
+        return true;
+    });
+    
+    if( !all_native ) {
+        // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
+        // forward request as a regular F8 delete
+        [self OnDeleteCommand:self];
+        return;
+    }
+
+    bool all_have_trash = all_of(begin(dirs), end(dirs), [](auto &i){
+        if( auto vol = NativeFSManager::Instance().VolumeFromPath(i) )
+            if( vol->interfaces.has_trash )
+                return true;
+        return false;
+    });
+    
+    if( !all_have_trash ) {
+        // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
+        // show a dialog and ask him to delete a file permanently
+        [self OnDeleteCommand:self];
         return;
     }
     
-    if( auto vol = NativeFSManager::Instance().VolumeFromPath(self.currentDirectoryPath) )
-        if( vol->interfaces.has_trash == false ) {
-            // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
-            // show a dialog and ask him to delete a file permanently
-            [self OnDeleteCommand:self];
-            return;
-        }
+    FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(items)
+                                                                        type:FileDeletionOperationType::MoveToTrash];
+    __weak PanelController *ws = self;
+    if( !self.receivesUpdateNotifications )
+        [op AddOnFinishHandler:^{
+            dispatch_to_main_queue([=]{
+                if(auto ss = ws)
+                    [ss RefreshDirectory];
+            });
+        }];
     
-    auto files = self.selectedEntriesOrFocusedEntryFilenames;
-    if(files.empty())
-        return;
-    
-    FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                 initWithFiles:move(files)
-                                 type:FileDeletionOperationType::MoveToTrash
-                                 dir:self.currentDirectoryPath];
-    op.TargetPanel = self;
     [self.state AddOperation:op];
 }
 

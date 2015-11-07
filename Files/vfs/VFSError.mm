@@ -123,5 +123,11 @@ NSError* ToNSError(int _code)
                            userInfo:@{ NSLocalizedDescriptionKey : TextForCode(_code) }
             ];
 }
+    
+int FromNSError(NSError* _err)
+{
+    return -1; // stub
+        
+}
 
 }

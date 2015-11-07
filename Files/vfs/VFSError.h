@@ -93,5 +93,6 @@ namespace VFSError
 
 #ifdef __OBJC__
     NSError* ToNSError(int _code);
+    int FromNSError(NSError* _err);
 #endif
 };

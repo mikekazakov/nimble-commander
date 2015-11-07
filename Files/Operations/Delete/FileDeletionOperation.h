@@ -24,14 +24,19 @@ enum
 
 @interface FileDeletionOperation : Operation
 
-- (id)initWithFiles:(vector<string>&&)_files
-               type:(FileDeletionOperationType)_type
-                dir:(const string&)_path;
 
-// VFS deletion can be only "delete", not "moving to trash" or "secure delete"
-- (id)initWithFiles:(vector<string>&&)_files
-                dir:(const string&)_path
-                 at:(const VFSHostPtr&) _host;
+- (id)initWithFiles:(vector<VFSListingItem>)_files
+               type:(FileDeletionOperationType)_type; // "trash" and "secure delete" are supported only on native fs. will throw otherwise
+
+
+//- (id)initWithFiles:(vector<string>&&)_files
+//               type:(FileDeletionOperationType)_type
+//                dir:(const string&)_path;
+//
+//// VFS deletion can be only "delete", not "moving to trash" or "secure delete"
+//- (id)initWithFiles:(vector<string>&&)_files
+//                dir:(const string&)_path
+//                 at:(const VFSHostPtr&) _host;
 
 - (void)Update;
 

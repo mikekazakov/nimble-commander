@@ -8,10 +8,9 @@
 
 #include "FileDeletionOperation.h"
 #include "../../ButtonWithOptions.h"
+#include "../../SheetController.h"
 
-typedef void (^FileDeletionSheetCompletionHandler)(int result);
-
-@interface FileDeletionSheetController : NSWindowController
+@interface FileDeletionSheetController : SheetController
 
 @property (strong) IBOutlet NSTextField *Label;
 @property (strong) IBOutlet ButtonWithOptions *DeleteButton;
@@ -19,17 +18,13 @@ typedef void (^FileDeletionSheetCompletionHandler)(int result);
 
 @property (nonatomic) bool allowMoveToTrash;
 @property (nonatomic) bool allowSecureDelete;
+@property (nonatomic) FileDeletionOperationType defaultType;
 @property (nonatomic) FileDeletionOperationType resultType;
+
+- (id)initWithItems:(shared_ptr<vector<VFSListingItem>>)_items;
 
 - (IBAction)OnDeleteAction:(id)sender;
 - (IBAction)OnCancelAction:(id)sender;
 - (IBAction)OnMenuItem:(NSMenuItem *)sender;
-
-- (id)init;
-
-- (void)ShowSheet:(NSWindow *)_window
-            Files:(const vector<string>&)_files
-             Type:(FileDeletionOperationType)_type
-          Handler:(FileDeletionSheetCompletionHandler)_handler;
 
 @end

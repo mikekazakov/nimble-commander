@@ -10,11 +10,75 @@ public:
     void Init(vector<VFSListingItem> _files, FileDeletionOperationType _type);
     
 private:
+    enum class StepResult
+    {
+        // operation was successful
+        Ok = 0,
+        
+        // user asked us to stop
+        Stop,
+        
+        // an error has occured, but current step was skipped since user asked us to do so or if SkipAll flag is on
+        Skipped,
+        
+        // an error has occured, but current step was skipped since user asked us to do so and to skip any other errors
+        SkipAll
+    };
+    
+    class SourceItems
+    {
+    public:
+        int             InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat );
+        
+        //        uint64_t        TotalRegBytes() const noexcept;
+        int             ItemsAmount() const noexcept;
+        //
+        string          ComposeFullPath( int _item_no ) const;
+        string          ComposeRelativePath( int _item_no ) const;
+        const string&   ItemName( int _item_no ) const;
+        mode_t          ItemMode( int _item_no ) const;
+        //        uint64_t        ItemSize( int _item_no ) const;
+        //        dev_t           ItemDev( int _item_no ) const; // meaningful only for native vfs (yet?)
+        VFSHost        &ItemHost( int _item_no ) const;
+        //
+        VFSHost &Host( uint16_t _host_ind ) const;
+        uint16_t InsertOrFindHost( const VFSHostPtr &_host );
+        
+        const string &BaseDir( unsigned _base_dir_ind ) const;
+        unsigned InsertOrFindBaseDir( const string &_dir );
+        
+        
+    private:
+        struct SourceItem
+        {
+            // full path = m_SourceItemsBaseDirectories[base_dir_index] + ... + m_Items[m_Items[parent_index].parent_index].item_name +  m_Items[parent_index].item_name + item_name;
+            string      item_name;
+            int         parent_index;
+            unsigned    base_dir_index;
+            uint16_t    host_index;
+            uint16_t    mode;
+        };
+        
+        vector<SourceItem>                      m_Items;
+        vector<VFSHostPtr>                      m_SourceItemsHosts;
+        vector<string>                          m_SourceItemsBaseDirectories;
+    };
+    
     virtual void Do() override;
+    void            DoScan();
+    void            DoProcess();
+    StepResult      DoVFSDelete(VFSHost &_host, const string& _path, uint16_t _mode);
+    StepResult      DoNativeDelete(const string& _path, uint16_t _mode);
+    StepResult      DoNativeTrash(const string& _path, uint16_t _mode);
+    StepResult      DoNativeSecureDelete(const string& _path, uint16_t _mode);
+    
+    static int      TrashItem(const string& _path, uint16_t _mode);
+
     
     
     vector<VFSListingItem>      m_OriginalItems;
-    
+    SourceItems                 m_SourceItems;
+    vector<int>                 m_DeleteOrder;
 
     FileDeletionOperationType   m_Type = FileDeletionOperationType::MoveToTrash;
     bool                        m_SkipAll = false;

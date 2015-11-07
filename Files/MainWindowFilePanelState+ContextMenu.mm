@@ -524,42 +524,62 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     });
 }
 
+- (void)doDeleteWithType:(FileDeletionOperationType)_type
+{
+    FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:m_Items
+                                                                        type:_type];
+    __weak PanelController *ws = m_CurrentController;
+    if( !m_CurrentController.receivesUpdateNotifications )
+        [op AddOnFinishHandler:^{
+            dispatch_to_main_queue([=]{
+                if(auto ss = ws)
+                    [ss RefreshDirectory];
+            });
+        }];
+    
+    [m_MainWnd AddOperation:op];
+}
+
 - (void)OnMoveToTrash:(id)sender
 {
     // TODO: rewrite
-    if( m_CommonHost && !m_CommonDir.empty() ) {
-        vector<string> filenames;
-        for(auto &i: m_Items)
-            filenames.emplace_back( i.Filename() );
-        
-        FileDeletionOperation *op = [[FileDeletionOperation alloc]
-                                     initWithFiles:move(filenames)
-                                     type:FileDeletionOperationType::MoveToTrash
-                                     dir:m_CommonDir];
-        [m_MainWnd AddOperation:op];
-    }
+//    if( m_CommonHost && !m_CommonDir.empty() ) {
+//        vector<string> filenames;
+//        for(auto &i: m_Items)
+//            filenames.emplace_back( i.Filename() );
+//        
+//        FileDeletionOperation *op = [[FileDeletionOperation alloc]
+//                                     initWithFiles:move(filenames)
+//                                     type:FileDeletionOperationType::MoveToTrash
+//                                     dir:m_CommonDir];
+//        [m_MainWnd AddOperation:op];
+//    }
+    
+    [self doDeleteWithType:FileDeletionOperationType::MoveToTrash];
 }
 
 - (void)OnDeletePermanently:(id)sender
 {
+    [self doDeleteWithType:FileDeletionOperationType::Delete];
+    
     // TODO: rewrite
-    if( m_CommonHost && !m_CommonDir.empty() ) {
-        vector<string> filenames;
-        for(auto &i: m_Items)
-            filenames.emplace_back( i.Filename() );
-        
-        FileDeletionOperation *op = [FileDeletionOperation alloc];
-        if(m_CommonHost->IsNativeFS())
-            op = [op initWithFiles:move(filenames)
-                              type:FileDeletionOperationType::Delete
-                               dir:m_CommonDir];
-        else
-            op = [op initWithFiles:move(filenames)
-                               dir:m_CommonDir
-                                at:m_CommonHost];
-        
-        [m_MainWnd AddOperation:op];
-    }
+//    if( m_CommonHost && !m_CommonDir.empty() ) {
+//        vector<string> filenames;
+//        for(auto &i: m_Items)
+//            filenames.emplace_back( i.Filename() );
+//        
+//        FileDeletionOperation *op = [FileDeletionOperation alloc];
+//        if(m_CommonHost->IsNativeFS())
+//            op = [op initWithFiles:move(filenames)
+//                              type:FileDeletionOperationType::Delete
+//                               dir:m_CommonDir];
+//        else
+//            op = [op initWithFiles:move(filenames)
+//                               dir:m_CommonDir
+//                                at:m_CommonHost];
+//        
+//        [m_MainWnd AddOperation:op];
+//    }
 }
 
 - (void)OnCopyPaths:(id)sender

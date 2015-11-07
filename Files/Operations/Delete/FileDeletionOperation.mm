@@ -6,89 +6,105 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "FileDeletionOperation.h"
-#include "FileDeletionOperationJob.h"
-#include "FileDeletionOperationVFSJob.h"
+//#include "FileDeletionOperationJob.h"
+//#include "FileDeletionOperationVFSJob.h"
 #include "../../OperationDialogAlert.h"
 #include "../../Common.h"
 #include "../../PanelController.h"
+#include "FileDeletionOperation.h"
+#include "Job.h"
 
 @implementation FileDeletionOperation
 {
-    unique_ptr<FileDeletionOperationJob> m_NativeJob;
-    unique_ptr<FileDeletionOperationVFSJob> m_VFSJob;
+    FileDeletionOperationJobNew m_Job;
+//    unique_ptr<FileDeletionOperationJob> m_NativeJob;
+//    unique_ptr<FileDeletionOperationVFSJob> m_VFSJob;
     
     bool m_SingleItem;
 }
 
-- (id)initWithFiles:(vector<string>&&)_files
+- (id)initWithFiles:(vector<VFSListingItem>)_files
                type:(FileDeletionOperationType)_type
-                dir:(const string&)_path
 {
-    m_NativeJob = make_unique<FileDeletionOperationJob>();
-    self = [super initWithJob:m_NativeJob.get()];
+    self = [super initWithJob:&m_Job];
     if (self) {
-        [self initCommon:_files rootpath:_path];
-        m_NativeJob->Init(move(_files), _type, _path, self);
+        m_Job.Init(move(_files), _type);
+        
+        
     }
-    return self;
-}   
-
-- (id)initWithFiles:(vector<string>&&)_files
-                dir:(const string&)_path
-                 at:(const VFSHostPtr&)_host
-{
-    m_VFSJob = make_unique<FileDeletionOperationVFSJob>();
-    self = [super initWithJob:m_VFSJob.get()];
-    if (self) {
-        [self initCommon:_files rootpath:_path];
-        m_VFSJob->Init(move(_files), _path, _host, self);
-    }
+    
     return self;
 }
 
-- (void)initCommon:(const vector<string>&)_files rootpath:(path)_path
-{
-    m_SingleItem = _files.size() == 1;
-    
-    if(_path.filename() == ".") _path.remove_filename();
-    NSString *dirname = [NSString stringWithUTF8String:_path.filename().c_str()];
-    
-    if(m_SingleItem)
-        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting \u201c%@\u201d from \u201c%@\u201d",
-                                                                             @"Operations",
-                                                                             "Operation title for single item deletion"),
-                        [NSString stringWithUTF8String:_files.front().c_str()],
-                        dirname];
-    else
-        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting %@ items from \u201c%@\u201d",
-                                                                             @"Operations",
-                                                                             "Operation title for multiple items deletion"),
-                        [NSNumber numberWithUnsignedLong:_files.size()],
-                        dirname];
-    
-    [self AddOnFinishHandler:^{
-        if(self.TargetPanel != nil) {
-            dispatch_to_main_queue( [=]{
-                [self.TargetPanel RefreshDirectory];
-            });
-        }
-    }];
-    
-    __weak auto wself = self;
-    self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
-                                nullptr,
-                                [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
-                                );
-}
+
+//- (id)initWithFiles:(vector<string>&&)_files
+//               type:(FileDeletionOperationType)_type
+//                dir:(const string&)_path
+//{
+//    m_NativeJob = make_unique<FileDeletionOperationJob>();
+//    self = [super initWithJob:m_NativeJob.get()];
+//    if (self) {
+//        [self initCommon:_files rootpath:_path];
+//        m_NativeJob->Init(move(_files), _type, _path, self);
+//    }
+//    return self;
+//}   
+//
+//- (id)initWithFiles:(vector<string>&&)_files
+//                dir:(const string&)_path
+//                 at:(const VFSHostPtr&)_host
+//{
+//    m_VFSJob = make_unique<FileDeletionOperationVFSJob>();
+//    self = [super initWithJob:m_VFSJob.get()];
+//    if (self) {
+//        [self initCommon:_files rootpath:_path];
+//        m_VFSJob->Init(move(_files), _path, _host, self);
+//    }
+//    return self;
+//}
+//
+//- (void)initCommon:(const vector<string>&)_files rootpath:(path)_path
+//{
+//    m_SingleItem = _files.size() == 1;
+//    
+//    if(_path.filename() == ".") _path.remove_filename();
+//    NSString *dirname = [NSString stringWithUTF8String:_path.filename().c_str()];
+//    
+//    if(m_SingleItem)
+//        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting \u201c%@\u201d from \u201c%@\u201d",
+//                                                                             @"Operations",
+//                                                                             "Operation title for single item deletion"),
+//                        [NSString stringWithUTF8String:_files.front().c_str()],
+//                        dirname];
+//    else
+//        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting %@ items from \u201c%@\u201d",
+//                                                                             @"Operations",
+//                                                                             "Operation title for multiple items deletion"),
+//                        [NSNumber numberWithUnsignedLong:_files.size()],
+//                        dirname];
+//    
+//    [self AddOnFinishHandler:^{
+//        if(self.TargetPanel != nil) {
+//            dispatch_to_main_queue( [=]{
+//                [self.TargetPanel RefreshDirectory];
+//            });
+//        }
+//    }];
+//    
+//    __weak auto wself = self;
+//    self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
+//                                nullptr,
+//                                [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+//                                );
+//}
 
 - (void)Update
 {
-    OperationStats &stats = m_NativeJob ? m_NativeJob->GetStats() : m_VFSJob->GetStats();
-    
-    float progress = stats.GetProgress();
-    if (self.Progress != progress)
-        self.Progress = progress;    
+//    OperationStats &stats = m_NativeJob ? m_NativeJob->GetStats() : m_VFSJob->GetStats();
+//    
+//    float progress = stats.GetProgress();
+//    if (self.Progress != progress)
+//        self.Progress = progress;    
 }
 
 - (void)updateShortInfo

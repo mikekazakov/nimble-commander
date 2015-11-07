@@ -651,7 +651,7 @@ void PanelData::CustomFlagsSelectInvert()
 {
     for(auto i: m_EntriesByCustomSort)
         if( !m_Listing->IsDotDot(i) )
-            m_VolatileData[i].toggle_selected( !m_VolatileData[i].is_shown() );
+            m_VolatileData[i].toggle_selected( !m_VolatileData[i].is_selected() );
     UpdateStatictics();
 }
 

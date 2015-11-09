@@ -13,6 +13,15 @@
 
 static NSString *const g_Domain = @__FILES_IDENTIFIER__".vfs";
 
+
+/*
+layout:
+0                        : OK code
+[-1..              -1000]: Files             vfs err = vfs err
+[-1'001..         -2'000]: POSIX             vfs err = posix - 1'500
+[-1'000'000.. -2'000'000]: Cocoa             vfs err = cocoa - 1'500'000
+ */
+
 VFSErrorException::VFSErrorException( int _err ) :
     m_Code(_err)
 {
@@ -34,8 +43,8 @@ namespace VFSError
 
 int FromErrno(int _errno)
 {
-    assert(_errno >= 1 && _errno < 200); // actually 106 was max
-    return -(1001 + _errno);
+//    assert(_errno >= 1 && _errno < 200); // actually 106 was max
+    return _errno - 1500;
 }
 
 int FromLibarchive(int _errno)
@@ -113,9 +122,12 @@ static NSString *TextForCode(int _code)
 
 NSError* ToNSError(int _code)
 {
-    if(_code <= -1001 && _code >= -1200)
+    if(_code >= -2000 && _code <= -1001)
         // unix error codes section
-        return [NSError errorWithDomain:NSPOSIXErrorDomain code:(-_code - 1001) userInfo:nil];
+        return [NSError errorWithDomain:NSPOSIXErrorDomain code:(_code + 1500) userInfo:nil];
+    
+    if(_code >= -2000000 && _code <= -1000000 )
+        return [NSError errorWithDomain:NSCocoaErrorDomain code:(_code + 1500000) userInfo:nil];
     
     // general codes section
     return [NSError errorWithDomain:g_Domain
@@ -126,8 +138,12 @@ NSError* ToNSError(int _code)
     
 int FromNSError(NSError* _err)
 {
+    if( [_err.domain isEqualToString:NSCocoaErrorDomain] )
+        return int(_err.code - 1500000);
+    if( [_err.domain isEqualToString:NSPOSIXErrorDomain] )
+        return int(_err.code - 1500);
+    
     return -1; // stub
-        
 }
 
 }

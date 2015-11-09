@@ -40,15 +40,20 @@ void FileDeletionOperationJobNew::ToggleSkipAll()
     m_SkipAll = true;
 }
 
+bool FileDeletionOperationJobNew::IsSingleItem() const noexcept
+{
+    return m_IsSingleItem;
+}
+
 void FileDeletionOperationJobNew::Do()
 {
     DoScan();
 
+    m_IsSingleItem = m_DeleteOrder.size() <= 1;
     m_Stats.StartTimeTracking();
     m_Stats.SetMaxValue( m_DeleteOrder.size() );
     
     DoProcess();
-    
     
     if( CheckPauseOrStop() ) { SetStopped(); return; }
     SetCompleted();    

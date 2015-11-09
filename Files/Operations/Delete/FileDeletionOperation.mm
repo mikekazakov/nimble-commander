@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-//#include "FileDeletionOperationJob.h"
-//#include "FileDeletionOperationVFSJob.h"
 #include "../../OperationDialogAlert.h"
 #include "../../Common.h"
 #include "../../PanelController.h"
@@ -31,10 +29,6 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
 @implementation FileDeletionOperation
 {
     FileDeletionOperationJobNew m_Job;
-//    unique_ptr<FileDeletionOperationJob> m_NativeJob;
-//    unique_ptr<FileDeletionOperationVFSJob> m_VFSJob;
-    
-    bool m_SingleItem;
 }
 
 - (id)initWithFiles:(vector<VFSListingItem>)_files
@@ -46,85 +40,30 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
         
         m_Job.Init(move(_files), _type);
         
-        __weak auto wself = self;
+        __weak auto weak_self = self;
         self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
                                     nullptr,
-                                    [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+                                    [weak_self]{ if(auto self = weak_self) [self updateShortInfo]; }
                                     );
+        m_Job.m_OnCantUnlink = [weak_self](int _vfs_error, string _path){
+            auto self = weak_self;
+            return [[self DialogOnUnlinkError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+        };
+        m_Job.m_OnCantRmdir =  [weak_self](int _vfs_error, string _path){
+            auto self = weak_self;
+            return [[self DialogOnRmdirError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+        };
+        m_Job.m_OnCantTrash =  [weak_self](int _vfs_error, string _path){
+            auto self = weak_self;
+            return [[self DialogOnTrashItemError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+        };
     }
     
     return self;
 }
 
-
-//- (id)initWithFiles:(vector<string>&&)_files
-//               type:(FileDeletionOperationType)_type
-//                dir:(const string&)_path
-//{
-//    m_NativeJob = make_unique<FileDeletionOperationJob>();
-//    self = [super initWithJob:m_NativeJob.get()];
-//    if (self) {
-//        [self initCommon:_files rootpath:_path];
-//        m_NativeJob->Init(move(_files), _type, _path, self);
-//    }
-//    return self;
-//}   
-//
-//- (id)initWithFiles:(vector<string>&&)_files
-//                dir:(const string&)_path
-//                 at:(const VFSHostPtr&)_host
-//{
-//    m_VFSJob = make_unique<FileDeletionOperationVFSJob>();
-//    self = [super initWithJob:m_VFSJob.get()];
-//    if (self) {
-//        [self initCommon:_files rootpath:_path];
-//        m_VFSJob->Init(move(_files), _path, _host, self);
-//    }
-//    return self;
-//}
-//
-//- (void)initCommon:(const vector<string>&)_files rootpath:(path)_path
-//{
-//    m_SingleItem = _files.size() == 1;
-//    
-//    if(_path.filename() == ".") _path.remove_filename();
-//    NSString *dirname = [NSString stringWithUTF8String:_path.filename().c_str()];
-//    
-//    if(m_SingleItem)
-//        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting \u201c%@\u201d from \u201c%@\u201d",
-//                                                                             @"Operations",
-//                                                                             "Operation title for single item deletion"),
-//                        [NSString stringWithUTF8String:_files.front().c_str()],
-//                        dirname];
-//    else
-//        self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting %@ items from \u201c%@\u201d",
-//                                                                             @"Operations",
-//                                                                             "Operation title for multiple items deletion"),
-//                        [NSNumber numberWithUnsignedLong:_files.size()],
-//                        dirname];
-//    
-//    [self AddOnFinishHandler:^{
-//        if(self.TargetPanel != nil) {
-//            dispatch_to_main_queue( [=]{
-//                [self.TargetPanel RefreshDirectory];
-//            });
-//        }
-//    }];
-//    
-//    __weak auto wself = self;
-//    self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
-//                                nullptr,
-//                                [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
-//                                );
-//}
-
 - (void)Update
 {
-//    OperationStats &stats = m_NativeJob ? m_NativeJob->GetStats() : m_VFSJob->GetStats();
-//    
-//    float progress = stats.GetProgress();
-//    if (self.Progress != progress)
-//        self.Progress = progress;    
 }
 
 - (void)updateShortInfo
@@ -144,7 +83,7 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
 - (OperationDialogAlert *)DialogOnOpendirError:(NSError*)_error ForDir:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+                                   initRetrySkipSkipAllAbortHide:!m_Job.IsSingleItem()];
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to access a directory",
                                                      @"Operations",
@@ -163,7 +102,7 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
 - (OperationDialogAlert *)DialogOnUnlinkError:(NSError*)_error ForPath:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+                                   initRetrySkipSkipAllAbortHide:!m_Job.IsSingleItem()];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to delete a file",
@@ -183,7 +122,7 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
 - (OperationDialogAlert *)DialogOnRmdirError:(NSError*)_error ForPath:(const char *)_path
 {
     OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
+                                   initRetrySkipSkipAllAbortHide:!m_Job.IsSingleItem()];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
     [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to delete a directory",
@@ -215,39 +154,20 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
                                [NSString stringWithUTF8String:_path]]];
     
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Retry", @"Operations", "Error dialog button - retry an attempt")
-                    andResult:OperationDialogResult::Retry];
+                    andResult:FileDeletionOperationDR::Retry];
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Delete Permanently", @"Operations", "Error dialog button - delete file permanently")
                     andResult:FileDeletionOperationDR::DeletePermanently];
-    if (!m_SingleItem) {
+    if (!m_Job.IsSingleItem()) {
         [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Skip", @"Operations", "Error dialog button - skip current item")
-                        andResult:OperationDialogResult::Skip];
+                        andResult:FileDeletionOperationDR::Skip];
         [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Skip All", @"Operations", "Error dialog button - skipp all items with errors")
-                        andResult:OperationDialogResult::SkipAll];
+                        andResult:FileDeletionOperationDR::SkipAll];
     }
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Abort", @"Operations", "Error dialog button - abort operation")
-                    andResult:OperationDialogResult::Stop];
+                    andResult:FileDeletionOperationDR::Stop];
     [alert AddButtonWithTitle:NSLocalizedStringFromTable(@"Hide", @"Operations", "Error dialog button - hide dialog")
-                    andResult:OperationDialogResult::None];
+                    andResult:FileDeletionOperationDR::None];
     
-    [self EnqueueDialog:alert];
-    
-    return alert;
-}
-
-- (OperationDialogAlert *)DialogOnSecureRewriteError:(NSError *)_error ForPath:(const char *)_path
-{
-    OperationDialogAlert *alert = [[OperationDialogAlert alloc]
-                                   initRetrySkipSkipAllAbortHide:!m_SingleItem];
-    
-    [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to securely delete a file",
-                                                     @"Operations",
-                                                     "Error dialog title when can't securely delete a file")];
-    [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@",
-                                                                                    @"Operations",
-                                                                                    "Informative text on error dialog when can't securely delete an item"),
-                               _error.localizedDescription,
-                               [NSString stringWithUTF8String:_path]]];
     [self EnqueueDialog:alert];
     
     return alert;

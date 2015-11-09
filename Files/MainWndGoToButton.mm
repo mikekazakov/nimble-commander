@@ -62,19 +62,22 @@ static vector<NSURL*> GetFindersFavorites()
     
 	for(NSObject *object in list) {
 		LSSharedFileListItemRef sflItemRef = (__bridge LSSharedFileListItemRef)object;
-		CFURLRef urlRef = NULL;
-		LSSharedFileListItemResolve(sflItemRef,
-                                    kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes,
-                                    &urlRef,
-                                    NULL);
-        
-        if(urlRef != 0) {
+        CFURLRef urlRef = nullptr;
+        CFErrorRef err = nullptr;
+        urlRef = LSSharedFileListItemCopyResolvedURL(sflItemRef,
+                                                     kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes,
+                                                     &err);
+        if( urlRef ) {
             NSURL* url = (__bridge NSURL*)urlRef;
             
             if([url.scheme isEqualToString:@"file"] &&
                [url.resourceSpecifier rangeOfString:@".cannedSearch/"].location == NSNotFound)
                 result.emplace_back(url);
             CFRelease(urlRef);
+        }
+        if( err ) {
+            NSLog(@"%@", (__bridge NSError*)err);
+            CFRelease(err);
         }
 	}
     

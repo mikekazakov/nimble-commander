@@ -68,8 +68,7 @@ LauchServicesHandlers LauchServicesHandlers::GetForItem( const VFSListingItem &_
 
         string path = _it.Directory() + _it.Filename();
         if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)path.c_str(), path.length(), false) ) {
-            CFURLRef default_app_url;
-            if( LSGetApplicationForURL(url, kLSRolesAll, 0, &default_app_url) == 0 ) {
+            if( CFURLRef default_app_url = LSCopyDefaultApplicationURLForURL(url, kLSRolesAll, nullptr) ) {
                 NSArray *apps = (NSArray *)CFBridgingRelease( LSCopyApplicationURLsForURL(url, kLSRolesAll) );
                 for( NSURL *url in apps ) {
                     result.paths.emplace_back( url.path.fileSystemRepresentation );

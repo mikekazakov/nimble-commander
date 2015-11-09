@@ -3,11 +3,14 @@
 #include "../../vfs/VFS.h"
 #include "../../OperationJob.h"
 #include "Options.h"
+#include "DialogResults.h"
 
 class FileDeletionOperationJobNew : public OperationJob
 {
 public:
     void Init(vector<VFSListingItem> _files, FileDeletionOperationType _type);
+    
+    void ToggleSkipAll();    
     
 private:
     enum class StepResult
@@ -67,10 +70,9 @@ private:
     virtual void Do() override;
     void            DoScan();
     void            DoProcess();
-    StepResult      DoVFSDelete(VFSHost &_host, const string& _path, uint16_t _mode);
-    StepResult      DoNativeDelete(const string& _path, uint16_t _mode);
-    StepResult      DoNativeTrash(const string& _path, uint16_t _mode);
-    StepResult      DoNativeSecureDelete(const string& _path, uint16_t _mode);
+    StepResult      DoVFSDelete(VFSHost &_host, const string& _path, uint16_t _mode) const;
+    StepResult      DoNativeDelete(const string& _path, uint16_t _mode) const;
+    StepResult      DoNativeTrash(const string& _path, uint16_t _mode) const;
     
     static int      TrashItem(const string& _path, uint16_t _mode);
 
@@ -82,4 +84,31 @@ private:
 
     FileDeletionOperationType   m_Type = FileDeletionOperationType::MoveToTrash;
     bool                        m_SkipAll = false;
+    
+public:
+    
+//    namespace FileDeletionOperationDR
+//    {
+//        using namespace OperationDialogResult;
+//        
+//        constexpr int DeletePermanently = Custom + 1;
+//    }
+    
+    // expect: FileDeletionOperationDR::Retry, FileDeletionOperationDR::Skip, FileDeletionOperationDR::SkipAll, FileDeletionOperationDR::Stop
+    function<int(int _vfs_error, string _path)> m_OnCantUnlink
+        = [](int, string){ return FileDeletionOperationDR::Stop; };
+    
+    // expect: FileDeletionOperationDR::Retry, FileDeletionOperationDR::Skip, FileDeletionOperationDR::SkipAll, FileDeletionOperationDR::Stop
+    function<int(int _vfs_error, string _path)> m_OnCantRmdir
+        = [](int, string){ return FileDeletionOperationDR::Stop; };
+
+    // expect: FileDeletionOperationDR::DeletePermanently, FileDeletionOperationDR::Retry, FileDeletionOperationDR::Skip, FileDeletionOperationDR::SkipAll, FileDeletionOperationDR::Stop
+    function<int(int _vfs_error, string _path)> m_OnCantTrash
+        = [](int, string){ return FileDeletionOperationDR::Stop; };
+    
+//    
+//    int result = [[m_Operation DialogOnUnlinkError:ErrnoToNSError() ForPath:_full_path] WaitForResult];
+//    if (result == OperationDialogResult::Retry) goto retry_unlink;
+//    else if (result == OperationDialogResult::SkipAll) m_SkipAll = true;
+//    else if (result == OperationDialogResult::Stop) RequestStop();
 };

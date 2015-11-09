@@ -14,14 +14,6 @@
 
 @class OperationDialogAlert;
 
-namespace FileDeletionOperationDR
-{
-enum
-{
-    DeletePermanently = OperationDialogResult::Custom
-};
-}
-
 @interface FileDeletionOperation : Operation
 
 

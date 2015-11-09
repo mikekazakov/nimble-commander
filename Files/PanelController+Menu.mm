@@ -730,13 +730,11 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
                                                                      ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
                                                                      : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
-        sheet.allowSecureDelete = true;
         sheet.allowMoveToTrash = all_have_trash;
         sheet.defaultType = type;
     }
     else {
         sheet.allowMoveToTrash = false;
-        sheet.allowSecureDelete = false;
         sheet.defaultType = FileDeletionOperationType::Delete;
     }
 

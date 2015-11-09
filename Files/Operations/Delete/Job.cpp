@@ -27,17 +27,28 @@ static bool EAHasMainFile(const char *_full_ea_path)
 
 void FileDeletionOperationJobNew::Init(vector<VFSListingItem> _files, FileDeletionOperationType _type)
 {
-    if( (_type == FileDeletionOperationType::MoveToTrash || _type == FileDeletionOperationType::SecureDelete) &&
+    if( (_type == FileDeletionOperationType::MoveToTrash) &&
        !all_of(begin(_files), end(_files), [](auto &i) { return i.Host()->IsNativeFS(); } ) )
         throw invalid_argument("FileDeletionOperationJobNew::Init invalid work mode for current source items");
     
+    m_Type = _type;
     m_OriginalItems = move(_files);
+}
+
+void FileDeletionOperationJobNew::ToggleSkipAll()
+{
+    m_SkipAll = true;
 }
 
 void FileDeletionOperationJobNew::Do()
 {
     DoScan();
+
+    m_Stats.StartTimeTracking();
+    m_Stats.SetMaxValue( m_DeleteOrder.size() );
+    
     DoProcess();
+    
     
     if( CheckPauseOrStop() ) { SetStopped(); return; }
     SetCompleted();    
@@ -140,83 +151,107 @@ void FileDeletionOperationJobNew::DoScan()
 
 void FileDeletionOperationJobNew::DoProcess()
 {
-//    for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {
     for(auto index: m_DeleteOrder) {
         auto source_mode = m_SourceItems.ItemMode(index);
         auto&source_host = m_SourceItems.ItemHost(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
 
+        m_Stats.SetCurrentItem( m_SourceItems.ItemName(index) );
 
-        
         StepResult step_result = StepResult::Stop;
         if( source_host.IsNativeFS() ) {
             if( m_Type == FileDeletionOperationType::Delete )
                 step_result = DoNativeDelete(source_path, source_mode);
             else if( m_Type == FileDeletionOperationType::MoveToTrash )
                 step_result = DoNativeTrash(source_path, source_mode);
-            else if( m_Type == FileDeletionOperationType::SecureDelete )
-                step_result = DoNativeSecureDelete(source_path, source_mode);
         }
         else
             step_result = DoVFSDelete(source_host, source_path, source_mode);
         
+        // check current item result
+        if( step_result == StepResult::Stop || CheckPauseOrStop() )
+            return;
         
+        if( step_result == StepResult::SkipAll )
+            ToggleSkipAll();
+        
+        m_Stats.AddValue(1);
     }
     
-    
+    m_Stats.SetCurrentItem("");
 }
 
-FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoNativeDelete(const string& _path, uint16_t _mode)
+FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoNativeDelete(const string& _path, uint16_t _mode) const
 {
     auto &io = RoutedIO::Default;
     
-    if( S_ISDIR(_mode) ) {
-        int ret = io.rmdir( _path.c_str() );
-        
-            // process return code
-        
-    }
-    else {
-        int ret = io.unlink( _path.c_str() );
-        
-            // process return code
-        
-    }
-    
+    if( S_ISDIR(_mode) )
+        while( io.rmdir(_path.c_str()) == -1 ) {
+            // failed to remove a directory
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch ( m_OnCantRmdir(VFSError::FromErrno(), _path) ) {
+                case FileDeletionOperationDR::Retry:    continue;
+                case FileDeletionOperationDR::Skip:     return StepResult::Skipped;
+                case FileDeletionOperationDR::SkipAll:  return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    else
+        while( io.unlink(_path.c_str()) == -1 ) {
+            // failed to unlink a file
+            if( m_SkipAll ) return StepResult::Skipped;            
+            switch ( m_OnCantUnlink(VFSError::FromErrno(), _path) ) {
+                case FileDeletionOperationDR::Retry:    continue;
+                case FileDeletionOperationDR::Skip:     return StepResult::Skipped;
+                case FileDeletionOperationDR::SkipAll:  return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
 
-    
-    
     return StepResult::Ok;
 }
 
-FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoNativeTrash(const string& _path, uint16_t _mode)
+FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoNativeTrash(const string& _path, uint16_t _mode) const
 {
-    int ret = TrashItem(_path, _mode);
-
-    // process return code
-    
+    while( auto ret = TrashItem(_path, _mode) ) {
+        // failed to trash file
+        if( m_SkipAll ) return StepResult::Skipped;
+        switch( m_OnCantTrash(ret, _path) ) {
+            case FileDeletionOperationDR::Retry:                continue;
+            case FileDeletionOperationDR::Skip:                 return StepResult::Skipped;
+            case FileDeletionOperationDR::SkipAll:              return StepResult::SkipAll;
+            case FileDeletionOperationDR::DeletePermanently:    return DoNativeDelete(_path, _mode);
+            default:                                            return StepResult::Stop;
+        }
+    }
     return StepResult::Ok;
 }
 
-FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoNativeSecureDelete(const string& _path, uint16_t _mode)
+FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoVFSDelete(VFSHost &_host, const string& _path, uint16_t _mode) const
 {
-    return StepResult::Ok;
-}
+    if( S_ISDIR(_mode) )
+        while( auto ret = _host.RemoveDirectory(_path.c_str()) ) {
+            // failed to remove a directory
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch ( m_OnCantRmdir(ret, _path) ) {
+                case FileDeletionOperationDR::Retry:    continue;
+                case FileDeletionOperationDR::Skip:     return StepResult::Skipped;
+                case FileDeletionOperationDR::SkipAll:  return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
+    else
+        while( auto ret = _host.Unlink(_path.c_str()) ) {
+            // failed to unlink a file
+            if( m_SkipAll ) return StepResult::Skipped;
+            switch ( m_OnCantUnlink(ret, _path) ) {
+                case FileDeletionOperationDR::Retry:    continue;
+                case FileDeletionOperationDR::Skip:     return StepResult::Skipped;
+                case FileDeletionOperationDR::SkipAll:  return StepResult::SkipAll;
+                default:                                return StepResult::Stop;
+            }
+        }
 
-FileDeletionOperationJobNew::StepResult FileDeletionOperationJobNew::DoVFSDelete(VFSHost &_host, const string& _path, uint16_t _mode)
-{
-    if( S_ISDIR(_mode) ) {
-        int ret = _host.RemoveDirectory( _path.c_str() );
-
-            // process return code
-    }
-    else {
-        int ret = _host.Unlink( _path.c_str() );
-        
-            // process return code
-    }
-    
-    
     return StepResult::Ok;
 }
 
@@ -233,8 +268,6 @@ int FileDeletionOperationJobNew::SourceItems::InsertItem( uint16_t _host_index, 
     it.base_dir_index = _base_dir_index;
     it.host_index = _host_index;
     it.mode = _stat.mode;
-//    it.dev_num = _stat.dev;
-//    it.item_size = _stat.size;
     
     m_Items.emplace_back( move(it) );
     

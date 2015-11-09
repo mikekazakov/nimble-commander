@@ -15,11 +15,9 @@
 
     shared_ptr<vector<VFSListingItem>> m_Items;
     bool                        m_AllowMoveToTrash;
-    bool                        m_AllowSecureDelete;
 }
 
 @synthesize allowMoveToTrash = m_AllowMoveToTrash;
-@synthesize allowSecureDelete = m_AllowSecureDelete;
 @synthesize resultType = m_ResultType;
 @synthesize defaultType = m_DefaultType;
 
@@ -28,7 +26,6 @@
     self = [super initWithWindowNibName:@"FileDeletionSheetController"];
     if (self) {
         m_AllowMoveToTrash = true;
-        m_AllowSecureDelete = true;
         m_DefaultType = FileDeletionOperationType::Delete;
         m_ResultType = FileDeletionOperationType::Delete;
         m_Items = _items;
@@ -58,15 +55,6 @@
         it.target = self;
         [self.DeleteButtonMenu addItem:it];        
     }
-    if( m_AllowSecureDelete ) {
-        NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = NSLocalizedString(@"Delete Securely", "Menu item title in file deletion sheet");
-        it.tag = int(FileDeletionOperationType::SecureDelete);
-        it.action = @selector(OnMenuItem:);
-        it.target = self;        
-        [self.DeleteButtonMenu addItem:it];        
-    }
-
     NSMenuItem *item = [self.DeleteButtonMenu itemWithTag:int(m_DefaultType)];
     if(!item) {
         item = [self.DeleteButtonMenu itemWithTag:int(FileDeletionOperationType::Delete)];

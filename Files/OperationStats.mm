@@ -74,8 +74,9 @@ void OperationStats::SetCurrentItem(string _item)
     NotifyWillChange(Nofity::CurrentItem);
     
     {
-        auto item = to_shared_ptr( move(_item) );
-        lock_guard<mutex> lock(m_Lock);
+        static const shared_ptr<string> empty_string = make_shared<string>("");
+        auto item = _item.empty() ? empty_string : to_shared_ptr( move(_item) );
+        lock_guard<spinlock> lock(m_CurrentItemLock);
         m_CurrentItem = item;
     }
     
@@ -84,7 +85,7 @@ void OperationStats::SetCurrentItem(string _item)
 
 shared_ptr<const string> OperationStats::GetCurrentItem() const
 {
-    lock_guard<mutex> lock(m_Lock);
+    lock_guard<spinlock> lock(m_CurrentItemLock);
     return m_CurrentItem;
 }
 

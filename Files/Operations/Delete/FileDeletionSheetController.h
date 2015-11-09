@@ -17,7 +17,6 @@
 @property (strong) IBOutlet NSMenu *DeleteButtonMenu;
 
 @property (nonatomic) bool allowMoveToTrash;
-@property (nonatomic) bool allowSecureDelete;
 @property (nonatomic) FileDeletionOperationType defaultType;
 @property (nonatomic) FileDeletionOperationType resultType;
 

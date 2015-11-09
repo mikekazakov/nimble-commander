@@ -14,6 +14,20 @@
 #include "FileDeletionOperation.h"
 #include "Job.h"
 
+static NSString *Caption(const vector<VFSListingItem> &_files)
+{
+    if(_files.size() == 1)
+        return  [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting \u201c%@\u201d",
+                                                                      @"Operations",
+                                                                      "Operation title for single item deletion"),
+                 [NSString stringWithUTF8String:_files.front().Name()]];
+    else
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Deleting %@ items",
+                                                                     @"Operations",
+                                                                     "Operation title for multiple items deletion"),
+                [NSNumber numberWithUnsignedLong:_files.size()]];
+}
+
 @implementation FileDeletionOperation
 {
     FileDeletionOperationJobNew m_Job;
@@ -28,9 +42,15 @@
 {
     self = [super initWithJob:&m_Job];
     if (self) {
+        self.Caption = Caption(_files);
+        
         m_Job.Init(move(_files), _type);
         
-        
+        __weak auto wself = self;
+        self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
+                                    nullptr,
+                                    [wself]{ if(auto sself = wself) [sself updateShortInfo]; }
+                                    );
     }
     
     return self;
@@ -117,6 +137,8 @@
                                                                                @"Operations",
                                                                                "Operation info for file deletion"),
                           [NSString stringWithUTF8StdString:*item]];
+    
+    self.Progress = self.Stats.GetProgress();
 }
 
 - (OperationDialogAlert *)DialogOnOpendirError:(NSError*)_error ForDir:(const char *)_path

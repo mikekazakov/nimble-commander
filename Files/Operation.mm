@@ -304,7 +304,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
     OperationsProgressReporter::Report((__bridge void*)self, Progress);
     
     m_Progress = Progress;
-    if(m_IsIndeterminate == true && Progress > 0.0001f)
+    if(m_IsIndeterminate == true && Progress > 0.0001)
         self.IsIndeterminate = false;
 }
 

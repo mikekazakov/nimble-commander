@@ -47,15 +47,16 @@ public:
     milliseconds GetTime() const;
     
 private:
-    nanoseconds     m_StartTime{0};
-    nanoseconds     m_PauseTime{0};
-    volatile bool   m_Started{false};
-    volatile int    m_Paused{0};
-    atomic_ulong    m_Value{0};
-    atomic_ulong    m_MaxValue{0};
-    mutable mutex   m_Lock;
+    nanoseconds                 m_StartTime{0};
+    nanoseconds                 m_PauseTime{0};
+    volatile bool               m_Started{false};
+    volatile int                m_Paused{0};
+    atomic_ulong                m_Value{0};
+    atomic_ulong                m_MaxValue{0};
+    mutable mutex               m_Lock;
 
-    shared_ptr<const string> m_CurrentItem = make_shared<string>("");
+    mutable spinlock            m_CurrentItemLock;
+    shared_ptr<const string>    m_CurrentItem = make_shared<string>(""); // waiting for atomic_shared_ptr to remove separate spinlock
     
     OperationStats(const OperationStats&) = delete;
     void operator=(const OperationStats&) = delete;

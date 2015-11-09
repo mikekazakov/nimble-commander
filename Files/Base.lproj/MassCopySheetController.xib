@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MassCopySheetController">
@@ -9,9 +9,14 @@
                 <outlet property="ButtonsPart" destination="vpz-Xu-YxL" id="d68-FX-lUt"/>
                 <outlet property="CopyButton" destination="16" id="56"/>
                 <outlet property="CopyButtonStringStub" destination="LIR-Na-Bsa" id="Ph5-ZD-rGL"/>
+                <outlet property="CopyFileTimesCheckbox" destination="dpu-XA-3T3" id="6CL-uy-8yj"/>
+                <outlet property="CopyUNIXFlagsCheckbox" destination="Qai-ZS-UAD" id="9KW-MA-rVL"/>
+                <outlet property="CopyUnixOwnersCheckbox" destination="EmM-aw-84e" id="m9W-cm-0vc"/>
+                <outlet property="CopyXattrsCheckbox" destination="qsB-Vr-8ZA" id="bhQ-KR-bG8"/>
                 <outlet property="DescriptionText" destination="12" id="60"/>
                 <outlet property="DisclosedViewController" destination="E1e-vG-fVc" id="uL0-rT-zug"/>
                 <outlet property="PathPart" destination="oVI-wD-asY" id="SjH-LV-XJ0"/>
+                <outlet property="PreserveSymlinksCheckbox" destination="Sz2-k9-71G" id="MI9-yY-NRW"/>
                 <outlet property="RenameButtonStringStub" destination="YbL-01-sYZ" id="YNC-bt-ICx"/>
                 <outlet property="StackView" destination="AYy-m7-y0I" id="oFm-SC-fGT"/>
                 <outlet property="TextField" destination="5" id="57"/>
@@ -117,7 +122,7 @@ Gw
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" misplaced="YES" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="485" height="267"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="250" verticalStackHuggingPriority="750" misplaced="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AYy-m7-y0I">
                         <rect key="frame" x="0.0" y="80" width="485" height="187"/>

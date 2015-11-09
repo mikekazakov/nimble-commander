@@ -12,6 +12,15 @@
 #include "../Files/vfs/vfs_native.h"
 #include "../Files/Operations/Delete/FileDeletionOperation.h"
 
+static vector<VFSListingItem> FetchItems(const string& _directory_path,
+                                         const vector<string> &_filenames,
+                                         VFSHost &_host)
+{
+    vector<VFSListingItem> items;
+    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
+    return items;
+}
+
 @interface Operation_VFSDelete_Tests : XCTestCase
 @end
 
@@ -32,9 +41,9 @@
         XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
         
         FileDeletionOperation *op = [FileDeletionOperation alloc];
-        op = [op initWithFiles:vector<string>{"mach_kernel"}
-                           dir:"/Public/!FilesTesting"
-                            at:host];
+        op = [op initWithFiles:FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host)
+                          type:FileDeletionOperationType::Delete
+              ];
         
         __block bool finished = false;
         [op AddOnFinishHandler:^{ finished = true; }];
@@ -62,9 +71,9 @@
         XCTAssert( VFSEasyCopyNode(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
         
         FileDeletionOperation *op = [FileDeletionOperation alloc];
-        op = [op initWithFiles:vector<string>{"bin"}
-                           dir:"/Public/!FilesTesting"
-                            at:host];
+        op = [op initWithFiles:FetchItems("/Public/!FilesTesting", {"bin"}, *host)
+                          type:FileDeletionOperationType::Delete
+              ];
         
         __block bool finished = false;
         [op AddOnFinishHandler:^{ finished = true; }];

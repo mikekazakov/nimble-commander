@@ -10,6 +10,15 @@
 #include "../Files/VFS/vfs_native.h"
 #include "../Files/Operations/Delete/FileDeletionOperation.h"
 
+static vector<VFSListingItem> FetchItems(const string& _directory_path,
+                                         const vector<string> &_filenames,
+                                         VFSHost &_host)
+{
+    vector<VFSListingItem> items;
+    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
+    return items;
+}
+
 @interface Operation_Deletion_Tests : XCTestCase
 
 @end
@@ -28,9 +37,10 @@
                                VFSNativeHost::SharedHost()) == 0);
     
     FileDeletionOperation *op = [FileDeletionOperation alloc];
-    op = [op initWithFiles:vector<string>{"Mail.app"}
+    
+    op = [op initWithFiles:FetchItems(dir, {"Mail.app"}, *VFSNativeHost::SharedHost())
                       type:FileDeletionOperationType::Delete
-                       dir:dir];
+          ];
     
     __block bool finished = false;
     [op AddOnFinishHandler:^{ finished = true; }];

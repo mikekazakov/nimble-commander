@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BatchRenameOperation.h"
-#import "BatchRenameOperationJob.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "BatchRenameOperation.h"
+#include "BatchRenameOperationJob.h"
 
 @implementation BatchRenameOperation
 {

@@ -7,7 +7,7 @@
 //
 
 #include "tests_common.h"
-#include "../Files/BatchRename.h"
+#include "../Files/Operations/BatchRename/BatchRename.h"
 
 @interface BatchRename_Tests : XCTestCase
 

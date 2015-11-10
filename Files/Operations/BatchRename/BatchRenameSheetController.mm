@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "BatchRenameSheetController.h"
-#import "BatchRename.h"
-#import "Common.h"
-#import "BatchRenameSheetRangeSelectionPopoverController.h"
-#import "SheetWithHotkeys.h"
-#import "SimpleComboBoxPersistentDataSource.h"
+#include "../../3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../Common.h"
+#include "../../SheetWithHotkeys.h"
+#include "../../SimpleComboBoxPersistentDataSource.h"
+#include "BatchRenameSheetController.h"
+#include "BatchRename.h"
+#include "BatchRenameSheetRangeSelectionPopoverController.h"
 
 static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTableViewDataType";
 

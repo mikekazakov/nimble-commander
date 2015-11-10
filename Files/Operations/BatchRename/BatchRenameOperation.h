@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "vfs/VFS.h"
-#include "Operation.h"
-#include "OperationDialogAlert.h"
+#include "../../vfs/VFS.h"
+#include "../../Operation.h"
+#include "../../OperationDialogAlert.h"
 
 @interface BatchRenameOperation : Operation
 

@@ -15,6 +15,9 @@
 #include "vfs/vfs_net_sftp.h"
 #include "vfs/vfs_xattr.h"
 #include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/BatchRename/BatchRename.h"
+#include "Operations/BatchRename/BatchRenameSheetController.h"
+#include "Operations/BatchRename/BatchRenameOperation.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController+Menu.h"
 #include "GoToFolderSheetController.h"
@@ -38,9 +41,6 @@
 #include "NativeFSManager.h"
 #include "SavedNetworkConnectionsManager.h"
 #include "ConnectionsMenuDelegate.h"
-#include "BatchRename.h"
-#include "BatchRenameSheetController.h"
-#include "BatchRenameOperation.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {

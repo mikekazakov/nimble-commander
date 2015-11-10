@@ -6,7 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationDialogProtocol.h"
+#pragma once
+
+#include "OperationDialogProtocol.h"
 
 // Alert that can be queued within Operation.
 // Use ShowDialogForWindow:(NSWindow *)_window to show the alert.

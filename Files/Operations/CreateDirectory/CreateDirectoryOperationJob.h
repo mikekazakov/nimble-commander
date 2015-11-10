@@ -8,8 +8,8 @@
 
 #pragma once
 
-#import "OperationJob.h"
-#import "CreateDirectoryOperation.h"
+#include "../../OperationJob.h"
+#include "CreateDirectoryOperation.h"
 
 class CreateDirectoryOperationJob : public OperationJob
 {

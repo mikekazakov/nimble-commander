@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "CreateDirectoryOperation.h"
-#import "CreateDirectoryOperationJob.h"
-#import "CreateDirectoryOperationVFSJob.h"
-#import "PanelController.h"
-#import "Common.h"
+#include "../../Common.h"
+// REMOVE THIS DEPENDENCY:
+#include "../../PanelController.h"
+
+#include "CreateDirectoryOperation.h"
+#include "CreateDirectoryOperationJob.h"
+#include "CreateDirectoryOperationVFSJob.h"
 
 static NSString *OperationTitleFromPath(const char *_path)
 {

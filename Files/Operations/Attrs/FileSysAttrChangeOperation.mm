@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileSysAttrChangeOperation.h"
-#import "FileSysAttrChangeOperationJob.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "FileSysAttrChangeOperation.h"
+#include "FileSysAttrChangeOperationJob.h"
 
 @implementation FileSysAttrChangeOperation
 {

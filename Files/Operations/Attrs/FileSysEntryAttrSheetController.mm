@@ -10,16 +10,17 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
-#include <vector>
-#include <algorithm>
 #include  <OpenDirectory/OpenDirectory.h>
 #include "FileSysEntryAttrSheetController.h"
-#include "Common.h"
-#include "PanelData.h"
+#include "../../Common.h"
+#include "../../chained_strings.h"
+// REMOVE THIS:
+#include "../../PanelData.h"
+
 #include "filesysattr.h"
-#include "chained_strings.h"
-#include "DispatchQueue.h"
-#include "sysinfo.h"
+
+#include "../../DispatchQueue.h"
+#include "../../sysinfo.h"
 
 struct user_info
 {

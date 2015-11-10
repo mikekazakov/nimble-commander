@@ -7,7 +7,9 @@
 //
 
 #pragma once
-#include "chained_strings.h"
+
+#include "../../vfs/VFS.h"
+#include "../../chained_strings.h"
 
 class PanelData;
 
@@ -73,21 +75,32 @@ struct FileSysAttrAlterCommand
     string   root_path;
 
     // section that operates with selected panel items
-    static void GetCommonFSFlagsState(const PanelData& _pd, tribool _state[fsf_totalcount]);
+    static void GetCommonFSFlagsState(const PanelData& _pd,
+                                      tribool _state[fsf_totalcount]);
+    static void GetCommonFSFlagsState(const vector<VFSListingItem>& _items,
+                                      tribool _state[fsf_totalcount]);
+    
+    
     static void GetCommonFSUIDAndGID(const PanelData& _pd,
                                      uid_t &_uid,
                                      bool &_has_common_uid,
                                      gid_t &_gid,
                                      bool &_has_common_gid);
     
-    static void GetCommonFSTimes(const PanelData& _pd,
-                                 int _atimes[fstm_totalcount],
-                                 int _mtimes[fstm_totalcount],
-                                 int _ctimes[fstm_totalcount],
-                                 int _btimes[fstm_totalcount]
-                                 ); // -1 value mean there's no common time
+//    static void GetCommonFSTimes(const PanelData& _pd,
+//                                 int _atimes[fstm_totalcount],
+//                                 int _mtimes[fstm_totalcount],
+//                                 int _ctimes[fstm_totalcount],
+//                                 int _btimes[fstm_totalcount]
+//                                 ); // -1 value mean there's no common time
     
     static void GetCommonFSTimes(const PanelData& _pd,
+                                 time_t &_atime, bool &_has_common_atime,
+                                 time_t &_mtime, bool &_has_common_mtime,
+                                 time_t &_ctime, bool &_has_common_ctime,
+                                 time_t &_btime, bool &_has_common_btime);
+    
+    static void GetCommonFSTimes(const vector<VFSListingItem>& _items,
                                  time_t &_atime, bool &_has_common_atime,
                                  time_t &_mtime, bool &_has_common_mtime,
                                  time_t &_ctime, bool &_has_common_ctime,

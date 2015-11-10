@@ -8,9 +8,9 @@
 
 #pragma once
 
-#import "OperationJob.h"
+#include "../../OperationJob.h"
+#include "../../chained_strings.h"
 #include "filesysattr.h"
-#include "chained_strings.h"
 
 @class FileSysAttrChangeOperation;
 

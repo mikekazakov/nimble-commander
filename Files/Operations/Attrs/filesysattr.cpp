@@ -6,10 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "filesysattr.h"
-#include "PanelData.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+
+// REMOVE THIS:
+//#include "../../PanelData.h"
+
+#include "filesysattr.h"
 
 void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, tribool _st[fsf_totalcount])
 {
@@ -85,6 +88,47 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, triboo
 //    }
 }
 
+template <class _InputIterator, class _Predicate>
+static tribool
+all_eq_onoff(_InputIterator __first, _InputIterator __last, _Predicate __pred)
+{
+    tribool firstval = indeterminate;
+    if( __first != __last )
+        firstval = bool(__pred(*__first));
+    
+    for (; __first != __last; ++__first)
+        if ( bool(__pred(*__first)) != firstval )
+            return indeterminate;
+    return firstval;
+}
+
+void FileSysAttrAlterCommand::GetCommonFSFlagsState(const vector<VFSListingItem>& _items, tribool _state[fsf_totalcount])
+{
+    // not the most efficient way since we call UnixMode and UnixFlag a lot more than actually can, but it shouldn't be a bottleneck anytime
+    _state[fsf_unix_usr_r]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IRUSR;          });
+    _state[fsf_unix_usr_w]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IWUSR;          });
+    _state[fsf_unix_usr_x]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IXUSR;          });
+    _state[fsf_unix_grp_r]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IRGRP;          });
+    _state[fsf_unix_grp_w]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IWGRP;          });
+    _state[fsf_unix_grp_x]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IXGRP;          });
+    _state[fsf_unix_oth_r]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IROTH;          });
+    _state[fsf_unix_oth_w]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IWOTH;          });
+    _state[fsf_unix_oth_x]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_IXOTH;          });
+    _state[fsf_unix_suid]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_ISUID;          });
+    _state[fsf_unix_sgid]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_ISGID;          });
+    _state[fsf_unix_sticky]     = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixMode()     & S_ISVTX;          });
+    _state[fsf_uf_nodump]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_NODUMP;        });
+    _state[fsf_uf_immutable]    = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_IMMUTABLE;     });
+    _state[fsf_uf_append]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_APPEND;        });
+    _state[fsf_uf_opaque]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_OPAQUE;        });
+    _state[fsf_uf_hidden]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_HIDDEN;        });
+    _state[fsf_uf_compressed]   = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_COMPRESSED;    });
+    _state[fsf_uf_tracked]      = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & UF_TRACKED;       });
+    _state[fsf_sf_archived]     = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & SF_ARCHIVED;      });
+    _state[fsf_sf_immutable]    = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & SF_IMMUTABLE;     });
+    _state[fsf_sf_append]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & SF_APPEND;        });
+}
+
 void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
                                  uid_t &_uid,
                                  bool &_has_common_uid,
@@ -115,13 +159,13 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
 //    }
 }
 
-void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
-                                               int _atimes[fstm_totalcount],
-                                               int _mtimes[fstm_totalcount],
-                                               int _ctimes[fstm_totalcount],
-                                               int _btimes[fstm_totalcount]
-                                               )
-{
+//void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
+//                                               int _atimes[fstm_totalcount],
+//                                               int _mtimes[fstm_totalcount],
+//                                               int _ctimes[fstm_totalcount],
+//                                               int _btimes[fstm_totalcount]
+//                                               )
+//{
 //    bool first = true;
 //    time_t t_atime, t_mtime, t_ctime, t_btime;
 //    struct tm atime, mtime, ctime, btime;
@@ -209,7 +253,7 @@ void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
 //            }
 //        }
 //    }
-}
+//}
 
 void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
                              time_t &_atime, bool &_has_common_atime,
@@ -239,4 +283,27 @@ void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
 //                if(_btime != i.BTime()) _has_common_btime = false;
 //            }
 //        }
+}
+
+static void GetCommonFSTimes(const vector<VFSListingItem>& _items,
+                             time_t &_atime, bool &_has_common_atime,
+                             time_t &_mtime, bool &_has_common_mtime,
+                             time_t &_ctime, bool &_has_common_ctime,
+                             time_t &_btime, bool &_has_common_btime)
+{
+    _has_common_atime = all_of(begin(_items), end(_items), [&](auto &i){ return i.ATime() == _items.front().ATime(); });
+    if( _has_common_atime )
+        _atime = _items.front().ATime();
+    
+    _has_common_mtime = all_of(begin(_items), end(_items), [&](auto &i){ return i.MTime() == _items.front().MTime(); });
+    if( _has_common_mtime )
+        _mtime = _items.front().MTime();
+    
+    _has_common_ctime = all_of(begin(_items), end(_items), [&](auto &i){ return i.CTime() == _items.front().CTime(); });
+    if( _has_common_ctime )
+        _ctime = _items.front().CTime();
+    
+    _has_common_btime = all_of(begin(_items), end(_items), [&](auto &i){ return i.BTime() == _items.front().BTime(); });
+    if( _has_common_btime )
+        _btime = _items.front().BTime();
 }

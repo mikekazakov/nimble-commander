@@ -9,7 +9,7 @@
 #include "tests_common.h"
 #include "../Files/VFS/VFS.h"
 #include "../Files/VFS/vfs_net_ftp.h"
-#include "../Files/CreateDirectoryOperation.h"
+#include "../Files/Operations/CreateDirectory/CreateDirectoryOperation.h"
 
 @interface Operation_CreateDirectory_VFS_Tests : XCTestCase
 

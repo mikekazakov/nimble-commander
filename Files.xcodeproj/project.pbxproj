@@ -57,11 +57,6 @@
 		CF0B7D351702E77000AB4F0F /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
-		CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
-		CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
-		CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
-		CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */; };
-		CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
@@ -211,11 +206,6 @@
 		CF6D9C13196678000077B146 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5F00ACA1711FCC300176F79 /* OperationDialogAlert.mm */; };
 		CF6D9C14196678000077B146 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B308170146240066A49F /* GenericOperationView.mm */; };
 		CF6D9C15196678000077B146 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30A170146240066A49F /* OperationsSummaryViewController.mm */; };
-		CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
-		CF6D9C1A196678000077B146 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
-		CF6D9C1B196678000077B146 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
-		CF6D9C1C196678000077B146 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */; };
-		CF6D9C1D196678000077B146 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CF6D9C1E196678000077B146 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B7D341702E77000AB4F0F /* FileSysEntryAttrSheetController.mm */; };
 		CF6D9C1F196678000077B146 /* filesysattr.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76B30417000C090066A49F /* filesysattr.mm */; };
 		CF6D9C20196678000077B146 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC058DA170B27C200A20CF2 /* FileSysAttrChangeOperation.mm */; };
@@ -364,6 +354,11 @@
 		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
 		CF7D13411BF1B091001F53FD /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
+		CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
+		CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
+		CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
+		CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -713,13 +708,8 @@
 		CFF6F3071A13567C00011177 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE40176985EF00757DE1 /* EncodingsAdditions.mm */; };
 		CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA110E177E83F8009E29F7 /* BigFileViewHistory.mm */; };
 		CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
-		CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128877177FF9D3002816C2 /* FileLinkOperation.mm */; };
-		CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */; };
-		CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */; };
 		CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857318EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm */; };
 		CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
-		CFF6F31A1A13567C00011177 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */; };
-		CFF6F31C1A13567C00011177 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */; };
 		CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
@@ -1029,16 +1019,6 @@
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
 		CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeDelete_Tests.mm; sourceTree = "<group>"; };
-		CF128876177FF9D3002816C2 /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperation.h; sourceTree = "<group>"; };
-		CF128877177FF9D3002816C2 /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperation.mm; sourceTree = "<group>"; };
-		CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkOperationJob.mm; sourceTree = "<group>"; };
-		CF12887A177FF9EC002816C2 /* FileLinkOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkOperationJob.h; sourceTree = "<group>"; };
-		CF12887C17800724002816C2 /* FileLinkNewSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkNewSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF12888117801DB1002816C2 /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF12888617803712002816C2 /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
-		CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
 		CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WorkspaceIconsCache.mm; sourceTree = "<group>"; };
 		CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkspaceIconsCache.h; sourceTree = "<group>"; };
 		CF17D1F01A049E1700B523C9 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
@@ -1250,6 +1230,16 @@
 		CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetController.mm; path = Operations/BatchRename/BatchRenameSheetController.mm; sourceTree = "<group>"; };
 		CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetRangeSelectionPopoverController.h; path = Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
 		CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetRangeSelectionPopoverController.mm; path = Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
+		CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkAlterSymlinkSheetController.h; path = Operations/Link/FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkAlterSymlinkSheetController.mm; path = Operations/Link/FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewHardlinkSheetController.h; path = Operations/Link/FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewHardlinkSheetController.mm; path = Operations/Link/FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewSymlinkSheetController.h; path = Operations/Link/FileLinkNewSymlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewSymlinkSheetController.mm; path = Operations/Link/FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperation.h; path = Operations/Link/FileLinkOperation.h; sourceTree = "<group>"; };
+		CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperation.mm; path = Operations/Link/FileLinkOperation.mm; sourceTree = "<group>"; };
+		CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperationJob.h; path = Operations/Link/FileLinkOperationJob.h; sourceTree = "<group>"; };
+		CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperationJob.mm; path = Operations/Link/FileLinkOperationJob.mm; sourceTree = "<group>"; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
@@ -1877,18 +1867,18 @@
 		CF128875177FF6F0002816C2 /* FileLinkOperation */ = {
 			isa = PBXGroup;
 			children = (
-				CF128876177FF9D3002816C2 /* FileLinkOperation.h */,
-				CF128877177FF9D3002816C2 /* FileLinkOperation.mm */,
-				CF12887A177FF9EC002816C2 /* FileLinkOperationJob.h */,
-				CF128879177FF9EC002816C2 /* FileLinkOperationJob.mm */,
-				CF12887C17800724002816C2 /* FileLinkNewSymlinkSheetController.h */,
-				CF12887D17800724002816C2 /* FileLinkNewSymlinkSheetController.mm */,
+				CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */,
+				CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */,
+				CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */,
+				CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */,
+				CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */,
+				CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */,
+				CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */,
+				CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */,
+				CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */,
+				CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */,
 				CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */,
-				CF12888117801DB1002816C2 /* FileLinkAlterSymlinkSheetController.h */,
-				CF12888217801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm */,
 				CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */,
-				CF12888617803712002816C2 /* FileLinkNewHardlinkSheetController.h */,
-				CF12888717803713002816C2 /* FileLinkNewHardlinkSheetController.mm */,
 				CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */,
 			);
 			name = FileLinkOperation;
@@ -3327,12 +3317,7 @@
 				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF6D9C15196678000077B146 /* OperationsSummaryViewController.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
-				CF6D9C19196678000077B146 /* FileLinkOperation.mm in Sources */,
-				CF6D9C1A196678000077B146 /* FileLinkOperationJob.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
-				CF6D9C1B196678000077B146 /* FileLinkNewSymlinkSheetController.mm in Sources */,
-				CF6D9C1C196678000077B146 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CF6D9C1D196678000077B146 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF50B6C71A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D01A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CF6D9C1E196678000077B146 /* FileSysEntryAttrSheetController.mm in Sources */,
@@ -3425,6 +3410,7 @@
 			files = (
 				CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */,
 				CF9069731BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
+				CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */,
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */,
@@ -3467,6 +3453,7 @@
 				CF9DBE141A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CF0A401A1B60BA00002A092B /* BlinkingCaret.mm in Sources */,
 				CFB3E4841844ACD700D375E2 /* TermParser.mm in Sources */,
+				CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFB3E4861844ACD700D375E2 /* TermScreen.cpp in Sources */,
 				CF1D17D516FAA58F0050B13F /* filesysinfo.mm in Sources */,
@@ -3506,10 +3493,12 @@
 				CF305DCB1946D50400840F25 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
+				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				B5F00ACB1711FCC300176F79 /* OperationDialogAlert.mm in Sources */,
 				CF9DF214171320910008CBAE /* CreateDirectoryOperation.mm in Sources */,
+				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF9DF218171320D40008CBAE /* CreateDirectoryOperationJob.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
@@ -3539,6 +3528,7 @@
 				CFD6F91A1BEC4FEA00A1B046 /* VFSListing.cpp in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
+				CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
@@ -3571,13 +3561,8 @@
 				CFDA110F177E83F8009E29F7 /* BigFileViewHistory.mm in Sources */,
 				CF8E76C21B353A1000BA16AD /* TermScrollView.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CF128878177FF9D3002816C2 /* FileLinkOperation.mm in Sources */,
-				CF12887B177FF9EC002816C2 /* FileLinkOperationJob.mm in Sources */,
-				CF12887F17800724002816C2 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF09857418EEB031006E6410 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
-				CF12888417801DB2002816C2 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CF12888917803715002816C2 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
@@ -3750,13 +3735,8 @@
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CFF6F30F1A13567C00011177 /* FileLinkOperation.mm in Sources */,
-				CFF6F3121A13567C00011177 /* FileLinkOperationJob.mm in Sources */,
-				CFF6F3131A13567C00011177 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
-				CFF6F31A1A13567C00011177 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
-				CFF6F31C1A13567C00011177 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CFABA8481B403AA3008DF6D1 /* TermTask.cpp in Sources */,
 				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,

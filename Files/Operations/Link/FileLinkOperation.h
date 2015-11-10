@@ -6,7 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "Operation.h"
+#pragma once
+
+#include "../../Operation.h"
 
 @class OperationDialogAlert;
 

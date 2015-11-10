@@ -7,22 +7,22 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include "Operations/Link/FileLinkNewSymlinkSheetController.h"
+#include "Operations/Link/FileLinkAlterSymlinkSheetController.h"
+#include "Operations/Link/FileLinkNewHardlinkSheetController.h"
+#include "Operations/Link/FileLinkOperation.h"
+#include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/Copy/MassCopySheetController.h"
+#include "Operations/Delete/FileDeletionOperation.h"
 #include "MainWindowFilePanelState+Menu.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController.h"
-#include "Operations/Delete/FileDeletionOperation.h"
 #include "FilePanelMainSplitView.h"
 #include "OperationsController.h"
 #include "Common.h"
 #include "ExternalEditorInfo.h"
 #include "MainWindowController.h"
 #include "FileCompressOperation.h"
-#include "FileLinkNewSymlinkSheetController.h"
-#include "FileLinkAlterSymlinkSheetController.h"
-#include "FileLinkNewHardlinkSheetController.h"
-#include "FileLinkOperation.h"
-#include "Operations/Copy/FileCopyOperation.h"
-#include "Operations/Copy/MassCopySheetController.h"
 
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 

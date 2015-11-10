@@ -8,10 +8,10 @@
 
 #include <Habanero/FontExtras.h>
 #include "vfs/vfs_native.h"
+#include "Operations/Link/FileLinkOperation.h"
+#include "Operations/Copy/FileCopyOperation.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
-#include "Operations/Copy/FileCopyOperation.h"
-#include "FileLinkOperation.h"
 #include "OperationsController.h"
 #include "path_manip.h"
 #include "Common.h"

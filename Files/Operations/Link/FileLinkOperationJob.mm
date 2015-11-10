@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileLinkOperationJob.h"
-#import "OperationDialogAlert.h"
-#include "RoutedIO.h"
+#include "../../OperationDialogAlert.h"
+#include "../../RoutedIO.h"
+#include "FileLinkOperationJob.h"
 
 FileLinkOperationJob::FileLinkOperationJob()
 {

@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationJob.h"
-#import "FileLinkOperation.h"
+#pragma once
 
+#include "../../OperationJob.h"
+#include "FileLinkOperation.h"
 
 class FileLinkOperationJob : public OperationJob
 {

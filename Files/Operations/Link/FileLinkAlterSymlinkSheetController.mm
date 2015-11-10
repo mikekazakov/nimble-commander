@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileLinkAlterSymlinkSheetController.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "FileLinkAlterSymlinkSheetController.h"
 
 @implementation FileLinkAlterSymlinkSheetController
 {

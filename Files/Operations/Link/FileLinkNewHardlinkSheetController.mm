@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileLinkNewHardlinkSheetController.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "FileLinkNewHardlinkSheetController.h"
 
 @implementation FileLinkNewHardlinkSheetController
 {

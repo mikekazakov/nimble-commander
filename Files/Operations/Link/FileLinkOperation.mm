@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileLinkOperation.h"
-#import "FileLinkOperationJob.h"
-#import "OperationDialogAlert.h"
+#include "../../OperationDialogAlert.h"
+#include "FileLinkOperation.h"
+#include "FileLinkOperationJob.h"
 
 @implementation FileLinkOperation
 {

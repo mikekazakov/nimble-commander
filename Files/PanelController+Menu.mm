@@ -123,7 +123,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
@@ -454,22 +454,34 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 }
 
 - (IBAction)OnFileAttributes:(id)sender {
-    if(!m_Data.Host()->IsNativeFS())
-        return; // currently support file info only on native fs
+//    if(!m_Data.Host()->IsNativeFS())
+//        return; // currently support file info only on native fs
+//    MachTimeBenchmark mtb;
     
-    FileSysEntryAttrSheetController *sheet = [FileSysEntryAttrSheetController new];
-    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
-        if(result == DialogResult::Apply)
-            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
-    };
+    auto entries = to_shared_ptr(self.selectedEntriesOrFocusedEntries);
+    if( entries->empty() )
+        return;
+    if( !all_of(begin(*entries), end(*entries), [](auto &i){ return i.Host()->IsNativeFS(); }) )
+        return;
     
-    if(m_Data.Stats().selected_entries_amount > 0 )
-        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-    else if(m_View.item && !m_View.item.IsDotDot())
-        [sheet ShowSheet:self.window
-                    data:&m_Data
-                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
-                 handler:handler];
+    FileSysEntryAttrSheetController *sheet = [[FileSysEntryAttrSheetController alloc] initWithItems:entries];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+
+        
+    }];
+    
+//    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
+//        if(result == DialogResult::Apply)
+//            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
+//    };
+//    
+//    if(m_Data.Stats().selected_entries_amount > 0 )
+//        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
+//    else if(m_View.item && !m_View.item.IsDotDot())
+//        [sheet ShowSheet:self.window
+//                    data:&m_Data
+//                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
+//                 handler:handler];
 }
 
 - (IBAction)OnDetailedVolumeInformation:(id)sender {

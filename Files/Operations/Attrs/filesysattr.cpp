@@ -8,14 +8,10 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-
-// REMOVE THIS:
-//#include "../../PanelData.h"
-
 #include "filesysattr.h"
 
-void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, tribool _st[fsf_totalcount])
-{
+//void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, tribool _st[fsf_totalcount])
+//{
 //    for(int i =0; i < fsf_totalcount; ++i) _st[i] = indeterminate;
 //    bool first = true;
 //    mode_t first_mode=0;
@@ -86,7 +82,7 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, triboo
 //            }
 //        }
 //    }
-}
+//}
 
 template <class _InputIterator, class _Predicate>
 static tribool
@@ -129,12 +125,12 @@ void FileSysAttrAlterCommand::GetCommonFSFlagsState(const vector<VFSListingItem>
     _state[fsf_sf_append]       = all_eq_onoff(begin(_items), end(_items), [](auto &i){ return i.UnixFlags()    & SF_APPEND;        });
 }
 
-void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
-                                 uid_t &_uid,
-                                 bool &_has_common_uid,
-                                 gid_t &_gid,
-                                 bool &_has_common_gid)
-{
+//void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
+//                                 uid_t &_uid,
+//                                 bool &_has_common_uid,
+//                                 gid_t &_gid,
+//                                 bool &_has_common_gid)
+//{
 //    bool first = true;
 //    _has_common_uid = false;
 //    _has_common_gid = false;
@@ -157,6 +153,21 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
 //            }
 //        }
 //    }
+//}
+
+void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const vector<VFSListingItem>& _items,
+                                                   uid_t &_uid,
+                                                   bool &_has_common_uid,
+                                                   gid_t &_gid,
+                                                   bool &_has_common_gid)
+{
+    _has_common_uid = all_of(begin(_items), end(_items), [&](auto &i){ return i.UnixUID() == _items.front().UnixUID(); });
+    if( _has_common_uid )
+        _uid = _items.front().UnixUID();
+
+    _has_common_gid = all_of(begin(_items), end(_items), [&](auto &i){ return i.UnixGID() == _items.front().UnixGID(); });
+    if( _has_common_gid )
+        _gid = _items.front().UnixGID();
 }
 
 //void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
@@ -255,12 +266,12 @@ void FileSysAttrAlterCommand::GetCommonFSUIDAndGID(const PanelData& _pd,
 //    }
 //}
 
-void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
-                             time_t &_atime, bool &_has_common_atime,
-                             time_t &_mtime, bool &_has_common_mtime,
-                             time_t &_ctime, bool &_has_common_ctime,
-                             time_t &_btime, bool &_has_common_btime)
-{
+//void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
+//                             time_t &_atime, bool &_has_common_atime,
+//                             time_t &_mtime, bool &_has_common_mtime,
+//                             time_t &_ctime, bool &_has_common_ctime,
+//                             time_t &_btime, bool &_has_common_btime)
+//{
 //    bool first = true;
 //    _has_common_atime = _has_common_mtime = _has_common_ctime = _has_common_btime = false;    
 //    for(const auto &i : _pd.Listing())
@@ -283,13 +294,13 @@ void FileSysAttrAlterCommand::GetCommonFSTimes(const PanelData& _pd,
 //                if(_btime != i.BTime()) _has_common_btime = false;
 //            }
 //        }
-}
+//}
 
-static void GetCommonFSTimes(const vector<VFSListingItem>& _items,
-                             time_t &_atime, bool &_has_common_atime,
-                             time_t &_mtime, bool &_has_common_mtime,
-                             time_t &_ctime, bool &_has_common_ctime,
-                             time_t &_btime, bool &_has_common_btime)
+void FileSysAttrAlterCommand::GetCommonFSTimes(const vector<VFSListingItem>& _items,
+                                               time_t &_atime, bool &_has_common_atime,
+                                               time_t &_mtime, bool &_has_common_mtime,
+                                               time_t &_ctime, bool &_has_common_ctime,
+                                               time_t &_btime, bool &_has_common_btime)
 {
     _has_common_atime = all_of(begin(_items), end(_items), [&](auto &i){ return i.ATime() == _items.front().ATime(); });
     if( _has_common_atime )

@@ -14,8 +14,6 @@
 #include "FileSysEntryAttrSheetController.h"
 #include "../../Common.h"
 #include "../../chained_strings.h"
-// REMOVE THIS:
-#include "../../PanelData.h"
 
 #include "filesysattr.h"
 
@@ -51,6 +49,7 @@ inline static tribool state_to_tribool(NSButton *_b)
     return indeterminate;
 }
 
+/*
 // return a long-long-time-ago date in GMT+0
 static NSDate *LongTimeAgo()
 {
@@ -72,6 +71,7 @@ static NSInteger ZeroSecsFromGMTEpoc()
     NSTimeInterval off = [[NSTimeZone defaultTimeZone] daylightSavingTimeOffsetForDate:[NSDate date]];
     return [[NSTimeZone defaultTimeZone]secondsFromGMTForDate:[NSDate date]] - off;
 }
+*/
         
 struct OtherAttrs
 {
@@ -86,6 +86,113 @@ struct OtherAttrs
         total
     };
 };
+
+// not used currently
+static vector<user_info> LoadUsersWithPasswd()
+{
+    vector<user_info> result;
+    
+    setpwent();
+    struct passwd *p;
+    while( (p = getpwent ()) != NULL ) {
+        user_info curr;
+        curr.pw_uid = p->pw_uid;
+        curr.pw_name = [NSString stringWithUTF8String:p->pw_name];
+        curr.pw_gecos = [NSString stringWithUTF8String:p->pw_gecos];
+        result.emplace_back(curr);
+    }
+    endpwent();
+
+    sort(begin(result), end(result), [](auto&_1, auto&_2){ return (signed)_1.pw_uid < (signed)_2.pw_uid; } );
+    result.erase(unique(begin(result), end(result), [](auto&_1, auto&_2){ return _1.pw_uid == _2.pw_uid; } ), end(result));
+    
+    return result;
+}
+
+static vector<user_info> LoadUsersWithOD()
+{
+    vector<user_info> result;
+    
+    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
+    if(!root) {
+        NSLog(@"Failed: ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@\"/Local/Default\" error:nil];");
+        return {};
+    }
+    
+    ODQuery *query = [ODQuery queryWithNode:root
+                             forRecordTypes:kODRecordTypeUsers
+                                  attribute:nil
+                                  matchType:0
+                                queryValues:nil
+                           returnAttributes:@[kODAttributeTypeUniqueID, kODAttributeTypeFullName]
+                             maximumResults:0
+                                      error:nil];
+    if( !query ) {
+        NSLog(@"Failed: ODQuery *query = [ODQuery queryWithNode:root...");
+        return {};
+    }
+    
+    for( ODRecord *r in [query resultsAllowingPartial:NO error:nil] ) {
+        NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
+        if(uid == nil || uid.count == 0)
+            continue; // invalid response, can't handle it
+        
+        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+        
+        user_info curr;
+        curr.pw_uid = (uid_t) [uid[0] integerValue];
+        curr.pw_name = r.recordName;
+        curr.pw_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
+        result.emplace_back(curr);
+    }
+
+    sort(begin(result), end(result), [](auto&_1, auto&_2){ return (signed)_1.pw_uid < (signed)_2.pw_uid; } );
+    result.erase(unique(begin(result), end(result), [](auto&_1, auto&_2){ return _1.pw_uid == _2.pw_uid; } ), end(result));
+    
+    return result;
+}
+
+static vector<group_info> LoadGroupsWithOD()
+{
+    vector<group_info> result;
+    
+    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
+    if( !root ) {
+        NSLog(@"Failed: ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@\"/Local/Default\" error:nil];");
+        return {};
+    }
+    
+    ODQuery *query = [ODQuery queryWithNode:root
+                             forRecordTypes:kODRecordTypeGroups
+                                  attribute:nil
+                                  matchType:0
+                                queryValues:nil
+                           returnAttributes:@[kODAttributeTypePrimaryGroupID, kODAttributeTypeFullName]
+                             maximumResults:0
+                                      error:nil];
+    if( !query ) {
+        NSLog(@"Failed: ODQuery *query = [ODQuery queryWithNode:root...");
+        return {};
+    }
+    
+    for (ODRecord *r in [query resultsAllowingPartial:NO error:nil]) {
+        NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
+        if(gid == nil || gid.count == 0)
+            continue; //invalid response
+        
+        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
+        
+        group_info curr;
+        curr.gr_gid = (gid_t) [gid[0] integerValue];
+        curr.gr_name = r.recordName;
+        curr.gr_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
+        result.emplace_back(curr);
+    }
+    
+    sort(begin(result), end(result), [](auto&_1, auto&_2){ return (signed)_1.gr_gid < (signed)_2.gr_gid; } );
+    
+    return result;
+}
         
 @implementation FileSysEntryAttrSheetController
 {
@@ -108,56 +215,92 @@ struct OtherAttrs
     bool                              m_HasCommonMTime;
     bool                              m_HasCommonCTime;
     bool                              m_HasCommonBTime;
-    bool                              m_HasDirectoryEntries;
     bool                              m_ProcessSubfolders;
     vector<user_info>            m_SystemUsers;
     vector<group_info>           m_SystemGroups;
-    chained_strings              m_Files;
-    string                              m_RootPath;
+//    chained_strings              m_Files;
+//    string                              m_RootPath;
 
+    shared_ptr<const vector<VFSListingItem>> m_Items;
+    
     shared_ptr<FileSysAttrAlterCommand>    m_Result;
-    FileSysEntryAttrSheetCompletionHandler m_Handler;
+//    FileSysEntryAttrSheetCompletionHandler m_Handler;
 }
 
 @synthesize Result = m_Result;
 
-- (id)init
+- (FileSysEntryAttrSheetController*)initWithItems:(const shared_ptr<const vector<VFSListingItem>>&)_items
 {
-    self = [super initWithWindowNibName:@"FileSysEntryAttrSheetController"];
-    if(self) {
+    MachTimeBenchmark mtb;
+    if(self = [super init]) {
+        m_Items = _items;
+        
+        FileSysAttrAlterCommand::GetCommonFSFlagsState(*m_Items,
+                                                       m_State[0].fsfstate);
+        FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*m_Items,
+                                                      m_State[0].uid, m_HasCommonUID,
+                                                      m_State[0].gid, m_HasCommonGID);
+        FileSysAttrAlterCommand::GetCommonFSTimes(*m_Items,
+                                                  m_State[0].atime, m_HasCommonATime,
+                                                  m_State[0].mtime, m_HasCommonMTime,
+                                                  m_State[0].ctime, m_HasCommonCTime,
+                                                  m_State[0].btime, m_HasCommonBTime);
+        m_State[1] = m_State[0];
         
         memset(m_UserDidEditFlags, 0, sizeof(m_UserDidEditFlags));
         memset(m_UserDidEditOthers, 0, sizeof(m_UserDidEditOthers));
-                
-        DispatchGroup dg;
-        dg.Run( [=]{ [self LoadUsers]; } );
-        dg.Run( [=]{ [self LoadGroups]; } );
-        dg.Wait();
+        
+
+//        DispatchGroup dg;
+//        dg.Run( [=]{ [self LoadUsers]; } );
+//        dg.Run( [=]{ [self LoadGroups]; } );
+//        dg.Wait();
+
+
+        MachTimeBenchmark mtb;
+        m_SystemUsers = LoadUsersWithOD();
+        m_SystemGroups = LoadGroupsWithOD();
+        mtb.ResetMilli();        
+
     }
     
+    mtb.ResetMilli();
+    
     return self;
+}
+
+- (bool) hasDirectoryEntries
+{
+    return any_of(begin(*m_Items), end(*m_Items), [](auto &i){ return i.IsDir(); } );
 }
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+
+    [self.StackView addView:self.StackViewTop inGravity:NSStackViewGravityTop];
+    [self.StackView addView:self.StackViewMiddle inGravity:NSStackViewGravityCenter];
+    [self.StackView addView:self.StackViewBottom inGravity:NSStackViewGravityBottom];
+    [self.StackView addView:self.StackViewFooter inGravity:NSStackViewGravityBottom];
     
     // Set title.
-    if (m_Files.size() == 1)
+    if (m_Items->size() == 1)
         self.Title.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
                                                                               "Title for file attributes sheet, single item"),
-                                    [NSString stringWithUTF8String:m_Files.front().c_str()]];
+                                    [NSString stringWithUTF8String:m_Items->front().Name()]];
     else
         self.Title.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
                                                                               "Title for file attributes sheet, multiple items"),
-                                  [NSNumber numberWithInt:m_Files.size()]];
+                                  [NSNumber numberWithInt:(int)m_Items->size()]];
     
     [self PopulateControls];
 }
 
 - (void) PopulateControls
 {
-    self.ProcessSubfoldersCheck.hidden = !m_HasDirectoryEntries;
+    
+//        MachTimeBenchmark mtb;
+    self.ProcessSubfoldersCheck.hidden = !self.hasDirectoryEntries;
     NSString *mixed_title = NSLocalizedString(@"[Mixed]", "Combo box element available when multiple elements are selected with different values");
     
     typedef FileSysAttrAlterCommand _;
@@ -254,8 +397,8 @@ struct OtherAttrs
 //    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMT];
 //    NSInteger secsfromgmt = [[NSTimeZone defaultTimeZone]secondsFromGMTForDate:[NSDate date]];
 //    NSInteger secsfromgmt = ZeroSecsFromGMT();
-    NSInteger secsfromgmt = ZeroSecsFromGMTEpoc();    
-
+//    NSInteger secsfromgmt = ZeroSecsFromGMTEpoc();
+/*
 #define DOTIME(_v1, _v2, _c)\
     [[self _c] setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];\
     [[self _c] setDateValue: (!m_ProcessSubfolders && _v1) || m_UserDidEditOthers[OtherAttrs::_v2] ?\
@@ -266,191 +409,273 @@ struct OtherAttrs
     DOTIME(m_HasCommonCTime, ctime, CTimePicker);
     DOTIME(m_HasCommonBTime, btime, BTimePicker);
 #undef DOTIME
+*/
+//        mtb.ResetMilli();
+    NSDate* current_date = NSDate.date;
+    auto turn_on = [=](NSDatePicker *_picker, NSButton *_enabler, time_t _time) {
+        [self setTimePickerOn:_picker withEnabler:_enabler andDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+    };
+    auto turn_off = [=](NSDatePicker *_picker, NSButton *_enabler, time_t _time) {
+//- (void)setTimePickerOff:(NSDatePicker *)picker withEnabler:(NSButton *)enabler andDate:(NSDate*)date
+//        [self setTimePickerOff:_picker withEnabler:_enabler andDate:/*current_date*/nil];
+        [self setTimePickerOff:_picker withEnabler:_enabler andDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+        
+        
+//        _picker.dateValue = current_date;
+//        _picker.enabled = false;
+//        _picker.textColor = NSColor.disabledControlTextColor;
+//        _enabler.state = NSOffState;
+    };
+    
+    if( (!m_ProcessSubfolders && m_HasCommonATime) || m_UserDidEditOthers[OtherAttrs::atime] )
+        turn_on(self.ATimePicker, self.ATimePickerEnabled, m_State[1].atime);
+    else
+        turn_off(self.ATimePicker, self.ATimePickerEnabled, m_HasCommonATime ? m_State[1].atime : current_date.timeIntervalSince1970);
+
+    if( (!m_ProcessSubfolders && m_HasCommonMTime) || m_UserDidEditOthers[OtherAttrs::mtime] )
+        turn_on(self.MTimePicker, self.MTimePickerEnabled, m_State[1].mtime);
+    else
+        turn_off(self.MTimePicker, self.MTimePickerEnabled, m_HasCommonMTime ? m_State[1].mtime : current_date.timeIntervalSince1970);
+
+    if( (!m_ProcessSubfolders && m_HasCommonCTime) || m_UserDidEditOthers[OtherAttrs::ctime] )
+        turn_on(self.CTimePicker, self.CTimePickerEnabled, m_State[1].ctime);
+    else
+        turn_off(self.CTimePicker, self.CTimePickerEnabled, m_HasCommonCTime ? m_State[1].ctime : current_date.timeIntervalSince1970);
+
+    if( (!m_ProcessSubfolders && m_HasCommonBTime) || m_UserDidEditOthers[OtherAttrs::btime] )
+        turn_on(self.BTimePicker, self.BTimePickerEnabled, m_State[1].btime);
+    else
+        turn_off(self.BTimePicker, self.BTimePickerEnabled, m_HasCommonBTime ? m_State[1].btime : current_date.timeIntervalSince1970);
 }
 
-- (void) LoadUsers
+
+- (IBAction)OnTimePickerEnabled:(id)sender
 {
-    m_SystemUsers.clear();
-    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
-    assert(root);
-    ODQuery *q = [ODQuery queryWithNode:root
-                         forRecordTypes:kODRecordTypeUsers
-                              attribute:nil
-                              matchType:0
-                            queryValues:nil
-                       returnAttributes:nil
-                         maximumResults:0
-                                  error:nil];
-    assert(q);
-    for (ODRecord *r in [q resultsAllowingPartial:NO error:nil]) {
-        
-        NSArray *uid = [r valuesForAttribute:kODAttributeTypeUniqueID error:nil];
-        if(uid.count == 0) continue; // invalid response, can't handle it
-        
-        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-        
-        user_info curr;
-        curr.pw_uid = (uid_t) [uid[0] integerValue];
-        curr.pw_name = r.recordName;
-        curr.pw_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
-        m_SystemUsers.emplace_back(curr);
+    auto button = objc_cast<NSButton>(sender);
+    if(!button)
+        return;
+    bool on = button.state == NSOnState;
+    if( button == self.ATimePickerEnabled ) {
+//    if( (!m_ProcessSubfolders && m_HasCommonBTime) || m_UserDidEditOthers[OtherAttrs::btime] )
+//        turn_on(self.ATimePicker, self.ATimePickerEnabled, m_State[1].atime);
+        if( on )
+            [self setTimePickerOn:self.ATimePicker
+                      withEnabler:button
+                          andDate:((/*!m_ProcessSubfolders && */m_HasCommonATime) || m_UserDidEditOthers[OtherAttrs::atime]) ?
+                            [NSDate dateWithTimeIntervalSince1970:m_State[1].atime] :
+                            NSDate.date
+             ];
+//                          andDate:NSDate.date];
+        else
+            [self setTimePickerOff:self.ATimePicker withEnabler:button andDate:nil];
+        m_UserDidEditOthers[OtherAttrs::atime] = on;
     }
-    sort(begin(m_SystemUsers), end(m_SystemUsers), [](auto&_1, auto&_2){ return (signed)_1.pw_uid < (signed)_2.pw_uid; } );
-}
-
-- (void) LoadGroups
-{
-    m_SystemGroups.clear();
-    ODNode *root = [ODNode nodeWithSession:ODSession.defaultSession name:@"/Local/Default" error:nil];
-    assert(root);
-    ODQuery *q = [ODQuery queryWithNode:root
-                         forRecordTypes:kODRecordTypeGroups
-                              attribute:nil
-                              matchType:0
-                            queryValues:nil
-                       returnAttributes:nil
-                         maximumResults:0
-                                  error:nil];
-    assert(q);
-    for (ODRecord *r in [q resultsAllowingPartial:NO error:nil]) {
-        NSArray *gid = [r valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
-        if(gid.count == 0) continue; //invalid response
-        
-        NSArray *gecos = [r valuesForAttribute:kODAttributeTypeFullName error:nil];
-        
-        group_info curr;
-        curr.gr_gid = (gid_t) [gid[0] integerValue];
-        curr.gr_name = r.recordName;
-        curr.gr_gecos = (gecos.count > 0) ? ((NSString*)[gecos objectAtIndex:0]) : @"";
-        m_SystemGroups.emplace_back(curr);
+    if( button == self.MTimePickerEnabled ) {
+        if( on )
+            [self setTimePickerOn:self.MTimePicker
+                      withEnabler:button
+                          andDate:((/*!m_ProcessSubfolders && */m_HasCommonMTime) || m_UserDidEditOthers[OtherAttrs::mtime]) ?
+                            [NSDate dateWithTimeIntervalSince1970:m_State[1].mtime] :
+                            NSDate.date
+             ];
+//                          andDate:NSDate.date];
+        else
+            [self setTimePickerOff:self.MTimePicker withEnabler:button andDate:nil];
+        m_UserDidEditOthers[OtherAttrs::mtime] = on;
     }
-    sort(begin(m_SystemGroups), end(m_SystemGroups), [](auto&_1, auto&_2){ return (signed)_1.gr_gid < (signed)_2.gr_gid; });
+    if( button == self.CTimePickerEnabled ) {
+        if( on )
+            [self setTimePickerOn:self.CTimePicker
+                      withEnabler:button
+                          andDate:((/*!m_ProcessSubfolders && */m_HasCommonCTime) || m_UserDidEditOthers[OtherAttrs::ctime]) ?
+             [NSDate dateWithTimeIntervalSince1970:m_State[1].ctime] :
+             NSDate.date
+             ];
+//                          andDate:NSDate.date];
+        else
+            [self setTimePickerOff:self.CTimePicker withEnabler:button andDate:nil];
+        m_UserDidEditOthers[OtherAttrs::ctime] = on;
+    }
+    if( button == self.BTimePickerEnabled ) {
+        if( on )
+            [self setTimePickerOn:self.BTimePicker
+                      withEnabler:button
+                          andDate:((/*!m_ProcessSubfolders && */m_HasCommonBTime) || m_UserDidEditOthers[OtherAttrs::btime]) ?
+             [NSDate dateWithTimeIntervalSince1970:m_State[1].btime] :
+             NSDate.date
+             ];
+//                          andDate:NSDate.date];
+        else
+            [self setTimePickerOff:self.BTimePicker withEnabler:button andDate:nil];
+        m_UserDidEditOthers[OtherAttrs::btime] = on;
+    }
 }
 
-- (void)ShowSheet: (NSWindow *)_window selentries: (const PanelData*)_data handler: (FileSysEntryAttrSheetCompletionHandler) handler
-{
-    FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_State[0].fsfstate);
-    FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_State[0].uid, m_HasCommonUID, m_State[0].gid, m_HasCommonGID);
-    FileSysAttrAlterCommand::GetCommonFSTimes(*_data, m_State[0].atime, m_HasCommonATime, m_State[0].mtime, m_HasCommonMTime,
-                                              m_State[0].ctime, m_HasCommonCTime, m_State[0].btime, m_HasCommonBTime);
-    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
-    
-    m_HasDirectoryEntries = _data->Stats().selected_dirs_amount > 0;
-    m_Files.swap(_data->StringsFromSelectedEntries());
-    m_RootPath = _data->DirectoryPathWithTrailingSlash();
-    
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-    self.ME = self;
-    m_Handler = handler;
-}
-        
-- (void)ShowSheet: (NSWindow *)_window data: (const PanelData*)_data index: (unsigned)_ind handler: (FileSysEntryAttrSheetCompletionHandler) handler
-{
-    auto item = _data->EntryAtRawPosition(_ind);
-    typedef FileSysAttrAlterCommand _;
-    m_State[0].fsfstate[_::fsf_unix_usr_r] = item.UnixMode() & S_IRUSR;
-    m_State[0].fsfstate[_::fsf_unix_usr_w] = item.UnixMode() & S_IWUSR;
-    m_State[0].fsfstate[_::fsf_unix_usr_x] = item.UnixMode() & S_IXUSR;
-    m_State[0].fsfstate[_::fsf_unix_grp_r] = item.UnixMode() & S_IRGRP;
-    m_State[0].fsfstate[_::fsf_unix_grp_w] = item.UnixMode() & S_IWGRP;
-    m_State[0].fsfstate[_::fsf_unix_grp_x] = item.UnixMode() & S_IXGRP;
-    m_State[0].fsfstate[_::fsf_unix_oth_r] = item.UnixMode() & S_IROTH;
-    m_State[0].fsfstate[_::fsf_unix_oth_w] = item.UnixMode() & S_IWOTH;
-    m_State[0].fsfstate[_::fsf_unix_oth_x] = item.UnixMode() & S_IXOTH;
-    m_State[0].fsfstate[_::fsf_unix_suid]  = item.UnixMode() & S_ISUID;
-    m_State[0].fsfstate[_::fsf_unix_sgid]  = item.UnixMode() & S_ISGID;
-    m_State[0].fsfstate[_::fsf_unix_sticky]= item.UnixMode() & S_ISVTX;
-    m_State[0].fsfstate[_::fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP;
-    m_State[0].fsfstate[_::fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE;
-    m_State[0].fsfstate[_::fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
-    m_State[0].fsfstate[_::fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
-    m_State[0].fsfstate[_::fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
-    m_State[0].fsfstate[_::fsf_uf_compressed]= item.UnixFlags() & UF_COMPRESSED;
-    m_State[0].fsfstate[_::fsf_uf_tracked]   = item.UnixFlags() & UF_TRACKED;
-    m_State[0].fsfstate[_::fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
-    m_State[0].fsfstate[_::fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
-    m_State[0].fsfstate[_::fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
-    m_State[0].uid = item.UnixUID();
-    m_State[0].gid = item.UnixGID();
-    m_State[0].atime = item.ATime();
-    m_State[0].mtime = item.MTime();
-    m_State[0].ctime = item.CTime();
-    m_State[0].btime = item.BTime();
-    m_HasCommonUID = m_HasCommonGID = m_HasCommonATime = m_HasCommonMTime = m_HasCommonCTime = m_HasCommonBTime = true;
-    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
-
-    m_HasDirectoryEntries = item.IsDir();
-    m_Files.swap(chained_strings(item.Name()));
-    m_RootPath = _data->DirectoryPathWithTrailingSlash();
-    
-    [self LoadUsers];
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
-    self.ME = self;
-    m_Handler = handler;
-}
+//- (void)ShowSheet: (NSWindow *)_window selentries: (const PanelData*)_data handler: (FileSysEntryAttrSheetCompletionHandler) handler
+//{
+//    FileSysAttrAlterCommand::GetCommonFSFlagsState(*_data, m_State[0].fsfstate);
+//    FileSysAttrAlterCommand::GetCommonFSUIDAndGID(*_data, m_State[0].uid, m_HasCommonUID, m_State[0].gid, m_HasCommonGID);
+//    FileSysAttrAlterCommand::GetCommonFSTimes(*_data, m_State[0].atime, m_HasCommonATime, m_State[0].mtime, m_HasCommonMTime,
+//                                              m_State[0].ctime, m_HasCommonCTime, m_State[0].btime, m_HasCommonBTime);
+//    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
+//    
+//    m_HasDirectoryEntries = _data->Stats().selected_dirs_amount > 0;
+//    m_Files.swap(_data->StringsFromSelectedEntries());
+//    m_RootPath = _data->DirectoryPathWithTrailingSlash();
+//    
+//    [NSApp beginSheet: [self window]
+//       modalForWindow: _window
+//        modalDelegate: self
+//       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+//          contextInfo: nil];
+//    self.ME = self;
+//    m_Handler = handler;
+//}
+//        
+//- (void)ShowSheet: (NSWindow *)_window data: (const PanelData*)_data index: (unsigned)_ind handler: (FileSysEntryAttrSheetCompletionHandler) handler
+//{
+//    auto item = _data->EntryAtRawPosition(_ind);
+//    typedef FileSysAttrAlterCommand _;
+//    m_State[0].fsfstate[_::fsf_unix_usr_r] = item.UnixMode() & S_IRUSR;
+//    m_State[0].fsfstate[_::fsf_unix_usr_w] = item.UnixMode() & S_IWUSR;
+//    m_State[0].fsfstate[_::fsf_unix_usr_x] = item.UnixMode() & S_IXUSR;
+//    m_State[0].fsfstate[_::fsf_unix_grp_r] = item.UnixMode() & S_IRGRP;
+//    m_State[0].fsfstate[_::fsf_unix_grp_w] = item.UnixMode() & S_IWGRP;
+//    m_State[0].fsfstate[_::fsf_unix_grp_x] = item.UnixMode() & S_IXGRP;
+//    m_State[0].fsfstate[_::fsf_unix_oth_r] = item.UnixMode() & S_IROTH;
+//    m_State[0].fsfstate[_::fsf_unix_oth_w] = item.UnixMode() & S_IWOTH;
+//    m_State[0].fsfstate[_::fsf_unix_oth_x] = item.UnixMode() & S_IXOTH;
+//    m_State[0].fsfstate[_::fsf_unix_suid]  = item.UnixMode() & S_ISUID;
+//    m_State[0].fsfstate[_::fsf_unix_sgid]  = item.UnixMode() & S_ISGID;
+//    m_State[0].fsfstate[_::fsf_unix_sticky]= item.UnixMode() & S_ISVTX;
+//    m_State[0].fsfstate[_::fsf_uf_nodump]    = item.UnixFlags() & UF_NODUMP;
+//    m_State[0].fsfstate[_::fsf_uf_immutable] = item.UnixFlags() & UF_IMMUTABLE;
+//    m_State[0].fsfstate[_::fsf_uf_append]    = item.UnixFlags() & UF_APPEND;
+//    m_State[0].fsfstate[_::fsf_uf_opaque]    = item.UnixFlags() & UF_OPAQUE;
+//    m_State[0].fsfstate[_::fsf_uf_hidden]    = item.UnixFlags() & UF_HIDDEN;
+//    m_State[0].fsfstate[_::fsf_uf_compressed]= item.UnixFlags() & UF_COMPRESSED;
+//    m_State[0].fsfstate[_::fsf_uf_tracked]   = item.UnixFlags() & UF_TRACKED;
+//    m_State[0].fsfstate[_::fsf_sf_archived]  = item.UnixFlags() & SF_ARCHIVED;
+//    m_State[0].fsfstate[_::fsf_sf_immutable] = item.UnixFlags() & SF_IMMUTABLE;
+//    m_State[0].fsfstate[_::fsf_sf_append]    = item.UnixFlags() & SF_APPEND;
+//    m_State[0].uid = item.UnixUID();
+//    m_State[0].gid = item.UnixGID();
+//    m_State[0].atime = item.ATime();
+//    m_State[0].mtime = item.MTime();
+//    m_State[0].ctime = item.CTime();
+//    m_State[0].btime = item.BTime();
+//    m_HasCommonUID = m_HasCommonGID = m_HasCommonATime = m_HasCommonMTime = m_HasCommonCTime = m_HasCommonBTime = true;
+//    memcpy(&m_State[1], &m_State[0], sizeof(m_State[0]));
+//
+//    m_HasDirectoryEntries = item.IsDir();
+//    m_Files.swap(chained_strings(item.Name()));
+//    m_RootPath = _data->DirectoryPathWithTrailingSlash();
+//    
+//    [self LoadUsers];
+//    [NSApp beginSheet: [self window]
+//       modalForWindow: _window
+//        modalDelegate: self
+//       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
+//          contextInfo: nil];
+//    self.ME = self;
+//    m_Handler = handler;
+//}
 
 - (IBAction)OnCancel:(id)sender{
-    [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];
+    [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnATimeClear:(id)sender{
-    [[self ATimePicker] setDateValue:LongTimeAgo()];
-    m_UserDidEditOthers[OtherAttrs::atime] = false;
-}
-        
-- (IBAction)OnATimeSet:(id)sender{
-    NSDate *cur = [NSDate date];
-    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-    m_State[1].atime = [cur timeIntervalSince1970];
+//- (IBAction)OnATimeClear:(id)sender{
+////    [[self ATimePicker] setDateValue:LongTimeAgo()];
+////    m_UserDidEditOthers[OtherAttrs::atime] = false;
+//}
+
+- (IBAction)OnATimeSet:(id)sender
+{
+    NSDate *cur = NSDate.date;
+    [self setTimePickerOn:self.ATimePicker withEnabler:self.ATimePickerEnabled andDate:cur];
+    m_State[1].atime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::atime] = true;
+//    NSDate *cur = [NSDate date];
+//    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
+//    m_State[1].atime = [cur timeIntervalSince1970];
+//    m_UserDidEditOthers[OtherAttrs::atime] = true;
 }
 
-- (IBAction)OnMTimeClear:(id)sender{
-    [[self MTimePicker] setDateValue:LongTimeAgo()];
-    m_UserDidEditOthers[OtherAttrs::mtime] = false;
+//- (IBAction)OnMTimeClear:(id)sender{
+////    [[self MTimePicker] setDateValue:LongTimeAgo()];
+////    m_UserDidEditOthers[OtherAttrs::mtime] = false;
+//}
+
+- (void)setTimePickerOff:(NSDatePicker *)picker withEnabler:(NSButton *)enabler andDate:(NSDate*)date
+{
+    if(date)
+        picker.dateValue = date;
+    picker.enabled = false;
+    picker.textColor = NSColor.disabledControlTextColor;
+    enabler.state = NSOffState;
 }
-        
-- (IBAction)OnMTimeSet:(id)sender{
-    NSDate *cur = [NSDate date];
-    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-    m_State[1].mtime = [cur timeIntervalSince1970];
+
+- (void)setTimePickerOn:(NSDatePicker *)picker withEnabler:(NSButton *)enabler andDate:(NSDate*)date
+{
+    if(date)
+        picker.dateValue = date;
+    picker.enabled = true;
+    picker.textColor = NSColor.controlTextColor;
+    enabler.state = NSOnState;
+}
+
+- (IBAction)OnMTimeSet:(id)sender
+{
+    NSDate *cur = NSDate.date;
+    [self setTimePickerOn:self.MTimePicker withEnabler:self.MTimePickerEnabled andDate:cur];
+    m_State[1].mtime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::mtime] = true;
+    
+///    NSDate *cur = [NSDate date];
+//    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
+//    m_State[1].mtime = [cur timeIntervalSince1970];
+//    m_UserDidEditOthers[OtherAttrs::mtime] = true;
 }
 
-- (IBAction)OnCTimeClear:(id)sender{
-    [[self CTimePicker] setDateValue:LongTimeAgo()];
-    m_UserDidEditOthers[OtherAttrs::ctime] = false;
-}
-        
-- (IBAction)OnCTimeSet:(id)sender{
-    NSDate *cur = [NSDate date];    
-    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-    m_State[1].ctime = [cur timeIntervalSince1970];
+//- (IBAction)OnCTimeClear:(id)sender{
+////    [[self CTimePicker] setDateValue:LongTimeAgo()];
+////    m_UserDidEditOthers[OtherAttrs::ctime] = false;
+//}
+
+- (IBAction)OnCTimeSet:(id)sender
+{
+    NSDate *cur = NSDate.date;
+    [self setTimePickerOn:self.CTimePicker withEnabler:self.CTimePickerEnabled andDate:cur];
+    m_State[1].ctime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::ctime] = true;
+    
+//    NSDate *cur = [NSDate date];    
+//    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
+//    m_State[1].ctime = [cur timeIntervalSince1970];
+//    m_UserDidEditOthers[OtherAttrs::ctime] = true;
 }
 
-- (IBAction)OnBTimeClear:(id)sender{
-    [[self BTimePicker] setDateValue:LongTimeAgo()];
-    m_UserDidEditOthers[OtherAttrs::btime] = false;
-}
+//- (IBAction)OnBTimeClear:(id)sender{
+////    [[self BTimePicker] setDateValue:LongTimeAgo()];
+////    m_UserDidEditOthers[OtherAttrs::btime] = false;
+//}
 
-- (IBAction)OnBTimeSet:(id)sender{
-    NSDate *cur = [NSDate date];
-    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-    m_State[1].btime = [cur timeIntervalSince1970];
+- (IBAction)OnBTimeSet:(id)sender
+{
+    NSDate *cur = NSDate.date;
+    [self setTimePickerOn:self.BTimePicker withEnabler:self.BTimePickerEnabled andDate:cur];
+    m_State[1].btime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::btime] = true;
+//    NSDate *cur = [NSDate date];
+//    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
+//    m_State[1].btime = [cur timeIntervalSince1970];
+//    m_UserDidEditOthers[OtherAttrs::btime] = true;
 }
 
-- (IBAction)OnProcessSubfolders:(id)sender{
-    m_ProcessSubfolders = [[self ProcessSubfoldersCheck] state] == NSOnState;
+- (IBAction)OnProcessSubfolders:(id)sender
+{
+    m_ProcessSubfolders = self.ProcessSubfoldersCheck.state == NSOnState;
     [self PopulateControls];
 }
         
@@ -512,35 +737,79 @@ struct OtherAttrs
 
 - (IBAction)OnTimeChange:(id)sender
 {
-    NSInteger secsfromgmt = ZeroSecsFromGMT();
-    if(sender == [self ATimePicker])
-    {
-        NSDate *date = [[[self ATimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
-        NSTimeInterval since1970 = [date timeIntervalSince1970];
-        m_UserDidEditOthers[OtherAttrs::atime] = since1970 >= 0;
-        m_State[1].atime = since1970 >= 0 ? since1970 : m_State[0].atime;
+    NSDatePicker *picker = objc_cast<NSDatePicker>(sender);
+    if( !picker )
+        return;
+    
+    NSDate *date = picker.dateValue;
+    if(sender == self.ATimePicker) {
+        m_UserDidEditOthers[OtherAttrs::atime] = true;
+        m_State[1].atime = date.timeIntervalSince1970;
     }
-    else if(sender == [self MTimePicker])
-    {
-        NSDate *date = [[[self MTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
-        NSTimeInterval since1970 = [date timeIntervalSince1970];
-        m_UserDidEditOthers[OtherAttrs::mtime] = since1970 >= 0;
-        m_State[1].mtime = since1970 >= 0 ? since1970 : m_State[0].mtime;
+    else if(sender == self.MTimePicker) {
+        m_UserDidEditOthers[OtherAttrs::mtime] = true;
+        m_State[1].mtime = date.timeIntervalSince1970;
     }
-    else if(sender == [self CTimePicker])
-    {
-        NSDate *date = [[[self CTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
-        NSTimeInterval since1970 = [date timeIntervalSince1970];
-        m_UserDidEditOthers[OtherAttrs::ctime] = since1970 >= 0;
-        m_State[1].ctime = since1970 >= 0 ? since1970 : m_State[0].ctime;
+    else if(sender == self.CTimePicker) {
+        m_UserDidEditOthers[OtherAttrs::ctime] = true;
+        m_State[1].ctime = date.timeIntervalSince1970;
     }
-    else if(sender == [self BTimePicker])
-    {
-        NSDate *date = [[[self BTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
-        NSTimeInterval since1970 = [date timeIntervalSince1970];
-        m_UserDidEditOthers[OtherAttrs::btime] = since1970 >= 0;
-        m_State[1].btime = since1970 >= 0 ? since1970 : m_State[0].btime;
+    else if(sender == self.BTimePicker) {
+        m_UserDidEditOthers[OtherAttrs::btime] = true;
+        m_State[1].btime = date.timeIntervalSince1970;
     }
+    
+    //    else if(sender == [self MTimePicker])
+    //    {
+    //        NSDate *date = [[[self MTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+    //        NSTimeInterval since1970 = [date timeIntervalSince1970];
+    //        m_UserDidEditOthers[OtherAttrs::mtime] = since1970 >= 0;
+    //        m_State[1].mtime = since1970 >= 0 ? since1970 : m_State[0].mtime;
+    //    }
+    //    else if(sender == [self CTimePicker])
+    //    {
+    //        NSDate *date = [[[self CTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+    //        NSTimeInterval since1970 = [date timeIntervalSince1970];
+    //        m_UserDidEditOthers[OtherAttrs::ctime] = since1970 >= 0;
+    //        m_State[1].ctime = since1970 >= 0 ? since1970 : m_State[0].ctime;
+    //    }
+    //    else if(sender == [self BTimePicker])
+    //    {
+    //        NSDate *date = [[[self BTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+    //        NSTimeInterval since1970 = [date timeIntervalSince1970];
+    //        m_UserDidEditOthers[OtherAttrs::btime] = since1970 >= 0;
+    //        m_State[1].btime = since1970 >= 0 ? since1970 : m_State[0].btime;
+    //    }
+    
+//    NSInteger secsfromgmt = ZeroSecsFromGMT();
+//    if(sender == [self ATimePicker])
+//    {
+//        NSDate *date = [[[self ATimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+//        NSTimeInterval since1970 = [date timeIntervalSince1970];
+//        m_UserDidEditOthers[OtherAttrs::atime] = since1970 >= 0;
+//        m_State[1].atime = since1970 >= 0 ? since1970 : m_State[0].atime;
+//    }
+//    else if(sender == [self MTimePicker])
+//    {
+//        NSDate *date = [[[self MTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+//        NSTimeInterval since1970 = [date timeIntervalSince1970];
+//        m_UserDidEditOthers[OtherAttrs::mtime] = since1970 >= 0;
+//        m_State[1].mtime = since1970 >= 0 ? since1970 : m_State[0].mtime;
+//    }
+//    else if(sender == [self CTimePicker])
+//    {
+//        NSDate *date = [[[self CTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+//        NSTimeInterval since1970 = [date timeIntervalSince1970];
+//        m_UserDidEditOthers[OtherAttrs::ctime] = since1970 >= 0;
+//        m_State[1].ctime = since1970 >= 0 ? since1970 : m_State[0].ctime;
+//    }
+//    else if(sender == [self BTimePicker])
+//    {
+//        NSDate *date = [[[self BTimePicker] dateValue] dateByAddingTimeInterval:-secsfromgmt];
+//        NSTimeInterval since1970 = [date timeIntervalSince1970];
+//        m_UserDidEditOthers[OtherAttrs::btime] = since1970 >= 0;
+//        m_State[1].btime = since1970 >= 0 ? since1970 : m_State[0].btime;
+//    }
 }
 
 - (IBAction)OnApply:(id)sender
@@ -582,31 +851,33 @@ m_State[1].fsfstate[FileSysAttrAlterCommand::_f] = state_to_tribool(self._c);
     for(int i = 0; i < FileSysAttrAlterCommand::fsf_totalcount; ++i)
         m_Result->flags[i] = m_State[1].fsfstate[i];
 
-    if((m_Result->set_uid = m_UserDidEditOthers[OtherAttrs::uid]) == true)
+    if( (m_Result->set_uid = m_UserDidEditOthers[OtherAttrs::uid]) == true )
         m_Result->uid = m_State[1].uid;
-    if((m_Result->set_gid = m_UserDidEditOthers[OtherAttrs::gid]) == true)
+    if( (m_Result->set_gid = m_UserDidEditOthers[OtherAttrs::gid]) == true )
         m_Result->gid = m_State[1].gid;
-    if((m_Result->set_atime = m_UserDidEditOthers[OtherAttrs::atime]) == true)
+    if( (m_Result->set_atime = m_UserDidEditOthers[OtherAttrs::atime]) == true )
         m_Result->atime = m_State[1].atime;
-    if((m_Result->set_mtime = m_UserDidEditOthers[OtherAttrs::mtime]) == true)
+    if( (m_Result->set_mtime = m_UserDidEditOthers[OtherAttrs::mtime]) == true )
         m_Result->mtime = m_State[1].mtime;
-    if((m_Result->set_ctime = m_UserDidEditOthers[OtherAttrs::ctime]) == true)
+    if( (m_Result->set_ctime = m_UserDidEditOthers[OtherAttrs::ctime]) == true )
         m_Result->ctime = m_State[1].ctime;
-    if((m_Result->set_btime = m_UserDidEditOthers[OtherAttrs::btime]) == true)
+    if( (m_Result->set_btime = m_UserDidEditOthers[OtherAttrs::btime]) == true )
         m_Result->btime = m_State[1].btime;
     m_Result->process_subdirs = m_ProcessSubfolders;
-    m_Result->files.swap(m_Files);
-    m_Result->root_path = m_RootPath;
+    m_Result->items = m_Items;
+//    m_Result->files.swap(m_Files);
+//    m_Result->root_path = m_RootPath;
     
-    [NSApp endSheet:[self window] returnCode:DialogResult::Apply];    
+    [self endSheet:NSModalResponseOK];    
+//    [NSApp endSheet:[self window] returnCode:DialogResult::Apply];
 }
         
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [[self window] orderOut:self];
-    m_Handler((int)returnCode);
-    self.ME = nil; // let ARC do it's duty
-    m_Handler = nil;
-}
+//- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+//{
+//    [[self window] orderOut:self];
+//    m_Handler((int)returnCode);
+//    self.ME = nil; // let ARC do it's duty
+//    m_Handler = nil;
+//}
 
 @end

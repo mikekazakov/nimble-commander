@@ -8,39 +8,38 @@
 
 #pragma once
 
-class PanelData;
+#include "../../vfs/VFS.h"
+#include "../../SheetController.h"
+
 struct FileSysAttrAlterCommand;
 
-typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
+@interface FileSysEntryAttrSheetController : SheetController
 
-@interface FileSysEntryAttrSheetController : NSWindowController
 @property (nonatomic, readonly) shared_ptr<FileSysAttrAlterCommand> Result;
-- (IBAction)OnApply:(id)sender;
-- (IBAction)OnCancel:(id)sender;
-- (IBAction)OnATimeClear:(id)sender;
-- (IBAction)OnATimeSet:(id)sender;
-- (IBAction)OnMTimeClear:(id)sender;
-- (IBAction)OnMTimeSet:(id)sender;
-- (IBAction)OnCTimeClear:(id)sender;
-- (IBAction)OnCTimeSet:(id)sender;
-- (IBAction)OnBTimeClear:(id)sender;
-- (IBAction)OnBTimeSet:(id)sender;
-- (IBAction)OnProcessSubfolders:(id)sender;
-- (IBAction)OnFlag:(id)sender;
-- (IBAction)OnUIDSel:(id)sender;
-- (IBAction)OnGIDSel:(id)sender;
-- (IBAction)OnTimeChange:(id)sender;
 
-- (void)ShowSheet: (NSWindow *)_window
-       selentries: (const PanelData*)_data
-          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
-- (void)ShowSheet: (NSWindow *)_window
-             data: (const PanelData*)_data
-            index:(unsigned)_ind
-          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
+- (FileSysEntryAttrSheetController*)initWithItems:(const shared_ptr<const vector<VFSListingItem>>&)_items;
+
+
+
+
+//- (void)ShowSheet: (NSWindow *)_window
+//       selentries: (const PanelData*)_data
+//          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
+//- (void)ShowSheet: (NSWindow *)_window
+//             data: (const PanelData*)_data
+//            index:(unsigned)_ind
+//          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
 
 // it's a self-owning object, so we need a retain loop to keep it alive, otherwise ARC will kill it
-@property (strong) FileSysEntryAttrSheetController *ME;
+//@property (strong) FileSysEntryAttrSheetController *ME;
+
+
+
+
+@end
+
+@interface FileSysEntryAttrSheetController ()
+
 @property (strong) IBOutlet NSButton *OwnerReadCheck;
 @property (strong) IBOutlet NSButton *OwnerWriteCheck;
 @property (strong) IBOutlet NSButton *OwnerExecCheck;
@@ -65,11 +64,39 @@ typedef void (^FileSysEntryAttrSheetCompletionHandler)(int result);
 @property (strong) IBOutlet NSButton *SetGIDCheck;
 @property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
 @property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
+
+@property (strong) IBOutlet NSButton *ATimePickerEnabled;
 @property (strong) IBOutlet NSDatePicker *ATimePicker;
+@property (strong) IBOutlet NSButton *MTimePickerEnabled;
 @property (strong) IBOutlet NSDatePicker *MTimePicker;
+@property (strong) IBOutlet NSButton *CTimePickerEnabled;
 @property (strong) IBOutlet NSDatePicker *CTimePicker;
+@property (strong) IBOutlet NSButton *BTimePickerEnabled;
 @property (strong) IBOutlet NSDatePicker *BTimePicker;
 @property (strong) IBOutlet NSButton *ProcessSubfoldersCheck;
 @property (strong) IBOutlet NSTextField *Title;
 
+@property (strong) IBOutlet NSStackView *StackView;
+@property (strong) IBOutlet NSView *StackViewTop;
+@property (strong) IBOutlet NSView *StackViewMiddle;
+@property (strong) IBOutlet NSView *StackViewBottom;
+@property (strong) IBOutlet NSView *StackViewFooter;
+
+- (IBAction)OnApply:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+//- (IBAction)OnATimeClear:(id)sender;
+- (IBAction)OnATimeSet:(id)sender;
+//- (IBAction)OnMTimeClear:(id)sender;
+- (IBAction)OnMTimeSet:(id)sender;
+//- (IBAction)OnCTimeClear:(id)sender;
+- (IBAction)OnCTimeSet:(id)sender;
+//- (IBAction)OnBTimeClear:(id)sender;
+- (IBAction)OnBTimeSet:(id)sender;
+- (IBAction)OnProcessSubfolders:(id)sender;
+- (IBAction)OnFlag:(id)sender;
+- (IBAction)OnUIDSel:(id)sender;
+- (IBAction)OnGIDSel:(id)sender;
+- (IBAction)OnTimeChange:(id)sender;
+
+- (IBAction)OnTimePickerEnabled:(id)sender;
 @end

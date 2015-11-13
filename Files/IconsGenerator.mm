@@ -266,8 +266,20 @@ NSImageRep *IconsGenerator::ImageFor(const VFSListingItem &_item, PanelVolatileD
     // need to collect the appropriate info and put request into generating queue
     
     if(m_Icons.size() >= MaxIcons ||
-       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_item.Host()) )
-        return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon; // we're full - sorry
+       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_item.Host()) ) {
+        // we're full - sorry
+        
+        // but we can try to quickly find an filetype icon
+        if( m_IconsMode >= IconMode::Icons && _item.HasExtension() ) {
+            lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
+            auto it = m_ExtensionIconsCache.find(_item.Extension());
+            if(it != end(m_ExtensionIconsCache))
+                return it->second;
+        }
+
+        // nope, just return a generic icons
+        return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+    }
 
     // build IconStorage
     unsigned short is_no = m_Icons.size();

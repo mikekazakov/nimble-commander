@@ -30,8 +30,6 @@ private:
     
     virtual void Do();
     void DoScan();
-    void ScanDirs();
-    void ScanDir(const char *_full_path, const chained_strings::node *_prefix);
 
     void DoFile(const char *_full_path);
     string ComposeFullPath( SourceItem &_item ) const;

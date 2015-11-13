@@ -352,7 +352,6 @@
 		CF7D135B1BF1B964001F53FD /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */; };
 		CF7D135C1BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */; };
 		CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
-		CF7D13661BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D135F1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.cpp */; };
 		CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
@@ -1228,7 +1227,6 @@
 		CF7D13581BF1B964001F53FD /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectorySheetController.h; path = Operations/CreateDirectory/CreateDirectorySheetController.h; sourceTree = "<group>"; };
 		CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectorySheetController.mm; path = Operations/CreateDirectory/CreateDirectorySheetController.mm; sourceTree = "<group>"; };
 		CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationCommand.h; path = Operations/Attrs/FileSysAttrChangeOperationCommand.h; sourceTree = "<group>"; };
-		CF7D135F1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSysAttrChangeOperationCommand.cpp; path = Operations/Attrs/FileSysAttrChangeOperationCommand.cpp; sourceTree = "<group>"; };
 		CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperation.h; path = Operations/Attrs/FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
 		CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation.mm; path = Operations/Attrs/FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
 		CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationJob.h; path = Operations/Attrs/FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
@@ -2513,7 +2511,6 @@
 				CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */,
 				CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */,
 				CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */,
-				CF7D135F1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.cpp */,
 				CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */,
 				CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */,
 				CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */,
@@ -3420,7 +3417,6 @@
 				CF73D1D81BE608BC0014C88F /* VFSNativeHost.mm in Sources */,
 				CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
-				CF7D13661BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.cpp in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,

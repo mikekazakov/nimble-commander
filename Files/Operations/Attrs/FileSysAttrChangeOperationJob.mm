@@ -177,8 +177,8 @@ void FileSysAttrChangeOperationJob::DoScan()
         return;
 }
 
-void FileSysAttrChangeOperationJob::ScanDirs()
-{
+//void FileSysAttrChangeOperationJob::ScanDirs()
+//{
 //    auto &io = RoutedIO::Default;
 //    
 //    // iterates on original files list, find if entry is a dir, and if so then process it recursively
@@ -208,10 +208,10 @@ void FileSysAttrChangeOperationJob::ScanDirs()
 //            }
 //        }
 //    }
-}
+//}
 
-void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const chained_strings::node *_prefix)
-{
+//void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const chained_strings::node *_prefix)
+//{
 //    if(CheckPauseOrStop()) return;
 //    
 //    auto &io = RoutedIO::InterfaceForAccess(_full_path, R_OK);
@@ -287,7 +287,7 @@ void FileSysAttrChangeOperationJob::ScanDir(const char *_full_path, const chaine
 //        }        
 //        io.closedir(dirp);
 //    }
-}
+//}
 
 void FileSysAttrChangeOperationJob::DoFile(const char *_full_path)
 {
@@ -437,39 +437,35 @@ retry_chown:
         else if (result == OperationDialogResult::Retry) goto label; \
     }
     
-    if(m_Command.set_atime && m_Command.atime != st.st_atimespec.tv_sec)
-    {
+    if(m_Command.atime && *m_Command.atime != st.st_atimespec.tv_sec) {
         uint32_t attr = ATTR_CMN_ACCTIME;
-        timespec time = {m_Command.atime, 0}; // yep, no msec and nsec
+        timespec time = {*m_Command.atime, 0}; // yep, no msec and nsec
 retry_acctime:
-        int res = io.chatime(_full_path, m_Command.atime);
+        int res = io.chatime(_full_path, *m_Command.atime);
         HANDLE_FILETIME_RESULT(retry_acctime);
     }
 
-    if(m_Command.set_mtime && m_Command.mtime != st.st_mtimespec.tv_sec)
-    {
+    if(m_Command.mtime && *m_Command.mtime != st.st_mtimespec.tv_sec) {
         uint32_t attr = ATTR_CMN_MODTIME;
-        timespec time = {m_Command.mtime, 0}; // yep, no msec and nsec
+        timespec time = {*m_Command.mtime, 0}; // yep, no msec and nsec
 retry_modtime:
-        int res = io.chmtime(_full_path, m_Command.mtime);
+        int res = io.chmtime(_full_path, *m_Command.mtime);
         HANDLE_FILETIME_RESULT(retry_modtime);
     }
     
-    if(m_Command.set_ctime && m_Command.ctime != st.st_ctimespec.tv_sec)
-    {
+    if(*m_Command.ctime && *m_Command.ctime != st.st_ctimespec.tv_sec) {
         uint32_t attr  = ATTR_CMN_CHGTIME;
-        timespec time = {m_Command.ctime, 0}; // yep, no msec and nsec
+        timespec time = {*m_Command.ctime, 0}; // yep, no msec and nsec
 retry_chgtime:
-        int res = io.chctime(_full_path, m_Command.ctime);
+        int res = io.chctime(_full_path, *m_Command.ctime);
         HANDLE_FILETIME_RESULT(retry_chgtime);
     }
     
-    if(m_Command.set_btime && m_Command.btime != st.st_birthtimespec.tv_sec)
-    {
+    if(*m_Command.btime && m_Command.btime != st.st_birthtimespec.tv_sec) {
         uint32_t attr = ATTR_CMN_CRTIME;
-        timespec time = {m_Command.btime, 0}; // yep, no msec and nsec
+        timespec time = {*m_Command.btime, 0}; // yep, no msec and nsec
 retry_crtime:
-        int res = io.chbtime(_full_path, m_Command.btime);
+        int res = io.chbtime(_full_path, *m_Command.btime);
         HANDLE_FILETIME_RESULT(retry_crtime);
     }
     

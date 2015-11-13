@@ -44,6 +44,20 @@ static mode_t GetFlags(const string&_path)
     return st.st_flags;
 }
 
+static time_t GetMTime(const string&_path)
+{
+    struct stat st;
+    stat( _path.c_str(), &st );
+    return st.st_mtime;
+}
+
+static time_t GetBTime(const string&_path)
+{
+    struct stat st;
+    stat( _path.c_str(), &st );
+    return st.st_birthtime;
+}
+
 @interface FileSysAttrChangeOperation_Tests : XCTestCase
 @end
 
@@ -92,6 +106,28 @@ static mode_t GetFlags(const string&_path)
         auto *op = [[FileSysAttrChangeOperation alloc] initWithCommand:command];
         [self runOperationUntilFinish:op];
         XCTAssert( GetMode(path) == (items->at(0).UnixMode() | S_IXUSR | S_IXGRP | S_IXOTH) );
+    }
+    
+    auto mtime = [NSDate dateWithTimeIntervalSinceNow:-1000];
+    auto btime = [NSDate dateWithTimeIntervalSinceNow:-10000];
+    
+    { // check setting mtime
+        auto command = mk_empty_cmd();
+        command.mtime = mtime.timeIntervalSince1970;
+        auto *op = [[FileSysAttrChangeOperation alloc] initWithCommand:command];
+        [self runOperationUntilFinish:op];
+        XCTAssert( GetMode(path) == (items->at(0).UnixMode() | S_IXUSR | S_IXGRP | S_IXOTH) );
+        XCTAssert( GetMTime(path) == (time_t)mtime.timeIntervalSince1970 );
+    }
+
+    { // check setting btime
+        auto command = mk_empty_cmd();
+        command.btime = btime.timeIntervalSince1970;
+        auto *op = [[FileSysAttrChangeOperation alloc] initWithCommand:command];
+        [self runOperationUntilFinish:op];
+        XCTAssert( GetMode(path) == (items->at(0).UnixMode() | S_IXUSR | S_IXGRP | S_IXOTH) );
+        XCTAssert( GetMTime(path) == (time_t)mtime.timeIntervalSince1970 );
+        XCTAssert( GetBTime(path) == (time_t)btime.timeIntervalSince1970 );
     }
     
     XCTAssert( VFSEasyDelete(directory.c_str(), VFSNativeHost::SharedHost()) == 0 );

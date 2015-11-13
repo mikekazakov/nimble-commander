@@ -356,6 +356,7 @@
 		CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
+		CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -1234,6 +1235,7 @@
 		CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperationJob.mm; path = Operations/Attrs/FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
 		CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysEntryAttrSheetController.h; path = Operations/Attrs/FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
 		CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysEntryAttrSheetController.mm; path = Operations/Attrs/FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
+		CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation_Tests.mm; path = Operations/Attrs/FileSysAttrChangeOperation_Tests.mm; sourceTree = "<group>"; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
@@ -2507,6 +2509,7 @@
 			children = (
 				CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */,
 				CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */,
+				CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */,
 				CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */,
 				CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */,
 				CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */,
@@ -3218,6 +3221,7 @@
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
 				CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
 				CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */,
+				CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF23295D1BDCEC600092BCAD /* FileMask_Tests.mm in Sources */,
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,

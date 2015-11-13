@@ -22,6 +22,7 @@
 #include "Operations/CreateDirectory/CreateDirectoryOperation.h"
 #include "Operations/Attrs/FileSysAttrChangeOperation.h"
 #include "Operations/Attrs/FileSysEntryAttrSheetController.h"
+#include "Operations/Attrs/FileSysAttrChangeOperationCommand.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController+Menu.h"
 #include "GoToFolderSheetController.h"
@@ -467,7 +468,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     FileSysEntryAttrSheetController *sheet = [[FileSysEntryAttrSheetController alloc] initWithItems:entries];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ) {
-            auto op = [[FileSysAttrChangeOperation alloc] initWithCommand:sheet.result];
+            auto op = [[FileSysAttrChangeOperation alloc] initWithCommand:*sheet.result];
             [self.state AddOperation:op];
         }
     }];

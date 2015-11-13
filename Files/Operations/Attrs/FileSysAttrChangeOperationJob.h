@@ -17,7 +17,7 @@ class FileSysAttrChangeOperationJob : public OperationJob
 {
 public:
     FileSysAttrChangeOperationJob();
-    void Init(shared_ptr<FileSysAttrAlterCommand> _command, FileSysAttrChangeOperation *_operation);
+    void Init(FileSysAttrAlterCommand _command, FileSysAttrChangeOperation *_operation);
 
 private:
     struct SourceItem
@@ -26,8 +26,6 @@ private:
         string      item_name;
         int         parent_index = -1;
         unsigned    base_dir_index;
-        //        uint16_t    host_index;
-        //        uint16_t    mode;
     };
     
     virtual void Do();
@@ -41,12 +39,9 @@ private:
     
 
     
-    shared_ptr<FileSysAttrAlterCommand> m_Command;
+    FileSysAttrAlterCommand             m_Command;
     vector<string>                      m_SourceItemsBaseDirectories;
     vector<SourceItem>                  m_SourceItems;
-    
-    
-//    chained_strings m_Files;
     __unsafe_unretained FileSysAttrChangeOperation *m_Operation;
     bool m_SkipAllErrors = false;
 };

@@ -15,11 +15,11 @@
     FileSysAttrChangeOperationJob m_Job;
 }
 
-- (id)initWithCommand:(shared_ptr<FileSysAttrAlterCommand>)_command
+- (id)initWithCommand:(FileSysAttrAlterCommand)_command
 {
     self = [super initWithJob:&m_Job];
     if (self) {
-        m_Job.Init(_command, self);
+        m_Job.Init(move(_command), self);
         
         // Set caption.
 //        if (_command->files.size() == 1) {

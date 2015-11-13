@@ -19,25 +19,25 @@ FileSysAttrChangeOperationJob::FileSysAttrChangeOperationJob():
 {
 }
 
-void FileSysAttrChangeOperationJob::Init(shared_ptr<FileSysAttrAlterCommand> _command, FileSysAttrChangeOperation *_operation)
+void FileSysAttrChangeOperationJob::Init(FileSysAttrAlterCommand _command, FileSysAttrChangeOperation *_operation)
 {
-    if( !all_of(begin(*_command->items), end(*_command->items), [](auto &i){ return i.Host()->IsNativeFS();}) )
+    if( !all_of(begin(*_command.items), end(*_command.items), [](auto &i){ return i.Host()->IsNativeFS();}) )
        throw invalid_argument("FileSysAttrChangeOperationJob::Init was called with elements of non-native host!");
     
-    m_Command = _command;
+    m_Command = move(_command);
     m_Operation = _operation;
 }
 
 void FileSysAttrChangeOperationJob::Do()
 {
 
-    if( m_Command->process_subdirs ) {
+    if( m_Command.process_subdirs ) {
         DoScan();
         
     }
     else {
         // just use original files list
-        for( auto &i:*m_Command->items ) {
+        for( auto &i:*m_Command.items ) {
             SourceItem it;
             it.item_name = i.Filename();
             it.base_dir_index = (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, i.Directory());
@@ -130,7 +130,7 @@ void FileSysAttrChangeOperationJob::DoScan()
         return int(m_SourceItems.size() - 1);
     };
     
-    for( auto &i: *m_Command->items ) {
+    for( auto &i: *m_Command.items ) {
         if(CheckPauseOrStop())
             return;
         
@@ -321,8 +321,8 @@ retry_stat:
     // process unix access modes
     mode_t newmode = st.st_mode;
 #define DOACCESS(_f, _c)\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == true) newmode |= _c;\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == false) newmode &= ~_c;
+    if(m_Command.flags[FileSysAttrAlterCommand::_f] == true) newmode |= _c;\
+    if(m_Command.flags[FileSysAttrAlterCommand::_f] == false) newmode &= ~_c;
     DOACCESS(fsf_unix_usr_r, S_IRUSR);
     DOACCESS(fsf_unix_usr_w, S_IWUSR);
     DOACCESS(fsf_unix_usr_x, S_IXUSR);
@@ -362,8 +362,8 @@ retry_chmod:
     // process file flags
     uint32_t newflags = st.st_flags;
 #define DOFLAGS(_f, _c)\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == true) newflags |= _c;\
-    if(m_Command->flags[FileSysAttrAlterCommand::_f] == false) newflags &= ~_c;
+    if(m_Command.flags[FileSysAttrAlterCommand::_f] == true) newflags |= _c;\
+    if(m_Command.flags[FileSysAttrAlterCommand::_f] == false) newflags &= ~_c;
     DOFLAGS(fsf_uf_nodump, UF_NODUMP);
     DOFLAGS(fsf_uf_immutable, UF_IMMUTABLE);
     DOFLAGS(fsf_uf_append, UF_APPEND);
@@ -400,8 +400,8 @@ retry_chflags:
     // process file owner and file group
     uid_t newuid = st.st_uid;
     gid_t newgid = st.st_gid;
-    if(m_Command->set_uid) newuid = m_Command->uid;
-    if(m_Command->set_gid) newgid = m_Command->gid;
+    if(m_Command.set_uid) newuid = m_Command.uid;
+    if(m_Command.set_gid) newgid = m_Command.gid;
     if(newuid != st.st_uid || newgid != st.st_gid)
     {
 retry_chown:
@@ -437,39 +437,39 @@ retry_chown:
         else if (result == OperationDialogResult::Retry) goto label; \
     }
     
-    if(m_Command->set_atime && m_Command->atime != st.st_atimespec.tv_sec)
+    if(m_Command.set_atime && m_Command.atime != st.st_atimespec.tv_sec)
     {
         uint32_t attr = ATTR_CMN_ACCTIME;
-        timespec time = {m_Command->atime, 0}; // yep, no msec and nsec
+        timespec time = {m_Command.atime, 0}; // yep, no msec and nsec
 retry_acctime:
-        int res = io.chatime(_full_path, m_Command->atime);
+        int res = io.chatime(_full_path, m_Command.atime);
         HANDLE_FILETIME_RESULT(retry_acctime);
     }
 
-    if(m_Command->set_mtime && m_Command->mtime != st.st_mtimespec.tv_sec)
+    if(m_Command.set_mtime && m_Command.mtime != st.st_mtimespec.tv_sec)
     {
         uint32_t attr = ATTR_CMN_MODTIME;
-        timespec time = {m_Command->mtime, 0}; // yep, no msec and nsec
+        timespec time = {m_Command.mtime, 0}; // yep, no msec and nsec
 retry_modtime:
-        int res = io.chmtime(_full_path, m_Command->mtime);
+        int res = io.chmtime(_full_path, m_Command.mtime);
         HANDLE_FILETIME_RESULT(retry_modtime);
     }
     
-    if(m_Command->set_ctime && m_Command->ctime != st.st_ctimespec.tv_sec)
+    if(m_Command.set_ctime && m_Command.ctime != st.st_ctimespec.tv_sec)
     {
         uint32_t attr  = ATTR_CMN_CHGTIME;
-        timespec time = {m_Command->ctime, 0}; // yep, no msec and nsec
+        timespec time = {m_Command.ctime, 0}; // yep, no msec and nsec
 retry_chgtime:
-        int res = io.chctime(_full_path, m_Command->ctime);
+        int res = io.chctime(_full_path, m_Command.ctime);
         HANDLE_FILETIME_RESULT(retry_chgtime);
     }
     
-    if(m_Command->set_btime && m_Command->btime != st.st_birthtimespec.tv_sec)
+    if(m_Command.set_btime && m_Command.btime != st.st_birthtimespec.tv_sec)
     {
         uint32_t attr = ATTR_CMN_CRTIME;
-        timespec time = {m_Command->btime, 0}; // yep, no msec and nsec
+        timespec time = {m_Command.btime, 0}; // yep, no msec and nsec
 retry_crtime:
-        int res = io.chbtime(_full_path, m_Command->btime);
+        int res = io.chbtime(_full_path, m_Command.btime);
         HANDLE_FILETIME_RESULT(retry_crtime);
     }
     

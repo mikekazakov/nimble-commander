@@ -45,31 +45,23 @@ struct FileSysAttrAlterCommand
         
         fsf_totalcount
     };
-    enum fstmvals { // we give no abitily to view and edit msec and nsec. but who cares?
-        fstm_year=0,
-        fstm_mon=1,
-        fstm_day=2,
-        fstm_hour=3,
-        fstm_min=4,
-        fstm_sec=5,
-        fstm_totalcount
-    };
+    
+    vector<tribool> flags = vector<tribool>(fsf_totalcount, indeterminate);
 
-    tribool  flags[fsf_totalcount];
     // todo: switch to optionals:
-    bool     set_uid;
+    bool     set_uid = false;
     uid_t    uid;
-    bool     set_gid;
+    bool     set_gid = false;
     gid_t    gid;
-    bool     set_atime;
+    bool     set_atime = false;
     time_t   atime;
-    bool     set_mtime;
+    bool     set_mtime = false;
     time_t   mtime;
-    bool     set_ctime;
+    bool     set_ctime = false;
     time_t   ctime;
-    bool     set_btime;
+    bool     set_btime = false;
     time_t   btime;
-    bool     process_subdirs;
+    bool     process_subdirs = false;
 
     //    chained_strings files;
 //    string   root_path;

@@ -15,7 +15,7 @@ struct FileSysAttrAlterCommand;
 
 @interface FileSysEntryAttrSheetController : SheetController
 
-@property (nonatomic, readonly) shared_ptr<FileSysAttrAlterCommand> Result;
+@property (nonatomic, readonly) shared_ptr<FileSysAttrAlterCommand> result;
 
 - (FileSysEntryAttrSheetController*)initWithItems:(const shared_ptr<const vector<VFSListingItem>>&)_items;
 

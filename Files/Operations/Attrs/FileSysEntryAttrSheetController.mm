@@ -6,19 +6,17 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include  <OpenDirectory/OpenDirectory.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
-#include  <OpenDirectory/OpenDirectory.h>
-#include "FileSysEntryAttrSheetController.h"
 #include "../../Common.h"
 #include "../../chained_strings.h"
+#include "FileSysEntryAttrSheetController.h"
+#include "FileSysAttrChangeOperationCommand.h"
 
-#include "filesysattr.h"
-
-#include "../../DispatchQueue.h"
-#include "../../sysinfo.h"
+namespace {
 
 struct user_info
 {
@@ -33,7 +31,9 @@ struct group_info
     NSString *gr_name;
     NSString *gr_gecos;
 };
-        
+    
+}
+
 inline static NSInteger tribool_to_state(tribool _s)
 {
     if(_s == false) return NSOffState;
@@ -227,7 +227,7 @@ static vector<group_info> LoadGroupsWithOD()
 //    FileSysEntryAttrSheetCompletionHandler m_Handler;
 }
 
-@synthesize Result = m_Result;
+@synthesize result = m_Result;
 
 - (FileSysEntryAttrSheetController*)initWithItems:(const shared_ptr<const vector<VFSListingItem>>&)_items
 {

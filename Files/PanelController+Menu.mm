@@ -466,8 +466,10 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     
     FileSysEntryAttrSheetController *sheet = [[FileSysEntryAttrSheetController alloc] initWithItems:entries];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-
-        
+        if( returnCode == NSModalResponseOK ) {
+            auto op = [[FileSysAttrChangeOperation alloc] initWithCommand:sheet.result];
+            [self.state AddOperation:op];
+        }
     }];
     
 //    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){

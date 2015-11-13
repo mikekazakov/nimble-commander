@@ -8,7 +8,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "filesysattr.h"
+#include "FileSysAttrChangeOperationCommand.h"
 
 //void FileSysAttrAlterCommand::GetCommonFSFlagsState(const PanelData& _pd, tribool _st[fsf_totalcount])
 //{

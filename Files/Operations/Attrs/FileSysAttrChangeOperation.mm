@@ -22,23 +22,23 @@
         m_Job.Init(_command, self);
         
         // Set caption.
-        if (_command->files.size() == 1) {
-            self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Altering attributes of \u201c%@\u201d",
-                                                                                 @"Operations",
-                                                                                 "Title of attributes change operation for single file"),
-                            [NSString stringWithUTF8String:_command->files.front().c_str()]];
-        }
-        else {
-            // Get directory name from path.
-            char buff[MAXPATHLEN] = {0};
-            GetDirectoryNameFromPath(_command->root_path.c_str(), buff, MAXPATHLEN);
-            
-            self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Altering attributes of %@ items in \u201c%@\u201d",
-                                                                                 @"Operations",
-                                                                                 "Title of attributes change operation for multiple files"),
-                            [NSNumber numberWithUnsignedLong:_command->files.size()],
-                            [NSString stringWithUTF8String:buff]];
-        }
+//        if (_command->files.size() == 1) {
+//            self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Altering attributes of \u201c%@\u201d",
+//                                                                                 @"Operations",
+//                                                                                 "Title of attributes change operation for single file"),
+//                            [NSString stringWithUTF8String:_command->files.front().c_str()]];
+//        }
+//        else {
+//            // Get directory name from path.
+//            char buff[MAXPATHLEN] = {0};
+//            GetDirectoryNameFromPath(_command->root_path.c_str(), buff, MAXPATHLEN);
+//            
+//            self.Caption = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Altering attributes of %@ items in \u201c%@\u201d",
+//                                                                                 @"Operations",
+//                                                                                 "Title of attributes change operation for multiple files"),
+//                            [NSNumber numberWithUnsignedLong:_command->files.size()],
+//                            [NSString stringWithUTF8String:buff]];
+//        }
         
         __weak auto wself = self;
         self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,

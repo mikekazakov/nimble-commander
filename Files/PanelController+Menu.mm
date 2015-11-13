@@ -467,7 +467,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 }
 
 - (IBAction)OnFileAttributes:(id)sender {
-    auto entries = to_shared_ptr(self.selectedEntriesOrFocusedEntries);
+    auto entries = to_shared_ptr(self.selectedEntriesOrFocusedEntry);
     if( entries->empty() )
         return;
     if( !all_of(begin(*entries), end(*entries), [](auto &i){ return i.Host()->IsNativeFS(); }) )
@@ -717,7 +717,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (void)DeleteFiles:(bool)_shift_behavior
 {
-    auto items = to_shared_ptr(self.selectedEntriesOrFocusedEntries);
+    auto items = to_shared_ptr(self.selectedEntriesOrFocusedEntry);
     if( items->empty() )
         return;
 
@@ -774,7 +774,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction)OnMoveToTrash:(id)sender
 {
-    auto items = self.selectedEntriesOrFocusedEntries;
+    auto items = self.selectedEntriesOrFocusedEntry;
     unordered_set<string> dirs;
     bool all_native = all_of(begin(items), end(items), [&](auto &i){
         if( !i.Host()->IsNativeFS() )
@@ -929,7 +929,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     if( !self.isUniform )
         return;
     
-    auto files = self.selectedEntriesOrFocusedEntries;
+    auto files = self.selectedEntriesOrFocusedEntry;
     if(files.empty())
         return;
     NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
@@ -1039,7 +1039,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     if( !self.isUniform )
         return;
     
-    auto items = self.selectedEntriesOrFocusedEntries;
+    auto items = self.selectedEntriesOrFocusedEntry;
     if( items.empty() )
         return;
     

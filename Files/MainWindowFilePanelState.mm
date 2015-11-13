@@ -365,7 +365,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         return false;
     
     NSMutableArray *filenames = [NSMutableArray new];
-    for( auto &i: self.activePanelController.selectedEntriesOrFocusedEntries )
+    for( auto &i: self.activePanelController.selectedEntriesOrFocusedEntry )
         if( i.Host()->IsNativeFS() )
             [filenames addObject:[NSString stringWithUTF8StdString:i.Path()]];
     

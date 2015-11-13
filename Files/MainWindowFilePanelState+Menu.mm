@@ -124,7 +124,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 {
     if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
     
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
     if(entries.empty())
         return;
 
@@ -243,7 +243,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
        [m_MainSplitView anyCollapsedOrOverlayed])
         return;
     
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
     
@@ -323,7 +323,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWriteable() )
         return;
     
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntries;
+    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
     if( entries.empty() )
         return;
     

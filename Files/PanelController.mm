@@ -655,7 +655,7 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
 {
-    return [self.state RequestContextMenuOn:self.selectedEntriesOrFocusedEntries caller:self];
+    return [self.state RequestContextMenuOn:self.selectedEntriesOrFocusedEntry caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

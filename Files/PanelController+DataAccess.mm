@@ -71,7 +71,7 @@
     return inds;
 }
 
-- (vector<VFSListingItem>)selectedEntriesOrFocusedEntries
+- (vector<VFSListingItem>)selectedEntriesOrFocusedEntry
 {
     vector<VFSListingItem> items;
     auto &d = self.data;

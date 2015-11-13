@@ -15,7 +15,7 @@
 #include "LSUrls.h"
 #include "Operations/Delete/FileDeletionOperation.h"
 #include "PanelController.h"
-#include "FileCompressOperation.h"
+#include "Operations/Compress/FileCompressOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
 
 struct OpenWithHandler

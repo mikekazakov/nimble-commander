@@ -14,6 +14,7 @@
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/Copy/MassCopySheetController.h"
 #include "Operations/Delete/FileDeletionOperation.h"
+#include "Operations/Compress/FileCompressOperation.h"
 #include "MainWindowFilePanelState+Menu.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController.h"
@@ -22,7 +23,6 @@
 #include "Common.h"
 #include "ExternalEditorInfo.h"
 #include "MainWindowController.h"
-#include "FileCompressOperation.h"
 
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 

@@ -6,10 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileCompressOperation.h"
-#import "FileCompressOperationJob.h"
-#import "Common.h"
-#import "PanelController.h"
+#include "FileCompressOperation.h"
+#include "FileCompressOperationJob.h"
+#include "../../Common.h"
+
+// TODO: remove this dependency
+#include "../../PanelController.h"
 
 static NSString *OpTitle(unsigned _amount, NSString *_target)
 {

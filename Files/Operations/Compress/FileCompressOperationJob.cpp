@@ -6,16 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/attr.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <sys/xattr.h>
-#import <Habanero/algo.h>
-#import "3rd_party/libarchive/archive.h"
-#import "3rd_party/libarchive/archive_entry.h"
-#import "FileCompressOperationJob.h"
-#import "AppleDoubleEA.h"
-#import "Common.h"
+#include <sys/attr.h>
+#include <sys/dirent.h>
+#include <sys/stat.h>
+#include <sys/xattr.h>
+#include <Habanero/algo.h>
+#include "../../3rd_party/libarchive/archive.h"
+#include "../../3rd_party/libarchive/archive_entry.h"
+#include "../../AppleDoubleEA.h"
+#include "../../Common.h"
+#include "FileCompressOperationJob.h"
 
 static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _path, const char *_name)
 {
@@ -362,8 +362,8 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
             }
             
             // update statistics
-            m_Stats.SetValue(m_TotalBytesProcessed);
             m_TotalBytesProcessed += vfs_read_ret;
+            m_Stats.SetValue(m_TotalBytesProcessed);
         }
         
         if(vfs_read_ret < 0) { // error on reading source file

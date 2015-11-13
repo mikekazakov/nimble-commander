@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "chained_strings.h"
-#include "vfs/VFS.h"
-#include "OperationJob.h"
-#include "OperationDialogProtocol.h"
+#include "../../vfs/VFS.h"
+#include "../../chained_strings.h"
+#include "../../OperationJob.h"
+#include "../../OperationDialogProtocol.h"
 
 
 class FileCompressOperationJob : public OperationJob

@@ -19,23 +19,6 @@ struct FileSysAttrAlterCommand;
 
 - (FileSysEntryAttrSheetController*)initWithItems:(const shared_ptr<const vector<VFSListingItem>>&)_items;
 
-
-
-
-//- (void)ShowSheet: (NSWindow *)_window
-//       selentries: (const PanelData*)_data
-//          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
-//- (void)ShowSheet: (NSWindow *)_window
-//             data: (const PanelData*)_data
-//            index:(unsigned)_ind
-//          handler: (FileSysEntryAttrSheetCompletionHandler) handler;
-
-// it's a self-owning object, so we need a retain loop to keep it alive, otherwise ARC will kill it
-//@property (strong) FileSysEntryAttrSheetController *ME;
-
-
-
-
 @end
 
 @interface FileSysEntryAttrSheetController ()
@@ -84,19 +67,15 @@ struct FileSysAttrAlterCommand;
 
 - (IBAction)OnApply:(id)sender;
 - (IBAction)OnCancel:(id)sender;
-//- (IBAction)OnATimeClear:(id)sender;
 - (IBAction)OnATimeSet:(id)sender;
-//- (IBAction)OnMTimeClear:(id)sender;
 - (IBAction)OnMTimeSet:(id)sender;
-//- (IBAction)OnCTimeClear:(id)sender;
 - (IBAction)OnCTimeSet:(id)sender;
-//- (IBAction)OnBTimeClear:(id)sender;
 - (IBAction)OnBTimeSet:(id)sender;
 - (IBAction)OnProcessSubfolders:(id)sender;
 - (IBAction)OnFlag:(id)sender;
 - (IBAction)OnUIDSel:(id)sender;
 - (IBAction)OnGIDSel:(id)sender;
 - (IBAction)OnTimeChange:(id)sender;
-
 - (IBAction)OnTimePickerEnabled:(id)sender;
+
 @end

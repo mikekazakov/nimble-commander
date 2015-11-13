@@ -67,12 +67,7 @@ bool FileSearch::Go(string _from_path,
 {
     if(IsRunning())
         return false;
-    
-    if(!m_FilterName &&
-       !m_FilterContent &&
-       !m_FilterSize )
-        return false; // need at least one filter to be set
-    
+        
     assert(m_Callback == nil);
     
     m_Callback = _found_callback;

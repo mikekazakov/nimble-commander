@@ -400,8 +400,8 @@ retry_chflags:
     // process file owner and file group
     uid_t newuid = st.st_uid;
     gid_t newgid = st.st_gid;
-    if(m_Command.set_uid) newuid = m_Command.uid;
-    if(m_Command.set_gid) newgid = m_Command.gid;
+    if(m_Command.uid) newuid = *m_Command.uid;
+    if(m_Command.gid) newgid = *m_Command.gid;
     if(newuid != st.st_uid || newgid != st.st_gid)
     {
 retry_chown:
@@ -426,7 +426,6 @@ retry_chown:
     }
     
     // process file times
-    // TODO: still weirdness with timezone stuff
     
 #define HANDLE_FILETIME_RESULT(label) \
     if (res != 0 && !m_SkipAllErrors) { \

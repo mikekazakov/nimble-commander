@@ -25,9 +25,9 @@ struct FileSysAttrAlterCommand
         fsf_unix_suid,      // set user id on execution
         fsf_unix_sgid,      // set group id on execution
         fsf_unix_sticky,    // S_ISVTX, will require super-user rights to alter it
-        fsf_uf_nodump,      // Do not dump the file
         
         // may be set or unset by either the owner of a file or the super-user:
+        fsf_uf_nodump,      // Do not dump the file
         fsf_uf_immutable,   // The file may not be changed
         fsf_uf_append,      // The file may only be appended to
         fsf_uf_opaque,      // The directory is opaque when viewed through a union stack
@@ -43,20 +43,13 @@ struct FileSysAttrAlterCommand
         fsf_totalcount
     };
     
-    vector<tribool> flags = vector<tribool>(fsf_totalcount, indeterminate);
-
-    // todo: switch to optionals:
-    bool     set_uid = false;
-    uid_t    uid;
-    bool     set_gid = false;
-    gid_t    gid;
-
-    optional<time_t> atime;
-    optional<time_t> mtime;
-    optional<time_t> ctime;
-    optional<time_t> btime;    
-    
-    bool     process_subdirs = false;
-
-    shared_ptr<const vector<VFSListingItem>> items;
+    vector<tribool>                             flags = vector<tribool>(fsf_totalcount, indeterminate);
+    shared_ptr<const vector<VFSListingItem>>    items;
+    optional<uid_t>                             uid;
+    optional<gid_t>                             gid;
+    optional<time_t>                            atime;
+    optional<time_t>                            mtime;
+    optional<time_t>                            ctime;
+    optional<time_t>                            btime;
+    bool                                        process_subdirs = false;
 };

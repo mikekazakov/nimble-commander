@@ -454,11 +454,19 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     [self HandleOpenInSystem];
 }
 
+// when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:
+- (void (^)()) refreshCurrentControllerLambda
+{
+    __weak auto cur = self;
+    auto update_this_panel = [=] {
+        dispatch_to_main_queue( [=]{
+            [(PanelController*)cur RefreshDirectory];
+        });
+    };
+    return update_this_panel;
+}
+
 - (IBAction)OnFileAttributes:(id)sender {
-//    if(!m_Data.Host()->IsNativeFS())
-//        return; // currently support file info only on native fs
-//    MachTimeBenchmark mtb;
-    
     auto entries = to_shared_ptr(self.selectedEntriesOrFocusedEntries);
     if( entries->empty() )
         return;
@@ -469,22 +477,11 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ) {
             auto op = [[FileSysAttrChangeOperation alloc] initWithCommand:*sheet.result];
+            if( !self.receivesUpdateNotifications )
+                [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
             [self.state AddOperation:op];
         }
     }];
-    
-//    FileSysEntryAttrSheetCompletionHandler handler = ^(int result){
-//        if(result == DialogResult::Apply)
-//            [self.state AddOperation:[[FileSysAttrChangeOperation alloc] initWithCommand:sheet.Result]];
-//    };
-//    
-//    if(m_Data.Stats().selected_entries_amount > 0 )
-//        [sheet ShowSheet:self.window selentries:&m_Data handler:handler];
-//    else if(m_View.item && !m_View.item.IsDotDot())
-//        [sheet ShowSheet:self.window
-//                    data:&m_Data
-//                   index:m_Data.RawIndexForSortIndex(m_View.curpos)
-//                 handler:handler];
 }
 
 - (IBAction)OnDetailedVolumeInformation:(id)sender {
@@ -758,14 +755,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
                  if(returnCode == NSModalResponseOK){
                      FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(*items)
                                                                                          type:sheet.resultType];
-                     __weak PanelController *ws = self;
                      if( !self.receivesUpdateNotifications )
-                         [op AddOnFinishHandler:^{
-                             dispatch_to_main_queue([=]{
-                                 if(auto ss = ws)
-                                     [ss RefreshDirectory];
-                             });
-                         }];
+                         [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
                      [self.state AddOperation:op];
                  }
              }];
@@ -815,14 +806,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     
     FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(items)
                                                                         type:FileDeletionOperationType::MoveToTrash];
-    __weak PanelController *ws = self;
     if( !self.receivesUpdateNotifications )
-        [op AddOnFinishHandler:^{
-            dispatch_to_main_queue([=]{
-                if(auto ss = ws)
-                    [ss RefreshDirectory];
-            });
-        }];
+        [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
     
     [self.state AddOperation:op];
 }

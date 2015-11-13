@@ -7,7 +7,7 @@
 //
 
 #include "../../vfs/VFS.h"
-#include "../../Operation.h"
+#include "../Operation.h"
 #include "Options.h"
 
 @interface FileCopyOperation : Operation

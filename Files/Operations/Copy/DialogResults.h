@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../OperationDialogProtocol.h"
+#include "../OperationDialogProtocol.h"
 
 namespace FileCopyOperationDR
 {

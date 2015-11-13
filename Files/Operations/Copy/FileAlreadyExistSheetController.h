@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "../../OperationDialogProtocol.h"
+#pragma once
+
+#include "../OperationDialogProtocol.h"
 
 @interface FileAlreadyExistSheetController : NSWindowController <OperationDialogProtocol>
 

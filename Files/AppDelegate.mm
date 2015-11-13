@@ -19,7 +19,7 @@
 #include "vfs/vfs_net_sftp.h"
 #import "AppDelegate.h"
 #import "MainWindowController.h"
-#import "OperationsController.h"
+#import "Operations/OperationsController.h"
 #import "Common.h"
 #import "chained_strings.h"
 #import "PreferencesWindowGeneralTab.h"

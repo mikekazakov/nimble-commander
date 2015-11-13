@@ -7,8 +7,8 @@
 //
 
 #include <Habanero/algo.h>
+#include "../Common.h"
 #include "OperationStats.h"
-#include "Common.h"
 
 OperationStats::OperationStats()
 {

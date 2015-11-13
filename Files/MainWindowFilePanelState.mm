@@ -9,6 +9,8 @@
 #include <Habanero/CommonPaths.h>
 #include "vfs/vfs_native.h"
 #include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/OperationsController.h"
+#include "Operations/OperationsSummaryViewController.h"
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "PanelController+DataAccess.h"
@@ -18,8 +20,6 @@
 #include "ClassicPanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "MainWndGoToButton.h"
-#include "OperationsController.h"
-#include "OperationsSummaryViewController.h"
 #include "QuickPreview.h"
 #include "MainWindowController.h"
 #include "FilePanelMainSplitView.h"

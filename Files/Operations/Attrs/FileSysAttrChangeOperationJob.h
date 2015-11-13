@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../OperationJob.h"
+#include "../OperationJob.h"
 #include "FileSysAttrChangeOperationCommand.h"
 
 @class FileSysAttrChangeOperation;

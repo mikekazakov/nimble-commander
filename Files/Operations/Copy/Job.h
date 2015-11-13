@@ -12,9 +12,9 @@
 #include "../../vfs/VFS.h"
 #include "../../NativeFSManager.h"
 #include "../../DispatchQueue.h"
+#include "../OperationJob.h"
+#include "../OperationDialogProtocol.h"
 #include "Options.h"
-#include "../../OperationJob.h"
-#include "../../OperationDialogProtocol.h"
 #include "DialogResults.h"
 
 class FileCopyOperationJob : public OperationJob

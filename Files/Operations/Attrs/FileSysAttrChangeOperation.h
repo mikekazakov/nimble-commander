@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "../../Operation.h"
-#include "../../OperationDialogAlert.h"
+#include "../Operation.h"
+#include "../OperationDialogAlert.h"
 
 struct FileSysAttrAlterCommand;
 

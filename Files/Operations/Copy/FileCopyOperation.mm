@@ -10,7 +10,7 @@
 #include "Job.h"
 #include "../../Common.h"
 #include "../../ByteCountFormatter.h"
-#include "../../OperationDialogAlert.h"
+#include "../OperationDialogAlert.h"
 #include "FileAlreadyExistSheetController.h"
 #include "DialogResults.h"
 

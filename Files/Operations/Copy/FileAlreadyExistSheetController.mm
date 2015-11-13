@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../Common.h"
+#include "../Operation.h"
+#include "DialogResults.h"
 #include "FileAlreadyExistSheetController.h"
 #include "FileCopyOperation.h"
-#include "../../Operation.h"
-#include "../../Common.h"
-#include "DialogResults.h"
 
 @implementation FileAlreadyExistSheetController
 {

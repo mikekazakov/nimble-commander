@@ -6,13 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "Operation.h"
-#import "OperationJob.h"
-#import "OperationDialogController.h"
-#import "Common.h"
-#import "ByteCountFormatter.h"
-
-#import "AppDelegate.h"
+#include "../Common.h"
+#include "../ByteCountFormatter.h"
+#include "../AppDelegate.h"
+#include "Operation.h"
+#include "OperationJob.h"
+#include "OperationDialogController.h"
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {

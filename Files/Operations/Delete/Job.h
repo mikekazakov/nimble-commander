@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../vfs/VFS.h"
-#include "../../OperationJob.h"
+#include "../OperationJob.h"
 #include "Options.h"
 #include "DialogResults.h"
 

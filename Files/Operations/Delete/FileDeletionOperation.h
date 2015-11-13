@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "../../Operation.h"
 #include "../../vfs/VFS.h"
+#include "../Operation.h"
 #include "Options.h"
 
 @class OperationDialogAlert;

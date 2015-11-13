@@ -7,8 +7,8 @@
 //
 
 #include "../../vfs/VFS.h"
-#include "../../Operation.h"
-#include "../../OperationDialogAlert.h"
+#include "../Operation.h"
+#include "../OperationDialogAlert.h"
 
 @interface FileCompressOperation : Operation
 

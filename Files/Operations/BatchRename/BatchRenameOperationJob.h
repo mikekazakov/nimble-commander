@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../../vfs/VFS.h"
-#include "../../OperationJob.h"
+#include "../OperationJob.h"
 
 @class BatchRenameOperation;
 

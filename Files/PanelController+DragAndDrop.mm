@@ -10,9 +10,9 @@
 #include "vfs/vfs_native.h"
 #include "Operations/Link/FileLinkOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/OperationsController.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
-#include "OperationsController.h"
 #include "path_manip.h"
 #include "Common.h"
 

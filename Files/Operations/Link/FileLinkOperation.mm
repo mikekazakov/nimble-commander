@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../OperationDialogAlert.h"
+#include "../OperationDialogAlert.h"
 #include "FileLinkOperation.h"
 #include "FileLinkOperationJob.h"
 

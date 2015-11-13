@@ -10,8 +10,8 @@
 
 #include "../../vfs/VFS.h"
 #include "../../chained_strings.h"
-#include "../../OperationJob.h"
-#include "../../OperationDialogProtocol.h"
+#include "../OperationJob.h"
+#include "../OperationDialogProtocol.h"
 
 
 class FileCompressOperationJob : public OperationJob

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationsController.h"
-#import "Common.h"
+#include "../Common.h"
+#include "OperationsController.h"
 
 static const milliseconds g_DialogAutoTriggeringTreshMS = 2000ms;
 

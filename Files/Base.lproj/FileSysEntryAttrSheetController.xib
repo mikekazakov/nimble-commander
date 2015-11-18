@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FileSysEntryAttrSheetController">
@@ -52,15 +52,19 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
-            <rect key="contentRect" x="196" y="240" width="469" height="467"/>
+            <rect key="contentRect" x="196" y="240" width="469" height="100"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" misplaced="YES" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="469" height="467"/>
-                <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="469" height="100"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3mU-TJ-u4k">
-                        <rect key="frame" x="0.0" y="0.0" width="469" height="467"/>
+                    <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3mU-TJ-u4k">
+                        <rect key="frame" x="0.0" y="0.0" width="469" height="100"/>
                         <animations/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="3TG-oO-PnH"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="ZiI-B9-iEw"/>
+                        </constraints>
                     </stackView>
                 </subviews>
                 <constraints>
@@ -76,9 +80,8 @@
             </connections>
             <point key="canvasLocation" x="747.5" y="301.5"/>
         </window>
-        <customView misplaced="YES" id="PJW-t5-Gvv" userLabel="Top">
-            <rect key="frame" x="0.0" y="0.0" width="469" height="128"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="PJW-t5-Gvv" userLabel="Top">
+            <rect key="frame" x="0.0" y="0.0" width="469" height="134"/>
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
                     <rect key="frame" x="18" y="49" width="59" height="17"/>
@@ -379,9 +382,8 @@
             <animations/>
             <point key="canvasLocation" x="181.5" y="220"/>
         </customView>
-        <customView misplaced="YES" id="yEq-vZ-i2Z" userLabel="Middle">
-            <rect key="frame" x="0.0" y="0.0" width="479" height="178"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="yEq-vZ-i2Z" userLabel="Middle">
+            <rect key="frame" x="0.0" y="0.0" width="479" height="183"/>
             <subviews>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="166">
                     <rect key="frame" x="18" y="67" width="204" height="18"/>
@@ -594,9 +596,8 @@
             <animations/>
             <point key="canvasLocation" x="192.5" y="433"/>
         </customView>
-        <customView id="xZz-xg-Gyb" userLabel="Bottom">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="xZz-xg-Gyb" userLabel="Bottom">
             <rect key="frame" x="0.0" y="0.0" width="457" height="121"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="622">
                     <rect key="frame" x="18" y="84" width="94" height="17"/>
@@ -851,9 +852,8 @@
             <animations/>
             <point key="canvasLocation" x="187.5" y="637.5"/>
         </customView>
-        <customView id="SAz-B5-BKp" userLabel="Footer">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="SAz-B5-BKp" userLabel="Footer">
             <rect key="frame" x="0.0" y="0.0" width="473" height="61"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
                     <rect key="frame" x="265" y="13" width="92" height="32"/>

@@ -25,9 +25,8 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customView id="oVI-wD-asY" userLabel="Path">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="oVI-wD-asY" userLabel="Path">
             <rect key="frame" x="0.0" y="0.0" width="636" height="73"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="12">
                     <rect key="frame" x="18" y="36" width="51" height="17"/>
@@ -66,9 +65,8 @@
             <point key="canvasLocation" x="-291" y="600.5"/>
         </customView>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="vpz-Xu-YxL" userLabel="Buttons">
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="vpz-Xu-YxL" userLabel="Buttons">
             <rect key="frame" x="0.0" y="0.0" width="229" height="47"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="16">
                     <rect key="frame" x="123" y="13" width="92" height="32"/>
@@ -118,15 +116,19 @@ Gw
         </customView>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <rect key="contentRect" x="688" y="323" width="485" height="267"/>
+            <rect key="contentRect" x="688" y="323" width="485" height="100"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" misplaced="YES" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="485" height="267"/>
+            <view key="contentView" id="2">
+                <rect key="frame" x="0.0" y="0.0" width="485" height="100"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="250" verticalStackHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AYy-m7-y0I">
-                        <rect key="frame" x="0.0" y="80" width="485" height="187"/>
+                    <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="250" verticalStackHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AYy-m7-y0I">
+                        <rect key="frame" x="0.0" y="0.0" width="485" height="100"/>
                         <animations/>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="lQR-VW-ZZ8"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="rVn-z2-fVm"/>
+                        </constraints>
                     </stackView>
                 </subviews>
                 <constraints>

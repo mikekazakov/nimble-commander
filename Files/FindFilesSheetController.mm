@@ -242,6 +242,13 @@ static const int g_MaximumSearchResults = 262144;
 
 - (IBAction)OnClose:(id)sender
 {
+    if( NSEvent *ev = NSApp.currentEvent )
+        if( ev.type == NSKeyDown && m_FileSearch->IsRunning() ) {
+            // Close was triggered by Esc hotkey. just stop current search and don't close the dialog
+            m_FileSearch->Stop();
+            return;
+        }
+ 
     m_FileSearch->Stop();
     m_FileSearch->Wait();
     [self endSheet:NSModalResponseOK];

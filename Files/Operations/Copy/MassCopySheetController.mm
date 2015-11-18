@@ -76,12 +76,12 @@ static string MakeCanonicPath(string _input)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    [self.window makeFirstResponder:self.TextField];
     [self.DisclosedViewController toggleDisclosure:self];
     [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
     [self.StackView insertView:self.DisclosedViewController.view atIndex:0 inGravity:NSStackViewGravityBottom];
     [self.StackView insertView:self.ButtonsPart atIndex:1 inGravity:NSStackViewGravityBottom];
     [self.window.contentView updateConstraintsForSubtreeIfNeeded];
+    [self.window makeFirstResponder:self.TextField];
     
     auto initial_path = [NSString stringWithUTF8StdString:m_InitialDestination];
     

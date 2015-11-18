@@ -124,7 +124,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
     IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
@@ -140,7 +140,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.batch_rename")            return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.open_xattr")              return m_View.item;
+    IF_MENU_TAG("menu.command.open_xattr")              return m_View.item && m_View.item.Host()->IsNativeFS();
     
     return true; // will disable some items in the future
 }

@@ -65,5 +65,10 @@ All rights reserved.</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>http://filesmanager.info/downloads/sparkle.xml</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

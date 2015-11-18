@@ -32,7 +32,7 @@ private:
     void DoScan();
 
     void DoFile(const char *_full_path);
-    string ComposeFullPath( SourceItem &_item ) const;
+    string ComposeFullPath( const SourceItem &_item ) const;
     
     
 

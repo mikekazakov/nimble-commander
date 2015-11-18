@@ -97,7 +97,7 @@ void FileSysAttrChangeOperationJob::Do()
     SetCompleted();
 }
 
-string FileSysAttrChangeOperationJob::ComposeFullPath( SourceItem &_meta ) const
+string FileSysAttrChangeOperationJob::ComposeFullPath( const SourceItem &_meta ) const
 {
     array<int, 128> parents;
     int parents_num = 0;

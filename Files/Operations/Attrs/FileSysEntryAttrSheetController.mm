@@ -518,27 +518,13 @@ static vector<group_info> LoadGroupsWithOD()
     [self endSheet:NSModalResponseCancel];
 }
 
-//- (IBAction)OnATimeClear:(id)sender{
-////    [[self ATimePicker] setDateValue:LongTimeAgo()];
-////    m_UserDidEditOthers[OtherAttrs::atime] = false;
-//}
-
 - (IBAction)OnATimeSet:(id)sender
 {
     NSDate *cur = NSDate.date;
     [self setTimePickerOn:self.ATimePicker withEnabler:self.ATimePickerEnabled andDate:cur];
     m_State[1].atime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::atime] = true;
-//    NSDate *cur = [NSDate date];
-//    [[self ATimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-//    m_State[1].atime = [cur timeIntervalSince1970];
-//    m_UserDidEditOthers[OtherAttrs::atime] = true;
 }
-
-//- (IBAction)OnMTimeClear:(id)sender{
-////    [[self MTimePicker] setDateValue:LongTimeAgo()];
-////    m_UserDidEditOthers[OtherAttrs::mtime] = false;
-//}
 
 - (void)setTimePickerOff:(NSDatePicker *)picker withEnabler:(NSButton *)enabler andDate:(NSDate*)date
 {
@@ -564,17 +550,7 @@ static vector<group_info> LoadGroupsWithOD()
     [self setTimePickerOn:self.MTimePicker withEnabler:self.MTimePickerEnabled andDate:cur];
     m_State[1].mtime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::mtime] = true;
-    
-///    NSDate *cur = [NSDate date];
-//    [[self MTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-//    m_State[1].mtime = [cur timeIntervalSince1970];
-//    m_UserDidEditOthers[OtherAttrs::mtime] = true;
 }
-
-//- (IBAction)OnCTimeClear:(id)sender{
-////    [[self CTimePicker] setDateValue:LongTimeAgo()];
-////    m_UserDidEditOthers[OtherAttrs::ctime] = false;
-//}
 
 - (IBAction)OnCTimeSet:(id)sender
 {
@@ -582,17 +558,7 @@ static vector<group_info> LoadGroupsWithOD()
     [self setTimePickerOn:self.CTimePicker withEnabler:self.CTimePickerEnabled andDate:cur];
     m_State[1].ctime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::ctime] = true;
-    
-//    NSDate *cur = [NSDate date];    
-//    [[self CTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-//    m_State[1].ctime = [cur timeIntervalSince1970];
-//    m_UserDidEditOthers[OtherAttrs::ctime] = true;
 }
-
-//- (IBAction)OnBTimeClear:(id)sender{
-////    [[self BTimePicker] setDateValue:LongTimeAgo()];
-////    m_UserDidEditOthers[OtherAttrs::btime] = false;
-//}
 
 - (IBAction)OnBTimeSet:(id)sender
 {
@@ -600,10 +566,6 @@ static vector<group_info> LoadGroupsWithOD()
     [self setTimePickerOn:self.BTimePicker withEnabler:self.BTimePickerEnabled andDate:cur];
     m_State[1].btime = cur.timeIntervalSince1970;
     m_UserDidEditOthers[OtherAttrs::btime] = true;
-//    NSDate *cur = [NSDate date];
-//    [[self BTimePicker] setDateValue:[cur dateByAddingTimeInterval:ZeroSecsFromGMT()]];
-//    m_State[1].btime = [cur timeIntervalSince1970];
-//    m_UserDidEditOthers[OtherAttrs::btime] = true;
 }
 
 - (IBAction)OnProcessSubfolders:(id)sender

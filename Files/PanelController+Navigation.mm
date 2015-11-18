@@ -19,12 +19,14 @@
     
     // 1st - build current hosts stack
     vector<VFSHostPtr> curr_stack;
-    VFSHostPtr cur = self.vfs;
-    while(cur) {
-        curr_stack.emplace_back(cur);
-        cur = cur->Parent();
+    if( self.isUniform ) {
+        VFSHostPtr cur = self.vfs;
+        while( cur ) {
+            curr_stack.emplace_back(cur);
+            cur = cur->Parent();
+        }
+        reverse(begin(curr_stack), end(curr_stack));
     }
-    reverse(begin(curr_stack), end(curr_stack));
     
     // 2nd - compare with required stack and left only what matches
     vector<VFSHostPtr> res_stack;
@@ -146,7 +148,6 @@ loadPreviousState:(bool)_load_state
         
         [self CancelBackgroundOperations]; // clean running operations if any
         dispatch_or_run_in_main_queue([=]{
-            m_UpperDirectory.Reset();
             [m_View SavePathState];
             m_Data.Load(listing, PanelData::PanelType::Directory);
             [m_View dataUpdated];
@@ -170,9 +171,6 @@ loadPreviousState:(bool)_load_state
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{
-        if( self.isUniform )
-            m_UpperDirectory = VFSPath( self.vfs, self.currentDirectoryPath );
-        
         [m_View SavePathState];
         m_Data.Load(_listing, PanelData::PanelType::TemporaryPanel);
         [m_View dataUpdated];

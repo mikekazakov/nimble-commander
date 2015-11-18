@@ -285,8 +285,8 @@ void panel::GenericCursorPersistance::Restore() const
             return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn loadPreviousState:true async:true] == 0;
         }
     }
-    else if( m_UpperDirectory )
-        return [self GoToDir:m_UpperDirectory.Path() vfs:m_UpperDirectory.Host() select_entry:"" loadPreviousState:true async:true] == 0;
+    else
+        [self OnGoBack:self];
     return false;
 }
 

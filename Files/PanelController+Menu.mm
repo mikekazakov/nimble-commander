@@ -120,7 +120,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF(tag_sort_creat)      upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByBTimeMask);
 #undef IF
     
-    IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack();
+    IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
@@ -146,9 +146,17 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 }
 
 - (IBAction)OnGoBack:(id)sender {
-    if(!m_History.CanMoveBack())
-        return;
-    m_History.MoveBack();
+    if( self.isUniform ) {
+        if(!m_History.CanMoveBack())
+            return;
+        m_History.MoveBack();
+    }
+    else {
+        // a different logic here, since non-uniform listings like search results (and temporary panels later) are not written into history
+        if( m_History.Empty() )
+            return;
+        m_History.RewindAt( m_History.Length()-1 );
+    }
     [self GoToVFSPathStack:*m_History.Current()];
 }
 

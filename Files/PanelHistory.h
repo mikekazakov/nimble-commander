@@ -12,15 +12,28 @@
 class PanelHistory
 {
 public:
-    bool IsRecording() const;
-    unsigned Length() const;
+    bool IsRecording() const noexcept;
+    unsigned Length() const noexcept;
+    bool Empty() const noexcept;
     
-    bool CanMoveForth() const;
+    bool CanMoveForth() const noexcept;
+    
+    /**
+     * Will throw if CanMoveForth() == false.
+     */
     void MoveForth();
     
-    bool CanMoveBack() const;
+    bool CanMoveBack() const noexcept;
+    
+    /**
+     * Will throw if CanMoveBack() == false.
+     */
     void MoveBack();
     
+    /**
+     * Will turn History into "recording" state.
+     * History was in playing state - will discard anything in front of current position.
+     */
     void Put(VFSPathStack&& _path);
     
     /**
@@ -36,7 +49,7 @@ public:
     
     vector<reference_wrapper<const VFSPathStack>> All() const;
 private:
-    list<VFSPathStack>  m_History;
+    deque<VFSPathStack>  m_History;
      // lesser the index - farther the history entry
      // most recent entry is at .size()-1
     unsigned            m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false

@@ -11,6 +11,7 @@
 
 @interface PanelController (Menu)
 
+- (IBAction)OnGoBack:(id)sender;
 - (void) showGoToFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_current; // current may be nullptr
 - (void) showGoToSFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_current; // current may be nullptr
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;

@@ -6,11 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "PanelData.h"
-#import "PanelView.h"
-#import "PanelHistory.h"
-#import "DispatchQueue.h"
+#pragma once
+
+#include "PanelData.h"
+#include "PanelView.h"
+#include "PanelHistory.h"
+#include "DispatchQueue.h"
 
 @class QuickLookView;
 @class BriefSystemOverview;
@@ -57,9 +58,6 @@ namespace panel
     // Main controller's possessions
     PanelData                   m_Data;   // owns
     PanelView                   *m_View;  // create and owns
-    
-    // Handmade upper directory for non-uniform listings like search results
-    VFSPath                     m_UpperDirectory;
     
     // VFS changes observation
     VFSHostDirObservationTicket  m_UpdatesObservationTicket;

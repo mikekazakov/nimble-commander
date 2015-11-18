@@ -33,7 +33,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.activePanelView.item.IsDir();
+    IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
     IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot();
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && self.leftPanelController.vfs->IsNativeFS() && self.rightPanelController.vfs->IsNativeFS() && !self.activePanelView.item.IsDir();
@@ -111,13 +111,23 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
-    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item || !self.activePanelView.item.IsDir()) return;
+    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item)
+        return;
     auto cur = self.activePanelController;
     auto opp = self.oppositePanelController;
-    [opp GoToDir:cur.currentFocusedEntryPath
-             vfs:cur.vfs
-    select_entry:""
-           async:true];
+    auto item = cur.view.item;
+    if( !cur || !opp || !item )
+        return;
+    if( item.IsDir() )
+        [opp GoToDir:item.Path()
+                 vfs:item.Host()
+        select_entry:""
+               async:true];
+    else
+        [opp GoToDir:item.Directory()
+                 vfs:item.Host()
+        select_entry:item.Filename()
+               async:true];
 }
 
 - (IBAction)OnCompressFiles:(id)sender

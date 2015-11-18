@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6246" systemVersion="14A361c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6246"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="OperationsSummaryViewController">
@@ -18,6 +17,7 @@
         <customView id="gst-Y4-7ma">
             <rect key="frame" x="0.0" y="0.0" width="163" height="96"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <animations/>
         </customView>
         <customView id="912" userLabel="Operation View" customClass="GenericOperationView">
             <rect key="frame" x="0.0" y="0.0" width="298" height="55"/>
@@ -25,6 +25,7 @@
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2499" userLabel="Short Info">
                     <rect key="frame" x="9" y="4" width="273" height="14"/>
+                    <animations/>
                     <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Short info string" id="2500">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -40,6 +41,7 @@
                         <constraint firstAttribute="width" priority="1" constant="276" id="2702"/>
                         <constraint firstAttribute="width" constant="276" id="2772"/>
                     </constraints>
+                    <animations/>
                     <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="Copying files: /Volumes/C to /dev/null" id="938">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -54,6 +56,7 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="216" id="2780"/>
                     </constraints>
+                    <animations/>
                     <connections>
                         <binding destination="955" name="value" keyPath="representedObject.Progress" id="C5B-q9-OTu"/>
                     </connections>
@@ -63,6 +66,7 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="2657"/>
                     </constraints>
+                    <animations/>
                     <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="pause_icon" imagePosition="only" alternateImage="NSRefreshFreestandingTemplate" focusRingType="none" imageScaling="proportionallyDown" id="934">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -80,6 +84,7 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="2550"/>
                     </constraints>
+                    <animations/>
                     <buttonCell key="cell" type="bevel" bezelStyle="circular" image="NSStopProgressFreestandingTemplate" imagePosition="only" focusRingType="none" imageScaling="proportionallyDown" id="935">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -98,6 +103,7 @@
                         <constraint firstAttribute="width" constant="14" id="2579"/>
                         <constraint firstAttribute="height" constant="14" id="2652"/>
                     </constraints>
+                    <animations/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="question_icon" imagePosition="only" alignment="center" state="on" focusRingType="none" inset="2" id="931">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="miniSystem"/>
@@ -133,6 +139,7 @@
                 <constraint firstItem="925" firstAttribute="leading" secondItem="912" secondAttribute="leading" constant="33" id="2782"/>
                 <constraint firstItem="927" firstAttribute="leading" secondItem="925" secondAttribute="trailing" constant="8" symbolic="YES" id="2881"/>
             </constraints>
+            <animations/>
         </customView>
         <collectionViewItem id="955" userLabel="Operations List View Item">
             <connections>
@@ -154,6 +161,7 @@
                     <collectionView wantsLayer="YES" maxNumberOfColumns="1" id="952">
                         <rect key="frame" x="0.0" y="0.0" width="300" height="48"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                         <connections>
@@ -162,15 +170,19 @@
                         </connections>
                     </collectionView>
                 </subviews>
+                <animations/>
                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
             </clipView>
+            <animations/>
             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="953">
                 <rect key="frame" x="-100" y="-100" width="233" height="15"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <animations/>
             </scroller>
             <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="954">
                 <rect key="frame" x="234" y="1" width="15" height="143"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <animations/>
             </scroller>
             <point key="canvasLocation" x="452" y="107"/>
         </scrollView>

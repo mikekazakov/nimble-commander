@@ -74,8 +74,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     if(self)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        m_OverlappedTerminal.bottom_gap = 0;
-        m_OverlappedTerminal.did_hide_panels_for_long_task = false;
+        m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
         m_GoToForceActivation = [defaults boolForKey:g_DefsGoToActivation];
         
@@ -174,6 +173,9 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         }
         
         [self updateTabBarsVisibility];
+        [self layoutSubtreeIfNeeded];
+        [self loadOverlappedTerminalSettingsAndRunIfNecessary];
+        
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsGeneralShowTabs options:0 context:NULL];
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -266,11 +268,11 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     [self addConstraint:m_MainSplitViewBottomConstraint];
     
     if( configuration::has_terminal ) {
-        m_OverlappedTerminal.terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
-        m_OverlappedTerminal.terminal.translatesAutoresizingMaskIntoConstraints = false;
-        [self addSubview:m_OverlappedTerminal.terminal positioned:NSWindowBelow relativeTo:nil];
+        m_OverlappedTerminal->terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
+        m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_OverlappedTerminal->terminal positioned:NSWindowBelow relativeTo:nil];
         
-        auto terminal = m_OverlappedTerminal.terminal;
+        auto terminal = m_OverlappedTerminal->terminal;
         views = NSDictionaryOfVariableBindings(terminal);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
@@ -322,14 +324,15 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 {
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL] returnTypes:@[]];
     
-    // if we alredy were active and have some focused view - restore it
-    if(m_LastResponder)
+    if( m_LastResponder ) {
+        // if we already were active and have some focused view - restore it
         [self.window makeFirstResponder:m_LastResponder];
-    m_LastResponder = nil;
-    
-    // if we don't know which view should be active - make left panel a first responder
-    if( !self.overlappedTerminalVisible && !self.isPanelActive)
+        m_LastResponder = nil;
+    }
+    else {
+        // if we don't know which view should be active - make left panel a first responder
         [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+    }
     
     [self UpdateTitle];
 }
@@ -683,7 +686,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 
 - (void)WindowWillClose
 {
-   [self SavePanelPaths];
+    [self SavePanelPaths];
+    [self saveOverlappedTerminalSettings];
 }
 
 - (void)SavePanelPaths
@@ -853,10 +857,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     }
 }
 
+- (void)updateBottomConstraint
+{
+    auto gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
+    m_MainSplitViewBottomConstraint.constant = -gap;
+}
+
 - (void)frameDidChange
 {
-    auto gap = [m_OverlappedTerminal.terminal bottomGapForLines:m_OverlappedTerminal.bottom_gap];
-    m_MainSplitViewBottomConstraint.constant = -gap;
+    [self layoutSubtreeIfNeeded];
+    [self updateBottomConstraint];
 }
 
 - (bool)isPanelsSplitViewHidden

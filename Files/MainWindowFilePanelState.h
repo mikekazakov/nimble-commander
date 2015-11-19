@@ -6,11 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
+
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
-#import "MainWindowStateProtocol.h"
-#import "chained_strings.h"
-#import "vfs/VFS.h"
+#include "MainWindowStateProtocol.h"
+#include "chained_strings.h"
+#include "vfs/VFS.h"
 
 class PanelData;
 @class Operation;
@@ -24,6 +25,8 @@ class PanelData;
 @class OperationsSummaryViewController;
 @class FilePanelOverlappedTerminal;
 
+struct MainWindowFilePanelState_OverlappedTerminalSupport;
+
 @interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate, MMTabBarViewDelegate>
 {
     vector<PanelController*> m_LeftPanelControllers;
@@ -33,11 +36,7 @@ class PanelData;
     FilePanelMainSplitView *m_MainSplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
 
-    struct { // overlapped terminal support
-    FilePanelOverlappedTerminal *terminal;
-    int                          bottom_gap;
-    bool                         did_hide_panels_for_long_task;
-    }                       m_OverlappedTerminal;
+    unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
     
     MainWndGoToButton *m_LeftPanelGoToButton;
     MainWndGoToButton *m_RightPanelGoToButton;
@@ -137,7 +136,7 @@ class PanelData;
 @interface MainWindowFilePanelState ()
 
 - (void)savePanelsOptions;
-- (void)frameDidChange;
+- (void)updateBottomConstraint;
 
 @end
 

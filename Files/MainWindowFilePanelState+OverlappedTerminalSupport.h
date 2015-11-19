@@ -6,9 +6,19 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState.h"
+
+struct MainWindowFilePanelState_OverlappedTerminalSupport
+{
+    FilePanelOverlappedTerminal *terminal = nil;
+    int                          bottom_gap = 0;
+    bool                         did_hide_panels_for_long_task = false;
+};
 
 @interface MainWindowFilePanelState (OverlappedTerminalSupport)
+
+- (void) loadOverlappedTerminalSettingsAndRunIfNecessary;
+- (void) saveOverlappedTerminalSettings;
 
 - (bool) overlappedTerminalVisible;
 - (void) activateOverlappedTerminal;

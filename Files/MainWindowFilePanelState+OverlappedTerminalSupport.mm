@@ -14,13 +14,15 @@
 #include "PanelController.h"
 #include "PanelAux.h"
 
+static auto g_DefaultsGapKey = @"FilePanels_OverlappedTerminal_BottomGap";
+
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
 
 - (void) moveFocusToOverlappedTerminal
 {
     if( self.isPanelActive )
         m_LastFocusedPanelController = self.activePanelController;
-    [m_OverlappedTerminal.terminal focusTerminal];
+    [m_OverlappedTerminal->terminal focusTerminal];
 }
 
 - (void) moveFocusBackToPanels
@@ -35,59 +37,59 @@
 
 - (bool) isOverlappedTerminalRunning
 {
-    if( !m_OverlappedTerminal.terminal )
+    if( !m_OverlappedTerminal->terminal )
         return false;
-    auto s = m_OverlappedTerminal.terminal.state;
+    auto s = m_OverlappedTerminal->terminal.state;
     return (s != TermShellTask::TaskState::Inactive) &&
            (s != TermShellTask::TaskState::Dead );
 }
 
 - (void) increaseBottomTerminalGap
 {
-    if( !m_OverlappedTerminal.terminal || self.isPanelsSplitViewHidden )
+    if( !m_OverlappedTerminal->terminal || self.isPanelsSplitViewHidden )
         return;
-    m_OverlappedTerminal.bottom_gap++;
-    m_OverlappedTerminal.bottom_gap = min(m_OverlappedTerminal.bottom_gap, m_OverlappedTerminal.terminal.totalScreenLines);
-    [self frameDidChange];
+    m_OverlappedTerminal->bottom_gap++;
+    m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+    [self updateBottomConstraint];
     [self activateOverlappedTerminal];
-    if(m_OverlappedTerminal.bottom_gap == 1) {
+    if(m_OverlappedTerminal->bottom_gap == 1) {
         [self moveFocusToOverlappedTerminal];
     }
 }
 
 - (void) decreaseBottomTerminalGap
 {
-    if( !m_OverlappedTerminal.terminal || self.isPanelsSplitViewHidden )
+    if( !m_OverlappedTerminal->terminal || self.isPanelsSplitViewHidden )
         return;
-    if( m_OverlappedTerminal.bottom_gap == 0 )
+    if( m_OverlappedTerminal->bottom_gap == 0 )
         return;
-    m_OverlappedTerminal.bottom_gap = min(m_OverlappedTerminal.bottom_gap, m_OverlappedTerminal.terminal.totalScreenLines);
-    if( m_OverlappedTerminal.bottom_gap > 0 )
-        m_OverlappedTerminal.bottom_gap--;
-    [self frameDidChange];
-    if(m_OverlappedTerminal.bottom_gap == 0)
+    m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+    if( m_OverlappedTerminal->bottom_gap > 0 )
+        m_OverlappedTerminal->bottom_gap--;
+    [self updateBottomConstraint];
+    if(m_OverlappedTerminal->bottom_gap == 0)
         [self moveFocusBackToPanels];
 }
 
 - (void) activateOverlappedTerminal
 {
-    auto s = m_OverlappedTerminal.terminal.state;
+    auto s = m_OverlappedTerminal->terminal.state;
     if( s == TermShellTask::TaskState::Inactive || s == TermShellTask::TaskState::Dead ) {
         string wd;
         if( auto p = self.activePanelController )
             if( p.vfs->IsNativeFS() )
                 wd = p.currentDirectoryPath;
         
-        [m_OverlappedTerminal.terminal runShell:wd];
+        [m_OverlappedTerminal->terminal runShell:wd];
         
         __weak MainWindowFilePanelState *weakself = self;
-        m_OverlappedTerminal.terminal.onShellCWDChanged = [=]{
+        m_OverlappedTerminal->terminal.onShellCWDChanged = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalShellCWDChanged];
         };
-        m_OverlappedTerminal.terminal.onLongTaskStarted = [=]{
+        m_OverlappedTerminal->terminal.onLongTaskStarted = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskStarted];
         };
-        m_OverlappedTerminal.terminal.onLongTaskFinished = [=]{
+        m_OverlappedTerminal->terminal.onLongTaskFinished = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskFinished];
         };
     }
@@ -99,7 +101,7 @@
     if( !pc )
         pc = m_LastFocusedPanelController;
     if( pc ) {
-        auto cwd = m_OverlappedTerminal.terminal.cwd;
+        auto cwd = m_OverlappedTerminal->terminal.cwd;
         if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
             auto r = make_shared<PanelControllerGoToDirContext>();
             r->RequestedDirectory = cwd;
@@ -113,15 +115,15 @@
 {
     if( self.overlappedTerminalVisible && !self.isPanelsSplitViewHidden) {
         [self hidePanelsSplitView];
-        m_OverlappedTerminal.did_hide_panels_for_long_task = true;
+        m_OverlappedTerminal->did_hide_panels_for_long_task = true;
     }
 }
 
 - (void)onOverlappedTerminalLongTaskFinished
 {
-    if( self.isPanelsSplitViewHidden && m_OverlappedTerminal.did_hide_panels_for_long_task) {
+    if( self.isPanelsSplitViewHidden && m_OverlappedTerminal->did_hide_panels_for_long_task) {
         [self showPanelsSplitView];
-        m_OverlappedTerminal.did_hide_panels_for_long_task = false;
+        m_OverlappedTerminal->did_hide_panels_for_long_task = false;
     }
 }
 
@@ -140,8 +142,8 @@
 
 - (bool) overlappedTerminalVisible
 {
-    return m_OverlappedTerminal.terminal &&
-        (m_OverlappedTerminal.bottom_gap > 0 || self.isPanelsSplitViewHidden);
+    return m_OverlappedTerminal->terminal &&
+        (m_OverlappedTerminal->bottom_gap > 0 || self.isPanelsSplitViewHidden);
 }
 
 - (void) synchronizeOverlappedTerminalWithPanel:(PanelController*)_pc
@@ -149,8 +151,8 @@
     if(_pc.isUniform &&
        _pc.vfs->IsNativeFS() &&
        self.overlappedTerminalVisible &&
-       m_OverlappedTerminal.terminal.isShellVirgin == true )
-        [m_OverlappedTerminal.terminal changeWorkingDirectory:_pc.currentDirectoryPath];
+       m_OverlappedTerminal->terminal.isShellVirgin == true )
+        [m_OverlappedTerminal->terminal changeWorkingDirectory:_pc.currentDirectoryPath];
 }
 
 - (void) handleCtrlAltTab
@@ -168,7 +170,7 @@
 - (void) feedOverlappedTerminalWithCurrentFilename
 {
     if( !self.overlappedTerminalVisible ||
-         m_OverlappedTerminal.terminal.state != TermShellTask::TaskState::Shell )
+         m_OverlappedTerminal->terminal.state != TermShellTask::TaskState::Shell )
         return;
     
     auto pc = self.activePanelController;
@@ -177,16 +179,16 @@
     if( pc && pc.vfs->IsNativeFS() )
         if( auto entry = pc.view.item ) {
             if( panel::IsEligbleToTryToExecuteInConsole(entry) &&
-                m_OverlappedTerminal.terminal.isShellVirgin )
-                [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + entry.Name()];
+                m_OverlappedTerminal->terminal.isShellVirgin )
+                [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + entry.Name()];
             else
-                [m_OverlappedTerminal.terminal feedShellWithInput:entry.Name()];
+                [m_OverlappedTerminal->terminal feedShellWithInput:entry.Name()];
         }
 }
 
 - (void) feedOverlappedTerminalWithFilenamesMenu
 {
-    if( !self.overlappedTerminalVisible || m_OverlappedTerminal.terminal.state != TermShellTask::TaskState::Shell )
+    if( !self.overlappedTerminalVisible || m_OverlappedTerminal->terminal.state != TermShellTask::TaskState::Shell )
         return;
 
     auto cpc = self.activePanelController;
@@ -211,17 +213,17 @@
         }
         
         if( !strings.empty() )
-            [m_OverlappedTerminal.terminal runPasteMenu:strings];
+            [m_OverlappedTerminal->terminal runPasteMenu:strings];
     }
 }
 
 - (bool) handleReturnKeyWithOverlappedTerminal
 {
     if( self.overlappedTerminalVisible &&
-        m_OverlappedTerminal.terminal.state == TermShellTask::TaskState::Shell &&
-        m_OverlappedTerminal.terminal.isShellVirgin == false ) {
+        m_OverlappedTerminal->terminal.state == TermShellTask::TaskState::Shell &&
+        m_OverlappedTerminal->terminal.isShellVirgin == false ) {
         // dirty, dirty shell... lets clear it all with Return key
-        [m_OverlappedTerminal.terminal commitShell];
+        [m_OverlappedTerminal->terminal commitShell];
         return true;
     }
     
@@ -232,11 +234,11 @@
 - (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path
 {
     if( self.overlappedTerminalVisible &&
-       m_OverlappedTerminal.terminal.state == TermShellTask::TaskState::Shell &&
-       m_OverlappedTerminal.terminal.isShellVirgin == true ) {
+       m_OverlappedTerminal->terminal.state == TermShellTask::TaskState::Shell &&
+       m_OverlappedTerminal->terminal.isShellVirgin == true ) {
         // assumes that _filename is eligible to execute in terminal (should be check by PanelController before)
-        [m_OverlappedTerminal.terminal feedShellWithInput:"./"s + _filename];
-        [m_OverlappedTerminal.terminal commitShell];
+        [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + _filename];
+        [m_OverlappedTerminal->terminal commitShell];
         return true;
     }
     return false;
@@ -244,9 +246,9 @@
 
 - (bool) isAnythingRunningInOverlappedTerminal
 {
-    if( !m_OverlappedTerminal.terminal )
+    if( !m_OverlappedTerminal->terminal )
         return false;
-    auto s = m_OverlappedTerminal.terminal.state;
+    auto s = m_OverlappedTerminal->terminal.state;
     return s == TermShellTask::TaskState::ProgramInternal ||
            s == TermShellTask::TaskState::ProgramExternal ;
 }
@@ -256,7 +258,7 @@
     if( !self.overlappedTerminalVisible )
         return false;
     
-    return [m_OverlappedTerminal.terminal canFeedShellWithKeyDown:event];
+    return [m_OverlappedTerminal->terminal canFeedShellWithKeyDown:event];
 }
 
 - (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event
@@ -264,7 +266,30 @@
     if( !self.overlappedTerminalVisible )
         return false;
     
-    return [m_OverlappedTerminal.terminal feedShellWithKeyDown:event];
+    return [m_OverlappedTerminal->terminal feedShellWithKeyDown:event];
+}
+
+- (void) saveOverlappedTerminalSettings
+{
+    if( !m_OverlappedTerminal->terminal )
+        return;
+  
+    [NSUserDefaults.standardUserDefaults setInteger:m_OverlappedTerminal->bottom_gap forKey:g_DefaultsGapKey];
+}
+
+- (void) loadOverlappedTerminalSettingsAndRunIfNecessary
+{
+    if( !m_OverlappedTerminal->terminal )
+        return;
+    if( [NSUserDefaults.standardUserDefaults objectForKey:g_DefaultsGapKey] ) {
+        int gap = (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsGapKey];
+        if( gap > 0 ) {
+            m_OverlappedTerminal->bottom_gap = gap;
+            m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+            [self updateBottomConstraint];
+            [self activateOverlappedTerminal];
+        }
+    }
 }
 
 @end

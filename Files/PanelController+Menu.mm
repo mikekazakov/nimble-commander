@@ -246,7 +246,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction)OnGoIntoDirectory:(id)sender { // cmd+down
     auto item = m_View.item;
-    if(item && !item.IsDotDot() == false)
+    if( item && !item.IsDotDot() )
         [self HandleGoIntoDirOrArchive];
 }
 

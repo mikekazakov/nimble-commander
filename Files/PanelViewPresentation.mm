@@ -6,10 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelViewPresentation.h"
-#import "PanelView.h"
-#import "PanelData.h"
-#import "Common.h"
+#include <Habanero/CommonPaths.h>
+#include "vfs/vfs_native.h"
+#include "PanelViewPresentation.h"
+#include "PanelView.h"
+#include "PanelData.h"
+#include "Common.h"
 
 PanelViewPresentation::PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
     m_View(_parent_view),
@@ -247,36 +249,48 @@ void PanelViewPresentation::SetViewNeedsDisplay()
 void PanelViewPresentation::UpdateStatFS()
 {
     // in usual redrawings - update not more that in 5 secs
-//    nanoseconds now = machtime();
-//    if(m_StatFSLastUpdate + 5s < now ||
-//       m_StatFSLastHost != m_State->Data->Host().get() ||
-//       m_StatFSLastPath != m_State->Data->Listing().RelativePath()
-//       )
-//    {
-//        m_StatFSLastUpdate = now;
-//        m_StatFSLastHost = m_State->Data->Host().get();
-//        m_StatFSLastPath = m_State->Data->Listing().RelativePath();
-//        
-//        if(!m_StatFSQueue->Empty())
-//            return;
-//
-//        auto host = m_State->Data->Host();
-//        auto path = m_State->Data->Listing().RelativePath();
-//        m_StatFSQueue->Run([=]{
-//            VFSStatFS stat;
-//            if(host->StatFS(path, stat, 0) == 0 &&
-//               stat != m_StatFS // force redrawing only if statfs has in fact changed
-//               )
-//            {
-//                assert(dispatch_is_main_queue() == false);
-//                // POSSIBLE DEADLOCK HERE
-//                dispatch_sync(dispatch_get_main_queue(), ^{
-//                    m_StatFS = stat;
-//                    SetViewNeedsDisplay();
-//                });
-//            }
-//        });
-//    }
+    nanoseconds now = machtime();
+
+    VFSHostPtr current_host;
+    string current_path;
+    if( m_State->Data->Type() == PanelData::PanelType::Directory ) {
+        // we're in regular directory somewhere
+        current_host = m_State->Data->Host();
+        current_path = m_State->Data->Listing().Directory();
+    }
+    else {
+        // we're in temporary directory so there may be not common path and common host.
+        // as current solution - display information about home directory
+        current_host = VFSNativeHost::SharedHost();
+        current_path = CommonPaths::Home();
+    }
+    
+    if(m_StatFSLastUpdate + 5s < now ||
+       m_StatFSLastHost != current_host.get() ||
+       m_StatFSLastPath != current_path)
+    {
+        m_StatFSLastUpdate = now;
+        m_StatFSLastHost = current_host.get();
+        m_StatFSLastPath = current_path;
+        
+        if( !m_StatFSQueue->Empty() )
+            return;
+
+        m_StatFSQueue->Run([=](const shared_ptr<SerialQueueT> &_que){
+            VFSStatFS stat;
+            if( current_host->StatFS(current_path.c_str(), stat, 0) == 0 &&
+                stat != m_StatFS // force redrawing only if statfs has in fact changed
+                ) {
+                assert( dispatch_is_main_queue() == false );
+                if( _que->IsStopped() )
+                    return;
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    m_StatFS = stat;
+                    SetViewNeedsDisplay();
+                });
+            }
+        });
+    }
 }
 
 int PanelViewPresentation::GetNumberOfItemColumns() const

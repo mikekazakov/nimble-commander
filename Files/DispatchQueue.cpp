@@ -18,6 +18,7 @@ SerialQueueT::SerialQueueT(const char *_label):
 
 SerialQueueT::~SerialQueueT()
 {
+    Stop();
     Wait();
 }
 

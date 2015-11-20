@@ -16,28 +16,22 @@ class ModernPanelViewPresentationHeader
 {
 public:
     ModernPanelViewPresentationHeader();
-    void Draw(const string& _path, // a path to draw
-              bool _active,       // is panel active now?
+    void Draw(bool _active,       // is panel active now?
               bool _wnd_active,   // is window active now?
               double _width,      // panel width
               PanelSortMode::Mode _sort_mode
             );
-    void SetQuickSearchPrompt(NSString *_text);
+    void SetTitle(NSString *_title);
     
     inline double Height() const { return m_Height; }
 private:
-    void PrepareToDraw(const string& _path, bool _active, PanelSortMode::Mode _sort_mode);
-
-    NSFont                          *m_Font = nil;
+    NSFont                         *m_Font = nil;
     double                          m_FontHeight = 0;
     double                          m_FontAscent = 0;
     double                          m_Height = 0;
     
-    string                          m_QuickSearchPrompt;
-    string                          m_LastHeaderPath;
-    bool                            m_LastActive = false;
     PanelSortMode::Mode             m_LastSortMode = PanelSortMode::SortNoSort;
-    
-    NSAttributedString              *m_PathStr;
-    NSAttributedString              *m_ModeStr;
+
+    NSAttributedString             *m_Title = nil;
+    NSAttributedString             *m_ModeStr = nil;
 };

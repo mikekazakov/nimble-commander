@@ -11,7 +11,9 @@
 #import "PanelData.h"
 #import "Common.h"
 
-PanelViewPresentation::PanelViewPresentation()
+PanelViewPresentation::PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
+    m_View(_parent_view),
+    m_State(_view_state)
 {
     LoadSizeFormats();
     m_SizeFormatObserver = [ObjcToCppObservingBlockBridge
@@ -28,16 +30,6 @@ PanelViewPresentation::PanelViewPresentation()
 PanelViewPresentation::~PanelViewPresentation()
 {
     m_StatFSQueue->Wait();
-}
-
-void PanelViewPresentation::SetState(PanelViewState *_state)
-{
-    m_State = _state;
-}
-
-void PanelViewPresentation::SetView(PanelView *_view)
-{
-    m_View = _view;
 }
 
 void PanelViewPresentation::SetCursorPos(int _pos)

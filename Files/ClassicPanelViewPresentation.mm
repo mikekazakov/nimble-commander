@@ -282,7 +282,8 @@ ClassicPanelViewPresentationItemsColoringFilter ClassicPanelViewPresentationItem
     return f;
 }
 
-ClassicPanelViewPresentation::ClassicPanelViewPresentation()
+ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
+    PanelViewPresentation(_parent_view, _view_state)
 {
     BuildGeometry();
     BuildAppearance();
@@ -697,10 +698,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         if(m_SymbWidth > 14) { // need to draw a path name on header
             oms::StringBuf<MAXPATHLEN*2> path;
-            if(m_QuickSearchPrompt.empty())
-                path.FromUTF8(m_State->Data->VerboseDirectoryFullPath());
-            else
-                path.FromUTF8(m_QuickSearchPrompt);                
+            path.FromCFString( (__bridge CFStringRef)View().headerTitle );
             if(path.CanBeComposed())
                 path.NormalizeToFormC();
             path.TrimEllipsisLeft(m_SymbWidth - 7);
@@ -871,12 +869,4 @@ void ClassicPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int
     tv.font = (__bridge NSFont*) m_FontCache->BaseFont();
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
-}
-
-void ClassicPanelViewPresentation::SetQuickSearchPrompt(NSString *_text)
-{
-    if(_text == nil || _text.length == 0)
-        m_QuickSearchPrompt = "";
-    else
-        m_QuickSearchPrompt = _text.UTF8String;
 }

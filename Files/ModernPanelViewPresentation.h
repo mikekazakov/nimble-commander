@@ -31,7 +31,7 @@ struct ModernPanelViewPresentationItemsColoringFilter
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
 public:
-    ModernPanelViewPresentation();
+    ModernPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state);
     ~ModernPanelViewPresentation() override;
     
     void Draw(NSRect _dirty_rect) override;
@@ -48,7 +48,6 @@ public:
     NSRect ItemRect(int _item_index) const override;
     NSRect ItemFilenameRect(int _item_index) const override;
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
-    void SetQuickSearchPrompt(NSString *_text) override;
     
     NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelVolatileData &_vd) const;
 private:
@@ -107,6 +106,7 @@ private:
     
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
+    ObjcToCppObservingBlockBridge *m_TitleObserver;
     
     IconsGenerator m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;

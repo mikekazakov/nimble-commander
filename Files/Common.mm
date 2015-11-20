@@ -212,7 +212,7 @@ void SyncMessageBoxNS(NSString *_ns_string)
     if(dispatch_is_main_queue())
         self.needsDisplay = true;
     else
-        dispatch_to_main_queue( ^{ self.needsDisplay = true; } );
+        dispatch_to_main_queue( [=]{ self.needsDisplay = true; } );
 }
 @end
 

@@ -37,6 +37,7 @@ struct PanelViewStateStorage
     PanelViewState              m_State;
     
     map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
+    NSString                   *m_HeaderTitle;
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     string                      m_RenamingOriginalName;
@@ -66,6 +67,7 @@ struct PanelViewStateStorage
     self = [super initWithFrame:frame];
     if (self) {
         self.wantsLayer = true;
+        m_HeaderTitle = @"";
         m_FieldRenamingRequestTicket = 0;
         m_ScrollDY = 0.0;
         m_DisableCurrentMomentumScroll = false;
@@ -88,9 +90,9 @@ struct PanelViewStateStorage
         
         auto skin = AppDelegate.me.skin;
         if (skin == ApplicationSkin::Modern)
-            [self setPresentation:make_unique<ModernPanelViewPresentation>()];
+            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
         else if(skin == ApplicationSkin::Classic)
-            [self setPresentation:make_unique<ClassicPanelViewPresentation>()];
+            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
     }
     
     return self;
@@ -238,8 +240,6 @@ struct PanelViewStateStorage
 {
     m_Presentation = move(_presentation);
     if (m_Presentation) {
-        m_Presentation->SetState(&m_State);
-        m_Presentation->SetView(self);
         [self frameDidChange];
         self.needsDisplay = true;
     }
@@ -594,9 +594,13 @@ struct PanelViewStateStorage
     return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }
 
-- (PanelVolatileData &)item_vd
+- (const PanelVolatileData &)item_vd
 {
-    return m_State.Data->VolatileDataAtSortPosition(m_State.CursorPos);
+    static const PanelVolatileData stub{};
+    int indx = m_State.Data->RawIndexForSortIndex( m_State.CursorPos );
+    if( indx < 0 )
+        return stub;
+    return m_State.Data->VolatileDataAtRawPosition(indx);
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
@@ -687,7 +691,7 @@ struct PanelViewStateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void)directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
+- (void)panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
 {
     assert( dispatch_is_main_queue() );
     m_State.ItemsDisplayOffset = 0;
@@ -710,6 +714,7 @@ struct PanelViewStateStorage
     
     [self disableCurrentMomentumScroll];
     [self discardFieldEditor];
+    [self setHeaderTitle:self.headerTitleForPanel];
     m_Presentation->OnDirectoryChanged();
 }
 
@@ -884,7 +889,7 @@ struct PanelViewStateStorage
 
 - (void) setQuickSearchPrompt:(NSString*)_text
 {
-    m_Presentation->SetQuickSearchPrompt(_text);
+    [self setHeaderTitle:_text != nil ? _text : self.headerTitleForPanel];
     [self setNeedsDisplay];
 }
 
@@ -955,9 +960,31 @@ struct PanelViewStateStorage
     if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
         auto skin = AppDelegate.me.skin;
         if (skin == ApplicationSkin::Modern)
-            [self setPresentation:make_unique<ModernPanelViewPresentation>()];
+            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
         else if(skin == ApplicationSkin::Classic)
-            [self setPresentation:make_unique<ClassicPanelViewPresentation>()];
+            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
+    }
+}
+
+- (void) setHeaderTitle:(NSString *)headerTitle
+{
+    m_HeaderTitle = headerTitle;
+}
+
+- (NSString *) headerTitle
+{
+    return m_HeaderTitle;
+}
+
+- (NSString *) headerTitleForPanel
+{
+    switch(m_State.Data->Type()) {
+        case PanelData::PanelType::Directory:
+            return [NSString stringWithUTF8StdString:m_State.Data->VerboseDirectoryFullPath()];
+        case PanelData::PanelType::Temporary:
+            return @"Temporary Panel"; // TODO: localize
+        default:
+            return @"";
     }
 }
 

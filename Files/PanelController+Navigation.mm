@@ -151,8 +151,8 @@ loadPreviousState:(bool)_load_state
             [m_View SavePathState];
             m_Data.Load(listing, PanelData::PanelType::Directory);
             [m_View dataUpdated];
-            [m_View directoryChangedWithFocusedFilename:c->RequestFocusedEntry
-                                      loadPreviousState:c->LoadPreviousViewState];
+            [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
+                                  loadPreviousState:c->LoadPreviousViewState];
             [self OnPathChanged];
         });
     };
@@ -172,9 +172,9 @@ loadPreviousState:(bool)_load_state
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{
         [m_View SavePathState];
-        m_Data.Load(_listing, PanelData::PanelType::TemporaryPanel);
+        m_Data.Load(_listing, PanelData::PanelType::Temporary);
         [m_View dataUpdated];
-        [m_View directoryChangedWithFocusedFilename:"" loadPreviousState:false];
+        [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
         [self OnPathChanged];
     });
 }

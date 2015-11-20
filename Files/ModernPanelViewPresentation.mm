@@ -104,7 +104,8 @@ static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 
 NSImage *ModernPanelViewPresentation::m_SymlinkArrowImage = nil;
 
-ModernPanelViewPresentation::ModernPanelViewPresentation():
+ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
+    PanelViewPresentation(_parent_view, _view_state),
     m_RegularBackground(0),
     m_OddBackground(0),
     m_ActiveCursor(0),
@@ -155,6 +156,13 @@ ModernPanelViewPresentation::ModernPanelViewPresentation():
                                     m_State->Data->CustomIconClearAll();
                                 SetViewNeedsDisplay();
                             }];
+    
+    m_TitleObserver = [ObjcToCppObservingBlockBridge
+                       bridgeWithObject:_parent_view
+                       forKeyPath:@"headerTitle"
+                       options:0 block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
+                           m_Header->SetTitle(View().headerTitle);
+                       }];
 }
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
@@ -334,19 +342,17 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     CGContextSaveGState(context);
     
     // Header
-    string panelpath = m_State->Data->VerboseDirectoryFullPath();
-    m_Header->Draw(panelpath, active, wnd_active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
+    m_Header->Draw(active, wnd_active, m_ItemsArea.size.width, m_State->Data->SortMode().sort);
     
     // Footer
-    if( auto i = View().item)
-        m_ItemsFooter->Draw(i,
-                            View().item_vd,
-                            m_State->Data->Stats(),
-                            m_State->ViewType,
-                            active,
-                            wnd_active,
-                            m_ItemsArea.origin.y + m_ItemsArea.size.height,
-                            m_ItemsArea.size.width);
+    m_ItemsFooter->Draw(View().item,
+                        View().item_vd,
+                        m_State->Data->Stats(),
+                        m_State->ViewType,
+                        active,
+                        wnd_active,
+                        m_ItemsArea.origin.y + m_ItemsArea.size.height,
+                        m_ItemsArea.size.width);
     
     // Volume footer if any
     if(m_VolumeFooter) {
@@ -759,9 +765,4 @@ void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int 
     tv.font = m_Font;
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
-}
-
-void ModernPanelViewPresentation::SetQuickSearchPrompt(NSString *_text)
-{
-    m_Header->SetQuickSearchPrompt(_text);
 }

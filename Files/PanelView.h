@@ -39,11 +39,12 @@ struct PanelVolatileData;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
-@property (nonatomic, readonly) PanelVolatileData&     item_vd; // will throw if currently there's no item under cursor
+@property (nonatomic, readonly) const PanelVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;
 @property (nonatomic, readonly) PanelViewPresentation* presentation;
+@property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 
 /**
  * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,
@@ -63,7 +64,7 @@ struct PanelVolatileData;
  * called by controlled when a directory has been entirely changed in PanelData.
  * possibly focusing some file, may be "".
  */
-- (void) directoryChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load;
+- (void) panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load;
 
 /**
  * called by controller to inform that internals of panel data object has changed (possibly reloaded).

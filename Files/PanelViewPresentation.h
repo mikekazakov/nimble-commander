@@ -17,11 +17,8 @@
 class PanelViewPresentation
 {
 public:
-    PanelViewPresentation();
+    PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state);
     virtual ~PanelViewPresentation();
-    
-    void SetState(PanelViewState *_state);
-    void SetView(PanelView *_view);
     
     void SetCursorPos(int _pos);
     void ScrollCursor(int _idx, int _idy);
@@ -56,8 +53,6 @@ public:
     
     virtual void SetupFieldRenaming(NSScrollView *_editor, int _item_index) = 0;
 
-    virtual void SetQuickSearchPrompt(NSString *_text) = 0;
-
     
     /**
      * Return a height of a single file item. So this height*number_of_items_vertically should be something like height of a view minus decors.
@@ -78,7 +73,7 @@ protected:
     inline const VFSStatFS &StatFS() const { return m_StatFS; }
     void UpdateStatFS();
     
-    PanelViewState *m_State = nullptr;
+    PanelViewState * const         m_State;
     
     inline PanelView *View() { return m_View; }
 private:
@@ -94,5 +89,5 @@ private:
     ByteCountFormatter::Type       m_FileSizeFormat = ByteCountFormatter::Fixed6;
     ByteCountFormatter::Type       m_SelectionSizeFormat = ByteCountFormatter::SpaceSeparated;
     
-    __unsafe_unretained PanelView *m_View = nil;
+    __unsafe_unretained PanelView * const m_View = nil;
 };

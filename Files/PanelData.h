@@ -226,7 +226,7 @@ public:
     enum class PanelType
     {
         Directory,
-        TemporaryPanel
+        Temporary
     };
     
     struct EntrySortKeys

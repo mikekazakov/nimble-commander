@@ -7,8 +7,9 @@
 //
 
 #include <Habanero/FontExtras.h>
-#import "ModernPanelViewPresentationHeader.h"
-#import "PanelData.h"
+#include "ModernPanelViewPresentationHeader.h"
+#include "PanelData.h"
+#include "Common.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_HeaderStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
@@ -39,22 +40,15 @@ ModernPanelViewPresentationHeader::ModernPanelViewPresentationHeader()
     m_FontHeight = info.LineHeight();
     m_FontAscent = info.Ascent();
     m_Height = m_FontHeight + g_TextInsetsInLine[1] + g_TextInsetsInLine[3] + 1; // + 1 + 1
-    m_LastHeaderPath = ""; // flush cache if any
 }
 
-void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to draw
-                                             bool _active,       // is panel active now?
+void ModernPanelViewPresentationHeader::Draw(bool _active,       // is panel active now?
                                              bool _wnd_active,
                                              double _width,      // panel width
                                              PanelSortMode::Mode _sort_mode)
 {
     if(!_wnd_active)
         _active = false;
-    
-    // a tiny hack to show search prompt instead of a path, but it works. (for now)
-    PrepareToDraw(m_QuickSearchPrompt.empty() ? _path : m_QuickSearchPrompt,
-                  _active,
-                  _sort_mode);
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
@@ -75,13 +69,28 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
     NSPoint header_points[2] = { {0, m_Height - 0.5}, {_width, m_Height - 0.5} };
     CGContextStrokeLineSegments(context, header_points, 2);
     
-    // draw path text itself
-    [m_PathStr drawWithRect:NSMakeRect(20,
+    // draw title text itself
+    [m_Title drawWithRect:NSMakeRect(20,
                                      g_TextInsetsInLine[1] + m_FontAscent,
                                      _width - 25,
                                      m_FontHeight)
                     options:0];
     
+    // prepare panel sort mode
+    if( _sort_mode != m_LastSortMode ) {
+        static const NSParagraphStyle *header_text_pstyle = ^{
+            NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+            p.alignment = NSCenterTextAlignment;
+            return p.copy;
+        }();
+        
+        static NSDictionary *header_text_attr = @{NSFontAttributeName: m_Font,
+                                                  NSParagraphStyleAttributeName: header_text_pstyle};
+        m_ModeStr = [[NSAttributedString alloc] initWithString:FormHumanReadableSortModeReprentation(_sort_mode)
+                                                    attributes:header_text_attr];
+        m_LastSortMode = _sort_mode;
+    }
+ 
     // draw panel sort mode
     [m_ModeStr drawWithRect:NSMakeRect(0,
                              g_TextInsetsInLine[1] + m_FontAscent,
@@ -90,42 +99,17 @@ void ModernPanelViewPresentationHeader::Draw(const string& _path, // a path to d
                     options:0];
 }
 
-void ModernPanelViewPresentationHeader::PrepareToDraw(const string& _path, bool _active, PanelSortMode::Mode _sort_mode)
+void ModernPanelViewPresentationHeader::SetTitle(NSString *_title)
 {
-    if(m_LastHeaderPath == _path &&
-       m_LastActive == _active &&
-       m_LastSortMode == _sort_mode)
-        return; // current state is ok
-    
-    static const NSParagraphStyle *header_text_pstyle = ^{
+    static const NSParagraphStyle *header_text_pstyle = []{
         NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
         p.alignment = NSCenterTextAlignment;
         p.lineBreakMode = NSLineBreakByTruncatingHead;
         return p.copy;
     }();
-
     
-    NSDictionary *header_text_attr =@{NSFontAttributeName: m_Font,
-                                      NSParagraphStyleAttributeName: header_text_pstyle};
-
-    NSString *header_string = [NSString stringWithUTF8String:_path.c_str()];
-    if(header_string == nil) header_string = @"...";
-    
-    m_PathStr = [[NSAttributedString alloc] initWithString:header_string
-                                                attributes:header_text_attr];
-    
-    m_ModeStr = [[NSAttributedString alloc] initWithString:FormHumanReadableSortModeReprentation(_sort_mode)
-                                                attributes:header_text_attr];
-
-    m_LastActive = _active;
-    m_LastHeaderPath = _path;
-    m_LastSortMode = _sort_mode;
-}
-
-void ModernPanelViewPresentationHeader::SetQuickSearchPrompt(NSString *_text)
-{
-    if(_text == nil || _text.length == 0)
-        m_QuickSearchPrompt = "";
-    else
-        m_QuickSearchPrompt = _text.UTF8String;
+    NSDictionary *header_text_attr = @{NSFontAttributeName: m_Font,
+                                       NSParagraphStyleAttributeName: header_text_pstyle};
+    m_Title = [[NSAttributedString alloc] initWithString:_title
+                                              attributes:header_text_attr];
 }

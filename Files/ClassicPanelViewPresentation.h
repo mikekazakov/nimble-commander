@@ -30,7 +30,7 @@ struct ClassicPanelViewPresentationItemsColoringFilter
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
-    ClassicPanelViewPresentation();
+    ClassicPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state);
     
     void Draw(NSRect _dirty_rect) override;
     void OnFrameChanged(NSRect _frame) override;
@@ -47,7 +47,6 @@ public:
     NSRect ItemFilenameRect(int _item_index) const override;
     
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
-    void SetQuickSearchPrompt(NSString *_text) override;
     
 private:
     void BuildGeometry();
@@ -82,5 +81,4 @@ private:
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     bool            m_DrawVolumeInfo = true;
-    string          m_QuickSearchPrompt;
 };

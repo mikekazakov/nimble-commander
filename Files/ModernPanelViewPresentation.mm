@@ -489,7 +489,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSDictionary *item_text_attr = focused ? attrs.focused : attrs.regular;
             
             if(rect.size.width > 0) {
-                NSString *string = is_listing_uniform ? item.NSDisplayName() : [NSString stringWithUTF8StdString:item.Path()];
+                NSString *string = item.NSDisplayName();
+                if( !is_listing_uniform && (m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull) )
+                    string = [NSString stringWithUTF8StdString:item.Path()];
                 [string drawWithRect:rect options:0 attributes:item_text_attr];
             }
             

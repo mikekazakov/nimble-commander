@@ -265,11 +265,11 @@ public:
      */
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
-    VFSListingItem   EntryAtRawPosition(int _pos) const; // will return an "empty" item upon invalid index
+    VFSListingItem   EntryAtRawPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
     
-    VFSListingItem   EntryAtSortPosition(int _pos) const; // will return an "empty" item upon invalid index
+    VFSListingItem   EntryAtSortPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     [[deprecated]] chained_strings StringsFromSelectedEntries() const;

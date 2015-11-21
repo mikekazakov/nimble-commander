@@ -227,11 +227,19 @@ oms::StringBuf<256> ClassicPanelViewPresentation::FormHumanReadableBytesAndFiles
     return out;
 }
 
-static oms::StringBuf<256> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+static oms::StringBuf<MAXPATHLEN> ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, PanelViewType _view_type)
 {   // output is a direct filename or symlink path in ->filename form
-    oms::StringBuf<256> out;
-    if(!_dirent.IsSymlink())
-        out.FromUTF8(_dirent.Name(), _dirent.NameLen());
+    oms::StringBuf<MAXPATHLEN> out;
+    if(!_dirent.IsSymlink()) {
+        if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
+            out.FromUTF8(_dirent.Filename()); // we're on regular panel - just use filename
+
+        // we're on non-uniform panel like temporary, will return full path for short and medium view types
+        if( _view_type == PanelViewType::ViewShort || _view_type == PanelViewType::ViewMedium )
+            out.FromUTF8(_dirent.Path());
+        else
+            out.FromUTF8(_dirent.Filename());
+    }
     else if(_dirent.Symlink() != 0)
         {
             string str("->");
@@ -599,6 +607,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         full_columns_width[0] + full_columns_width[1] + full_columns_width[2] + 2};
     
     const auto sorted_entries_size = m_State->Data->SortedDirectoryEntries().size();
+    const bool is_listing_uniform = m_State->Data->Listing().IsUniform();
     int path_name_start_pos = 0, path_name_end_pos = 0;
     int selected_bytes_start_pos = 0, selected_bytes_end_pos = 0;
     int bytes_in_dir_start_pos = 0, bytes_in_dir_end_pos = 0;
@@ -613,16 +622,21 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     oms::StringBuf<MAXPATHLEN> fn;
     for(int n = 0, i = m_State->ItemsDisplayOffset;
         n < max_files_to_show && i < sorted_entries_size;
-        ++n, ++i)
-    {
+        ++n, ++i) {
         auto current = m_State->Data->EntryAtSortPosition(i);
+        assert( current );
         auto current_vd = m_State->Data->VolatileDataAtSortPosition(i);
-        if(current.CFDisplayName() == current.CFName())
-            // entry has no altered display name, so just use it's real filename
-            fn.FromUTF8(current.Name(), current.NameLen());
+        
+        if( is_listing_uniform || m_State->ViewType == PanelViewType::ViewShort || m_State->ViewType == PanelViewType::ViewMedium ) {
+            if(current.CFDisplayName() == current.CFName())
+                // entry has no altered display name, so just use it's real filename
+                fn.FromUTF8(current.Name(), current.NameLen());
+            else
+                // entry is localized, load buffer from given display name
+                fn.FromCFString(current.CFDisplayName());
+        }
         else
-            // entry is localized, load buffer from given display name
-            fn.FromCFString(current.CFDisplayName());
+            fn.FromUTF8( current.Path() );
         
         if(fn.CanBeComposed())// <-- this check usually takes 100-300 nanoseconds per filename
             fn.NormalizeToFormC();
@@ -644,6 +658,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             if(focused)
                 omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
         
+            fn.TrimEllipsisLeft(columns_width[CN] - 1);
             omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
         
             if(m_State->ViewType==PanelViewType::ViewWide) {
@@ -670,8 +685,10 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
                 omsc.DrawBackground(m_CursorBackgroundColor, 1 + full_column_fr_pos[2], Y, 5);
             }
             
-            if(full_columns_width[0] > 0)
+            if(full_columns_width[0] > 0) {
+                fn.TrimEllipsisLeft(full_columns_width[0] - 1);
                 omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(full_columns_width[0] - 1), X, Y, text_color);
+            }
             omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1 + full_column_fr_pos[0], Y, text_color);
             omsc.DrawString(date_info.Chars(), 0, date_info.Capacity, 1 + full_column_fr_pos[1], Y, text_color);
             omsc.DrawString(time_info, 0, 5, 1 + full_column_fr_pos[2], Y, text_color);
@@ -685,12 +702,12 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         
         oms::StringBuf<14> time_info;
         oms::StringBuf<6> size_info;
-        oms::StringBuf<256> footer_entry;
+        oms::StringBuf<MAXPATHLEN> footer_entry;
         auto sort_mode = FormHumanReadableSortModeReprentation(m_State->Data->SortMode().sort);
         if(current_entry) {
             time_info = FormHumanReadableTimeRepresentation( current_entry.MTime() );
             size_info = FormHumanReadableSizeReprentationForDirEnt( current_entry, m_State->Data->VolatileDataAtSortPosition(m_State->CursorPos) );
-            footer_entry = ComposeFooterFileNameForEntry( current_entry );
+            footer_entry = ComposeFooterFileNameForEntry( current_entry, m_State->ViewType );
         }
         
         // draw sorting mode in left-upper corner

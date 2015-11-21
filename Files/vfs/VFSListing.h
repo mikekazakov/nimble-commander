@@ -14,6 +14,7 @@
 
 struct VFSListingInput;
 class VFSListingItem;
+class VFSWeakListingItem;
 
 class VFSListing : public enable_shared_from_this<VFSListing>
 {
@@ -212,11 +213,42 @@ public:
     bool            IsDotDot()          const { return L->IsDotDot(I);              }
     bool            IsHidden()          const { return L->IsHidden(I);              }
     
+    bool operator ==(const VFSListingItem&_) const noexcept { return I == _.I && L == _.L; }
+    bool operator !=(const VFSListingItem&_) const noexcept { return I != _.I || L != _.L; }
+    
 private:
     shared_ptr<const VFSListing>    L;
-    unsigned                                I;
+    unsigned                        I;
     friend VFSListing::iterator;
+    friend VFSWeakListingItem;
 };
+
+class VFSWeakListingItem
+{
+public:
+    VFSWeakListingItem() noexcept;
+    VFSWeakListingItem(const VFSListingItem &_item) noexcept;
+    VFSWeakListingItem(const VFSWeakListingItem &_item) noexcept;
+    VFSWeakListingItem(VFSWeakListingItem &&_item) noexcept;
+    
+    const VFSWeakListingItem& operator=( const VFSListingItem &_item ) noexcept;
+    const VFSWeakListingItem& operator=( const VFSWeakListingItem &_item ) noexcept;
+    const VFSWeakListingItem& operator=( VFSWeakListingItem &&_item ) noexcept;
+    
+    VFSListingItem Lock() const noexcept;
+    
+    bool operator ==(const VFSWeakListingItem&) const noexcept;
+    bool operator !=(const VFSWeakListingItem&) const noexcept;
+    bool operator ==(const VFSListingItem&) const noexcept;
+    bool operator !=(const VFSListingItem&) const noexcept;
+    
+private:
+    weak_ptr<const VFSListing>  L;
+    unsigned                    I;
+};
+
+inline bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept { return   _r == _l ; }
+inline bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept { return !(_r == _l); }
 
 struct VFSListing::iterator
 {

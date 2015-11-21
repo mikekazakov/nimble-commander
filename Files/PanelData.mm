@@ -578,7 +578,7 @@ int PanelData::RawIndexForSortIndex(int _index) const noexcept
     return m_EntriesByCustomSort[_index];
 }
 
-VFSListingItem PanelData::EntryAtRawPosition(int _pos) const
+VFSListingItem PanelData::EntryAtRawPosition(int _pos) const noexcept
 {
     if( _pos >= 0 &&
         _pos < m_Listing->Count() )
@@ -586,7 +586,7 @@ VFSListingItem PanelData::EntryAtRawPosition(int _pos) const
     return {};
 }
 
-VFSListingItem PanelData::EntryAtSortPosition(int _pos) const
+VFSListingItem PanelData::EntryAtSortPosition(int _pos) const noexcept
 {
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));
 }

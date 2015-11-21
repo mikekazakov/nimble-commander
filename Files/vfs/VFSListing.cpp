@@ -618,3 +618,72 @@ VFSListing::iterator VFSListing::end() const noexcept
     it.i = VFSListingItem(shared_from_this(), m_ItemsCount);
     return it;
 }
+
+VFSWeakListingItem::VFSWeakListingItem() noexcept
+{
+}
+
+VFSWeakListingItem::VFSWeakListingItem(const VFSListingItem &_item) noexcept:
+    L(_item.L),
+    I(_item.I)
+{
+}
+
+VFSWeakListingItem::VFSWeakListingItem(const VFSWeakListingItem &_item) noexcept:
+    L(_item.L),
+    I(_item.I)
+{
+}
+
+VFSWeakListingItem::VFSWeakListingItem(VFSWeakListingItem &&_item) noexcept:
+    L( move(_item.L) ),
+    I( _item.I )
+{
+}
+
+const VFSWeakListingItem& VFSWeakListingItem::operator=( const VFSListingItem &_item ) noexcept
+{
+    L = _item.L;
+    I = _item.I;
+    return *this;
+}
+
+const VFSWeakListingItem& VFSWeakListingItem::operator=( const VFSWeakListingItem &_item ) noexcept
+{
+    L = _item.L;
+    I = _item.I;
+    return *this;
+}
+
+const VFSWeakListingItem& VFSWeakListingItem::operator=( VFSWeakListingItem &&_item ) noexcept
+{
+    L = move(_item.L);
+    I = _item.I;
+    return *this;
+}
+
+VFSListingItem VFSWeakListingItem::Lock() const noexcept
+{
+    return { L.lock(), I };
+}
+
+bool VFSWeakListingItem::operator ==(const VFSWeakListingItem&_) const noexcept
+{
+    return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
+}
+
+bool VFSWeakListingItem::operator !=(const VFSWeakListingItem&_) const noexcept
+{
+    return !(*this == _);
+}
+
+bool VFSWeakListingItem::operator ==(const VFSListingItem&_) const noexcept
+{
+    return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
+}
+
+bool VFSWeakListingItem::operator !=(const VFSListingItem&_) const noexcept
+{
+    return !(*this == _);
+}
+

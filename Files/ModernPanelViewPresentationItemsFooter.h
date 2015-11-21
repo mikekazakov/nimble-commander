@@ -48,14 +48,11 @@ private:
     double                          m_SizeWidth = 50;
     
     bool                            m_LastActive = false;
+    PanelViewType                   m_LastViewType;
     PanelDataStatistics             m_LastStatistics;
-    string                          m_LastItemName;
-    string                          m_LastItemSymlink;
+
+    VFSWeakListingItem              m_LastItem;
     uint64_t                        m_LastItemSize = 0;
-    time_t                          m_LastItemDate = 0;
-    bool                            m_LastItemIsDir = false;
-    bool                            m_LastItemIsDotDot = false;
-    
     
     NSAttributedString              *m_StatsStr;
     

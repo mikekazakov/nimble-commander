@@ -32,11 +32,19 @@ static NSString* FormHumanReadableDateTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, PanelViewType _view_type)
 {
     // output is a direct filename or symlink path in ->filename form
-    if(!_dirent.IsSymlink())
-        return (_dirent.NSName()).copy;
+    if(!_dirent.IsSymlink()) {
+        if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
+            return _dirent.NSName(); // we're on regular panel - just return filename
+        
+        // we're on non-uniform panel like temporary, will return full path for short and medium view types
+        if( _view_type == PanelViewType::ViewShort || _view_type == PanelViewType::ViewMedium )
+            return [NSString stringWithUTF8StdString:_dirent.Path()];
+        else
+            return _dirent.NSName();
+    }
     else if(_dirent.Symlink() != 0) {
         NSString *link = [NSString stringWithUTF8String:_dirent.Symlink()];
         if(link != nil)
@@ -62,7 +70,6 @@ ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(M
     
     // flush caches
     m_LastStatistics = PanelDataStatistics();
-    m_LastItemName.clear();
 }
 
 NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
@@ -201,30 +208,19 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem&
         m_LastStatistics = _stats;
         m_LastActive = _active;
     }
-    else if(_current_item)
-    {
+    else if(_current_item) {
         if(m_LastActive == _active &&
-           m_LastItemName == _current_item.Name() &&
            m_LastItemSize == _current_item_vd.size &&
-           m_LastItemDate == _current_item.MTime() &&
-           m_LastItemSymlink.empty() == !_current_item.IsSymlink() &&
-           (!_current_item.IsSymlink() || m_LastItemSymlink == _current_item.Symlink()) &&
-           m_LastItemIsDir == _current_item.IsDir() &&
-           m_LastItemIsDotDot == _current_item.IsDotDot()
+           m_LastItem == _current_item &&
+           m_LastViewType == _view_type
            )
             return; // ok, we're up to date
         
         // nope, we're outdated, need to rebuild info
         m_LastActive = _active;
-        m_LastItemName = _current_item.Name();
+        m_LastItem = _current_item;
+        m_LastViewType = _view_type;
         m_LastItemSize = _current_item_vd.size;
-        m_LastItemDate = _current_item.MTime();
-        m_LastItemIsDir = _current_item.IsDir();
-        m_LastItemIsDotDot = _current_item.IsDotDot();
-        if(_current_item.IsSymlink())
-            m_LastItemSymlink = _current_item.Symlink();
-        else
-            m_LastItemSymlink.clear();
         
         static NSMutableParagraphStyle *par1, *par2;
         static once_flag once;
@@ -242,7 +238,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem&
         NSDictionary *attr2 = @{NSFontAttributeName:m_Font,
                                 NSParagraphStyleAttributeName: par2};
 
-        NSString *date_str = FormHumanReadableDateTime(m_LastItemDate);
+        NSString *date_str = FormHumanReadableDateTime(_current_item.MTime());
         m_ItemDateStr = [[NSAttributedString alloc] initWithString:date_str
                                                         attributes:attr1];
         
@@ -250,7 +246,7 @@ void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem&
         m_ItemSizeStr = [[NSAttributedString alloc] initWithString:size_str
                                                         attributes:attr1];
 
-        NSString *file_str = ComposeFooterFileNameForEntry(_current_item);
+        NSString *file_str = ComposeFooterFileNameForEntry(_current_item, _view_type);
         m_ItemNameStr = [[NSAttributedString alloc] initWithString:file_str
                                                         attributes:attr2];
         

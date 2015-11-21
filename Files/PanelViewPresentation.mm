@@ -260,9 +260,16 @@ void PanelViewPresentation::UpdateStatFS()
     }
     else {
         // we're in temporary directory so there may be not common path and common host.
-        // as current solution - display information about home directory
-        current_host = VFSNativeHost::SharedHost();
-        current_path = CommonPaths::Home();
+        // as current solution - display information about first item's directory
+        if( auto i = m_State->Data->EntryAtRawPosition(0) ){
+            current_host = i.Host();
+            current_path = i.Directory();
+        }
+        else {
+            // there's no first item (no items at all) - display information about home directory
+            current_host = VFSNativeHost::SharedHost();
+            current_path = CommonPaths::Home();
+        }
     }
     
     if(m_StatFSLastUpdate + 5s < now ||

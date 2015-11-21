@@ -296,8 +296,9 @@ range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _uni
 // requires that _symb_amount should be >= 3, otherwise it's meaningless
 int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount, uint16_t *_out)
 {
-    const int ell_num = 3;
-    assert(_symb_amount >= ell_num);
+    unsigned ell_num = 3;
+    if(_symb_amount < ell_num)
+        ell_num = (unsigned)_symb_amount;
     int sizenow = oms::CalculateSymbolsSpaceForString(_s, _unic_amount);
         
     if(sizenow <= _symb_amount)

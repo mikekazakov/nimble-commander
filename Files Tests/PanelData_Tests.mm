@@ -8,6 +8,7 @@
 
 #include "tests_common.h"
 #include "../Files/VFS/VFS.h"
+#include "../Files/VFS/vfs_native.h"
 #include "../Files/VFS/VFSListingInput.h"
 #include "../Files/PanelData.h"
 
@@ -217,6 +218,27 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     data.SetHardFiltering(filtering);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedDirectoryEntries().size() == count);
+}
+
+- (void)testSelectionWithExtension
+{
+    VFSListingPtr listing;
+    VFSNativeHost::SharedHost()->FetchFlexibleListing("/bin/", listing, 0, nullptr);
+    PanelData data;
+    data.Load(listing, PanelData::PanelType::Directory);
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("", true, true) >= 30 );
+    
+    VFSNativeHost::SharedHost()->FetchFlexibleListing("/usr/share/man/man1", listing, 0, nullptr);
+    data.Load(listing, PanelData::PanelType::Directory);
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("1", true, true) >= 1000 );
+
+    VFSNativeHost::SharedHost()->FetchFlexibleListing("/System/Library/CoreServices", listing, 0, nullptr);
+    data.Load(listing, PanelData::PanelType::Directory);
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("app", true, true) == 0 );
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("app", true, false) >= 30 );
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("App", true, false) >= 30 );
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("ApP", true, false) >= 30 );
+    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("APP", true, false) >= 30 );            
 }
 
 @end

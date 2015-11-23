@@ -185,6 +185,11 @@ void panel::GenericCursorPersistance::Restore() const
     return (bool)m_UpdatesObservationTicket;
 }
 
+- (bool) ignoreDirectoriesOnSelectionByMask
+{
+    return [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
+}
+
 - (void) setOptions:(NSDictionary *)options
 {
     auto hard_filtering = m_Data.HardFiltering();
@@ -730,10 +735,7 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
-    if(_mask == nil)
-        return;
-    bool ignore_dirs = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
-    if(m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs))
+    if( m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, self.ignoreDirectoriesOnSelectionByMask) )
         [m_View setNeedsDisplay:true];
 }
 

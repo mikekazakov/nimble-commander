@@ -536,7 +536,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
-- (IBAction)DoSelectByMask:(bool)_select {
+- (void)DoSelectByMask:(bool)_select {
     if(m_SelectionWithMaskPopover &&
        m_SelectionWithMaskPopover.shown)
         return;
@@ -572,6 +572,23 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction)OnDeselectByMask:(id)sender {
     [self DoSelectByMask:false];
+}
+
+- (void)DoQuickSelectByExtension:(bool)_select
+{
+    if( auto item = self.view.item )
+        if( m_Data.CustomFlagsSelectAllSortedByExtension(item.HasExtension() ? item.Extension() : "", _select, self.ignoreDirectoriesOnSelectionByMask) )
+            [m_View setNeedsDisplay:true];
+}
+
+- (IBAction)OnQuickSelectByExtension:(id)sender
+{
+    [self DoQuickSelectByExtension:true];
+}
+
+- (IBAction)OnQuickDeselectByExtension:(id)sender
+{
+    [self DoQuickSelectByExtension:false];
 }
 
 - (IBAction)OnEjectVolume:(id)sender {

@@ -102,7 +102,9 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.copy_file_name",             u8"⇧⌘c"     }, // shift+cmd+c
         {"menu.command.copy_file_path",             u8"⌥⌘c"     }, // alt+cmd+c
         {"menu.command.select_with_mask",           u8"⌘="      }, // cmd+=
+        {"menu.command.select_with_extension",      u8"⌥⌘="     }, // alt+cmd+=
         {"menu.command.deselect_with_mask",         u8"⌘-"      }, // cmd+-
+        {"menu.command.deselect_with_extension",    u8"⌥⌘-"     }, // alt+cmd+-
         {"menu.command.quick_look",                 u8"⌘y"      }, // cmd+y
         {"menu.command.internal_viewer",            u8"⌥\uF706" }, // alt+F3
         {"menu.command.external_editor",            u8"\uF707"  }, // F4

@@ -55,6 +55,74 @@ static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<str
     return src_keys_ind;
 }
 
+static struct
+{
+    static string ProduceFormCLowercase(const string &_string)
+    {
+        auto s = [NSString stringWithUTF8StdStringNoCopy:_string];
+        if( !s ) return "";
+        auto cl = s.precomposedStringWithCanonicalMapping.lowercaseString;
+        if( !cl ) return "";
+        return cl.UTF8String;
+    }
+    
+    static string ProduceFormCLowercase(const char *_string)
+    {
+        auto s = [NSString stringWithUTF8StringNoCopy:_string];
+        if( !s ) return "";
+        auto cl = s.precomposedStringWithCanonicalMapping.lowercaseString;
+        if( !cl ) return "";
+        return cl.UTF8String;
+    }
+    
+    string ExtensionToFormCLowercase(const string &_extension)
+    {
+        if( _extension.length() > m_MaxLength )
+            // we don't cache long extensions
+            return ProduceFormCLowercase(_extension);
+        
+        lock_guard<spinlock> lock(m_Lock);
+        auto it = m_Data.find( _extension );
+        if( it != end(m_Data) )
+            return it->second;
+        
+        auto cl = ProduceFormCLowercase(_extension);
+        m_Data.emplace( _extension, cl );
+        return cl;
+    }
+    
+    bool LowercaseExtensionEqual( const string &_filename_ext, const string _compare_to_formc_lc )
+    {
+        lock_guard<spinlock> lock(m_Lock);
+        auto it = m_Data.find( _filename_ext );
+        if( it != end(m_Data) )
+            return it->second == _compare_to_formc_lc;
+    
+        auto cl = ProduceFormCLowercase(_filename_ext);
+        if( _filename_ext.length() <= m_MaxLength )
+            m_Data.emplace( _filename_ext, cl );
+        return cl == _compare_to_formc_lc;
+    }
+
+    bool LowercaseExtensionEqual( const char *_filename_ext, const string _compare_to_formc_lc )
+    {
+        lock_guard<spinlock> lock(m_Lock);
+        auto it = m_Data.find( _filename_ext );
+        if( it != end(m_Data) )
+            return it->second == _compare_to_formc_lc;
+        
+        auto cl = ProduceFormCLowercase(_filename_ext);
+        if( strlen(_filename_ext) <= m_MaxLength )
+            m_Data.emplace( _filename_ext, cl );
+        return cl == _compare_to_formc_lc;
+    }
+    
+private:
+    enum {                              m_MaxLength = 16 };
+    unordered_map<string, string>       m_Data;
+    spinlock                            m_Lock;
+} g_FormCLowercaseExtensionsCache;
+
 bool PanelData::EntrySortKeys::is_valid() const noexcept
 {
     return !name.empty() && display_name != nil;
@@ -721,10 +789,13 @@ int PanelData::SortedIndexForName(const char *_filename) const
     return SortedIndexForRawIndex(RawIndexForName(_filename));
 }
 
-int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs)
+unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs)
 {
+    if( !_mask )
+        return 0;
+    
     FileMask mask(_mask);
-    int counter = 0;
+    unsigned counter = 0;
     
     for(auto i: m_EntriesByCustomSort) {
         if( _ignore_dirs && m_Listing->IsDir(i) )
@@ -734,6 +805,35 @@ int PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, b
             continue;
         
         if( mask.MatchName(m_Listing->DisplayFilenameNS(i)) ) {
+            CustomFlagsSelectRaw(i, _select);
+            counter++;
+        }
+    }
+    
+    return counter;
+}
+
+unsigned PanelData::CustomFlagsSelectAllSortedByExtension(const string &_extension, bool _select, bool _ignore_dirs)
+{
+    const auto extension = g_FormCLowercaseExtensionsCache.ExtensionToFormCLowercase(_extension);
+    const bool empty = extension.empty();
+    unsigned counter = 0;
+    for(auto i: m_EntriesByCustomSort) {
+        if( _ignore_dirs && m_Listing->IsDir(i) )
+            continue;
+        
+        if( m_Listing->IsDotDot(i) )
+            continue;
+
+        bool legit = false;
+        if( m_Listing->HasExtension(i) ) {
+            if( g_FormCLowercaseExtensionsCache.LowercaseExtensionEqual(m_Listing->Extension(i), extension) )
+                legit = true;
+        }
+        else if( empty )
+            legit = true;
+
+        if( legit ) {
             CustomFlagsSelectRaw(i, _select);
             counter++;
         }

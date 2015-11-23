@@ -91,7 +91,7 @@ static struct
         return cl;
     }
     
-    bool LowercaseExtensionEqual( const string &_filename_ext, const string _compare_to_formc_lc )
+    bool LowercaseExtensionEqual( const string &_filename_ext, const string &_compare_to_formc_lc )
     {
         lock_guard<spinlock> lock(m_Lock);
         auto it = m_Data.find( _filename_ext );
@@ -104,7 +104,7 @@ static struct
         return cl == _compare_to_formc_lc;
     }
 
-    bool LowercaseExtensionEqual( const char *_filename_ext, const string _compare_to_formc_lc )
+    bool LowercaseExtensionEqual( const char *_filename_ext, const string &_compare_to_formc_lc )
     {
         lock_guard<spinlock> lock(m_Lock);
         auto it = m_Data.find( _filename_ext );

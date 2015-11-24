@@ -149,10 +149,10 @@ namespace panel
 - (void) CancelBackgroundOperations;
 - (void) OnPathChanged;
 - (void) OnCursorChanged;
-- (void) HandleOpenInSystem;
+- (void) handleOpenInSystem;
 - (bool) HandleGoToUpperDirectory;
-- (bool) HandleGoIntoDirOrArchive;
-- (void) HandleGoIntoDirOrOpenInSystem;
+- (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only;
+- (void) handleGoIntoDirOrOpenInSystemSync;
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
 - (void) SelectAllEntries:(bool) _select;
 - (void) invertSelection;

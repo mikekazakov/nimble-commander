@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/algo.h>
+#include "Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
 #include "Common.h"
 #include "MainWindowController.h"
@@ -16,8 +17,8 @@
 #include "SharingService.h"
 #include "BriefSystemOverview.h"
 #include "ActionsShortcutsManager.h"
-#include "Operations/Copy/FileCopyOperation.h"
 #include "SandboxManager.h"
+#include "ExtensionLowercaseComparison.h"
 
 static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
@@ -63,6 +64,21 @@ void panel::GenericCursorPersistance::Restore() const
             m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
         }
     }
+}
+
+static bool IsItemInArcivesWhitelist( const VFSListingItem &_item ) noexcept
+{
+    // TODO: move to setting
+    static vector<string> archive_extensions = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
+    
+    if( _item.IsDir() )
+        return false;
+
+    if( !_item.HasExtension() )
+        return false;
+    
+    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _item.Extension() );
+    return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) { return extension == _; } );
 }
 
 @implementation PanelController
@@ -224,7 +240,7 @@ void panel::GenericCursorPersistance::Restore() const
     return m_View.active;
 }
 
-- (void) HandleOpenInSystem
+- (void) handleOpenInSystem
 {
     // may go async here on non-native VFS
     // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"    
@@ -296,7 +312,7 @@ void panel::GenericCursorPersistance::Restore() const
 }
 
 
-- (bool) HandleGoIntoDirOrArchive
+- (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only
 {
     const auto entry = m_View.item;
     if( !entry )
@@ -314,21 +330,20 @@ void panel::GenericCursorPersistance::Restore() const
     }
     // archive stuff here
     else if(configuration::has_archives_browsing) {
-        auto arhost = VFSArchiveProxy::OpenFileAsArchive(self.currentFocusedEntryPath,
-                                                         self.vfs);
-        if(arhost)
-            return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
+        if( !_whitelist_archive_only || IsItemInArcivesWhitelist(entry) )
+            if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host()) )
+                return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
     }
     
     return false;
 }
 
-- (void) HandleGoIntoDirOrOpenInSystem
+- (void) handleGoIntoDirOrOpenInSystemSync
 {
     if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
         return;
     
-    if([self HandleGoIntoDirOrArchive])
+    if([self handleGoIntoDirOrArchiveSync:true])
         return;
     
     auto entry = m_View.item;
@@ -346,7 +361,7 @@ void panel::GenericCursorPersistance::Restore() const
     
     // If previous code didn't handle current item,
     // open item with the default associated application.
-    [self HandleOpenInSystem];
+    [self handleOpenInSystem];
 }
 
 - (void) ReLoadRefreshedListing:(const VFSListingPtr &)_ptr
@@ -467,11 +482,11 @@ void panel::GenericCursorPersistance::Restore() const
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
         auto &shortcuts = ActionsShortcutsManager::Instance();
         if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
-            [self HandleGoIntoDirOrOpenInSystem];
+            [self handleGoIntoDirOrOpenInSystemSync];
             return true;
         }
         if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
-            [self HandleOpenInSystem];
+            [self handleOpenInSystem];
             return true;
         }
         
@@ -665,7 +680,7 @@ void panel::GenericCursorPersistance::Restore() const
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
 {
-    [self HandleGoIntoDirOrOpenInSystem];
+    [self handleGoIntoDirOrOpenInSystemSync];
 }
 
 - (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view

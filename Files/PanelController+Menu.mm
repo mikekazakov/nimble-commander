@@ -247,7 +247,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 - (IBAction)OnGoIntoDirectory:(id)sender { // cmd+down
     auto item = m_View.item;
     if( item && !item.IsDotDot() )
-        [self HandleGoIntoDirOrArchive];
+        [self handleGoIntoDirOrArchiveSync:false];
 }
 
 - (void) GoToFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_connection
@@ -455,11 +455,11 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 }
 
 - (IBAction)OnOpen:(id)sender { // enter
-    [self HandleGoIntoDirOrOpenInSystem];
+    [self handleGoIntoDirOrOpenInSystemSync];
 }
 
 - (IBAction)OnOpenNatively:(id)sender { // shift+enter
-    [self HandleOpenInSystem];
+    [self handleOpenInSystem];
 }
 
 // when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:

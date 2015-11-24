@@ -160,6 +160,7 @@
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
+		CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CF6D9BD2196677CA0077B146 /* NSArray+SSYMutations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF305DC51946D50400840F25 /* NSArray+SSYMutations.m */; };
@@ -1068,6 +1069,8 @@
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
 		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
+		CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
+		CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Files Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Files Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2352,6 +2355,8 @@
 				CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */,
 				CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */,
 				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
+				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
+				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3525,6 +3530,7 @@
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
 				CFABA8461B403AA3008DF6D1 /* TermTask.cpp in Sources */,
+				CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,

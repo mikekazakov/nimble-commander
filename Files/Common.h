@@ -30,6 +30,7 @@ struct DialogResult
     };
 };
 
+CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept;
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;

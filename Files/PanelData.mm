@@ -1,9 +1,9 @@
-#import <CoreFoundation/CoreFoundation.h>
-#import <Habanero/algo.h>
-#import "PanelData.h"
-#import "Common.h"
-#import "chained_strings.h"
-#import "FileMask.h"
+#include <Habanero/algo.h>
+#include "Common.h"
+#include "chained_strings.h"
+#include "FileMask.h"
+#include "ExtensionLowercaseComparison.h"
+#include "PanelData.h"
 
 static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);
 
@@ -54,74 +54,6 @@ static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<str
     sort( begin(src_keys_ind), end(src_keys_ind), [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
     return src_keys_ind;
 }
-
-static struct
-{
-    static string ProduceFormCLowercase(const string &_string)
-    {
-        auto s = [NSString stringWithUTF8StdStringNoCopy:_string];
-        if( !s ) return "";
-        auto cl = s.precomposedStringWithCanonicalMapping.lowercaseString;
-        if( !cl ) return "";
-        return cl.UTF8String;
-    }
-    
-    static string ProduceFormCLowercase(const char *_string)
-    {
-        auto s = [NSString stringWithUTF8StringNoCopy:_string];
-        if( !s ) return "";
-        auto cl = s.precomposedStringWithCanonicalMapping.lowercaseString;
-        if( !cl ) return "";
-        return cl.UTF8String;
-    }
-    
-    string ExtensionToFormCLowercase(const string &_extension)
-    {
-        if( _extension.length() > m_MaxLength )
-            // we don't cache long extensions
-            return ProduceFormCLowercase(_extension);
-        
-        lock_guard<spinlock> lock(m_Lock);
-        auto it = m_Data.find( _extension );
-        if( it != end(m_Data) )
-            return it->second;
-        
-        auto cl = ProduceFormCLowercase(_extension);
-        m_Data.emplace( _extension, cl );
-        return cl;
-    }
-    
-    bool LowercaseExtensionEqual( const string &_filename_ext, const string &_compare_to_formc_lc )
-    {
-        lock_guard<spinlock> lock(m_Lock);
-        auto it = m_Data.find( _filename_ext );
-        if( it != end(m_Data) )
-            return it->second == _compare_to_formc_lc;
-    
-        auto cl = ProduceFormCLowercase(_filename_ext);
-        if( _filename_ext.length() <= m_MaxLength )
-            m_Data.emplace( _filename_ext, cl );
-        return cl == _compare_to_formc_lc;
-    }
-
-    bool LowercaseExtensionEqual( const char *_filename_ext, const string &_compare_to_formc_lc )
-    {
-        lock_guard<spinlock> lock(m_Lock);
-        auto it = m_Data.find( _filename_ext );
-        if( it != end(m_Data) )
-            return it->second == _compare_to_formc_lc;
-        
-        auto cl = ProduceFormCLowercase(_filename_ext);
-        if( strlen(_filename_ext) <= m_MaxLength )
-            m_Data.emplace( _filename_ext, cl );
-        return cl == _compare_to_formc_lc;
-    }
-    
-private:
-    enum {                              m_MaxLength = 16 };
-    unordered_map<string, string>       m_Data;
-    spinlock                            m_Lock;
-} g_FormCLowercaseExtensionsCache;
 
 bool PanelData::EntrySortKeys::is_valid() const noexcept
 {
@@ -815,7 +747,7 @@ unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _sele
 
 unsigned PanelData::CustomFlagsSelectAllSortedByExtension(const string &_extension, bool _select, bool _ignore_dirs)
 {
-    const auto extension = g_FormCLowercaseExtensionsCache.ExtensionToFormCLowercase(_extension);
+    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension);
     const bool empty = extension.empty();
     unsigned counter = 0;
     for(auto i: m_EntriesByCustomSort) {
@@ -827,7 +759,7 @@ unsigned PanelData::CustomFlagsSelectAllSortedByExtension(const string &_extensi
 
         bool legit = false;
         if( m_Listing->HasExtension(i) ) {
-            if( g_FormCLowercaseExtensionsCache.LowercaseExtensionEqual(m_Listing->Extension(i), extension) )
+            if(ExtensionLowercaseComparison::Instance().Equal(m_Listing->Extension(i), extension))
                 legit = true;
         }
         else if( empty )

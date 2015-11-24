@@ -267,6 +267,16 @@ void SyncMessageBoxNS(NSString *_ns_string)
 
 @end
 
+CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept
+{
+    return CFStringCreateWithBytesNoCopy(0,
+                                         (UInt8*)_s.data(),
+                                         _s.length(),
+                                         kCFStringEncodingUTF8,
+                                         false,
+                                         kCFAllocatorNull);
+}
+
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept
 {
     return CFStringCreateWithBytesNoCopy(0,

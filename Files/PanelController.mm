@@ -20,6 +20,7 @@
 #include "SandboxManager.h"
 #include "ExtensionLowercaseComparison.h"
 
+static auto g_DefaultsArchivesExtensionsWhitelist = @"FilePanels_General_ArchivesExtensionsWhitelist";
 static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static auto g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
@@ -66,10 +67,23 @@ void panel::GenericCursorPersistance::Restore() const
     }
 }
 
-static bool IsItemInArcivesWhitelist( const VFSListingItem &_item ) noexcept
+static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
-    // TODO: move to setting
-    static vector<string> archive_extensions = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
+    static const vector<string> archive_extensions = []{
+        vector<string> v;
+        if( auto exts_string = objc_cast<NSString>([NSUserDefaults.standardUserDefaults stringForKey:g_DefaultsArchivesExtensionsWhitelist]) ) {
+            // load extensions list from defaults
+            if( auto extensions_array = [exts_string componentsSeparatedByString:@","] )
+                for( NSString *s: extensions_array )
+                    if( s != nil && s.length > 0 )
+                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                            if( auto utf8 = trimmed.UTF8String)
+                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
+        }
+        else // hardcoded fallback data
+            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
+        return v;
+    }();
     
     if( _item.IsDir() )
         return false;
@@ -330,7 +344,7 @@ static bool IsItemInArcivesWhitelist( const VFSListingItem &_item ) noexcept
     }
     // archive stuff here
     else if(configuration::has_archives_browsing) {
-        if( !_whitelist_archive_only || IsItemInArcivesWhitelist(entry) )
+        if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) )
             if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host()) )
                 return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
     }

@@ -92,6 +92,10 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
+	<key>FilePanels_General_ArchivesExtensionsWhitelist</key>
+	<string>zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar</string>
+	<key>FilePanels_General_ExecutableExtensionsWhitelist</key>
+	<string>sh, pl, rb, py</string>
 	<key>FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask</key>
 	<true/>
 	<key>FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu</key>
@@ -102,8 +106,6 @@
 	<true/>
 	<key>FilePanelsGeneralShowLocalizedFilenames</key>
 	<true/>
-	<key>FilePanelsGeneralExecutableExtensionsList</key>
-	<string>sh,pl,rb,py</string>
 	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>
 	<true/>
 	<key>FilePanelsGeneralUseTildeAsHomeShotcut</key>

@@ -6,13 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/types.h>
-#import <sys/stat.h>
-#import <dirent.h>
-#import "PanelAux.h"
-#import "Common.h"
-#import "TemporaryNativeFileStorage.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include "PanelAux.h"
+#include "Common.h"
+#include "TemporaryNativeFileStorage.h"
+#include "ExtensionLowercaseComparison.h"
 
+static auto g_DefaultsExecutableExtensionsWhitelist = @"FilePanels_General_ExecutableExtensionsWhitelist";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,
@@ -136,27 +138,23 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
 
 bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    static vector<string> extensions;
-    static once_flag once;
-    call_once(once, []{
-        bool any = false;
-        
-        // load from defaults
-        if(NSString *exts_string = [NSUserDefaults.standardUserDefaults stringForKey:@"FilePanelsGeneralExecutableExtensionsList"])
-            if(NSArray *extensions_array = [exts_string componentsSeparatedByString:@","])
-                for(NSString *s: extensions_array)
-                    if(s != nil && s.length > 0)
-                        if(const char *utf8 = s.UTF8String) {
-                            extensions.emplace_back(utf8);
-                            any = true;
-                        }
-        
-        // hardcoded fallback case if something went wrong
-        if(!any)
-            extensions = vector<string>{"sh", "pl", "rb", "py"};
-    });
+    static const vector<string> extensions = []{
+        vector<string> v;
+        if( auto exts_string = objc_cast<NSString>([NSUserDefaults.standardUserDefaults stringForKey:g_DefaultsExecutableExtensionsWhitelist]) ) {
+            // load from defaults
+            if( auto extensions_array = [exts_string componentsSeparatedByString:@","] )
+                for( NSString *s: extensions_array )
+                    if( s != nil && s.length > 0 )
+                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                            if( auto utf8 = trimmed.UTF8String )
+                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
+        }
+        else // hardcoded fallback case if something went wrong
+            v = {"sh", "pl", "rb", "py"};
+        return v;
+    }();
     
-    if(_item.IsDir())
+    if( _item.IsDir() )
         return false;
     
     // TODO: need more sophisticated executable handling here
@@ -167,13 +165,13 @@ bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     
     if(!uexec) return false;
     
-    if(!_item.HasExtension())
+    if( !_item.HasExtension() )
         return true; // if file has no extension and had execute rights - let's try it
     
-    const char *ext = _item.Extension();
     
+    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _item.Extension() );
     for(auto &s: extensions)
-        if(s == ext)
+        if( s == extension )
             return true;
     
     return false;

@@ -139,7 +139,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.batch_rename")            return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.open_xattr")              return m_View.item && m_View.item.Host()->IsNativeFS();
     
     return true; // will disable some items in the future
@@ -1061,14 +1061,13 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction)OnBatchRename:(id)sender
 {
-    if( !self.isUniform )
-        return;
-    
     auto items = self.selectedEntriesOrFocusedEntry;
     if( items.empty() )
         return;
     
-    auto vfs = self.vfs;
+    auto host = items.front().Host();
+    if( !all_of(begin(items), end(items), [=](auto &i){ return i.Host() == host;}) )
+        return; // currently BatchRenameOperation supports only single host for items    
     
     BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithItems:move(items)];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
@@ -1077,7 +1076,9 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             auto dst_paths = sheet.filenamesDestination;
             BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
                                                                               renamedFilepaths:move(dst_paths)
-                                                                                           vfs:vfs];
+                                                                                           vfs:host];
+            if( !self.receivesUpdateNotifications )
+                [op AddOnFinishHandler:self.refreshCurrentControllerLambda];            
             [self.state AddOperation:op];
         }
     }];    

@@ -66,10 +66,10 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         for( auto &e: _items ) {
             
             BatchRename::FileInfo fi;
-            fi.parent_path = [NSString stringWithUTF8StdString:e.Directory()];
+            fi.item = e;
             fi.mod_time = e.MTime();
             localtime_r(&fi.mod_time, &fi.mod_time_tm);
-            fi.filename = e.NSName().copy;
+            fi.filename = e.NSName();
             
             static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
             auto r = [fi.filename rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
@@ -83,7 +83,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
                 fi.extension = @"";
             }
             
-            m_FileInfos.emplace_back(fi);
+            m_FileInfos.emplace_back( move(fi) );
             m_ResultSource.emplace_back( e.Directory() + e.Name() );
         }
         
@@ -511,10 +511,8 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 - (void) buildResultDestinations
 {
     m_ResultDestination.clear();
-    for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i ) {
-        m_ResultDestination.emplace_back(string( m_FileInfos[i].parent_path.fileSystemRepresentationSafe ) +
-                                         m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
-    }
+    for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i )
+        m_ResultDestination.emplace_back(m_FileInfos[i].item.Directory() + m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
 }
 
 - (IBAction)OnOK:(id)sender

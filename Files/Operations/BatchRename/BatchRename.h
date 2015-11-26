@@ -55,6 +55,7 @@
 //Same as above, but for partial strings (here: letters 4-7).
 //Supports the same ranges as the [N] field (see above), including leading spaces or zeroes.
 
+#include "../../vfs/VFS.h"
 
 class BatchRename
 {
@@ -102,7 +103,7 @@ public:
     
     struct FileInfo
     {
-        NSString *parent_path;  // /Users/migun/
+        VFSListingItem item;    // this dependency looks very bad and redundant, it must be removed later
         NSString *filename;     // filename.txt
         NSString *name;         // filename
         NSString *extension;    // txt

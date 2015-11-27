@@ -710,6 +710,37 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
     return false;
 }
 
+bool PanelData::SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size)
+{
+    if(_filename    == nullptr ||
+       _filename[0] == 0       ||
+       _directory == nullptr   ||
+       _directory[0] == 0      ||
+       _size == PanelVolatileData::invalid_size )
+        return false;
+    
+    // dumb linear search here
+    for( unsigned i = 0, e = m_Listing->Count(); i != e; ++i )
+        if( m_Listing->IsDir(i) &&
+            m_Listing->Filename(i) == _filename &&
+            m_Listing->Directory(i) == _directory ) {
+            auto &vd = m_VolatileData[i];
+            if( vd.size == _size)
+                return true;
+            
+            vd.size = _size;
+            
+            // double-check me
+            DoSortWithHardFiltering();
+            ClearSelectedFlagsFromHiddenElements();
+            BuildSoftFilteringIndeces();
+            UpdateStatictics();
+            
+            return true;
+        }
+    return false;
+}
+
 void PanelData::CustomIconClearAll()
 {
     for(auto &vd: m_VolatileData)

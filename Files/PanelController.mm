@@ -522,30 +522,25 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return false;
 }
 
-- (void) CalculateSizesWithNames:(const vector<string>&) _filenames
+- (void) CalculateSizes:(const vector<VFSListingItem>&) _items
 {
-    if( !self.isUniform )
-        return; // not supported for temporary panels currently
-    
-    function<void(const char*, uint64_t)> complet = [=](const char* _sub_dir, uint64_t _size) {
-        string sub_dir = _sub_dir;
-        dispatch_to_main_queue([=]{
-            panel::GenericCursorPersistance pers(m_View, m_Data);
-            // may cause re-sorting if current sorting is by size
-            if(m_Data.SetCalculatedSizeForDirectory(sub_dir.c_str(), _size))
-            {
-                [m_View setNeedsDisplay];
-                pers.Restore();
-            }
-        });
-    };
-    
-    string current_dir = self.currentDirectoryPath;
     m_DirectorySizeCountingQ->Run([=](const SerialQueue &_q){
-        self.vfs->CalculateDirectoriesSizes(_filenames,
-                                            current_dir.c_str(),
-                                            [=]{ return _q->IsStopped(); },
-                                            complet);
+        for(auto &i:_items) {
+            if( _q->IsStopped() )
+                return;
+            auto result = i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
+                                                           [=]{ return _q->IsStopped(); }
+                                                           );
+            if( result > 0 )
+                dispatch_to_main_queue([=]{
+                    panel::GenericCursorPersistance pers(m_View, m_Data);
+                    // may cause re-sorting if current sorting is by size
+                    if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
+                        [m_View setNeedsDisplay];
+                        pers.Restore();
+                    }
+                });
+        }
     });
 }
 

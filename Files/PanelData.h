@@ -372,6 +372,8 @@ public:
      * _size should be less than uint64_t(-1).
      */
     bool SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size);
+    bool SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size);
+    
 private:    
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;

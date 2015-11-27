@@ -48,12 +48,9 @@ public:
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     
-    virtual int CalculateDirectoriesSizes(
-                                        const vector<string> &_dirs,
-                                        const char *_root_path,
-                                        VFSCancelChecker _cancel_checker,
-                                        function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
-                                        ) override;
+    virtual ssize_t CalculateDirectorySize(const char *_path,
+                                           VFSCancelChecker _cancel_checker
+                                           ) override;
     
     virtual int ReadSymlink(const char *_path,
                             char *_buffer,

@@ -312,70 +312,29 @@ cleanup:
 }
 
 
-int VFSNativeHost::CalculateDirectoriesSizes(
-                                      const vector<string> &_dirs,
-                                      const char *_root_path, // relative to current host path
-                                      VFSCancelChecker _cancel_checker,
-                                      function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
-                                      )
+ssize_t VFSNativeHost::CalculateDirectorySize(const char *_path,
+                                              VFSCancelChecker _cancel_checker                                              )
 {
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     
-    if(_dirs.empty())
-        return VFSError::Ok;
-    
-    if(_root_path == 0 ||
-       _root_path[0] != '/')
+    if(_path == 0 ||
+       _path[0] != '/')
         return VFSError::InvalidCall;
     
     bool iscancelling = false;
     char path[MAXPATHLEN];
-    strcpy(path, _root_path);
-    if(path[strlen(path)-1] != '/') strcat(path, "/");
-    char *var = path + strlen(path);
+    strcpy(path, _path);
     
     dispatch_queue stat_queue(__FILES_IDENTIFIER__".VFSNativeHost.CalculateDirectoriesSizes");
     
-    int error = VFSError::Ok;
-    
-    if(_dirs.size() == 1 && strisdotdot(_dirs.front()) )
-    { // special case for a single ".." entry
-        int64_t size = 0;
-        int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
-        stat_queue.sync([]{});
-        if(iscancelling || (_cancel_checker && _cancel_checker())) // check if we need to quit
-            goto cleanup;
-        if(result >= 0)
-            _completion_handler("..", size);
-        else
-            error = result;
-    }
-    else for(const auto &i: _dirs)
-    {
-        memcpy(var, i.c_str(), i.size() + 1);
-        
-        int64_t total_size = 0;
-        
-        int result = CalculateDirectoriesSizesHelper(path,
-                                                strlen(path),
-                                                iscancelling,
-                                                _cancel_checker,
-                                                stat_queue,
-                                                total_size);
-        stat_queue.sync([]{});
-        
-        if(iscancelling || (_cancel_checker && _cancel_checker())) // check if we need to quit
-            goto cleanup;
-        
-        if(result >= 0)
-            _completion_handler(i.c_str(), total_size);
-        else
-            error = result;
-    }
-    
-cleanup:
-    return error;
+    int64_t size = 0;
+    int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+    stat_queue.sync([]{});
+    if(result >= 0)
+        return size;
+    else
+        return result;
 }
 
 bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)

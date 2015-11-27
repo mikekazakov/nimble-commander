@@ -63,7 +63,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
                     auto it = listing_fn_ind.find(filename);
                     if( it != end(listing_fn_ind) )
                         ind.emplace_back( it->second );
-                        }
+                }
         }
     }
     
@@ -646,16 +646,16 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction)OnCalculateSizes:(id)sender {
     // suboptimal - may have regular files inside (not dirs)
-    [self CalculateSizesWithNames:self.selectedEntriesOrFocusedEntryFilenamesWithDotDot];
+    [self CalculateSizes:self.selectedEntriesOrFocusedEntryWithDotDot];
 }
 
 - (IBAction)OnCalculateAllSizes:(id)sender {
-    vector<string> filenames;
+    vector<VFSListingItem> filenames;
     for(auto &i: m_Data.Listing())
         if(i.IsDir() && !i.IsDotDot())
-            filenames.emplace_back(i.Name());
+            filenames.emplace_back(i);
     
-    [self CalculateSizesWithNames:filenames];
+    [self CalculateSizes:filenames];
 }
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender{
@@ -1086,7 +1086,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction) OnOpenExtendedAttributes:(id)sender
 {
-    if( !self.view.item )
+    if( !self.view.item || !self.view.item.Host()->IsNativeFS() )
         return;
     
     try {

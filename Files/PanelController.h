@@ -157,7 +157,7 @@ namespace panel
 - (void) SelectAllEntries:(bool) _select;
 - (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
-- (void) CalculateSizesWithNames:(const vector<string>&) _filenames;
+- (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode;
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter;
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev;

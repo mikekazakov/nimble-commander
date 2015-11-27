@@ -46,6 +46,8 @@
 
 @property (nonatomic, readonly) vector<VFSListingItem> selectedEntriesOrFocusedEntry;
 
+@property (nonatomic, readonly) vector<VFSListingItem> selectedEntriesOrFocusedEntryWithDotDot;
+
 /**
  * Return current (topmost in vfs stack) VFS Host.
  * If current listing is non-uniform - will throw an exception.

@@ -78,12 +78,26 @@
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
             if( auto e = d.EntryAtRawPosition(ind) )
-                if( !e.IsDotDot() )
                     items.emplace_back( move(e) );
     
     if( items.empty() )
         if( auto e = d.EntryAtSortPosition(self.view.curpos) )
             if( !e.IsDotDot() )
+                items.emplace_back( move(e) );
+    return items;
+}
+
+- (vector<VFSListingItem>) selectedEntriesOrFocusedEntryWithDotDot
+{
+    vector<VFSListingItem> items;
+    auto &d = self.data;
+    for( auto ind: d.SortedDirectoryEntries() )
+        if( d.VolatileDataAtRawPosition(ind).is_selected() )
+            if( auto e = d.EntryAtRawPosition(ind) )
+                    items.emplace_back( move(e) );
+    
+    if( items.empty() )
+        if( auto e = d.EntryAtSortPosition(self.view.curpos) )
                 items.emplace_back( move(e) );
     return items;
 }

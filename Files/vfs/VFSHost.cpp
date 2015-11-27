@@ -262,69 +262,36 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
     return false;
 }
 
-int VFSHost::CalculateDirectoriesSizes(
-                                    const vector<string> &_dirs,
-                                    const char *_root_path,
-                                    VFSCancelChecker _cancel_checker,
-                                    function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler
-                                    )
+ssize_t VFSHost::CalculateDirectorySize(const char *_path,
+                                        VFSCancelChecker _cancel_checker
+                                        )
 {
-    if(_root_path == 0 ||
-       _root_path[0] != '/')
+    if(_path == 0 || _path[0] != '/')
         return VFSError::InvalidCall;
     
     queue<path> look_paths;
     int64_t total_size = 0;
     
-    if(_dirs.size() == 1 && strisdotdot(_dirs.front()) ) { // special case for a single ".." entry
-        look_paths.emplace(_root_path);
-        while(!look_paths.empty()) {
-            if(_cancel_checker && _cancel_checker()) // check if we need to quit
-                return VFSError::Cancelled;
-                
-            IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
-                path full_path = look_paths.front() / _dirent.name;
-                if(_dirent.type == VFSDirEnt::Dir)
-                    look_paths.emplace(move(full_path));
-                else {
-                    VFSStat stat;
-                    if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
-                        total_size += stat.size;
-                }
-                return true;
-            });
-            look_paths.pop();
-        }
-            
-        _completion_handler("..", total_size);
-    }
-    else { // regular dirs lookup
-        for(auto &i: _dirs) {
-            total_size = 0;
-            look_paths.emplace(path(_root_path) / i);
-            while(!look_paths.empty()) {
-                if(_cancel_checker && _cancel_checker()) // check if we need to quit
-                    return VFSError::Cancelled;
-                
-                IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
-                    path full_path = look_paths.front() / _dirent.name;
-                    if(_dirent.type == VFSDirEnt::Dir)
-                        look_paths.emplace(move(full_path));
-                    else {
-                        VFSStat stat;
-                        if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
-                            total_size += stat.size;
-                    }
-                    return true;
-                });
-                look_paths.pop();
+    look_paths.emplace(_path);
+    while( !look_paths.empty() ) {
+        if(_cancel_checker && _cancel_checker()) // check if we need to quit
+            return VFSError::Cancelled;
+        
+        IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
+            path full_path = look_paths.front() / _dirent.name;
+            if(_dirent.type == VFSDirEnt::Dir)
+                look_paths.emplace(move(full_path));
+            else {
+                VFSStat stat;
+                if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
+                    total_size += stat.size;
             }
-
-            _completion_handler(i.c_str(), total_size);
-        }
+            return true;
+        });
+        look_paths.pop();
     }
     
-    return VFSError::Ok;
+    return total_size;
 }
 
 bool VFSHost::IsDirChangeObservingAvailable(const char *_path)

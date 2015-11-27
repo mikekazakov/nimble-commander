@@ -120,11 +120,9 @@ public:
                                 VFSCancelChecker _cancel_checker
                                 );
     
-    virtual int CalculateDirectoriesSizes(
-                                        const vector<string> &_dirs,
-                                        const char* _root_path,
-                                        VFSCancelChecker _cancel_checker,
-                                        function<void(const char* _dir_sh_name, uint64_t _size)> _completion_handler);
+    virtual ssize_t CalculateDirectorySize(const char *_path,
+                                           VFSCancelChecker _cancel_checker
+                                           );
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,

@@ -380,6 +380,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
     auto entries = vector<VFSListingItem>({item});
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    __weak auto cur = self.activePanelController;
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()
                                              sourceDirectory:item.Directory()
@@ -398,6 +399,14 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
         
         auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
         [op AddOnFinishHandler:update_both_panels];
+        [op AddOnFinishHandler:^{
+            dispatch_to_main_queue( [=]{
+                string single_fn_rename = ::path(path).filename().native();
+                PanelControllerDelayedSelection req;
+                req.filename = single_fn_rename;
+                [(PanelController*)cur ScheduleDelayedSelectionChangeFor:req];
+            });
+        }];
         [m_OperationsController AddOperation:op];
     }];
 }

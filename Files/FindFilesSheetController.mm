@@ -189,7 +189,7 @@ static const int g_MaximumSearchResults = 262144;
     self.MaskComboBox.stringValue = m_MaskHistory.count ? m_MaskHistory[0] : @"*";
     self.TextComboBox.usesDataSource = true;
     self.TextComboBox.dataSource = self;
-    self.TextComboBox.stringValue = m_TextHistory[0];
+    self.TextComboBox.stringValue = @"";
   
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(comboBoxWillPopUp:)
@@ -288,7 +288,8 @@ static const int g_MaximumSearchResults = 262144;
     static const int max_items = 16;
     NSMutableArray *texts = [m_TextHistory mutableCopy];
     [texts removeObject:_text];
-    [texts insertObject:_text.copy atIndex:0];
+    if( _text.length > 0 )
+        [texts insertObject:_text.copy atIndex:0];
     while(texts.count > max_items)
         [texts removeLastObject];
     if(![texts isEqualToArray:m_TextHistory])

@@ -718,24 +718,27 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     return false;
 }
 
-- (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path
+- (void)revealEntries:(const vector<string>&)_filenames inDirectory:(const string&)_path
 {
-    assert(dispatch_is_main_queue());
+    assert( dispatch_is_main_queue() );
     auto data = self.activePanelData;
     if(!data)
         return;
     
-    PanelController *panel = self.activePanelController;
-    if([panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok)
-    {
-        if(!_entries.empty()) {
+    auto panel = self.activePanelController;
+    if(!panel)
+        return;
+    
+    if( [panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok ) {
+        if( !_filenames.empty() ) {
             PanelControllerDelayedSelection req;
-            req.filename = _entries.front().c_str();
+            req.filename = _filenames.front();
             [panel ScheduleDelayedSelectionChangeFor:req];
         }
         
-        for(auto &i: _entries)
-            data->CustomFlagsSelectSorted(data->SortedIndexForName(i.c_str()), true);
+        if( _filenames.size() > 1 )
+            for(auto &i: _filenames)
+                data->CustomFlagsSelectSorted( data->SortedIndexForName(i.c_str()), true );
         
         [self.activePanelView setNeedsDisplay];
     }

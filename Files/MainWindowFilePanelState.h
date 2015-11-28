@@ -68,7 +68,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * Called by panel controller when it sucessfuly changes it's current path
  */
 - (void)PanelPathChanged:(PanelController*)_panel;
-- (void)RevealEntries:(chained_strings)_entries inPath:(const string&)_path;
+- (void)revealEntries:(const vector<string>&)_filenames inDirectory:(const string&)_path;
 
 @property (readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 

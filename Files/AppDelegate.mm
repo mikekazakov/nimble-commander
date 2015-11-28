@@ -417,83 +417,73 @@ static SUUpdater *g_Sparkle = nil;
     }
 }
 
-- (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
+- (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
 {
-    // we support only one directory path now
+    [self  application:sender openFiles:@[filename]];;
+    return true;
+}
+
+- (void)application:(NSApplication *)sender openFiles:(NSArray<NSString *> *)filenames
+{
+    vector<string> paths;
+    for( NSString *pathstring in filenames )
+        if( auto fs = pathstring.fileSystemRepresentation )
+            paths.emplace_back( fs );
+    
+    if( !paths.empty() )
+        [self doRevealNativeItems:paths];
+}
+
+- (void) doRevealNativeItems:(const vector<string>&)_path
+{
     // TODO: need to implement handling muliple directory paths in the future
-    char common_path[MAXPATHLEN];
-    common_path[0]=0;
-    chained_strings filenames;
-    
-    // compose requested path and items names
-    NSArray *items = [pboard pasteboardItems];
-    for( NSPasteboardItem *item in items )
-    {
-        NSString *urlstring = [item stringForType:@"public.file-url"];
-        if (urlstring != nil)
-        {
-            NSURL *url = [NSURL URLWithString:urlstring];
-            NSString *unixpath = [url path];
-            
-            char path[MAXPATHLEN];
-            strcpy(path, [unixpath fileSystemRepresentation]);
-            
-            // get directory path
-            char *lastslash = strrchr(path, '/');
-            if(!lastslash)
-                continue; // malformed ?
-            if(lastslash == path)
-            {// input is inside a root dir or is a root dir itself
-                if(common_path[0]==0)
-                { // set common directory as root
-                    strcpy(common_path, "/");
-                    if(*(lastslash+1) != 0)
-                        filenames.push_back(lastslash+1, nullptr);
-                        
-                }
-                else if(strcmp(common_path, "/") == 0)
-                { // add current item into root dir
-                    if(*(lastslash+1) != 0)
-                        filenames.push_back(lastslash+1, nullptr);
-                }
-            }
-            else
-            {// regular case
-                *lastslash = 0;
-                if(common_path[0]==0)
-                { // get the first directory as main directory
-                    strcpy(common_path, path);
-                    filenames.push_back(lastslash+1, nullptr);
-                }
-                else if(strcmp(common_path, path) == 0)
-                { // get only files which fall into common directory
-                    filenames.push_back(lastslash+1, nullptr);
-                }
-            }
-        }
+    // grab first common directory and all corresponding items in it.
+    string directory;
+    vector<string> filenames;
+    for( auto &i:_path ) {
+        string parent = path(i).parent_path().native();
+
+        if( directory.empty() )
+            directory = parent;
+        
+        if( i != "/" )
+            filenames.emplace_back( path(i).filename().native() );
     }
-    
+
     // find window to ask
     NSWindow *target_window = nil;
-    for(NSWindow *wnd in NSApplication.sharedApplication.orderedWindows)
+    for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
         if(wnd != nil &&
            objc_cast<MainWindowController>(wnd.windowController) != nil) {
             target_window = wnd;
             break;
         }
     
-    if(!target_window)
-    {
+    if(!target_window) {
         [self AllocateNewMainWindow];
         target_window = [m_MainWindows.back() window];
     }
 
-    if(target_window)
-    {
+    if(target_window) {
         [target_window makeKeyAndOrderFront:self];
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
-        [contr.filePanelsState RevealEntries:std::move(filenames) inPath:common_path];
+        [contr.filePanelsState revealEntries:filenames inDirectory:directory];
     }
+}
+
+- (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
+{
+    // extract file paths
+    vector<string> paths;
+    for( NSPasteboardItem *item in pboard.pasteboardItems )
+        if( NSString *urlstring = [item stringForType:@"public.file-url"] )
+            if( NSURL *url = [NSURL URLWithString:urlstring] )
+                if( NSString *unixpath = url.path )
+                    if( auto fs = unixpath.fileSystemRepresentation  )
+                        paths.emplace_back( fs );
+
+    if( !paths.empty() )
+        [self doRevealNativeItems:paths];
 }
 
 - (void)OnPreferencesCommand:(id)sender

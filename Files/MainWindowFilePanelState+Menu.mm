@@ -104,7 +104,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 - (IBAction)OnShowTerminal:(id)sender
 {
     string path = "";
-    if(self.isPanelActive && self.activePanelController.vfs->IsNativeFS())
+    if( self.isPanelActive && self.activePanelController.isUniform && self.activePanelController.vfs->IsNativeFS() )
         path = self.activePanelController.currentDirectoryPath;
     [(MainWindowController*)self.window.delegate RequestTerminal:path];
 }

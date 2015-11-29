@@ -14,7 +14,7 @@
 
 - (double) bottomGapForLines:(int)_lines_amount;
 - (int) totalScreenLines;
-- (void) runShell:(const string&)_initial_wd;
+- (void) runShell:(const string&)_initial_wd; // if _initital_wd is empty - use home directory
 - (void) focusTerminal;
 - (void) changeWorkingDirectory:(const string&)_new_dir;
 - (void) feedShellWithInput:(const string&)_input;

@@ -77,8 +77,7 @@ static auto g_DefaultsGapKey = @"FilePanels_OverlappedTerminal_BottomGap";
     if( s == TermShellTask::TaskState::Inactive || s == TermShellTask::TaskState::Dead ) {
         string wd;
         if( auto p = self.activePanelController )
-            if( p.vfs->IsNativeFS() )
-                wd = p.currentDirectoryPath;
+            wd = p.lastNativeDirectoryPath;
         
         [m_OverlappedTerminal->terminal runShell:wd];
         

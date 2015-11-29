@@ -253,7 +253,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     if(self.topmostState == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive) {
         if( auto pc = m_PanelState.activePanelController ){
             auto cwd = m_Terminal.CWD;
-            if( !pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd ) {
+            if( pc.isUniform && (!pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd) ) {
                 auto cnt = make_shared<PanelControllerGoToDirContext>();
                 cnt->VFS = VFSNativeHost::SharedHost();
                 cnt->RequestedDirectory = cwd;

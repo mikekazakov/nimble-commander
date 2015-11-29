@@ -142,6 +142,116 @@
 		CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
+		CF50C3EF1C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
+		CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
+		CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
+		CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
+		CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
+		CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
+		CF50C3FC1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
+		CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
+		CF50C3FE1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
+		CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
+		CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
+		CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
+		CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */; };
+		CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */; };
+		CF50C4041C0ADE18009DF611 /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */; };
+		CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */; };
+		CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */; };
+		CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */; };
+		CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
+		CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
+		CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
+		CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
+		CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
+		CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
+		CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */; };
+		CF50C40F1C0ADE38009DF611 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */; };
+		CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
+		CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
+		CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
+		CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
+		CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
+		CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
+		CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
+		CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
+		CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
+		CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
+		CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
+		CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
+		CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
+		CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
+		CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
+		CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
+		CF50C4201C0ADE75009DF611 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */; };
+		CF50C4211C0ADE75009DF611 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */; };
+		CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
+		CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
+		CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
+		CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
+		CF50C4261C0ADE7F009DF611 /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13891BF5E38B001F53FD /* OperationStats.mm */; };
+		CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13891BF5E38B001F53FD /* OperationStats.mm */; };
+		CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
+		CF50C4291C0ADE85009DF611 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
+		CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */; };
+		CF50C42B1C0ADE88009DF611 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */; };
+		CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
+		CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
+		CF50C42E1C0ADEAD009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
+		CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
+		CF50C4301C0ADEB7009DF611 /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9151BEC4FEA00A1B046 /* VFSHost.cpp */; };
+		CF50C4311C0ADEB8009DF611 /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9151BEC4FEA00A1B046 /* VFSHost.cpp */; };
+		CF50C4321C0ADEBB009DF611 /* VFSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9171BEC4FEA00A1B046 /* VFSListing.cpp */; };
+		CF50C4331C0ADEBB009DF611 /* VFSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9171BEC4FEA00A1B046 /* VFSListing.cpp */; };
+		CF50C4341C0ADEC9009DF611 /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EC1BE6179A0014C88F /* VFSPSFile.cpp */; };
+		CF50C4351C0ADECA009DF611 /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EC1BE6179A0014C88F /* VFSPSFile.cpp */; };
+		CF50C4361C0ADECE009DF611 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EF1BE6179A0014C88F /* VFSPSHost.mm */; };
+		CF50C4371C0ADECE009DF611 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1EF1BE6179A0014C88F /* VFSPSHost.mm */; };
+		CF50C4381C0ADED4009DF611 /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */; };
+		CF50C4391C0ADED5009DF611 /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */; };
+		CF50C43A1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F61BE619B20014C88F /* VFSArchiveHost.mm */; };
+		CF50C43B1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F61BE619B20014C88F /* VFSArchiveHost.mm */; };
+		CF50C43C1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F81BE619B20014C88F /* VFSArchiveInternal.mm */; };
+		CF50C43D1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F81BE619B20014C88F /* VFSArchiveInternal.mm */; };
+		CF50C43E1C0ADEE1009DF611 /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */; };
+		CF50C43F1C0ADEE2009DF611 /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */; };
+		CF50C4401C0ADEE4009DF611 /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */; };
+		CF50C4411C0ADEE5009DF611 /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */; };
+		CF50C4421C0ADEE7009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */; };
+		CF50C4431C0ADEE8009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */; };
+		CF50C4441C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D11BE608BC0014C88F /* DisplayNamesCache.mm */; };
+		CF50C4451C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D11BE608BC0014C88F /* DisplayNamesCache.mm */; };
+		CF50C4461C0ADEEF009DF611 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D21BE608BC0014C88F /* VFSNativeFile.cpp */; };
+		CF50C4471C0ADEF0009DF611 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D21BE608BC0014C88F /* VFSNativeFile.cpp */; };
+		CF50C4481C0ADEF5009DF611 /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D51BE608BC0014C88F /* VFSNativeHost.mm */; };
+		CF50C44A1C0ADEF7009DF611 /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D51BE608BC0014C88F /* VFSNativeHost.mm */; };
+		CF50C44B1C0ADEFB009DF611 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA7751C1BD08D630045072A /* xattr.cpp */; };
+		CF50C44C1C0ADEFC009DF611 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA7751C1BD08D630045072A /* xattr.cpp */; };
+		CF50C44D1C0ADF02009DF611 /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DA1BE6155E0014C88F /* VFSNetFTPCache.mm */; };
+		CF50C44E1C0ADF02009DF611 /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DA1BE6155E0014C88F /* VFSNetFTPCache.mm */; };
+		CF50C44F1C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DC1BE6155E0014C88F /* VFSNetFTPFile.mm */; };
+		CF50C4501C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DC1BE6155E0014C88F /* VFSNetFTPFile.mm */; };
+		CF50C4511C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DE1BE6155E0014C88F /* VFSNetFTPHost.mm */; };
+		CF50C4521C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DE1BE6155E0014C88F /* VFSNetFTPHost.mm */; };
+		CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E01BE6155E0014C88F /* VFSNetFTPInternals.mm */; };
+		CF50C4541C0ADF0D009DF611 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E01BE6155E0014C88F /* VFSNetFTPInternals.mm */; };
+		CF50C4551C0ADF11009DF611 /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E61BE616320014C88F /* VFSNetSFTPFile.cpp */; };
+		CF50C4561C0ADF12009DF611 /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E61BE616320014C88F /* VFSNetSFTPFile.cpp */; };
+		CF50C4571C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E81BE616320014C88F /* VFSNetSFTPHost.cpp */; };
+		CF50C4581C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1E81BE616320014C88F /* VFSNetSFTPHost.cpp */; };
+		CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
+		CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
+		CF50C45C1C0ADF51009DF611 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
+		CF50C45D1C0ADF52009DF611 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
+		CF50C45E1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
+		CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
+		CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
+		CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
+		CF50C4621C0ADF88009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
+		CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
@@ -2946,6 +3056,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CFB598BC196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
@@ -2977,6 +3088,7 @@
 				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
+				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -3075,6 +3187,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF50C42E1C0ADEAD009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
@@ -3106,6 +3219,7 @@
 				CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
+				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
@@ -3213,15 +3327,20 @@
 				CF9069741BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
 				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
+				CF50C4311C0ADEB8009DF611 /* VFSHost.cpp in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFE3829219CEFBA0005C8958 /* BigFileViewSheet.mm in Sources */,
+				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
+				CF50C43D1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
+				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
+				CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
@@ -3232,33 +3351,51 @@
 				CF50B7441A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */,
+				CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF6D9C711966780D0077B146 /* chained_strings.cpp in Sources */,
+				CF50C4541C0ADF0D009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CF6D9C721966780D0077B146 /* Encodings.cpp in Sources */,
 				CF6D9C731966780D0077B146 /* FontCache.cpp in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF6D9BDD196678000077B146 /* Common.mm in Sources */,
 				CF6D9BDF196678000077B146 /* filesysinfo.mm in Sources */,
+				CF50C4291C0ADE85009DF611 /* GenericOperationView.mm in Sources */,
 				CF6D9BE0196678000077B146 /* EncodingsAdditions.mm in Sources */,
+				CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
+				CF50C4561C0ADF12009DF611 /* VFSNetSFTPFile.cpp in Sources */,
 				CF6D9BE1196678000077B146 /* FSEventsDirUpdate.cpp in Sources */,
 				CF6D9BE2196678000077B146 /* NativeFSManager.mm in Sources */,
+				CF50C4381C0ADED4009DF611 /* VFSArchiveFile.cpp in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
+				CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
 				CF6D9BE4196678000077B146 /* SearchInFile.mm in Sources */,
 				CF6D9BE5196678000077B146 /* ObjcToCppObservingBridge.mm in Sources */,
+				CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */,
+				CF50C4521C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */,
+				CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CF6D9BE6196678000077B146 /* FileMask.mm in Sources */,
 				CF6D9BE7196678000077B146 /* FileSearch.mm in Sources */,
 				CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF6D9BE9196678000077B146 /* sysinfo.mm in Sources */,
+				CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */,
 				CF9069861BB54035000C3CBB /* Job.cpp in Sources */,
+				CF50C4411C0ADEE5009DF611 /* VFSArchiveUnRARHost.cpp in Sources */,
+				CF50C4331C0ADEBB009DF611 /* VFSListing.cpp in Sources */,
+				CF50C42B1C0ADE88009DF611 /* OperationsSummaryViewController.mm in Sources */,
 				CF8E76C31B353A1000BA16AD /* TermScrollView.mm in Sources */,
+				CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */,
+				CF50C45C1C0ADF51009DF611 /* JobTrash.mm in Sources */,
 				CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CF6D9BEC196678000077B146 /* DispatchQueue.cpp in Sources */,
+				CF50C4501C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF6D9BEE196678000077B146 /* FPSLimitedDrawer.mm in Sources */,
 				CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
+				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
@@ -3269,29 +3406,40 @@
 				CF6D9C0D196678000077B146 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF54101A1A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
+				CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */,
 				CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
+				CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF9069901BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
+				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
+				CF50C4211C0ADE75009DF611 /* OperationDialogController.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF50B6C71A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D01A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
+				CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
+				CF50C4441C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,
+				CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF6D9C32196678010077B146 /* BigFileView.mm in Sources */,
+				CF50C44E1C0ADF02009DF611 /* VFSNetFTPCache.mm in Sources */,
 				CF6D9C33196678010077B146 /* BigFileViewDataBackend.mm in Sources */,
 				CF6D9C34196678010077B146 /* BigFileViewHex.mm in Sources */,
 				CF6D9C35196678010077B146 /* BigFileViewText.mm in Sources */,
 				CF6D9C36196678010077B146 /* BigFileViewHistory.mm in Sources */,
 				CF6D9C37196678010077B146 /* MainWindowBigFileViewState.mm in Sources */,
+				CF50C43A1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */,
 				CF6D9C39196678010077B146 /* TermShellTask.cpp in Sources */,
 				CF6D9C3A196678010077B146 /* TermParser.mm in Sources */,
 				CF6D9C3B196678010077B146 /* TermScreen.cpp in Sources */,
 				CF6D9C3C196678010077B146 /* TermView.mm in Sources */,
+				CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
 				CF6D9C3D196678010077B146 /* MainWindowTerminalState.mm in Sources */,
 				CF6D9C3E196678010077B146 /* PanelData.mm in Sources */,
 				CF6D9C3F196678010077B146 /* PanelView.mm in Sources */,
 				CF6D9C40196678010077B146 /* PanelController.mm in Sources */,
+				CF50C4371C0ADECE009DF611 /* VFSPSHost.mm in Sources */,
 				CF7249AF1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CF6D9C41196678010077B146 /* PanelController+Navigation.mm in Sources */,
 				CF6D9C42196678010077B146 /* PanelController+DataAccess.mm in Sources */,
@@ -3302,9 +3450,13 @@
 				CF6D9C47196678010077B146 /* PanelHistory.mm in Sources */,
 				CF6D9C48196678010077B146 /* PanelAux.mm in Sources */,
 				CF6D9C49196678010077B146 /* MainWindowFilePanelState.mm in Sources */,
+				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
+				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF6D9C4B196678010077B146 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
+				CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CF50C4431C0ADEE8009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF6D9C4C196678010077B146 /* SharingService.mm in Sources */,
 				CF6D9C4F196678010077B146 /* QuickPreview.mm in Sources */,
 				CF6D9C50196678010077B146 /* BriefSystemOverview.mm in Sources */,
@@ -3313,17 +3465,26 @@
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
 				CF6D9C54196678010077B146 /* FindFilesSheetController.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
+				CF50C4481C0ADEF5009DF611 /* VFSNativeHost.mm in Sources */,
+				CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */,
 				CF6D9C56196678010077B146 /* PanelViewPresentation.mm in Sources */,
 				CFABA8471B403AA3008DF6D1 /* TermTask.cpp in Sources */,
 				CF6D9C57196678010077B146 /* ClassicPanelViewPresentation.mm in Sources */,
+				CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CF6D9C58196678010077B146 /* ModernPanelViewPresentation.mm in Sources */,
 				CF6D9C59196678010077B146 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF6D9C5A196678010077B146 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
+				CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF6D9C5B196678010077B146 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF6D9C5C196678010077B146 /* OrthodoxMonospace.mm in Sources */,
+				CF50C4581C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
+				CF50C4351C0ADECA009DF611 /* VFSPSFile.cpp in Sources */,
 				CF6D9C5D196678010077B146 /* IconsGenerator.mm in Sources */,
+				CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */,
 				CF6D9C5E196678010077B146 /* QLThumbnailsCache.mm in Sources */,
 				CF6D9C5F196678010077B146 /* WorkspaceIconsCache.mm in Sources */,
+				CF50C4471C0ADEF0009DF611 /* VFSNativeFile.cpp in Sources */,
 				CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CF6D9C60196678010077B146 /* MainWindowController.mm in Sources */,
 				CF6D9C61196678010077B146 /* PreferencesWindowGeneralTab.mm in Sources */,
@@ -3331,19 +3492,25 @@
 				CF6D9C63196678010077B146 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF6D9C64196678010077B146 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF6D9C65196678010077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */,
+				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
+				CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */,
+				CF50C43F1C0ADEE2009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CF6D9BD2196677CA0077B146 /* NSArray+SSYMutations.m in Sources */,
 				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
 				CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */,
+				CF50C40F1C0ADE38009DF611 /* FileCompressOperation.mm in Sources */,
 				CF6D9BD3196677CA0077B146 /* NSDictionary+SimpleMutations.m in Sources */,
 				CF6D9BD4196677CA0077B146 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF6D9BD8196677CA0077B146 /* NSUserDefaults+myColorSupport.m in Sources */,
+				CF50C44C1C0ADEFC009DF611 /* xattr.cpp in Sources */,
 				CF6D9BD9196677CA0077B146 /* ButtonWithOptions.m in Sources */,
 				CF55CDD31B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CF6D9BDA196677CA0077B146 /* main.m in Sources */,
@@ -3562,15 +3729,20 @@
 				CF9069751BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
 				CFF6F23D1A13567C00011177 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF6F23F1A13567C00011177 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
+				CF50C4301C0ADEB7009DF611 /* VFSHost.cpp in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,
 				CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
+				CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */,
+				CF50C43C1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */,
 				CFF6F2431A13567C00011177 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
+				CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */,
 				CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF6F2471A13567C00011177 /* PanelData.mm in Sources */,
 				CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */,
 				CF0A40161B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFF6F2491A13567C00011177 /* PanelView.mm in Sources */,
+				CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFF6F24D1A13567C00011177 /* BigFileViewSheet.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CFF6F24E1A13567C00011177 /* FontCache.cpp in Sources */,
@@ -3581,33 +3753,51 @@
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,
+				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
+				CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
 				CFA57B271B42FF1300AC5EDF /* TermScreenBuffer.cpp in Sources */,
 				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */,
+				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,
 				CF4E33DF1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
+				CF50C3FE1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
+				CF50C4551C0ADF11009DF611 /* VFSNetSFTPFile.cpp in Sources */,
 				CFF6F26A1A13567C00011177 /* Encodings.cpp in Sources */,
 				CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
+				CF50C4391C0ADED5009DF611 /* VFSArchiveFile.cpp in Sources */,
 				CFF6F26C1A13567C00011177 /* path_manip.c in Sources */,
 				CFF6F2701A13567C00011177 /* TermParser.mm in Sources */,
+				CF50C4041C0ADE18009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
 				CFF6F2741A13567C00011177 /* TermScreen.cpp in Sources */,
+				CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */,
+				CF50C4511C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */,
+				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CFF6F2761A13567C00011177 /* filesysinfo.mm in Sources */,
 				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
+				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
 				CFF6F27D1A13567C00011177 /* ExternalEditorInfo.mm in Sources */,
+				CF50C4401C0ADEE4009DF611 /* VFSArchiveUnRARHost.cpp in Sources */,
+				CF50C4321C0ADEBB009DF611 /* VFSListing.cpp in Sources */,
+				CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */,
 				CFF6F27F1A13567C00011177 /* PanelController+DelayedSelection.mm in Sources */,
+				CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */,
+				CF50C45D1C0ADF52009DF611 /* JobTrash.mm in Sources */,
 				CF8E76C41B353A1000BA16AD /* TermScrollView.mm in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CF50C44F1C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
+				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
 				CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
@@ -3618,29 +3808,40 @@
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CFF6F2A71A13567C00011177 /* NSDictionary+SimpleMutations.m in Sources */,
 				CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */,
+				CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
+				CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */,
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CF50C4261C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
+				CF50C4201C0ADE75009DF611 /* OperationDialogController.mm in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
 				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
+				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
+				CF50C4451C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,
+				CF50C3EF1C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */,
+				CF50C44D1C0ADF02009DF611 /* VFSNetFTPCache.mm in Sources */,
 				CFF6F2D01A13567C00011177 /* DispatchQueue.cpp in Sources */,
 				CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */,
 				CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
 				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
+				CF50C43B1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */,
 				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
 				CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
+				CF50C3FC1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
 				CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */,
 				CFF6F2E31A13567C00011177 /* Common.mm in Sources */,
 				CFF6F2E51A13567C00011177 /* PanelViewPresentation.mm in Sources */,
 				CFF6F2E81A13567C00011177 /* ProcessSheetController.mm in Sources */,
+				CF50C4361C0ADECE009DF611 /* VFSPSHost.mm in Sources */,
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
 				CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
@@ -3651,9 +3852,13 @@
 				CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */,
 				CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */,
 				CFF6F2F61A13567C00011177 /* BigFileView.mm in Sources */,
+				CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CFF6F2F81A13567C00011177 /* BigFileViewHex.mm in Sources */,
+				CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFF6F2F91A13567C00011177 /* BigFileViewText.mm in Sources */,
 				CFF6F2FC1A13567C00011177 /* BigFileViewDataBackend.mm in Sources */,
+				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CF50C4421C0ADEE7009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF50B6C81A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D11A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */,
@@ -3662,17 +3867,26 @@
 				CFF6F3021A13567C00011177 /* MainWindowBigFileViewState.mm in Sources */,
 				CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */,
 				CFF6F3071A13567C00011177 /* EncodingsAdditions.mm in Sources */,
+				CF50C44A1C0ADEF7009DF611 /* VFSNativeHost.mm in Sources */,
+				CF50C4621C0ADF88009DF611 /* shared_mutex.cpp in Sources */,
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
+				CF50C45E1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
+				CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CFABA8481B403AA3008DF6D1 /* TermTask.cpp in Sources */,
 				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,
+				CF50C4571C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
+				CF50C4341C0ADEC9009DF611 /* VFSPSFile.cpp in Sources */,
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,
+				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
+				CF50C4461C0ADEEF009DF611 /* VFSNativeFile.cpp in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
@@ -3680,19 +3894,25 @@
 				CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */,
 				CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */,
+				CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CFF6F3331A13567C00011177 /* NSUserDefaults+myColorSupport.m in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
+				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFF6F33D1A13567C00011177 /* ObjcToCppObservingBridge.mm in Sources */,
+				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
+				CF50C43E1C0ADEE1009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CFF6F3411A13567C00011177 /* FPSLimitedDrawer.mm in Sources */,
 				CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */,
 				CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */,
+				CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
 				CFF6F34A1A13567C00011177 /* NSUserDefaults+KeyPaths.m in Sources */,
 				CFF6F34E1A13567C00011177 /* NSArray+SSYMutations.m in Sources */,
+				CF50C44B1C0ADEFB009DF611 /* xattr.cpp in Sources */,
 				CFF6F3501A13567C00011177 /* SharingService.mm in Sources */,
 				CF55CDD41B299843001B4F91 /* SheetWithHotkeys.mm in Sources */,
 				CFF6F3521A13567C00011177 /* TermSingleTask.mm in Sources */,

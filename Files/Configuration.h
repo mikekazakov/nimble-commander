@@ -51,6 +51,7 @@ namespace configuration
     constexpr Version version                       = __FILES_VERSION_NUMBER__;
     constexpr const char *identifier                = __FILES_IDENTIFIER__;
     constexpr const char *appstore_id               = __FILES_APPSTORE_IDENTIFIER__;
+    constexpr const char *website_domain            = "filesmanager.info";
     constexpr bool is_sandboxed                     = version <= Version::Pro;
     constexpr bool is_for_app_store                 = version <= Version::Pro;
     constexpr bool has_psfs                         = version >= Version::Pro;

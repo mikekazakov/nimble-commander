@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Sparkle/Sparkle.h>
-#import <Habanero/CommonPaths.h>
-#import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+#include <Sparkle/Sparkle.h>
+#include <Habanero/CommonPaths.h>
+#include "3rd_party/NSFileManager+DirectoryLocations.h"
+#include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include "vfs/vfs_native.h"
 #include "vfs/vfs_arc_la.h"
 #include "vfs/vfs_arc_unrar.h"
@@ -17,28 +17,27 @@
 #include "vfs/vfs_xattr.h"
 #include "vfs/vfs_net_ftp.h"
 #include "vfs/vfs_net_sftp.h"
-#import "AppDelegate.h"
-#import "MainWindowController.h"
-#import "Operations/OperationsController.h"
-#import "Common.h"
-#import "chained_strings.h"
-#import "PreferencesWindowGeneralTab.h"
-#import "PreferencesWindowPanelsTab.h"
-#import "PreferencesWindowViewerTab.h"
-#import "PreferencesWindowExternalEditorsTab.h"
-#import "PreferencesWindowTerminalTab.h"
-#import "PreferencesWindowHotkeysTab.h"
-#import "TemporaryNativeFileStorage.h"
-#import "MainWindowTerminalState.h"
-#import "NativeFSManager.h"
-#import "ActionsShortcutsManager.h"
-#import "MainWindowFilePanelState.h"
-#import "SandboxManager.h"
-#import "MASAppInstalledChecker.h"
-#import "TrialWindowController.h"
-#import "RoutedIO.h"
-#import "sysinfo.h"
-#import "AppStoreRatings.h"
+#include "AppDelegate.h"
+#include "MainWindowController.h"
+#include "Operations/OperationsController.h"
+#include "Common.h"
+#include "PreferencesWindowGeneralTab.h"
+#include "PreferencesWindowPanelsTab.h"
+#include "PreferencesWindowViewerTab.h"
+#include "PreferencesWindowExternalEditorsTab.h"
+#include "PreferencesWindowTerminalTab.h"
+#include "PreferencesWindowHotkeysTab.h"
+#include "TemporaryNativeFileStorage.h"
+#include "MainWindowTerminalState.h"
+#include "NativeFSManager.h"
+#include "ActionsShortcutsManager.h"
+#include "MainWindowFilePanelState.h"
+#include "SandboxManager.h"
+#include "MASAppInstalledChecker.h"
+#include "TrialWindowController.h"
+#include "RoutedIO.h"
+#include "sysinfo.h"
+#include "AppStoreRatings.h"
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -539,6 +538,16 @@ static SUUpdater *g_Sparkle = nil;
         
         if(MASAppInstalledChecker::Instance().Has(app_name, app_id))
             return;
+        
+        // download "red.plist" for every start of an unregistered copy of application
+        if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/red.plist", configuration::website_domain]] ) {
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+            NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
+                                                    completionHandler:^(NSData *, NSURLResponse *, NSError *) {
+                                                        NSLog(@"Unregistered!");
+                                                    }];
+            [task resume];
+        }
         
         // check cooldown criterias
         bool usage_time_exceeds_cooldown = false;

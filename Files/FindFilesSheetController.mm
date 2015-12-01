@@ -14,6 +14,7 @@
 #include "Common.h"
 #include "BigFileViewSheet.h"
 #include "ByteCountFormatter.h"
+#include "AppDelegate.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
@@ -214,7 +215,15 @@ static const int g_MaximumSearchResults = 262144;
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
+    if( configuration::version == configuration::Version::Lite ) {
+        self.PanelButton.target = AppDelegate.me;
+        self.PanelButton.action = @selector(showFeatureNotSupportedWindow:);
+    }
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
+    if( configuration::version == configuration::Version::Lite ) {
+        self.ViewButton.target = AppDelegate.me;
+        self.ViewButton.action = @selector(showFeatureNotSupportedWindow:);
+    }
 }
 
 - (void) dealloc

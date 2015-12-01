@@ -38,6 +38,7 @@
 #include "RoutedIO.h"
 #include "sysinfo.h"
 #include "AppStoreRatings.h"
+#include "FeatureNotAvailableWindowController.h"
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -141,9 +142,15 @@ static SUUpdater *g_Sparkle = nil;
         item.alternate = false;
         item.hidden = true;
     };
+    auto prohibit       = [&](const char *s) {
+        auto item = menuitem(s);
+        item.target = self;
+        item.action = @selector(showFeatureNotSupportedWindow:);
+    };
+
     
     if(!configuration::has_psfs)
-        hide("menu.go.processes_list");
+        prohibit("menu.go.processes_list");
     if(!configuration::has_terminal) {
         hide("menu.view.show_terminal");
         hide("menu.view.panels_position.move_up");
@@ -154,36 +161,39 @@ static SUUpdater *g_Sparkle = nil;
         hide("menu.file.feed_filenames_to_terminal");        
     }
     
-    if(!configuration::has_brief_system_overview)       hide("menu.command.system_overview");
-    if(!configuration::has_unix_attributes_editing)     hide("menu.command.file_attributes");
-    if(!configuration::has_detailed_volume_information) hide("menu.command.volume_information");
-    if(!configuration::has_batch_rename)                hide("menu.command.batch_rename");
+    if(!configuration::has_brief_system_overview)       prohibit("menu.command.system_overview");
+    if(!configuration::has_unix_attributes_editing)     prohibit("menu.command.file_attributes");
+    if(!configuration::has_detailed_volume_information) prohibit("menu.command.volume_information");
+    if(!configuration::has_batch_rename)                prohibit("menu.command.batch_rename");
     // fix for a hanging separator in Lite version
     // BAD, BAD approach with hardcoded standalone tag!
     // need to write a mech to hide separators if surrounding menu items became hidden
     // or just w8 till all upgrade to 10.10, which does it automatically
-    if(!configuration::has_brief_system_overview &&
-       !configuration::has_unix_attributes_editing &&
-       !configuration::has_detailed_volume_information)
-        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
-    if(!configuration::has_internal_viewer)             hide("menu.command.internal_viewer");
-    if(!configuration::has_compression_operation)       hide("menu.command.compress");
+//    if(!configuration::has_brief_system_overview &&
+//       !configuration::has_unix_attributes_editing &&
+//       !configuration::has_detailed_volume_information)
+//        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
+    if(!configuration::has_internal_viewer)             prohibit("menu.command.internal_viewer");
+    if(!configuration::has_compression_operation)       prohibit("menu.command.compress");
     if(!configuration::has_fs_links_manipulation) {
-        hide("menu.command.link_create_soft");
-        hide("menu.command.link_create_hard");
-        hide("menu.command.link_edit");
-        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
+        prohibit("menu.command.link_create_soft");
+        prohibit("menu.command.link_create_hard");
+        prohibit("menu.command.link_edit");
+//        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
     }
     if(!configuration::has_network_connectivity) {
-        hide("menu.go.connect.ftp");
-        hide("menu.go.connect.sftp");
-        hide("menu.go.quick_lists.connections");
-        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
+        prohibit("menu.go.connect.ftp");
+        prohibit("menu.go.connect.sftp");
+        prohibit("menu.go.quick_lists.connections");
+//        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
     }
     
-    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
-    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full ||
-                                                      sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_10;
+    if( !configuration::has_checksum_calculation )
+        prohibit("menu.file.calculate_checksum");
+    if( !configuration::has_xattr_vfs )
+        prohibit("menu.command.open_xattr");
+//    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
+    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -535,19 +545,18 @@ static SUUpdater *g_Sparkle = nil;
     dispatch_to_background([=]{
         string app_name = "Files Pro.app";
         string app_id   = "info.filesmanager.Files-Pro";
+        bool has_paid = MASAppInstalledChecker::Instance().Has(app_name, app_id);
         
-        if(MASAppInstalledChecker::Instance().Has(app_name, app_id))
-            return;
-        
-        // download "red.plist" for every start of an unregistered copy of application
-        if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/red.plist", configuration::website_domain]] ) {
+        // download "red.plist" for every start of an unregistered copy of application or "green.plist" for registered copy
+        if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/%s", configuration::website_domain, has_paid ? "green.plist" : "red.plist"]] ) {
             NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
             NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
-                                                    completionHandler:^(NSData *, NSURLResponse *, NSError *) {
-                                                        NSLog(@"Unregistered!");
-                                                    }];
+                                                    completionHandler:^(NSData *, NSURLResponse *, NSError *) {}];
             [task resume];
         }
+        
+        if( has_paid )
+            return;
         
         // check cooldown criterias
         bool usage_time_exceeds_cooldown = false;
@@ -619,6 +628,12 @@ static SUUpdater *g_Sparkle = nil;
     }
     
     return true;
+}
+
+- (IBAction)showFeatureNotSupportedWindow:(id)sender
+{
+    auto wnd = [[FeatureNotAvailableWindowController alloc] init];
+    [NSApp runModalForWindow:wnd.window];
 }
 
 @end

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="FeatureNotAvailableWindowController">
+            <connections>
+                <outlet property="textView" destination="NYG-dA-6Wc" id="6C1-ZW-Cqr"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="FeatureNotAvailableWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <rect key="contentRect" x="196" y="240" width="305" height="238"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="305" height="238"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hX7-5K-8GG">
+                        <rect key="frame" x="209" y="13" width="82" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="H2C-gB-eyB"/>
+                        </constraints>
+                        <animations/>
+                        <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HH2-SE-ffx">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnClose:" target="-2" id="Ylu-WI-gcY"/>
+                        </connections>
+                    </button>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IgJ-h6-xX0">
+                        <rect key="frame" x="105" y="134" width="96" height="96"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="96" id="7vT-Mx-65B"/>
+                            <constraint firstAttribute="width" constant="96" id="Aze-Q7-EQt"/>
+                        </constraints>
+                        <animations/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="files" id="qvA-sj-mQI"/>
+                    </imageView>
+                    <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="20l-rL-A69">
+                        <rect key="frame" x="20" y="49" width="265" height="77"/>
+                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="kSg-Ql-AK3">
+                            <rect key="frame" x="0.0" y="0.0" width="265" height="77"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="NYG-dA-6Wc" customClass="FeatureNotAvailableTextView">
+                                    <rect key="frame" x="0.0" y="0.0" width="465" height="77"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <animations/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="265" height="77"/>
+                                    <size key="maxSize" width="485" height="254"/>
+                                    <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="265" height="77"/>
+                                    <size key="maxSize" width="485" height="254"/>
+                                </textView>
+                            </subviews>
+                            <animations/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <animations/>
+                        <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="avM-Sq-n9e">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <animations/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1g2-0s-Hab">
+                            <rect key="frame" x="-100" y="-100" width="16" height="135"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <animations/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="hX7-5K-8GG" secondAttribute="trailing" constant="20" symbolic="YES" id="Cmh-5R-7BH"/>
+                    <constraint firstItem="IgJ-h6-xX0" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="F57-cJ-eOv"/>
+                    <constraint firstAttribute="bottom" secondItem="hX7-5K-8GG" secondAttribute="bottom" constant="20" symbolic="YES" id="Jyj-Op-MXQ"/>
+                    <constraint firstItem="hX7-5K-8GG" firstAttribute="top" secondItem="20l-rL-A69" secondAttribute="bottom" constant="8" id="Sy9-iY-NNC"/>
+                    <constraint firstItem="20l-rL-A69" firstAttribute="top" secondItem="IgJ-h6-xX0" secondAttribute="bottom" constant="8" id="W19-7A-FNn"/>
+                    <constraint firstItem="IgJ-h6-xX0" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="8" id="bxO-uY-BcO"/>
+                    <constraint firstItem="20l-rL-A69" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="hd8-mA-JdW"/>
+                    <constraint firstAttribute="trailing" secondItem="20l-rL-A69" secondAttribute="trailing" constant="20" symbolic="YES" id="sff-VW-sv1"/>
+                </constraints>
+                <animations/>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+                <outlet property="initialFirstResponder" destination="hX7-5K-8GG" id="021-TL-lEQ"/>
+            </connections>
+            <point key="canvasLocation" x="526.5" y="481"/>
+        </window>
+    </objects>
+    <resources>
+        <image name="files" width="512" height="512"/>
+    </resources>
+</document>

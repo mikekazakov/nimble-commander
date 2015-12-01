@@ -252,6 +252,12 @@
 		CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF50C4621C0ADF88009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
+		CF50C46B1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
+		CF50C46C1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
+		CF50C46D1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
+		CF50C46E1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
+		CF50C46F1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
+		CF50C4701C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
 		CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
@@ -1166,6 +1172,9 @@
 		CF50B73F1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = vfs/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
 		CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLVFSThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
+		CF50C4681C0DC057009DF611 /* FeatureNotAvailableWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureNotAvailableWindowController.h; sourceTree = "<group>"; };
+		CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FeatureNotAvailableWindowController.mm; sourceTree = "<group>"; };
+		CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeatureNotAvailableWindowController.xib; sourceTree = "<group>"; };
 		CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = archivelib_LIB.xcodeproj; path = 3rd_party/libarchive/archivelib_LIB/archivelib_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatings.mm; sourceTree = "<group>"; };
 		CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatings.h; sourceTree = "<group>"; };
@@ -1838,6 +1847,9 @@
 				CF7B206A1A277A27008F1492 /* TrialWindowController.h */,
 				CF7B206B1A277A27008F1492 /* TrialWindowController.mm */,
 				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
+				CF50C4681C0DC057009DF611 /* FeatureNotAvailableWindowController.h */,
+				CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */,
+				CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */,
 				CF55CDD01B299843001B4F91 /* SheetWithHotkeys.h */,
 				CF55CDD11B299843001B4F91 /* SheetWithHotkeys.mm */,
 				CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */,
@@ -3108,6 +3120,7 @@
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
+				CF50C46F1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */,
 				CFC044E81B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */,
@@ -3155,6 +3168,7 @@
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CF50C46E1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */,
 				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
 				CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
@@ -3239,6 +3253,7 @@
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
+				CF50C4701C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */,
 				CFC044E91B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CFF6F39A1A13567C00011177 /* pref_general_icon.png in Resources */,
 				CFF6F39B1A13567C00011177 /* pref_viewer_icon.png in Resources */,
@@ -3443,6 +3458,7 @@
 				CF7249AF1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CF6D9C41196678010077B146 /* PanelController+Navigation.mm in Sources */,
 				CF6D9C42196678010077B146 /* PanelController+DataAccess.mm in Sources */,
+				CF50C46C1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
 				CF6D9C43196678010077B146 /* PanelController+DelayedSelection.mm in Sources */,
 				CF6D9C44196678010077B146 /* PanelController+QuickSearch.mm in Sources */,
 				CF6D9C45196678010077B146 /* PanelController+DragAndDrop.mm in Sources */,
@@ -3640,6 +3656,7 @@
 				CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */,
+				CF50C46B1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF73D1EA1BE616320014C88F /* VFSNetSFTPFile.cpp in Sources */,
@@ -3845,6 +3862,7 @@
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
 				CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
+				CF50C46D1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,

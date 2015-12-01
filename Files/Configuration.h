@@ -55,6 +55,7 @@ namespace configuration
     constexpr bool is_sandboxed                     = version <= Version::Pro;
     constexpr bool is_for_app_store                 = version <= Version::Pro;
     constexpr bool has_psfs                         = version >= Version::Pro;
+    constexpr bool has_xattr_vfs                    = version >= Version::Pro;
     constexpr bool has_terminal                     = version == Version::Full;
     constexpr bool has_brief_system_overview        = version >= Version::Pro;
     constexpr bool has_unix_attributes_editing      = version >= Version::Pro;

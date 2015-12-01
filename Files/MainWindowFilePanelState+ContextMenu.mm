@@ -61,14 +61,6 @@ static bool ExposeOpenWithHandler(const string &_path, OpenWithHandler &_hndl)
     return true;
 }
 
-static inline chained_strings StringsFromVector(const vector<string> &_files)
-{
-    chained_strings files;
-    for(auto &i:_files)
-        files.push_back(i.c_str(), (int)i.length(), nullptr);
-    return files;
-}
-
 static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
 {
     // _handlers should be already sorted here

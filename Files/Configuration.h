@@ -67,5 +67,6 @@ namespace configuration
     constexpr bool has_network_connectivity         = version >= Version::Pro;
     constexpr bool has_checksum_calculation         = version >= Version::Pro;
     constexpr bool has_batch_rename                 = version >= Version::Pro;
+    constexpr bool has_copy_verification            = version >= Version::Pro;
 }
 #endif

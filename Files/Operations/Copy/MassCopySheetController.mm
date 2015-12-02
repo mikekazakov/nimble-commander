@@ -113,6 +113,8 @@ static string MakeCanonicPath(string _input)
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     [self.VerifySetting selectItemWithTag:(int)m_Options.verification];
+    if( !configuration::has_copy_verification )
+        self.VerifySetting.enabled = false;
 }
 
 - (IBAction)OnCopy:(id)sender

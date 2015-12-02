@@ -184,7 +184,7 @@ static SUUpdater *g_Sparkle = nil;
     if(!configuration::has_network_connectivity) {
         prohibit("menu.go.connect.ftp");
         prohibit("menu.go.connect.sftp");
-        prohibit("menu.go.quick_lists.connections");
+//        prohibit("menu.go.quick_lists.connections");
 //        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
     }
     

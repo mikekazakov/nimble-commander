@@ -42,7 +42,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
                                                        styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
                                                          backing:NSBackingStoreBuffered
                                                            defer:false];
-    window.minSize = NSMakeSize(636, 480);
+    window.minSize = NSMakeSize(640, 480);
     window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     window.restorable = YES;
     window.restorationClass = self.class;

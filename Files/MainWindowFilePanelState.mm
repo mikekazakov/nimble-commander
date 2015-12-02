@@ -665,23 +665,6 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 - (void)WindowDidResize
 {
     [self UpdateTitle];
-    
-    // update some toolbar items' visibility
-    // hardcoded for now, mb write some separate class later
-    if(self.window.frame.size.width < 686) {
-        if(m_Toolbar.items.count == [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
-            // need to hide spinning indicators
-            [m_Toolbar removeItemAtIndex:6];
-            [m_Toolbar removeItemAtIndex:2];
-        }
-    }
-    else {
-        if(m_Toolbar.items.count < [self toolbarAllowedItemIdentifiers:m_Toolbar].count) {
-            // need to show spinning indicators
-            [m_Toolbar insertItemWithItemIdentifier:@"filepanels_left_spinning_indicator" atIndex:2];
-            [m_Toolbar insertItemWithItemIdentifier:@"filepanels_right_spinning_indicator" atIndex:6];
-        }
-    }
 }
 
 - (void)WindowWillClose

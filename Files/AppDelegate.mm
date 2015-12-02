@@ -548,12 +548,14 @@ static SUUpdater *g_Sparkle = nil;
         bool has_paid = MASAppInstalledChecker::Instance().Has(app_name, app_id);
         
         // download "red.plist" for every start of an unregistered copy of application or "green.plist" for registered copy
+#ifndef DEBUG
         if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/%s", configuration::website_domain, has_paid ? "green.plist" : "red.plist"]] ) {
             NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
             NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
                                                     completionHandler:^(NSData *, NSURLResponse *, NSError *) {}];
             [task resume];
         }
+#endif
         
         if( has_paid )
             return;

@@ -13,7 +13,7 @@
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "J19-J3-pgq"; */
 "J19-J3-pgq.title" = "Имя:";
 
-/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m etc"; ObjectID = "SdM-sO-Ddd"; */
+/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m etc"; ObjectID = "SdM-sO-Ddd"; */
 "SdM-sO-Ddd.ibShadowedIsNilPlaceholder" = "*, *.*, *.cpp, *.*m и т.д.";
 
 /* Class = "NSTextFieldCell"; title = "File mask:"; ObjectID = "eP4-pl-vw3"; */
@@ -25,7 +25,7 @@
 /* Class = "NSButtonCell"; title = "..."; ObjectID = "fkZ-WL-MSq"; */
 "fkZ-WL-MSq.title" = "...";
 
-/* Class = "IBBindingConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
+/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
 "mi2-sj-UPs.ibShadowedIsNilPlaceholder" = "%%";
 
 /* Class = "NSTextFieldCell"; title = "Any occurrences of %% will be replaced with file path. You can use backward slashes to escape spaces from being interpreted as parameters dividers."; ObjectID = "wWC-fX-UjM"; */

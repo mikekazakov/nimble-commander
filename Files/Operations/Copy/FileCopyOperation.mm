@@ -581,7 +581,7 @@ static NSString *ExtractCopyToName(const string&_s)
     OperationDialogAlert *alert = [[OperationDialogAlert alloc] init];
     [alert AddButtonWithTitle:@"OK" andResult:FileCopyOperationDR::Continue];
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Chechsum verification failed!", @"Operations", "Error when verification failed")];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Checksum verification failed!", @"Operations", "Error when verification failed")];
     [alert SetInformativeText:
      [NSString stringWithFormat:NSLocalizedStringFromTable(@"MD5 checksum mismatch found for path:\n%@", @"Operations", "Informative text for checksum verification failed"),
                   [NSString stringWithUTF8String:_path]]

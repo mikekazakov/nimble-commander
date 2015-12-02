@@ -73,17 +73,11 @@
 /* Class = "NSTextFieldCell"; title = "Delete (F8):"; ObjectID = "774"; */
 "774.title" = "Удаление (F8):";
 
-/* Class = "NSMenuItem"; title = "Delete Securely"; ObjectID = "793"; */
-"793.title" = "Удалить безопасно";
-
 /* Class = "NSMenuItem"; title = "Delete Permanently"; ObjectID = "794"; */
 "794.title" = "Удалить необратимо";
 
 /* Class = "NSMenuItem"; title = "Move To Trash"; ObjectID = "795"; */
 "795.title" = "Переместить в Корзину";
-
-/* Class = "NSMenuItem"; title = "Delete Securely"; ObjectID = "798"; */
-"798.title" = "Удалить безопасно";
 
 /* Class = "NSMenuItem"; title = "Delete Permanently"; ObjectID = "799"; */
 "799.title" = "Удалить необратимо";

@@ -64,6 +64,9 @@
 /* Class = "NSTextField"; ibShadowedToolTip = "^S"; ObjectID = "a2f-4v-JJC"; */
 "a2f-4v-JJC.ibShadowedToolTip" = "^S";
 
+/* Class = "NSButtonCell"; title = "Panel"; ObjectID = "a08-QI-zeL"; */
+"a08-QI-zeL.title" = "Панель";
+
 /* Class = "NSMenuItem"; title = "Mb"; ObjectID = "c22-DH-E7c"; */
 "c22-DH-E7c.title" = "Мб";
 

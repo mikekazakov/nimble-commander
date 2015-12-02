@@ -1175,6 +1175,8 @@
 		CF50C4681C0DC057009DF611 /* FeatureNotAvailableWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureNotAvailableWindowController.h; sourceTree = "<group>"; };
 		CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FeatureNotAvailableWindowController.mm; sourceTree = "<group>"; };
 		CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeatureNotAvailableWindowController.xib; sourceTree = "<group>"; };
+		CF50C4761C0EB52A009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
+		CF50C4771C0EB6A0009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MassCopySheetController.strings; sourceTree = "<group>"; };
 		CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = archivelib_LIB.xcodeproj; path = 3rd_party/libarchive/archivelib_LIB/archivelib_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatings.mm; sourceTree = "<group>"; };
 		CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatings.h; sourceTree = "<group>"; };
@@ -4028,6 +4030,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9069891BB54052000C3CBB /* Base */,
+				CF50C4761C0EB52A009DF611 /* ru */,
 			);
 			name = FileAlreadyExistSheetController.xib;
 			sourceTree = "<group>";
@@ -4036,6 +4039,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9069931BB54081000C3CBB /* Base */,
+				CF50C4771C0EB6A0009DF611 /* ru */,
 			);
 			name = MassCopySheetController.xib;
 			sourceTree = "<group>";

@@ -22,6 +22,12 @@
 /* Operation title batch renaming */
 "Batch renaming %u items" = "Групповое переименование %u объектов";
 
+/* Error when verification failed */
+"Checksum verification failed!" = "Ошибка верификации контрольной суммы!";
+
+/* ShortInfo text for file copy operation when it's cleaning source files */
+"Cleaning up" = "Завершение";
+
 /* Operation title for compression */
 "Compressing %@ items to “%@”" = "Сжатие %1$@ объектов в “%2$@”";
 
@@ -68,10 +74,10 @@
 "Delete Permanently" = "Удалить необратимо";
 
 /* Operation title for multiple items deletion */
-"Deleting %@ items from “%@”" = "Удаление %1$@ объектов из “%2$@”";
+"Deleting %@ items" = "Удаление %@ объектов";
 
 /* Operation title for single item deletion */
-"Deleting “%@” from “%@”" = "Удаление “%1$@” из “%2$@”";
+"Deleting “%@”" = "Удаление “%@”";
 
 /* Title for error wheen when destination file already exists */
 "Destination already exists. Do you want to rewrite it?" = "Итоговый файл уже существует. Вы хотите переписать его?";
@@ -79,7 +85,8 @@
 /* Informative text on case when destination file already exists */
 "Destination: %@\nSource: %@" = "Итоговый путь: %1$@\nИсходный путь: %2$@";
 
-/* (No Commment) */
+/* Generic informative error text
+   Informative text on error dialog when can't write an archive */
 "Error: %@" = "Ошибка: %@";
 
 /* (No Commment) */
@@ -156,9 +163,6 @@
 /* Error dialog title when can't rename an item when batch renaming */
 "Failed to rename an item" = "Не удалось переименовать объект";
 
-/* Error dialog title when can't securely delete a file */
-"Failed to securely delete a file" = "Не удалось безопасно удалить файл";
-
 /* Error dialog title on time setting failure */
 "Failed to set file time" = "Не удалось установить время файла";
 
@@ -173,6 +177,9 @@
    User action button title
    User action button title to hide an error sheet */
 "Hide" = "Скрыть";
+
+/* Informative text for checksum verification failed */
+"MD5 checksum mismatch found for path:\n%@" = "Несовпадение контрольной суммы MD5:\n%@";
 
 /* Operaration title prefix for moving */
 "Moving" = "Перенос";
@@ -201,4 +208,7 @@
 /* Error dialog button - skipp all items with errors
    Error dialog button title */
 "Skip All" = "Пропустить все";
+
+/* ShortInfo text for file copy operation when veryfying a copy result */
+"Verifying “%@”" = "Верификация “%@”";
 

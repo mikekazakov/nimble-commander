@@ -102,9 +102,6 @@
 /* Menu item title in file deletion sheet */
 "Delete Permanently" = "Удалить необратимо";
 
-/* Menu item title in file deletion sheet */
-"Delete Securely" = "Удалить безопасно";
-
 /* Title for deselection with mask popup */
 "Deselect files using mask:" = "Снять выделение по маске:";
 
@@ -128,6 +125,9 @@
 
 /* Showing error when trying to create an empty file */
 "Failed to create an empty file:" = "Не удалось создать пустой файл:";
+
+/* Alert message text when failed to open xattr vfs */
+"Failed to open extended attributes" = "Не удалось открыть расширенные атрибуты";
 
 /* Favorites popup menu title in file panels */
 "Favorites" = "Избранное";
@@ -156,9 +156,6 @@
 /* Menu item title */
 "Hide Toolbar" = "Скрыть панель инструментов";
 
-/* No comment provided by engineer. */
-"Hide advanced settings" = "Скрыть расширенные настройки";
-
 /* History popup menu title in file panels */
 "History" = "История";
 
@@ -182,6 +179,9 @@
 
 /* No comment provided by engineer. */
 "OK" = "ОК";
+
+/* No comment provided by engineer. */
+"Ok" = "Ок";
 
 /* Title for process sheet when opening a vfs file */
 "Opening file..." = "Открытие файла...";
@@ -255,9 +255,6 @@
 /* Menu item title */
 "Show Toolbar" = "Показать панель инструментов";
 
-/* No comment provided by engineer. */
-"Show advanced settings" = "Показать расширенные настройки";
-
 /* User action to stop running actions and close window */
 "Stop And Close" = "Остановить и закрыть";
 
@@ -281,6 +278,9 @@
 
 /* Asking user for quitting app with activity */
 "The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Прекратить все операции и завершить приложение?";
+
+/* Message text when user is entering an invalid filename */
+"The name “%@” can’t be used." = "Имя “%@” не может быть использовано.";
 
 /* Asking user for confirmation on erasing custom settings - informative text */
 "This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
@@ -339,6 +339,9 @@
 
 /* Fixed-length (6 chars) string for upper-dir, for English is '    Up' */
 "__CLASSICPRESENTATION_UP_WORD" = "Наверх";
+
+/* No comment provided by engineer. */
+"__GENERAL_FEATURE_NOT_AVAILABLE" = "Эта функция недоступна в версии Lite.\rЧтобы использовать её, установите $Files Pro$https://itunes.apple.com/app/files-pro/id942443942?ls=1&mt=12$.\r\r$Узнать больше о возможностях полной версии$http://filesmanager.info/$";
 
 /* Folders dummy string when size is not available, for English is 'Folder' */
 "__MODERNPRESENTATION_FOLDER_WORD" = "Папка";

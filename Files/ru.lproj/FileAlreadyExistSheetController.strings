@@ -10,8 +10,8 @@
 /* Class = "NSButtonCell"; title = "Abort"; ObjectID = "31"; */
 "31.title" = "Отменить";
 
-/* Class = "NSButtonCell"; title = "Remember choice"; ObjectID = "38"; */
-"38.title" = "Запомнить выбор";
+/* Class = "NSButtonCell"; title = "Apply to all"; ObjectID = "38"; */
+"38.title" = "Применить ко всем";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "49"; */
 "49.title" = "";

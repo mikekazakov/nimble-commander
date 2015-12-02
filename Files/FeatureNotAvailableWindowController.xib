@@ -14,14 +14,14 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="FeatureNotAvailableWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <rect key="contentRect" x="196" y="240" width="305" height="238"/>
+            <rect key="contentRect" x="196" y="240" width="360" height="238"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="305" height="238"/>
+                <rect key="frame" x="0.0" y="0.0" width="360" height="238"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hX7-5K-8GG">
-                        <rect key="frame" x="209" y="13" width="82" height="32"/>
+                        <rect key="frame" x="264" y="13" width="82" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="70" id="H2C-gB-eyB"/>
                         </constraints>
@@ -38,7 +38,7 @@ Gw
                         </connections>
                     </button>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IgJ-h6-xX0">
-                        <rect key="frame" x="105" y="134" width="96" height="96"/>
+                        <rect key="frame" x="132" y="134" width="96" height="96"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="96" id="7vT-Mx-65B"/>
                             <constraint firstAttribute="width" constant="96" id="Aze-Q7-EQt"/>
@@ -47,21 +47,21 @@ Gw
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="files" id="qvA-sj-mQI"/>
                     </imageView>
                     <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="20l-rL-A69">
-                        <rect key="frame" x="20" y="49" width="265" height="77"/>
+                        <rect key="frame" x="20" y="49" width="320" height="77"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="kSg-Ql-AK3">
-                            <rect key="frame" x="0.0" y="0.0" width="265" height="77"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="77"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textView editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="NO" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" usesFontPanel="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="NYG-dA-6Wc" customClass="FeatureNotAvailableTextView">
-                                    <rect key="frame" x="0.0" y="0.0" width="465" height="77"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="520" height="77"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <animations/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <size key="minSize" width="265" height="77"/>
-                                    <size key="maxSize" width="485" height="254"/>
+                                    <size key="minSize" width="320" height="77"/>
+                                    <size key="maxSize" width="520" height="254"/>
                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="265" height="77"/>
-                                    <size key="maxSize" width="485" height="254"/>
+                                    <size key="minSize" width="320" height="77"/>
+                                    <size key="maxSize" width="520" height="254"/>
                                 </textView>
                             </subviews>
                             <animations/>
@@ -97,7 +97,7 @@ Gw
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="hX7-5K-8GG" id="021-TL-lEQ"/>
             </connections>
-            <point key="canvasLocation" x="526.5" y="481"/>
+            <point key="canvasLocation" x="554" y="481"/>
         </window>
     </objects>
     <resources>

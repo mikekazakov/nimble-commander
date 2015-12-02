@@ -280,6 +280,9 @@
 /* Class = "NSMenuItem"; title = "External Editor"; ObjectID = "IBo-yJ-DeD"; */
 "IBo-yJ-DeD.title" = "Внешний редактор";
 
+/* Class = "NSMenuItem"; title = "Deselect With Extension"; ObjectID = "KwQ-7L-e5N"; */
+"KwQ-7L-e5N.title" = "Снять выделение по расширению";
+
 /* Class = "NSMenuItem"; title = "Copy File Path"; ObjectID = "KxB-Cc-TKQ"; */
 "KxB-Cc-TKQ.title" = "Копировать путь файла";
 
@@ -318,6 +321,9 @@
 
 /* Class = "NSMenuItem"; title = "Connect To..."; ObjectID = "R1g-do-NyV"; */
 "R1g-do-NyV.title" = "Подключиться к...";
+
+/* Class = "NSMenuItem"; title = "Select With Extension"; ObjectID = "SXp-Fg-ClM"; */
+"SXp-Fg-ClM.title" = "Выделить по расширению";
 
 /* Class = "NSMenuItem"; title = "Quick Lists"; ObjectID = "ToO-KH-35P"; */
 "ToO-KH-35P.title" = "Быстрые списки";
@@ -390,6 +396,9 @@
 
 /* Class = "NSMenuItem"; title = "New Folder with Selection"; ObjectID = "n1z-q2-heV"; */
 "n1z-q2-heV.title" = "Новая папка из выделения";
+
+/* Class = "NSMenuItem"; title = "Open Extended Attributes"; ObjectID = "o44-xu-Cyg"; */
+"o44-xu-Cyg.title" = "Показать расширенные атрибуты";
 
 /* Class = "NSMenuItem"; title = "Processes List"; ObjectID = "ooW-Y5-gXA"; */
 "ooW-Y5-gXA.title" = "Список процессов";

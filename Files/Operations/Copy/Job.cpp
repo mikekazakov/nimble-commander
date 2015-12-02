@@ -206,8 +206,8 @@ void FileCopyOperationJob::ProcessItems()
     m_Stats.SetMaxValue( m_SourceItems.TotalRegBytes() );
     
     const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
-    auto is_same_native_volume = [this, &nfsm = NativeFSManager::Instance()]( int _index ) {
-        return nfsm.VolumeFromDevID( m_SourceItems.ItemDev(_index) ) == m_DestinationNativeFSInfo;
+    auto is_same_native_volume = [this]( int _index ) {
+        return NativeFSManager::Instance().VolumeFromDevID( m_SourceItems.ItemDev(_index) ) == m_DestinationNativeFSInfo;
     };
     
     for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {

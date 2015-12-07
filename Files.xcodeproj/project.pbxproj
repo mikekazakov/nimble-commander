@@ -417,6 +417,7 @@
 		CF73D2051BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */; };
 		CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */; };
 		CF73D2071BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */; };
+		CF747BCB1C117C280081185B /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF747BC91C117C280081185B /* Config.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
@@ -1264,6 +1265,8 @@
 		CF73D20C1BE61BEB0014C88F /* vfs_net_sftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_net_sftp.h; path = vfs/vfs_net_sftp.h; sourceTree = "<group>"; };
 		CF73D20D1BE61BEB0014C88F /* vfs_ps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_ps.h; path = vfs/vfs_ps.h; sourceTree = "<group>"; };
 		CF73D20E1BE61BEB0014C88F /* vfs_xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_xattr.h; path = vfs/vfs_xattr.h; sourceTree = "<group>"; };
+		CF747BC91C117C280081185B /* Config.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Config.mm; sourceTree = "<group>"; };
+		CF747BCA1C117C280081185B /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
@@ -2481,6 +2484,8 @@
 				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
+				CF747BC91C117C280081185B /* Config.mm */,
+				CF747BCA1C117C280081185B /* Config.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3620,6 +3625,7 @@
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
+				CF747BCB1C117C280081185B /* Config.mm in Sources */,
 				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,

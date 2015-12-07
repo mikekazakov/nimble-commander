@@ -39,8 +39,11 @@
 #include "sysinfo.h"
 #include "AppStoreRatings.h"
 #include "FeatureNotAvailableWindowController.h"
+#include "Config.h"
 
 static SUUpdater *g_Sparkle = nil;
+
+static GenericConfig g_Config("/Users/migun/test_defaults.cfg", "/Users/migun/test_overwrites.cfg");
 
 @implementation AppDelegate
 {
@@ -636,6 +639,11 @@ static SUUpdater *g_Sparkle = nil;
 {
     auto wnd = [[FeatureNotAvailableWindowController alloc] init];
     [NSApp runModalForWindow:wnd.window];
+}
+
+- (GenericConfigObjC*) config
+{
+    return g_Config.Bridge();
 }
 
 @end

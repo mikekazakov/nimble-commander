@@ -10,6 +10,7 @@
 #import "ApplicationSkins.h"
 
 @class MainWindowController;
+@class GenericConfigObjC;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -60,5 +61,7 @@
  * May change in the future.
  */
 @property (nonatomic, readonly) const string& configDirectory;
+
+@property (nonatomic, readonly) GenericConfigObjC *config;
 
 @end

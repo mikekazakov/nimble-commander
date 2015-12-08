@@ -123,10 +123,18 @@ GenericConfig &GlobalConfig() noexcept
             [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
         }
     };
-    move_bool(@"FilePanelsGeneralShowDotDotEntry", "filePanel.general.showDotDotEntry");
-    move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask", "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
-    move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut", "filePanel.general.useTildeAsHomeShortcut");
-    move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu", "filePanel.general.appendOtherWindowsPathsToGoToMenu");
+    auto move_int = [](NSString *_default, const char *_config) {
+        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) ) {
+            GlobalConfig().Set(_config, v.intValue);
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
+        }
+    };
+    move_bool(@"FilePanelsGeneralShowDotDotEntry",                       "filePanel.general.showDotDotEntry");
+    move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask",  "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
+    move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut",                 "filePanel.general.useTildeAsHomeShortcut");
+    move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu",     "filePanel.general.appendOtherWindowsPathsToGoToMenu");
+    move_bool(@"FilePanelsGeneralGoToShowConnections",                   "filePanel.general.showNetworkConnectionsInGoToMenu");
+    move_int (@"FilePanelsGeneralGoToConnectionsLimit",                  "filePanel.general.maximumNetworkConnectionsInGoToMenu");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

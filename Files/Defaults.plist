@@ -102,10 +102,6 @@
 	<integer>1</integer>
 	<key>FilePanelsGeneralSelectionSizeFormat</key>
 	<integer>0</integer>
-	<key>FilePanelsGeneralGoToConnectionsLimit</key>
-	<integer>5</integer>
-	<key>FilePanelsGeneralGoToShowConnections</key>
-	<true/>
 	<key>FilePanelsGeneralGoToForceActivation</key>
 	<true/>
 	<key>FilePanelsGeneralRouteKeyboardInputIntoTerminal</key>

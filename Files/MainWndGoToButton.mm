@@ -17,8 +17,8 @@
 #include "PanelController.h"
 #include "Config.h"
 
-static NSString *g_ConnLimitKey = @"FilePanelsGeneralGoToConnectionsLimit";
-static NSString *g_ConnShowKey  = @"FilePanelsGeneralGoToShowConnections";
+static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
+static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
 static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";
 
 // TODO: make this less stupid
@@ -351,7 +351,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     }
     
     // Recent Network Connections
-    if( [NSUserDefaults.standardUserDefaults boolForKey:g_ConnShowKey] ) {
+    if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) ) {
         static auto network_image = []{
             NSImage *m = [NSImage imageNamed:NSImageNameNetwork];
             m.size = icon_size;
@@ -360,7 +360,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
         
         auto connections = SavedNetworkConnectionsManager::Instance().Connections();
 
-        auto limit = max([NSUserDefaults.standardUserDefaults integerForKey:g_ConnLimitKey], 0l);
+        auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
         if(connections.size() > limit)
             connections.resize(limit);
         

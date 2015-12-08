@@ -17,6 +17,22 @@
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
 
+@interface PreferencesToNumberValueTransformer : NSValueTransformer
+@end
+
+@implementation PreferencesToNumberValueTransformer
++(Class)transformedValueClass {
+    return [NSNumber class];
+}
+-(id)transformedValue:(id)value {
+    if( auto n = objc_cast<NSNumber>(value) )
+        return n;
+    else if( auto s = objc_cast<NSString>(value) )
+        return [NSNumber numberWithInt:s.intValue];
+    return @0;
+}
+@end
+
 @implementation PreferencesWindowPanelsTab
 {
     NSFont *m_ClassicFont;

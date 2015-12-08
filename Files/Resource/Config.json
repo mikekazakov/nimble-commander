@@ -1,9 +1,8 @@
 {
-    
-  
     "filePanel": {
 
         "general": {
+            
             "ignoreDirectoriesOnSelectionWithMask": true,
 
             "showDotDotEntry": true,
@@ -12,13 +11,14 @@
 
             "appendOtherWindowsPathsToGoToMenu": true,
             
+            "showNetworkConnectionsInGoToMenu": true,
             
+            "maximumNetworkConnectionsInGoToMenu": 5,
+                        
             "archivesExtensionsWhitelist": "zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar",
             
             "executableExtensionsWhitelist": "sh, pl, rb, py"
 
         }
     }
-    
-    
 }

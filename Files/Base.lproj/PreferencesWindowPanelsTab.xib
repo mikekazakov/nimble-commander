@@ -1071,7 +1071,7 @@
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToShowConnections" id="252-YQ-wKF"/>
+                                <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.showNetworkConnectionsInGoToMenu" id="Vwb-ve-mcT"/>
                             </connections>
                         </button>
                         <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jkP-c6-fJK">
@@ -1086,8 +1086,11 @@
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                             <connections>
-                                <binding destination="36" name="value" keyPath="values.FilePanelsGeneralGoToConnectionsLimit" id="0gk-5O-41o"/>
-                                <binding destination="36" name="enabled" keyPath="values.FilePanelsGeneralGoToShowConnections" id="D3A-Fc-I7d"/>
+                                <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.maximumNetworkConnectionsInGoToMenu" id="nfc-IK-vtQ">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">PreferencesToNumberValueTransformer</string>
+                                    </dictionary>
+                                </binding>
                             </connections>
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">

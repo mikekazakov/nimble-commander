@@ -196,6 +196,19 @@ bool GenericConfig::GetBool(const char *_path) const
     return false;
 }
 
+int GenericConfig::GetInt(const char *_path) const
+{
+    auto v = GetInternal(_path);
+    if( v.GetType() == rapidjson::kNumberType ) {
+        if( v.IsInt() )         return v.GetInt();
+        else if( v.IsUint()  )  return (int)v.GetUint();
+        else if( v.IsInt64() )  return (int)v.GetInt64();
+        else if( v.IsUint64() ) return (int)v.GetUint64();
+        else if( v.IsDouble() ) return (int)v.GetDouble();
+    }
+    return 0;
+}
+
 GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 {
     lock_guard<mutex> lock(m_DocumentLock);
@@ -232,6 +245,26 @@ GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 }
 
 bool GenericConfig::Set(const char *_path, int _value)
+{
+    return SetInternal( _path, ConfigValue(_value) );
+}
+
+bool GenericConfig::Set(const char *_path, unsigned int _value)
+{
+    return SetInternal( _path, ConfigValue(_value) );
+}
+
+bool GenericConfig::Set(const char *_path, long long _value)
+{
+    return SetInternal( _path, ConfigValue(_value) );
+}
+
+bool GenericConfig::Set(const char *_path, unsigned long long _value)
+{
+    return SetInternal( _path, ConfigValue(_value) );
+}
+
+bool GenericConfig::Set(const char *_path, double _value)
 {
     return SetInternal( _path, ConfigValue(_value) );
 }
@@ -454,7 +487,13 @@ void GenericConfig::FireObservers(const char *_path)
         case rapidjson::kTrueType:      return [NSNumber numberWithBool:true];
         case rapidjson::kFalseType:     return [NSNumber numberWithBool:false];
         case rapidjson::kStringType:    return [NSString stringWithUTF8String:v.GetString()];
-        case rapidjson::kNumberType:    return [NSNumber numberWithInt:v.GetInt()];
+        case rapidjson::kNumberType:
+            if( v.IsInt() )             return [NSNumber numberWithInt:v.GetInt()];
+            else if( v.IsUint()  )      return [NSNumber numberWithUnsignedInt:v.GetUint()];
+            else if( v.IsInt64() )      return [NSNumber numberWithLongLong:v.GetInt64()];
+            else if( v.IsUint64() )     return [NSNumber numberWithUnsignedLongLong:v.GetUint64()];
+            else if( v.IsDouble() )     return [NSNumber numberWithDouble:v.GetDouble()];
+            else                        return nil; // future guard
         default: break;
     }
     
@@ -483,33 +522,33 @@ void GenericConfig::FireObservers(const char *_path)
 
 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath
 {
-    if( value ) {
-        if( auto n = objc_cast<NSNumber>(value) ) {
-            auto type = n.objCType;
-            if( strcmp(type, @encode(BOOL)) == 0 ) {
-                m_Config->Set( keyPath.UTF8String, (bool)n.boolValue );
-                
-//                int a = 19;
-                
-            }
-            
-//            CFNumberType
-            
-//            NSNumber * n = [NSNumber numberWithBool:YES];
-//            if (strcmp([n objCType], @encode(BOOL)) == 0) {
-//                NSLog(@"this is a bool");
-//            } else if (strcmp([n objCType], @encode(int)) == 0) {
-//                NSLog(@"this is an int");
-//            }
-            
-            
-//            m_Config->Set(keyPath.UTF8String, n.intValue);
-            
-            
-        }
-        
-        
+    if( auto n = objc_cast<NSNumber>(value) ) {
+        auto type = n.objCType;
+        if( strcmp(type, @encode(BOOL)) == 0 )
+            m_Config->Set( keyPath.UTF8String, (bool)n.boolValue );
+        else if( strcmp(type, @encode(int)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.intValue );
+        else if( strcmp(type, @encode(short)) == 0 )
+            m_Config->Set( keyPath.UTF8String, (int)n.shortValue );
+        else if( strcmp(type, @encode(long)) == 0 )
+            m_Config->Set( keyPath.UTF8String, (int)n.longValue );
+        else if( strcmp(type, @encode(long long)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.longLongValue );
+        else if( strcmp(type, @encode(unsigned int)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.unsignedIntValue );
+        else if( strcmp(type, @encode(unsigned short)) == 0 )
+            m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedShortValue );
+        else if( strcmp(type, @encode(unsigned long)) == 0 )
+            m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedLongValue );
+        else if( strcmp(type, @encode(unsigned long long)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.unsignedLongLongValue );
+        else if( strcmp(type, @encode(double)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.doubleValue );
+        else if( strcmp(type, @encode(float)) == 0 )
+            m_Config->Set( keyPath.UTF8String, n.floatValue );
     }
+    else if( auto s = objc_cast<NSString>(value) )
+        m_Config->Set( keyPath.UTF8String, s.UTF8String );
 }
 
 //- (void) addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context

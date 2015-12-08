@@ -22,9 +22,22 @@ public:
     ConfigValue Get(const string &_path) const;
     ConfigValue Get(const char *_path) const;
     optional<string> GetString(const char *_path) const;
+
+    /**
+     * Return false if value wasn't found.
+     */
     bool GetBool(const char *_path) const;
     
+    /**
+     * Return 0 if value wasn't found.
+     */
+    int GetInt(const char *_path) const;
+    
     bool Set(const char *_path, int _value);
+    bool Set(const char *_path, unsigned int _value);
+    bool Set(const char *_path, long long _value);
+    bool Set(const char *_path, unsigned long long _value);
+    bool Set(const char *_path, double _value);
     bool Set(const char *_path, bool _value);
     bool Set(const char *_path, const string &_value);
     bool Set(const char *_path, const char *_value);

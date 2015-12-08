@@ -114,9 +114,6 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     m_OverwritesPath(_overwrites),
     m_DefaultsPath(_defaults)
 {
-    
-    
-
     string def = Load(m_DefaultsPath);
     rapidjson::Document defaults;
     rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
@@ -126,24 +123,8 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
         exit(EXIT_FAILURE);
     }
     
-//    bool b = d.HasMember("int_value");
-//    int bb = d["int_value"].GetInt();
-//    int bbb = d["something"]["inside_something"].GetInt();
-    
-    
-//    Document doc;
-//    ParseResult ok = doc.Parse("[42]");
-//    if (!ok) {
-//        fprintf(stderr, "JSON parse error: %s (%u)",
-//                GetParseError_En(ok.Code()), ok.Offset());
-//        exit(EXIT_FAILURE);
-//    }
-    
-    
-//    m_Current = d;
     m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
     m_Current.CopyFrom(defaults, m_Defaults.GetAllocator());
-
 
     string over = Load(m_OverwritesPath);
     if( !over.empty() ) {
@@ -154,18 +135,6 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
         else
             MergeDocument(m_Current, overwrites);
     }
-//    
-//    auto aa1 = Get("something.inside_something").GetInt();
-//    Set("something.inside_something", 150);
-//    auto aa2 = Get("something.inside_something").GetInt();
-    
-//    Get("something..inside_something");
-//    Get("something..");
-//    Get("something.");
-//    Get("something..inside_something.");
-    
-//    int a = 10;
-//    a = 11;
     
     m_Bridge = [[GenericConfigObjC alloc] initWithConfig:this];
 }
@@ -424,7 +393,23 @@ GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path, funct
 
 void GenericConfig::StopObserving(unsigned long _ticket)
 {
-    // later
+    if( !_ticket )
+        return;
+    
+    lock_guard<mutex> lock(m_ObserversLock);
+    for( auto &path: m_Observers ) {
+        auto &observers = path.second;
+        for( size_t i = 0, e = observers->size(); i != e; ++i ) {
+            auto &o = (*observers)[i];
+            if( o->ticket == _ticket ) {
+                auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+                *new_observers = *observers;
+                new_observers->erase( next(new_observers->begin(), i) );
+                path.second = new_observers;
+                return;
+            }
+        }
+    }
 }
 
 shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path)
@@ -444,26 +429,9 @@ void GenericConfig::FireObservers(const char *_path)
             o->callback();
 }
 
-//static int a = []{
-//    GenericConfig gc("/Users/migun/test_defaults.cfg", "/Users/migun/test_overwrites.cfg");
-//    
-//    
-//    
-//    
-//    return 0;
-//}();
-
-//struct GenericConfigObjCObserver
-//{
-//    __weak NSObject            *observer;
-//    NSKeyValueObservingOptions  options;
-//    void                       *context;
-//};
-
 @implementation GenericConfigObjC
 {
-    GenericConfig                                               *m_Config;
-//    unordered_map<string, vector<GenericConfigObjCObserver>>     m_Observers;
+    GenericConfig *m_Config;
 }
 
 - (instancetype) initWithConfig:(GenericConfig*)_config

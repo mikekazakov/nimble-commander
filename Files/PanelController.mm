@@ -25,18 +25,15 @@ static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.gen
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigUseTildeAsHomeShortcut                = "filePanel.general.useTildeAsHomeShortcut";
+static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
 
 static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static auto g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
 static auto g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
-static auto g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
-static auto g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
 static auto g_DefaultsGeneralRouteKeyboardInputIntoTerminal =  @"FilePanelsGeneralRouteKeyboardInputIntoTerminal";
 static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
-                               g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
-                               g_DefaultsGeneralShowDotDotEntry,
-                               g_DefaultsGeneralShowLocalizedFilenames];
+                               g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView];
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -131,7 +128,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         [self observeValueForKeyPath:g_DefaultsQuickSearchWhereToFind ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [self observeValueForKeyPath:g_DefaultsGeneralShowLocalizedFilenames ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:g_DefaultsKeys];
         
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -140,11 +136,11 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         [self RegisterDragAndDropListeners];
         
         __weak PanelController *weak_self = self;
-        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowDotDotEntry, [=]{
-            [(PanelController *)weak_self configShowDotDotEntryChanged];
-        }));
+        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowDotDotEntry, [=]{ [(PanelController *)weak_self configShowDotDotEntryChanged]; }));
+        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowLocalizedFilenames, [=]{ [(PanelController *)weak_self configShowLocalizedFilenamesChanged]; }));
         
         [self configShowDotDotEntryChanged];
+        [self configShowLocalizedFilenamesChanged];
     }
 
     return self;
@@ -161,6 +157,15 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
+    [self RefreshDirectory];
+}
+
+- (void)configShowLocalizedFilenamesChanged
+{
+    if( GlobalConfig().GetBool(g_ConfigShowLocalizedFilenames) == true )
+        m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
+    else
+        m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
     [self RefreshDirectory];
 }
 
@@ -185,13 +190,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         else if([keyPath isEqualToString:g_DefaultsQuickSearchTypingView]) {
             m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
             [self QuickSearchClearFiltering];
-        }
-        else if([keyPath isEqualToString:g_DefaultsGeneralShowLocalizedFilenames]) {
-            if([defaults boolForKey:g_DefaultsGeneralShowLocalizedFilenames] == true)
-                m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
-            else
-                m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
-            [self RefreshDirectory];
         }
     }
 }

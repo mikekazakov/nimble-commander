@@ -5,6 +5,8 @@
             
             "ignoreDirectoriesOnSelectionWithMask": true,
 
+            "showLocalizedFilenames": true,
+            
             "showDotDotEntry": true,
   
             "showVolumeInformationBar": true,

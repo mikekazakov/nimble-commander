@@ -1133,7 +1133,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowLocalizedFilenames" id="71K-og-ztz"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.showLocalizedFilenames" id="dQk-ix-Mpz"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">

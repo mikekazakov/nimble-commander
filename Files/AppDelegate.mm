@@ -136,6 +136,7 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"FilePanelsGeneralGoToShowConnections",                      "filePanel.general.showNetworkConnectionsInGoToMenu");
     move_int (@"FilePanelsGeneralGoToConnectionsLimit",                     "filePanel.general.maximumNetworkConnectionsInGoToMenu");
     move_bool(@"FilePanelsGeneralShowVolumeInformationBar",                 "filePanel.general.showVolumeInformationBar");
+    move_bool(@"FilePanelsGeneralShowLocalizedFilenames",                   "filePanel.general.showLocalizedFilenames");
     move_int (@"FilePanels_Modern_FontSize",                                "filePanel.modern.fontSize");
 }
 

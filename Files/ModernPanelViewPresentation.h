@@ -106,7 +106,6 @@ private:
     
     static NSImage *m_SymlinkArrowImage;
     
-    ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     ObjcToCppObservingBlockBridge *m_TitleObserver;
     

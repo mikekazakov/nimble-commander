@@ -21,6 +21,10 @@
             
             "executableExtensionsWhitelist": "sh, pl, rb, py"
 
+        },
+        
+        "modern": {
+            "fontSize": 13
         }
     }
 }

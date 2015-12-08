@@ -20,8 +20,7 @@
 #import "ByteCountFormatter.h"
 
 static const auto g_ConfigShowVolumeBar = "filePanel.general.showVolumeInformationBar";
-
-static auto g_FontSizeKey = @"FilePanels_Modern_FontSize";
+static const auto g_ConfigFontSize = "filePanel.modern.fontSize";
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -130,17 +129,8 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     BuildGeometry();
     BuildAppearance();
     
-    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,[=]{
-        OnGeometryOptionsChanged();
-    }));
-    
-    m_GeometryObserver = [ObjcToCppObservingBlockBridge
-                          bridgeWithObject:NSUserDefaults.standardUserDefaults
-                          forKeyPaths:@[g_FontSizeKey]
-                          options:0
-                          block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                              OnGeometryOptionsChanged();
-                          }];
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,[=]{ OnGeometryOptionsChanged(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFontSize,     [=]{ OnGeometryOptionsChanged(); }));
     
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
                             bridgeWithObject:NSUserDefaults.standardUserDefaults
@@ -191,7 +181,7 @@ void ModernPanelViewPresentation::OnGeometryOptionsChanged()
 void ModernPanelViewPresentation::BuildGeometry()
 {
     // build font geometry according current settings
-    m_Font = [NSFont systemFontOfSize:[NSUserDefaults.standardUserDefaults integerForKey:g_FontSizeKey]];
+    m_Font = [NSFont systemFontOfSize:GlobalConfig().GetInt(g_ConfigFontSize)];
     if(!m_Font) m_Font = [NSFont systemFontOfSize:13];
     if(!m_Font) m_Font = [NSFont fontWithName:@"Lucida Grande" size:13];
     

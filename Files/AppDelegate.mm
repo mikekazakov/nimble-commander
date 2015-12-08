@@ -129,13 +129,14 @@ GenericConfig &GlobalConfig() noexcept
             [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
         }
     };
-    move_bool(@"FilePanelsGeneralShowDotDotEntry",                       "filePanel.general.showDotDotEntry");
-    move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask",  "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
-    move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut",                 "filePanel.general.useTildeAsHomeShortcut");
-    move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu",     "filePanel.general.appendOtherWindowsPathsToGoToMenu");
-    move_bool(@"FilePanelsGeneralGoToShowConnections",                   "filePanel.general.showNetworkConnectionsInGoToMenu");
-    move_int (@"FilePanelsGeneralGoToConnectionsLimit",                  "filePanel.general.maximumNetworkConnectionsInGoToMenu");
-    move_bool(@"FilePanelsGeneralShowVolumeInformationBar",              "filePanel.general.showVolumeInformationBar");
+    move_bool(@"FilePanelsGeneralShowDotDotEntry",                          "filePanel.general.showDotDotEntry");
+    move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask",     "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
+    move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut",                    "filePanel.general.useTildeAsHomeShortcut");
+    move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu",        "filePanel.general.appendOtherWindowsPathsToGoToMenu");
+    move_bool(@"FilePanelsGeneralGoToShowConnections",                      "filePanel.general.showNetworkConnectionsInGoToMenu");
+    move_int (@"FilePanelsGeneralGoToConnectionsLimit",                     "filePanel.general.maximumNetworkConnectionsInGoToMenu");
+    move_bool(@"FilePanelsGeneralShowVolumeInformationBar",                 "filePanel.general.showVolumeInformationBar");
+    move_int (@"FilePanels_Modern_FontSize",                                "filePanel.modern.fontSize");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

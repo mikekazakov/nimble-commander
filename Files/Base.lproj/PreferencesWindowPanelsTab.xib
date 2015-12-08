@@ -1144,7 +1144,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowVolumeInformationBar" id="ean-d2-Api"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.showVolumeInformationBar" id="1w8-lC-GEr"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">

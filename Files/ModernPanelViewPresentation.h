@@ -11,6 +11,7 @@
 #import "PanelViewPresentationItemsColoringFilter.h"
 #import "ObjcToCppObservingBridge.h"
 #import "IconsGenerator.h"
+#include "Config.h"
 
 @class PanelView;
 class ModernPanelViewPresentationIconCache;
@@ -75,6 +76,7 @@ private:
     ItemLayout LayoutItem(int _item_index) const;
     void CalculateLayoutFromFrame();
     void OnDirectoryChanged() override;
+    void OnGeometryOptionsChanged();
     void BuildGeometry();
     void BuildAppearance();
     const ColoringAttrs& AttrsForItem(const VFSListingItem& _item, const PanelVolatileData& _item_vd) const;
@@ -112,4 +114,5 @@ private:
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;
     unique_ptr<ModernPanelViewPresentationItemsFooter> m_ItemsFooter;
     unique_ptr<ModernPanelViewPresentationVolumeFooter> m_VolumeFooter;
+    vector<GenericConfig::ObservationTicket>    m_ConfigObservations;
 };

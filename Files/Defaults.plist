@@ -92,8 +92,6 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>FilePanelsGeneralShowVolumeInformationBar</key>
-	<true/>
 	<key>FilePanelsGeneralShowLocalizedFilenames</key>
 	<true/>
 	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>

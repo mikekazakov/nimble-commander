@@ -135,6 +135,7 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu",     "filePanel.general.appendOtherWindowsPathsToGoToMenu");
     move_bool(@"FilePanelsGeneralGoToShowConnections",                   "filePanel.general.showNetworkConnectionsInGoToMenu");
     move_int (@"FilePanelsGeneralGoToConnectionsLimit",                  "filePanel.general.maximumNetworkConnectionsInGoToMenu");
+    move_bool(@"FilePanelsGeneralShowVolumeInformationBar",              "filePanel.general.showVolumeInformationBar");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

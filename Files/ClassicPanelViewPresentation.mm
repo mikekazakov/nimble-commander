@@ -20,6 +20,8 @@
 // Helper functions and constants.
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static const auto g_ConfigShowVolumeBar = "filePanel.general.showVolumeInformationBar";
+
 static char *strlefttrim(char *_s, char _c)
 {
     int amount = 0;
@@ -296,15 +298,16 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_vi
     BuildGeometry();
     BuildAppearance();
     
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar, [=]{
+        OnGeometryOptionsChanged();
+    }));
+    
     m_GeometryObserver = [ObjcToCppObservingBlockBridge
                           bridgeWithObject:NSUserDefaults.standardUserDefaults
-                          forKeyPaths:@[@"FilePanelsClassicFont", @"FilePanelsGeneralShowVolumeInformationBar"]
+                          forKeyPaths:@[@"FilePanelsClassicFont"]
                           options:0
                           block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                              BuildGeometry();
-                              CalcLayout(m_FrameSize);
-                              EnsureCursorIsVisible();
-                              SetViewNeedsDisplay();
+                              OnGeometryOptionsChanged();
                           }];
 
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
@@ -323,6 +326,14 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_vi
     
 }
 
+void ClassicPanelViewPresentation::OnGeometryOptionsChanged()
+{
+    BuildGeometry();
+    CalcLayout(m_FrameSize);
+    EnsureCursorIsVisible();
+    SetViewNeedsDisplay();
+}
+
 void ClassicPanelViewPresentation::BuildGeometry()
 {
     CTFontRef font = (CTFontRef)CFBridgingRetain([NSUserDefaults.standardUserDefaults fontForKey:@"FilePanelsClassicFont"]);
@@ -331,7 +342,7 @@ void ClassicPanelViewPresentation::BuildGeometry()
     m_FontCache = FontCache::FontCacheFromFont(font);
     CFRelease(font);
     
-    m_DrawVolumeInfo = [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralShowVolumeInformationBar"];
+    m_DrawVolumeInfo = GlobalConfig().GetBool(g_ConfigShowVolumeBar);
 }
 
 void ClassicPanelViewPresentation::BuildAppearance()

@@ -6,6 +6,8 @@
             "ignoreDirectoriesOnSelectionWithMask": true,
 
             "showDotDotEntry": true,
+  
+            "showVolumeInformationBar": true,
 
             "useTildeAsHomeShortcut": true,
 

@@ -19,6 +19,8 @@
 #import "ModernPanelViewPresentationVolumeFooter.h"
 #import "ByteCountFormatter.h"
 
+static const auto g_ConfigShowVolumeBar = "filePanel.general.showVolumeInformationBar";
+
 static auto g_FontSizeKey = @"FilePanels_Modern_FontSize";
 
 static NSString* FormHumanReadableShortDate(time_t _in)
@@ -128,17 +130,16 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     BuildGeometry();
     BuildAppearance();
     
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,[=]{
+        OnGeometryOptionsChanged();
+    }));
+    
     m_GeometryObserver = [ObjcToCppObservingBlockBridge
                           bridgeWithObject:NSUserDefaults.standardUserDefaults
-                          forKeyPaths:@[g_FontSizeKey,
-                                        @"FilePanelsGeneralShowVolumeInformationBar"]
+                          forKeyPaths:@[g_FontSizeKey]
                           options:0
                           block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                              BuildGeometry();
-                              CalculateLayoutFromFrame();
-                              m_State->Data->CustomIconClearAll();
-                              BuildAppearance();
-                              SetViewNeedsDisplay();
+                              OnGeometryOptionsChanged();
                           }];
     
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
@@ -178,8 +179,17 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
         m_State->Data->CustomIconClearAll();
 }
 
+void ModernPanelViewPresentation::OnGeometryOptionsChanged()
+{
+    BuildGeometry();
+    CalculateLayoutFromFrame();
+    m_State->Data->CustomIconClearAll();
+    BuildAppearance();
+    SetViewNeedsDisplay();
+}
+
 void ModernPanelViewPresentation::BuildGeometry()
-{    
+{
     // build font geometry according current settings
     m_Font = [NSFont systemFontOfSize:[NSUserDefaults.standardUserDefaults integerForKey:g_FontSizeKey]];
     if(!m_Font) m_Font = [NSFont systemFontOfSize:13];
@@ -238,7 +248,7 @@ void ModernPanelViewPresentation::BuildGeometry()
             m_TimeColumnWidth = tw;
     }
     
-    bool need_volume_bar = [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralShowVolumeInformationBar"];
+    bool need_volume_bar = GlobalConfig().GetBool( g_ConfigShowVolumeBar );
     if(need_volume_bar && m_VolumeFooter == nullptr)
         m_VolumeFooter = make_unique<ModernPanelViewPresentationVolumeFooter>();
     else if(!need_volume_bar && m_VolumeFooter != nullptr)

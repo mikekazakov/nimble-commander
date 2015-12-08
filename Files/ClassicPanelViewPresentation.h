@@ -8,11 +8,12 @@
 
 #pragma once
 
+#include "vfs/VFS.h"
 #include "PanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
 #include "ObjcToCppObservingBridge.h"
-#include "vfs/VFS.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
+#include "Config.h"
 
 class FontCache;
 @class PanelView;
@@ -49,6 +50,7 @@ public:
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     
 private:
+    void OnGeometryOptionsChanged();
     void BuildGeometry();
     void BuildAppearance();
     void DoDraw(CGContextRef _context);
@@ -81,4 +83,5 @@ private:
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
     ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     bool            m_DrawVolumeInfo = true;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 };

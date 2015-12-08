@@ -1,0 +1,24 @@
+{
+    
+  
+    "filePanel": {
+
+        "general": {
+            "ignoreDirectoriesOnSelectionWithMask": true,
+
+            "showDotDotEntry": true,
+
+            "useTildeAsHomeShortcut": true,
+
+            "appendOtherWindowsPathsToGoToMenu": true,
+            
+            
+            "archivesExtensionsWhitelist": "zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar",
+            
+            "executableExtensionsWhitelist": "sh, pl, rb, py"
+
+        }
+    }
+    
+    
+}

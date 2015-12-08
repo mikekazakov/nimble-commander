@@ -12,6 +12,7 @@
 #include "PanelView.h"
 #include "PanelHistory.h"
 #include "DispatchQueue.h"
+#include "Config.h"
 
 @class QuickLookView;
 @class BriefSystemOverview;
@@ -123,6 +124,8 @@ namespace panel
     
     
     __weak MainWindowFilePanelState* m_FilePanelState;
+    
+    vector<GenericConfig::ObservationTicket> m_ConfigObservers;
 }
 
 @property (nonatomic) MainWindowFilePanelState* state;

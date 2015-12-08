@@ -465,6 +465,7 @@
 		CF7D13941BF5E3A8001F53FD /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
 		CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */; };
 		CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
+		CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -1342,6 +1343,7 @@
 		CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericOperationView.mm; path = Operations/GenericOperationView.mm; sourceTree = "<group>"; };
 		CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsSummaryViewController.mm; path = Operations/OperationsSummaryViewController.mm; sourceTree = "<group>"; };
 		CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OperationsSummaryViewController.xib; path = Operations/OperationsSummaryViewController.xib; sourceTree = "<group>"; };
+		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = Resource/Config.json; sourceTree = "<group>"; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
@@ -1747,6 +1749,7 @@
 				CFB5989A196E38C700D4C108 /* Art */,
 				CFB598BF196E3A0400D4C108 /* Doc */,
 				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
+				CF7D7A741C15AAC200ECEBA0 /* Config.json */,
 				CF4E33D11B75F889005B5292 /* Defaults.plist */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
 				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
@@ -3141,6 +3144,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */,
 				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */,

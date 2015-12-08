@@ -15,10 +15,11 @@
 #include "MainWindowController.h"
 #include "NativeFSManager.h"
 #include "PanelController.h"
+#include "Config.h"
 
 static NSString *g_ConnLimitKey = @"FilePanelsGeneralGoToConnectionsLimit";
 static NSString *g_ConnShowKey  = @"FilePanelsGeneralGoToShowConnections";
-static NSString *g_ShowOthersKey = @"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu";
+static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";
 
 // TODO: make this less stupid
 struct AdditionalPath
@@ -218,7 +219,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
 {
     m_OtherPanelsPaths.clear();
     
-    if(![NSUserDefaults.standardUserDefaults boolForKey:g_ShowOthersKey])
+    if( !GlobalConfig().GetBool(g_ConfigShowOthersKey) )
         return;
     
     MainWindowFilePanelState *owner = m_Owner;

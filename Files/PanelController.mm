@@ -19,20 +19,23 @@
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"
 #include "ExtensionLowercaseComparison.h"
+#include "Config.h"
 
-static auto g_DefaultsArchivesExtensionsWhitelist = @"FilePanels_General_ArchivesExtensionsWhitelist";
+static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.general.archivesExtensionsWhitelist";
+static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
+static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
+static const auto g_ConfigUseTildeAsHomeShortcut                = "filePanel.general.useTildeAsHomeShortcut";
+
 static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
 static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
 static auto g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
 static auto g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
 static auto g_DefaultsGeneralShowDotDotEntry       = @"FilePanelsGeneralShowDotDotEntry";
 static auto g_DefaultsGeneralShowLocalizedFilenames= @"FilePanelsGeneralShowLocalizedFilenames";
-static auto g_DefaultsGeneralIgnoreDirsOnMaskSel   = @"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask";
-static auto g_DefaultsGeneraluseTildeAsHomeShortcut =  @"FilePanelsGeneralUseTildeAsHomeShotcut";
 static auto g_DefaultsGeneralRouteKeyboardInputIntoTerminal =  @"FilePanelsGeneralRouteKeyboardInputIntoTerminal";
 static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
                                g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView,
-                               g_DefaultsGeneralShowDotDotEntry, g_DefaultsGeneralIgnoreDirsOnMaskSel,
+                               g_DefaultsGeneralShowDotDotEntry,
                                g_DefaultsGeneralShowLocalizedFilenames];
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
@@ -71,9 +74,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
     static const vector<string> archive_extensions = []{
         vector<string> v;
-        if( auto exts_string = objc_cast<NSString>([NSUserDefaults.standardUserDefaults stringForKey:g_DefaultsArchivesExtensionsWhitelist]) ) {
+        if( auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList) ) {
             // load extensions list from defaults
-            if( auto extensions_array = [exts_string componentsSeparatedByString:@","] )
+            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
                 for( NSString *s: extensions_array )
                     if( s != nil && s.length > 0 )
                         if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
@@ -128,7 +131,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         [self observeValueForKeyPath:g_DefaultsQuickSearchWhereToFind ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [self observeValueForKeyPath:g_DefaultsGeneralShowDotDotEntry ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [self observeValueForKeyPath:g_DefaultsGeneralShowLocalizedFilenames ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:g_DefaultsKeys];
         
@@ -136,6 +138,13 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_View.delegate = self;
         m_View.data = &m_Data;
         [self RegisterDragAndDropListeners];
+        
+        __weak PanelController *weak_self = self;
+        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowDotDotEntry, [=]{
+            [(PanelController *)weak_self configShowDotDotEntryChanged];
+        }));
+        
+        [self configShowDotDotEntryChanged];
     }
 
     return self;
@@ -144,6 +153,15 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 - (void) dealloc
 {
     [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:g_DefaultsKeys];
+}
+
+- (void)configShowDotDotEntryChanged
+{
+    if( GlobalConfig().GetBool(g_ConfigShowDotDotEntry) == false )
+        m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
+    else
+        m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
+    [self RefreshDirectory];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -167,13 +185,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         else if([keyPath isEqualToString:g_DefaultsQuickSearchTypingView]) {
             m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
             [self QuickSearchClearFiltering];
-        }
-        else if([keyPath isEqualToString:g_DefaultsGeneralShowDotDotEntry]) {
-            if([defaults boolForKey:g_DefaultsGeneralShowDotDotEntry] == false)
-                m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
-            else
-                m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
-            [self RefreshDirectory];
         }
         else if([keyPath isEqualToString:g_DefaultsGeneralShowLocalizedFilenames]) {
             if([defaults boolForKey:g_DefaultsGeneralShowLocalizedFilenames] == true)
@@ -217,7 +228,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (bool) ignoreDirectoriesOnSelectionByMask
 {
-    return [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralIgnoreDirsOnMaskSel];
+    return GlobalConfig().GetBool(g_ConfigIgnoreDirectoriesOnMaskSelection);
 }
 
 - (void) setOptions:(NSDictionary *)options
@@ -479,7 +490,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         }
         if( unicode == '~' &&
            (modif & (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
-           [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneraluseTildeAsHomeShortcut] &&
+            GlobalConfig().GetBool(g_ConfigUseTildeAsHomeShortcut) &&
            !terminal_can_eat) { // Tilde to go Home
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];

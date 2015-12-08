@@ -43,7 +43,13 @@
 
 static SUUpdater *g_Sparkle = nil;
 
-static GenericConfig g_Config("/Users/migun/test_defaults.cfg", "/Users/migun/test_overwrites.cfg");
+static GenericConfig *g_Config = nullptr;
+
+GenericConfig &GlobalConfig() noexcept
+{
+    assert(g_Config);
+    return *g_Config;
+}
 
 @implementation AppDelegate
 {
@@ -85,6 +91,8 @@ static GenericConfig g_Config("/Users/migun/test_defaults.cfg", "/Users/migun/te
         }
         
         [self setupConfigDirectory];
+        g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].UTF8String, self.configDirectory + "Config.json");
+        [self migrateFromDefaultsToJSONConfig];
         
         m_Skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
         assert(m_Skin == ApplicationSkin::Modern || m_Skin == ApplicationSkin::Classic);
@@ -105,6 +113,20 @@ static GenericConfig g_Config("/Users/migun/test_defaults.cfg", "/Users/migun/te
 {
     static AppDelegate *_ = (AppDelegate*) ((NSApplication*)NSApp).delegate;
     return _;
+}
+
+- (void)migrateFromDefaultsToJSONConfig
+{
+    auto move_bool = [](NSString *_default, const char *_config) {
+        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) ) {
+            GlobalConfig().Set(_config, (bool)v.boolValue);
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
+        }
+    };
+    move_bool(@"FilePanelsGeneralShowDotDotEntry", "filePanel.general.showDotDotEntry");
+    move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask", "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
+    move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut", "filePanel.general.useTildeAsHomeShortcut");
+    move_bool(@"FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu", "filePanel.general.appendOtherWindowsPathsToGoToMenu");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
@@ -643,7 +665,7 @@ static GenericConfig g_Config("/Users/migun/test_defaults.cfg", "/Users/migun/te
 
 - (GenericConfigObjC*) config
 {
-    return g_Config.Bridge();
+    return g_Config->Bridge();
 }
 
 @end

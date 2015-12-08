@@ -13,8 +13,9 @@
 #include "Common.h"
 #include "TemporaryNativeFileStorage.h"
 #include "ExtensionLowercaseComparison.h"
+#include "Config.h"
 
-static auto g_DefaultsExecutableExtensionsWhitelist = @"FilePanels_General_ExecutableExtensionsWhitelist";
+static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,
@@ -140,9 +141,9 @@ bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     static const vector<string> extensions = []{
         vector<string> v;
-        if( auto exts_string = objc_cast<NSString>([NSUserDefaults.standardUserDefaults stringForKey:g_DefaultsExecutableExtensionsWhitelist]) ) {
-            // load from defaults
-            if( auto extensions_array = [exts_string componentsSeparatedByString:@","] )
+        if( auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist) ) {
+            // load from config
+            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
                 for( NSString *s: extensions_array )
                     if( s != nil && s.length > 0 )
                         if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )

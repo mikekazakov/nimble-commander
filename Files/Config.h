@@ -21,11 +21,32 @@ public:
     
     ConfigValue Get(const string &_path) const;
     ConfigValue Get(const char *_path) const;
+    optional<string> GetString(const char *_path) const;
+    bool GetBool(const char *_path) const;
     
     bool Set(const char *_path, int _value);
     bool Set(const char *_path, bool _value);
     bool Set(const char *_path, const string &_value);
     bool Set(const char *_path, const char *_value);
+    
+    struct ObservationTicket
+    {
+        ObservationTicket(ObservationTicket &&) noexcept;
+        ~ObservationTicket();
+        const ObservationTicket &operator=(ObservationTicket &&);
+        operator bool() const noexcept;
+    private:
+        ObservationTicket(GenericConfig *_inst, unsigned long _ticket) noexcept;
+        ObservationTicket(const ObservationTicket&) = delete;
+        void operator=(const ObservationTicket&) = delete;
+        
+        GenericConfig  *instance;
+        unsigned long   ticket;
+        friend class GenericConfig;
+    };
+    
+    ObservationTicket Observe(const char *_path, function<void()> _change_callback);
+    
     
 //    bool 	IsInt () const
 //    bool 	IsUint () const
@@ -38,21 +59,35 @@ public:
 #endif
     
     
+    
 private:
+    struct Observer
+    {
+        function<void()> callback;
+        unsigned long ticket;
+    };
+    
+    shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const char *_path);
+    void        FireObservers(const char *_path);
+    void        StopObserving(unsigned long _ticket);
     ConfigValue GetInternal(string_view _path) const;
-    bool SetInternal(const char *_path, const ConfigValue &_value);
+    bool        SetInternal(const char *_path, const ConfigValue &_value);
+    void        DumpOverwrites();
     
-    void DumpOverwrites();
+    mutable mutex                                                       m_DocumentLock;
+    rapidjson::Document                                                 m_Current;
+    rapidjson::Document                                                 m_Defaults;
+    unordered_map<string, shared_ptr<vector<shared_ptr<Observer>>>>     m_Observers;
+    mutable mutex                                                       m_ObserversLock;
     
-    string                  m_DefaultsPath;
-    string                  m_OverwritesPath;
-    
-
-    rapidjson::Document     m_Current;
-    rapidjson::Document     m_Defaults;
-    mutable mutex           m_Lock;
+    string                                                              m_DefaultsPath;
+    string                                                              m_OverwritesPath;
+    atomic_ullong                                                       m_ObservationTicket{ 1 };
 #ifdef __OBJC__
-    GenericConfigObjC      *m_Bridge;
+    GenericConfigObjC                                                  *m_Bridge;
 #endif
+    friend struct ObservationTicket;
 };
 
+
+GenericConfig &GlobalConfig() noexcept;

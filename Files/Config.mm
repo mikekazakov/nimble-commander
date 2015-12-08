@@ -1,4 +1,5 @@
 #include <fstream>
+#include <Habanero/algo.h>
 #include "3rd_party/rapidjson/include/rapidjson/error/en.h"
 #include "3rd_party/rapidjson/include/rapidjson/memorystream.h"
 #include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
@@ -120,8 +121,10 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     rapidjson::Document defaults;
     rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
 
-    if (!ok)
-        fprintf(stderr, "JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+    if (!ok) {
+        fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+        exit(EXIT_FAILURE);
+    }
     
 //    bool b = d.HasMember("int_value");
 //    int bb = d["int_value"].GetInt();
@@ -143,24 +146,26 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
 
 
     string over = Load(m_OverwritesPath);
-    rapidjson::Document overwrites;
-    ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
-    if (!ok)
-        fprintf(stderr, "JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-    
-    MergeDocument(m_Current, overwrites);
-    
-    auto aa1 = Get("something.inside_something").GetInt();
-    Set("something.inside_something", 150);
-    auto aa2 = Get("something.inside_something").GetInt();
+    if( !over.empty() ) {
+        rapidjson::Document overwrites;
+        ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
+        if (!ok)
+            fprintf(stderr, "Overwrites JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+        else
+            MergeDocument(m_Current, overwrites);
+    }
+//    
+//    auto aa1 = Get("something.inside_something").GetInt();
+//    Set("something.inside_something", 150);
+//    auto aa2 = Get("something.inside_something").GetInt();
     
 //    Get("something..inside_something");
 //    Get("something..");
 //    Get("something.");
 //    Get("something..inside_something.");
     
-    int a = 10;
-    a = 11;
+//    int a = 10;
+//    a = 11;
     
     m_Bridge = [[GenericConfigObjC alloc] initWithConfig:this];
 }
@@ -175,9 +180,25 @@ GenericConfig::ConfigValue GenericConfig::Get(const char *_path) const
     return GetInternal( _path );
 }
 
+optional<string> GenericConfig::GetString(const char *_path) const
+{
+    auto v = GetInternal(_path);
+    if( v.GetType() == rapidjson::kStringType )
+        return make_optional<string>(v.GetString());
+    return nullopt;
+}
+
+bool GenericConfig::GetBool(const char *_path) const
+{
+    auto v = GetInternal(_path);
+    if( v.GetType() == rapidjson::kTrueType )
+        return true;
+    return false;
+}
+
 GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 {
-    lock_guard<mutex> lock(m_Lock);
+    lock_guard<mutex> lock(m_DocumentLock);
     
     const rapidjson::Value *st = &m_Current;
     string_view path = _path;
@@ -232,74 +253,162 @@ bool GenericConfig::Set(const char *_path, const char *_value)
 
 bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
 {
-    lock_guard<mutex> lock(m_Lock);
-    
-    rapidjson::Value *st = &m_Current;
-    string_view path = _path;
-    size_t p;
-    
-    while( (p = path.find_first_of(".")) != string_view::npos ) {
+    {
+        lock_guard<mutex> lock(m_DocumentLock);
+        
+        rapidjson::Value *st = &m_Current;
+        string_view path = _path;
+        size_t p;
+        
+        while( (p = path.find_first_of(".")) != string_view::npos ) {
+            char sub[g_MaxNamePartLen];
+            copy( begin(path), begin(path) + p, begin(sub) );
+            sub[p] = 0;
+            
+            auto submb = st->FindMember(sub);
+            if( submb == st->MemberEnd() )
+                return false;
+            
+            st = &(*submb).value;
+            if( st->GetType() != rapidjson::kObjectType )
+                return false;
+            
+            path = p+1 < path.length() ? path.substr( p+1 ) : string_view();
+        }
+        
         char sub[g_MaxNamePartLen];
-        copy( begin(path), begin(path) + p, begin(sub) );
-        sub[p] = 0;
+        copy( begin(path), end(path), begin(sub) );
+        sub[path.length()] = 0;
+        
+        auto it = st->FindMember(sub);
+        if( it != st->MemberEnd() ) {
+            if( it->value == _value )
+                return true;
+            
+            it->value.CopyFrom( _value, m_Current.GetAllocator() );
+        }
+        else {
+            rapidjson::Value key( sub, m_Current.GetAllocator() );
+            rapidjson::Value value( _value, m_Current.GetAllocator() );
+            st->AddMember( key, value, m_Current.GetAllocator() );
+        }
+    }
 
-        auto submb = st->FindMember(sub);
-        if( submb == st->MemberEnd() )
-            return false;
-        
-        st = &(*submb).value;
-        if( st->GetType() != rapidjson::kObjectType )
-            return false;
-        
-        path = p+1 < path.length() ? path.substr( p+1 ) : string_view();
-    }
-    
-    char sub[g_MaxNamePartLen];
-    copy( begin(path), end(path), begin(sub) );
-    sub[path.length()] = 0;
-
-    auto it = st->FindMember(sub);
-    if( it != st->MemberEnd() ) {
-        if( it->value == _value )
-            return true;
-        
-        
-//        [m_Bridge willChangeValueForKey:[NSString stringWithUTF8String:_path]];
-        
-        it->value.CopyFrom( _value, m_Current.GetAllocator() );
-        
-        DumpOverwrites();
-        
-//        [m_Bridge didChangeValueForKey:[NSString stringWithUTF8String:_path]];
-        
-        
-        // NOTIFY ABOUT ACTUAL CHANGE
-    }
-    else {
-        rapidjson::Value key( sub, m_Current.GetAllocator() );
-        rapidjson::Value value( _value, m_Current.GetAllocator() );
-        st->AddMember( key, value, m_Current.GetAllocator() );
-        // NOTIFY ABOUT ACTUAL CHANGE
-    }
-    
-//            [self didChangeValueForKey:@"DialogsCount"];
+    FireObservers(_path);
+    DumpOverwrites();
     
     return true;
 }
 
 void GenericConfig::DumpOverwrites()
 {
-    rapidjson::Document d(rapidjson::kObjectType);
-  
-    BuildOverwrites(m_Defaults, m_Current, d);
+    lock_guard<mutex> lock(m_DocumentLock);
     
+    MachTimeBenchmark mtb;
+    
+    rapidjson::Document d(rapidjson::kObjectType);
+    BuildOverwrites(m_Defaults, m_Current, d);
+    mtb.ResetMicro("built overwrites tree in us: ");
+
+    // this should be async:
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    cout << buffer.GetString() << endl;
+    mtb.ResetMicro("composed overwrites json in us: ");
     
-//static void BuildOverwrites( const rapidjson::Document &_defaults, const rapidjson::Document &_staging, rapidjson::Document &_overwrites )
+//    cout << buffer.GetString() << endl;
     
+    ofstream out(m_OverwritesPath, ios::out | ios::binary);
+    if( out )
+        out << buffer.GetString();
+    mtb.ResetMicro("wrote json file in us: ");
+}
+
+GenericConfig::ObservationTicket::ObservationTicket(GenericConfig *_inst, unsigned long _ticket) noexcept:
+    instance(_inst),
+    ticket(_ticket)
+{
+}
+
+GenericConfig::ObservationTicket::ObservationTicket(ObservationTicket &&_r) noexcept:
+    instance(_r.instance),
+    ticket(_r.ticket)
+{
+    _r.instance = nullptr;
+    _r.ticket = 0;
+}
+
+GenericConfig::ObservationTicket::~ObservationTicket()
+{
+    if( *this )
+        instance->StopObserving(ticket);
+}
+
+const GenericConfig::ObservationTicket &GenericConfig::ObservationTicket::operator=(GenericConfig::ObservationTicket &&_r)
+{
+    if( *this )
+        instance->StopObserving(ticket);
+    instance = _r.instance;
+    ticket = _r.ticket;
+    _r.instance = nullptr;
+    _r.ticket = 0;
+    return *this;
+}
+
+GenericConfig::ObservationTicket::operator bool() const noexcept
+{
+    return instance != nullptr && ticket != 0;
+}
+
+GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path, function<void()> _change_callback)
+{
+    if( !_change_callback )
+        return ObservationTicket(nullptr, 0);
+    
+    string path = _path;
+    auto t = m_ObservationTicket++;
+    {
+        Observer o;
+        o.callback = move(_change_callback);
+        o.ticket = t;
+        
+        lock_guard<mutex> lock(m_ObserversLock);
+        
+        auto current_observers_it = m_Observers.find(path);
+        
+        auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+        if( current_observers_it != end(m_Observers)  ) {
+            new_observers->reserve( current_observers_it->second->size() + 1 );
+            *new_observers = *(current_observers_it->second);
+        }
+        new_observers->emplace_back( to_shared_ptr(move(o)) );
+        
+        m_Observers[path] = move(new_observers);
+    }
+    
+    return ObservationTicket(this, t);
+}
+
+void GenericConfig::StopObserving(unsigned long _ticket)
+{
+    // later
+}
+
+shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path)
+{
+    string path = _path;
+    lock_guard<mutex> lock(m_ObserversLock);
+    auto observers_it = m_Observers.find(path);
+    if( observers_it != end(m_Observers) )
+        return  observers_it->second;
+    return nullptr;
+}
+
+void GenericConfig::FireObservers(const char *_path)
+{
+    if( auto observers = FindObserversLocked(_path) )
+        for( auto &o: *observers )
+            o->callback();
 }
 
 //static int a = []{

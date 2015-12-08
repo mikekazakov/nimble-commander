@@ -1016,18 +1016,18 @@
             <edgeInsets key="edgeInsets" left="2" right="2" top="2" bottom="2"/>
             <beginningViews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                    <rect key="frame" x="18" y="248" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="160" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask" id="769"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.ignoreDirectoriesOnSelectionWithMask" id="Zni-rD-RvB"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
-                    <rect key="frame" x="18" y="228" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="141" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1038,33 +1038,33 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">
-                    <rect key="frame" x="-2" y="-2" width="187" height="18"/>
+                    <rect key="frame" x="0.0" y="122" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Use ~ to go Home" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GBa-AA-rRO">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralUseTildeAsHomeShotcut" id="Psc-ig-GRc"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.useTildeAsHomeShortcut" id="rJw-UW-eKJ"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
-                    <rect key="frame" x="18" y="208" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="103" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAppendOtherWindowsPathsToGoToMenu" id="TNv-P7-9uV"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.appendOtherWindowsPathsToGoToMenu" id="WzI-6V-mh7"/>
                     </connections>
                 </button>
                 <stackView orientation="horizontal" alignment="centerY" horizontalHuggingPriority="249" verticalHuggingPriority="249" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g0x-BO-igL">
-                    <rect key="frame" x="0.0" y="0.0" width="374" height="251"/>
+                    <rect key="frame" x="2" y="78" width="374" height="22"/>
                     <animations/>
                     <beginningViews>
                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O3v-fq-9DO">
-                            <rect key="frame" x="18" y="188" width="57" height="18"/>
+                            <rect key="frame" x="-2" y="2" width="56" height="18"/>
                             <animations/>
                             <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MQi-kD-j8V">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1075,7 +1075,7 @@
                             </connections>
                         </button>
                         <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jkP-c6-fJK">
-                            <rect key="frame" x="76" y="187" width="24" height="22"/>
+                            <rect key="frame" x="60" y="0.0" width="29" height="22"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="24" id="HQG-EQ-EV1"/>
                             </constraints>
@@ -1091,7 +1091,7 @@
                             </connections>
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
-                            <rect key="frame" x="101" y="189" width="285" height="17"/>
+                            <rect key="frame" x="95" y="3" width="281" height="17"/>
                             <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
                                 <font key="font" metaFont="system"/>
@@ -1112,18 +1112,18 @@
                     </customSpacing>
                 </stackView>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
-                    <rect key="frame" x="18" y="168" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="57" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show “..” entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralShowDotDotEntry" id="QwH-3H-ODO"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.showDotDotEntry" id="Udj-bc-Y60"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
-                    <rect key="frame" x="18" y="148" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="38" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1134,7 +1134,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
-                    <rect key="frame" x="18" y="128" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="19" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1145,7 +1145,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
-                    <rect key="frame" x="18" y="128" width="399" height="18"/>
+                    <rect key="frame" x="0.0" y="0.0" width="378" height="18"/>
                     <animations/>
                     <buttonCell key="cell" type="check" title="Route keyboard input into overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>

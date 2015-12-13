@@ -38,8 +38,23 @@
 
             "archivesExtensionsWhitelist": "zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar",
             
-            "executableExtensionsWhitelist": "sh, pl, rb, py"
+            "executableExtensionsWhitelist": "sh, pl, rb, py",
 
+            /**
+             * Size format for current file, integer enumeration:
+             * 1 - 2536 K
+             * 2 - 2,5 MB
+             */
+            "fileSizeFormat": 1,
+            
+            /**
+             * Size format for total selection, integer enumeration:
+             * 0 - 2 597 065 bytes
+             * 1 - 2536 K
+             * 2 - 2,5 MB
+             * 3 - 2,48 MB
+             */
+            "selectionSizeFormat": 0
         },
         
         /**

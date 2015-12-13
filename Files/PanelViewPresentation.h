@@ -9,8 +9,8 @@
 #include "PanelViewTypes.h"
 #include "vfs/VFS.h"
 #include "DispatchQueue.h"
-#include "ObjcToCppObservingBridge.h"
 #include "ByteCountFormatter.h"
+#include "Config.h"
 
 @class PanelView;
 
@@ -85,9 +85,8 @@ private:
     VFSHost                       *m_StatFSLastHost = nullptr;
     string                         m_StatFSLastPath;
     
-    ObjcToCppObservingBlockBridge *m_SizeFormatObserver;
     ByteCountFormatter::Type       m_FileSizeFormat = ByteCountFormatter::Fixed6;
     ByteCountFormatter::Type       m_SelectionSizeFormat = ByteCountFormatter::SpaceSeparated;
-    
     __unsafe_unretained PanelView * const m_View = nil;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 };

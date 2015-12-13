@@ -90,10 +90,6 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>FilePanelsGeneralFileSizeFormat</key>
-	<integer>1</integer>
-	<key>FilePanelsGeneralSelectionSizeFormat</key>
-	<integer>0</integer>
 	<key>FilePanelsGeneralRouteKeyboardInputIntoTerminal</key>
 	<false/>
 	<key>FilePanels_Modern_RegularBackground</key>

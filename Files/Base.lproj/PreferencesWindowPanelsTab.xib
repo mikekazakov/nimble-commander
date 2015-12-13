@@ -103,7 +103,7 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="WJ0-rW-zeJ"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="2ca-ud-EbR">
+                                        <popUpButtonCell key="cell" type="push" title="2" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" selectedItem="3Qc-aM-Mil" id="2ca-ud-EbR">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="OFN-Un-idF">
@@ -118,7 +118,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedTag" keyPath="values.FilePanelsGeneralFileSizeFormat" id="ReW-79-6kB"/>
+                                            <binding destination="-3" name="selectedTag" keyPath="self.delegate.config.filePanel.general.fileSizeFormat" id="oLw-JX-KQ2"/>
                                         </connections>
                                     </popUpButton>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7w-Ea-gHV">
@@ -158,7 +158,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedTag" keyPath="values.FilePanelsGeneralSelectionSizeFormat" id="ImY-ku-Aqk"/>
+                                            <binding destination="-3" name="selectedTag" keyPath="self.delegate.config.filePanel.general.selectionSizeFormat" id="0iq-24-qxb"/>
                                         </connections>
                                     </popUpButton>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="770">

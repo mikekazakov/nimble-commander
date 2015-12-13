@@ -13,20 +13,20 @@
 #include "PanelData.h"
 #include "Common.h"
 
+static const auto g_ConfigFileSizeFormat = "filePanel.general.fileSizeFormat";
+static const auto g_ConfigSelectionSizeFormat = "filePanel.general.selectionSizeFormat";
+
 PanelViewPresentation::PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
     m_View(_parent_view),
     m_State(_view_state)
 {
     LoadSizeFormats();
-    m_SizeFormatObserver = [ObjcToCppObservingBlockBridge
-                            bridgeWithObject:NSUserDefaults.standardUserDefaults
-                            forKeyPaths:@[@"FilePanelsGeneralFileSizeFormat",
-                                          @"FilePanelsGeneralSelectionSizeFormat"]
-                            options:0
-                            block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                                LoadSizeFormats();
-                                SetViewNeedsDisplay();
-                            }];
+    auto reload_fmts = [=]{
+        LoadSizeFormats();
+        SetViewNeedsDisplay();
+    };
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFileSizeFormat, reload_fmts) );
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigSelectionSizeFormat, reload_fmts) );
 }
 
 PanelViewPresentation::~PanelViewPresentation()
@@ -322,8 +322,8 @@ bool PanelViewPresentation::IsItemVisible(int _item_no) const
 
 void PanelViewPresentation::LoadSizeFormats()
 {
-    m_FileSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralFileSizeFormat"];
-    m_SelectionSizeFormat = (ByteCountFormatter::Type)[NSUserDefaults.standardUserDefaults integerForKey:@"FilePanelsGeneralSelectionSizeFormat"];
+    m_FileSizeFormat = (ByteCountFormatter::Type) GlobalConfig().GetInt(g_ConfigFileSizeFormat);
+    m_SelectionSizeFormat = (ByteCountFormatter::Type) GlobalConfig().GetInt(g_ConfigSelectionSizeFormat);
 }
 
 void PanelViewPresentation::OnDirectoryChanged()

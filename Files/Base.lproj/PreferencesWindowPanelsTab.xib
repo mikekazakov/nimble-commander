@@ -963,7 +963,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralAllowDraggingIntoFolders" id="D5D-qS-Cv2"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.allowDraggingIntoFolders" id="Bve-gD-t0x"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">

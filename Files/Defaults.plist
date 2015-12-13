@@ -90,8 +90,6 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>FilePanelsGeneralAllowDraggingIntoFolders</key>
-	<true/>
 	<key>FilePanelsGeneralFileSizeFormat</key>
 	<integer>1</integer>
 	<key>FilePanelsGeneralSelectionSizeFormat</key>

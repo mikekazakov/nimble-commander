@@ -137,6 +137,7 @@ GenericConfig &GlobalConfig() noexcept
     move_int (@"FilePanelsGeneralGoToConnectionsLimit",                     "filePanel.general.maximumNetworkConnectionsInGoToMenu");
     move_bool(@"FilePanelsGeneralShowVolumeInformationBar",                 "filePanel.general.showVolumeInformationBar");
     move_bool(@"FilePanelsGeneralShowLocalizedFilenames",                   "filePanel.general.showLocalizedFilenames");
+    move_bool(@"FilePanelsGeneralAllowDraggingIntoFolders",                 "filePanel.general.allowDraggingIntoFolders");
     move_int (@"FilePanelsQuickSearchWhereToFind",                          "filePanel.quickSearch.whereToFind");
     move_bool(@"FilePanelsQuickSearchSoftFiltering",                        "filePanel.quickSearch.softFiltering");
     move_bool(@"FilePanelsQuickSearchTypingView",                           "filePanel.quickSearch.typingView");

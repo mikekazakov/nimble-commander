@@ -15,6 +15,7 @@
 #include "MainWindowFilePanelState.h"
 #include "path_manip.h"
 #include "Common.h"
+#include "Config.h"
 
 static NSString *g_PrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
@@ -32,7 +33,7 @@ static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeC
 
 static bool DraggingIntoFoldersAllowed()
 {
-    return [NSUserDefaults.standardUserDefaults boolForKey:@"FilePanelsGeneralAllowDraggingIntoFolders"];
+    return GlobalConfig().GetBool( "filePanel.general.allowDraggingIntoFolders" );
 }
 
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)

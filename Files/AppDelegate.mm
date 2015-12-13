@@ -142,6 +142,7 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"FilePanelsQuickSearchTypingView",                           "filePanel.quickSearch.typingView");
     move_int (@"FilePanelsQuickSearchKeyModifier",                          "filePanel.quickSearch.keyOption");
     move_int (@"FilePanels_Modern_FontSize",                                "filePanel.modern.fontSize");
+    move_bool(@"GeneralShowToolbar",                                        "general.showToolbar");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

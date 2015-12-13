@@ -1,4 +1,17 @@
 {
+    /**
+     * General stuff
+     */
+    "general": {
+        /**
+         * Show/hide toolbar
+         */
+        "showToolbar": true
+    },
+
+    /**
+     * Settings related to file panels, i.e. main application state
+     */
     "filePanel": {
 
         "general": {

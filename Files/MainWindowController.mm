@@ -8,21 +8,21 @@
 //
 
 #include "vfs/vfs_native.h"
-#import "MainWindowController.h"
-#import "MainWindow.h"
-#import "AppDelegate.h"
-#import "QuickPreview.h"
-#import "BigFileView.h"
-#import "MainWindowBigFileViewState.h"
-#import "MainWindowFilePanelState.h"
-#import "MainWindowTerminalState.h"
-#import "MainWindowExternalTerminalEditorState.h"
-#import "PanelController.h"
-#import "Common.h"
-#import "sysinfo.h"
-#import "ActionsShortcutsManager.h"
+#include "MainWindowController.h"
+#include "MainWindow.h"
+#include "AppDelegate.h"
+#include "QuickPreview.h"
+#include "BigFileView.h"
+#include "MainWindowBigFileViewState.h"
+#include "MainWindowFilePanelState.h"
+#include "MainWindowTerminalState.h"
+#include "MainWindowExternalTerminalEditorState.h"
+#include "PanelController.h"
+#include "Common.h"
+#include "sysinfo.h"
+#include "ActionsShortcutsManager.h"
 
-static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
+static const auto g_ConfigShowToolbar = "general.showToolbar";
 
 @implementation MainWindowController
 {
@@ -31,6 +31,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
     MainWindowTerminalState     *m_Terminal;
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTicktets;
 }
 
 @synthesize filePanelsState = m_PanelState;
@@ -59,7 +60,7 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
         self.shouldCascadeWindows = NO;
         window.delegate = self;
         
-        m_ToolbarVisible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
+        m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
         
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
                                                                 Window:self.window];
@@ -83,9 +84,8 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
                                                selector:@selector(applicationWillTerminate)
                                                    name:NSApplicationWillTerminateNotification
                                                  object:NSApplication.sharedApplication];
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsShowToolbar options:0 context:NULL];
-        
-        
+        __weak MainWindowController* weak_self = self;
+        m_ConfigObservationTicktets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar, [=]{ [(MainWindowController*)weak_self onConfigShowToolbarChanged]; }) );
     }
     
     return self;
@@ -95,7 +95,6 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 {
     [self.window saveFrameUsingName:NSStringFromClass(self.class)];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:g_DefsShowToolbar];
     assert(m_WindowState.empty());
 }
 
@@ -216,19 +215,13 @@ static NSString *g_DefsShowToolbar = @"GeneralShowToolbar";
 
 - (IBAction)OnShowToolbar:(id)sender
 {
-    [NSUserDefaults.standardUserDefaults setBool:![NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar] forKey:g_DefsShowToolbar];
+    GlobalConfig().Set( g_ConfigShowToolbar, !GlobalConfig().GetBool(g_ConfigShowToolbar) );
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)onConfigShowToolbarChanged
 {
-    // Check if defaults changed.
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (object == defaults) {
-        if ([keyPath isEqualToString:g_DefsShowToolbar]) {
-            bool visible = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsShowToolbar];
-            [self updateTitleAndToolbarVisibilityWith:self.window.toolbar toolbarVisible:visible needsTitle:self.currentStateNeedWindowTitle];
-        }
-    }
+    bool visible = GlobalConfig().GetBool( g_ConfigShowToolbar );
+    [self updateTitleAndToolbarVisibilityWith:self.window.toolbar toolbarVisible:visible needsTitle:self.currentStateNeedWindowTitle];
 }
 
 - (void) ResignAsWindowState:(id)_state

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -23,7 +23,6 @@
             <subviews>
                 <tabView translatesAutoresizingMaskIntoConstraints="NO" id="3">
                     <rect key="frame" x="13" y="10" width="473" height="335"/>
-                    <animations/>
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="Common" identifier="1" id="21">
@@ -36,7 +35,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="RRV-dn-ebU"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="796">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -60,7 +58,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="9Np-0t-NWf"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative Delete (⇧F8):" id="772">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -72,7 +69,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="zAo-Cy-cfx"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="791">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -96,7 +92,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="OhA-zl-fu5"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="File size format:" id="Fdh-DS-9r8">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -108,7 +103,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="WJ0-rW-zeJ"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="2ca-ud-EbR">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -132,7 +126,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="81e-Si-5B7"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selection size format:" id="3TY-zr-HZN">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -144,7 +137,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="154" id="6BZ-QO-z6b"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" altersStateOfSelectedItem="NO" id="SF6-1q-3Bv">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -174,7 +166,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="CVY-G1-VpX"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Delete (F8):" id="774">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -189,25 +180,20 @@
                                             <subviews>
                                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o5N-ve-aUy">
                                                     <rect key="frame" x="0.0" y="25" width="166" height="79"/>
-                                                    <animations/>
                                                 </view>
                                             </subviews>
-                                            <animations/>
                                         </clipView>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="YUE-S1-e7F"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="138" id="i63-3r-g19"/>
                                         </constraints>
-                                        <animations/>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="LoN-sC-Dw0">
                                             <rect key="frame" x="1" y="80" width="166" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="gNb-Yv-gEz">
                                             <rect key="frame" x="402" y="1" width="16" height="161"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                     </scrollView>
                                 </subviews>
@@ -242,7 +228,6 @@
                                     <constraint firstAttribute="trailing" secondItem="y2K-Vy-fyD" secondAttribute="trailing" constant="17" id="wys-nt-jVy"/>
                                     <constraint firstItem="xmO-TZ-Bgm" firstAttribute="baseline" secondItem="M7w-Ea-gHV" secondAttribute="baseline" id="yZX-DO-rbc"/>
                                 </constraints>
-                                <animations/>
                             </view>
                         </tabViewItem>
                         <tabViewItem label="Quick Search" identifier="1" id="7ue-46-YVg">
@@ -255,13 +240,12 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="225" id="rRd-kW-okB"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="check" title="Soft filtering" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="qmw-Ul-eSK">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsQuickSearchSoftFiltering" id="ZmK-MD-oS4"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.quickSearch.softFiltering" id="G6a-Zc-qJD"/>
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="P2p-mW-Hz8">
@@ -269,13 +253,12 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="225" id="gs3-is-r43"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="check" title="Typing view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="WwL-AC-0hP">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanelsQuickSearchTypingView" id="qw8-Pw-SKg"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.quickSearch.typingView" id="Wf9-Tu-JCL"/>
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aWa-FM-fe7">
@@ -283,7 +266,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="223" id="fzn-PC-oOY"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Key modifier:" id="EBC-2p-BQv">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -295,7 +277,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="160" id="N7z-HB-sNm"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="LEU-be-d00">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -310,7 +291,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsQuickSearchKeyModifier" id="IoF-n0-Mw0"/>
+                                            <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.filePanel.quickSearch.keyOption" id="qfK-eE-Rvb"/>
                                         </connections>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HPL-rh-Bha">
@@ -318,7 +299,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="223" id="0Ex-uK-YLG"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Where to search:" id="eQJ-GQ-QOA">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -330,7 +310,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="160" id="6mQ-Y3-1zh"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Yp8-cZ-7kX">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -344,7 +323,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsQuickSearchWhereToFind" id="CBT-sT-Neg"/>
+                                            <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.filePanel.quickSearch.whereToFind" id="fVt-bq-Vjs"/>
                                         </connections>
                                     </popUpButton>
                                 </subviews>
@@ -366,7 +345,6 @@
                                     <constraint firstItem="aWa-FM-fe7" firstAttribute="leading" secondItem="HPL-rh-Bha" secondAttribute="leading" id="xRp-Ll-3Xr"/>
                                     <constraint firstAttribute="trailing" secondItem="HPL-rh-Bha" secondAttribute="trailing" constant="20" symbolic="YES" id="z2p-VZ-Luh"/>
                                 </constraints>
-                                <animations/>
                             </view>
                         </tabViewItem>
                         <tabViewItem label="Classic" identifier="2" id="4">
@@ -380,7 +358,6 @@
                                             <constraint firstAttribute="height" constant="20" id="8Oc-nS-hRh"/>
                                             <constraint firstAttribute="width" constant="28" id="q3L-Rd-c54"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicBackgroundColor" id="295">
@@ -395,7 +372,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="144" id="DOZ-Ry-0Ib"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Common background:" id="291">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -407,7 +383,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="144" id="0JR-HB-XMW"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cursor background:" id="299">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -420,7 +395,6 @@
                                             <constraint firstAttribute="height" constant="20" id="11R-ss-oI1"/>
                                             <constraint firstAttribute="width" constant="28" id="1yA-EF-lUd"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicCursorBackgroundColor" id="421">
@@ -439,34 +413,28 @@
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" headerView="9Tg-hN-PEV" id="ICM-ex-rxA">
                                                     <rect key="frame" x="0.0" y="0.0" width="411" height="121"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <animations/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                 </tableView>
                                             </subviews>
-                                            <animations/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="312" id="0o3-wS-aXB"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="V4p-ic-aCE"/>
                                         </constraints>
-                                        <animations/>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="eHF-D2-xRk">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="a0g-S1-BbY">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                         <tableHeaderView key="headerView" id="9Tg-hN-PEV">
                                             <rect key="frame" x="0.0" y="0.0" width="411" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </tableHeaderView>
                                     </scrollView>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="5XO-Nu-xUb">
@@ -475,7 +443,6 @@
                                             <constraint firstAttribute="width" constant="22" id="37G-hq-1iZ"/>
                                             <constraint firstAttribute="height" constant="22" id="F0l-Rb-9vk"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bwL-DX-wvp">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -490,7 +457,6 @@
                                             <constraint firstAttribute="height" constant="22" id="91y-ez-oXd"/>
                                             <constraint firstAttribute="width" constant="22" id="cYn-Q5-WEA"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jIX-LC-Sgl">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -504,7 +470,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="Vvz-73-Scg"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="275">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -519,7 +484,6 @@
                                             <constraint firstAttribute="width" constant="28" id="DSD-1m-qPH"/>
                                             <constraint firstAttribute="height" constant="20" id="HQO-ie-yPW"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicTextColor" id="Vrn-Rc-Lug">
@@ -534,7 +498,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="ndY-zb-Msj"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="q3b-YG-pX2">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -546,7 +509,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="U4e-uk-5J1"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active text color:" id="QIU-SV-1X1">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -559,7 +521,6 @@
                                             <constraint firstAttribute="height" constant="20" id="aa0-wS-1Lp"/>
                                             <constraint firstAttribute="width" constant="28" id="oF8-Yt-nf7"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicActiveTextColor" id="EmU-te-HSq">
@@ -574,7 +535,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="zEU-rd-cbt"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Highlight text color:" id="S7z-3w-oYP">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -587,7 +547,6 @@
                                             <constraint firstAttribute="width" constant="28" id="nZz-1A-qfh"/>
                                             <constraint firstAttribute="height" constant="20" id="uq4-wn-FiV"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanelsClassicHighlightTextColor" id="cwB-6W-zEz">
@@ -599,7 +558,6 @@
                                     </colorWell>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8d8-xG-L4U">
                                         <rect key="frame" x="18" y="183" width="135" height="14"/>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filenames coloring rules:" id="Yz6-Vn-ehr">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -608,7 +566,6 @@
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xsa-mG-b5a">
                                         <rect key="frame" x="70" y="3" width="365" height="28"/>
-                                        <animations/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="huB-JX-uOp">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -659,7 +616,6 @@
                                     <constraint firstItem="290" firstAttribute="leading" secondItem="7" secondAttribute="leading" constant="20" symbolic="YES" id="wwd-SL-FpW"/>
                                     <constraint firstItem="8d8-xG-L4U" firstAttribute="top" secondItem="274" secondAttribute="bottom" constant="2" id="xqd-8P-bwX"/>
                                 </constraints>
-                                <animations/>
                             </view>
                         </tabViewItem>
                         <tabViewItem label="Modern" identifier="3" id="5">
@@ -672,7 +628,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="135" id="ana-Sw-sSF"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Regular background:" id="83">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -685,7 +640,6 @@
                                             <constraint firstAttribute="width" constant="28" id="IC3-Qh-pgd"/>
                                             <constraint firstAttribute="height" constant="20" id="wPj-E8-Oe2"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanels_Modern_RegularBackground" id="hbN-v4-Mzd">
@@ -700,7 +654,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="135" id="h1r-l0-myK"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Alternative background:" id="99">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -713,7 +666,6 @@
                                             <constraint firstAttribute="width" constant="28" id="8iS-6L-D9C"/>
                                             <constraint firstAttribute="height" constant="20" id="imn-L2-puA"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanels_Modern_AlternativeBackground" id="kHm-LZ-KHa">
@@ -728,7 +680,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="e0k-Cq-klV"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Active cursor:" id="114">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -741,7 +692,6 @@
                                             <constraint firstAttribute="width" constant="28" id="fdG-vC-PpQ"/>
                                             <constraint firstAttribute="height" constant="20" id="mtR-43-uph"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanels_Modern_ActiveCursor" id="rT6-mr-oD8">
@@ -756,7 +706,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="gja-EG-Co4"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Inactive cursor:" id="142">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -769,7 +718,6 @@
                                             <constraint firstAttribute="height" constant="20" id="AXK-Ne-O34"/>
                                             <constraint firstAttribute="width" constant="28" id="g3x-M3-DgJ"/>
                                         </constraints>
-                                        <animations/>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <binding destination="36" name="value" keyPath="values.FilePanels_Modern_InactiveCursor" id="MvF-cc-Sy7">
@@ -784,7 +732,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="jLo-xy-1WN"/>
                                         </constraints>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Icons mode:" id="169">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -796,7 +743,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="112" id="nG8-4e-M2T"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="26">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -818,7 +764,6 @@
                                             <constraint firstAttribute="height" constant="22" id="AGF-s4-4O5"/>
                                             <constraint firstAttribute="width" constant="22" id="jr3-d9-HN9"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FGS-3P-rLE">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -833,7 +778,6 @@
                                             <constraint firstAttribute="height" constant="22" id="Bdg-Zx-CAk"/>
                                             <constraint firstAttribute="width" constant="22" id="sXx-0b-cwE"/>
                                         </constraints>
-                                        <animations/>
                                         <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DdJ-HV-ef7">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -851,39 +795,32 @@
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Sdc-Nl-SkA" id="vjI-ps-c9i">
                                                     <rect key="frame" x="0.0" y="0.0" width="411" height="117"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <animations/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                 </tableView>
                                             </subviews>
-                                            <animations/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </clipView>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="312" id="hhJ-Cx-WOa"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="nUe-Yh-Lc6"/>
                                         </constraints>
-                                        <animations/>
                                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="nht-Ht-s5j">
                                             <rect key="frame" x="1" y="119" width="223" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="33V-0y-6OS">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </scroller>
                                         <tableHeaderView key="headerView" id="Sdc-Nl-SkA">
                                             <rect key="frame" x="0.0" y="0.0" width="411" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <animations/>
                                         </tableHeaderView>
                                     </scrollView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MZY-TB-fSP">
                                         <rect key="frame" x="18" y="179" width="135" height="14"/>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filenames coloring rules:" id="cYq-VC-V1Y">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -892,7 +829,6 @@
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YT-WS-7Ci">
                                         <rect key="frame" x="70" y="3" width="365" height="28"/>
-                                        <animations/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="dVh-IV-Uhm">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -904,7 +840,6 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="64" id="waL-in-lab"/>
                                         </constraints>
-                                        <animations/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="J9p-qc-gvN">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="smallSystem"/>
@@ -940,7 +875,6 @@
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="upc-EL-Sxy">
                                         <rect key="frame" x="91" y="203" width="54" height="14"/>
-                                        <animations/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Text size:" id="kxt-pe-M7D">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -993,7 +927,6 @@
                                     <constraint firstItem="98" firstAttribute="centerY" secondItem="103" secondAttribute="centerY" id="wt5-R9-2nK"/>
                                     <constraint firstItem="25" firstAttribute="leading" secondItem="168" secondAttribute="trailing" constant="8" symbolic="YES" id="xux-w5-FcI"/>
                                 </constraints>
-                                <animations/>
                             </view>
                         </tabViewItem>
                     </tabViewItems>
@@ -1005,19 +938,16 @@
                 <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="tIh-RM-Thd"/>
                 <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="12" symbolic="YES" id="wy0-Nt-R2A"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="417.5" y="91.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
         <stackView orientation="vertical" alignment="left" spacing="5" hasEqualSpacing="YES" horizontalStackHuggingPriority="1000" horizontalHuggingPriority="249" verticalHuggingPriority="249" id="cMG-5Y-D3j">
             <rect key="frame" x="0.0" y="0.0" width="378" height="178"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <animations/>
             <edgeInsets key="edgeInsets" left="2" right="2" top="2" bottom="2"/>
             <beginningViews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="760">
                     <rect key="frame" x="0.0" y="160" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1028,7 +958,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
                     <rect key="frame" x="0.0" y="141" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1039,7 +968,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">
                     <rect key="frame" x="0.0" y="122" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Use ~ to go Home" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GBa-AA-rRO">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1050,7 +978,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
                     <rect key="frame" x="0.0" y="103" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1061,11 +988,9 @@
                 </button>
                 <stackView orientation="horizontal" alignment="centerY" horizontalHuggingPriority="249" verticalHuggingPriority="249" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g0x-BO-igL">
                     <rect key="frame" x="2" y="78" width="374" height="22"/>
-                    <animations/>
                     <beginningViews>
                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O3v-fq-9DO">
                             <rect key="frame" x="-2" y="2" width="56" height="18"/>
-                            <animations/>
                             <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="MQi-kD-j8V">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -1079,7 +1004,6 @@
                             <constraints>
                                 <constraint firstAttribute="width" constant="24" id="HQG-EQ-EV1"/>
                             </constraints>
-                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" usesSingleLineMode="YES" id="Tvn-tO-bka">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -1095,7 +1019,6 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
                             <rect key="frame" x="95" y="3" width="281" height="17"/>
-                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1116,7 +1039,6 @@
                 </stackView>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1m-K3-6d7">
                     <rect key="frame" x="0.0" y="57" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Show “..” entry in directory listing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="tmQ-Kf-Ylo">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1127,7 +1049,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lg9-3W-PJz">
                     <rect key="frame" x="0.0" y="38" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Show localized filenames" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Tdz-Yw-NMY">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1138,7 +1059,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zSi-y5-IGC">
                     <rect key="frame" x="0.0" y="19" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Show volume information bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="nz9-v0-Dc6">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -1149,7 +1069,6 @@
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
                     <rect key="frame" x="0.0" y="0.0" width="378" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Route keyboard input into overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>

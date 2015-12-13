@@ -25,6 +25,40 @@
 
         },
         
+        /**
+         * Section about QuickSearch - instant search for filenames in current panel by typing
+         */
+        "quickSearch": {
+            /**
+             * Enable quick search typing prompt
+             */
+            "typingView": true,
+
+            /**
+             * Should filtering show only matching filenames(false) or should it only focus matching filenames in whole panel(true)
+             */
+            "softFiltering": true,
+            
+            /**
+             * Where to find a piece of text in filename, integer enumeration:
+             * 0 - Anywhere
+             * 1 - Beginning
+             * 2 - Ending
+             * 3 - BeginningOrEnding
+             */
+            "whereToFind": 0,
+  
+            /**
+             * Key option to activate quick search by typing, integer enumeration:
+             * 0 - ⌥, type filename part with Alt key
+             * 1 - ⌃⌥, type filename part with Ctrl+Alt keys
+             * 2 - ⇧⌥, type filename part with Shift+Alt keys
+             * 3 - no modifiers required
+             * 4 - quick search is disabled
+             */
+            "keyOption": 3            
+        },
+        
         "modern": {
             "fontSize": 13
         }

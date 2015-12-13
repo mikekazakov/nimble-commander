@@ -330,14 +330,6 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
 	<key>FilePanelsClassicHighlightTextColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEAAYY=</data>
-	<key>FilePanelsQuickSearchKeyModifier</key>
-	<integer>3</integer>
-	<key>FilePanelsQuickSearchWhereToFind</key>
-	<integer>0</integer>
-	<key>FilePanelsQuickSearchSoftFiltering</key>
-	<true/>
-	<key>FilePanelsQuickSearchTypingView</key>
-	<true/>
 	<key>FilePanelsChecksumCalculationAlgorithm</key>
 	<string>MD5</string>
 	<key>Terminal</key>

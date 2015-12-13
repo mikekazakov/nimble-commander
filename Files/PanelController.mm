@@ -26,14 +26,12 @@ static const auto g_ConfigShowDotDotEntry                       = "filePanel.gen
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigUseTildeAsHomeShortcut                = "filePanel.general.useTildeAsHomeShortcut";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
+static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
+static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
+static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
+static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
 
-static auto g_DefaultsQuickSearchKeyModifier   = @"FilePanelsQuickSearchKeyModifier";
-static auto g_DefaultsQuickSearchSoftFiltering = @"FilePanelsQuickSearchSoftFiltering";
-static auto g_DefaultsQuickSearchWhereToFind   = @"FilePanelsQuickSearchWhereToFind";
-static auto g_DefaultsQuickSearchTypingView    = @"FilePanelsQuickSearchTypingView";
 static auto g_DefaultsGeneralRouteKeyboardInputIntoTerminal =  @"FilePanelsGeneralRouteKeyboardInputIntoTerminal";
-static auto g_DefaultsKeys = @[g_DefaultsQuickSearchKeyModifier, g_DefaultsQuickSearchSoftFiltering,
-                               g_DefaultsQuickSearchWhereToFind, g_DefaultsQuickSearchTypingView];
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -123,75 +121,51 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_DirectoryReLoadingQ->OnChange(on_change);
         m_DirectoryLoadingQ->OnChange(on_change);
         
-        // loading defaults via simulating it's change
-        [self observeValueForKeyPath:g_DefaultsQuickSearchKeyModifier ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [self observeValueForKeyPath:g_DefaultsQuickSearchWhereToFind ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [self observeValueForKeyPath:g_DefaultsQuickSearchSoftFiltering ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [self observeValueForKeyPath:g_DefaultsQuickSearchTypingView ofObject:NSUserDefaults.standardUserDefaults change:nil context:nullptr];
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:g_DefaultsKeys];
-        
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
         m_View.data = &m_Data;
         [self RegisterDragAndDropListeners];
         
+        // wire up config changing notifications
         __weak PanelController *weak_self = self;
-        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowDotDotEntry, [=]{ [(PanelController *)weak_self configShowDotDotEntryChanged]; }));
-        m_ConfigObservers.emplace_back(GlobalConfig().Observe(g_ConfigShowLocalizedFilenames, [=]{ [(PanelController *)weak_self configShowLocalizedFilenamesChanged]; }));
+        auto add_observer = [&](const char *_path, function<void()> _cb) { m_ConfigObservers.emplace_back( GlobalConfig().Observe(_path, move(_cb)) ); };
+        add_observer(g_ConfigShowDotDotEntry,           [=]{ [(PanelController *)weak_self configVFSFetchFlagsChanged]; });
+        add_observer(g_ConfigShowLocalizedFilenames,    [=]{ [(PanelController *)weak_self configVFSFetchFlagsChanged]; });
+        add_observer(g_ConfigQuickSearchWhereToFind,    [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
+        add_observer(g_ConfigQuickSearchSoftFiltering,  [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
+        add_observer(g_ConfigQuickSearchTypingView,     [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
+        add_observer(g_ConfigQuickSearchKeyOption,      [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
         
-        [self configShowDotDotEntryChanged];
-        [self configShowLocalizedFilenamesChanged];
+        // loading config via simulating it's change
+        [self configVFSFetchFlagsChanged];
+        [self configQuickSearchSettingsChanged];
     }
 
     return self;
 }
 
-- (void) dealloc
-{
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:g_DefaultsKeys];
-}
-
-- (void)configShowDotDotEntryChanged
+- (void)configVFSFetchFlagsChanged
 {
     if( GlobalConfig().GetBool(g_ConfigShowDotDotEntry) == false )
         m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
-    [self RefreshDirectory];
-}
-
-- (void)configShowLocalizedFilenamesChanged
-{
+    
     if( GlobalConfig().GetBool(g_ConfigShowLocalizedFilenames) == true )
         m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
+    
     [self RefreshDirectory];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)configQuickSearchSettingsChanged
 {
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    
-    if(object == defaults)
-    {
-        if([keyPath isEqualToString:g_DefaultsQuickSearchKeyModifier]) {
-            m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchKeyModifier]);
-            [self QuickSearchClearFiltering];
-        }
-        else if([keyPath isEqualToString:g_DefaultsQuickSearchWhereToFind]) {
-            m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt((int)[defaults integerForKey:g_DefaultsQuickSearchWhereToFind]);
-            [self QuickSearchClearFiltering];
-        }
-        else if([keyPath isEqualToString:g_DefaultsQuickSearchSoftFiltering]) {
-            m_QuickSearchIsSoftFiltering = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchSoftFiltering];
-            [self QuickSearchClearFiltering];
-        }
-        else if([keyPath isEqualToString:g_DefaultsQuickSearchTypingView]) {
-            m_QuickSearchTypingView = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsQuickSearchTypingView];
-            [self QuickSearchClearFiltering];
-        }
-    }
+    m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
+    m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
+    m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
+    m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
+    [self QuickSearchClearFiltering];
 }
 
 - (void) setState:(MainWindowFilePanelState *)state

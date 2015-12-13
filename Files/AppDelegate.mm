@@ -137,6 +137,10 @@ GenericConfig &GlobalConfig() noexcept
     move_int (@"FilePanelsGeneralGoToConnectionsLimit",                     "filePanel.general.maximumNetworkConnectionsInGoToMenu");
     move_bool(@"FilePanelsGeneralShowVolumeInformationBar",                 "filePanel.general.showVolumeInformationBar");
     move_bool(@"FilePanelsGeneralShowLocalizedFilenames",                   "filePanel.general.showLocalizedFilenames");
+    move_int (@"FilePanelsQuickSearchWhereToFind",                          "filePanel.quickSearch.whereToFind");
+    move_bool(@"FilePanelsQuickSearchSoftFiltering",                        "filePanel.quickSearch.softFiltering");
+    move_bool(@"FilePanelsQuickSearchTypingView",                           "filePanel.quickSearch.typingView");
+    move_int (@"FilePanelsQuickSearchKeyModifier",                          "filePanel.quickSearch.keyOption");
     move_int (@"FilePanels_Modern_FontSize",                                "filePanel.modern.fontSize");
 }
 

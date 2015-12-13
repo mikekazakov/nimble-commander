@@ -1074,7 +1074,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="36" name="value" keyPath="values.FilePanelsGeneralRouteKeyboardInputIntoTerminal" id="b7p-iv-DFR"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.routeKeyboardInputIntoTerminal" id="XoV-z4-d8q"/>
                     </connections>
                 </button>
             </beginningViews>

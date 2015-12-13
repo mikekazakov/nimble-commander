@@ -141,6 +141,7 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"FilePanelsGeneralGoToForceActivation",                      "filePanel.general.goToButtonForcesPanelActivation");
     move_int (@"FilePanelsGeneralFileSizeFormat",                           "filePanel.general.fileSizeFormat");
     move_int (@"FilePanelsGeneralSelectionSizeFormat",                      "filePanel.general.selectionSizeFormat");
+    move_bool(@"FilePanelsGeneralRouteKeyboardInputIntoTerminal",           "filePanel.general.routeKeyboardInputIntoTerminal");
     move_int (@"FilePanelsQuickSearchWhereToFind",                          "filePanel.quickSearch.whereToFind");
     move_bool(@"FilePanelsQuickSearchSoftFiltering",                        "filePanel.quickSearch.softFiltering");
     move_bool(@"FilePanelsQuickSearchTypingView",                           "filePanel.quickSearch.typingView");

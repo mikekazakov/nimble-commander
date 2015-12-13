@@ -26,12 +26,11 @@ static const auto g_ConfigShowDotDotEntry                       = "filePanel.gen
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigUseTildeAsHomeShortcut                = "filePanel.general.useTildeAsHomeShortcut";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
+static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
 static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
 static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
 static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
 static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
-
-static auto g_DefaultsGeneralRouteKeyboardInputIntoTerminal =  @"FilePanelsGeneralRouteKeyboardInputIntoTerminal";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -419,7 +418,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
  
-    const bool route_to_overlapped_terminal = [NSUserDefaults.standardUserDefaults boolForKey:g_DefaultsGeneralRouteKeyboardInputIntoTerminal];
+    const bool route_to_overlapped_terminal = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
     const bool terminal_can_eat = route_to_overlapped_terminal && [self.state overlappedTerminalWillEatKeyDown:event];
     
     NSString*  const character   = event.charactersIgnoringModifiers;

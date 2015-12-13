@@ -54,7 +54,9 @@
              * 2 - 2,5 MB
              * 3 - 2,48 MB
              */
-            "selectionSizeFormat": 0
+            "selectionSizeFormat": 0,
+  
+            "routeKeyboardInputIntoTerminal": false
         },
         
         /**

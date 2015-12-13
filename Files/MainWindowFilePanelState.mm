@@ -29,11 +29,12 @@
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
+#include "Config.h"
 
+static const auto g_ConfigGoToActivation = "filePanel.general.goToButtonForcesPanelActivation";
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
-static auto g_DefsGoToActivation = @"FilePanelsGeneralGoToForceActivation";
 
 static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
 {
@@ -76,7 +77,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
-        m_GoToForceActivation = [defaults boolForKey:g_DefsGoToActivation];
+        m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );
         
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController

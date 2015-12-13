@@ -33,6 +33,8 @@
             "maximumNetworkConnectionsInGoToMenu": 5,
 
             "allowDraggingIntoFolders": true,
+  
+            "goToButtonForcesPanelActivation": true,
 
             "archivesExtensionsWhitelist": "zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar",
             

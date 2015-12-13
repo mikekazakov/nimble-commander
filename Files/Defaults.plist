@@ -94,8 +94,6 @@
 	<integer>1</integer>
 	<key>FilePanelsGeneralSelectionSizeFormat</key>
 	<integer>0</integer>
-	<key>FilePanelsGeneralGoToForceActivation</key>
-	<true/>
 	<key>FilePanelsGeneralRouteKeyboardInputIntoTerminal</key>
 	<false/>
 	<key>FilePanels_Modern_RegularBackground</key>

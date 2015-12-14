@@ -6,13 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowPanelsTab.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "ClassicPanelViewPresentation.h"
-#import "ModernPanelViewPresentation.h"
-#import "PreferencesWindowPanelsTabColoringFilterSheet.h"
-#import "ByteCountFormatter.h"
-#import "Common.h"
+#include "PreferencesWindowPanelsTab.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "ClassicPanelViewPresentation.h"
+#include "ModernPanelViewPresentation.h"
+#include "PreferencesWindowPanelsTabColoringFilterSheet.h"
+#include "ByteCountFormatter.h"
+#include "Common.h"
+#include "HexadecimalColor.h"
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
@@ -31,6 +32,36 @@
         return [NSNumber numberWithInt:s.intValue];
     return @0;
 }
+@end
+
+@interface PreferencesHexStringToColorValueTransformer : NSValueTransformer
+@end
+
+@implementation PreferencesHexStringToColorValueTransformer
+
++ (BOOL)allowsReverseTransformation
+{
+    return YES;
+}
+
++ (Class)transformedValueClass {
+    return [NSColor class];
+}
+
+- (id)transformedValue:(id)value
+{
+    if( auto s = objc_cast<NSString>(value) )
+        return [NSColor colorWithHexString:s.UTF8String];
+    return nil;
+}
+
+- (id)reverseTransformedValue:(id)value
+{
+    if( auto c = objc_cast<NSColor>(value) )
+        return [c toHexString];
+    return nil;
+}
+
 @end
 
 @implementation PreferencesWindowPanelsTab

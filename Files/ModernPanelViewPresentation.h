@@ -96,10 +96,10 @@ private:
     NSRect m_ItemsArea;
     int m_ItemsPerColumn;
     
-    CGColorRef  m_RegularBackground;
-    CGColorRef  m_OddBackground;
-    CGColorRef  m_ActiveCursor;
-    CGColorRef  m_InactiveCursor;
+    NSColor* m_RegularBackground;
+    NSColor* m_OddBackground;
+    NSColor* m_ActiveCursor;
+    NSColor* m_InactiveCursor;
     CGColorRef  m_ColumnDividerColor;
     vector<ModernPanelViewPresentationItemsColoringFilter> m_ColoringRules;
     vector<ColoringAttrs> m_ColoringAttrs;

@@ -642,9 +642,9 @@
                                         </constraints>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_RegularBackground" id="hbN-v4-Mzd">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.modern.regularBackground" id="iMj-wa-TCN">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>
@@ -668,9 +668,9 @@
                                         </constraints>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_AlternativeBackground" id="kHm-LZ-KHa">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.modern.alternativeBackground" id="Juc-Uo-o5Z">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>
@@ -694,9 +694,9 @@
                                         </constraints>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_ActiveCursor" id="rT6-mr-oD8">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.modern.activeCursor" id="zHe-VO-kO4">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>
@@ -720,9 +720,9 @@
                                         </constraints>
                                         <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <binding destination="36" name="value" keyPath="values.FilePanels_Modern_InactiveCursor" id="MvF-cc-Sy7">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.modern.inactiveCursor" id="7YK-DI-QYz">
                                                 <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                                                 </dictionary>
                                             </binding>
                                         </connections>

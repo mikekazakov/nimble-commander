@@ -94,7 +94,15 @@
         },
         
         "modern": {
-            "fontSize": 13
+            "fontSize": 13,
+
+            "regularBackground": "#FDFFFF",
+            
+            "alternativeBackground": "#F2F2F2",
+            
+            "activeCursor": "#0C50D0",
+            
+            "inactiveCursor": "#D4D4D4"
         }
     }
 }

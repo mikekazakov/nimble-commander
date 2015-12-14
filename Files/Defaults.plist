@@ -90,10 +90,6 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>FilePanels_Modern_RegularBackground</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
-	<key>FilePanels_Modern_AlternativeBackground</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg/Pycj+D8/JyP4Pz8nI/AYY=</data>
 	<key>FilePanels_Modern_ColoringRules</key>
 	<array>
 		<dict>
@@ -172,10 +168,6 @@
 			<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
 		</dict>
 	</array>
-	<key>FilePanels_Modern_ActiveCursor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg8HAQD2DoaCgPoPR0FA/AYY=</data>
-	<key>FilePanels_Modern_InactiveCursor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg9XUVD+D1dRUP4PV1FQ/AYY=</data>
 	<key>FilePanelsModernIconsMode</key>
 	<integer>2</integer>
 	<key>FilePanelsClassicFont</key>

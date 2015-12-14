@@ -534,6 +534,7 @@
 		CFA7FA731C1D6DAF000D039F /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF747BC91C117C280081185B /* Config.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CFA7FA781C1DC8BC000D039F /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7FA771C1DC8BC000D039F /* HexadecimalColor.mm */; };
 		CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFABA8461B403AA3008DF6D1 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFABA8441B403AA3008DF6D1 /* TermTask.cpp */; };
@@ -1420,6 +1421,8 @@
 		CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockAnalysis.h; sourceTree = "<group>"; };
 		CFA7751C1BD08D630045072A /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = xattr.cpp; path = vfs/XAttr/xattr.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		CFA7751D1BD08D630045072A /* xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = xattr.h; path = vfs/XAttr/xattr.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CFA7FA761C1DC8BC000D039F /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexadecimalColor.h; sourceTree = "<group>"; };
+		CFA7FA771C1DC8BC000D039F /* HexadecimalColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HexadecimalColor.mm; sourceTree = "<group>"; };
 		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = Operations/Delete/JobTrash.mm; sourceTree = "<group>"; };
 		CFAA2AB1196BA56B0036B388 /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TermShellTask_Tests.mm; sourceTree = "<group>"; };
 		CFAADAB01930E02200D30699 /* PanelController+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+Menu.h"; sourceTree = "<group>"; };
@@ -2458,8 +2461,8 @@
 				CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */,
 				CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */,
 				CF4C5A5C17A7B48E00B1B061 /* FileMask.h */,
-				CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */,
 				CFCD3B6C18A9DC7300028B41 /* FileSearch.h */,
+				CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */,
 				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
 				CF27414E1803F6A2006D6687 /* sysinfo.mm */,
@@ -2493,6 +2496,8 @@
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
 				CF747BC91C117C280081185B /* Config.mm */,
 				CF747BCA1C117C280081185B /* Config.h */,
+				CFA7FA761C1DC8BC000D039F /* HexadecimalColor.h */,
+				CFA7FA771C1DC8BC000D039F /* HexadecimalColor.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3647,6 +3652,7 @@
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF73D1E21BE6155E0014C88F /* VFSNetFTPCache.mm in Sources */,
+				CFA7FA781C1DC8BC000D039F /* HexadecimalColor.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,

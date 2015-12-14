@@ -6,21 +6,26 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelView.h"
-#import "ModernPanelViewPresentation.h"
-#import "PanelData.h"
-#import "Encodings.h"
-#import "Common.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "ObjcToCppObservingBridge.h"
-#import "IconsGenerator.h"
-#import "ModernPanelViewPresentationHeader.h"
-#import "ModernPanelViewPresentationItemsFooter.h"
-#import "ModernPanelViewPresentationVolumeFooter.h"
-#import "ByteCountFormatter.h"
+#include "PanelView.h"
+#include "ModernPanelViewPresentation.h"
+#include "PanelData.h"
+#include "Encodings.h"
+#include "Common.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "ObjcToCppObservingBridge.h"
+#include "IconsGenerator.h"
+#include "ModernPanelViewPresentationHeader.h"
+#include "ModernPanelViewPresentationItemsFooter.h"
+#include "ModernPanelViewPresentationVolumeFooter.h"
+#include "ByteCountFormatter.h"
+#include "HexadecimalColor.h"
 
-static const auto g_ConfigShowVolumeBar = "filePanel.general.showVolumeInformationBar";
-static const auto g_ConfigFontSize = "filePanel.modern.fontSize";
+static const auto g_ConfigShowVolumeBar         = "filePanel.general.showVolumeInformationBar";
+static const auto g_ConfigFontSize              = "filePanel.modern.fontSize";
+static const auto g_ConfigRegularBackground     = "filePanel.modern.regularBackground";
+static const auto g_ConfigAlternativeBackground = "filePanel.modern.alternativeBackground";
+static const auto g_ConfigActiveCursor          = "filePanel.modern.activeCursor";
+static const auto g_ConfigInactiveCursor        = "filePanel.modern.inactiveCursor";
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -80,6 +85,11 @@ NSDictionary *ModernPanelViewPresentationItemsColoringFilter::Archive() const
              };
 };
 
+static NSColor *ColorFromConfig(const char *_path)
+{
+    return [NSColor colorWithHexStdString:GlobalConfig().GetString(_path).value_or("")];
+}
+
 ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
 {
     ModernPanelViewPresentationItemsColoringFilter f;
@@ -131,21 +141,20 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,[=]{ OnGeometryOptionsChanged(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFontSize,     [=]{ OnGeometryOptionsChanged(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigRegularBackground,     [=]{ BuildAppearance(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigAlternativeBackground, [=]{ BuildAppearance(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveCursor,          [=]{ BuildAppearance(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigInactiveCursor,        [=]{ BuildAppearance(); }));
     
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
                             bridgeWithObject:NSUserDefaults.standardUserDefaults
-                            forKeyPaths:@[@"FilePanels_Modern_RegularBackground",
-                                          @"FilePanels_Modern_AlternativeBackground",
-                                          @"FilePanels_Modern_ActiveCursor",
-                                          @"FilePanels_Modern_InactiveCursor",
-                                          @"FilePanelsModernIconsMode",
+                            forKeyPaths:@[@"FilePanelsModernIconsMode",
                                           @"FilePanels_Modern_ColoringRules"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
                                 BuildAppearance();
                                 if([_key_path isEqualToString:@"FilePanelsModernIconsMode"])
                                     m_State->Data->CustomIconClearAll();
-                                SetViewNeedsDisplay();
                             }];
     
     m_TitleObserver = [ObjcToCppObservingBlockBridge
@@ -159,10 +168,6 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
     m_IconCache.SetUpdateCallback(nullptr);
-    CGColorRelease(m_RegularBackground);
-    CGColorRelease(m_OddBackground);
-    CGColorRelease(m_ActiveCursor);
-    CGColorRelease(m_InactiveCursor);
     CGColorRelease(m_ColumnDividerColor);
     
     if(m_State->Data != 0)
@@ -251,19 +256,13 @@ void ModernPanelViewPresentation::BuildAppearance()
     
     // Icon mode
     m_IconCache.SetIconMode( (IconsGenerator::IconMode)[defaults integerForKey:@"FilePanelsModernIconsMode"] );
+//                                    m_State->Data->CustomIconClearAll();
     
     // Colors
-    if(m_RegularBackground) CGColorRelease(m_RegularBackground);
-    m_RegularBackground = [defaults colorForKey:@"FilePanels_Modern_RegularBackground"].copyCGColor;
-
-    if(m_OddBackground) CGColorRelease(m_OddBackground);
-    m_OddBackground = [defaults colorForKey:@"FilePanels_Modern_AlternativeBackground"].copyCGColor;
-    
-    if(m_ActiveCursor) CGColorRelease(m_ActiveCursor);
-    m_ActiveCursor = [defaults colorForKey:@"FilePanels_Modern_ActiveCursor"].copyCGColor;
-    
-    if(m_InactiveCursor) CGColorRelease(m_InactiveCursor);
-    m_InactiveCursor = [defaults colorForKey:@"FilePanels_Modern_InactiveCursor"].copyCGColor;
+    m_RegularBackground = ColorFromConfig(g_ConfigRegularBackground);
+    m_OddBackground     = ColorFromConfig(g_ConfigAlternativeBackground);
+    m_ActiveCursor      = ColorFromConfig(g_ConfigActiveCursor);
+    m_InactiveCursor    = ColorFromConfig(g_ConfigInactiveCursor);
     
     m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
     
@@ -314,6 +313,7 @@ void ModernPanelViewPresentation::BuildAppearance()
                             NSForegroundColorAttributeName: c.regular,
                             NSParagraphStyleAttributeName: size_col_text_pstyle};
     }
+    SetViewNeedsDisplay();
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
@@ -331,7 +331,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     ///////////////////////////////////////////////////////////////////////////////
     // Clear view background.
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-    CGContextSetFillColorWithColor(context, m_RegularBackground);
+    CGContextSetFillColorWithColor(context, m_RegularBackground.CGColor);
     // don't paint areas of header and footer
     CGRect bk_fill_rect = NSRectToCGRect(_dirty_rect);
     bk_fill_rect.origin.y += m_Header->Height();
@@ -403,7 +403,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             // Draw alternate background.
             if(count % 2 == 1) {
-                CGContextSetFillColorWithColor(context, m_OddBackground);
+                CGContextSetFillColorWithColor(context, m_OddBackground.CGColor);
                 CGContextFillRect(context, NSMakeRect(start_x + 1, item_start_y,
                                                       column_width - 2, m_LineHeight));
             }
@@ -415,11 +415,11 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             if(m_State->CursorPos == i) {
                 if (active && wnd_active) {
-                    CGContextSetFillColorWithColor(context, m_ActiveCursor);
+                    CGContextSetFillColorWithColor(context, m_ActiveCursor.CGColor);
                     CGContextFillRect(context, NSMakeRect(start_x + 1, item_start_y, column_width - 2, m_LineHeight - 1));
                 }
                 else {
-                    CGContextSetFillColorWithColor(context, m_InactiveCursor);
+                    CGContextSetFillColorWithColor(context, m_InactiveCursor.CGColor);
                     CGContextFillRect(context, NSMakeRect(start_x + 1, item_start_y, column_width - 2, m_LineHeight - 1));
                 }
             }

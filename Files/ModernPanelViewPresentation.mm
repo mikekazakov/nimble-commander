@@ -26,6 +26,7 @@ static const auto g_ConfigRegularBackground     = "filePanel.modern.regularBackg
 static const auto g_ConfigAlternativeBackground = "filePanel.modern.alternativeBackground";
 static const auto g_ConfigActiveCursor          = "filePanel.modern.activeCursor";
 static const auto g_ConfigInactiveCursor        = "filePanel.modern.inactiveCursor";
+static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 
 static NSString* FormHumanReadableShortDate(time_t _in)
 {
@@ -76,6 +77,11 @@ NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_d
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // class ModernPanelViewPresentation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+static NSColor *ColorFromConfig(const char *_path)
+{
+    return [NSColor colorWithHexStdString:GlobalConfig().GetString(_path).value_or("")];
+}
+
 NSDictionary *ModernPanelViewPresentationItemsColoringFilter::Archive() const
 {
     return @{@"name"    : [NSString stringWithUTF8String:name.c_str()],
@@ -84,11 +90,6 @@ NSDictionary *ModernPanelViewPresentationItemsColoringFilter::Archive() const
              @"filter"  : filter.Archive()
              };
 };
-
-static NSColor *ColorFromConfig(const char *_path)
-{
-    return [NSColor colorWithHexStdString:GlobalConfig().GetString(_path).value_or("")];
-}
 
 ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
 {
@@ -268,10 +269,12 @@ void ModernPanelViewPresentation::BuildAppearance()
     
     // Coloring rules
     m_ColoringRules.clear();
-    if(auto coloring_rules = [NSUserDefaults.standardUserDefaults arrayForKey:@"FilePanels_Modern_ColoringRules"])
-        for(id item: coloring_rules)
-            if([item isKindOfClass:NSDictionary.class])
-                m_ColoringRules.emplace_back( ModernPanelViewPresentationItemsColoringFilter::Unarchive(item) );
+    {
+        auto cr = GlobalConfig().Get(g_ConfigColoring);
+        if( cr.IsArray() )
+            for( auto i = cr.Begin(), e = cr.End(); i != e; ++i )
+                m_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
+    }
     
     m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     

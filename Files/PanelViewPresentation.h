@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 #include "PanelViewTypes.h"
 #include "vfs/VFS.h"
 #include "DispatchQueue.h"

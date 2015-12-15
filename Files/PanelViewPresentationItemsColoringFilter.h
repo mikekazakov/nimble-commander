@@ -11,6 +11,7 @@
 #include "vfs/vfs.h"
 #include "FileMask.h"
 #include "PanelData.h"
+#include "Config.h"
 
 struct PanelViewPresentationItemsColoringFilter
 {
@@ -40,9 +41,27 @@ struct PanelViewPresentationItemsColoringFilter
      * Persistance support - store values in a dictionary.
      */
     NSDictionary *Archive() const;
+
+    /**
+     * Persistance support - store values in a dictionary.
+     */
+    GenericConfig::ConfigValue ToJSON() const;
     
     /**
      * Persistance support - build filter from a dictionary.
      */
     static PanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
+    
+    static PanelViewPresentationItemsColoringFilter FromJSON(const GenericConfig::ConfigValue& _v);
+};
+
+struct PanelViewPresentationItemsColoringRule
+{
+    string                                      name;
+    NSColor                                     *regular = NSColor.blackColor; // all others state text color
+    NSColor                                     *focused = NSColor.blackColor; // focused text color
+    PanelViewPresentationItemsColoringFilter    filter;
+    
+    GenericConfig::ConfigValue ToJSON() const;
+    static PanelViewPresentationItemsColoringRule FromJSON(const GenericConfig::ConfigValue& _v);
 };

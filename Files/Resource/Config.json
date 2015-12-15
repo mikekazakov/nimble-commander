@@ -102,7 +102,31 @@
             
             "activeCursor": "#0C50D0",
             
-            "inactiveCursor": "#D4D4D4"
+            "inactiveCursor": "#D4D4D4",
+            
+            "coloringRules_v1": [
+                                 {
+                                 "name": "selected",
+                                    "regular": "#FF0000",
+                                    "focused": "#FF0000",
+                                    "filter": {
+                                        "selected": true
+                                    }
+                                 },
+                                 {
+                                    "name": "hidden",
+                                    "regular": "#666666",
+                                    "focused": "#999999",
+                                    "filter": {
+                                        "hidden": true
+                                    }
+                                 },
+                                 {
+                                    "name": "other",
+                                    "regular": "#000000",
+                                    "focused": "#FFFFFF"
+                                 }
+            ]
         }
     }
 }

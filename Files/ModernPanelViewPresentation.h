@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/FontExtras.h>
-#import "PanelViewPresentation.h"
-#import "PanelViewPresentationItemsColoringFilter.h"
-#import "ObjcToCppObservingBridge.h"
-#import "IconsGenerator.h"
+#include <Habanero/FontExtras.h>
+#include "PanelViewPresentation.h"
+#include "PanelViewPresentationItemsColoringFilter.h"
+#include "ObjcToCppObservingBridge.h"
+#include "IconsGenerator.h"
 #include "Config.h"
 
 @class PanelView;
@@ -101,7 +101,7 @@ private:
     NSColor* m_ActiveCursor;
     NSColor* m_InactiveCursor;
     CGColorRef  m_ColumnDividerColor;
-    vector<ModernPanelViewPresentationItemsColoringFilter> m_ColoringRules;
+    vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     vector<ColoringAttrs> m_ColoringAttrs;
     
     static NSImage *m_SymlinkArrowImage;

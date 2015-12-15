@@ -24,8 +24,7 @@ static string Load(const string &_filepath)
     return "";
 }
 
-static rapidjson::CrtAllocator g_CrtAllocator;
-
+rapidjson::CrtAllocator GenericConfig::g_CrtAllocator;
 
 static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target_document, const rapidjson::Value &_overwrites )
 {

@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/stat.h>
-#import "PanelViewPresentationItemsColoringFilter.h"
+#include <sys/stat.h>
+#include "PanelViewPresentationItemsColoringFilter.h"
+#include "HexadecimalColor.h"
 
 static tribool to_tribool(NSNumber *_n)
 {
@@ -16,6 +17,30 @@ static tribool to_tribool(NSNumber *_n)
     if(_n.intValue == 1)
         return true;
     return indeterminate;
+}
+
+static tribool to_tribool(const GenericConfig::ConfigValue &_val)
+{
+    switch( _val.GetType() ) {
+        case rapidjson::kTrueType:  return true;
+        case rapidjson::kFalseType: return false;
+        default:                    return indeterminate;
+    }
+}
+
+static GenericConfig::ConfigValue to_json(tribool _b)
+{
+    if( indeterminate(_b) )
+        return GenericConfig::ConfigValue( rapidjson::kNullType );
+    if( _b )
+        return GenericConfig::ConfigValue( rapidjson::kTrueType );
+    else
+        return GenericConfig::ConfigValue( rapidjson::kFalseType );
+}
+
+static NSColor *ColorFromJSON(const GenericConfig::ConfigValue& _v)
+{
+    return [NSColor colorWithHexStdString:_v.IsString() ? _v.GetString() : ""];
 }
 
 bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
@@ -75,6 +100,19 @@ NSDictionary *PanelViewPresentationItemsColoringFilter::Archive() const
              };
 }
 
+GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() const
+{
+    GenericConfig::ConfigValue v( rapidjson::kObjectType );
+    v.AddMember("mask", GenericConfig::ConfigValue( mask.Mask() ? mask.Mask().UTF8String : "", GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
+    v.AddMember("executable", to_json(executable), GenericConfig::g_CrtAllocator);
+    v.AddMember("hidden", to_json(hidden), GenericConfig::g_CrtAllocator);
+    v.AddMember("directory", to_json(directory), GenericConfig::g_CrtAllocator);
+    v.AddMember("symlink", to_json(symlink), GenericConfig::g_CrtAllocator);
+    v.AddMember("reg", to_json(reg), GenericConfig::g_CrtAllocator);
+    v.AddMember("selected", to_json(selected), GenericConfig::g_CrtAllocator);
+    return v;
+}
+
 PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
 {
     PanelViewPresentationItemsColoringFilter f;
@@ -109,6 +147,49 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
     if([_dict objectForKey:@"selected"] &&
        [[_dict objectForKey:@"selected"] isKindOfClass:NSNumber.class])
         f.selected = to_tribool([_dict objectForKey:@"selected"]);
+    
+    return f;
+}
+
+PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilter::FromJSON(const GenericConfig::ConfigValue& _v)
+{
+    PanelViewPresentationItemsColoringFilter f;
+
+    if( _v.GetType() != rapidjson::kObjectType )
+        return f;
+    
+    if( _v.HasMember("mask") && _v["mask"].IsString() ) {
+        auto &m = _v["mask"];
+        if( m.IsString() )
+            f.mask = FileMask( [NSString stringWithUTF8String:m.GetString()] );
+    }
+    
+    if( _v.HasMember("executable") )    f.executable    = to_tribool( _v["executable"] );
+    if( _v.HasMember("hidden") )        f.hidden        = to_tribool( _v["hidden"] );
+    if( _v.HasMember("directory") )     f.directory     = to_tribool( _v["directory"] );
+    if( _v.HasMember("symlink") )       f.symlink       = to_tribool( _v["symlink"] );
+    if( _v.HasMember("reg") )           f.reg           = to_tribool( _v["reg"] );
+    if( _v.HasMember("selected") )      f.selected      = to_tribool( _v["selected"] );
+    return f;
+}
+
+GenericConfig::ConfigValue PanelViewPresentationItemsColoringRule::ToJSON() const
+{
+    
+    
+}
+
+PanelViewPresentationItemsColoringRule PanelViewPresentationItemsColoringRule::FromJSON(const GenericConfig::ConfigValue& _v)
+{
+    PanelViewPresentationItemsColoringRule f;
+    
+    if( _v.GetType() != rapidjson::kObjectType )
+        return f;
+    
+    if( _v.HasMember("filter") ) f.filter = PanelViewPresentationItemsColoringFilter::FromJSON( _v["filter"] );
+    if( _v.HasMember("name") && _v["name"].IsString() ) f.name = _v["name"].GetString();
+    if( _v.HasMember("regular") ) f.regular = ColorFromJSON( _v["regular"] );
+    if( _v.HasMember("focused") ) f.focused = ColorFromJSON( _v["focused"] );
     
     return f;
 }

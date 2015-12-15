@@ -15,6 +15,8 @@ class GenericConfig;
 class GenericConfig
 {
 public:
+    static rapidjson::CrtAllocator g_CrtAllocator;
+    
     GenericConfig(const string &_defaults, const string &_overwrites);
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
@@ -60,18 +62,9 @@ public:
     
     ObservationTicket Observe(const char *_path, function<void()> _change_callback);
     
-    
-//    bool 	IsInt () const
-//    bool 	IsUint () const
-//    bool 	IsInt64 () const
-//    bool 	IsUint64 () const
-//    bool 	IsDouble () const
-
 #ifdef __OBJC__
     inline GenericConfigObjC    *Bridge() const { return m_Bridge; }
 #endif
-    
-    
     
 private:
     struct Observer

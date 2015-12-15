@@ -12,6 +12,7 @@ void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept;
 + (NSColor*)colorWithHexStdString:(const string&)_hex;
 - (uint32_t)toRGBA;
 - (NSString*)toHexString;
+- (string)toHexStdString;
 
 @end
 

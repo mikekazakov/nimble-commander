@@ -103,13 +103,20 @@ NSDictionary *PanelViewPresentationItemsColoringFilter::Archive() const
 GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() const
 {
     GenericConfig::ConfigValue v( rapidjson::kObjectType );
-    v.AddMember("mask", GenericConfig::ConfigValue( mask.Mask() ? mask.Mask().UTF8String : "", GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-    v.AddMember("executable", to_json(executable), GenericConfig::g_CrtAllocator);
-    v.AddMember("hidden", to_json(hidden), GenericConfig::g_CrtAllocator);
-    v.AddMember("directory", to_json(directory), GenericConfig::g_CrtAllocator);
-    v.AddMember("symlink", to_json(symlink), GenericConfig::g_CrtAllocator);
-    v.AddMember("reg", to_json(reg), GenericConfig::g_CrtAllocator);
-    v.AddMember("selected", to_json(selected), GenericConfig::g_CrtAllocator);
+    if( mask.Mask() && mask.Mask().length > 0 )
+        v.AddMember("mask", GenericConfig::ConfigValue( mask.Mask().UTF8String, GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+    if( !indeterminate(executable) )
+        v.AddMember("executable", to_json(executable), GenericConfig::g_CrtAllocator);
+    if( !indeterminate(hidden) )
+        v.AddMember("hidden", to_json(hidden), GenericConfig::g_CrtAllocator);
+    if( !indeterminate(directory) )
+        v.AddMember("directory", to_json(directory), GenericConfig::g_CrtAllocator);
+    if( !indeterminate(symlink) )
+        v.AddMember("symlink", to_json(symlink), GenericConfig::g_CrtAllocator);
+    if( !indeterminate(reg) )
+        v.AddMember("reg", to_json(reg), GenericConfig::g_CrtAllocator);
+    if( !indeterminate(selected) )
+        v.AddMember("selected", to_json(selected), GenericConfig::g_CrtAllocator);
     return v;
 }
 
@@ -175,8 +182,14 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
 
 GenericConfig::ConfigValue PanelViewPresentationItemsColoringRule::ToJSON() const
 {
-    
-    
+    GenericConfig::ConfigValue v( rapidjson::kObjectType );
+    v.AddMember("name", GenericConfig::ConfigValue(name.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+    v.AddMember("regular", GenericConfig::ConfigValue(regular.toHexStdString.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+    v.AddMember("focused", GenericConfig::ConfigValue(focused.toHexStdString.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+    auto f = filter.ToJSON();
+    if( !f.ObjectEmpty() )
+        v.AddMember("filter", f, GenericConfig::g_CrtAllocator);
+    return v;
 }
 
 PanelViewPresentationItemsColoringRule PanelViewPresentationItemsColoringRule::FromJSON(const GenericConfig::ConfigValue& _v)

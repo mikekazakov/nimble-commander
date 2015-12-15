@@ -55,6 +55,11 @@ static tribool state_to_tribool(NSCellStateValue _val)
     self.mask.stringValue = m_Filter.mask.Mask() ? m_Filter.mask.Mask() : @"";
 }
 
+- (void)cancelOperation:(id)sender
+{
+    [self endSheet:NSModalResponseCancel];
+}
+
 - (IBAction)OnOK:(id)sender
 {
     m_Filter.executable = state_to_tribool(self.executable.state);

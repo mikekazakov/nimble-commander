@@ -82,34 +82,6 @@ static NSColor *ColorFromConfig(const char *_path)
     return [NSColor colorWithHexStdString:GlobalConfig().GetString(_path).value_or("")];
 }
 
-NSDictionary *ModernPanelViewPresentationItemsColoringFilter::Archive() const
-{
-    return @{@"name"    : [NSString stringWithUTF8String:name.c_str()],
-             @"regular" : [NSArchiver archivedDataWithRootObject:regular],
-             @"focused" : [NSArchiver archivedDataWithRootObject:focused],
-             @"filter"  : filter.Archive()
-             };
-};
-
-ModernPanelViewPresentationItemsColoringFilter ModernPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
-{
-    ModernPanelViewPresentationItemsColoringFilter f;
-    
-    if(!_dict)
-        return f;
-
-    if( auto filter = objc_cast<NSDictionary>([_dict objectForKey:@"filter"])  )
-        f.filter = PanelViewPresentationItemsColoringFilter::Unarchive(filter);
-    if( auto name = objc_cast<NSString>([_dict objectForKey:@"name"]) )
-        f.name = name.UTF8String;
-    if( auto regular = objc_cast<NSData>([_dict objectForKey:@"regular"]) )
-        f.regular = (NSColor *)[NSUnarchiver unarchiveObjectWithData:regular];
-    if( auto focused = objc_cast<NSData>([_dict objectForKey:@"focused"]) )
-        f.focused = (NSColor *)[NSUnarchiver unarchiveObjectWithData:focused];
-    
-    return f;
-}
-
 // Item name display insets inside the item line.
 // Order: left, top, right, bottom.
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
@@ -146,11 +118,11 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigAlternativeBackground, [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveCursor,          [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigInactiveCursor,        [=]{ BuildAppearance(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,              [=]{ BuildAppearance(); }));
     
     m_AppearanceObserver = [ObjcToCppObservingBlockBridge
                             bridgeWithObject:NSUserDefaults.standardUserDefaults
-                            forKeyPaths:@[@"FilePanelsModernIconsMode",
-                                          @"FilePanels_Modern_ColoringRules"]
+                            forKeyPaths:@[@"FilePanelsModernIconsMode"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
                                 BuildAppearance();

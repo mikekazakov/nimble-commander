@@ -18,6 +18,8 @@
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
 
+static const auto g_ConfigModernColoring = "filePanel.modern.coloringRules_v1";
+
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
 
@@ -67,6 +69,7 @@
 @implementation PreferencesWindowPanelsTab
 {
     NSFont *m_ClassicFont;
+    vector<PanelViewPresentationItemsColoringRule> m_ModernColoringRules;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -74,6 +77,11 @@
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
+        
+        auto mcr = GlobalConfig().Get(g_ConfigModernColoring);
+        if( mcr.IsArray() )
+            for( auto i = mcr.Begin(), e = mcr.End(); i != e; ++i )
+                m_ModernColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
     }
     
     return self;
@@ -137,9 +145,9 @@
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
     [self.modernColoringRulesTable addTableColumn:column];
     
-    column = [[NSTableColumn alloc] initWithIdentifier:@"selected"];
+    column = [[NSTableColumn alloc] initWithIdentifier:@"focused"];
     column.width = 60;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Selected",
+    ((NSTableHeaderCell*)column.headerCell).stringValue = NSLocalizedStringFromTable(@"Focused",
                                                                                      @"Preferences",
                                                                                      "Coloring rules column name");
     ((NSTableHeaderCell*)column.headerCell).alignment = NSCenterTextAlignment;
@@ -211,7 +219,7 @@
     if( tableView == self.classicColoringRulesTable )
         return self.classicColoringRules.count;
     if( tableView == self.modernColoringRulesTable )
-        return self.modernColoringRules.count;
+        return m_ModernColoringRules.size();
     return 0;
 }
 
@@ -257,11 +265,11 @@
         }
     }
     if(tableView == self.modernColoringRulesTable) {
-        assert(row < self.modernColoringRules.count);
-        NSDictionary *d = [self.modernColoringRules objectAtIndex:row];
+        assert(row < m_ModernColoringRules.size());
+        auto &r = m_ModernColoringRules[row];
         if([tableColumn.identifier isEqualToString:@"name"]) {
             NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-            tf.stringValue = [d objectForKey:@"name"];
+            tf.stringValue = [NSString stringWithUTF8StdString:r.name];
             tf.bordered = false;
             tf.editable = true;
             tf.drawsBackground = false;
@@ -270,13 +278,13 @@
         }
         if([tableColumn.identifier isEqualToString:@"regular"]) {
             NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
-            cw.color = [NSUnarchiver unarchiveObjectWithData:[d objectForKey:@"regular"]];
+            cw.color = r.regular;
             [cw addObserver:self forKeyPath:@"color" options:0 context:NULL];
             return cw;
         }
-        if([tableColumn.identifier isEqualToString:@"selected"]) {
+        if([tableColumn.identifier isEqualToString:@"focused"]) {
             NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
-            cw.color = [NSUnarchiver unarchiveObjectWithData:[d objectForKey:@"focused"]];
+            cw.color = r.focused;
             [cw addObserver:self forKeyPath:@"color" options:0 context:NULL];
             return cw;
         }
@@ -333,8 +341,7 @@
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    if( [tf.superview isKindOfClass:NSTableRowView.class] ) {
-        NSTableRowView *rv = (NSTableRowView *)tf.superview;
+    if( auto rv = objc_cast<NSTableRowView>(tf.superview) ) {
         if( [rv.superview isKindOfClass:NSTableView.class] &&
            rv.superview == self.classicColoringRulesTable ) {
             long row_no = [((NSTableView*)rv.superview) rowForView:rv];
@@ -346,15 +353,11 @@
                 self.classicColoringRules = arr;
             }
         }
-        else if([rv.superview isKindOfClass:NSTableView.class] &&
-                rv.superview == self.modernColoringRulesTable ) {
-            long row_no = [((NSTableView*)rv.superview) rowForView:rv];
+        else if( rv.superview == self.modernColoringRulesTable ) {
+            long row_no = [self.modernColoringRulesTable rowForView:rv];
             if( row_no >= 0 ) {
-                NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-                auto filt = ModernPanelViewPresentationItemsColoringFilter::Unarchive([arr objectAtIndex:row_no]);
-                filt.name = tf.stringValue.UTF8String ? tf.stringValue.UTF8String : "";
-                [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
-                self.modernColoringRules = arr;
+                m_ModernColoringRules[row_no].name = tf.stringValue ? tf.stringValue.UTF8String : "";
+                [self writeModernFiltering];
             }
         }
     }
@@ -362,42 +365,44 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if(object &&
-       [object isKindOfClass:NSColorWell.class] &&
-       [keyPath isEqualToString:@"color"]) {
-        NSColorWell *cw = object;
-        if( [cw.superview isKindOfClass:NSTableRowView.class] ) {
-            NSTableRowView *rv = (NSTableRowView *)cw.superview;
-            if( [rv.superview isKindOfClass:NSTableView.class] &&
-               rv.superview == self.classicColoringRulesTable ) {
-                long row_no = [((NSTableView*)rv.superview) rowForView:rv];
-                if( row_no >= 0 ) {
-                    NSMutableArray *arr = self.classicColoringRules.mutableCopy;
-                    auto filt = ClassicPanelViewPresentationItemsColoringFilter::Unarchive([arr objectAtIndex:row_no]);
-                    if( [rv viewAtColumn:1] == cw )
-                        filt.unfocused = DoubleColor(cw.color);
-                    if( [rv viewAtColumn:2] == cw )
-                        filt.focused = DoubleColor(cw.color);
-                    [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
-                    self.classicColoringRules = arr;
+    if( [keyPath isEqualToString:@"color"] )
+        if( NSColorWell *cw = objc_cast<NSColorWell>(object) ) {
+            if( auto rv = objc_cast<NSTableRowView>(cw.superview) ) {
+                if( [rv.superview isKindOfClass:NSTableView.class] &&
+                   rv.superview == self.classicColoringRulesTable ) {
+                    long row_no = [((NSTableView*)rv.superview) rowForView:rv];
+                    if( row_no >= 0 ) {
+                        NSMutableArray *arr = self.classicColoringRules.mutableCopy;
+                        auto filt = ClassicPanelViewPresentationItemsColoringFilter::Unarchive([arr objectAtIndex:row_no]);
+                        if( [rv viewAtColumn:1] == cw )
+                            filt.unfocused = DoubleColor(cw.color);
+                        if( [rv viewAtColumn:2] == cw )
+                            filt.focused = DoubleColor(cw.color);
+                        [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
+                        self.classicColoringRules = arr;
+                    }
                 }
-            }
-            else if([rv.superview isKindOfClass:NSTableView.class] &&
-                    rv.superview == self.modernColoringRulesTable ) {
-                long row_no = [((NSTableView*)rv.superview) rowForView:rv];
-                if( row_no >= 0 ) {
-                    NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-                    auto filt = ModernPanelViewPresentationItemsColoringFilter::Unarchive([arr objectAtIndex:row_no]);
-                    if( [rv viewAtColumn:1] == cw )
-                        filt.regular = cw.color;
-                    if( [rv viewAtColumn:2] == cw )
-                        filt.focused = cw.color;
-                    [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
-                    self.modernColoringRules = arr;
+                else if( rv.superview == self.modernColoringRulesTable ) {
+                    long row_no = [self.modernColoringRulesTable rowForView:rv];
+                    if( row_no >= 0 ) {
+                        if( cw == [rv viewAtColumn:1] )
+                            m_ModernColoringRules.at(row_no).regular = cw.color;
+                        if( cw == [rv viewAtColumn:2] )
+                            m_ModernColoringRules.at(row_no).focused = cw.color;
+                        [self writeModernFiltering];
+                    }
                 }
             }
         }
-    }
+}
+
+- (void) writeModernFiltering
+{
+    GenericConfig::ConfigValue cr(rapidjson::kArrayType);
+    cr.Reserve((unsigned)m_ModernColoringRules.size(), GenericConfig::g_CrtAllocator);
+    for(const auto &r: m_ModernColoringRules)
+        cr.PushBack( r.ToJSON(), GenericConfig::g_CrtAllocator );
+    GlobalConfig().Set(g_ConfigModernColoring, cr);
 }
 
 - (void) classicColoringFilterClicked:(id)sender
@@ -422,22 +427,18 @@
 
 - (void) modernColoringFilterClicked:(id)sender
 {
-    if( auto button = objc_cast<NSButton>(sender) ) {
-        NSTableRowView *rv = (NSTableRowView *)button.superview;
-        long row_no = [((NSTableView*)rv.superview) rowForView:rv];
-        
-        __block auto filt = ModernPanelViewPresentationItemsColoringFilter::Unarchive([self.modernColoringRules objectAtIndex:row_no]);
-        __block PreferencesWindowPanelsTabColoringFilterSheet *sheet;
-        sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc] initWithFilter:filt.filter];
-        [sheet beginSheetForWindow:self.view.window
-                 completionHandler:^(NSModalResponse returnCode) {
-                     NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-                     filt.filter = sheet.filter;
-                     [arr replaceObjectAtIndex:row_no withObject:filt.Archive()];
-                     self.modernColoringRules = arr;
-                     sheet = nil;
-                 }];
-    }
+    if( auto button = objc_cast<NSButton>(sender) )
+        if( auto rv = objc_cast<NSTableRowView>(button.superview) ) {
+            long row_no = [((NSTableView*)rv.superview) rowForView:rv];
+            auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc] initWithFilter:m_ModernColoringRules.at(row_no).filter];
+            [sheet beginSheetForWindow:self.view.window
+                     completionHandler:^(NSModalResponse returnCode) {
+                         if( returnCode != NSModalResponseOK )
+                             return;
+                         m_ModernColoringRules.at(row_no).filter = sheet.filter;
+                         [self writeModernFiltering];
+                     }];
+        }
 }
 
 - (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
@@ -496,16 +497,15 @@
            drag_to == drag_from + 1) // same index, below
             return false;
         
-        assert(drag_from < self.modernColoringRules.count);
-        if(drag_from < drag_to)
-            drag_to--;
-        
-        NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-        id item = [arr objectAtIndex:drag_from];
-        [arr removeObject:item];
-        [arr insertObject:item atIndex:drag_to];
-        self.modernColoringRules = arr;
+        assert(drag_from < m_ModernColoringRules.size());
+
+        auto i = begin(m_ModernColoringRules);
+        if( drag_from < drag_to )
+            rotate( i + drag_from, i + drag_from + 1, i + drag_to );
+        else
+            rotate( i + drag_to, i + drag_from, i + drag_from + 1 );
         [self.modernColoringRulesTable reloadData];
+        [self writeModernFiltering];
         return true;
     }
     return false;
@@ -531,33 +531,20 @@
     }
 }
 
-- (NSArray*)modernColoringRules
-{
-    return [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanels_Modern_ColoringRules"];
-}
-
-- (void) setModernColoringRules:(NSArray *)modernColoringRules
-{
-    [NSUserDefaults.standardUserDefaults setObject:modernColoringRules forKey:@"FilePanels_Modern_ColoringRules"];
-}
-
 - (IBAction)OnAddNewModernColoringRule:(id)sender
 {
-    ModernPanelViewPresentationItemsColoringFilter def;
-    NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-    [arr addObject:def.Archive()];
-    self.modernColoringRules = arr;
+    m_ModernColoringRules.emplace_back();
     [self.modernColoringRulesTable reloadData];
+    [self writeModernFiltering];
 }
 
 - (IBAction)OnRemoveModernColoringRule:(id)sender
 {
     NSIndexSet *indeces = self.modernColoringRulesTable.selectedRowIndexes;
-    if(indeces.count == 1) {
-        NSMutableArray *arr = self.modernColoringRules.mutableCopy;
-        [arr removeObjectAtIndex:indeces.firstIndex];
-        self.modernColoringRules = arr;
+    if( indeces.count == 1 ) {
+        m_ModernColoringRules.erase( begin(m_ModernColoringRules) + indeces.firstIndex );
         [self.modernColoringRulesTable reloadData];
+        [self writeModernFiltering];
     }
 }
 

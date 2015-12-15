@@ -252,6 +252,11 @@ bool GenericConfig::Set(const char *_path, const char *_value)
     return SetInternal( _path, ConfigValue(_value, g_CrtAllocator) );
 }
 
+bool GenericConfig::Set(const char *_path, const ConfigValue &_value)
+{
+    return SetInternal( _path, _value );
+}
+
 bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
 {
     {

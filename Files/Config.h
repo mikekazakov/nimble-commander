@@ -35,6 +35,7 @@ public:
      */
     int GetInt(const char *_path) const;
     
+    bool Set(const char *_path, const ConfigValue &_value);
     bool Set(const char *_path, int _value);
     bool Set(const char *_path, unsigned int _value);
     bool Set(const char *_path, long long _value);

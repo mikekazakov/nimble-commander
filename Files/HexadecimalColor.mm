@@ -129,4 +129,11 @@ void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept
     return [NSString stringWithUTF8String:buf];
 }
 
+- (string)toHexStdString
+{
+    char buf[16];
+    HexadecimalColorRGBAToString( [self toRGBA], buf );
+    return string(buf);
+}
+
 @end

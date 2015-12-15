@@ -19,15 +19,6 @@ class ModernPanelViewPresentationHeader;
 class ModernPanelViewPresentationItemsFooter;
 class ModernPanelViewPresentationVolumeFooter;
 
-struct ModernPanelViewPresentationItemsColoringFilter
-{
-    string                                      name;
-    NSColor                                     *regular = NSColor.blackColor; // all others state text color
-    NSColor                                     *focused = NSColor.blackColor; // focused text color
-    PanelViewPresentationItemsColoringFilter    filter;
-    NSDictionary *Archive() const;
-    static ModernPanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
-};
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {

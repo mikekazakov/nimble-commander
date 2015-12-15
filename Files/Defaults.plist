@@ -230,8 +230,6 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
 	<key>FilePanelsClassicHighlightTextColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEAAYY=</data>
-	<key>FilePanelsChecksumCalculationAlgorithm</key>
-	<string>MD5</string>
 	<key>Terminal</key>
 	<dict>
 		<key>CursorMode</key>

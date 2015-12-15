@@ -118,16 +118,19 @@ GenericConfig &GlobalConfig() noexcept
 - (void)migrateFromDefaultsToJSONConfig
 {
     auto move_bool = [](NSString *_default, const char *_config) {
-        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) ) {
+        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) )
             GlobalConfig().Set(_config, (bool)v.boolValue);
-            [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
-        }
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
     };
     auto move_int = [](NSString *_default, const char *_config) {
-        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) ) {
+        if( auto v = objc_cast<NSNumber>([NSUserDefaults.standardUserDefaults objectForKey:_default]) )
             GlobalConfig().Set(_config, v.intValue);
-            [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
-        }
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
+    };
+    auto move_string = [](NSString *_default, const char *_config) {
+        if( auto v = objc_cast<NSString>([NSUserDefaults.standardUserDefaults objectForKey:_default]) )
+            GlobalConfig().Set(_config, v.UTF8String);
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
     };
     move_bool(@"FilePanelsGeneralShowDotDotEntry",                          "filePanel.general.showDotDotEntry");
     move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask",     "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
@@ -142,6 +145,7 @@ GenericConfig &GlobalConfig() noexcept
     move_int (@"FilePanelsGeneralFileSizeFormat",                           "filePanel.general.fileSizeFormat");
     move_int (@"FilePanelsGeneralSelectionSizeFormat",                      "filePanel.general.selectionSizeFormat");
     move_bool(@"FilePanelsGeneralRouteKeyboardInputIntoTerminal",           "filePanel.general.routeKeyboardInputIntoTerminal");
+    move_string(@"FilePanelsChecksumCalculationAlgorithm",                  "filePanel.general.checksumCalculationAlgorithm");
     move_int (@"FilePanelsQuickSearchWhereToFind",                          "filePanel.quickSearch.whereToFind");
     move_bool(@"FilePanelsQuickSearchSoftFiltering",                        "filePanel.quickSearch.softFiltering");
     move_bool(@"FilePanelsQuickSearchTypingView",                           "filePanel.quickSearch.typingView");

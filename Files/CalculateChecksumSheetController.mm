@@ -6,11 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/Hash.h>
-#import "CalculateChecksumSheetController.h"
-#import "DispatchQueue.h"
+#include <Habanero/Hash.h>
+#include "CalculateChecksumSheetController.h"
+#include "DispatchQueue.h"
+#include "Config.h"
 
-static NSString *g_DefAlgoKey = @"FilePanelsChecksumCalculationAlgorithm";
+static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static string g_SumsFilename = "checksums.txt";
 
 const static vector<pair<NSString*,int>> g_Algos = {
@@ -77,11 +78,11 @@ const static vector<pair<NSString*,int>> g_Algos = {
 {
     if(!m_WorkQue->Empty())
         return;
+
+    GlobalConfig().Set(g_ConfigAlgo, self.HashMethod.titleOfSelectedItem.UTF8String);
     
     const int chunk_sz = 16*1024*1024;
-    
-    if(![[NSUserDefaults.standardUserDefaults stringForKey:g_DefAlgoKey] isEqualToString:self.HashMethod.titleOfSelectedItem])
-        [NSUserDefaults.standardUserDefaults setObject:self.HashMethod.titleOfSelectedItem forKey:g_DefAlgoKey];
+
     int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
     self.Progress.doubleValue = 0;
     
@@ -145,9 +146,9 @@ const static vector<pair<NSString*,int>> g_Algos = {
     for(auto &i:g_Algos)
         [self.HashMethod addItemWithTitle:i.first];
     
-    NSString *def_algo = [NSUserDefaults.standardUserDefaults stringForKey:g_DefAlgoKey];
-    if(!def_algo) // should not happen in normal workflow
-        def_algo = @"MD5";
+    NSString *def_algo = @"MD5";
+    if( auto k = GlobalConfig().GetString(g_ConfigAlgo) )
+        def_algo = [NSString stringWithUTF8String:k->c_str()];
     [self.HashMethod selectItemWithTitle:def_algo];
     
     self.Table.delegate = self;

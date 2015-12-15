@@ -56,7 +56,13 @@
              */
             "selectionSizeFormat": 0,
   
-            "routeKeyboardInputIntoTerminal": false
+            "routeKeyboardInputIntoTerminal": false,
+            
+            /**
+             * Default algorithm to calculate file's checksum, possible values:
+             * Adler32, CRC32, MD2, MD4, MD5, SHA1-160, SHA2-224, SHA2-256, SHA2-384, SHA2-512.
+             */
+            "checksumCalculationAlgorithm": "MD5"
         },
         
         /**

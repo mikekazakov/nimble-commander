@@ -28,6 +28,8 @@ public:
     
     void SetUpdateCallback( function<void()> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
+    IconMode GetIconMode() const noexcept { return m_IconsMode; };
+
     void SetIconSize(int _size);
     int IconSize() const { return m_IconSize; }
     

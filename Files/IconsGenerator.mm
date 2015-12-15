@@ -453,8 +453,8 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
 void IconsGenerator::SetIconMode(IconMode _mode)
 {
     assert(dispatch_is_main_queue()); // STA api design
-    assert(_mode >= IconMode::Generic && _mode < IconMode::IconModesCount);
-    m_IconsMode = _mode;
+    if( _mode >= IconMode::Generic && _mode < IconMode::IconModesCount )
+        m_IconsMode = _mode;
 }
 
 void IconsGenerator::Flush()

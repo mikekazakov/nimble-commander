@@ -94,6 +94,14 @@
         },
         
         "modern": {
+            /**
+             * Icons mode, integer enumeration
+             * 0 - Generic file/directory icons only
+             * 1 - Icons based on file types
+             * 2 - Thumbnails based on file content
+             */
+            "iconsMode": 2,
+            
             "fontSize": 13,
 
             "regularBackground": "#FDFFFF",

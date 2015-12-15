@@ -755,7 +755,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="36" name="selectedIndex" keyPath="values.FilePanelsModernIconsMode" id="177"/>
+                                            <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.filePanel.modern.iconsMode" id="9yy-B9-rxS"/>
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="9rK-nA-bFK">

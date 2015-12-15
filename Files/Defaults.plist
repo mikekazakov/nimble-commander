@@ -90,8 +90,6 @@
 		<key>ViewMode</key>
 		<integer>1</integer>
 	</dict>
-	<key>FilePanelsModernIconsMode</key>
-	<integer>2</integer>
 	<key>FilePanelsClassicFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsClassicBackgroundColor</key>

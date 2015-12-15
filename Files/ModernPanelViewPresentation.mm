@@ -22,6 +22,7 @@
 
 static const auto g_ConfigShowVolumeBar         = "filePanel.general.showVolumeInformationBar";
 static const auto g_ConfigFontSize              = "filePanel.modern.fontSize";
+static const auto g_ConfigIconsMode             = "filePanel.modern.iconsMode";
 static const auto g_ConfigRegularBackground     = "filePanel.modern.regularBackground";
 static const auto g_ConfigAlternativeBackground = "filePanel.modern.alternativeBackground";
 static const auto g_ConfigActiveCursor          = "filePanel.modern.activeCursor";
@@ -114,22 +115,13 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,[=]{ OnGeometryOptionsChanged(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFontSize,     [=]{ OnGeometryOptionsChanged(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigIconsMode,             [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigRegularBackground,     [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigAlternativeBackground, [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveCursor,          [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigInactiveCursor,        [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,              [=]{ BuildAppearance(); }));
-    
-    m_AppearanceObserver = [ObjcToCppObservingBlockBridge
-                            bridgeWithObject:NSUserDefaults.standardUserDefaults
-                            forKeyPaths:@[@"FilePanelsModernIconsMode"]
-                            options:0
-                            block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                                BuildAppearance();
-                                if([_key_path isEqualToString:@"FilePanelsModernIconsMode"])
-                                    m_State->Data->CustomIconClearAll();
-                            }];
-    
+
     m_TitleObserver = [ObjcToCppObservingBlockBridge
                        bridgeWithObject:_parent_view
                        forKeyPath:@"headerTitle"
@@ -225,11 +217,13 @@ void ModernPanelViewPresentation::BuildGeometry()
 
 void ModernPanelViewPresentation::BuildAppearance()
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    assert(dispatch_is_main_queue()); // STA api design
     
     // Icon mode
-    m_IconCache.SetIconMode( (IconsGenerator::IconMode)[defaults integerForKey:@"FilePanelsModernIconsMode"] );
-//                                    m_State->Data->CustomIconClearAll();
+    if( (IconsGenerator::IconMode)GlobalConfig().GetInt(g_ConfigIconsMode) != m_IconCache.GetIconMode() ) {
+        m_IconCache.SetIconMode( (IconsGenerator::IconMode)GlobalConfig().GetInt(g_ConfigIconsMode) );
+        m_State->Data->CustomIconClearAll();
+    }
     
     // Colors
     m_RegularBackground = ColorFromConfig(g_ConfigRegularBackground);

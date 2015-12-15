@@ -25,6 +25,7 @@ static const auto g_ConfigFontSize              = "filePanel.modern.fontSize";
 static const auto g_ConfigIconsMode             = "filePanel.modern.iconsMode";
 static const auto g_ConfigRegularBackground     = "filePanel.modern.regularBackground";
 static const auto g_ConfigAlternativeBackground = "filePanel.modern.alternativeBackground";
+static const auto g_ConfigColulmnDivider        = "filePanel.modern.columnDivider";
 static const auto g_ConfigActiveCursor          = "filePanel.modern.activeCursor";
 static const auto g_ConfigInactiveCursor        = "filePanel.modern.inactiveCursor";
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
@@ -118,6 +119,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigIconsMode,             [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigRegularBackground,     [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigAlternativeBackground, [=]{ BuildAppearance(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColulmnDivider,        [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveCursor,          [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigInactiveCursor,        [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,              [=]{ BuildAppearance(); }));
@@ -133,7 +135,6 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
 {
     m_IconCache.SetUpdateCallback(nullptr);
-    CGColorRelease(m_ColumnDividerColor);
     
     if(m_State->Data != 0)
         m_State->Data->CustomIconClearAll();
@@ -230,8 +231,7 @@ void ModernPanelViewPresentation::BuildAppearance()
     m_OddBackground     = ColorFromConfig(g_ConfigAlternativeBackground);
     m_ActiveCursor      = ColorFromConfig(g_ConfigActiveCursor);
     m_InactiveCursor    = ColorFromConfig(g_ConfigInactiveCursor);
-    
-    m_ColumnDividerColor = CGColorCreateGenericRGB(224/255.0, 224/255.0, 224/255.0, 1.0); // hard-coded for now
+    m_ColumnDividerColor= ColorFromConfig(g_ConfigColulmnDivider);
     
     // Coloring rules
     m_ColoringRules.clear();
@@ -359,7 +359,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSMakePoint(start_x + 0.5 + column_width, m_ItemsArea.origin.y),
                 NSMakePoint(start_x + 0.5 + column_width, m_ItemsArea.origin.y + m_ItemsArea.size.height)
             };
-            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
+            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor.CGColor);
             CGContextSetLineWidth(context, 1);
             CGContextStrokeLineSegments(context, points, 2);
         }
@@ -499,7 +499,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             NSMakePoint(x + 0.5, m_ItemsArea.origin.y),
             NSMakePoint(x + 0.5, m_ItemsArea.origin.y + m_ItemsArea.size.height)
         };
-        CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
+        CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor.CGColor);
         CGContextSetLineWidth(context, 1);
         CGContextStrokeLineSegments(context, points, 2);
     }
@@ -516,7 +516,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 NSMakePoint(x + 0.5, m_ItemsArea.origin.y),
                 NSMakePoint(x + 0.5, m_ItemsArea.origin.y + m_ItemsArea.size.height)
             };
-            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor);
+            CGContextSetStrokeColorWithColor(context, m_ColumnDividerColor.CGColor);
             CGContextSetLineWidth(context, 1);
             CGContextStrokeLineSegments(context, points, 2);
         }

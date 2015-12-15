@@ -91,7 +91,7 @@ private:
     NSColor* m_OddBackground;
     NSColor* m_ActiveCursor;
     NSColor* m_InactiveCursor;
-    CGColorRef  m_ColumnDividerColor;
+    NSColor* m_ColumnDividerColor;
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     vector<ColoringAttrs> m_ColoringAttrs;
     

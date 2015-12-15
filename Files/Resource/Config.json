@@ -108,6 +108,8 @@
             
             "alternativeBackground": "#F2F2F2",
             
+            "columnDivider": "#E0E0E0",
+            
             "activeCursor": "#0C50D0",
             
             "inactiveCursor": "#D4D4D4",

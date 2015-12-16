@@ -90,16 +90,6 @@
 	</dict>
 	<key>FilePanelsClassicFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
-	<key>FilePanelsClassicBackgroundColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAACDgYAAPwGG</data>
-	<key>FilePanelsClassicCursorBackgroundColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAIOBgAA/g4GAAD8Bhg==</data>
-	<key>FilePanelsClassicTextColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAEBAYY=</data>
-	<key>FilePanelsClassicActiveTextColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAAAAAYY=</data>
-	<key>FilePanelsClassicHighlightTextColor</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEAAYY=</data>
 	<key>Terminal</key>
 	<dict>
 		<key>CursorMode</key>

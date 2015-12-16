@@ -71,7 +71,6 @@ private:
     DoubleColor     m_ActiveTextColor;
     DoubleColor     m_HighlightTextColor;
     ObjcToCppObservingBlockBridge *m_GeometryObserver;
-    ObjcToCppObservingBlockBridge *m_AppearanceObserver;
     bool            m_DrawVolumeInfo = true;
     vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 };

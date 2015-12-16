@@ -163,6 +163,16 @@
          */
         "classic": {
             
+            "regularBackground": "#000080",
+            
+            "cursorBackground": "#008080",
+            
+            "textColor": "#00FFFF",
+            
+            "activeTextColor": "#000000",
+            
+            "highlightTextColor": "#FFFF00",
+            
             "coloringRules_v1": [
                                  {
                                     "name": "selected",

@@ -21,6 +21,13 @@ struct DoubleColor
     DoubleColor() = default;
     DoubleColor(double _r, double _g, double _b, double _a):
         r(_r), g(_g), b(_b), a(_a) {}
+    DoubleColor( uint32_t _rgba ):
+        r(double( _rgba         & 0x000000FF) / 255.),
+        g(double((_rgba >>  8)  & 0x000000FF) / 255.),
+        b(double((_rgba >> 16)  & 0x000000FF) / 255.),
+        a(double((_rgba >> 24)  & 0x000000FF) / 255.)
+    {
+    }
 #ifdef __OBJC__
     DoubleColor(NSColor *_c)
     {

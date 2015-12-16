@@ -15,6 +15,8 @@
 #include "vfs/VFS.h"
 #include "AppDelegate.h"
 
+static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
+
 enum class CursorSelectionType
 {
     No,
@@ -76,7 +78,7 @@ struct PanelViewStateStorage
         m_DraggingOver = false;
         m_DraggingOverItemAtPosition = -1;
         m_FPSLimitedDrawer = [[FPSLimitedDrawer alloc] initWithView:self];
-        m_FPSLimitedDrawer.fps = 60;
+        m_FPSLimitedDrawer.fps = GlobalConfig().GetInt(g_ConfigMaxFPS);
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)

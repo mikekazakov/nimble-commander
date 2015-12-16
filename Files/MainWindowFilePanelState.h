@@ -10,8 +10,8 @@
 
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #include "MainWindowStateProtocol.h"
-#include "chained_strings.h"
 #include "vfs/VFS.h"
+#include "Config.h"
 
 class PanelData;
 @class Operation;
@@ -54,6 +54,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     
     bool                m_ShowTabs;
     bool                m_GoToForceActivation;
+    
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
 }
 
 

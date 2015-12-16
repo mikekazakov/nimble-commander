@@ -24,7 +24,7 @@
 #include "ExternalEditorInfo.h"
 #include "MainWindowController.h"
 
-static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
+static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -63,7 +63,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
     IF_MENU_TAG("menu.window.show_previous_tab")    return self.currentSideTabsCount > 1;
     IF_MENU_TAG("menu.window.show_next_tab")        return self.currentSideTabsCount > 1;
     IF_MENU_TAG("menu.view.show_tabs") {
-        item.title = [NSUserDefaults.standardUserDefaults boolForKey:g_DefsGeneralShowTabs] ?
+        item.title = GlobalConfig().GetBool(g_ConfigGeneralShowTabs) ?
             NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
             NSLocalizedString(@"Show Tab Bar", "Menu item title for showing tab bar");
         return true;
@@ -518,8 +518,7 @@ static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 - (IBAction)OnShowTabs:(id)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:![defaults boolForKey:g_DefsGeneralShowTabs] forKey:g_DefsGeneralShowTabs];
+    GlobalConfig().Set( g_ConfigGeneralShowTabs, !GlobalConfig().GetBool(g_ConfigGeneralShowTabs) );
 }
 
 - (IBAction)OnViewPanelsPositionMoveUp:(id)sender

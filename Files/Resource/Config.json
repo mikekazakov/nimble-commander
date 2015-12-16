@@ -6,7 +6,12 @@
         /**
          * Show/hide toolbar
          */
-        "showToolbar": true
+        "showToolbar": true,
+
+        /**
+         * Show/hide tabs bar
+         */
+        "showTabs": false
     },
 
     /**

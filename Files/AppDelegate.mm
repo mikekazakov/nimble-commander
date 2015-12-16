@@ -153,6 +153,7 @@ GenericConfig &GlobalConfig() noexcept
     move_int (@"FilePanels_Modern_FontSize",                                "filePanel.modern.fontSize");
     move_int (@"FilePanelsModernIconsMode",                                 "filePanel.modern.iconsMode");
     move_bool(@"GeneralShowToolbar",                                        "general.showToolbar");
+    move_bool(@"GeneralShowTabs",                                           "general.showTabs");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

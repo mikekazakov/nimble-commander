@@ -29,12 +29,11 @@
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
-#include "Config.h"
 
-static const auto g_ConfigGoToActivation = "filePanel.general.goToButtonForcesPanelActivation";
+static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
+static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
-static auto g_DefsGeneralShowTabs = @"GeneralShowTabs";
 
 static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
 {
@@ -76,7 +75,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
-        m_ShowTabs = [defaults boolForKey:g_DefsGeneralShowTabs];
+        m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );
         
         m_OperationsController = [[OperationsController alloc] init];
@@ -177,19 +176,19 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         [self layoutSubtreeIfNeeded];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];
         
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:g_DefsGeneralShowTabs options:0 context:NULL];
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
         
+        __weak MainWindowFilePanelState* weak_self = self;
+        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralShowTabs, [=]{ [(MainWindowFilePanelState*)weak_self onShowTabsSettingChanged]; }) );
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:g_DefsGeneralShowTabs];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -828,20 +827,14 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     [m_OperationsController AddOperation:_operation];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)onShowTabsSettingChanged
 {
-    // Check if defaults changed.
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (object == defaults) {
-        // Check if the skin value was modified.
-        if ([keyPath isEqualToString:g_DefsGeneralShowTabs]) {
-            bool show = [defaults boolForKey:g_DefsGeneralShowTabs];
-            dispatch_to_main_queue_after(1ms, [=]{
-                m_ShowTabs = show;
-                [self updateTabBarsVisibility];
-            });
-        }
-    }
+    bool show = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
+    if( show != m_ShowTabs )
+        dispatch_to_main_queue_after(1ms, [=]{
+            m_ShowTabs = show;
+            [self updateTabBarsVisibility];
+        });
 }
 
 - (void)updateBottomConstraint

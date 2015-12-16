@@ -14,7 +14,7 @@
 #include "PanelController.h"
 #include "PanelAux.h"
 
-static auto g_DefaultsGapKey = @"FilePanels_OverlappedTerminal_BottomGap";
+static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
 
@@ -273,21 +273,19 @@ static auto g_DefaultsGapKey = @"FilePanels_OverlappedTerminal_BottomGap";
     if( !m_OverlappedTerminal->terminal )
         return;
   
-    [NSUserDefaults.standardUserDefaults setInteger:m_OverlappedTerminal->bottom_gap forKey:g_DefaultsGapKey];
+    GlobalConfig().Set(g_ConfigGapPath, m_OverlappedTerminal->bottom_gap);
 }
 
 - (void) loadOverlappedTerminalSettingsAndRunIfNecessary
 {
     if( !m_OverlappedTerminal->terminal )
         return;
-    if( [NSUserDefaults.standardUserDefaults objectForKey:g_DefaultsGapKey] ) {
-        int gap = (int)[NSUserDefaults.standardUserDefaults integerForKey:g_DefaultsGapKey];
-        if( gap > 0 ) {
-            m_OverlappedTerminal->bottom_gap = gap;
-            m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
-            [self updateBottomConstraint];
-            [self activateOverlappedTerminal];
-        }
+    int gap = GlobalConfig().GetInt( g_ConfigGapPath );
+    if( gap > 0 ) {
+        m_OverlappedTerminal->bottom_gap = gap;
+        m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+        [self updateBottomConstraint];
+        [self activateOverlappedTerminal];
     }
 }
 

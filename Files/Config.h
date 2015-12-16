@@ -21,6 +21,7 @@ public:
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
     
+    bool Has(const char *_path) const;
     ConfigValue Get(const string &_path) const;
     ConfigValue Get(const char *_path) const;
     optional<string> GetString(const char *_path) const;
@@ -78,6 +79,7 @@ private:
     void        FireObservers(const char *_path);
     void        StopObserving(unsigned long _ticket);
     ConfigValue GetInternal(string_view _path) const;
+    const rapidjson::Value *FindUnlocked(string_view _path) const;
     bool        SetInternal(const char *_path, const ConfigValue &_value);
     void        DumpOverwrites();
     

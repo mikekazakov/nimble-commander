@@ -177,10 +177,14 @@ int GenericConfig::GetInt(const char *_path) const
     return 0;
 }
 
-GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
+bool GenericConfig::Has(const char *_path) const
 {
     lock_guard<mutex> lock(m_DocumentLock);
-    
+    return FindUnlocked(_path) != nullptr;
+}
+
+const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
+{
     const rapidjson::Value *st = &m_Current;
     string_view path = _path;
     size_t p;
@@ -189,27 +193,36 @@ GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
         char sub[g_MaxNamePartLen];
         copy( begin(path), begin(path) + p, begin(sub) );
         sub[p] = 0;
-
+        
         auto submb = st->FindMember(sub);
         if( submb == st->MemberEnd() )
-            return ConfigValue( rapidjson::kNullType );
+            return nullptr;
         
         st = &(*submb).value;
         if( st->GetType() != rapidjson::kObjectType )
-            return ConfigValue( rapidjson::kNullType );
+            return nullptr;
         
         path = p+1 < path.length() ? path.substr( p+1 ) : string_view();
     }
-
+    
     char sub[g_MaxNamePartLen];
     copy( begin(path), end(path), begin(sub) );
     sub[path.length()] = 0;
     
     auto it = st->FindMember(sub);
     if( it == st->MemberEnd() )
-        return ConfigValue( rapidjson::kNullType );
+        return nullptr;
     
-    return ConfigValue( (*it).value, g_CrtAllocator );
+    return &(*it).value;
+}
+
+GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
+{
+    lock_guard<mutex> lock(m_DocumentLock);
+    auto v = FindUnlocked(_path);
+    if( !v )
+        return ConfigValue( rapidjson::kNullType );
+    return ConfigValue( *v, g_CrtAllocator );
 }
 
 bool GenericConfig::Set(const char *_path, int _value)

@@ -72,7 +72,9 @@
             /**
              * Limit maximum rate of views redrawing, zero is no limit
              */
-            "maxFPS": 60
+            "maxFPS": 60,
+  
+            "bottomGapForOverlappedTerminal": 0
         },
         
         /**

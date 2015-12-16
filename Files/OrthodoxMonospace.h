@@ -24,8 +24,12 @@ struct DoubleColor
 #ifdef __OBJC__
     DoubleColor(NSColor *_c)
     {
-        assert(_c != nil);
-        [[_c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
+        if( _c == nil )
+            throw invalid_argument( "_c==nil" );
+        if( _c.colorSpace == NSColorSpace.genericRGBColorSpace   )
+            [_c getRed:&r green:&g blue:&b alpha:&a];
+        else
+            [[_c colorUsingColorSpace:NSColorSpace.genericRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];
     }
     inline NSColor* ToNSColor() const {
         return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:a];

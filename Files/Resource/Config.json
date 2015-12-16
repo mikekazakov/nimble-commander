@@ -109,6 +109,9 @@
             "keyOption": 3            
         },
         
+        /**
+         * Settings related to modern presentation mode
+         */
         "modern": {
             /**
              * Icons mode, integer enumeration
@@ -151,6 +154,52 @@
                                     "name": "other",
                                     "regular": "#000000",
                                     "focused": "#FFFFFF"
+                                 }
+            ]
+        },
+        
+        /**
+         * Settings related to classic presentation mode
+         */
+        "classic": {
+            
+            "coloringRules_v1": [
+                                 {
+                                    "name": "selected",
+                                    "regular": "#FFFF00",
+                                    "focused": "#FFFF00",
+                                    "filter": {
+                                        "selected": true
+                                    }
+                                 },
+                                 {
+                                    "name": "hidden",
+                                    "regular": "#008080",
+                                    "focused": "#808080",
+                                    "filter": {
+                                        "hidden": true
+                                    }
+                                 },
+                                 {
+                                    "name": "regular files",
+                                    "regular": "#00FFFF",
+                                    "focused": "#000000",
+                                    "filter": {
+                                        "reg": true
+                                    }
+                                 },
+                                 {
+                                    "name": "directories",
+                                    "regular": "#FFFFFF",
+                                    "focused": "#FFFFFF",
+                                    "filter": {
+                                    "directory": true
+                                    }
+                                 },
+                                 {
+                                    "name": "other",
+                                    "regular": "#FF0000",
+                                    "focused": "#FF0000"
                                  }
             ]
         }

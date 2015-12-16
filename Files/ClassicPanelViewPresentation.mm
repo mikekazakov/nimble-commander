@@ -6,21 +6,23 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ClassicPanelViewPresentation.h"
-#import "OrthodoxMonospace.h"
-#import "Encodings.h"
-#import "PanelView.h"
-#import "PanelData.h"
-#import "FontCache.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "ObjcToCppObservingBridge.h"
-#import "ByteCountFormatter.h"
+#include "ClassicPanelViewPresentation.h"
+#include "OrthodoxMonospace.h"
+#include "Encodings.h"
+#include "PanelView.h"
+#include "PanelData.h"
+#include "FontCache.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "ObjcToCppObservingBridge.h"
+#include "ByteCountFormatter.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static const auto g_ConfigShowVolumeBar = "filePanel.general.showVolumeInformationBar";
+static const auto g_ConfigShowVolumeBar     = "filePanel.general.showVolumeInformationBar";
+static const auto g_ConfigColoring          = "filePanel.classic.coloringRules_v1";
+
 
 static char *strlefttrim(char *_s, char _c)
 {
@@ -256,41 +258,41 @@ static oms::StringBuf<MAXPATHLEN> ComposeFooterFileNameForEntry(const VFSListing
 /////////////////////////////////////////////////////////////////////////////////////////
 // ClassicPanelViewPresentation class
 /////////////////////////////////////////////////////////////////////////////////////////
-
-NSDictionary *ClassicPanelViewPresentationItemsColoringFilter::Archive() const
-{
-    return @{@"name"        : [NSString stringWithUTF8String:name.c_str()],
-             @"unfocused"   : [NSArchiver archivedDataWithRootObject:unfocused.ToNSColor()],
-             @"focused"     : [NSArchiver archivedDataWithRootObject:focused.ToNSColor()],
-             @"filter"      : filter.Archive()
-             };
-}
-
-ClassicPanelViewPresentationItemsColoringFilter ClassicPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
-{
-    ClassicPanelViewPresentationItemsColoringFilter f;
-
-    if(!_dict)
-        return f;
-    
-    if([_dict objectForKey:@"filter"] &&
-       [[_dict objectForKey:@"filter"] isKindOfClass:NSDictionary.class])
-        f.filter = PanelViewPresentationItemsColoringFilter::Unarchive([_dict objectForKey:@"filter"]);
-    
-    if([_dict objectForKey:@"name"] &&
-       [[_dict objectForKey:@"name"] isKindOfClass:NSString.class])
-        f.name = [[_dict objectForKey:@"name"] UTF8String];
-
-    if([_dict objectForKey:@"unfocused"] &&
-       [[_dict objectForKey:@"unfocused"] isKindOfClass:NSData.class])
-        f.unfocused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"unfocused"]]);
-    
-    if([_dict objectForKey:@"focused"] &&
-       [[_dict objectForKey:@"focused"] isKindOfClass:NSData.class])
-        f.focused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"focused"]]);
-
-    return f;
-}
+//
+//NSDictionary *ClassicPanelViewPresentationItemsColoringFilter::Archive() const
+//{
+//    return @{@"name"        : [NSString stringWithUTF8String:name.c_str()],
+//             @"unfocused"   : [NSArchiver archivedDataWithRootObject:unfocused.ToNSColor()],
+//             @"focused"     : [NSArchiver archivedDataWithRootObject:focused.ToNSColor()],
+//             @"filter"      : filter.Archive()
+//             };
+//}
+//
+//ClassicPanelViewPresentationItemsColoringFilter ClassicPanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
+//{
+//    ClassicPanelViewPresentationItemsColoringFilter f;
+//
+//    if(!_dict)
+//        return f;
+//    
+//    if([_dict objectForKey:@"filter"] &&
+//       [[_dict objectForKey:@"filter"] isKindOfClass:NSDictionary.class])
+//        f.filter = PanelViewPresentationItemsColoringFilter::Unarchive([_dict objectForKey:@"filter"]);
+//    
+//    if([_dict objectForKey:@"name"] &&
+//       [[_dict objectForKey:@"name"] isKindOfClass:NSString.class])
+//        f.name = [[_dict objectForKey:@"name"] UTF8String];
+//
+//    if([_dict objectForKey:@"unfocused"] &&
+//       [[_dict objectForKey:@"unfocused"] isKindOfClass:NSData.class])
+//        f.unfocused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"unfocused"]]);
+//    
+//    if([_dict objectForKey:@"focused"] &&
+//       [[_dict objectForKey:@"focused"] isKindOfClass:NSData.class])
+//        f.focused = DoubleColor((NSColor *)[NSUnarchiver unarchiveObjectWithData:[_dict objectForKey:@"focused"]]);
+//
+//    return f;
+//}
 
 ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
     PanelViewPresentation(_parent_view, _view_state)
@@ -298,9 +300,8 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_vi
     BuildGeometry();
     BuildAppearance();
     
-    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar, [=]{
-        OnGeometryOptionsChanged();
-    }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,    [=]{ OnGeometryOptionsChanged(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,         [=]{ BuildAppearance(); }));
     
     m_GeometryObserver = [ObjcToCppObservingBlockBridge
                           bridgeWithObject:NSUserDefaults.standardUserDefaults
@@ -316,12 +317,10 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_vi
                                           @"FilePanelsClassicCursorBackgroundColor",
                                           @"FilePanelsClassicTextColor",
                                           @"FilePanelsClassicActiveTextColor",
-                                          @"FilePanelsClassicHighlightTextColor",
-                                          @"FilePanelsClassicColoringRules"]
+                                          @"FilePanelsClassicHighlightTextColor"]
                             options:0
                             block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
                                 BuildAppearance();
-                                SetViewNeedsDisplay();
                             }];
     
 }
@@ -354,19 +353,28 @@ void ClassicPanelViewPresentation::BuildAppearance()
     m_ActiveTextColor       = DoubleColor([defaults colorForKey:@"FilePanelsClassicActiveTextColor"]);
     m_HighlightTextColor    = DoubleColor([defaults colorForKey:@"FilePanelsClassicHighlightTextColor"]);
     
+//    m_ColoringRules.clear();
+//    NSArray *coloring_rules = [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsClassicColoringRules"];
+//    if(coloring_rules && [coloring_rules isKindOfClass:NSArray.class])
+//        for(id item: coloring_rules)
+//            if([item isKindOfClass:NSDictionary.class])
+//                m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
+    
+    // Coloring rules
     m_ColoringRules.clear();
-    NSArray *coloring_rules = [NSUserDefaults.standardUserDefaults objectForKey:@"FilePanelsClassicColoringRules"];
-    if(coloring_rules && [coloring_rules isKindOfClass:NSArray.class])
-        for(id item: coloring_rules)
-            if([item isKindOfClass:NSDictionary.class])
-                m_ColoringRules.emplace_back( ClassicPanelViewPresentationItemsColoringFilter::Unarchive(item) );
+    auto cr = GlobalConfig().Get(g_ConfigColoring);
+    if( cr.IsArray() )
+        for( auto i = cr.Begin(), e = cr.End(); i != e; ++i )
+            m_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
+    
+    SetViewNeedsDisplay();    
 }
 
-const DoubleColor& ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
+DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
         if(r.filter.Filter(_dirent, _vd))
-            return _is_focused ? r.focused : r.unfocused;
+            return _is_focused ? r.focused : r.regular;
     static DoubleColor def;
     return def;
 }

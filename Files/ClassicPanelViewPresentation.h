@@ -18,16 +18,6 @@
 class FontCache;
 @class PanelView;
 
-struct ClassicPanelViewPresentationItemsColoringFilter
-{
-    string                                      name;
-    DoubleColor                                 unfocused;
-    DoubleColor                                 focused;
-    PanelViewPresentationItemsColoringFilter    filter;
-    NSDictionary *Archive() const;
-    static ClassicPanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
-};
-
 class ClassicPanelViewPresentation : public PanelViewPresentation
 {
 public:
@@ -54,7 +44,7 @@ private:
     void BuildGeometry();
     void BuildAppearance();
     void DoDraw(CGContextRef _context);
-    const DoubleColor& GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused);
+    DoubleColor GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused);
     void CalcLayout(NSSize _from_px_size);
     oms::StringBuf<6> FormHumanReadableSizeRepresentation(unsigned long _sz) const;
     oms::StringBuf<6> FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelVolatileData& _vd) const;
@@ -72,7 +62,7 @@ private:
     int             m_EntryFooterVPos = 0;
     int             m_SelectionVPos = 0;
     
-    vector<ClassicPanelViewPresentationItemsColoringFilter> m_ColoringRules;
+    vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     
     shared_ptr<FontCache> m_FontCache;
     DoubleColor     m_BackgroundColor;

@@ -16,7 +16,6 @@
                                                             NSTextFieldDelegate>
 - (IBAction)OnSetClassicFont:(id)sender;
 @property (strong) IBOutlet NSTableView *classicColoringRulesTable;
-@property (nonatomic) NSArray *classicColoringRules;
 - (IBAction)OnAddNewClassicColoringRule:(id)sender;
 - (IBAction)OnRemoveClassicColoringRule:(id)sender;
 

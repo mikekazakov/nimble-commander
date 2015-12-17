@@ -17,6 +17,9 @@
 #include "HexadecimalColor.h"
 #include "Config.h"
 
+static const auto g_ConfigMaxFPS = "terminal.maxFPS";
+static const auto g_ConfigCursorMode = "terminal.cursorMode";
+
 struct SelPoint
 {
     int x;
@@ -97,7 +100,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
-        m_FPS.fps = [[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.FramesPerSecond"] intValue];
+        m_FPS.fps = GlobalConfig().GetInt(g_ConfigMaxFPS);
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
         [self reloadSettings];
     }
@@ -169,6 +172,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (void) reloadSettings
 {
     NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
+    NSLog(@"%@", font.fontName);
+    
     if(!font)
         font = [NSFont fontWithName:@"Menlo-Regular" size:13];
     m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
@@ -178,8 +183,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     m_BackgroundColor       = ConfigColor("terminal.backgroundColor");
     m_SelectionColor        = ConfigColor("terminal.selectionColor");
     m_CursorColor           = ConfigColor("terminal.cursorColor");
-    m_CursorType = (TermViewCursor)[[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.CursorMode"] intValue];
-    m_AnsiColors = AnsiColors();
+    m_CursorType            = (TermViewCursor)GlobalConfig().GetInt(g_ConfigCursorMode);
+    m_AnsiColors            = AnsiColors();
 }
 
 - (void)keyDown:(NSEvent *)event

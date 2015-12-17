@@ -469,7 +469,7 @@
                         </column>
                     </cells>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="selectedIndex" keyPath="selection.CursorMode" id="y9g-6q-mua"/>
+                        <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.terminal.cursorMode" id="k7e-oW-gf4"/>
                     </connections>
                 </matrix>
                 <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">

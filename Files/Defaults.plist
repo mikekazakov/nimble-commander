@@ -92,12 +92,8 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>Terminal</key>
 	<dict>
-		<key>CursorMode</key>
-		<integer>0</integer>
 		<key>Font</key>
 		<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
-		<key>FramesPerSecond</key>
-		<integer>60</integer>
 	</dict>
 	<key>Terminal_HideScrollbar</key>
 	<false/>

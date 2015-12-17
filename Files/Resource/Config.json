@@ -222,6 +222,19 @@
      */
     "terminal": {
         /**
+         * Limit maximum rate of view redrawing, zero is no limit
+         */
+        "maxFPS": 60,
+        
+        /**
+         * Cursor drawing mode, integer enumeration:
+         * 0 - Block,
+         * 1 - Underline,
+         * 2 - Vertical bar
+         */
+        "cursorMode": 0,
+        
+        /**
          * Basic colors:
          */
         "textColor":        "#BFBFBF",

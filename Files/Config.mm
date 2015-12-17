@@ -6,8 +6,10 @@
 #include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
 #include "Common.h"
 #include "Config.h"
+#include "FSEventsDirUpdate.h"
 
 static const int g_MaxNamePartLen = 128;
+static const auto g_IODelay = 30s;
 
 static string Load(const string &_filepath)
 {
@@ -22,6 +24,14 @@ static string Load(const string &_filepath)
         return contents;
     }
     return "";
+}
+
+static time_t ModificationTime( const string &_filepath )
+{
+    struct stat st;
+    if( stat( _filepath.c_str(), &st ) == 0 )
+        return st.st_mtime;
+    return 0;
 }
 
 rapidjson::CrtAllocator GenericConfig::g_CrtAllocator;
@@ -42,7 +52,7 @@ static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target
             auto &cur_val = cur_it->value;
             if( cur_val.GetType() == over_val.GetType() ) {
                 if( cur_val.GetType() == rapidjson::kObjectType ) {
-                    MergeObject( cur_val, _target_document, over_val);
+                    MergeObject( cur_val, _target_document, over_val );
                 }
                 else if( cur_val != over_val ) {
                     // overwriting itself is here:
@@ -56,7 +66,7 @@ static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target
     }
 }
 
-static void MergeDocument( rapidjson::Document &_target, const rapidjson::Document &_overwrites )
+static void MergeDocument( rapidjson::Document &_target, const rapidjson::Document &_overwrites)
 {
     if( _target.GetType() != rapidjson::kObjectType || _overwrites.GetType() != rapidjson::kObjectType )
         return;
@@ -123,7 +133,7 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     }
     
     m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
-    m_Current.CopyFrom(defaults, m_Defaults.GetAllocator());
+    m_Current.CopyFrom(defaults, m_Current.GetAllocator());
 
     string over = Load(m_OverwritesPath);
     if( !over.empty() ) {
@@ -131,11 +141,17 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
         ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
         if (!ok)
             fprintf(stderr, "Overwrites JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-        else
+        else {
+            m_OverwritesTime = ModificationTime(m_OverwritesPath);
             MergeDocument(m_Current, overwrites);
+        }
     }
     
     m_Bridge = [[GenericConfigObjC alloc] initWithConfig:this];
+    
+    FSEventsDirUpdate::Instance().AddWatchPath(path(m_OverwritesPath).parent_path().c_str(), [=]{
+        OnOverwritesFileDirChanged();
+    });
 }
 
 GenericConfig::ConfigValue GenericConfig::Get(const string &_path) const
@@ -314,33 +330,9 @@ bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
     }
 
     FireObservers(_path);
-    DumpOverwrites();
+    MarkDirty();
     
     return true;
-}
-
-void GenericConfig::DumpOverwrites()
-{
-    lock_guard<mutex> lock(m_DocumentLock);
-    
-    MachTimeBenchmark mtb;
-    
-    rapidjson::Document d(rapidjson::kObjectType);
-    BuildOverwrites(m_Defaults, m_Current, d);
-    mtb.ResetMicro("built overwrites tree in us: ");
-
-    // this should be async:
-    rapidjson::StringBuffer buffer;
-    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-    d.Accept(writer);
-    mtb.ResetMicro("composed overwrites json in us: ");
-    
-//    cout << buffer.GetString() << endl;
-    
-    ofstream out(m_OverwritesPath, ios::out | ios::binary);
-    if( out )
-        out << buffer.GetString();
-    mtb.ResetMicro("wrote json file in us: ");
 }
 
 GenericConfig::ObservationTicket::ObservationTicket(GenericConfig *_inst, unsigned long _ticket) noexcept:
@@ -446,6 +438,125 @@ void GenericConfig::FireObservers(const char *_path)
             o->callback();
 }
 
+void GenericConfig::WriteOverwrites(const rapidjson::Document &_overwrites_diff, string _path)
+{
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    _overwrites_diff.Accept(writer);
+    
+    ofstream out(_path, ios::out | ios::binary);
+    if( out )
+        out << buffer.GetString();
+}
+
+void GenericConfig::RunOverwritesDumping()
+{
+    auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
+    
+    {
+        lock_guard<mutex> lock(m_DocumentLock);
+        BuildOverwrites(m_Defaults, m_Current, *d);
+    }
+    
+    string path = m_OverwritesPath;
+    m_IOQueue->Run([=]{
+        WriteOverwrites(*d, path);
+        m_OverwritesTime = ModificationTime(path);
+    });
+}
+
+void GenericConfig::MarkDirty()
+{
+    if( !m_WriteScheduled.test_and_set() )
+        dispatch_to_main_queue_after(g_IODelay, [=]{
+            RunOverwritesDumping();
+            m_WriteScheduled.clear();
+        });
+}
+
+void GenericConfig::NotifyAboutShutdown()
+{
+    if( m_WriteScheduled.test_and_set() ) {
+        RunOverwritesDumping();
+        m_IOQueue->Wait();
+    }
+    m_WriteScheduled.clear();
+}
+
+void GenericConfig::OnOverwritesFileDirChanged()
+{
+    string path = m_OverwritesPath;
+    m_IOQueue->Run([=]{
+        auto ov_tm = ModificationTime(path);
+        if( ov_tm == m_OverwritesTime)
+            return;
+        
+        string over = Load(path);
+        if( !over.empty() ) {
+            auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
+            rapidjson::ParseResult ok = d->Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
+            if (!ok)
+                fprintf(stderr, "Overwrites JSON parse error: %s (%zu)\n", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+            else {
+                fprintf(stdout, "Loaded on-the-fly config overwrites: %s.\n", path.c_str());
+                m_OverwritesTime = ov_tm;
+                dispatch_to_main_queue([=]{
+                    MergeChangedOverwrites(*d);
+                });
+            }
+        }
+    });
+}
+
+void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overwrites_diff)
+{
+    if( _new_overwrites_diff.GetType() != rapidjson::kObjectType )
+        return;
+    
+    rapidjson::Document new_staging;
+    new_staging.CopyFrom(m_Defaults, m_Defaults.GetAllocator());
+    MergeDocument(new_staging, _new_overwrites_diff);
+    
+    vector<string> changes;
+    {
+        lock_guard<mutex> lock(m_DocumentLock);
+        stack< tuple<const rapidjson::Value*,const rapidjson::Value*, string> > travel;
+        travel.emplace( make_tuple(&m_Current, &new_staging, "") );
+        
+        while( !travel.empty() ) {
+            auto current_staging = get<0>(travel.top());
+            auto new_staging = get<1>(travel.top());
+            string prefix = move(get<2>(travel.top()));
+            travel.pop();
+            
+            for( auto i = new_staging->MemberBegin(), e = new_staging->MemberEnd(); i != e; ++i ) {
+                auto &new_staging_name = i->name;
+                auto &new_staging_val = i->value;
+                
+                auto current_staging_it = current_staging->FindMember( new_staging_name );
+                if( current_staging_it != current_staging->MemberEnd() ) {
+                    auto &current_staging_val = current_staging_it->value;
+                    if( current_staging_val.GetType() == new_staging_val.GetType() ) {
+                        if( current_staging_val.GetType() == rapidjson::kObjectType ) {
+                            travel.emplace( make_tuple(&current_staging_val, &new_staging_val, prefix + new_staging_name.GetString() + ".") );
+                            continue; // ok - go inside
+                        }
+                        else if( current_staging_val == new_staging_val )
+                            continue; // ok - same value
+                    }
+                }
+                changes.emplace_back( prefix + new_staging_name.GetString() ); // changed
+            }
+        }
+        
+        if( !changes.empty() )
+            swap( m_Current, new_staging );
+    }
+    
+    for(auto &path: changes)
+        FireObservers( path.c_str() );
+}
+
 @implementation GenericConfigObjC
 {
     GenericConfig *m_Config;
@@ -535,60 +646,6 @@ void GenericConfig::FireObservers(const char *_path)
     else if( auto s = objc_cast<NSString>(value) )
         m_Config->Set( keyPath.UTF8String, s.UTF8String );
 }
-
-//- (void) addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
-//{
-//
-//    int a = 10;
-////    NSNotificationCenter
-////    struct GenericConfigObjCObserver
-////    {
-////        __weak NSObject            *observer;
-////        NSKeyValueObservingOptions  options;
-////        void                       *context;
-////    };
-////    GenericConfigObjCObserver o;
-////    o.observer = observer;
-////    o.options = options;
-////    o.context = context;
-////    m_Observers[keyPath.UTF8String].emplace_back(o);
-//}
-//
-//- (void) willChangeValueForKey:(NSString *)key
-//{
-//    
-//    
-//}
-//
-//- (void) didChangeValueForKey:(NSString *)key
-//{
-//    auto it = m_Observers.find(key.UTF8String);
-//    if( it != m_Observers.end() )
-//        for( auto &i: it->second)
-//            if( NSObject *object = i.observer ) {
-//                [object observeValueForKeyPath:key ofObject:self change:nil context:i.context];
-//            
-//        
-//            }
-//}
-//
-//- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(nullable void *)context
-//{
-//    
-//    
-//}
-//
-//- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
-//{
-//    
-//    
-//}
-
-
-//- (void)observeValueForKeyPath:(nullable NSString *)keyPath
-//ofObject:(nullable id)object
-//change:(nullable NSDictionary<NSString*, id> *)change
-//context:(nullable void *)context;
 
 @end
 

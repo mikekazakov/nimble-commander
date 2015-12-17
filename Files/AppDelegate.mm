@@ -448,6 +448,11 @@ GenericConfig &GlobalConfig() noexcept
     return NSTerminateNow;
 }
 
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+    GlobalConfig().NotifyAboutShutdown();
+}
+
 - (IBAction)OnMenuSendFeedback:(id)sender
 {
     NSString *toAddress = @"feedback@filesmanager.info";

@@ -2,6 +2,7 @@
 
 #include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
 #include "3rd_party/rapidjson/include/rapidjson/document.h"
+#include "DispatchQueue.h"
 
 class GenericConfig;
 
@@ -18,6 +19,8 @@ public:
     static rapidjson::CrtAllocator g_CrtAllocator;
     
     GenericConfig(const string &_defaults, const string &_overwrites);
+    
+    void NotifyAboutShutdown();
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
     
@@ -87,7 +90,11 @@ private:
     ConfigValue GetInternal(string_view _path) const;
     const rapidjson::Value *FindUnlocked(string_view _path) const;
     bool        SetInternal(const char *_path, const ConfigValue &_value);
-    void        DumpOverwrites();
+    void        RunOverwritesDumping();
+    void        MarkDirty();
+    static void WriteOverwrites(const rapidjson::Document &_overwrites_diff, string _path);
+    void        OnOverwritesFileDirChanged();
+    void        MergeChangedOverwrites(const rapidjson::Document &_new_overwrites_diff);
     
     mutable mutex                                                       m_DocumentLock;
     rapidjson::Document                                                 m_Current;
@@ -101,6 +108,9 @@ private:
 #ifdef __OBJC__
     GenericConfigObjC                                                  *m_Bridge;
 #endif
+    SerialQueue                                                         m_IOQueue = SerialQueueT::Make("GenericConfig input/output queue");
+    atomic_flag                                                         m_WriteScheduled{ false };
+    time_t                                                              m_OverwritesTime = 0;
     friend struct ObservationTicket;
 };
 

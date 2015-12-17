@@ -29,25 +29,30 @@ struct SelPoint
     inline bool operator !=(const SelPoint&_r) const { return y != _r.y || x != _r.x; }
 };
 
+static uint32_t ConfigColor(const char *_path)
+{
+    return HexadecimalColorStringToRGBA(GlobalConfig().GetString(_path).value_or(""));
+}
+
 struct AnsiColors : array<DoubleColor, 16>
 {
     AnsiColors() : array{{
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor0").value_or("")), // Black
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor1").value_or("")), // Red
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor2").value_or("")), // Green
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor3").value_or("")), // Yellow
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor4").value_or("")), // Blue
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor5").value_or("")), // Magenta
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor6").value_or("")), // Cyan
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor7").value_or("")), // White
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor8").value_or("")), // Bright Black
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor9").value_or("")), // Bright Red
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor10").value_or("")),// Bright Green
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor11").value_or("")),// Bright Yellow
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor12").value_or("")),// Bright Blue
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor13").value_or("")),// Bright Magenta
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor14").value_or("")),// Bright Cyan
-        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor15").value_or("")) // Bright White
+        ConfigColor("terminal.AnsiColor0"), // Black
+        ConfigColor("terminal.AnsiColor1"), // Red
+        ConfigColor("terminal.AnsiColor2"), // Green
+        ConfigColor("terminal.AnsiColor3"), // Yellow
+        ConfigColor("terminal.AnsiColor4"), // Blue
+        ConfigColor("terminal.AnsiColor5"), // Magenta
+        ConfigColor("terminal.AnsiColor6"), // Cyan
+        ConfigColor("terminal.AnsiColor7"), // White
+        ConfigColor("terminal.AnsiColor8"), // Bright Black
+        ConfigColor("terminal.AnsiColor9"), // Bright Red
+        ConfigColor("terminal.AnsiColor10"),// Bright Green
+        ConfigColor("terminal.AnsiColor11"),// Bright Yellow
+        ConfigColor("terminal.AnsiColor12"),// Bright Blue
+        ConfigColor("terminal.AnsiColor13"),// Bright Magenta
+        ConfigColor("terminal.AnsiColor14"),// Bright Cyan
+        ConfigColor("terminal.AnsiColor15") // Bright White
     }}{}
 };
 
@@ -168,11 +173,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         font = [NSFont fontWithName:@"Menlo-Regular" size:13];
     m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
     
-    m_ForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.FgColor"]);
-    m_BoldForegroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BldFgColor"]);
-    m_BackgroundColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.BgColor"]);
-    m_SelectionColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.SelColor"]);
-    m_CursorColor = DoubleColor([NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.CursorColor"]);
+    m_ForegroundColor       = ConfigColor("terminal.textColor");
+    m_BoldForegroundColor   = ConfigColor("terminal.boldTextColor");
+    m_BackgroundColor       = ConfigColor("terminal.backgroundColor");
+    m_SelectionColor        = ConfigColor("terminal.selectionColor");
+    m_CursorColor           = ConfigColor("terminal.cursorColor");
     m_CursorType = (TermViewCursor)[[NSUserDefaults.standardUserDefaults valueForKeyPath:@"Terminal.CursorMode"] intValue];
     m_AnsiColors = AnsiColors();
 }

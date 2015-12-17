@@ -272,9 +272,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.FgColor" id="aLE-Gk-c9q">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.textColor" id="fMH-pX-R0b">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -287,9 +287,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.BldFgColor" id="rVg-zj-Rw7">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.boldTextColor" id="UTX-7C-Ba0">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -302,9 +302,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.BgColor" id="gGa-l4-YWq">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.backgroundColor" id="dtz-My-itG">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -317,9 +317,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.SelColor" id="Wvb-8E-ZlR">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.selectionColor" id="NZZ-jr-rdF">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -364,9 +364,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.CursorColor" id="udl-Hw-mD4">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.cursorColor" id="Vsd-Fp-Lio">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>

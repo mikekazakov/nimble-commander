@@ -222,6 +222,15 @@
      */
     "terminal": {
         /**
+         * Basic colors:
+         */
+        "textColor":        "#BFBFBF",
+        "boldTextColor":    "#E5E5E5",
+        "backgroundColor":  "#000000",
+        "selectionColor":   "#E5E5E5",
+        "cursorColor":      "#666666",
+        
+        /**
          * 16 ANSI colors:
          */
         "AnsiColor0":  "#000000", // black
@@ -240,6 +249,5 @@
         "AnsiColor13": "#E500E5", // bright magenta
         "AnsiColor14": "#00E5E5", // bright cyan
         "AnsiColor15": "#E5E5E5"  // bright white
-        
     }
 }

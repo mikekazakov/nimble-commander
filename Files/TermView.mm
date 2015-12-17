@@ -6,14 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "TermView.h"
-#import "OrthodoxMonospace.h"
-#import "FontCache.h"
-#import "TermScreen.h"
-#import "TermParser.h"
-#import "Common.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "BlinkingCaret.h"
+#include "TermView.h"
+#include "OrthodoxMonospace.h"
+#include "FontCache.h"
+#include "TermScreen.h"
+#include "TermParser.h"
+#include "Common.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "BlinkingCaret.h"
+#include "HexadecimalColor.h"
+#include "Config.h"
 
 struct SelPoint
 {
@@ -30,22 +32,22 @@ struct SelPoint
 struct AnsiColors : array<DoubleColor, 16>
 {
     AnsiColors() : array{{
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor0"], // Black
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor1"], // Red
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor2"], // Green
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor3"], // Yellow
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor4"], // Blue
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor5"], // Magenta
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor6"], // Cyan
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor7"], // White
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor8"], // Bright Black
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor9"], // Bright Red
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor10"],// Bright Green
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor11"],// Bright Yellow
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor12"],// Bright Blue
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor13"],// Bright Magenta
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor14"],// Bright Cyan
-            [NSUserDefaults.standardUserDefaults colorForKeyPath:@"Terminal.AnsiColor15"] // Bright White
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor0").value_or("")), // Black
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor1").value_or("")), // Red
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor2").value_or("")), // Green
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor3").value_or("")), // Yellow
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor4").value_or("")), // Blue
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor5").value_or("")), // Magenta
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor6").value_or("")), // Cyan
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor7").value_or("")), // White
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor8").value_or("")), // Bright Black
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor9").value_or("")), // Bright Red
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor10").value_or("")),// Bright Green
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor11").value_or("")),// Bright Yellow
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor12").value_or("")),// Bright Blue
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor13").value_or("")),// Bright Magenta
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor14").value_or("")),// Bright Cyan
+        HexadecimalColorStringToRGBA(GlobalConfig().GetString("terminal.AnsiColor15").value_or("")) // Bright White
     }}{}
 };
 
@@ -399,8 +401,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     // draw glyphs
     x = 0;
     curr_c = {-1, -1, -1, -1};
-    bool is_aa = true;
-    CGContextSetShouldAntialias(_context, is_aa);
+    CGContextSetShouldAntialias(_context, true);
     
 //    for(TermScreen::Space char_space: _line.chars)
     for(auto char_space: _line)
@@ -430,9 +431,13 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
             if(c != curr_c)
                 oms::SetFillColor(_context, curr_c = c);
             
-            bool should_aa = !IsBoxDrawingCharacter(char_space.l);
-            if(should_aa != is_aa)
-                CGContextSetShouldAntialias(_context, is_aa = should_aa);
+            bool pop = false;
+            if( IsBoxDrawingCharacter(char_space.l) ) {
+                CGContextSaveGState(_context);
+                CGContextSetShouldAntialias(_context, false);
+                pop = true;
+                
+            }
             
             oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache.get());
             
@@ -440,6 +445,9 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                 oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, m_FontCache.get());
             if(char_space.c2 != 0)
                 oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, m_FontCache.get());
+            
+            if(pop)
+                CGContextRestoreGState(_context);
         }        
         
         if(char_space.underline)

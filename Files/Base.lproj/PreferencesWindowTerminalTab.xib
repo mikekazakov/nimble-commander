@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowTerminalTab">
@@ -17,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="348" height="386"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zr7-ub-6YW">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zr7-ub-6YW">
                     <rect key="frame" x="18" y="173" width="73" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ANSI Colors" id="2Kw-RY-4u0">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -33,9 +32,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor0" id="hkc-uo-0Lk">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor0" id="NLe-Ov-XFu">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -48,9 +47,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor1" id="12K-lu-gg3">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor1" id="pty-yr-m5X">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -63,9 +62,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor2" id="ge7-pW-Wna">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor2" id="Vie-ej-hQH">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -78,9 +77,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor3" id="vWu-du-Dyr">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor3" id="stn-XW-HDQ">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -93,9 +92,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor4" id="3QE-Dg-mSq">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor4" id="rjs-7j-96F">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -108,9 +107,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor5" id="p2V-eg-8NB">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor5" id="P1z-Ra-f9e">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -123,9 +122,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor6" id="f2z-x3-JMY">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor6" id="X6g-k2-mEp">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -138,9 +137,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor7" id="gDh-jv-Pfh">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor7" id="uBw-WH-I10">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -153,9 +152,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor8" id="atO-69-faj">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor8" id="Drp-Er-f3b">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -168,9 +167,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor9" id="hdV-wA-2Gx">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor9" id="oUw-4T-bTQ">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -183,9 +182,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor10" id="Dk1-2A-43O">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor10" id="08v-U4-bMl">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -198,9 +197,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor11" id="mgS-Fb-3ER">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor11" id="QYT-bN-bLX">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -213,9 +212,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor12" id="lwb-qh-I43">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor12" id="qHZ-kg-lIU">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -228,9 +227,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor13" id="Ki4-rq-Tr6">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor13" id="n4n-Mu-l7r">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -243,9 +242,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor14" id="NqO-C2-pp2">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor14" id="h7c-QW-OUA">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -258,9 +257,9 @@
                     </constraints>
                     <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
-                        <binding destination="kx9-7p-zxc" name="value" keyPath="selection.AnsiColor15" id="oM2-KS-EeH">
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor15" id="7y6-sB-LH1">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">NSUnarchiveFromData</string>
+                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -325,7 +324,7 @@
                         </binding>
                     </connections>
                 </colorWell>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
                     <rect key="frame" x="54" y="290" width="26" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Text" id="p0R-sF-276">
                         <font key="font" metaFont="smallSystem"/>
@@ -333,7 +332,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
                     <rect key="frame" x="54" y="267" width="54" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bold Text" id="Yfm-Nn-AuD">
                         <font key="font" metaFont="smallSystem"/>
@@ -341,7 +340,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
                     <rect key="frame" x="54" y="221" width="54" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selection" id="ezd-9K-uv3">
                         <font key="font" metaFont="smallSystem"/>
@@ -349,7 +348,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
                     <rect key="frame" x="54" y="244" width="68" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Background" id="cwt-bk-IjR">
                         <font key="font" metaFont="smallSystem"/>
@@ -380,7 +379,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
                     <rect key="frame" x="18" y="104" width="43" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="nU3-et-JNg">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -388,7 +387,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-9U-Klv">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-9U-Klv">
                     <rect key="frame" x="271" y="152" width="43" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Normal" id="B4C-wO-uIY">
                         <font key="font" metaFont="smallSystem"/>
@@ -404,7 +403,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kxJ-qf-MsA">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kxJ-qf-MsA">
                     <rect key="frame" x="18" y="311" width="76" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Basic Colors" id="WRM-bF-61O">
                         <font key="font" metaFont="smallSystemBold"/>
@@ -473,7 +472,7 @@
                         <binding destination="kx9-7p-zxc" name="selectedIndex" keyPath="selection.CursorMode" id="y9g-6q-mua"/>
                     </connections>
                 </matrix>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">
+                <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">
                     <rect key="frame" x="18" y="18" width="108" height="18"/>
                     <buttonCell key="cell" type="check" title="Hide scrollbar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zcL-oM-aS5">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>

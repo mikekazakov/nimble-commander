@@ -14,6 +14,7 @@
 #include "Config.h"
 
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
+static const auto g_ConfigFont = "terminal.font";
 
 @interface TermScrollViewFlippableDocumentHolder : NSView
 - (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
@@ -62,6 +63,7 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     TermView                               *m_View;
     TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
     unique_ptr<TermScreen>                  m_Screen;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;    
 }
 
 @synthesize view = m_View;
@@ -108,7 +110,8 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
         
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"Terminal" options:0 context:nil];
+        __weak TermScrollView* weak_self = self;
+        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigFont, [=]{ [(TermScrollView*)weak_self onFontChanged]; }) );
         
         [self frameDidChange];
         
@@ -119,7 +122,6 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Terminal"];    
 }
 
 - (TermScreen&) screen
@@ -128,13 +130,10 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     return *m_Screen;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)onFontChanged
 {
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    if(object == defaults && [keyPath isEqualToString:@"Terminal"]) {
-        [m_View reloadSettings];
-        [self frameDidChange]; // handle with care - it will cause geometry recalculating
-    }
+    [m_View reloadGeometry];
+    [self frameDidChange]; // handle with care - it will cause geometry recalculating
 }
 
 - (void)frameDidChange

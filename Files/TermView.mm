@@ -19,6 +19,27 @@
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
 static const auto g_ConfigFont = "terminal.font";
+static const auto g_ConfigForegroundColor       = "terminal.textColor";
+static const auto g_ConfigBoldForegroundColor   = "terminal.boldTextColor";
+static const auto g_ConfigBackgroundColor       = "terminal.backgroundColor";
+static const auto g_ConfigSelectionColor        = "terminal.selectionColor";
+static const auto g_ConfigCursorColor           = "terminal.cursorColor";
+static const auto g_ConfigAnsi0  = "terminal.AnsiColor0";
+static const auto g_ConfigAnsi1  = "terminal.AnsiColor1";
+static const auto g_ConfigAnsi2  = "terminal.AnsiColor2";
+static const auto g_ConfigAnsi3  = "terminal.AnsiColor3";
+static const auto g_ConfigAnsi4  = "terminal.AnsiColor4";
+static const auto g_ConfigAnsi5  = "terminal.AnsiColor5";
+static const auto g_ConfigAnsi6  = "terminal.AnsiColor6";
+static const auto g_ConfigAnsi7  = "terminal.AnsiColor7";
+static const auto g_ConfigAnsi8  = "terminal.AnsiColor8";
+static const auto g_ConfigAnsi9  = "terminal.AnsiColor9";
+static const auto g_ConfigAnsi10 = "terminal.AnsiColor10";
+static const auto g_ConfigAnsi11 = "terminal.AnsiColor11";
+static const auto g_ConfigAnsi12 = "terminal.AnsiColor12";
+static const auto g_ConfigAnsi13 = "terminal.AnsiColor13";
+static const auto g_ConfigAnsi14 = "terminal.AnsiColor14";
+static const auto g_ConfigAnsi15 = "terminal.AnsiColor15";
 
 struct SelPoint
 {
@@ -40,22 +61,22 @@ static uint32_t ConfigColor(const char *_path)
 struct AnsiColors : array<DoubleColor, 16>
 {
     AnsiColors() : array{{
-        ConfigColor("terminal.AnsiColor0"), // Black
-        ConfigColor("terminal.AnsiColor1"), // Red
-        ConfigColor("terminal.AnsiColor2"), // Green
-        ConfigColor("terminal.AnsiColor3"), // Yellow
-        ConfigColor("terminal.AnsiColor4"), // Blue
-        ConfigColor("terminal.AnsiColor5"), // Magenta
-        ConfigColor("terminal.AnsiColor6"), // Cyan
-        ConfigColor("terminal.AnsiColor7"), // White
-        ConfigColor("terminal.AnsiColor8"), // Bright Black
-        ConfigColor("terminal.AnsiColor9"), // Bright Red
-        ConfigColor("terminal.AnsiColor10"),// Bright Green
-        ConfigColor("terminal.AnsiColor11"),// Bright Yellow
-        ConfigColor("terminal.AnsiColor12"),// Bright Blue
-        ConfigColor("terminal.AnsiColor13"),// Bright Magenta
-        ConfigColor("terminal.AnsiColor14"),// Bright Cyan
-        ConfigColor("terminal.AnsiColor15") // Bright White
+        ConfigColor(g_ConfigAnsi0), // Black
+        ConfigColor(g_ConfigAnsi1), // Red
+        ConfigColor(g_ConfigAnsi2), // Green
+        ConfigColor(g_ConfigAnsi3), // Yellow
+        ConfigColor(g_ConfigAnsi4), // Blue
+        ConfigColor(g_ConfigAnsi5), // Magenta
+        ConfigColor(g_ConfigAnsi6), // Cyan
+        ConfigColor(g_ConfigAnsi7), // White
+        ConfigColor(g_ConfigAnsi8), // Bright Black
+        ConfigColor(g_ConfigAnsi9), // Bright Red
+        ConfigColor(g_ConfigAnsi10),// Bright Green
+        ConfigColor(g_ConfigAnsi11),// Bright Yellow
+        ConfigColor(g_ConfigAnsi12),// Bright Blue
+        ConfigColor(g_ConfigAnsi13),// Bright Magenta
+        ConfigColor(g_ConfigAnsi14),// Bright Cyan
+        ConfigColor(g_ConfigAnsi15) // Bright White
     }}{}
 };
 
@@ -86,6 +107,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     FPSLimitedDrawer *m_FPS;
     NSSize          m_IntrinsicSize;
     unique_ptr<BlinkingCaret> m_BlinkingCaret;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -102,7 +124,36 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = GlobalConfig().GetInt(g_ConfigMaxFPS);
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
-        [self reloadSettings];
+        [self reloadGeometry];
+        [self reloadAppearance];
+
+        __weak TermView* weak_self = self;
+        GlobalConfig().ObserveMany(m_ConfigObservationTickets,
+                                   [=]{ [(TermView*)weak_self reloadAppearance]; },
+                                   initializer_list<const char*>{
+                                       g_ConfigCursorMode,
+                                       g_ConfigForegroundColor,
+                                       g_ConfigBoldForegroundColor,
+                                       g_ConfigBackgroundColor,
+                                       g_ConfigSelectionColor,
+                                       g_ConfigCursorColor,
+                                       g_ConfigAnsi0,
+                                       g_ConfigAnsi1,
+                                       g_ConfigAnsi2,
+                                       g_ConfigAnsi3,
+                                       g_ConfigAnsi4,
+                                       g_ConfigAnsi5,
+                                       g_ConfigAnsi6,
+                                       g_ConfigAnsi7,
+                                       g_ConfigAnsi8,
+                                       g_ConfigAnsi9,
+                                       g_ConfigAnsi10,
+                                       g_ConfigAnsi11,
+                                       g_ConfigAnsi12,
+                                       g_ConfigAnsi13,
+                                       g_ConfigAnsi14,
+                                       g_ConfigAnsi15
+                                   });
     }
     return self;
 }
@@ -169,19 +220,24 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return m_BlinkingCaret->Enabled();
 }
 
-- (void) reloadSettings
+- (void) reloadAppearance
+{
+    m_ForegroundColor       = ConfigColor(g_ConfigForegroundColor);
+    m_BoldForegroundColor   = ConfigColor(g_ConfigBoldForegroundColor);
+    m_BackgroundColor       = ConfigColor(g_ConfigBackgroundColor);
+    m_SelectionColor        = ConfigColor(g_ConfigSelectionColor);
+    m_CursorColor           = ConfigColor(g_ConfigCursorColor);
+    m_CursorType            = (TermViewCursor)GlobalConfig().GetInt(g_ConfigCursorMode);
+    m_AnsiColors            = AnsiColors();
+    [self setNeedsDisplay:true];
+}
+
+- (void) reloadGeometry
 {
     NSFont *font = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont).value_or("")]];
     if(!font)
         font = [NSFont fontWithName:@"Menlo-Regular" size:13];
     m_FontCache             = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
-    m_ForegroundColor       = ConfigColor("terminal.textColor");
-    m_BoldForegroundColor   = ConfigColor("terminal.boldTextColor");
-    m_BackgroundColor       = ConfigColor("terminal.backgroundColor");
-    m_SelectionColor        = ConfigColor("terminal.selectionColor");
-    m_CursorColor           = ConfigColor("terminal.cursorColor");
-    m_CursorType            = (TermViewCursor)GlobalConfig().GetInt(g_ConfigCursorMode);
-    m_AnsiColors            = AnsiColors();
 }
 
 - (void)keyDown:(NSEvent *)event

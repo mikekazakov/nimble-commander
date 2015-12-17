@@ -63,6 +63,12 @@ public:
     };
     
     ObservationTicket Observe(const char *_path, function<void()> _change_callback);
+    template <typename C, typename T>
+    void ObserveMany(C &_storage, function<void()> _change_callback, const T &_paths )
+    {
+        for( const auto &i: _paths )
+            _storage.emplace_back( Observe(i, _change_callback) );
+    }
     
 #ifdef __OBJC__
     inline GenericConfigObjC    *Bridge() const { return m_Bridge; }

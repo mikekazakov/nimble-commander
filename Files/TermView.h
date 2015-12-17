@@ -30,7 +30,7 @@ enum class TermViewCursor
 @property (nonatomic, readonly) NSFont *font;
 @property (nonatomic, readonly) NSColor *backgroundColor;
 
-- (void) reloadSettings;
+- (void) reloadGeometry;
 - (void) AttachToScreen:(TermScreen*)_scr;
 - (void) AttachToParser:(TermParser*)_par;
 

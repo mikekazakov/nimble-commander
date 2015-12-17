@@ -16,6 +16,7 @@
 #include "ObjcToCppObservingBridge.h"
 #include "ByteCountFormatter.h"
 #include "HexadecimalColor.h"
+#include "Common.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.
@@ -28,6 +29,7 @@ static const auto g_ConfigCursorBackground      = "filePanel.classic.cursorBackg
 static const auto g_ConfigTextColor             = "filePanel.classic.textColor";
 static const auto g_ConfigActiveTextColor       = "filePanel.classic.activeTextColor";
 static const auto g_ConfigHighlightTextColor    = "filePanel.classic.highlightTextColor";
+static const auto g_ConfigFont                  = "filePanel.classic.font";
 
 static char *strlefttrim(char *_s, char _c)
 {
@@ -271,20 +273,13 @@ ClassicPanelViewPresentation::ClassicPanelViewPresentation(PanelView *_parent_vi
     BuildAppearance();
     
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigShowVolumeBar,        [=]{ OnGeometryOptionsChanged(); }));
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFont,                 [=]{ OnGeometryOptionsChanged(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,             [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigRegularBackground,    [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigCursorBackground,     [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigTextColor,            [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveTextColor,      [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigHighlightTextColor,   [=]{ BuildAppearance(); }));
-    
-    m_GeometryObserver = [ObjcToCppObservingBlockBridge
-                          bridgeWithObject:NSUserDefaults.standardUserDefaults
-                          forKeyPaths:@[@"FilePanelsClassicFont"]
-                          options:0
-                          block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                              OnGeometryOptionsChanged();
-                          }];
 }
 
 void ClassicPanelViewPresentation::OnGeometryOptionsChanged()
@@ -297,7 +292,7 @@ void ClassicPanelViewPresentation::OnGeometryOptionsChanged()
 
 void ClassicPanelViewPresentation::BuildGeometry()
 {
-    CTFontRef font = (CTFontRef)CFBridgingRetain([NSUserDefaults.standardUserDefaults fontForKey:@"FilePanelsClassicFont"]);
+    CTFontRef font = (CTFontRef)CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont).value_or("")]]);
     if(!font) font = CTFontCreateWithName( CFSTR("Menlo Regular"), 15, 0);
     
     m_FontCache = FontCache::FontCacheFromFont(font);

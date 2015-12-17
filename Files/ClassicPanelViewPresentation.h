@@ -11,7 +11,6 @@
 #include "vfs/VFS.h"
 #include "PanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
-#include "ObjcToCppObservingBridge.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
 #include "Config.h"
 
@@ -70,7 +69,6 @@ private:
     DoubleColor     m_TextColor;
     DoubleColor     m_ActiveTextColor;
     DoubleColor     m_HighlightTextColor;
-    ObjcToCppObservingBlockBridge *m_GeometryObserver;
     bool            m_DrawVolumeInfo = true;
     vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 };

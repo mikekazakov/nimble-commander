@@ -165,6 +165,8 @@
          */
         "classic": {
             
+            "font": "Menlo-Regular, 13",
+            
             "regularBackground": "#000080",
             
             "cursorBackground": "#008080",

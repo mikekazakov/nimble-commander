@@ -20,6 +20,7 @@
 
 static const auto g_ConfigClassicColoring   = "filePanel.classic.coloringRules_v1";
 static const auto g_ConfigModernColoring    = "filePanel.modern.coloringRules_v1";
+static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
@@ -203,8 +204,7 @@ static const auto g_ConfigModernColoring    = "filePanel.modern.coloringRules_v1
 
 - (IBAction)OnSetClassicFont:(id)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    m_ClassicFont = [defaults fontForKey:@"FilePanelsClassicFont"];
+    m_ClassicFont = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]];
     if(!m_ClassicFont) m_ClassicFont = [NSFont fontWithName:@"Menlo Regular" size:15];
 
     NSFontManager *fontManager = NSFontManager.sharedFontManager;
@@ -217,8 +217,7 @@ static const auto g_ConfigModernColoring    = "filePanel.modern.coloringRules_v1
 - (void)ChangeClassicFont:(id)sender
 {
     m_ClassicFont = [sender convertFont:m_ClassicFont];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setFont:m_ClassicFont forKey:@"FilePanelsClassicFont"];
+    GlobalConfig().Set(g_ConfigClassicFont, [m_ClassicFont toStringDescription].UTF8String);
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView

@@ -479,7 +479,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="BhN-AP-L3R" name="value" keyPath="values.Terminal_HideScrollbar" id="Hi1-jK-kM0"/>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.hideVerticalScrollbar" id="VVw-wM-YY2"/>
                     </connections>
                 </button>
             </subviews>

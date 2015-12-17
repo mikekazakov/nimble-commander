@@ -6,13 +6,14 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "NSUserDefaults+myColorSupport.h"
-#import "TermScrollView.h"
-#import "FontCache.h"
-#import "TermParser.h"
-#import "Common.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "TermScrollView.h"
+#include "FontCache.h"
+#include "TermParser.h"
+#include "Common.h"
+#include "Config.h"
 
-static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
+static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 
 @interface TermScrollViewFlippableDocumentHolder : NSView
 - (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
@@ -74,7 +75,7 @@ static auto g_HideScrollbarKey = @"Terminal_HideScrollbar";
         m_View = [[TermView alloc] initWithFrame:rc];
         m_ViewHolder = [[TermScrollViewFlippableDocumentHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
         self.documentView = m_ViewHolder;
-        self.hasVerticalScroller = ![NSUserDefaults.standardUserDefaults boolForKey:g_HideScrollbarKey];
+        self.hasVerticalScroller = !GlobalConfig().GetBool(g_ConfigHideScrollbar);
         self.borderType = NSNoBorder;
         self.verticalScrollElasticity = NSScrollElasticityNone;
         self.scrollsDynamically = true;

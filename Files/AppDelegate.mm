@@ -154,6 +154,7 @@ GenericConfig &GlobalConfig() noexcept
     move_int (@"FilePanelsModernIconsMode",                                 "filePanel.modern.iconsMode");
     move_bool(@"GeneralShowToolbar",                                        "general.showToolbar");
     move_bool(@"GeneralShowTabs",                                           "general.showTabs");
+    move_bool(@"Terminal_HideScrollbar",                                    "terminal.hideVerticalScrollbar");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

@@ -225,6 +225,8 @@
          * Limit maximum rate of view redrawing, zero is no limit
          */
         "maxFPS": 60,
+  
+        "hideVerticalScrollbar": false,
         
         /**
          * Cursor drawing mode, integer enumeration:

@@ -12,13 +12,13 @@
 #include "TermScreen.h"
 #include "TermParser.h"
 #include "Common.h"
-#include "NSUserDefaults+myColorSupport.h"
 #include "BlinkingCaret.h"
 #include "HexadecimalColor.h"
 #include "Config.h"
 
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
+static const auto g_ConfigFont = "terminal.font";
 
 struct SelPoint
 {
@@ -171,13 +171,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) reloadSettings
 {
-    NSFont *font = [NSUserDefaults.standardUserDefaults fontForKeyPath:@"Terminal.Font"];
-    NSLog(@"%@", font.fontName);
-    
+    NSFont *font = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont).value_or("")]];
     if(!font)
         font = [NSFont fontWithName:@"Menlo-Regular" size:13];
-    m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
-    
+    m_FontCache             = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
     m_ForegroundColor       = ConfigColor("terminal.textColor");
     m_BoldForegroundColor   = ConfigColor("terminal.boldTextColor");
     m_BackgroundColor       = ConfigColor("terminal.backgroundColor");

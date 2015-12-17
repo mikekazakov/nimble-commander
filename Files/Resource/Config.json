@@ -235,6 +235,11 @@
          * 2 - Vertical bar
          */
         "cursorMode": 0,
+
+        /**
+         * Font
+         */
+        "font": "Menlo-Regular, 13",
         
         /**
          * Basic colors:

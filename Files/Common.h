@@ -94,6 +94,11 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 @property (readonly) CGColorRef copyCGColor;
 @end
 
+@interface NSFont (StringDescription)
++ (NSFont*) fontWithStringDescription:(NSString*)_description;
+- (NSString*) toStringDescription;
+@end
+
 @interface NSTimer (SafeTolerance)
 - (void) setSafeTolerance;
 @end

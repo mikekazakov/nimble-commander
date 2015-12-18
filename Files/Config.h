@@ -110,6 +110,7 @@ private:
 #endif
     SerialQueue                                                         m_IOQueue = SerialQueueT::Make("GenericConfig input/output queue");
     atomic_flag                                                         m_WriteScheduled{ false };
+    atomic_flag                                                         m_ReadScheduled{ false };
     time_t                                                              m_OverwritesTime = 0;
     friend struct ObservationTicket;
 };

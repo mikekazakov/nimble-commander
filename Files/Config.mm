@@ -9,7 +9,8 @@
 #include "FSEventsDirUpdate.h"
 
 static const int g_MaxNamePartLen = 128;
-static const auto g_IODelay = 30s;
+static const auto g_WriteDelay = 30s;
+static const auto g_ReadDelay = 1s;
 
 static string Load(const string &_filepath)
 {
@@ -468,7 +469,7 @@ void GenericConfig::RunOverwritesDumping()
 void GenericConfig::MarkDirty()
 {
     if( !m_WriteScheduled.test_and_set() )
-        dispatch_to_main_queue_after(g_IODelay, [=]{
+        dispatch_to_main_queue_after(g_WriteDelay, [=]{
             RunOverwritesDumping();
             m_WriteScheduled.clear();
         });
@@ -485,27 +486,31 @@ void GenericConfig::NotifyAboutShutdown()
 
 void GenericConfig::OnOverwritesFileDirChanged()
 {
-    string path = m_OverwritesPath;
-    m_IOQueue->Run([=]{
-        auto ov_tm = ModificationTime(path);
-        if( ov_tm == m_OverwritesTime)
-            return;
-        
-        string over = Load(path);
-        if( !over.empty() ) {
-            auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
-            rapidjson::ParseResult ok = d->Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
-            if (!ok)
-                fprintf(stderr, "Overwrites JSON parse error: %s (%zu)\n", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-            else {
-                fprintf(stdout, "Loaded on-the-fly config overwrites: %s.\n", path.c_str());
-                m_OverwritesTime = ov_tm;
-                dispatch_to_main_queue([=]{
-                    MergeChangedOverwrites(*d);
-                });
-            }
-        }
-    });
+    if( !m_ReadScheduled.test_and_set() )
+        dispatch_to_main_queue_after(g_ReadDelay, [=]{
+            string path = m_OverwritesPath;
+            m_IOQueue->Run([=]{
+                auto ov_tm = ModificationTime(path);
+                if( ov_tm == m_OverwritesTime)
+                    return;
+                
+                string over = Load(path);
+                if( !over.empty() ) {
+                    auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
+                    rapidjson::ParseResult ok = d->Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
+                    if (!ok)
+                        fprintf(stderr, "Overwrites JSON parse error: %s (%zu)\n", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+                    else {
+                        fprintf(stdout, "Loaded on-the-fly config overwrites: %s.\n", path.c_str());
+                        m_OverwritesTime = ov_tm;
+                        dispatch_to_main_queue([=]{
+                            MergeChangedOverwrites(*d);
+                        });
+                    }
+                }
+            });
+            m_ReadScheduled.clear();
+        });
 }
 
 void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overwrites_diff)

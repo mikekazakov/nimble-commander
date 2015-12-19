@@ -220,6 +220,21 @@
     },
     
     /**
+     * Settings related to built-in viewer
+     */
+    "viewer": {
+        /**
+         * What per-file states viewer should save
+         */
+        "saveFileEncoding":     true,
+        "saveFileMode":         true,
+        "saveFilePosition":     true,
+        "saveFileWrapping":     true,
+        "saveFileSelection":    true
+        
+    },
+    
+    /**
      * Settings related to terminal emulator
      */
     "terminal": {

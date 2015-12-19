@@ -155,6 +155,12 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"GeneralShowToolbar",                                        "general.showToolbar");
     move_bool(@"GeneralShowTabs",                                           "general.showTabs");
     move_bool(@"Terminal_HideScrollbar",                                    "terminal.hideVerticalScrollbar");
+
+    move_bool(@"BigFileViewDoSaveFileEncoding",                             "viewer.saveFileEncoding");
+    move_bool(@"BigFileViewDoSaveFileMode",                                 "viewer.saveFileMode");
+    move_bool(@"BigFileViewDoSaveFilePosition",                             "viewer.saveFilePosition");
+    move_bool(@"BigFileViewDoSaveFileWrapping",                             "viewer.saveFileWrapping");
+    move_bool(@"BigFileViewDoSaveFileSelection",                            "viewer.saveFileSelection");    
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

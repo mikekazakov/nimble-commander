@@ -36,16 +36,6 @@
 	<string>ENCODING_MACOS_ROMAN_WESTERN</string>
 	<key>BigFileViewEncodingAutoDetect</key>
 	<true/>
-	<key>BigFileViewDoSaveFileEncoding</key>
-	<true/>
-	<key>BigFileViewDoSaveFileMode</key>
-	<true/>
-	<key>BigFileViewDoSaveFilePosition</key>
-	<true/>
-	<key>BigFileViewDoSaveFileWrapping</key>
-	<true/>
-	<key>BigFileViewDoSaveFileSelection</key>
-	<true/>
 	<key>BigFileViewFileWindowPow2X</key>
 	<integer>3</integer>
 	<key>BigFileViewCaseSensitiveSearch</key>

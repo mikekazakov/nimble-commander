@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -145,7 +144,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewDoSaveFilePosition" id="373"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.saveFilePosition" id="G7e-8K-YZO"/>
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="374">
@@ -158,7 +157,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewDoSaveFileMode" id="380"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.saveFileMode" id="AH1-d9-GEW"/>
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="381">
@@ -171,7 +170,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewDoSaveFileEncoding" id="387"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.saveFileEncoding" id="eAU-dT-8E7"/>
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="388">
@@ -184,7 +183,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewDoSaveFileWrapping" id="394"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.saveFileWrapping" id="Vry-E1-JLk"/>
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="395">
@@ -197,10 +196,10 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewDoSaveFileSelection" id="401"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.saveFileSelection" id="dpk-QY-POl"/>
                                         </connections>
                                     </button>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="595">
+                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="595">
                                         <rect key="frame" x="188" y="13" width="118" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="PSH-KO-6dT"/>
@@ -261,7 +260,7 @@
                                 <rect key="frame" x="10" y="33" width="448" height="252"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="183">
+                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="183">
                                         <rect key="frame" x="202" y="140" width="93" height="18"/>
                                         <buttonCell key="cell" type="check" title="Antialiasing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="205">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -275,7 +274,7 @@
                                             </binding>
                                         </connections>
                                     </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="184">
+                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="184">
                                         <rect key="frame" x="202" y="120" width="89" height="18"/>
                                         <buttonCell key="cell" type="check" title="Smoothing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="203">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -319,7 +318,7 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="188">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="188">
                                         <rect key="frame" x="98" y="198" width="100" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selection color:" id="198">
                                             <font key="font" metaFont="system"/>
@@ -342,7 +341,7 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="190">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="190">
                                         <rect key="frame" x="129" y="229" width="69" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="195">
                                             <font key="font" metaFont="system"/>
@@ -371,7 +370,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="186">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="186">
                                         <rect key="frame" x="80" y="167" width="118" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Background color:" id="201">
                                             <font key="font" metaFont="system"/>
@@ -416,7 +415,7 @@
                                 <rect key="frame" x="10" y="33" width="448" height="252"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="20">
+                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="20">
                                         <rect key="frame" x="202" y="140" width="93" height="18"/>
                                         <buttonCell key="cell" type="check" title="Antialiasing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="21">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -430,7 +429,7 @@
                                             </binding>
                                         </connections>
                                     </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="41">
+                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="41">
                                         <rect key="frame" x="202" y="120" width="89" height="18"/>
                                         <buttonCell key="cell" type="check" title="Smoothing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="43">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -459,7 +458,7 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="62">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="62">
                                         <rect key="frame" x="80" y="167" width="118" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Background color:" id="63">
                                             <font key="font" metaFont="system"/>
@@ -482,7 +481,7 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="86">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="86">
                                         <rect key="frame" x="98" y="198" width="100" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selection color:" id="88">
                                             <font key="font" metaFont="system"/>
@@ -505,7 +504,7 @@
                                             </binding>
                                         </connections>
                                     </colorWell>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="102">
+                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="102">
                                         <rect key="frame" x="129" y="229" width="69" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="103">
                                             <font key="font" metaFont="system"/>

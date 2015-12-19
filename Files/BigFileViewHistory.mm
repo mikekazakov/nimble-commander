@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileViewHistory.h"
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "Encodings.h"
-#import "DispatchQueue.h"
+#include "BigFileViewHistory.h"
+#include "Encodings.h"
+#include "DispatchQueue.h"
+#include "Config.h"
 
 static NSString *g_FileName = @"/bigfileviewhistory.bplist"; // bplist file name
 static NSString *g_PathArchiveKey = @"path";
@@ -22,6 +23,12 @@ static NSString *g_SelPosArchiveKey = @"sel_position";
 static NSString *g_SelLenArchiveKey = @"sel_length";
 static BigFileViewHistory *g_SharedInstance = nil;
 static const auto g_MaximumEntries = 256;
+
+static const auto g_ConfigSaveFileEnconding = "viewer.saveFileEncoding";
+static const auto g_ConfigSaveFileMode      = "viewer.saveFileMode";
+static const auto g_ConfigSaveFilePosition  = "viewer.saveFilePosition";
+static const auto g_ConfigSaveFileWrapping  = "viewer.saveFileWrapping";
+static const auto g_ConfigSaveFileSelection = "viewer.saveFileSelection";
 
 static NSString* StorageFileName()
 {
@@ -180,13 +187,12 @@ static NSString* StorageFileName()
 
 + (BigFileViewHistoryOptions) HistoryOptions
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     BigFileViewHistoryOptions options;
-    options.encoding    = [defaults boolForKey:@"BigFileViewDoSaveFileEncoding"];
-    options.mode        = [defaults boolForKey:@"BigFileViewDoSaveFileMode"];
-    options.position    = [defaults boolForKey:@"BigFileViewDoSaveFilePosition"];
-    options.wrapping    = [defaults boolForKey:@"BigFileViewDoSaveFileWrapping"];
-    options.selection   = [defaults boolForKey:@"BigFileViewDoSaveFileSelection"];
+    options.encoding    = GlobalConfig().GetBool(g_ConfigSaveFileEnconding);
+    options.mode        = GlobalConfig().GetBool(g_ConfigSaveFileMode);
+    options.position    = GlobalConfig().GetBool(g_ConfigSaveFilePosition);
+    options.wrapping    = GlobalConfig().GetBool(g_ConfigSaveFileWrapping);
+    options.selection   = GlobalConfig().GetBool(g_ConfigSaveFileSelection);    
     return options;
 }
 

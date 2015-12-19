@@ -223,6 +223,15 @@
      * Settings related to built-in viewer
      */
     "viewer": {
+                
+        "respectComAppleTextEncoding": true,
+        
+        /**
+         * Search options
+         */
+        "searchCaseSensitive": false,
+        "searchForWholePhrase": false,
+        
         /**
          * What per-file states viewer should save
          */
@@ -230,8 +239,8 @@
         "saveFileMode":         true,
         "saveFilePosition":     true,
         "saveFileWrapping":     true,
-        "saveFileSelection":    true
-        
+        "saveFileSelection":    true,
+        "maximumHistoryEntries": 256
     },
     
     /**

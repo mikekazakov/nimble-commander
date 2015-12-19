@@ -12,7 +12,6 @@
 #include "PanelView.h"
 #include "PanelData.h"
 #include "FontCache.h"
-#include "NSUserDefaults+myColorSupport.h"
 #include "ObjcToCppObservingBridge.h"
 #include "ByteCountFormatter.h"
 #include "HexadecimalColor.h"

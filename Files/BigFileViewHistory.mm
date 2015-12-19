@@ -22,13 +22,13 @@ static NSString *g_EncodingArchiveKey = @"encoding";
 static NSString *g_SelPosArchiveKey = @"sel_position";
 static NSString *g_SelLenArchiveKey = @"sel_length";
 static BigFileViewHistory *g_SharedInstance = nil;
-static const auto g_MaximumEntries = 256;
 
 static const auto g_ConfigSaveFileEnconding = "viewer.saveFileEncoding";
 static const auto g_ConfigSaveFileMode      = "viewer.saveFileMode";
 static const auto g_ConfigSaveFilePosition  = "viewer.saveFilePosition";
 static const auto g_ConfigSaveFileWrapping  = "viewer.saveFileWrapping";
 static const auto g_ConfigSaveFileSelection = "viewer.saveFileSelection";
+static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
 
 static NSString* StorageFileName()
 {
@@ -106,6 +106,7 @@ static NSString* StorageFileName()
     NSMutableArray *m_History;
     bool            m_IsDirty;
     SerialQueue     m_Queue;
+    int             m_Limit;
 }
 
 - (id) init
@@ -123,6 +124,7 @@ static NSString* StorageFileName()
         m_History = [NSMutableArray new]; // failed to load it - ok, just create a new one
     
     m_IsDirty = false;
+    m_Limit = max(0, min(GlobalConfig().GetInt(g_ConfigMaximumHistoryEntries), 4096));
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(OnTerminate:)
@@ -180,8 +182,8 @@ static NSString* StorageFileName()
             }
         [m_History insertObject:_entry atIndex:0];
   
-        if( m_History.count > g_MaximumEntries )
-            [m_History removeObjectsInRange:NSMakeRange(g_MaximumEntries, m_History.count - g_MaximumEntries)];
+        if( m_History.count > m_Limit )
+            [m_History removeObjectsInRange:NSMakeRange(m_Limit, m_History.count - m_Limit)];
     });
 }
 

@@ -120,7 +120,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewRespectComAppleTextEncoding" id="kIH-CI-CcS"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.respectComAppleTextEncoding" id="0M0-Rg-TiA"/>
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="339">

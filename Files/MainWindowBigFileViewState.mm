@@ -18,6 +18,11 @@
 #include "ProcessSheetController.h"
 #include "ActionsShortcutsManager.h"
 #include "ByteCountFormatter.h"
+#include "Config.h"
+
+static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
+static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
+static const auto g_ConfigSearchForWholePhrase          = "viewer.searchForWholePhrase";
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -203,9 +208,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         return false;
     
     m_SearchInFile = make_unique<SearchInFile>(*m_SearchFileWindow);
-    m_SearchInFile->SetSearchOptions(
-                                     ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"] ? SearchInFile::OptionCaseSensitive : 0) |
-                                     ([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"]   ? SearchInFile::OptionFindWholePhrase : 0) );
+    m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
+                                     (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
     
     m_FilePath = _fn;
     m_GlobalFilePath = vfsfile->ComposeVerbosePath();
@@ -229,7 +233,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     }
     else {
         [m_View SetFile:m_FileWindow.get()];
-        if([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewRespectComAppleTextEncoding"] &&
+        if( GlobalConfig().GetBool(g_ConfigRespectComAppleTextEncoding) &&
            (encoding = EncodingFromXAttr(origfile)) != encodings::ENCODING_INVALID )
             m_View.encoding = encoding;
     }
@@ -468,14 +472,14 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Case-sensitive search", "Menu item option in internal viewer search")
                                       action:@selector(SetCaseSensitiveSearch:)
                                keyEquivalent:@""];
-    item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewCaseSensitiveSearch"];
+    item.state = GlobalConfig().GetBool(g_ConfigSearchCaseSensitive);
     item.target = self;
     [menu insertItem:item atIndex:0];
 
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Find whole phrase", "Menu item option in internal viewer search")
                                       action:@selector(SetWholePhrasesSearch:)
                                keyEquivalent:@""];
-    item.state = [NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewWholePhraseSearch"];
+    item.state = GlobalConfig().GetBool(g_ConfigSearchForWholePhrase);
     item.target = self;
     [menu insertItem:item atIndex:1];
     
@@ -514,7 +518,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
     [menu itemAtIndex:0].state = (options & SearchInFile::OptionCaseSensitive) != 0;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    [NSUserDefaults.standardUserDefaults setBool:options&SearchInFile::OptionCaseSensitive forKey:@"BigFileViewCaseSensitiveSearch"];
+    GlobalConfig().Set( g_ConfigSearchCaseSensitive, bool(options & SearchInFile::OptionCaseSensitive) );
 }
 
 - (IBAction)SetWholePhrasesSearch:(NSMenuItem *)menuItem
@@ -527,7 +531,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
     [menu itemAtIndex:1].state = (options & SearchInFile::OptionFindWholePhrase) != 0;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    [NSUserDefaults.standardUserDefaults setBool:options&SearchInFile::OptionFindWholePhrase forKey:@"BigFileViewWholePhraseSearch"];
+    GlobalConfig().Set( g_ConfigSearchForWholePhrase, bool(options & SearchInFile::OptionFindWholePhrase) );
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector

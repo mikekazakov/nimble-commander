@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "NSUserDefaults+myColorSupport.h"
 #include "TermScrollView.h"
 #include "FontCache.h"
 #include "TermParser.h"

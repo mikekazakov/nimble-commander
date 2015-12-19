@@ -164,6 +164,8 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"BigFileViewCaseSensitiveSearch",                            "viewer.searchCaseSensitive");
     move_bool(@"BigFileViewWholePhraseSearch",                              "viewer.searchForWholePhrase");
     move_bool(@"BigFileViewEncodingAutoDetect",                             "viewer.autoDetectEncoding");
+    move_int (@"BigFileViewFileWindowPow2X",                                "viewer.fileWindowSize");
+    
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

@@ -34,8 +34,6 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAACDBkoAPwGG</data>
 	<key>BigFileViewDefaultEncoding</key>
 	<string>ENCODING_MACOS_ROMAN_WESTERN</string>
-	<key>BigFileViewFileWindowPow2X</key>
-	<integer>3</integer>
 	<key>FilePanelsDeleteBehavior</key>
 	<integer>0</integer>
 	<key>FilePanelsShiftDeleteBehavior</key>

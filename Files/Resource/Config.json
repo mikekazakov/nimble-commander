@@ -116,7 +116,7 @@
          */
         "modern": {
             /**
-             * Icons mode, integer enumeration
+             * Icons mode, integer enumeration:
              * 0 - Generic file/directory icons only
              * 1 - Icons based on file types
              * 2 - Thumbnails based on file content
@@ -224,6 +224,17 @@
      */
     "viewer": {
 
+        /**
+         * Size of a window thru which viewer should show contents of a file, integer enumeration:
+         * 0 - 32Kb
+         * 1 - 64Kb
+         * 2 - 128Kb
+         * 3 - 256Kb
+         * 4 - 512Kb
+         * 5 - 1024Kb
+         */
+        "fileWindowSize": 3,
+        
         "autoDetectEncoding": true,
         
         "respectComAppleTextEncoding": true,

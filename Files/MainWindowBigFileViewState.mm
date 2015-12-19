@@ -23,6 +23,7 @@
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
 static const auto g_ConfigSearchForWholePhrase          = "viewer.searchForWholePhrase";
+static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize";
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -92,7 +93,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 + (int) fileWindowSize
 {
     int file_window_size = FileWindow::DefaultWindowSize;
-    int file_window_pow2x = (int)[NSUserDefaults.standardUserDefaults integerForKey:@"BigFileViewFileWindowPow2X"];
+    int file_window_pow2x = GlobalConfig().GetInt(g_ConfigWindowSize);
     if( file_window_pow2x >= 0 && file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;
     return file_window_size;

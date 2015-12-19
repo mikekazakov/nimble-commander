@@ -107,7 +107,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="25" name="selectedIndex" keyPath="values.BigFileViewFileWindowPow2X" id="640"/>
+                                            <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.viewer.fileWindowSize" id="qmP-MT-UQf"/>
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="Q1Z-tG-gn0">

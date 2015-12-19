@@ -36,7 +36,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewEncodingAutoDetect" id="269"/>
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.autoDetectEncoding" id="uId-m4-JDV"/>
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="272">

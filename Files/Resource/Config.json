@@ -223,7 +223,9 @@
      * Settings related to built-in viewer
      */
     "viewer": {
-                
+
+        "autoDetectEncoding": true,
+        
         "respectComAppleTextEncoding": true,
         
         /**

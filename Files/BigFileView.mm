@@ -6,14 +6,17 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileView.h"
-#import "BigFileViewText.h"
-#import "BigFileViewHex.h"
-#import "DataBlockAnalysis.h"
-#import "Common.h"
-#import "AppDelegate.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "BigFileViewDataBackend.h"
+#include "BigFileView.h"
+#include "BigFileViewText.h"
+#include "BigFileViewHex.h"
+#include "DataBlockAnalysis.h"
+#include "Common.h"
+#include "AppDelegate.h"
+#include "NSUserDefaults+myColorSupport.h"
+#include "BigFileViewDataBackend.h"
+#include "Config.h"
+
+static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
 
 static NSArray *MyDefaultsKeys()
 {
@@ -238,8 +241,7 @@ const static double g_BorderWidth = 1.0;
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
-    if([NSUserDefaults.standardUserDefaults boolForKey:@"BigFileViewEncodingAutoDetect"])
-    {
+    if( GlobalConfig().GetBool(g_ConfigAutoDetectEncoding) ) {
         if(stat.likely_utf16_le)        encoding = encodings::ENCODING_UTF16LE;
         else if(stat.likely_utf16_be)   encoding = encodings::ENCODING_UTF16BE;
         else if(stat.can_be_utf8)       encoding = encodings::ENCODING_UTF8;

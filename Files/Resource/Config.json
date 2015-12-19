@@ -234,6 +234,8 @@
          * 5 - 1024Kb
          */
         "fileWindowSize": 3,
+
+        "defaultEncoding": "ENCODING_MACOS_ROMAN_WESTERN",
         
         "autoDetectEncoding": true,
         

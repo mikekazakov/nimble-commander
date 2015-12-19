@@ -165,7 +165,7 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"BigFileViewWholePhraseSearch",                              "viewer.searchForWholePhrase");
     move_bool(@"BigFileViewEncodingAutoDetect",                             "viewer.autoDetectEncoding");
     move_int (@"BigFileViewFileWindowPow2X",                                "viewer.fileWindowSize");
-    
+    move_string(@"BigFileViewDefaultEncoding",                              "viewer.defaultEncoding");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

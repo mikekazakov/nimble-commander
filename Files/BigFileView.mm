@@ -16,7 +16,8 @@
 #include "BigFileViewDataBackend.h"
 #include "Config.h"
 
-static const auto g_ConfigAutoDetectEncoding = "viewer.autoDetectEncoding";
+static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
+static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
 
 static NSArray *MyDefaultsKeys()
 {
@@ -234,8 +235,7 @@ const static double g_BorderWidth = 1.0;
 
 - (void) SetFile:(FileWindow*) _file
 {
-    int encoding = encodings::EncodingFromName(
-        [NSUserDefaults.standardUserDefaults stringForKey:@"BigFileViewDefaultEncoding"].UTF8String);
+    int encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).value_or("").c_str());
     if(encoding == encodings::ENCODING_INVALID)
         encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 

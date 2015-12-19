@@ -6,10 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowViewerTab.h"
+#include "PreferencesWindowViewerTab.h"
 #import "NSUserDefaults+myColorSupport.h"
-#import "Encodings.h"
-#import "BigFileViewHistory.h"
+#include "Encodings.h"
+#include "BigFileViewHistory.h"
+#include "Config.h"
+
+static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 
 @implementation PreferencesWindowViewerTab
 {
@@ -32,8 +35,7 @@
     
     for(const auto i: encodings::LiteralEncodingsList())
         [self.DefaultEncoding addItemWithTitle: (__bridge NSString*)i.second];
-    int default_encoding = encodings::EncodingFromName(
-                                               [[[NSUserDefaults standardUserDefaults] stringForKey:@"BigFileViewDefaultEncoding"] UTF8String]);
+    int default_encoding = encodings::EncodingFromName( GlobalConfig().GetString(g_ConfigDefaultEncoding).value_or("").c_str() );
     if(default_encoding == encodings::ENCODING_INVALID)
         default_encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
@@ -104,8 +106,7 @@
 {
     for(const auto &i: encodings::LiteralEncodingsList())
         if([(__bridge NSString*)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]]) {
-            NSString *encoding_name = [NSString stringWithUTF8String:encodings::NameFromEncoding(i.first)];
-            [[NSUserDefaults standardUserDefaults] setObject:encoding_name forKey:@"BigFileViewDefaultEncoding"];
+            GlobalConfig().Set( g_ConfigDefaultEncoding, encodings::NameFromEncoding(i.first) );
             break;
         }    
 }

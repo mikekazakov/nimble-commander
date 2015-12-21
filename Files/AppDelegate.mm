@@ -166,6 +166,10 @@ GenericConfig &GlobalConfig() noexcept
     move_bool(@"BigFileViewEncodingAutoDetect",                             "viewer.autoDetectEncoding");
     move_int (@"BigFileViewFileWindowPow2X",                                "viewer.fileWindowSize");
     move_string(@"BigFileViewDefaultEncoding",                              "viewer.defaultEncoding");
+    move_bool(@"BigFileViewModernShouldAntialias",                          "viewer.modern.shouldAntialiasText");
+    move_bool(@"BigFileViewModernShouldSmoothFonts",                        "viewer.modern.shouldSmoothText");
+    move_bool(@"BigFileViewClassicShouldAntialias",                         "viewer.classic.shouldAntialiasText");
+    move_bool(@"BigFileViewClassicShouldSmoothFonts",                       "viewer.classic.shouldSmoothText");
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification

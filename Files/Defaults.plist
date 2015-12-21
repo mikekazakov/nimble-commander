@@ -8,10 +8,6 @@
 	<string>/</string>
 	<key>Skin</key>
 	<integer>1</integer>
-	<key>BigFileViewModernShouldAntialias</key>
-	<true/>
-	<key>BigFileViewModernShouldSmoothFonts</key>
-	<true/>
 	<key>BigFileViewModernFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDIQBYwCYAZgAmACG</data>
 	<key>BigFileViewModernTextColor</key>
@@ -20,10 +16,6 @@
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmg7W0ND+D19ZWP4P9/Hw/AYY=</data>
 	<key>BigFileViewModernBackgroundColor</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARmZmZmAQEBAYY=</data>
-	<key>BigFileViewClassicShouldAntialias</key>
-	<true/>
-	<key>BigFileViewClassicShouldSmoothFonts</key>
-	<true/>
 	<key>BigFileViewClassicFont</key>
 	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>BigFileViewClassicTextColor</key>

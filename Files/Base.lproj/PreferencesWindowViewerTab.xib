@@ -267,7 +267,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewClassicShouldAntialias" id="259">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.classic.shouldAntialiasText" id="4dZ-Sg-g08">
                                                 <dictionary key="options">
                                                     <bool key="NSConditionallySetsEnabled" value="NO"/>
                                                 </dictionary>
@@ -281,7 +281,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewClassicShouldSmoothFonts" id="260">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.classic.shouldSmoothText" id="4TM-yV-sBc">
                                                 <dictionary key="options">
                                                     <bool key="NSConditionallySetsEnabled" value="NO"/>
                                                 </dictionary>
@@ -422,7 +422,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewModernShouldAntialias" id="34">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.modern.shouldAntialiasText" id="aWx-dB-Zqr">
                                                 <dictionary key="options">
                                                     <bool key="NSConditionallySetsEnabled" value="NO"/>
                                                 </dictionary>
@@ -436,7 +436,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="25" name="value" keyPath="values.BigFileViewModernShouldSmoothFonts" id="48">
+                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.modern.shouldSmoothText" id="wec-Vo-8p0">
                                                 <dictionary key="options">
                                                     <bool key="NSConditionallySetsEnabled" value="NO"/>
                                                 </dictionary>

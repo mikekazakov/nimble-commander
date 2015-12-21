@@ -18,12 +18,16 @@
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
+static const auto g_ConfigModernShouldAntialias = "viewer.modern.shouldAntialiasText";
+static const auto g_ConfigModernShouldSmooth    = "viewer.modern.shouldSmoothText";
+static const auto g_ConfigClassicShouldAntialias = "viewer.classic.shouldAntialiasText";
+static const auto g_ConfigClassicShouldSmooth    = "viewer.classic.shouldSmoothText";
 
 static NSArray *MyDefaultsKeys()
 {
-    return [NSArray arrayWithObjects:@"BigFileViewModernShouldSmoothFonts", @"BigFileViewModernShouldAntialias",
+    return [NSArray arrayWithObjects:
  @"BigFileViewModernBackgroundColor", @"BigFileViewModernSelectionColor", @"BigFileViewModernTextColor",
- @"BigFileViewModernFont", @"BigFileViewClassicShouldSmoothFonts", @"BigFileViewClassicShouldAntialias",
+ @"BigFileViewModernFont",
  @"BigFileViewClassicBackgroundColor", @"BigFileViewClassicSelectionColor", @"BigFileViewClassicTextColor",
  @"BigFileViewClassicFont", nil];
 }
@@ -54,6 +58,7 @@ const static double g_BorderWidth = 1.0;
                                                  // updated when windows moves, regarding current selection in bytes
     CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                                  // updated when windows moves, regarding current selection in bytes
+    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 }
 
 @synthesize delegate = m_Delegate;
@@ -88,6 +93,15 @@ const static double g_BorderWidth = 1.0;
         [self frameDidChange];
         
         [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
+
+        __weak BigFileView* weak_self = self;
+        GlobalConfig().ObserveMany(m_ConfigObservations,
+                                   [=]{ [(BigFileView*)weak_self reloadAppearance]; },
+                                   initializer_list<const char *>{  g_ConfigClassicShouldAntialias,
+                                                                    g_ConfigClassicShouldSmooth,
+                                                                    g_ConfigModernShouldAntialias,
+                                                                    g_ConfigModernShouldSmooth }
+                                   );
     }
     
     return self;
@@ -122,8 +136,8 @@ const static double g_BorderWidth = 1.0;
     m_ForegroundColor = [defaults colorForKey:@"BigFileViewModernTextColor"].copyCGColor;
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
-    m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
-    m_ShouldAntialias = [defaults boolForKey:@"BigFileViewModernShouldAntialias"];
+    m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
+    m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
 }
 
 - (void) InitAppearanceForClassicPresentation
@@ -133,8 +147,22 @@ const static double g_BorderWidth = 1.0;
     m_ForegroundColor = [defaults colorForKey:@"BigFileViewClassicTextColor"].copyCGColor;
     m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
     m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
-    m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
-    m_ShouldAntialias = [defaults boolForKey:@"BigFileViewClassicShouldAntialias"];
+    m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
+    m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
+}
+
+- (void)reloadAppearance
+{
+    auto skin = AppDelegate.me.skin;
+    if(skin == ApplicationSkin::Modern) {
+        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
+        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
+    }
+    else if(skin == ApplicationSkin::Classic) {
+        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
+        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
+    }
+    [self setNeedsDisplay];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -145,10 +173,6 @@ const static double g_BorderWidth = 1.0;
     if(skin == ApplicationSkin::Modern) {
         if([keyPath isEqualToString:@"BigFileViewModernBackgroundColor"])
             m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernBackgroundColor"]);
-        else if([keyPath isEqualToString:@"BigFileViewModernShouldSmoothFonts"])
-            m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewModernShouldSmoothFonts"];
-        else if([keyPath isEqualToString:@"BigFileViewModernShouldAntialias"])
-            m_ShouldAntialias = [defaults boolForKey:@"BigFileViewModernShouldAntialias"];
         else if([keyPath isEqualToString:@"BigFileViewModernSelectionColor"])
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewModernSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewModernTextColor"]) {
@@ -165,10 +189,6 @@ const static double g_BorderWidth = 1.0;
     else if(skin == ApplicationSkin::Classic) {
         if([keyPath isEqualToString:@"BigFileViewClassicBackgroundColor"])
             m_BackgroundFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicBackgroundColor"]);
-        else if([keyPath isEqualToString:@"BigFileViewClassicShouldSmoothFonts"])
-            m_ShouldSmoothFonts = [defaults boolForKey:@"BigFileViewClassicShouldSmoothFonts"];
-        else if([keyPath isEqualToString:@"BigFileViewClassicShouldAntialias"])
-            m_ShouldAntialias = [defaults boolForKey:@"BigFileViewClassicShouldAntialias"];
         else if([keyPath isEqualToString:@"BigFileViewClassicSelectionColor"])
             m_SelectionBkFillColor = DoubleColor([defaults colorForKey:@"BigFileViewClassicSelectionColor"]);
         else if([keyPath isEqualToString:@"BigFileViewClassicTextColor"]) {

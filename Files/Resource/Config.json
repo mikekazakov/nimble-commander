@@ -259,12 +259,18 @@
         
         "modern": {
             "shouldAntialiasText": true,
-            "shouldSmoothText": true            
+            "shouldSmoothText": true,
+            "textColor":        "#000000",
+            "selectionColor":   "#B4D6FC",
+            "backgroundColor":  "#FFFFFF"
         },
         
         "classic": {
             "shouldAntialiasText": true,
-            "shouldSmoothText": true            
+            "shouldSmoothText": true,
+            "textColor":        "#00FFFF",
+            "selectionColor":   "#008080",
+            "backgroundColor":  "#000080"
         }
     },
     

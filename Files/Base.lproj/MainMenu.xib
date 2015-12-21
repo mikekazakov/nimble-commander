@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -734,10 +734,10 @@ CA
                                     <action selector="OnDeleteCommand:" target="-1" id="834"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Alternative Delete..." tag="15180" alternate="YES" keyEquivalent="" id="926">
+                            <menuItem title="Delete Permanently..." tag="15180" alternate="YES" keyEquivalent="" id="926">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
-                                    <action selector="OnAlternativeDeleteCommand:" target="-1" id="928"/>
+                                    <action selector="OnDeletePermanentlyCommand:" target="-1" id="k7X-O4-IHR"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Links" id="908">

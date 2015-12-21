@@ -118,7 +118,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.create_directory",           u8"\uF70a"  }, // F7
         {"menu.command.move_to_trash",              u8"⌘\u007f" }, // cmd+backspace
         {"menu.command.delete",                     u8"\uF70b"  }, // F8
-        {"menu.command.delete_alternative",         u8"⇧\uF70b" }, // shift+F8
+        {"menu.command.delete_permanently",         u8"⇧\uF70b" }, // shift+F8
         {"menu.command.link_create_soft",           u8""        },
         {"menu.command.link_create_hard",           u8""        },
         {"menu.command.link_edit",                  u8""        },

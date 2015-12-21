@@ -8,10 +8,6 @@
 	<string>/</string>
 	<key>Skin</key>
 	<integer>1</integer>
-	<key>FilePanelsDeleteBehavior</key>
-	<integer>0</integer>
-	<key>FilePanelsShiftDeleteBehavior</key>
-	<integer>1</integer>
 	<key>FilePanelsLeftPanelViewState</key>
 	<dict>
 		<key>NumericSort</key>

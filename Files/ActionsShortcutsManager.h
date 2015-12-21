@@ -181,7 +181,7 @@ private:
         {"menu.command.create_directory",       15150},
         {"menu.command.move_to_trash",          15160},
         {"menu.command.delete",                 15170},
-        {"menu.command.delete_alternative",     15180},
+        {"menu.command.delete_permanently",     15180},
         {"menu.command.link_create_soft",       15190},
         {"menu.command.link_create_hard",       15200},
         {"menu.command.link_edit",              15210},

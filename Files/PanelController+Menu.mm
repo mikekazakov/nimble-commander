@@ -134,7 +134,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.delete_alternative")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
@@ -740,7 +740,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
-- (void)DeleteFiles:(bool)_shift_behavior
+- (void)DeleteFiles:(bool)_delete_permanently
 {
     auto items = to_shared_ptr(self.selectedEntriesOrFocusedEntry);
     if( items->empty() )
@@ -763,12 +763,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             return false;
         });
         
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        FileDeletionOperationType type = (FileDeletionOperationType)(_shift_behavior
-                                                                     ? [defaults integerForKey:@"FilePanelsShiftDeleteBehavior"]
-                                                                     : [defaults integerForKey:@"FilePanelsDeleteBehavior"]);
         sheet.allowMoveToTrash = all_have_trash;
-        sheet.defaultType = type;
+        sheet.defaultType = _delete_permanently ? FileDeletionOperationType::Delete : FileDeletionOperationType::MoveToTrash;
     }
     else {
         sheet.allowMoveToTrash = false;
@@ -792,7 +788,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     [self DeleteFiles:false];
 }
 
-- (IBAction)OnAlternativeDeleteCommand:(id)sender
+- (IBAction)OnDeletePermanentlyCommand:(id)sender
 {
     [self DeleteFiles:true];
 }

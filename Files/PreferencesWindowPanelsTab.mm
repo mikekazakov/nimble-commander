@@ -68,6 +68,15 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 
 @end
 
+@interface PreferencesWindowPanelsTabFlippedStackView : NSStackView
+@end
+@implementation PreferencesWindowPanelsTabFlippedStackView
+- (BOOL) isFlipped
+{
+    return YES;
+}
+@end
+
 @implementation PreferencesWindowPanelsTab
 {
     NSFont *m_ClassicFont;

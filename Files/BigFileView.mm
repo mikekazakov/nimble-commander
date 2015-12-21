@@ -12,7 +12,6 @@
 #include "DataBlockAnalysis.h"
 #include "Common.h"
 #include "AppDelegate.h"
-#include "NSUserDefaults+myColorSupport.h"
 #include "BigFileViewDataBackend.h"
 #include "Config.h"
 #include "HexadecimalColor.h"
@@ -24,20 +23,13 @@ static const auto g_ConfigModernShouldSmooth    = "viewer.modern.shouldSmoothTex
 static const auto g_ConfigModernTextColor       = "viewer.modern.textColor";
 static const auto g_ConfigModernSelectionColor  = "viewer.modern.selectionColor";
 static const auto g_ConfigModernBackgroundColor = "viewer.modern.backgroundColor";
-
-static const auto g_ConfigClassicShouldAntialias = "viewer.classic.shouldAntialiasText";
-static const auto g_ConfigClassicShouldSmooth    = "viewer.classic.shouldSmoothText";
-static const auto g_ConfigClassicTextColor       = "viewer.classic.textColor";
-static const auto g_ConfigClassicSelectionColor  = "viewer.classic.selectionColor";
-static const auto g_ConfigClassicBackgroundColor = "viewer.classic.backgroundColor";
-
-
-static NSArray *MyDefaultsKeys()
-{
-    return [NSArray arrayWithObjects:
- @"BigFileViewModernFont",
- @"BigFileViewClassicFont", nil];
-}
+static const auto g_ConfigModernFont            = "viewer.modern.font";
+static const auto g_ConfigClassicShouldAntialias= "viewer.classic.shouldAntialiasText";
+static const auto g_ConfigClassicShouldSmooth   = "viewer.classic.shouldSmoothText";
+static const auto g_ConfigClassicTextColor      = "viewer.classic.textColor";
+static const auto g_ConfigClassicSelectionColor = "viewer.classic.selectionColor";
+static const auto g_ConfigClassicBackgroundColor= "viewer.classic.backgroundColor";
+static const auto g_ConfigClassicFont           = "viewer.classic.font";
 
 const static double g_BorderWidth = 1.0;
 
@@ -80,10 +72,6 @@ const static double g_BorderWidth = 1.0;
         m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
         m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
         
-        if( [(AppDelegate*)NSApplication.sharedApplication.delegate skin] == ApplicationSkin::Modern)
-            [self InitAppearanceForModernPresentation];
-        else
-            [self InitAppearanceForClassicPresentation];
         [self reloadAppearance];
         
         [NSNotificationCenter.defaultCenter addObserver:self
@@ -100,16 +88,16 @@ const static double g_BorderWidth = 1.0;
         [self layoutVerticalScroll];
         [self frameDidChange];
         
-        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPaths:MyDefaultsKeys() options:0 context:0];
-
         __weak BigFileView* weak_self = self;
         GlobalConfig().ObserveMany(m_ConfigObservations,
                                    [=]{ [(BigFileView*)weak_self reloadAppearance]; },
-                                   initializer_list<const char *>{  g_ConfigClassicShouldAntialias,
+                                   initializer_list<const char *>{  g_ConfigClassicFont,
+                                                                    g_ConfigClassicShouldAntialias,
                                                                     g_ConfigClassicShouldSmooth,
                                                                     g_ConfigClassicTextColor,
                                                                     g_ConfigClassicSelectionColor,
                                                                     g_ConfigClassicBackgroundColor,
+                                                                    g_ConfigModernFont,
                                                                     g_ConfigModernShouldAntialias,
                                                                     g_ConfigModernShouldSmooth,
                                                                     g_ConfigModernTextColor,
@@ -124,7 +112,6 @@ const static double g_BorderWidth = 1.0;
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPaths:MyDefaultsKeys()];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
 }
@@ -143,18 +130,6 @@ const static double g_BorderWidth = 1.0;
                                                                  options:0 metrics:nil views:views]];
 }
 
-- (void) InitAppearanceForModernPresentation
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
-    m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
-}
-
-- (void) InitAppearanceForClassicPresentation
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
-}
-
 - (void)reloadAppearance
 {
     auto skin = AppDelegate.me.skin;
@@ -167,6 +142,9 @@ const static double g_BorderWidth = 1.0;
         // todo: switch to NSColor!
         if(m_ForegroundColor) CFRelease(m_ForegroundColor);
         m_ForegroundColor = [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].copyCGColor;
+        
+        if(m_Font) CFRelease(m_Font);
+        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
     }
     else if(skin == ApplicationSkin::Classic) {
         m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
@@ -177,31 +155,11 @@ const static double g_BorderWidth = 1.0;
         // todo: switch to NSColor!
         if(m_ForegroundColor) CFRelease(m_ForegroundColor);
         m_ForegroundColor = [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].copyCGColor;
+        
+        if(m_Font) CFRelease(m_Font);
+        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
     }
     m_ViewImpl->OnFontSettingsChanged();    
-    [self setNeedsDisplay];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    auto skin = [(AppDelegate*)NSApplication.sharedApplication.delegate skin];
-
-    if(skin == ApplicationSkin::Modern) {
-        if([keyPath isEqualToString:@"BigFileViewModernFont"]) {
-            CFRelease(m_Font);
-            m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewModernFont"]);
-            m_ViewImpl->OnFontSettingsChanged();
-        }
-    }
-    else if(skin == ApplicationSkin::Classic) {
-        if([keyPath isEqualToString:@"BigFileViewClassicFont"]) {
-            CFRelease(m_Font);
-            m_Font = (CTFontRef) CFBridgingRetain([defaults fontForKey:@"BigFileViewClassicFont"]);
-            m_ViewImpl->OnFontSettingsChanged();
-        }
-    }
-    
     [self setNeedsDisplay];
 }
 

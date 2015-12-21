@@ -8,10 +8,6 @@
 	<string>/</string>
 	<key>Skin</key>
 	<integer>1</integer>
-	<key>BigFileViewModernFont</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDIQBYwCYAZgAmACG</data>
-	<key>BigFileViewClassicFont</key>
-	<data>BAtzdHJlYW10eXBlZIHoA4QBQISEhAZOU0ZvbnQehIQITlNPYmplY3QAhYQBaSSEBVszNmNdBgAAABwAAAD//k0AZQBuAGwAbwAtAFIAZQBnAHUAbABhAHIAhAFmDYQBYwCYAZgAmACG</data>
 	<key>FilePanelsDeleteBehavior</key>
 	<integer>0</integer>
 	<key>FilePanelsShiftDeleteBehavior</key>

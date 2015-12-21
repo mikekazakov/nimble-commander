@@ -257,15 +257,23 @@
         "saveFileSelection":    true,
         "maximumHistoryEntries": 256,
         
+        /**
+         * Appearance options for modern presentation mode
+         */
         "modern": {
+            "font": "Menlo-Regular, 13",
             "shouldAntialiasText": true,
             "shouldSmoothText": true,
             "textColor":        "#000000",
             "selectionColor":   "#B4D6FC",
             "backgroundColor":  "#FFFFFF"
         },
-        
+
+        /**
+         * Appearance options for classic presentation mode
+         */
         "classic": {
+            "font": "Menlo-Regular, 13",
             "shouldAntialiasText": true,
             "shouldSmoothText": true,
             "textColor":        "#00FFFF",

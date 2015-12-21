@@ -7,12 +7,14 @@
 //
 
 #include "PreferencesWindowViewerTab.h"
-#import "NSUserDefaults+myColorSupport.h"
 #include "Encodings.h"
 #include "BigFileViewHistory.h"
 #include "Config.h"
+#include "Common.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
+static const auto g_ConfigModernFont      = "viewer.modern.font";
+static const auto g_ConfigClassicFont     = "viewer.classic.font";
 
 @implementation PreferencesWindowViewerTab
 {
@@ -62,9 +64,8 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 
 - (IBAction) OnSetModernFont:(id)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    m_ModernFont = [defaults fontForKey:@"BigFileViewModernFont"];
-    if(!m_ModernFont) m_ModernFont = [NSFont fontWithName: @"Menlo" size:12];
+    m_ModernFont = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]];
+    if(!m_ModernFont) m_ModernFont = [NSFont fontWithName: @"Menlo" size:13];
     
     NSFontManager * fontManager = [NSFontManager sharedFontManager];
     [fontManager setTarget:self];
@@ -76,15 +77,13 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 - (void)ChangeModernFont:(id)sender
 {
     m_ModernFont = [sender convertFont:m_ModernFont];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setFont:m_ModernFont forKey:@"BigFileViewModernFont"];    
+    GlobalConfig().Set(g_ConfigModernFont, [m_ModernFont toStringDescription].UTF8String);
 }
 
 - (IBAction) OnSetClassicFont:(id)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    m_ClassicFont = [defaults fontForKey:@"BigFileViewClassicFont"];
-    if(!m_ClassicFont) m_ClassicFont = [NSFont fontWithName: @"Menlo" size:12];
+    m_ModernFont = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]];
+    if(!m_ClassicFont) m_ClassicFont = [NSFont fontWithName: @"Menlo" size:13];
     
     NSFontManager * fontManager = [NSFontManager sharedFontManager];
     [fontManager setTarget:self];
@@ -96,8 +95,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 - (void) ChangeClassicFont:(id)sender
 {
     m_ClassicFont = [sender convertFont:m_ClassicFont];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setFont:m_ClassicFont forKey:@"BigFileViewClassicFont"];
+    GlobalConfig().Set(g_ConfigClassicFont, [m_ClassicFont toStringDescription].UTF8String);
 }
 
 - (void)changeAttributes:(id)sender {} // wtf, is this necessary?

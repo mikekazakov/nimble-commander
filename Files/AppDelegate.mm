@@ -44,6 +44,7 @@
 static SUUpdater *g_Sparkle = nil;
 
 static GenericConfig *g_Config = nullptr;
+static const auto g_ConfigGeneralSkin = "general.skin";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -62,6 +63,7 @@ GenericConfig &GlobalConfig() noexcept
     bool                m_IsRunningTests;
     string              m_StartupCWD;
     string              m_ConfigDirectory;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -94,25 +96,28 @@ GenericConfig &GlobalConfig() noexcept
         g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].UTF8String, self.configDirectory + "Config.json");
         [self migrateFromDefaultsToJSONConfig];
         
-        m_Skin = (ApplicationSkin)[NSUserDefaults.standardUserDefaults integerForKey:@"Skin"];
-        assert(m_Skin == ApplicationSkin::Modern || m_Skin == ApplicationSkin::Classic);
-        [NSUserDefaults.standardUserDefaults addObserver:self
-                                              forKeyPath:@"Skin"
-                                                 options:0
-                                                 context:NULL];
+        m_Skin = ApplicationSkin::Modern;
+        [self reloadSkinSetting];
+
+        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"Skin" context:NULL];
 }
 
 + (AppDelegate*) me
 {
     static AppDelegate *_ = (AppDelegate*) ((NSApplication*)NSApp).delegate;
     return _;
+}
+
+- (void) reloadSkinSetting
+{
+    auto new_skin = (ApplicationSkin)GlobalConfig().GetInt(g_ConfigGeneralSkin);
+    if( new_skin == ApplicationSkin::Modern || new_skin == ApplicationSkin::Classic ) {
+        [self willChangeValueForKey:@"skin"];
+        m_Skin = new_skin;
+        [self didChangeValueForKey:@"skin"];
+    }
 }
 
 - (void)migrateFromDefaultsToJSONConfig
@@ -132,6 +137,7 @@ GenericConfig &GlobalConfig() noexcept
             GlobalConfig().Set(_config, v.UTF8String);
         [NSUserDefaults.standardUserDefaults removeObjectForKey:_default];
     };
+    move_int (@"skin",                                                      "general.skin");
     move_bool(@"FilePanelsGeneralShowDotDotEntry",                          "filePanel.general.showDotDotEntry");
     move_bool(@"FilePanelsGeneralIgnoreDirectoriesOnSelectionWithMask",     "filePanel.general.ignoreDirectoriesOnSelectionWithMask");
     move_bool(@"FilePanelsGeneralUseTildeAsHomeShotcut",                    "filePanel.general.useTildeAsHomeShortcut");
@@ -480,23 +486,6 @@ GenericConfig &GlobalConfig() noexcept
     NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    // Check if defaults changed.
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (object == defaults) {
-        // Check if the skin value was modified.
-        if ([keyPath isEqualToString:@"Skin"]) {
-            ApplicationSkin skin = (ApplicationSkin)[defaults integerForKey:@"Skin"];
-            assert(skin == ApplicationSkin::Modern || skin == ApplicationSkin::Classic);
-            
-            [self willChangeValueForKey:@"skin"];
-            m_Skin = skin;
-            [self didChangeValueForKey:@"skin"];
-        }
-    }
 }
 
 - (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename

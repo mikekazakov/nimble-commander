@@ -7,8 +7,6 @@
 //
 
 #import "PreferencesWindowTerminalTab.h"
-#import "NSUserDefaults+myColorSupport.h"
-#import "3rd_party/CategoriesObjC/NSUserDefaults+KeyPaths.h"
 #include "Config.h"
 #include "Common.h"
 

@@ -4,6 +4,13 @@
      */
     "general": {
         /**
+         * Application appearance mode, integer enumeration:
+         * 0 - classic
+         * 1 - modern
+         */
+        "skin": 1,
+        
+        /**
          * Show/hide toolbar
          */
         "showToolbar": true,

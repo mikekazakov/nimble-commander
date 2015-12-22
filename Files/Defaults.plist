@@ -6,8 +6,6 @@
 	<string>/</string>
 	<key>SecondPanelPath</key>
 	<string>/</string>
-	<key>Skin</key>
-	<integer>1</integer>
 	<key>FilePanelsLeftPanelViewState</key>
 	<dict>
 		<key>NumericSort</key>

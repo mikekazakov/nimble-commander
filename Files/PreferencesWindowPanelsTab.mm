@@ -7,7 +7,6 @@
 //
 
 #include "PreferencesWindowPanelsTab.h"
-#include "NSUserDefaults+myColorSupport.h"
 #include "ClassicPanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"

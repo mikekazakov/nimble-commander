@@ -27,29 +27,64 @@
     "filePanel": {
 
         "general": {
-            
+            /**
+             * Should selection by mask (cmd+=, alt+cmd+= etc) ignore when enumerating entries
+             */
             "ignoreDirectoriesOnSelectionWithMask": true,
 
+            /**
+             * Show localized and/or modified (like ~/Trash instead of ~/.Trash) filenames in file panels
+             */
             "showLocalizedFilenames": true,
             
+            /**
+             * When loading directory listings for file panels, should "entry" be present
+             */
             "showDotDotEntry": true,
   
+            /**
+             * Show volume information bar below file panels
+             */
             "showVolumeInformationBar": true,
 
+            /**
+             * Enable ~ hotkey for fast going into Home directory
+             */
             "useTildeAsHomeShortcut": true,
 
+            /**
+             * Show current paths in other file panels in GoTo pop-up menu
+             */
             "appendOtherWindowsPathsToGoToMenu": true,
-            
+
+            /**
+             * Should show network connections in GoTo pop-up menu
+             */
             "showNetworkConnectionsInGoToMenu": true,
             
+            /**
+             * Maximum amount of recent network connections shown in GoTo pop-up menu
+             */
             "maximumNetworkConnectionsInGoToMenu": 5,
 
+            /**
+             * When dragging items, allow or not dragging into some directory in file panel or only into current file panel's directory
+             */
             "allowDraggingIntoFolders": true,
   
+            /**
+             * When panel path was changed by GoTo pop-up menu click, should that panel be activated automatically
+             */
             "goToButtonForcesPanelActivation": true,
 
+            /**
+             * Which extensions should be treated as potential archives when deciding what to do upon Enter key pressed
+             */
             "archivesExtensionsWhitelist": "zip, tar, pax, cpio, xar, lha, ar, cab, mtree, iso, bz2, gz, bzip2, gzip, 7z, rar",
             
+            /**
+             * Which extensions should be treated as potential executables when deciding what to do upon Enter key pressed
+             */
             "executableExtensionsWhitelist": "sh, pl, rb, py",
 
             /**
@@ -214,7 +249,7 @@
                                     "regular": "#FFFFFF",
                                     "focused": "#FFFFFF",
                                     "filter": {
-                                    "directory": true
+                                        "directory": true
                                     }
                                  },
                                  {

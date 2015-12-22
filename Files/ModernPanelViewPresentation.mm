@@ -11,7 +11,6 @@
 #include "PanelData.h"
 #include "Encodings.h"
 #include "Common.h"
-#include "ObjcToCppObservingBridge.h"
 #include "IconsGenerator.h"
 #include "ModernPanelViewPresentationHeader.h"
 #include "ModernPanelViewPresentationItemsFooter.h"

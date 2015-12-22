@@ -12,7 +12,6 @@
 #include "PanelView.h"
 #include "PanelData.h"
 #include "FontCache.h"
-#include "ObjcToCppObservingBridge.h"
 #include "ByteCountFormatter.h"
 #include "HexadecimalColor.h"
 #include "Common.h"

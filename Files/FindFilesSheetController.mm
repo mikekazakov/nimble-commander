@@ -15,11 +15,58 @@
 #include "BigFileViewSheet.h"
 #include "ByteCountFormatter.h"
 #include "AppDelegate.h"
+#include "Config.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
+static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
+static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
+
+class FindFilesSheetComboHistory : public vector<string>
+{
+public:
+    FindFilesSheetComboHistory( int _max, const char *_config_path, NSString *_defaults_migration_path ):
+        m_Path(_config_path),
+        m_Max(_max)
+    {
+
+        if( auto history = [NSUserDefaults.standardUserDefaults arrayForKey:_defaults_migration_path] ) {
+            // load history from previous defaults and remove that key
+            for( NSObject *e in history )
+                if( auto s = objc_cast<NSString>(e) )
+                    emplace_back( s.UTF8String );
+            [NSUserDefaults.standardUserDefaults removeObjectForKey:_defaults_migration_path];
+        }
+        else {
+            auto arr = StateConfig().Get(m_Path);
+            if( arr.GetType() == rapidjson::kArrayType )
+                for( auto i = arr.Begin(), e = arr.End(); i != e; ++i )
+                    if( i->GetType() == rapidjson::kStringType )
+                        emplace_back( i->GetString() );
+        }
+    }
     
+    ~FindFilesSheetComboHistory()
+    {
+        GenericConfig::ConfigValue arr(rapidjson::kArrayType);
+        for( auto &s: *this )
+            arr.PushBack( GenericConfig::ConfigValue(s.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+        StateConfig().Set(m_Path, arr);
+    }
+    
+    void insert_unique( const string &_value )
+    {
+        erase( remove_if(begin(), end(), [&](auto &_s) { return _s == _value; }), end() );
+        insert( begin(), _value );
+        while( size() > m_Max ) pop_back();
+    }
+    
+private:
+    const int   m_Max;
+    const char *m_Path;
+};
+
 @interface FindFilesSheetFoundItem : NSObject
 @property (nonatomic, readonly) FindFilesSheetControllerFoundItem *data;
 @property (nonatomic, readonly) NSString *location;
@@ -120,8 +167,8 @@ static const int g_MaximumSearchResults = 262144;
     
     NSMutableArray             *m_FoundItems; // is controlled by ArrayController
     atomic_bool                 m_ControllerIsAdding;
-    NSArray                    *m_MaskHistory;
-    NSArray                    *m_TextHistory;
+    unique_ptr<FindFilesSheetComboHistory>  m_MaskHistory;
+    unique_ptr<FindFilesSheetComboHistory>  m_TextHistory;
     
     NSMutableArray             *m_FoundItemsBatch;
     NSTimer                    *m_BatchDrainTimer;
@@ -147,13 +194,8 @@ static const int g_MaximumSearchResults = 262144;
         m_FoundItems = [NSMutableArray new];
         m_FoundItemsBatch = [NSMutableArray new];
 
-        m_MaskHistory = [NSUserDefaults.standardUserDefaults arrayForKey:g_MaskHistoryKey];
-        if(!m_MaskHistory)
-            m_MaskHistory = [NSArray new];
-        
-        m_TextHistory = [NSUserDefaults.standardUserDefaults arrayForKey:g_TextHistoryKey];
-        if(!m_TextHistory)
-            m_TextHistory = @[@""];
+        m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory, g_MaskHistoryKey);
+        m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory, g_TextHistoryKey);
         
         m_BatchQueue = SerialQueueT::Make();
         self.focusedItem = nil;
@@ -187,7 +229,7 @@ static const int g_MaximumSearchResults = 262144;
     
     self.MaskComboBox.usesDataSource = true;
     self.MaskComboBox.dataSource = self;
-    self.MaskComboBox.stringValue = m_MaskHistory.count ? m_MaskHistory[0] : @"*";
+    self.MaskComboBox.stringValue = m_MaskHistory->empty() ? @"*" : [NSString stringWithUTF8StdString:m_MaskHistory->front()];
     self.TextComboBox.usesDataSource = true;
     self.TextComboBox.dataSource = self;
     self.TextComboBox.stringValue = @"";
@@ -234,18 +276,18 @@ static const int g_MaximumSearchResults = 262144;
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox;
 {
     if(aComboBox == self.MaskComboBox)
-        return m_MaskHistory.count;
+        return m_MaskHistory->size();
     if(aComboBox == self.TextComboBox)
-        return m_TextHistory.count;
+        return m_TextHistory->size();
     return 0;
 }
 
 - (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index;
 {
     if(aComboBox == self.MaskComboBox)
-        return m_MaskHistory[index];
+        return [NSString stringWithUTF8StdString:m_MaskHistory->at(index)];
     if(aComboBox == self.TextComboBox)
-        return m_TextHistory[index];
+        return [NSString stringWithUTF8StdString:m_TextHistory->at(index)];
     return 0;
 }
 
@@ -260,6 +302,7 @@ static const int g_MaximumSearchResults = 262144;
  
     m_FileSearch->Stop();
     m_FileSearch->Wait();
+    m_OnPanelize = nullptr;
     [self endSheet:NSModalResponseOK];
 }
 
@@ -280,31 +323,6 @@ static const int g_MaximumSearchResults = 262144;
     });
 }
 
-- (void) updateFileMaskHistoryWithMask:(NSString *)_mask
-{
-    static const int max_items = 16;
-    NSMutableArray *masks = [m_MaskHistory mutableCopy];
-    [masks removeObject:_mask];
-    [masks insertObject:_mask.copy atIndex:0];
-    while(masks.count > max_items)
-        [masks removeLastObject];
-    if(![masks isEqualToArray:m_MaskHistory])
-        [NSUserDefaults.standardUserDefaults setObject:masks.copy forKey:g_MaskHistoryKey];
-}
-
-- (void) updateFileTextHistoryWithText:(NSString *)_text
-{
-    static const int max_items = 16;
-    NSMutableArray *texts = [m_TextHistory mutableCopy];
-    [texts removeObject:_text];
-    if( _text.length > 0 )
-        [texts insertObject:_text.copy atIndex:0];
-    while(texts.count > max_items)
-        [texts removeLastObject];
-    if(![texts isEqualToArray:m_TextHistory])
-        [NSUserDefaults.standardUserDefaults setObject:texts.copy forKey:g_TextHistoryKey];
-}
-
 - (IBAction)OnSearch:(id)sender
 {
     if(m_FileSearch->IsRunning()) {
@@ -321,13 +339,13 @@ static const int g_MaximumSearchResults = 262144;
        [mask isEqualToString:@""] == false &&
        [mask isEqualToString:@"*"] == false) {
         FileSearch::FilterName filter_name;
-        filter_name.mask = self.MaskComboBox.stringValue;
+        filter_name.mask = mask;
         m_FileSearch->SetFilterName(&filter_name);
-        [self updateFileMaskHistoryWithMask:mask];
+        m_MaskHistory->insert_unique( mask.UTF8String );
     }
     else {
         m_FileSearch->SetFilterName(nullptr);
-        [self updateFileMaskHistoryWithMask:@"*"];
+        m_MaskHistory->insert_unique("*");
     }
     
     NSString *cont_text = self.TextComboBox.stringValue;
@@ -341,7 +359,7 @@ static const int g_MaximumSearchResults = 262144;
     }
     else
         m_FileSearch->SetFilterContent(nullptr);
-    [self updateFileTextHistoryWithText:cont_text];
+    m_TextHistory->insert_unique( cont_text ? cont_text.UTF8String : "" );
     
     if([self.SizeTextField.stringValue isEqualToString:@""] == false)
     {

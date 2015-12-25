@@ -265,13 +265,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
             m_ShortCutsDefaults[i->second] = sc;
     }
     
-    NSString *old_overrides = @"CommonHotkeysOverrides";
-    if(NSArray *overrides = [NSUserDefaults.standardUserDefaults objectForKey:old_overrides]) { // migrate to config file if any
-        ReadOverrides(overrides);
-        if( WriteOverridesToConfigFile() )
-            [NSUserDefaults.standardUserDefaults removeObjectForKey:old_overrides];
-    }
-    else if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
+    if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
         ReadOverrides(a);
 }
 

@@ -9,9 +9,9 @@
 #include "vfs/VFS.h"
 #include "GoToFolderSheetController.h"
 #include "Common.h"
+#include "Config.h"
 
-
-static NSString *g_LastGoToKey = @"FilePanelsGeneralLastGoToFolder";
+static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 
 static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const string& _prefix)
 {
@@ -65,8 +65,8 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 {
     [super windowDidLoad];
     
-    if(NSString *last = [NSUserDefaults.standardUserDefaults stringForKey:g_LastGoToKey])
-        self.Text.stringValue = last;
+    if( auto last = StateConfig().GetString(g_StateGoToKey) )
+        self.Text.stringValue = [NSString stringWithUTF8StdString:*last];
     
     self.Text.delegate = self;
     [self controlTextDidChange:[NSNotification notificationWithName:@"" object:nil]];
@@ -89,8 +89,8 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 - (void)tellLoadingResult:(int)_code
 {
-    if(_code == 0) {
-        [NSUserDefaults.standardUserDefaults setValue:self.Text.stringValue forKey:g_LastGoToKey];
+    if( _code == VFSError::Ok ) {
+        StateConfig().Set( g_StateGoToKey, self.Text.stringValue.fileSystemRepresentationSafe );
         [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
     }
     else { // show error here

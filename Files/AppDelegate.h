@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 #import <Cocoa/Cocoa.h>
 #import "ApplicationSkins.h"
 
@@ -61,6 +63,11 @@
  * May change in the future.
  */
 @property (nonatomic, readonly) const string& configDirectory;
+
+/**
+ * This dir is ~/Library/Application Support/Files(Lite,Pro)/State/.
+ */
+@property (nonatomic, readonly) const string& stateDirectory;
 
 @property (nonatomic, readonly) GenericConfigObjC *config;
 

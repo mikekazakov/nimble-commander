@@ -117,3 +117,4 @@ private:
 
 
 GenericConfig &GlobalConfig() noexcept;
+GenericConfig &StateConfig() noexcept;

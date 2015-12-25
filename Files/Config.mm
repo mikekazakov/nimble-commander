@@ -124,23 +124,29 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     m_OverwritesPath(_overwrites),
     m_DefaultsPath(_defaults)
 {
-    string def = Load(m_DefaultsPath);
-    rapidjson::Document defaults;
-    rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
-
-    if (!ok) {
-        fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-        exit(EXIT_FAILURE);
+    if( !m_DefaultsPath.empty() ) {
+        string def = Load(m_DefaultsPath);
+        rapidjson::Document defaults;
+        rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
+        
+        if (!ok) {
+            fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+            exit(EXIT_FAILURE);
+        }
+        
+        m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
+        m_Current.CopyFrom(defaults, m_Current.GetAllocator());
     }
-    
-    m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
-    m_Current.CopyFrom(defaults, m_Current.GetAllocator());
+    else {
+        m_Defaults = rapidjson::Document(rapidjson::kObjectType);
+        m_Current = rapidjson::Document(rapidjson::kObjectType);
+    }
 
     string over = Load(m_OverwritesPath);
     if( !over.empty() ) {
         rapidjson::Document overwrites;
-        ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
-        if (!ok)
+        rapidjson::ParseResult ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
+        if ( !ok )
             fprintf(stderr, "Overwrites JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
         else {
             m_OverwritesTime = ModificationTime(m_OverwritesPath);

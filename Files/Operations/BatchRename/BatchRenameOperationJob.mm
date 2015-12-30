@@ -6,8 +6,19 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BatchRenameOperationJob.h"
-#import "BatchRenameOperation.h"
+#include "BatchRenameOperationJob.h"
+#include "BatchRenameOperation.h"
+#include "../../Common.h"
+
+static bool LowercaseComparisonEqual(const string &_p1, const string &_p2)
+{
+    NSString *p1 = [NSString stringWithUTF8StdString:_p1];
+    NSString *p2 = [NSString stringWithUTF8StdString:_p2];
+    if( !p1 || !p2 )
+        return false;
+    
+    return [p1 compare:p2 options:NSCaseInsensitiveSearch] == NSOrderedSame;
+}
 
 BatchRenameOperationJob::BatchRenameOperationJob()
 {
@@ -55,7 +66,8 @@ void BatchRenameOperationJob::ProcessItem(const string &_orig, const string &_re
     
     int ret = 0;
 retry_rename:
-    if( m_VFS->Exists(_renamed.c_str()) == true )
+    if( m_VFS->Exists(_renamed.c_str()) == true &&
+        LowercaseComparisonEqual(_orig, _renamed) == false )
         ret = VFSError::FromErrno(EEXIST);
     else
         ret = m_VFS->Rename(_orig.c_str(), _renamed.c_str(), nullptr);

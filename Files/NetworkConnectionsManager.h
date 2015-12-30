@@ -1,0 +1,121 @@
+#pragma once
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/functional/hash.hpp>
+#include "Config.h"
+
+class NetworkConnectionsManager
+{
+    NetworkConnectionsManager();
+public:
+    class Connection;
+    class BaseConnection;
+    class FTPConnection;
+    class SFTPConnection;
+    
+    static NetworkConnectionsManager& Instance();
+    
+    static boost::uuids::uuid MakeUUID();
+
+    optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const;
+    
+    void InsertConnection( const Connection &_connection );
+    void ReportUsage( const Connection &_connection );
+    
+    vector<Connection> FTPConnectionsByMRU() const;
+    vector<Connection> SFTPConnectionsByMRU() const;
+    
+    
+    string TitleForConnection(const Connection &_conn) const;
+    
+private:
+    void Save();
+    void Load();
+    
+    vector<Connection>                              m_Connections;
+    vector<boost::uuids::uuid>                      m_MRU;
+    mutable mutex                                   m_Lock;
+    GenericConfig                                   m_Config;
+};
+
+class NetworkConnectionsManager::Connection
+{
+public:
+    template <class T>
+    explicit Connection(T _t):
+        m_Object( make_shared<Model<T>>( move(_t) ) )
+    {
+        static_assert( is_class<T>::value, "connection should be a class/struct" );
+    }
+    
+    template <class T>
+    bool IsType() const noexcept
+    {
+        return dynamic_pointer_cast<const Model<T>>( m_Object ) != nullptr;
+    }
+    
+    template <class T>
+    const T &Get() const
+    {
+        if( auto p = dynamic_pointer_cast<const Model<T>>( m_Object ) )
+            return p->obj;
+        throw domain_error("invalid cast request");
+    }
+    
+    template <class T>
+    const T* Cast() const noexcept
+    {
+        if( auto p = dynamic_pointer_cast<const Model<T>>( m_Object ) )
+            return &p->obj;
+        return nullptr;
+    }
+
+    const string&               Title() const noexcept { return m_Object->Title(); }
+    const boost::uuids::uuid&   Uuid()  const noexcept { return m_Object->Uuid(); }
+
+private:
+
+    struct Concept
+    {
+        virtual ~Concept() = default;
+        virtual const string& Title() const noexcept = 0;
+        virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
+    };
+    
+    template <class T>
+    struct Model final : Concept
+    {
+        T obj;
+        
+        Model(T _t): obj( move(_t) ) {};
+        virtual const string& Title() const noexcept override { return obj.title; }
+        virtual const boost::uuids::uuid& Uuid() const noexcept override { return obj.uuid; };
+    };
+    
+    shared_ptr<const Concept> m_Object;
+};
+
+class NetworkConnectionsManager::BaseConnection
+{
+public:
+    string              title; // arbitrary user-defined title
+    boost::uuids::uuid  uuid;
+};
+
+class NetworkConnectionsManager::FTPConnection : public NetworkConnectionsManager::BaseConnection
+{
+public:
+    string user;
+    string host;
+    string path;
+    long   port;
+};
+
+class NetworkConnectionsManager::SFTPConnection : public NetworkConnectionsManager::BaseConnection
+{
+public:
+    string user;
+    string host;
+    string keypath;
+    long   port;
+};

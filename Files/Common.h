@@ -146,3 +146,11 @@ inline T__ clip(const T__& n, const T__& lower, const T__& upper)
 {
     return max(lower, min(n, upper));
 }
+
+#define __LOCK_GUARD_TOKENPASTE(x, y) x ## y
+#define __LOCK_GUARD_TOKENPASTE2(x, y) __LOCK_GUARD_TOKENPASTE(x, y)
+#define LOCK_GUARD(lock_object) int __LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) = 1; \
+    for(std::lock_guard<decltype(lock_object)> __LOCK_GUARD_TOKENPASTE2(__lock_guard_, __LINE__)(lock_object); \
+        __LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) != 0; \
+        --__LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) \
+        )

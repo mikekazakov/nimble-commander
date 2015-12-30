@@ -39,16 +39,18 @@ public:
     }
 };
 
+static VFSConfiguration ComposeConfiguration(const string &_path)
+{
+    VFSArchiveHostConfiguration config;
+    config.path = _path;
+    return VFSConfiguration( move(config) );
+}
+
 VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
-    VFSHost(_path.c_str(), _parent, Tag)
+    VFSHost(_path.c_str(), _parent, Tag),
+    m_Configuration( ComposeConfiguration(_path) )
 {
     assert(_parent);
-    {
-        VFSArchiveHostConfiguration config;
-        config.path = _path;
-        m_Configuration = VFSConfiguration( move(config) );
-    }
-
     int rc = DoInit();
     if(rc < 0) {
         if(m_Arc != 0) { // TODO: ugly

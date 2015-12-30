@@ -117,24 +117,30 @@ VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
         throw VFSErrorException(rc);
 }
 
+static VFSConfiguration ComposeConfguration(const string &_serv_url,
+                                            const string &_user,
+                                            const string &_passwd,
+                                            const string &_keypath,
+                                            long   _port)
+{
+    VFSNetSFTPHostConfiguration config;
+    config.server_url = _serv_url;
+    config.user = _user;
+    config.passwd = _passwd;
+    config.keypath = _keypath;
+    config.port = _port;
+    config.verbose = "sftp://"s + config.user + "@" + config.server_url;
+    return VFSConfiguration( move(config) );
+}
+
 VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
                                const string &_user,
                                const string &_passwd,
                                const string &_keypath,
                                long   _port):
-    VFSHost(_serv_url.c_str(), nullptr, Tag)
-{
-    {
-        VFSNetSFTPHostConfiguration config;
-        config.server_url = _serv_url;
-        config.user = _user;
-        config.passwd = _passwd;
-        config.keypath = _keypath;
-        config.port = _port;
-        config.verbose = "sftp://"s + config.user + "@" + config.server_url;
-        m_Config = VFSConfiguration(move(config));
-    }
-    
+    VFSHost(_serv_url.c_str(), nullptr, Tag),
+    m_Config( ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port))
+{    
     int rc = DoInit();
     if(rc < 0)
         throw VFSErrorException(rc);

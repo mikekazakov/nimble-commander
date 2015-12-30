@@ -58,25 +58,31 @@ VFSNetFTPHost::~VFSNetFTPHost()
     // this dummy destructor is here due to forwarded types
 }
 
+static VFSConfiguration ComposeConfiguration(const string &_serv_url,
+                                             const string &_user,
+                                             const string &_passwd,
+                                             const string &_start_dir,
+                                             long   _port)
+{
+    VFSNetFTPHostConfiguration config;
+    config.server_url = _serv_url;
+    config.user = _user;
+    config.passwd = _passwd;
+    config.start_dir = _start_dir;
+    config.port = _port;
+    config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;
+    return VFSConfiguration( move(config) );
+}
+
 VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
                              const string &_user,
                              const string &_passwd,
                              const string &_start_dir,
                              long   _port):
     VFSHost(_serv_url.c_str(), nullptr, Tag),
+    m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port) ),
     m_Cache(make_unique<VFSNetFTP::Cache>())
 {
-    {
-        VFSNetFTPHostConfiguration config;
-        config.server_url = _serv_url;
-        config.user = _user;
-        config.passwd = _passwd;
-        config.start_dir = _start_dir;
-        config.port = _port;
-        config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;        
-        m_Configuration = VFSConfiguration( move(config) );
-    }
-    
     int rc = DoInit();
     if(rc < 0)
         throw VFSErrorException(rc);

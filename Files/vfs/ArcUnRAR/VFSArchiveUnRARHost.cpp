@@ -58,17 +58,18 @@ public:
     }
 };
 
+static VFSConfiguration ComposeConfiguration( const string &_path )
+{
+    VFSArchiveUnRARHostConfiguration config;
+    config.path = _path;
+    return VFSConfiguration( move(config) );
+}
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
     VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), Tag),
-    m_SeekCacheControl(dispatch_queue_create(NULL, NULL))
+    m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
+    m_Configuration( ComposeConfiguration(_path) )
 {
-    {
-        VFSArchiveUnRARHostConfiguration config;
-        config.path = _path;
-        m_Configuration = VFSConfiguration( move(config) );
-    }
-    
     int rc = DoInit();
     if(rc < 0)
         throw VFSErrorException(rc);

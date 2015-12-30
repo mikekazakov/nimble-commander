@@ -10,6 +10,8 @@
 #include "SavedNetworkConnectionsManager.h"
 #include "Common.h"
 
+#include "NetworkConnectionsManager.h"
+
 static NSString *g_DefKey = @"FilePanelsSavedNetworkConnections";
 
 inline static string TitleFromStoredConnectionIfAny(NSDictionary *_from)
@@ -150,6 +152,32 @@ SavedNetworkConnectionsManager &SavedNetworkConnectionsManager::Instance()
 SavedNetworkConnectionsManager::SavedNetworkConnectionsManager()
 {
     m_Connections = LoadConnections();
+    
+//    for( auto con: m_Connections ) {
+//        if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::FTPConnection*>(con.get())) {
+//            NetworkConnectionsManager::FTPConnection c;
+//            c.host = ftp->host;
+//            c.path = ftp->path;
+//            c.port = ftp->port;
+//            c.user = ftp->user;
+//            c.title = ftp->title;
+//            c.uuid = NetworkConnectionsManager::MakeUUID();
+//            
+//            NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );
+//        }
+//        if(auto sftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(con.get())) {
+//            
+//            NetworkConnectionsManager::SFTPConnection c;
+//            c.host = sftp->host;
+//            c.port = sftp->port;
+//            c.user = sftp->user;
+//            c.keypath = sftp->keypath;
+//            c.title = sftp->title;
+//            c.uuid = NetworkConnectionsManager::MakeUUID();
+//            
+//            NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );            
+//        }
+//    }
 }
 
 void SavedNetworkConnectionsManager::InsertConnection(const shared_ptr<AbstractConnection> &_conn )

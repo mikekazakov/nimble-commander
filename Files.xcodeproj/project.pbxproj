@@ -88,6 +88,9 @@
 		CF396AF6173FA8C600A20C42 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF0173FA8C600A20C42 /* BigFileView.mm */; };
 		CF396AF7173FA8C600A20C42 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF2173FA8C600A20C42 /* BigFileViewHex.mm */; };
 		CF396AF8173FA8C600A20C42 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */; };
+		CF39F4421C2EB198009CEFBB /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
+		CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
+		CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
@@ -1119,6 +1122,8 @@
 		CF396AF3173FA8C600A20C42 /* BigFileViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewProtocol.h; sourceTree = "<group>"; };
 		CF396AF4173FA8C600A20C42 /* BigFileViewText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigFileViewText.h; sourceTree = "<group>"; };
 		CF396AF5173FA8C600A20C42 /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BigFileViewText.mm; sourceTree = "<group>"; };
+		CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionsManager.h; sourceTree = "<group>"; };
+		CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnectionsManager.mm; sourceTree = "<group>"; };
 		CF3C88D516D73A23006346CD /* PanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelController.h; sourceTree = "<group>"; };
 		CF3C88D616D73A23006346CD /* PanelController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanelController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
@@ -2279,6 +2284,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */,
+				CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */,
 				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
 				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
 				CF9DBE131A48831D00FF735B /* SavedNetworkConnectionsManager.h */,
@@ -3485,6 +3492,7 @@
 				CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */,
 				CF6D9C56196678010077B146 /* PanelViewPresentation.mm in Sources */,
 				CFABA8471B403AA3008DF6D1 /* TermTask.cpp in Sources */,
+				CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF6D9C57196678010077B146 /* ClassicPanelViewPresentation.mm in Sources */,
 				CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CF6D9C58196678010077B146 /* ModernPanelViewPresentation.mm in Sources */,
@@ -3573,6 +3581,7 @@
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.cpp in Sources */,
 				CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */,
+				CF39F4421C2EB198009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF02F1D716F38805000AF870 /* Encodings.cpp in Sources */,
 				CF73D1D71BE608BC0014C88F /* VFSNativeFile.cpp in Sources */,
 				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
@@ -3885,6 +3894,7 @@
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30C1A13567C00011177 /* BigFileViewHistory.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
+				CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF50C45E1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFF6F3141A13567C00011177 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,

@@ -23,8 +23,6 @@
 class VFSConfiguration
 {
 public:
-    VFSConfiguration();
-
     template <class T>
     VFSConfiguration(T _t):
         m_Object( make_shared<Model<T>>( move(_t) ) )

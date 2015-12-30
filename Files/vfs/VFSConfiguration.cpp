@@ -8,11 +8,6 @@ struct VFSConfigurationDummyModel
     inline bool operator==(const VFSConfigurationDummyModel&) const { return false; }
 };
 
-VFSConfiguration::VFSConfiguration():
-    m_Object( make_shared<Model<VFSConfigurationDummyModel>>( VFSConfigurationDummyModel() ) )
-{
-}
-
 const char *VFSConfiguration::Tag() const
 {
     return m_Object->Tag();

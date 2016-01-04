@@ -6,22 +6,25 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "SFTPConnectionSheetController.h"
-#import "Common.h"
-#import "SavedNetworkConnectionsManager.h"
+#include <Habanero/CommonPaths.h>
+#include "SFTPConnectionSheetController.h"
+#include "Common.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 @implementation SFTPConnectionSheetController
 {
-    vector<shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>> m_SavedConnections;
+    vector<NetworkConnectionsManager::Connection> m_Connections;
+    optional<NetworkConnectionsManager::Connection> m_Original;
+    NetworkConnectionsManager::SFTPConnection m_Connection;
 }
 
 - (id) init
 {
     self = [super init];
     if(self) {
+        m_Connections = NetworkConnectionsManager::Instance().SFTPConnectionsByMRU();
+        
         string rsa_path = g_SSHdir + "id_rsa";
         string dsa_path = g_SSHdir + "id_dsa";
         
@@ -35,9 +38,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 - (void) windowDidLoad
 {
-    m_SavedConnections = SavedNetworkConnectionsManager::Instance().SFTPConnections();
-    
-    if(!m_SavedConnections.empty()) {
+    if(!m_Connections.empty()) {
         self.saved.autoenablesItems = false;
         
         NSMenuItem *pref = [[NSMenuItem alloc] init];
@@ -45,9 +46,9 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         pref.enabled = false;
         [self.saved.menu addItem:pref];
         
-        for(auto &i: m_SavedConnections) {
+        for(auto &i: m_Connections) {
             NSMenuItem *it = [NSMenuItem new];
-            auto title = SavedNetworkConnectionsManager::Instance().TitleForConnection(i);
+            auto title = NetworkConnectionsManager::Instance().TitleForConnection(i);
             it.title = [NSString stringWithUTF8StdString:title];
             [self.saved.menu addItem:it];
         }
@@ -66,24 +67,28 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
     }
     
     ind = ind - 2;
-    if(ind < 0 || ind >= m_SavedConnections.size())
+    if(ind < 0 || ind >= m_Connections.size())
         return;
     
-    auto conn = m_SavedConnections[ind];
+    auto conn = m_Connections[ind];
     [self fillInfoFromStoredConnection:conn];
 }
 
-- (void)fillInfoFromStoredConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_conn
+- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn
 {
     [self window];
-    self.title = [NSString stringWithUTF8StdString:_conn->title];
-    self.server = [NSString stringWithUTF8StdString:_conn->host];
-    self.username = [NSString stringWithUTF8StdString:_conn->user];
-    self.keypath = [NSString stringWithUTF8StdString:_conn->keypath];
-    self.port = [NSString stringWithFormat:@"%li", _conn->port];
+
+    m_Original = _conn;
+    auto &c = m_Original->Get<NetworkConnectionsManager::SFTPConnection>();
+    
+    self.title = [NSString stringWithUTF8StdString:c.title];
+    self.server = [NSString stringWithUTF8StdString:c.host];
+    self.username = [NSString stringWithUTF8StdString:c.user];
+    self.keypath = [NSString stringWithUTF8StdString:c.keypath];
+    self.port = [NSString stringWithFormat:@"%li", c.port];
     
     string password;
-    if(SavedNetworkConnectionsManager::Instance().GetPassword(_conn, password))
+    if( NetworkConnectionsManager::Instance().GetPassword(_conn, password) )
         self.password = [NSString stringWithUTF8StdString:password];
     else
         self.password = @"";
@@ -97,7 +102,9 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     if(alert.runModal == NSAlertFirstButtonReturn) {
-        SavedNetworkConnectionsManager::Instance().EraseAllSFTPConnections();
+        for( auto &i: m_Connections )
+            NetworkConnectionsManager::Instance().RemoveConnection(i);
+        m_Connections.clear();
         [self.saved selectItemAtIndex:0];
         while( self.saved.numberOfItems > 1 )
             [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
@@ -106,6 +113,19 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 - (IBAction)OnConnect:(id)sender
 {
+    if( m_Original)
+        m_Connection.uuid = m_Original->Uuid();
+    else
+        m_Connection.uuid = NetworkConnectionsManager::Instance().MakeUUID();
+    
+    m_Connection.title = self.title.UTF8String ? self.title.UTF8String : "";
+    m_Connection.host = self.server.UTF8String ? self.server.UTF8String : "";
+    m_Connection.user = self.username ? self.username.UTF8String : "";
+    m_Connection.keypath = self.keypath ? self.keypath.UTF8String : "";
+    m_Connection.port = 22;
+    if(self.port.intValue != 0)
+        m_Connection.port = self.port.intValue;
+    
     [self endSheet:NSModalResponseOK];
 }
 
@@ -128,6 +148,12 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
                       if(result == NSFileHandlingPanelOKButton)
                           self.keypath = panel.URL.path;
                   }];
+}
+
+//@property (readonly, nonatomic) NetworkConnectionsManager::Connection result;
+- (NetworkConnectionsManager::Connection) result
+{
+    return NetworkConnectionsManager::Connection( m_Connection );
 }
 
 @end

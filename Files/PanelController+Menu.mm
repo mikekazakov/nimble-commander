@@ -40,7 +40,6 @@
 #include "PanelViewPresentation.h"
 #include "CalculateChecksumSheetController.h"
 #include "NativeFSManager.h"
-#include "SavedNetworkConnectionsManager.h"
 #include "ConnectionsMenuDelegate.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
@@ -250,24 +249,24 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         [self handleGoIntoDirOrArchiveSync:false];
 }
 
-- (void) GoToFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_connection
+- (void) GoToFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
                       password:(const string&)_passwd
 {
+    auto &info = _connection.Get<NetworkConnectionsManager::FTPConnection>();
     try {
-        auto host = make_shared<VFSNetFTPHost>(_connection->host,
-                                               _connection->user,
+        auto host = make_shared<VFSNetFTPHost>(info.host,
+                                               info.user,
                                                _passwd,
-                                               _connection->path,
-                                               _connection->port
+                                               info.path,
+                                               info.port
                                                );
         dispatch_to_main_queue([=]{
             m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [self GoToDir:_connection->path vfs:host select_entry:"" async:true];
+            [self GoToDir:info.path vfs:host select_entry:"" async:true];
         });
         
-        // save successful connection to history
-        SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
-        SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+        // save successful connection usage to history
+        NetworkConnectionsManager::Instance().ReportUsage(_connection);
     } catch (VFSErrorException &e) {
         dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -279,29 +278,21 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
-- (void) showGoToFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_current
+- (void) showGoToFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
 {
     FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
     if(_current)
-        [sheet fillInfoFromStoredConnection:_current];
+        [sheet fillInfoFromStoredConnection:*_current];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK || sheet.server == nil)
             return;
         
-        string server = sheet.server.UTF8String;
-        string title = sheet.title.UTF8String ? sheet.title.UTF8String : "";
-        string username = sheet.username ? sheet.username.UTF8String : "";
+        auto connection = sheet.result;
         string password = sheet.password ? sheet.password.UTF8String : "";
-        string path = sheet.path ? sheet.path.UTF8String : "/";
-        if(path.empty() || path[0] != '/')
-            path = "/";
-        long port = 21;
-        if(sheet.port.intValue != 0)
-            port = sheet.port.intValue;
-        auto conn = make_shared<SavedNetworkConnectionsManager::FTPConnection>( title, username, server, path, port );
-        
+        NetworkConnectionsManager::Instance().InsertConnection(connection);
+        NetworkConnectionsManager::Instance().SetPassword(connection, password);
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToFTPWithConnection:conn password:password];
+            [self GoToFTPWithConnection:connection password:password];
         });
     }];
     
@@ -309,18 +300,19 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction) OnGoToFTP:(id)sender
 {
-    [self showGoToFTPSheet:nullptr];
+    [self showGoToFTPSheet:nullopt];
 }
 
-- (void) GoToSFTPWithConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_connection
-                         password:(const string&)_passwd
+- (void) GoToSFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
+                       password:(const string&)_passwd
 {
+    auto &info = _connection.Get<NetworkConnectionsManager::SFTPConnection>();
     try {
-        auto host = make_shared<VFSNetSFTPHost>(_connection->host,
-                                                _connection->user,
+        auto host = make_shared<VFSNetSFTPHost>(info.host,
+                                                info.user,
                                                 _passwd,
-                                                _connection->keypath,
-                                                _connection->port
+                                                info.keypath,
+                                                info.port
                                                 );
         dispatch_to_main_queue([=]{
             m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
@@ -328,9 +320,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         });
         
         // save successful connection to history
-        SavedNetworkConnectionsManager::Instance().InsertConnection(_connection);
-        SavedNetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
-        
+        NetworkConnectionsManager::Instance().ReportUsage(_connection);
     } catch (const VFSErrorException &e) {
         dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -342,27 +332,21 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
-- (void) showGoToSFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_current; // current may be nullptr
+- (void) showGoToSFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
 {
     SFTPConnectionSheetController *sheet = [SFTPConnectionSheetController new];
     if(_current)
-        [sheet fillInfoFromStoredConnection:_current];
+        [sheet fillInfoFromStoredConnection:*_current];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK || sheet.server == nil)
+        if(returnCode != NSModalResponseOK)
             return;
         
-        string server = sheet.server.UTF8String;
-        string title = sheet.title ? sheet.title.UTF8String : "";
-        string username = sheet.username ? sheet.username.UTF8String : "";
+        auto connection = sheet.result;
         string password = sheet.password ? sheet.password.UTF8String : "";
-        string keypath = sheet.keypath ? sheet.keypath.fileSystemRepresentationSafe : "";
-        long port = 22;
-        if(sheet.port.intValue != 0)
-            port = sheet.port.intValue;
-
-        auto conn = make_shared<SavedNetworkConnectionsManager::SFTPConnection>( title, username, server, keypath, port );
+        NetworkConnectionsManager::Instance().InsertConnection(connection);
+        NetworkConnectionsManager::Instance().SetPassword(connection, password);
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToSFTPWithConnection:conn password:password];
+            [self GoToSFTPWithConnection:connection password:password];
         });
     }];
     
@@ -370,30 +354,23 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (IBAction) OnGoToSFTP:(id)sender
 {
-    [self showGoToSFTPSheet:nullptr];
+    [self showGoToSFTPSheet:nullopt];
 }
 
-- (void)GoToSavedConnection:(shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>)connection
+- (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
-    if(!connection)
+    string passwd;
+    if( !NetworkConnectionsManager::Instance().GetPassword(connection, passwd) )
         return;
     
-    if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(connection)) {
-        string passwd;
-        if(!SavedNetworkConnectionsManager::Instance().GetPassword(connection, passwd))
-            return;
+    if( connection.IsType<NetworkConnectionsManager::FTPConnection>() )
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToFTPWithConnection:ftp password:passwd];
+            [self GoToFTPWithConnection:connection password:passwd];
         });
-    }
-    else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(connection)) {
-        string passwd;
-        if(!SavedNetworkConnectionsManager::Instance().GetPassword(connection, passwd))
-            return;
+    else if( connection.IsType<NetworkConnectionsManager::SFTPConnection>() )
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToSFTPWithConnection:sftp password:passwd];
+            [self GoToSFTPWithConnection:connection password:passwd];
         });
-    }
 }
 
 - (IBAction)OnGoToQuickListsParents:(id)sender
@@ -438,20 +415,20 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
             if([alert runModal] == NSAlertFirstButtonReturn)
-                SavedNetworkConnectionsManager::Instance().RemoveConnection(rep.object);
+                NetworkConnectionsManager::Instance().RemoveConnection(rep.object);
         }
 }
 
 - (IBAction)OnEditSavedConnectionItem:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )
-            if( auto conn = rep.object ) {
-                if(auto ftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::FTPConnection>(conn))
-                    [self showGoToFTPSheet:ftp];
-                else if(auto sftp = dynamic_pointer_cast<SavedNetworkConnectionsManager::SFTPConnection>(conn))
-                    [self showGoToSFTPSheet:sftp];
-            }
+        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )  {
+            auto conn = rep.object;
+            if( conn.IsType<NetworkConnectionsManager::FTPConnection>() )
+                [self showGoToFTPSheet:conn];
+            else if( conn.IsType<NetworkConnectionsManager::SFTPConnection>() )
+                [self showGoToSFTPSheet:conn];
+        }
 }
 
 - (IBAction)OnOpen:(id)sender { // enter

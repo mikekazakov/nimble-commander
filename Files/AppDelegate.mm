@@ -65,6 +65,8 @@ GenericConfig &StateConfig() noexcept
     return *g_State;
 }
 
+static AppDelegate *g_Me = nil;
+
 @implementation AppDelegate
 {
     vector<MainWindowController *> m_MainWindows;
@@ -91,6 +93,8 @@ GenericConfig &StateConfig() noexcept
 {
     self = [super init];
     if(self) {
+        g_Me = self;
+        
         char cwd[MAXPATHLEN];
         getcwd(cwd, MAXPATHLEN);
         m_StartupCWD = cwd;
@@ -122,8 +126,7 @@ GenericConfig &StateConfig() noexcept
 
 + (AppDelegate*) me
 {
-    static AppDelegate *_ = (AppDelegate*) ((NSApplication*)NSApp).delegate;
-    return _;
+    return g_Me;
 }
 
 - (void) reloadSkinSetting

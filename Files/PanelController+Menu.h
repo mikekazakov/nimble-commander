@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelController.h"
-#import "SavedNetworkConnectionsManager.h"
+#include "PanelController.h"
+#include "NetworkConnectionsManager.h"
 
 @interface PanelController (Menu)
 
 - (IBAction)OnGoBack:(id)sender;
-- (void) showGoToFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_current; // current may be nullptr
-- (void) showGoToSFTPSheet:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_current; // current may be nullptr
+- (void) showGoToFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current;
+- (void) showGoToSFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current;
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
-- (void)GoToSavedConnection:(shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>)connection;
+- (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection;
 - (IBAction)OnDeleteSavedConnectionItem:(id)sender;
 - (IBAction)OnEditSavedConnectionItem:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;

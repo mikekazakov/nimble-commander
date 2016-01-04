@@ -7,11 +7,10 @@
 //
 
 #include "vfs/vfs_native.h"
-#import "NativeFSManager.h"
-#import "Common.h"
-#import "PanelController+NavigationMenu.h"
-#import "MainWndGoToButton.h"
-#import "SavedNetworkConnectionsManager.h"
+#include "NativeFSManager.h"
+#include "Common.h"
+#include "PanelController+NavigationMenu.h"
+#include "MainWndGoToButton.h"
 
 static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
 //static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
@@ -104,22 +103,27 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
 @end
 
 @interface PanelControllerQuickListConnectionHolder : NSObject
-- (instancetype) initWithObject:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>&)_obj;
-@property (readonly, nonatomic) const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>& object;
+- (instancetype) initWithObject:(const NetworkConnectionsManager::Connection&)_obj;
+@property (readonly, nonatomic) const NetworkConnectionsManager::Connection& object;
 @end
 
 @implementation PanelControllerQuickListConnectionHolder
 {
-    shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> m_Obj;
+    optional<NetworkConnectionsManager::Connection> m_Obj;
 }
-@synthesize object = m_Obj;
-- (instancetype) initWithObject:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>&)_obj
+- (instancetype) initWithObject:(const NetworkConnectionsManager::Connection&)_obj
 {
     self = [super init];
     if( self )
         m_Obj = _obj;
     return self;
 }
+
+- (const NetworkConnectionsManager::Connection&) object
+{
+    return *m_Obj;
+}
+
 @end
 
 @implementation PanelController (NavigationMenu)
@@ -285,11 +289,11 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     NSMenu *menu = [[NSMenu alloc] init];
     [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Connections", "Connections popup menu title in file panels") action:nullptr keyEquivalent:@""]];
 
-    auto connections = SavedNetworkConnectionsManager::Instance().Connections();
+    auto connections = NetworkConnectionsManager::Instance().AllConnectionsByMRU();
     
     for(auto &c:connections) {
         NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
+        it.title = [NSString stringWithUTF8StdString:NetworkConnectionsManager::Instance().TitleForConnection(c)];
         it.image = network_image;
         it.target = self;
         it.action = @selector(doCalloutWithConnectionHolder:);

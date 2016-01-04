@@ -20,11 +20,17 @@ public:
     optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const;
     
     void InsertConnection( const Connection &_connection );
+    void RemoveConnection( const Connection &_connection );
+    
     void ReportUsage( const Connection &_connection );
     
+    vector<Connection> AllConnectionsByMRU() const;
     vector<Connection> FTPConnectionsByMRU() const;
     vector<Connection> SFTPConnectionsByMRU() const;
     
+    
+    bool SetPassword(const Connection &_conn, const string& _password);
+    bool GetPassword(const Connection &_conn, string& _password);
     
     string TitleForConnection(const Connection &_conn) const;
     

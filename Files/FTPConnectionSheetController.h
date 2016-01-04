@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SheetController.h"
-#import "SavedNetworkConnectionsManager.h"
+#pragma once
+
+#include "SheetController.h"
+#include "NetworkConnectionsManager.h"
 
 @interface FTPConnectionSheetController : SheetController
 @property (strong) NSString *title;
@@ -20,6 +22,8 @@
 - (IBAction)OnSaved:(id)sender;
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
-- (void)fillInfoFromStoredConnection:(shared_ptr<SavedNetworkConnectionsManager::FTPConnection>)_conn;
+- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn;
+
+@property (readonly, nonatomic) NetworkConnectionsManager::Connection result;
 
 @end

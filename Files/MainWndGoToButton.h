@@ -9,7 +9,7 @@
 #pragma once
 
 #include "vfs/VFS.h"
-#include "SavedNetworkConnectionsManager.h"
+#include "NetworkConnectionsManager.h"
 
 @class MainWindowFilePanelState;
 
@@ -22,7 +22,7 @@
 @end
 
 @interface MainWndGoToButtonSelectionSavedNetworkConnection : MainWndGoToButtonSelection
-@property shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> connection;
+@property NetworkConnectionsManager::Connection connection;
 @end
 
 @interface MainWndGoToButton : NSPopUpButton<NSMenuDelegate>

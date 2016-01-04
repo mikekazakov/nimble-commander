@@ -1,5 +1,6 @@
 #include "Common.h"
 #include "Config.h"
+#include "SavedNetworkConnectionsManager.h"
 #include "AppDelegate+Migration.h"
 
 
@@ -61,6 +62,9 @@
     move_bool(@"BigFileViewModernShouldSmoothFonts",                        "viewer.modern.shouldSmoothText");
     move_bool(@"BigFileViewClassicShouldAntialias",                         "viewer.classic.shouldAntialiasText");
     move_bool(@"BigFileViewClassicShouldSmoothFonts",                       "viewer.classic.shouldSmoothText");
+    
+    // migrate network connections settings into json-based config:
+    SavedNetworkConnectionsManager::Instance();
 }
 
 @end

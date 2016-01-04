@@ -5,6 +5,7 @@
 #include <Habanero/spinlock.h>
 #include "AppDelegate.h"
 #include "NetworkConnectionsManager.h"
+#include "KeychainServices.h"
 #include "Common.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
@@ -91,6 +92,24 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
     return nullopt;
 }
 
+static string KeychainWhereFromConnection( const NetworkConnectionsManager::Connection& _c )
+{
+    if( auto *c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
+        return "ftp://" + c->host;
+    if( auto *c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+        return "sftp://" + c->host;
+    return "";
+}
+
+static string KeychainAccountFromConnection( const NetworkConnectionsManager::Connection& _c )
+{
+    if( auto *c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
+        return c->user;
+    if( auto *c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+        return c->user;
+    return "";
+}
+
 NetworkConnectionsManager::NetworkConnectionsManager():
     m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename)
 {
@@ -121,7 +140,21 @@ void NetworkConnectionsManager::InsertConnection( const NetworkConnectionsManage
         else
             m_Connections.emplace_back(_conn);
     }
-    Save();
+    dispatch_to_background([=]{ Save(); });
+}
+
+void NetworkConnectionsManager::RemoveConnection( const Connection &_connection )
+{
+    LOCK_GUARD(m_Lock) {
+        auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c){ return _c.Uuid() == _connection.Uuid(); } );
+        if( t != end(m_Connections) )
+            m_Connections.erase(t);
+        
+        auto i = find_if(begin(m_MRU), end(m_MRU), [&](auto &_c){ return _c == _connection.Uuid(); } );
+        if( i != end(m_MRU) )
+            m_MRU.erase(i);
+    }
+    dispatch_to_background([=]{ Save(); });
 }
 
 optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::ConnectionByUUID(const boost::uuids::uuid& _uuid) const
@@ -198,6 +231,7 @@ void NetworkConnectionsManager::ReportUsage( const Connection &_connection )
         else
             m_MRU.insert( begin(m_MRU), _connection.Uuid() );
     }
+    dispatch_to_background([=]{ Save(); });
 }
 
 vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::FTPConnectionsByMRU() const
@@ -222,4 +256,28 @@ vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::SFTPCon
         // TODO: actually sort
     }
     return c;
+}
+
+vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::AllConnectionsByMRU() const
+{
+    vector<Connection> c;
+    LOCK_GUARD(m_Lock) {
+        c = m_Connections;
+        // TODO: actually sort
+    }
+    return c;
+}
+
+bool NetworkConnectionsManager::SetPassword(const Connection &_conn, const string& _password)
+{
+    return KeychainServices::Instance().SetPassword(KeychainWhereFromConnection(_conn),
+                                                    KeychainAccountFromConnection(_conn),
+                                                    _password);
+}
+
+bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password)
+{
+    return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
+                                                    KeychainAccountFromConnection(_conn),
+                                                    _password);
 }

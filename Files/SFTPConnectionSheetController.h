@@ -6,8 +6,11 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SheetController.h"
-#import "SavedNetworkConnectionsManager.h"
+#pragma once
+
+#include "SheetController.h"
+#include "NetworkConnectionsManager.h"
+
 @interface SFTPConnectionSheetController : SheetController
 @property (strong) NSString *title;
 @property (strong) NSString *server;
@@ -20,5 +23,6 @@
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnChooseKey:(id)sender;
-- (void)fillInfoFromStoredConnection:(shared_ptr<SavedNetworkConnectionsManager::SFTPConnection>)_conn;
+- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn;
+@property (readonly, nonatomic) NetworkConnectionsManager::Connection result;
 @end

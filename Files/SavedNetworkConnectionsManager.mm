@@ -14,6 +14,44 @@
 
 static NSString *g_DefKey = @"FilePanelsSavedNetworkConnections";
 
+struct SavedNetworkConnectionsManager::AbstractConnection
+{
+    AbstractConnection(const string &_title);
+    virtual ~AbstractConnection();
+    
+    const string title; // arbitrary and should not be used in Equal() comparison
+    
+    virtual bool Equal(const AbstractConnection& _rhs) const = 0;
+    virtual string KeychainWhere() const = 0;
+    virtual string KeychainAccount() const = 0;
+};
+
+struct SavedNetworkConnectionsManager::FTPConnection : AbstractConnection
+{
+    FTPConnection( const string &_title, const string &_user, const string &_host, const string &_path, long  _port );
+    const string user;
+    const string host;
+    const string path;
+    const long   port;
+    
+    virtual bool Equal(const AbstractConnection& _rhs) const override;
+    virtual string KeychainWhere() const override;
+    virtual string KeychainAccount() const override;
+};
+
+struct SavedNetworkConnectionsManager::SFTPConnection : AbstractConnection
+{
+    SFTPConnection( const string &_title, const string &_user, const string &_host, const string &_keypath, long  _port );
+    const string user;
+    const string host;
+    const string keypath;
+    const long   port;
+    
+    virtual bool Equal(const AbstractConnection& _rhs) const override;
+    virtual string KeychainWhere() const override;
+    virtual string KeychainAccount() const override;
+};
+
 inline static string TitleFromStoredConnectionIfAny(NSDictionary *_from)
 {
     id t = _from[@"title"];
@@ -151,33 +189,46 @@ SavedNetworkConnectionsManager &SavedNetworkConnectionsManager::Instance()
 
 SavedNetworkConnectionsManager::SavedNetworkConnectionsManager()
 {
+    // load info from UserDefaults
     m_Connections = LoadConnections();
     
-//    for( auto con: m_Connections ) {
-//        if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::FTPConnection*>(con.get())) {
-//            NetworkConnectionsManager::FTPConnection c;
-//            c.host = ftp->host;
-//            c.path = ftp->path;
-//            c.port = ftp->port;
-//            c.user = ftp->user;
-//            c.title = ftp->title;
-//            c.uuid = NetworkConnectionsManager::MakeUUID();
-//            
-//            NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );
-//        }
-//        if(auto sftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(con.get())) {
-//            
-//            NetworkConnectionsManager::SFTPConnection c;
-//            c.host = sftp->host;
-//            c.port = sftp->port;
-//            c.user = sftp->user;
-//            c.keypath = sftp->keypath;
-//            c.title = sftp->title;
-//            c.uuid = NetworkConnectionsManager::MakeUUID();
-//            
-//            NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );            
-//        }
-//    }
+    if( !m_Connections.empty() ) {
+        // if there's something:
+        
+        // 1st - copy it into NetworkConnectionsManager
+        for( auto con: m_Connections ) {
+            if(auto ftp = dynamic_cast<SavedNetworkConnectionsManager::FTPConnection*>(con.get())) {
+                NetworkConnectionsManager::FTPConnection c;
+                c.host = ftp->host;
+                c.path = ftp->path;
+                c.port = ftp->port;
+                c.user = ftp->user;
+                c.title = ftp->title;
+                c.uuid = NetworkConnectionsManager::MakeUUID();
+                
+                NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );
+            }
+            if(auto sftp = dynamic_cast<SavedNetworkConnectionsManager::SFTPConnection*>(con.get())) {
+                
+                NetworkConnectionsManager::SFTPConnection c;
+                c.host = sftp->host;
+                c.port = sftp->port;
+                c.user = sftp->user;
+                c.keypath = sftp->keypath;
+                c.title = sftp->title;
+                c.uuid = NetworkConnectionsManager::MakeUUID();
+                
+                NetworkConnectionsManager::Instance().InsertConnection( NetworkConnectionsManager::Connection(move(c)) );
+            }
+        }
+        
+        // 2nd - remove info from defaults
+        [NSUserDefaults.standardUserDefaults removeObjectForKey:g_DefKey];
+        
+        // 3rd - clear ourselves
+        m_Connections.clear();
+    }
+    
 }
 
 void SavedNetworkConnectionsManager::InsertConnection(const shared_ptr<AbstractConnection> &_conn )

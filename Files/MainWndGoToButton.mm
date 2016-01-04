@@ -153,6 +153,19 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
 @implementation MainWndGoToButtonSelectionVFSPath
 @end
 @implementation MainWndGoToButtonSelectionSavedNetworkConnection
+{
+    optional<NetworkConnectionsManager::Connection> m_Connection;
+}
+
+- (NetworkConnectionsManager::Connection) connection
+{
+    return *m_Connection;
+}
+
+- (void) setConnection:(NetworkConnectionsManager::Connection)connection
+{
+    m_Connection = connection;
+}
 @end
 
 @implementation MainWndGoToButton
@@ -358,18 +371,18 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
             return m;
         }();
         
-        auto connections = SavedNetworkConnectionsManager::Instance().Connections();
+        auto connections = NetworkConnectionsManager::Instance().AllConnectionsByMRU();
 
         auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
-        if(connections.size() > limit)
-            connections.resize(limit);
+        while(connections.size() > limit)
+            connections.pop_back();
         
         if(!connections.empty()) {
             [menu addItem:NSMenuItem.separatorItem];
         
             for(auto &c:connections) {
                 NSMenuItem *menuitem = [NSMenuItem new];
-                menuitem.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
+                menuitem.title = [NSString stringWithUTF8StdString: NetworkConnectionsManager::Instance().TitleForConnection(c)];
                 menuitem.image = network_image;
                 
                 MainWndGoToButtonSelectionSavedNetworkConnection *info = [MainWndGoToButtonSelectionSavedNetworkConnection new];

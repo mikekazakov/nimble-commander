@@ -6,10 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SavedNetworkConnectionsManager.h"
+#pragma once
+
+#include "NetworkConnectionsManager.h"
 
 @interface ConnectionsMenuDelegateInfoWrapper : NSObject
-@property (nonatomic, readonly) shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> object;
+@property (nonatomic, readonly) NetworkConnectionsManager::Connection object;
 @end
 
 @interface ConnectionsMenuDelegate : NSObject<NSMenuDelegate>

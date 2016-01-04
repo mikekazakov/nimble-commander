@@ -8,6 +8,9 @@
 
 #pragma once
 
+// this class serves only for migration purpose only, not used anywhere else
+// should be removed in 1.1.2
+
 class SavedNetworkConnectionsManager
 {
 public:
@@ -16,6 +19,8 @@ public:
     struct SFTPConnection;
 
     static SavedNetworkConnectionsManager &Instance();
+    
+private:
     
     /**
      * inserts a connection in front of connections list.
@@ -43,7 +48,7 @@ public:
     bool GetPassword(const shared_ptr<AbstractConnection> &_conn, string& _password);
     
     string TitleForConnection(const shared_ptr<AbstractConnection> &_conn);
-private:
+
     SavedNetworkConnectionsManager();
     static void SaveConnections(const vector<shared_ptr<AbstractConnection>> &_conns);
     static vector<shared_ptr<AbstractConnection>> LoadConnections();
@@ -52,40 +57,3 @@ private:
     mutable mutex m_Lock;
 };
 
-struct SavedNetworkConnectionsManager::AbstractConnection
-{
-    AbstractConnection(const string &_title);
-    virtual ~AbstractConnection();
-    
-    const string title; // arbitrary and should not be used in Equal() comparison
-    
-    virtual bool Equal(const AbstractConnection& _rhs) const = 0;
-    virtual string KeychainWhere() const = 0;
-    virtual string KeychainAccount() const = 0;
-};
-
-struct SavedNetworkConnectionsManager::FTPConnection : AbstractConnection
-{
-    FTPConnection( const string &_title, const string &_user, const string &_host, const string &_path, long  _port );
-    const string user;
-    const string host;
-    const string path;
-    const long   port;
-
-    virtual bool Equal(const AbstractConnection& _rhs) const override;
-    virtual string KeychainWhere() const override;
-    virtual string KeychainAccount() const override;
-};
-
-struct SavedNetworkConnectionsManager::SFTPConnection : AbstractConnection
-{
-    SFTPConnection( const string &_title, const string &_user, const string &_host, const string &_keypath, long  _port );
-    const string user;
-    const string host;
-    const string keypath;
-    const long   port;
-    
-    virtual bool Equal(const AbstractConnection& _rhs) const override;
-    virtual string KeychainWhere() const override;
-    virtual string KeychainAccount() const override;
-};

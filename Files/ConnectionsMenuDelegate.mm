@@ -6,20 +6,20 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ConnectionsMenuDelegate.h"
-#import "Common.h"
-#import "PanelController.h"
+#include "ConnectionsMenuDelegate.h"
+#include "Common.h"
+#include "PanelController.h"
 
 @interface ConnectionsMenuDelegateInfoWrapper()
-- (id) initWithConnection:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> &)_conn;
+- (id) initWithConnection:(const NetworkConnectionsManager::Connection &)_conn;
 @end
 
 @implementation ConnectionsMenuDelegateInfoWrapper
 {
-    shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> m_Connection;
+    optional<NetworkConnectionsManager::Connection> m_Connection;
 }
 
-- (id) initWithConnection:(const shared_ptr<SavedNetworkConnectionsManager::AbstractConnection> &)_conn
+- (id) initWithConnection:(const NetworkConnectionsManager::Connection &)_conn
 {
     self = [super init];
     if(self) {
@@ -28,20 +28,20 @@
     return self;
 }
 
-- (shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>) object
+- (NetworkConnectionsManager::Connection) object
 {
-    return m_Connection;
+    return *m_Connection;
 }
 @end
 
 @implementation ConnectionsMenuDelegate
 {
-    vector<shared_ptr<SavedNetworkConnectionsManager::AbstractConnection>> m_Connections;
+    vector<NetworkConnectionsManager::Connection> m_Connections;
 }
 
 - (NSInteger)numberOfItemsInMenu:(NSMenu*)menu
 {
-    m_Connections = SavedNetworkConnectionsManager::Instance().Connections();
+    m_Connections = NetworkConnectionsManager::Instance().AllConnectionsByMRU();
     
     if(m_Connections.empty())
         return 2;
@@ -67,7 +67,7 @@
         auto &c = m_Connections.at(conn_num);
 
         item.indentationLevel = 1;
-        item.title = [NSString stringWithUTF8StdString:SavedNetworkConnectionsManager::Instance().TitleForConnection(c)];
+        item.title = [NSString stringWithUTF8StdString:NetworkConnectionsManager::Instance().TitleForConnection(c)];
         item.representedObject = [[ConnectionsMenuDelegateInfoWrapper alloc] initWithConnection:c];
 
         //clang gone mad, so mute nonsence warning

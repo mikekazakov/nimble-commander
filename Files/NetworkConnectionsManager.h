@@ -42,6 +42,7 @@ private:
     vector<boost::uuids::uuid>                      m_MRU;
     mutable mutex                                   m_Lock;
     GenericConfig                                   m_Config;
+    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
 };
 
 class NetworkConnectionsManager::Connection

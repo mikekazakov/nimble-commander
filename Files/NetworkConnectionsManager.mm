@@ -127,8 +127,15 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
 NetworkConnectionsManager::NetworkConnectionsManager():
     m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename)
 {
+    // Load current configuration
     Load();
     
+    // Wire up on-the-fly loading of externally changed config
+    m_Config.ObserveMany(m_ConfigObservations, [=]{ Load(); },
+                         initializer_list<const char*>{g_ConnectionsKey, g_MRUKey}
+                         );
+
+    // Wire up notification about application shutdown
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
                                                     object:nil
                                                      queue:nil

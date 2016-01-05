@@ -12,6 +12,20 @@ static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";
 
+static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, const vector<boost::uuids::uuid>& _mru)
+{
+    vector< pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
+    for( auto &i: _values ) {
+        auto it = find( begin(_mru), end(_mru), i.Uuid() );
+        v.emplace_back( move(i), it );
+    }
+    
+    sort( begin(v), end(v), [](auto &_1st, auto &_2nd){ return _1st.second < _2nd.second; } );
+  
+    for( size_t i = 0, e = v.size(); i != e; ++i )
+        _values[i] = move( v[i].first );
+}
+
 static void FillBasicConnectionInfoInJSONObject( GenericConfig::ConfigValue &_cv, const char *_type, const NetworkConnectionsManager::BaseConnection &_bc)
 {
     _cv.AddMember("type", GenericConfig::ConfigValue(_type, GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
@@ -94,18 +108,18 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 
 static string KeychainWhereFromConnection( const NetworkConnectionsManager::Connection& _c )
 {
-    if( auto *c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
         return "ftp://" + c->host;
-    if( auto *c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return "sftp://" + c->host;
     return "";
 }
 
 static string KeychainAccountFromConnection( const NetworkConnectionsManager::Connection& _c )
 {
-    if( auto *c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
         return c->user;
-    if( auto *c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return c->user;
     return "";
 }
@@ -114,6 +128,13 @@ NetworkConnectionsManager::NetworkConnectionsManager():
     m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename)
 {
     Load();
+    
+    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
+                                                    object:nil
+                                                     queue:nil
+                                                usingBlock:^(NSNotification * _Nonnull note) {
+                                                    m_Config.NotifyAboutShutdown();
+                                                }];
 }
 
 NetworkConnectionsManager& NetworkConnectionsManager::Instance()
@@ -198,8 +219,8 @@ void NetworkConnectionsManager::Load()
                     m_Connections.emplace_back( *c );
         
         auto mru = m_Config.Get(g_MRUKey);
-        if( connections.GetType() == kArrayType )
-            for( auto i = connections.Begin(), e = connections.End(); i != e; ++i )
+        if( mru.GetType() == kArrayType )
+            for( auto i = mru.Begin(), e = mru.End(); i != e; ++i )
                 if( i->GetType() == kStringType )
                     m_MRU.emplace_back( uuid_gen(i->GetString()) );
     }
@@ -241,7 +262,7 @@ vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::FTPConn
         for(auto &i: m_Connections)
             if( i.IsType<FTPConnection>() )
                 c.emplace_back( i );
-        // TODO: actually sort
+        SortByMRU(c, m_MRU);
     }
     return c;
 }
@@ -253,7 +274,7 @@ vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::SFTPCon
         for(auto &i: m_Connections)
             if( i.IsType<SFTPConnection>() )
                 c.emplace_back( i );
-        // TODO: actually sort
+        SortByMRU(c, m_MRU);
     }
     return c;
 }
@@ -263,7 +284,7 @@ vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::AllConn
     vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         c = m_Connections;
-        // TODO: actually sort
+        SortByMRU(c, m_MRU);
     }
     return c;
 }

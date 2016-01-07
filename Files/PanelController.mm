@@ -379,7 +379,10 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) RefreshDirectory
 {
-    if(m_View == nil) return; // guard agains calls from init process
+    if(m_View == nil)
+        return; // guard agains calls from init process
+    if( m_Data.Listing().shared_from_this() == VFSListing::EmptyListing() )
+        return; // guard agains calls from init process
     
     // going async here
     if(!m_DirectoryLoadingQ->Empty())

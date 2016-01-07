@@ -654,6 +654,9 @@ void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
     uint64_t window_size = m_Data->RawSize();
     uint64_t file_size = m_Data->FileSize();
     
+    if( _offset >= file_size )
+        return;
+    
     if(_offset > window_pos + g_BytesPerHexLine &&
        _offset + m_FrameLines * g_BytesPerHexLine < window_pos + window_size)
     { // we can just move our offset in window

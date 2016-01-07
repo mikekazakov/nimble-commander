@@ -38,7 +38,7 @@ struct PanelViewStateStorage
     unique_ptr<PanelViewPresentation> m_Presentation;
     PanelViewState              m_State;
     
-    map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
+    unordered_map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside

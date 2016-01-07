@@ -242,14 +242,13 @@ VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing&
 
 shared_ptr<VFSListing> VFSListing::EmptyListing()
 {
-    static shared_ptr<VFSListing> empty;
-    once_flag once;
-    call_once(once, []{
-        empty = Alloc();
-        empty->m_ItemsCount = 0;
-        empty->m_Hosts.insert(0, VFSHost::DummyHost());
-        empty->m_Directories.insert(0, "/");
-    });
+    static shared_ptr<VFSListing> empty = []{
+        auto l = Alloc();
+        l->m_ItemsCount = 0;
+        l->m_Hosts.insert(0, VFSHost::DummyHost());
+        l->m_Directories.insert(0, "/");
+        return l;
+    }();
     return empty;
 }
 

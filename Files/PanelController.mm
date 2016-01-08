@@ -20,6 +20,7 @@
 #include "SandboxManager.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
+#include "PanelDataPersistency.h"
 
 static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
@@ -31,6 +32,8 @@ static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.qui
 static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
 static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
 static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
+
+static const auto g_RestorationDataKey = "data";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -621,6 +624,14 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         if( self.vfs->IsNativeFS() )
             m_LastNativeDirectory = self.currentDirectoryPath;
     }
+    
+    [self markRestorableStateAsInvalid];
+}
+
+- (void) markRestorableStateAsInvalid
+{
+    if( auto wc = objc_cast<MainWindowController>(self.state.window.delegate) )
+        [wc invalidateRestorableState];
 }
 
 - (void) OnCursorChanged
@@ -760,6 +771,41 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 - (bool)ensureCanGoToNativeFolderSync:(const string&)_path
 {
     return [PanelController ensureCanGoToNativeFolderSync:_path];
+}
+
+- (optional<rapidjson::StandaloneValue>) encodeRestorableState
+{
+    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    
+    if( auto v = PanelDataPersisency::EncodeVFSPath(m_Data.Listing()) )
+        json.AddMember(rapidjson::StandaloneValue(g_RestorationDataKey, rapidjson::g_CrtAllocator),
+                       move(*v),
+                       rapidjson::g_CrtAllocator );
+    else
+        return nullopt;
+    
+    return move(json);
+}
+
+- (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state
+{
+    if( _state.IsObject() ) {
+        if( _state.HasMember(g_RestorationDataKey) ) {
+            auto &data = _state[g_RestorationDataKey];
+            VFSHostPtr host;
+            // this should be async:
+            if( PanelDataPersisency::CreateVFSFromState(data, host) == VFSError::Ok ) {
+                string path = PanelDataPersisency::GetPathFromState(data);
+                
+                auto context = make_shared<PanelControllerGoToDirContext>();
+                context->VFS = host;
+                context->RequestedDirectory = path;
+                [self GoToDirWithContext:context];
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 @end

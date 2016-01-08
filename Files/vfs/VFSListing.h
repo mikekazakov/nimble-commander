@@ -44,6 +44,9 @@ public:
     const VFSHostPtr&   Host                () const; // will throw if there's no common host
     const VFSHostPtr&   Host                (unsigned _ind) const;
     
+    /**
+     * Compose a path to specified listing item. Is case of ".." item will directory path itself.
+     */
     string              Path                (unsigned _ind) const;
     
     const string&       Filename            (unsigned _ind) const;

@@ -12,6 +12,7 @@
 #include "MainWindowStateProtocol.h"
 #include "vfs/VFS.h"
 #include "Config.h"
+#include "Common.h"
 
 class PanelData;
 @class Operation;
@@ -83,6 +84,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 - (void) AddOperation:(Operation*)_operation;
 
+- (optional<rapidjson::StandaloneValue>) encodeRestorableState;
+- (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
+- (void) markRestorableStateAsInvalid;
 
 - (void) savePanelOptionsFor:(PanelController*)_pc;
 
@@ -139,6 +143,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 - (void)savePanelsOptions;
 - (void)updateBottomConstraint;
+
+- (void)addNewControllerOnLeftPane:(PanelController*)_pc;
+- (void)addNewControllerOnRightPane:(PanelController*)_pc;
 
 @end
 

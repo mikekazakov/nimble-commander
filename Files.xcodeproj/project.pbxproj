@@ -461,6 +461,7 @@
 		CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */; };
 		CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
 		CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF81AA111C3F8B3D00C5E531 /* PanelDataPersistency.cpp */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -1338,6 +1339,8 @@
 		CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsSummaryViewController.mm; path = Operations/OperationsSummaryViewController.mm; sourceTree = "<group>"; };
 		CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OperationsSummaryViewController.xib; path = Operations/OperationsSummaryViewController.xib; sourceTree = "<group>"; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = Resource/Config.json; sourceTree = "<group>"; };
+		CF81AA111C3F8B3D00C5E531 /* PanelDataPersistency.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PanelDataPersistency.cpp; sourceTree = "<group>"; };
+		CF81AA121C3F8B3D00C5E531 /* PanelDataPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelDataPersistency.h; sourceTree = "<group>"; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
@@ -1918,6 +1921,8 @@
 			children = (
 				CFC5123516C5284800D247EE /* PanelData.h */,
 				CFC5123416C5284800D247EE /* PanelData.mm */,
+				CF81AA121C3F8B3D00C5E531 /* PanelDataPersistency.h */,
+				CF81AA111C3F8B3D00C5E531 /* PanelDataPersistency.cpp */,
 				B52D9A82173D329F00EC7154 /* PanelViewTypes.h */,
 				CFC5123716C5287B00D247EE /* PanelView.h */,
 				CFC5123816C5287B00D247EE /* PanelView.mm */,
@@ -3617,6 +3622,7 @@
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFD6F9191BEC4FEA00A1B046 /* VFSHost.cpp in Sources */,
+				CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */,
 				CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */,
 				CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,

@@ -32,6 +32,7 @@
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
+static const auto g_ResorationPanelsKey     = "panels_v1";
 static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
 static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
@@ -641,12 +642,81 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
 }
 
+- (optional<rapidjson::StandaloneValue>) encodeRestorableState
+{
+    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    rapidjson::StandaloneValue json_panels(rapidjson::kArrayType);
+    rapidjson::StandaloneValue json_panels_left(rapidjson::kArrayType);
+    rapidjson::StandaloneValue json_panels_right(rapidjson::kArrayType);
+    
+    for( auto pc: m_LeftPanelControllers )
+        if( auto v = [pc encodeRestorableState] )
+            json_panels_left.PushBack( move(*v), rapidjson::g_CrtAllocator );
+
+    for( auto pc: m_RightPanelControllers )
+        if( auto v = [pc encodeRestorableState] )
+            json_panels_right.PushBack( move(*v), rapidjson::g_CrtAllocator );
+    
+    json_panels.PushBack( move(json_panels_left), rapidjson::g_CrtAllocator );
+    json_panels.PushBack( move(json_panels_right), rapidjson::g_CrtAllocator );
+
+    
+    json.AddMember(rapidjson::StandaloneValue(g_ResorationPanelsKey, rapidjson::g_CrtAllocator),
+                   move(json_panels),
+                   rapidjson::g_CrtAllocator);
+    
+    return move(json);
+}
+
+- (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state
+{
+    if( !_state.IsObject() )
+        return;
+    
+    if( _state.HasMember(g_ResorationPanelsKey) ) {
+        auto &json_panels = _state[g_ResorationPanelsKey];
+        if( json_panels.IsArray() && json_panels.Size() == 2 ) {
+            auto &left = json_panels[0];
+            if( left.IsArray() )
+                for( auto i = left.Begin(), e = left.End(); i != e; ++i ) {
+                    if( i != left.Begin() ) {
+                        auto pc = [PanelController new];
+                        pc.state = self;
+                        [self addNewControllerOnLeftPane:pc];
+                        [pc loadRestorableState:*i];
+                    }
+                    else
+                        [m_LeftPanelControllers.front() loadRestorableState:*i];
+                }
+            
+            auto &right = json_panels[1];
+            if( right.IsArray() )
+                for( auto i = right.Begin(), e = right.End(); i != e; ++i ) {
+                    if( i != right.Begin() ) {
+                        auto pc = [PanelController new];
+                        pc.state = self;
+                        [self addNewControllerOnRightPane:pc];
+                        [pc loadRestorableState:*i];
+                    }
+                    else
+                        [m_RightPanelControllers.front() loadRestorableState:*i];
+                }
+        }
+    }
+}
+
+- (void) markRestorableStateAsInvalid
+{
+    if( auto wc = objc_cast<MainWindowController>(self.window.delegate) )
+        [wc invalidateRestorableState];
+}
+
 - (void)PanelPathChanged:(PanelController*)_panel
 {
-    if(_panel == nil)
+    if( _panel == nil )
         return;
 
-    if(_panel == self.activePanelController) {
+    if( _panel == self.activePanelController ) {
         [self UpdateTitle];
         [self synchronizeOverlappedTerminalWithPanel:_panel];
     }
@@ -858,6 +928,18 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 {
     if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] )
         [(MainWindowController*)self.window.delegate RequestTerminalExecution:_filename.c_str() at:_cwd.c_str()];
+}
+
+- (void)addNewControllerOnLeftPane:(PanelController*)_pc
+{
+    m_LeftPanelControllers.emplace_back(_pc);
+    [m_MainSplitView.leftTabbedHolder addPanel:_pc.view];
+}
+
+- (void)addNewControllerOnRightPane:(PanelController*)_pc
+{
+    m_RightPanelControllers.emplace_back(_pc);
+    [m_MainSplitView.rightTabbedHolder addPanel:_pc.view];
 }
 
 @end

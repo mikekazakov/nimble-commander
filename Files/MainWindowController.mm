@@ -7,6 +7,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
+#include "3rd_party/rapidjson/include/rapidjson/writer.h"
+#include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
 #include "vfs/vfs_native.h"
 #include "MainWindowController.h"
 #include "MainWindow.h"
@@ -23,6 +26,7 @@
 #include "ActionsShortcutsManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
+static auto g_RestorationFilePanelsStateKey = @"filePanelsState";
 
 @implementation MainWindowController
 {
@@ -98,13 +102,20 @@ static const auto g_ConfigShowToolbar = "general.showToolbar";
     assert(m_WindowState.empty());
 }
 
+- (BOOL) isRestorable
+{
+    return true;
+}
+
 + (void)restoreWindowWithIdentifier:(NSString *)identifier
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
     AppDelegate *delegate = (AppDelegate*)NSApplication.sharedApplication.delegate;
-    if(delegate.isRunningTests)
+    if(delegate.isRunningTests) {
+        completionHandler(nil, nil);
         return;
+    }
 //  looks like current bugs in OSX10.10. uncomment this later:
 //    if(configuration::is_sandboxed && [NSApp modalWindow] != nil)
 //        return;
@@ -116,6 +127,30 @@ static const auto g_ConfigShowToolbar = "general.showToolbar";
         window = [delegate AllocateNewMainWindow].window;
     }
     completionHandler(window, nil);
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    if( auto panels_state = [m_PanelState encodeRestorableState] ) {
+        rapidjson::StringBuffer buffer;
+//        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+        panels_state->Accept(writer);
+        cout << buffer.GetString() << endl;
+        [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_RestorationFilePanelsStateKey];
+    }
+}
+
+- (void)restoreStateWithCoder:(NSCoder *)coder
+{
+    if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_RestorationFilePanelsStateKey]) ) {
+        NSLog(@"%@", json);
+        
+        rapidjson::StandaloneDocument state;
+        rapidjson::ParseResult ok = state.Parse<rapidjson::kParseCommentsFlag>( json.UTF8String );
+        if( ok )
+            [m_PanelState decodeRestorableState:state];
+    }
 }
 
 - (bool)currentStateNeedWindowTitle
@@ -272,7 +307,7 @@ static const auto g_ConfigShowToolbar = "general.showToolbar";
     [self.window makeFirstResponder:self.window.contentView];
     
     if([self.topmostState respondsToSelector:@selector(Assigned)])
-        [self.topmostState Assigned];    
+        [self.topmostState Assigned];
 }
 
 - (OperationsController*) OperationsController

@@ -13,6 +13,7 @@
 #include "PanelHistory.h"
 #include "DispatchQueue.h"
 #include "Config.h"
+#include "Common.h"
 
 @class QuickLookView;
 @class BriefSystemOverview;
@@ -140,10 +141,14 @@ namespace panel
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
 
+- (optional<rapidjson::StandaloneValue>) encodeRestorableState;
+- (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
+
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;
 - (void) RefreshDirectory; // user pressed cmd+r by default
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
+- (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
 
 @end
 

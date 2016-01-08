@@ -7,6 +7,8 @@
 //
 #pragma once
 
+#include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
+#include "3rd_party/rapidjson/include/rapidjson/document.h"
 #include "path_manip.h"
 
 // TODO: remove it.
@@ -29,6 +31,13 @@ struct DialogResult
         Delete
     };
 };
+
+namespace rapidjson
+{
+    extern CrtAllocator g_CrtAllocator;
+    typedef GenericDocument<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneDocument;
+    typedef GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneValue;
+}
 
 CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept;
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;

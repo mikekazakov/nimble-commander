@@ -29,6 +29,8 @@
                                         params:(const string&)_params
                                           file:(const string&)_file_path;
 
+- (void)restoreDefaultWindowStateFromConfig;
+
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
 @property (nonatomic, readonly) MainWindowTerminalState*    terminalState;    // zero or one per window

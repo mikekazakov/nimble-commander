@@ -1,7 +1,7 @@
 #pragma once
 #include "DispatchQueue.h"
+#include "Common.h"
 #include "vfs/VFS.h"
-#import "chained_strings.h"
 
 struct PanelVolatileData;
 
@@ -48,6 +48,20 @@ struct PanelSortMode
     inline bool isrevert() const
     {
         return sort == SortByNameRev || sort == SortByExtRev || sort == SortBySizeRev || sort == SortByMTimeRev || sort == SortByBTimeRev;        
+    }
+    static inline bool validate(Mode _mode)
+    {
+        return _mode == SortNoSort ||
+               _mode == SortByName ||
+               _mode == SortByNameRev ||
+               _mode == SortByExt ||
+               _mode == SortByExtRev ||
+               _mode == SortBySize ||
+               _mode == SortBySizeRev ||
+               _mode == SortByMTime ||
+               _mode == SortByMTimeRev ||
+               _mode == SortByBTime ||
+               _mode == SortByBTimeRev;
     }
     inline bool operator ==(const PanelSortMode& _r) const
     {
@@ -272,7 +286,6 @@ public:
     VFSListingItem   EntryAtSortPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
-    [[deprecated]] chained_strings StringsFromSelectedEntries() const;
     vector<string>          SelectedEntriesFilenames() const;
     vector<VFSListingItem> SelectedEntries() const;
     
@@ -341,11 +354,14 @@ public:
     void SetSortMode(PanelSortMode _mode);
     PanelSortMode SortMode() const;
     
+    rapidjson::StandaloneValue EncodeSortingOptions() const;
+    void DecodeSortingOptions(const rapidjson::StandaloneValue& _options);
+    
     // hard filtering filtering
-    void SetHardFiltering(PanelDataHardFiltering _filter);
+    void SetHardFiltering(const PanelDataHardFiltering &_filter);
     inline PanelDataHardFiltering HardFiltering() const { return m_HardFiltering; }
     
-    void SetSoftFiltering(PanelDataTextFiltering _filter);
+    void SetSoftFiltering(const PanelDataTextFiltering &_filter);
     inline PanelDataTextFiltering SoftFiltering() const { return m_SoftFiltering; }
 
     /**

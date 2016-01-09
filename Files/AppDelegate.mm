@@ -235,8 +235,9 @@ static AppDelegate *g_Me = nil;
 {
     // Insert code here to initialize your application
     
-    if(!m_IsRunningTests && m_MainWindows.empty())
-        [self AllocateNewMainWindow]; // if there's no restored windows - we'll create a freshly new one
+    if( !m_IsRunningTests && m_MainWindows.empty() )
+//        [self AllocateNewMainWindow];
+        [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     [NSApp setServicesProvider:self];
     NSUpdateDynamicServices();
@@ -322,62 +323,62 @@ static AppDelegate *g_Me = nil;
     [m_DockTile display];
 }
 
-- (void)applicationDidBecomeActive:(NSNotification *)aNotification
-{
-    if(configuration::is_sandboxed &&
-       [NSApp modalWindow] != nil)
-        return; // we can show NSOpenPanel on startup. in this case applicationDidBecomeActive should be ignored
-    
-    if(m_MainWindows.empty())
-    {
-        if(!m_IsRunningTests)
-            [self AllocateNewMainWindow];
-    }
-    else
-    {
-        // check that any window is visible, otherwise bring to front last window
-        bool anyvisible = false;
-        for(auto c: m_MainWindows)
-            if(c.window.isVisible)
-                anyvisible = true;
-        
-        if(!anyvisible)
-        {
-            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
-            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
-        }     
-    }
-}
-
-- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
-{
-    if(m_IsRunningTests)
-        return false;
-    
-    if(flag)
-    {
-        // check that any window is visible, otherwise bring to front last window
-        bool anyvisible = false;
-        for(auto c: m_MainWindows)
-            if(c.window.isVisible)
-                anyvisible = true;
-        
-        if(!anyvisible)
-        {
-            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
-            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
-        }
-        
-        return NO;
-    }
-    else
-    {
-        if(m_MainWindows.empty())
-            [self AllocateNewMainWindow];
-        return YES;
-    }
-
-}
+//- (void)applicationDidBecomeActive:(NSNotification *)aNotification
+//{
+//    if(configuration::is_sandboxed &&
+//       [NSApp modalWindow] != nil)
+//        return; // we can show NSOpenPanel on startup. in this case applicationDidBecomeActive should be ignored
+//    
+//    if(m_MainWindows.empty())
+//    {
+//        if(!m_IsRunningTests)
+//            [self AllocateNewMainWindow];
+//    }
+//    else
+//    {
+//        // check that any window is visible, otherwise bring to front last window
+//        bool anyvisible = false;
+//        for(auto c: m_MainWindows)
+//            if(c.window.isVisible)
+//                anyvisible = true;
+//        
+//        if(!anyvisible)
+//        {
+//            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
+//            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
+//        }     
+//    }
+//}
+//
+//- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
+//{
+//    if(m_IsRunningTests)
+//        return false;
+//    
+//    if(flag)
+//    {
+//        // check that any window is visible, otherwise bring to front last window
+//        bool anyvisible = false;
+//        for(auto c: m_MainWindows)
+//            if(c.window.isVisible)
+//                anyvisible = true;
+//        
+//        if(!anyvisible)
+//        {
+//            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
+//            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
+//        }
+//        
+//        return NO;
+//    }
+//    else
+//    {
+//        if(m_MainWindows.empty())
+//            [self AllocateNewMainWindow];
+//        return YES;
+//    }
+//
+//}
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
@@ -454,6 +455,20 @@ static AppDelegate *g_Me = nil;
     NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
+}
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
+{
+    return true;
+}
+
+- (BOOL)applicationOpenUntitledFile:(NSApplication *)sender
+{
+    if( m_MainWindows.empty() ) {
+        auto mw = [self AllocateNewMainWindow];
+        [mw restoreDefaultWindowStateFromConfig];
+    }
+    return true;
 }
 
 - (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename

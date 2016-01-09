@@ -26,7 +26,8 @@
 #include "ActionsShortcutsManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
-static auto g_RestorationFilePanelsStateKey = @"filePanelsState";
+static auto g_CocoaRestorationFilePanelsStateKey = @"filePanelsState";
+static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
 
 @implementation MainWindowController
 {
@@ -137,13 +138,20 @@ static auto g_RestorationFilePanelsStateKey = @"filePanelsState";
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         panels_state->Accept(writer);
         cout << buffer.GetString() << endl;
-        [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_RestorationFilePanelsStateKey];
+        [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_CocoaRestorationFilePanelsStateKey];
     }
+}
+
+- (void)restoreDefaultWindowStateFromConfig
+{
+    auto panels_state = StateConfig().Get(g_JSONRestorationFilePanelsStateKey);
+    if( !panels_state.IsNull() )
+        [m_PanelState decodeRestorableState:panels_state];
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_RestorationFilePanelsStateKey]) ) {
+    if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey]) ) {
         NSLog(@"%@", json);
         
         rapidjson::StandaloneDocument state;
@@ -193,8 +201,14 @@ static auto g_RestorationFilePanelsStateKey = @"filePanelsState";
             [i WindowDidResize];
 }
 
+
 - (void)windowWillClose:(NSNotification *)notification
 {
+    // the are the last main window - need to save current state as "default" in state config
+    if( AppDelegate.me.mainWindowControllers.size() == 1 )
+        if( auto panels_state = [m_PanelState encodeRestorableState] )
+            StateConfig().Set(g_JSONRestorationFilePanelsStateKey, *panels_state);
+    
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowWillClose)])
             [i WindowWillClose];
@@ -212,7 +226,7 @@ static auto g_RestorationFilePanelsStateKey = @"filePanelsState";
     m_PanelState = nil;
     m_Terminal = nil;
     
-    [(AppDelegate*)NSApplication.sharedApplication.delegate RemoveMainWindow:self];
+    [AppDelegate.me RemoveMainWindow:self];
 }
 
 - (BOOL)windowShouldClose:(id)sender {

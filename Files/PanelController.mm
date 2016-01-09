@@ -34,6 +34,7 @@ static const auto g_ConfigQuickSearchTypingView                 = "filePanel.qui
 static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
 
 static const auto g_RestorationDataKey = "data";
+static const auto g_RestorationSortingKey = "sorting";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -783,13 +784,24 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                        rapidjson::g_CrtAllocator );
     else
         return nullopt;
+  
+    json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
+                   m_Data.EncodeSortingOptions(),
+                   rapidjson::g_CrtAllocator );
     
     return move(json);
 }
 
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state
 {
+    assert(dispatch_is_main_queue());
     if( _state.IsObject() ) {
+        if( _state.HasMember(g_RestorationSortingKey) ) {
+            panel::GenericCursorPersistance pers(m_View, m_Data);
+            m_Data.DecodeSortingOptions( _state[g_RestorationSortingKey] );
+            pers.Restore();
+        }
+        
         if( _state.HasMember(g_RestorationDataKey) ) {
             auto &data = _state[g_RestorationDataKey];
             VFSHostPtr host;

@@ -4,10 +4,6 @@
 #import "PanelController.h"
 #import "FilePanelMainSplitView.h"
 
-// duplicate!
-static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
-static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
-
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {
@@ -69,10 +65,12 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     PanelController *pc = [PanelController new];
     pc.state = self;
     
+    // TODO: copy options from current panel controller
+    
     string path;
     VFSHostPtr vfs;
     if(aTabView == m_MainSplitView.leftTabbedHolder.tabView) {
-        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
+//        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
         vfs = self.leftPanelController.vfs;
         path = self.leftPanelController.currentDirectoryPath;
         
@@ -80,7 +78,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
         [m_MainSplitView.leftTabbedHolder addPanel:pc.view];
     }
     else if(aTabView == m_MainSplitView.rightTabbedHolder.tabView) {
-        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
+//        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
         vfs = self.rightPanelController.vfs;
         path = self.rightPanelController.currentDirectoryPath;
         m_RightPanelControllers.emplace_back(pc);

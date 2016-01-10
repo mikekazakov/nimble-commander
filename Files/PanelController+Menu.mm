@@ -104,10 +104,10 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     auto tag = item.tag;
 #define IF(a) else if(tag == a)
     if(false);
-    IF(tag_short_mode)      item.state = m_View.type == PanelViewType::ViewShort;
-    IF(tag_medium_mode)     item.state = m_View.type == PanelViewType::ViewMedium;
-    IF(tag_full_mode)       item.state = m_View.type == PanelViewType::ViewFull;
-    IF(tag_wide_mode)       item.state = m_View.type == PanelViewType::ViewWide;
+    IF(tag_short_mode)      item.state = m_View.type == PanelViewType::Short;
+    IF(tag_medium_mode)     item.state = m_View.type == PanelViewType::Medium;
+    IF(tag_full_mode)       item.state = m_View.type == PanelViewType::Full;
+    IF(tag_wide_mode)       item.state = m_View.type == PanelViewType::Wide;
     IF(tag_sort_viewhidden) item.state = m_Data.HardFiltering().show_hidden;
     IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
     IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
@@ -639,25 +639,25 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     auto filtering = m_Data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
-    [self.state savePanelOptionsFor:self];
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self ChangeSortingModeTo:mode];
-    [self.state savePanelOptionsFor:self];
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
     [self ChangeSortingModeTo:mode];
-    [self.state savePanelOptionsFor:self];
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleNumericComparison:(id)sender{
     PanelSortMode mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self ChangeSortingModeTo:mode];
-    [self.state savePanelOptionsFor:self];
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleSortByName:(id)sender{
     [self MakeSortWith:PanelSortMode::SortByName Rev:PanelSortMode::SortByNameRev];
@@ -675,20 +675,20 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     [self MakeSortWith:PanelSortMode::SortByBTime Rev:PanelSortMode::SortByBTimeRev];
 }
 - (IBAction)ToggleShortViewMode:(id)sender {
-    m_View.type = PanelViewType::ViewShort;
-    [self.state savePanelOptionsFor:self];
+    m_View.type = PanelViewType::Short;
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleMediumViewMode:(id)sender {
-    m_View.type = PanelViewType::ViewMedium;
-    [self.state savePanelOptionsFor:self];
+    m_View.type = PanelViewType::Medium;
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleFullViewMode:(id)sender{
-    m_View.type = PanelViewType::ViewFull;
-    [self.state savePanelOptionsFor:self];
+    m_View.type = PanelViewType::Full;
+    [self markRestorableStateAsInvalid];
 }
 - (IBAction)ToggleWideViewMode:(id)sender{
-    m_View.type = PanelViewType::ViewWide;
-    [self.state savePanelOptionsFor:self];
+    m_View.type = PanelViewType::Wide;
+    [self markRestorableStateAsInvalid];
 }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {

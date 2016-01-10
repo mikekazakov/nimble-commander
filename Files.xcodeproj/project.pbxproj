@@ -99,9 +99,6 @@
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
-		CF4E33D21B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
-		CF4E33D31B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
-		CF4E33D41B75F889005B5292 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF4E33D11B75F889005B5292 /* Defaults.plist */; };
 		CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
 		CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
 		CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */; };
@@ -1141,7 +1138,6 @@
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask.mm; sourceTree = "<group>"; };
 		CF4C5A5C17A7B48E00B1B061 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMask.h; sourceTree = "<group>"; };
-		CF4E33D11B75F889005B5292 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		CF4E33D51B78CF60005B5292 /* PanelController+NavigationMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+NavigationMenu.h"; sourceTree = "<group>"; };
 		CF4E33D61B78CF60005B5292 /* PanelController+NavigationMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = "PanelController+NavigationMenu.mm"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF4E33DB1B791F9F005B5292 /* VFSConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSConfiguration.h; path = vfs/VFSConfiguration.h; sourceTree = "<group>"; };
@@ -1753,7 +1749,6 @@
 				CFC5122316C4BD3D00D247EE /* Credits.rtf */,
 				CF7D7A741C15AAC200ECEBA0 /* Config.json */,
 				CFD6295C1C2CE3AD0050EC68 /* State.json */,
-				CF4E33D11B75F889005B5292 /* Defaults.plist */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
 				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
 				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
@@ -3099,7 +3094,6 @@
 				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF4E33D31B75F889005B5292 /* Defaults.plist in Resources */,
 				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
@@ -3163,7 +3157,6 @@
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
-				CF4E33D21B75F889005B5292 /* Defaults.plist in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFCABCD51A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
@@ -3235,7 +3228,6 @@
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
-				CF4E33D41B75F889005B5292 /* Defaults.plist in Resources */,
 				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,

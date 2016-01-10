@@ -136,7 +136,6 @@ namespace panel
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;
-@property (nonatomic) NSDictionary* options;
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
@@ -149,6 +148,7 @@ namespace panel
 - (void) RefreshDirectory; // user pressed cmd+r by default
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
+- (void) copyOptionsFromController:(PanelController*)_pc;
 
 @end
 

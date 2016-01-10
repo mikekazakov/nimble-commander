@@ -33,8 +33,6 @@
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
 static const auto g_ResorationPanelsKey     = "panels_v1";
-static auto g_DefsPanelsLeftOptions  = @"FilePanelsLeftPanelViewState";
-static auto g_DefsPanelsRightOptions = @"FilePanelsRightPanelViewState";
 
 static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
 {
@@ -74,7 +72,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );
@@ -98,41 +96,30 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         [right_controller AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
 
         
-        left_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
-        right_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
+//        left_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
+//        right_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
 
         
-        // now load data into panels, on any fails - go into home dir
-        NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
-        NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
+        // initially - go into home dir
+//        NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
+//        NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
         
         if(!configuration::is_sandboxed) { // regular waypath
-            if(!lp || !lp.length || [left_controller GoToDir:lp.fileSystemRepresentation
-                                                               vfs:VFSNativeHost::SharedHost()
-                                                      select_entry:""
-                                                             async:false] < 0)
-                [left_controller GoToDir:CommonPaths::Home()
-                                           vfs:VFSNativeHost::SharedHost()
-                                  select_entry:""
-                                         async:false];
-        
-            if(!rp || !rp.length || [right_controller GoToDir:rp.fileSystemRepresentation
-                                                                vfs:VFSNativeHost::SharedHost()
-                                                       select_entry:""
-                                                              async:false] < 0)
-                [right_controller GoToDir:"/"
-                                            vfs:VFSNativeHost::SharedHost()
-                                   select_entry:""
-                                          async:false];
+            [left_controller GoToDir:CommonPaths::Home()
+                                 vfs:VFSNativeHost::SharedHost()
+                        select_entry:""
+                               async:false];
+            [right_controller GoToDir:CommonPaths::Home()
+                                  vfs:VFSNativeHost::SharedHost()
+                         select_entry:""
+                                async:false];
         }
         else { // on sandboxed version it's bit more complicated
-            if(!lp ||
-               !lp.length ||
-               !SandboxManager::Instance().CanAccessFolder(lp.fileSystemRepresentation) ||
-               [left_controller GoToDir:lp.fileSystemRepresentation
-                                          vfs:VFSNativeHost::SharedHost()
-                                 select_entry:""
-                                        async:false] < 0) {
+            if(!SandboxManager::Instance().CanAccessFolder(CommonPaths::Home()) ||
+               [left_controller GoToDir:CommonPaths::Home()
+                                    vfs:VFSNativeHost::SharedHost()
+                           select_entry:""
+                                  async:false] < 0) {
                    // failed to load saved panel path (or there was no saved path)
                    // try to go to some path we can
                    if(SandboxManager::Instance().Empty() ||
@@ -142,20 +129,18 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
                                                async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [left_controller GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
-                                                     vfs:VFSNativeHost::SharedHost()
-                                            select_entry:""
-                                                   async:false];
+                          [left_controller GoToDir:AppDelegate.me.startupCWD
+                                               vfs:VFSNativeHost::SharedHost()
+                                      select_entry:""
+                                             async:false];
                     }
             }
             
-            if(!rp ||
-               !rp.length ||
-               !SandboxManager::Instance().CanAccessFolder(rp.fileSystemRepresentation) ||
-               [right_controller GoToDir:rp.fileSystemRepresentation
-                                           vfs:VFSNativeHost::SharedHost()
-                                  select_entry:""
-                                         async:false] < 0) {
+            if(!SandboxManager::Instance().CanAccessFolder(CommonPaths::Home()) ||
+               [right_controller GoToDir:CommonPaths::Home()
+                                     vfs:VFSNativeHost::SharedHost()
+                            select_entry:""
+                                   async:false] < 0) {
                    // failed to load saved panel path (or there was no saved path)
                    // try to go to some path we can
                    if(SandboxManager::Instance().Empty() ||
@@ -165,10 +150,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
                                                 async:false] < 0) {
                           // failed to go to folder with granted access(or no such folders)
                           // as last resort - go to startup cwd
-                          [right_controller GoToDir:((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
-                                                      vfs:VFSNativeHost::SharedHost()
-                                             select_entry:""
-                                                    async:false];
+                          [right_controller GoToDir:AppDelegate.me.startupCWD
+                                                vfs:VFSNativeHost::SharedHost()
+                                       select_entry:""
+                                              async:false];
                       }
                }
         }
@@ -622,19 +607,19 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-- (void) savePanelsOptions
-{
-    [self savePanelOptionsFor:self.leftPanelController];
-    [self savePanelOptionsFor:self.rightPanelController];
-}
-
-- (void) savePanelOptionsFor:(PanelController*)_pc
-{
-    if(_pc == self.leftPanelController)
-        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsLeftOptions];
-    else if(_pc == self.rightPanelController)
-        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
-}
+//- (void) savePanelsOptions
+//{
+//    [self savePanelOptionsFor:self.leftPanelController];
+//    [self savePanelOptionsFor:self.rightPanelController];
+//}
+//
+//- (void) savePanelOptionsFor:(PanelController*)_pc
+//{
+//    if(_pc == self.leftPanelController)
+//        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsLeftOptions];
+//    else if(_pc == self.rightPanelController)
+//        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
+//}
 
 - (void)flagsChanged:(NSEvent *)event
 {
@@ -739,17 +724,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 
 - (void)WindowWillClose
 {
-    [self SavePanelPaths];
     [self saveOverlappedTerminalSettings];
 }
 
-- (void)SavePanelPaths
-{
-    if(PanelController *pc = self.leftPanelController)
-        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"FirstPanelPath"];
-    if(PanelController *pc = self.rightPanelController)
-        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"SecondPanelPath"];
-}
+//- (void)SavePanelPaths
+//{
+//    if(PanelController *pc = self.leftPanelController)
+//        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"FirstPanelPath"];
+//    if(PanelController *pc = self.rightPanelController)
+//        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"SecondPanelPath"];
+//}
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
@@ -799,7 +783,6 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 
 - (void)OnApplicationWillTerminate
 {
-    [self SavePanelPaths];
 }
 
 - (IBAction)paste:(id)sender

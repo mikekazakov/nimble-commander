@@ -304,10 +304,10 @@ int PanelViewPresentation::GetNumberOfItemColumns() const
 {
     switch(m_State->ViewType)
     {
-        case PanelViewType::ViewShort: return 3;
-        case PanelViewType::ViewMedium: return 2;
-        case PanelViewType::ViewWide: return 1;
-        case PanelViewType::ViewFull: return 1;
+        case PanelViewType::Short: return 3;
+        case PanelViewType::Medium: return 2;
+        case PanelViewType::Wide: return 1;
+        case PanelViewType::Full: return 1;
     }
     assert(0);
     return 0;

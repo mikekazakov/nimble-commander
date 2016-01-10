@@ -35,6 +35,7 @@ static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.qui
 
 static const auto g_RestorationDataKey = "data";
 static const auto g_RestorationSortingKey = "sorting";
+static const auto g_RestorationViewKey = "view";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -206,33 +207,38 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return GlobalConfig().GetBool(g_ConfigIgnoreDirectoriesOnMaskSelection);
 }
 
-- (void) setOptions:(NSDictionary *)options
-{
-    auto hard_filtering = m_Data.HardFiltering();
-    hard_filtering.show_hidden = [[options valueForKey:@"ViewHiddenFiles"] boolValue];
-    [self ChangeHardFilteringTo:hard_filtering];
-    
-    auto sort_mode = m_Data.SortMode();
-    sort_mode.sep_dirs = [[options valueForKey:@"SeparateDirectories"] boolValue];
-    sort_mode.case_sens = [[options valueForKey:@"CaseSensitiveComparison"] boolValue];
-    sort_mode.numeric_sort = [[options valueForKey:@"NumericSort"] boolValue];
-    sort_mode.sort = (PanelSortMode::Mode)[[options valueForKey:@"SortMode"] integerValue];
-    [self ChangeSortingModeTo:sort_mode];
-    
-    m_View.type = (PanelViewType)[[options valueForKey:@"ViewMode"] integerValue];
-}
+//- (void) setOptions:(NSDictionary *)options
+//{
+//    auto hard_filtering = m_Data.HardFiltering();
+//    hard_filtering.show_hidden = [[options valueForKey:@"ViewHiddenFiles"] boolValue];
+//    [self ChangeHardFilteringTo:hard_filtering];
+//    
+//    auto sort_mode = m_Data.SortMode();
+//    sort_mode.sep_dirs = [[options valueForKey:@"SeparateDirectories"] boolValue];
+//    sort_mode.case_sens = [[options valueForKey:@"CaseSensitiveComparison"] boolValue];
+//    sort_mode.numeric_sort = [[options valueForKey:@"NumericSort"] boolValue];
+//    sort_mode.sort = (PanelSortMode::Mode)[[options valueForKey:@"SortMode"] integerValue];
+//    [self ChangeSortingModeTo:sort_mode];
+//    
+//    m_View.type = (PanelViewType)[[options valueForKey:@"ViewMode"] integerValue];
+//}
+//
+//- (NSDictionary*) options
+//{
+//    auto mode = m_Data.SortMode();
+//    return [NSDictionary dictionaryWithObjectsAndKeys:
+//            [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
+//            [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
+//            [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
+//            [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
+//            [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
+//            [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
+//            nil];
+//}
 
-- (NSDictionary*) options
+- (void) copyOptionsFromController:(PanelController*)_pc
 {
-    auto mode = m_Data.SortMode();
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-            [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
-            [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
-            [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
-            [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
-            [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
-            nil];
+    // TODO: write
 }
 
 - (bool) isActive
@@ -276,7 +282,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
     mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
-    [self.state savePanelOptionsFor:self];
+    [self markRestorableStateAsInvalid];
 }
 
 - (bool) HandleGoToUpperDirectory
@@ -785,9 +791,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     else
         return nullopt;
   
-    json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
-                   m_Data.EncodeSortingOptions(),
-                   rapidjson::g_CrtAllocator );
+    json.AddMember( rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator), m_Data.EncodeSortingOptions(), rapidjson::g_CrtAllocator );
+    json.AddMember( rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator), [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
     
     return move(json);
 }
@@ -801,6 +806,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             m_Data.DecodeSortingOptions( _state[g_RestorationSortingKey] );
             pers.Restore();
         }
+        
+        if( _state.HasMember(g_RestorationViewKey) )
+            [m_View loadRestorableState:_state[g_RestorationViewKey]];
         
         if( _state.HasMember(g_RestorationDataKey) ) {
             auto &data = _state[g_RestorationDataKey];

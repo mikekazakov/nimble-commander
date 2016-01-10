@@ -400,7 +400,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
 
             // Draw stats columns for specific views.
             int spec_col_x = m_ItemsArea.size.width;
-            if (m_State->ViewType == PanelViewType::ViewFull) {
+            if (m_State->ViewType == PanelViewType::Full) {
                 NSRect time_rect = NSMakeRect(spec_col_x - m_TimeColumnWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
                                               m_TimeColumnWidth - g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
@@ -438,7 +438,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 rect.size.width -= m_DateColumnWidth;
                 spec_col_x -= m_DateColumnWidth;
             }
-            if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull) {
+            if(m_State->ViewType == PanelViewType::Wide || m_State->ViewType == PanelViewType::Full) {
                 // draw the entry size on the right
                 NSRect size_rect = NSMakeRect(spec_col_x - m_SizeColumWidth + g_TextInsetsInLine[0],
                                               rect.origin.y,
@@ -457,7 +457,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             
             if(rect.size.width > 0) {
                 NSString *string = item.NSDisplayName();
-                if( !is_listing_uniform && (m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull) )
+                if( !is_listing_uniform && (m_State->ViewType == PanelViewType::Wide || m_State->ViewType == PanelViewType::Full) )
                     string = [NSString stringWithUTF8StdString:item.Path()];
                 [string drawWithRect:rect options:0 attributes:item_text_attr];
             }
@@ -490,7 +490,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
     }
     
     // Draw column dividers for specific views.
-    if (m_State->ViewType == PanelViewType::ViewWide)
+    if (m_State->ViewType == PanelViewType::Wide)
     {
         int x = m_ItemsArea.size.width - m_SizeColumWidth;
         NSPoint points[2] = {
@@ -501,7 +501,7 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
         CGContextSetLineWidth(context, 1);
         CGContextStrokeLineSegments(context, points, 2);
     }
-    else if (m_State->ViewType == PanelViewType::ViewFull)
+    else if (m_State->ViewType == PanelViewType::Full)
     {
         int x_pos[3];
         x_pos[0] = m_ItemsArea.size.width - m_TimeColumnWidth;
@@ -660,9 +660,9 @@ ModernPanelViewPresentation::ItemLayout ModernPanelViewPresentation::LayoutItem(
     NSRect filename_rect = NSMakeRect(icon_size + 2*g_TextInsetsInLine[0], 0,
                              column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2],
                              m_FontInfo.LineHeight());
-    if (m_State->ViewType == PanelViewType::ViewFull)
+    if (m_State->ViewType == PanelViewType::Full)
         filename_rect.size.width -= m_TimeColumnWidth + m_DateColumnWidth;
-    if(m_State->ViewType == PanelViewType::ViewWide || m_State->ViewType == PanelViewType::ViewFull)
+    if(m_State->ViewType == PanelViewType::Wide || m_State->ViewType == PanelViewType::Full)
         filename_rect.size.width -= m_SizeColumWidth;
     if(filename_rect.size.width < 0)
         filename_rect.size.width = 0;

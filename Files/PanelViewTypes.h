@@ -12,17 +12,17 @@ class PanelData;
 
 enum class PanelViewType
 {
-    ViewShort,
-    ViewMedium,
-    ViewFull,
-    ViewWide
+    Short   = 0,
+    Medium  = 1,
+    Full    = 2,
+    Wide    = 3
 };
 
 struct PanelViewState
 {
     PanelData       *Data        = nullptr;
     int             CursorPos    = -1;
-    PanelViewType   ViewType     = PanelViewType::ViewMedium;
+    PanelViewType   ViewType     = PanelViewType::Medium;
     int             ItemsDisplayOffset  = 0;
 };
 

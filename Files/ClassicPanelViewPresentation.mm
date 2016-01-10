@@ -244,7 +244,7 @@ static oms::StringBuf<MAXPATHLEN> ComposeFooterFileNameForEntry(const VFSListing
             out.FromUTF8(_dirent.Filename()); // we're on regular panel - just use filename
 
         // we're on non-uniform panel like temporary, will return full path for short and medium view types
-        if( _view_type == PanelViewType::ViewShort || _view_type == PanelViewType::ViewMedium )
+        if( _view_type == PanelViewType::Short || _view_type == PanelViewType::Medium )
             out.FromUTF8(_dirent.Path());
         else
             out.FromUTF8(_dirent.Filename());
@@ -479,21 +479,21 @@ NSRect ClassicPanelViewPresentation::ItemRect(int _item_index) const
     
     int Y = row + 1;
     int X = 1, W = 0;
-    if( m_State->ViewType == PanelViewType::ViewShort ) {
+    if( m_State->ViewType == PanelViewType::Short ) {
         auto widths = ColumnWidthsShort();
         for(int i = 0; i < column; ++i)
             X += widths[i] + 1;
         W = widths[column];
     }
-    else if(m_State->ViewType == PanelViewType::ViewMedium) {
+    else if(m_State->ViewType == PanelViewType::Medium) {
         auto widths = ColumnWidthsMedium();
         for(int i = 0; i < column; ++i)
             X += widths[i] + 1;
         W = widths[column];
     }
-    else if( m_State->ViewType == PanelViewType::ViewFull )
+    else if( m_State->ViewType == PanelViewType::Full )
         W = m_SymbWidth - 2;
-    else if( m_State->ViewType == PanelViewType::ViewWide )
+    else if( m_State->ViewType == PanelViewType::Wide )
         W = m_SymbWidth - 2;
     
     return NSMakeRect(X*m_FontCache->Width(),
@@ -517,21 +517,21 @@ NSRect ClassicPanelViewPresentation::ItemFilenameRect(int _item_index) const
     
     int Y = row + 1;
     int X = 1, W = 0;
-    if( m_State->ViewType == PanelViewType::ViewShort ) {
+    if( m_State->ViewType == PanelViewType::Short ) {
         auto widths = ColumnWidthsShort();
         for(int i = 0; i < column; ++i)
             X += widths[i] + 1;
         W = widths[column];
     }
-    else if(m_State->ViewType == PanelViewType::ViewMedium) {
+    else if(m_State->ViewType == PanelViewType::Medium) {
         auto widths = ColumnWidthsMedium();
         for(int i = 0; i < column; ++i)
             X += widths[i] + 1;
         W = widths[column];
     }
-    else if( m_State->ViewType == PanelViewType::ViewFull )
+    else if( m_State->ViewType == PanelViewType::Full )
         W = ColumnWidthsFull()[0];
-    else if( m_State->ViewType == PanelViewType::ViewWide )
+    else if( m_State->ViewType == PanelViewType::Wide )
         W = ColumnWidthsWide()[0];
     
     return NSMakeRect(X*m_FontCache->Width(),
@@ -560,10 +560,10 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     int entries_in_column = GetMaxItemsPerColumn();
     int max_files_to_show = entries_in_column * columns;
     int column_width = (m_SymbWidth - 1) / columns;
-    if(m_State->ViewType==PanelViewType::ViewWide) column_width = m_SymbWidth - 8;
+    if(m_State->ViewType==PanelViewType::Wide) column_width = m_SymbWidth - 8;
     int columns_rest = m_SymbWidth - 1 - column_width*columns;
     int columns_width[] = {column_width, column_width, column_width};
-    if(m_State->ViewType==PanelViewType::ViewShort && columns_rest) { columns_width[2]++;  columns_rest--; }
+    if(m_State->ViewType==PanelViewType::Short && columns_rest) { columns_width[2]++;  columns_rest--; }
     if(columns_rest) { columns_width[1]++;  columns_rest--; }
     
     int full_fn_column_width = m_SymbWidth - 23; if(full_fn_column_width < 0) full_fn_column_width = 0;
@@ -593,7 +593,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         assert( current );
         auto current_vd = m_State->Data->VolatileDataAtSortPosition(i);
         
-        if( is_listing_uniform || m_State->ViewType == PanelViewType::ViewShort || m_State->ViewType == PanelViewType::ViewMedium ) {
+        if( is_listing_uniform || m_State->ViewType == PanelViewType::Short || m_State->ViewType == PanelViewType::Medium ) {
             if(current.CFDisplayName() == current.CFName())
                 // entry has no altered display name, so just use it's real filename
                 fn.FromUTF8(current.Name(), current.NameLen());
@@ -620,14 +620,14 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         bool focused = (i == m_State->CursorPos) && View().active;
         auto text_color = GetDirectoryEntryTextColor(current, current_vd, focused);
         
-        if(m_State->ViewType != PanelViewType::ViewFull) {
+        if(m_State->ViewType != PanelViewType::Full) {
             if(focused)
                 omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
         
             fn.TrimEllipsisLeft(columns_width[CN] - 1);
             omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
         
-            if(m_State->ViewType==PanelViewType::ViewWide) {
+            if(m_State->ViewType==PanelViewType::Wide) {
                 // draw entry size on right side, only for this mode
                 auto size_info = FormHumanReadableSizeReprentationForDirEnt(current, current_vd);
             
@@ -697,7 +697,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         }
 
         // entry footer info
-        if(current_entry && m_State->ViewType != PanelViewType::ViewFull)
+        if(current_entry && m_State->ViewType != PanelViewType::Full)
         {
             if(m_SymbWidth > 2 + 14 + 6)
             {   // draw current entry time info, size info and maybe filename
@@ -789,11 +789,11 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     b.put(u'╗', m_SymbWidth-1, 0);
     for(int i = 1; i < m_SelectionVPos; ++i)
     {
-        if(m_State->ViewType != PanelViewType::ViewFull)
+        if(m_State->ViewType != PanelViewType::Full)
             b.put(u'│', columns_width[0], i);
-        if(m_State->ViewType == PanelViewType::ViewShort)
+        if(m_State->ViewType == PanelViewType::Short)
             b.put(u'│', columns_width[0]+columns_width[1], i);
-        else if(m_State->ViewType == PanelViewType::ViewFull) {
+        else if(m_State->ViewType == PanelViewType::Full) {
             if(full_column_fr_pos[0] > 0)
                 b.put(u'│', full_column_fr_pos[0], i);
             if(full_column_fr_pos[1] > 0)
@@ -805,10 +805,10 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     for(int i = 1; i < m_SymbWidth - 1; ++i)
     {
         bool is_col = false;
-        if(m_State->ViewType != PanelViewType::ViewFull &&
+        if(m_State->ViewType != PanelViewType::Full &&
            ((i == columns_width[0]) || (i == columns_width[0] + columns_width[1])))
             is_col = true;
-        else if(m_State->ViewType == PanelViewType::ViewFull &&
+        else if(m_State->ViewType == PanelViewType::Full &&
             ((i == full_column_fr_pos[0]) || (i == full_column_fr_pos[1]) || (i == full_column_fr_pos[2])))
             is_col = true;
         

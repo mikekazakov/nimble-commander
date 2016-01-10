@@ -98,7 +98,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     [self.leftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
     [self.rightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
     
-    [self savePanelsOptions];
+    [self markRestorableStateAsInvalid];
 }
 
 - (IBAction)OnShowTerminal:(id)sender

@@ -102,14 +102,14 @@ static AppDelegate *g_Me = nil;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         
-        NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
-        NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
-        [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
-        auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
-        if((NSEvent.modifierFlags & erase_mask) == erase_mask) {
-            [self askToResetDefaults];
-            exit(0);
-        }
+//        NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
+//        NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
+//        [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
+//        auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
+//        if((NSEvent.modifierFlags & erase_mask) == erase_mask) {
+//            [self askToResetDefaults];
+//            exit(0);
+//        }
         
         [self setupConfigDirectory];
         g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].UTF8String, self.configDirectory + "Config.json");

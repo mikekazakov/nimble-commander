@@ -7,9 +7,10 @@
 //
 #pragma once
 
-#import "PanelViewTypes.h"
-#import "vfs/VFS.h"
-#import "FPSLimitedDrawer.h"
+#include "vfs/VFS.h"
+#include "PanelViewTypes.h"
+#include "FPSLimitedDrawer.h"
+#include "Common.h"
 
 @class PanelView;
 class PanelData;
@@ -74,6 +75,8 @@ struct PanelVolatileData;
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
+- (rapidjson::StandaloneValue) encodeRestorableState;
+- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
 - (void) SavePathState;
 - (void) LoadPathState;

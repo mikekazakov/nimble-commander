@@ -40,7 +40,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent, Pa
             return _dirent.NSName(); // we're on regular panel - just return filename
         
         // we're on non-uniform panel like temporary, will return full path for short and medium view types
-        if( _view_type == PanelViewType::ViewShort || _view_type == PanelViewType::ViewMedium )
+        if( _view_type == PanelViewType::Short || _view_type == PanelViewType::Medium )
             return [NSString stringWithUTF8StdString:_dirent.Path()];
         else
             return _dirent.NSName();
@@ -165,7 +165,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current
     }
     else if(_current_entry)
     {
-        if (_view_type != PanelViewType::ViewFull)
+        if (_view_type != PanelViewType::Full)
         {
             [m_ItemDateStr drawWithRect:NSMakeRect(_width - gap - m_DateTimeWidth, text_y_off, m_DateTimeWidth, m_FontHeight)
                                 options:0];
@@ -174,7 +174,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current
         }
         
         double name_width = _width - 2.*gap;
-        if (_view_type != PanelViewType::ViewFull)
+        if (_view_type != PanelViewType::Full)
             name_width -= m_DateTimeWidth + m_SizeWidth;
         
         if(name_width > 0.)

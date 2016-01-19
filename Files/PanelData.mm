@@ -334,18 +334,20 @@ string PanelData::VerboseDirectoryFullPath() const
 struct SortPredLessBase
 {
 protected:
-    const VFSListing&       l;
-    const vector<PanelVolatileData>&vd;
-    PanelSortMode                   sort_mode;
-    CFStringCompareFlags            str_comp_flags;
+    const VFSListing&                       l;
+    const vector<PanelVolatileData>&        vd;
+    const PanelSortMode                     sort_mode;
+    const CFStringCompareFlags              str_comp_flags;
+    typedef int (*CompareExtensionsT)(const char *, const char *);
+    const CompareExtensionsT                compare_extensions;
 public:
-    SortPredLessBase(const VFSListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode sort_mode):
+    SortPredLessBase(const VFSListing &_items, const vector<PanelVolatileData>& _vd, PanelSortMode _sort_mode):
         l(_items),
         vd(_vd),
-        sort_mode(sort_mode)
+        sort_mode{ _sort_mode },
+        compare_extensions{ _sort_mode.case_sens ? strcmp : strcasecmp},
+        str_comp_flags{ (_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) | (_sort_mode.numeric_sort ? kCFCompareNumerically : 0) }
     {
-        str_comp_flags = (sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-        (sort_mode.numeric_sort ? kCFCompareNumerically : 0);
     }
 };
 
@@ -373,7 +375,7 @@ struct SortPredLessIndToInd : public SortPredLessBase
                 return by_name() > 0;
             case _::SortByExt:
                 if( l.HasExtension(_1) && l.HasExtension(_2) ) {
-                    int r = strcmp(l.Extension(_1), l.Extension(_2));
+                    int r = compare_extensions(l.Extension(_1), l.Extension(_2));
                     if(r < 0) return true;
                     if(r > 0) return false;
                     return by_name() < 0;
@@ -383,7 +385,7 @@ struct SortPredLessIndToInd : public SortPredLessBase
                 return by_name() < 0; // fallback case
             case _::SortByExtRev:
                 if( l.HasExtension(_1) && l.HasExtension(_2) ) {
-                    int r = strcmp(l.Extension(_1), l.Extension(_2));
+                    int r = compare_extensions(l.Extension(_1), l.Extension(_2));
                     if(r < 0) return false;
                     if(r > 0) return true;
                     return by_name() > 0;
@@ -449,7 +451,7 @@ struct SortPredLessIndToKeys : public SortPredLessBase
             case _::SortByNameRev: return by_name() > 0;
             case _::SortByExt:
                 if( l.HasExtension(_1) && !_val2.extension.empty() ) {
-                    int r = strcmp(l.Extension(_1), _val2.extension.c_str());
+                    int r = compare_extensions(l.Extension(_1), _val2.extension.c_str());
                     if(r < 0) return true;
                     if(r > 0) return false;
                     return by_name() < 0;
@@ -459,7 +461,7 @@ struct SortPredLessIndToKeys : public SortPredLessBase
                 return by_name() < 0; // fallback case
             case _::SortByExtRev:
                 if( l.HasExtension(_1) && !_val2.extension.empty() ) {
-                    int r = strcmp(l.Extension(_1), _val2.extension.c_str());
+                    int r = compare_extensions(l.Extension(_1), _val2.extension.c_str());
                     if(r < 0) return false;
                     if(r > 0) return true;
                     return by_name() > 0;

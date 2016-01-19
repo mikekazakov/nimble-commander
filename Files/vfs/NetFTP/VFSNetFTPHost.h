@@ -26,6 +26,10 @@ public:
     static  const char *Tag;
     static VFSMeta Meta();
     virtual VFSConfiguration Configuration() const override;    
+
+    const string &ServerUrl() const noexcept;
+    const string &User() const noexcept;
+    long Port() const noexcept;
     
     // core VFSHost methods
     virtual int FetchFlexibleListing(const char *_path,
@@ -99,7 +103,7 @@ private:
     void InformDirectoryChanged(const string &_dir_wth_sl);
     
     void BasicOptsSetup(VFSNetFTP::CURLInstance *_inst);
-    const class VFSNetFTPHostConfiguration &Config() const;
+    const class VFSNetFTPHostConfiguration &Config() const noexcept;
     
     unique_ptr<VFSNetFTP::Cache>        m_Cache;
     unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;

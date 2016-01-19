@@ -718,3 +718,23 @@ int VFSNetSFTPHost::VFSErrorForConnection(Connection &_conn) const
     }
     return NetSFTPErrorSSH;
 }
+
+const string& VFSNetSFTPHost::ServerUrl() const noexcept
+{
+    return Config().server_url;
+}
+
+const string& VFSNetSFTPHost::User() const noexcept
+{
+    return Config().user;
+}
+
+const string& VFSNetSFTPHost::Keypath() const noexcept
+{
+    return Config().keypath;
+}
+
+long VFSNetSFTPHost::Port() const noexcept
+{
+    return Config().port;
+}

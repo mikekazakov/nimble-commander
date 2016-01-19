@@ -25,7 +25,9 @@ Host info:
 {
 type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
               // perhaps "archive" in the future, when more of them will come and some dedicated "ArchiveManager" will appear
-optional: junction: "path" 
+
+// for xattr, archives
+junction: "path"
 
 // for network:
 uuid: "uuid"

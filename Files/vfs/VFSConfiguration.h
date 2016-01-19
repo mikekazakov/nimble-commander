@@ -61,7 +61,7 @@ public:
     }
 
     template <class T>
-    const T &GetUnchecked() const
+    const T &GetUnchecked() const noexcept
     {
         return static_cast<const Model<T>*>( m_Object.get() )->obj;
     }

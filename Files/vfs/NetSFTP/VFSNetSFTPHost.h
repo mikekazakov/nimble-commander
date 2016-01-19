@@ -32,6 +32,10 @@ public:
     VFSNetSFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
     
     const string& HomeDir() const;
+    const string& ServerUrl() const noexcept;
+    const string& User() const noexcept;
+    const string& Keypath() const noexcept;
+    long          Port() const noexcept;
 
     // core VFSHost methods
     virtual bool IsWriteable() const override;

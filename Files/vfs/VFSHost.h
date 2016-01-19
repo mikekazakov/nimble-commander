@@ -65,7 +65,7 @@ public:
     /**
      * Returns a path of a filesystem root.
      * It may be a filepath for archive or network address for remote filesystem
-     * or even zero thing for special virtual filesystems.
+     * or even "" for special virtual filesystems or for native filesystem.
      */
     const char *JunctionPath() const noexcept;
     const VFSHostPtr& Parent() const noexcept;

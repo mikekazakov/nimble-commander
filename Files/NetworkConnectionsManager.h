@@ -3,6 +3,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 #include "Config.h"
+#include "vfs/VFS.h"
 
 class NetworkConnectionsManager
 {
@@ -18,6 +19,7 @@ public:
     static boost::uuids::uuid MakeUUID();
 
     optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const;
+    optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const;    
     
     void InsertConnection( const Connection &_connection );
     void RemoveConnection( const Connection &_connection );
@@ -30,9 +32,11 @@ public:
     
     
     bool SetPassword(const Connection &_conn, const string& _password);
-    bool GetPassword(const Connection &_conn, string& _password);
+    bool GetPassword(const Connection &_conn, string& _password) const;
     
     string TitleForConnection(const Connection &_conn) const;
+    
+    VFSHostPtr SpawnHostFromConnection(const Connection &_conn);
     
 private:
     void Save();

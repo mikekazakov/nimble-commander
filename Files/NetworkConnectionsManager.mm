@@ -7,6 +7,8 @@
 #include "NetworkConnectionsManager.h"
 #include "KeychainServices.h"
 #include "Common.h"
+#include "vfs/vfs_net_ftp.h"
+#include "vfs/vfs_net_sftp.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";
@@ -303,9 +305,61 @@ bool NetworkConnectionsManager::SetPassword(const Connection &_conn, const strin
                                                     _password);
 }
 
-bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password)
+bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password) const
 {
     return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
                                                     KeychainAccountFromConnection(_conn),
                                                     _password);
+}
+
+optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::ConnectionForVFS(const VFSHost& _vfs) const
+{
+    if( auto ftp = dynamic_cast<const VFSNetFTPHost*>(&_vfs) ) {
+        LOCK_GUARD(m_Lock) {
+            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
+                if( auto p = i.Cast<FTPConnection>() )
+                    return p->host == ftp->ServerUrl() && p->user == ftp->User() && p->port == ftp->Port();
+                return false;
+            } );
+            if( it != end(m_Connections) )
+                return *it;
+        }
+    }
+    else if( auto sftp = dynamic_cast<const VFSNetSFTPHost*>(&_vfs) ) {
+        LOCK_GUARD(m_Lock) {
+            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
+                if( auto p = i.Cast<SFTPConnection>() )
+                    return p->host == sftp->ServerUrl() && p->user == sftp->User() && p->keypath == sftp->Keypath() && p->port == sftp->Port();
+                return false;
+            });
+            if( it != end(m_Connections) )
+                return *it;
+        }
+    }
+    return nullopt;
+}
+
+VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection)
+{
+    string passwd;
+    if( !GetPassword(_connection, passwd) )
+        return nullptr;
+
+    // TODO: user-interactive password asking if it wasn't found
+    
+    try {
+        VFSHostPtr host;
+        if( auto *ftp = _connection.Cast<FTPConnection>() )
+            host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
+        if( auto *sftp = _connection.Cast<SFTPConnection>() )
+            host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
+        
+        if( host ) {
+            ReportUsage(_connection);
+            return host;
+        }
+    }
+    catch (VFSErrorException &ee) {
+    }
+    return nullptr;
 }

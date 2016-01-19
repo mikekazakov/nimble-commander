@@ -98,7 +98,7 @@ VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
         throw VFSErrorException(rc);
 }
 
-const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const
+const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const noexcept
 {
     return m_Configuration.GetUnchecked<VFSNetFTPHostConfiguration>();
 }
@@ -695,4 +695,19 @@ int VFSNetFTPHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker 
     _stat.avail_bytes = _stat.free_bytes = _stat.total_bytes = 0;
     _stat.volume_name = JunctionPath();
     return 0;
+}
+
+const string &VFSNetFTPHost::ServerUrl() const noexcept
+{
+    return Config().server_url;
+}
+
+const string &VFSNetFTPHost::User() const noexcept
+{
+    return Config().user;
+}
+
+long VFSNetFTPHost::Port() const noexcept
+{
+    return Config().port;
 }

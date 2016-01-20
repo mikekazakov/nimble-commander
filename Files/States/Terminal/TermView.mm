@@ -6,15 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../OrthodoxMonospace.h"
+#include "../../FontCache.h"
+#include "../../Common.h"
+#include "../../BlinkingCaret.h"
+#include "../../HexadecimalColor.h"
+#include "../../Config.h"
 #include "TermView.h"
-#include "OrthodoxMonospace.h"
-#include "FontCache.h"
 #include "TermScreen.h"
 #include "TermParser.h"
-#include "Common.h"
-#include "BlinkingCaret.h"
-#include "HexadecimalColor.h"
-#include "Config.h"
 
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";

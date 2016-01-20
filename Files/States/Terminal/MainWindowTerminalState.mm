@@ -6,18 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "MainWindowTerminalState.h"
-#import "TermShellTask.h"
-#import "TermScreen.h"
-#import "TermParser.h"
-#import "TermView.h"
-#import "TermScrollView.h"
-#import "MainWindowController.h"
-#import "ActionsShortcutsManager.h"
-
-
-#import "Common.h"
+#include <Habanero/CommonPaths.h>
+#include "../../MainWindowController.h"
+#include "../../ActionsShortcutsManager.h"
+#include "../../Common.h"
+#include "MainWindowTerminalState.h"
+#include "TermShellTask.h"
+#include "TermScreen.h"
+#include "TermParser.h"
+#include "TermView.h"
+#include "TermScrollView.h"
 
 @implementation MainWindowTerminalState
 {

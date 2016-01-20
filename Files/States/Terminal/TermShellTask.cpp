@@ -18,9 +18,9 @@
 #include <termios.h>
 #include <string.h>
 #include <libproc.h>
+#include "../../Common.h"
+#include "../../sysinfo.h"
 #include "TermShellTask.h"
-#include "Common.h"
-#include "sysinfo.h"
 
 static const char *g_ShellProg     = "/bin/bash";
 static       char *g_ShellParam[2] = {(char*)"-L", 0};

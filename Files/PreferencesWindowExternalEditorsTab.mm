@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ExternalEditorInfo.h"
-#import "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
-#import "PreferencesWindowExternalEditorsTab.h"
+#include "ExternalEditorInfo.h"
+#include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
+#include "PreferencesWindowExternalEditorsTab.h"
 
 #define MyPrivateTableViewDataType @"PreferencesWindowExternalEditorsTabPrivateTableViewDataType"
 

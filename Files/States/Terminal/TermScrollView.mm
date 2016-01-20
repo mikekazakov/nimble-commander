@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../FontCache.h"
+#include "../../Common.h"
+#include "../../Config.h"
 #include "TermScrollView.h"
-#include "FontCache.h"
 #include "TermParser.h"
-#include "Common.h"
-#include "Config.h"
 
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 static const auto g_ConfigFont = "terminal.font";

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-
-#import "FPSLimitedDrawer.h"
+#pragma once
+#include "../../FPSLimitedDrawer.h"
 
 class TermScreen;
 class TermParser;

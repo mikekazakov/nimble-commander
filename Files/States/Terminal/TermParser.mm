@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../Common.h"
+#include "../../OrthodoxMonospace.h"
+#include "../../FontCache.h"
 #include "TermParser.h"
 #include "TermScreen.h"
-#include "Common.h"
-#include "OrthodoxMonospace.h"
-#include "FontCache.h"
 
 #define GRAF_MAP  1
 #define LAT1_MAP  0

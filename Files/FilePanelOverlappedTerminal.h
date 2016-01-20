@@ -6,9 +6,9 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
 
-#import "TermShellTask.h"
+#include "States/Terminal/TermShellTask.h"
 
 @interface FilePanelOverlappedTerminal : NSView
 

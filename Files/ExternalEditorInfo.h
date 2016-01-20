@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
 #include "vfs/VFS.h"
 
 @interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>

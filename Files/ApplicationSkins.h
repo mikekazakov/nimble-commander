@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 enum class ApplicationSkin
 {
     Classic = 0,

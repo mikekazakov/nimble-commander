@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../FontCache.h"
+#include "../../OrthodoxMonospace.h"
 #include "TermScreen.h"
-#include "FontCache.h"
-#include "OrthodoxMonospace.h"
 
 TermScreen::TermScreen(unsigned _w, unsigned _h):
     m_Buffer(_w, _h)

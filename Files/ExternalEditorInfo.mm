@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "ExternalEditorInfo.h"
-#import "FileMask.h"
-#import "TermSingleTask.h"
+#include "3rd_party/NSFileManager+DirectoryLocations.h"
+#include "States/Terminal/TermSingleTask.h"
+#include "FileMask.h"
+#include "ExternalEditorInfo.h"
 
 static NSString *g_FileName = @"/externaleditors.bplist"; // bplist file name
 

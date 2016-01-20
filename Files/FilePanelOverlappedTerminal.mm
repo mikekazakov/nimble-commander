@@ -6,15 +6,15 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "TermShellTask.h"
-#import "TermScreen.h"
-#import "TermParser.h"
-#import "TermView.h"
-#import "TermScrollView.h"
-#import "FontCache.h"
-#import "Common.h"
-#import "FilePanelOverlappedTerminal.h"
+#include <Habanero/CommonPaths.h>
+#include "States/Terminal/TermShellTask.h"
+#include "States/Terminal/TermScreen.h"
+#include "States/Terminal/TermParser.h"
+#include "States/Terminal/TermView.h"
+#include "States/Terminal/TermScrollView.h"
+#include "FontCache.h"
+#include "Common.h"
+#include "FilePanelOverlappedTerminal.h"
 
 static const auto g_BashPromptInputDelay = 10ms;
 static const auto g_TaskStartInputDelay = 50ms;

@@ -6,16 +6,15 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "TermSingleTask.h"
-#import "TermScreen.h"
-#import "TermParser.h"
-#import "TermView.h"
-#import "FontCache.h"
-#import "Common.h"
-#import "MainWindowController.h"
-#import "MainWindowExternalTerminalEditorState.h"
-
-#import "TermScrollView.h"
+#include "../../FontCache.h"
+#include "../../Common.h"
+#include "../../MainWindowController.h"
+#include "TermSingleTask.h"
+#include "TermScreen.h"
+#include "TermParser.h"
+#include "TermView.h"
+#include "TermScrollView.h"
+#include "MainWindowExternalTerminalEditorState.h"
 
 @implementation MainWindowExternalTerminalEditorState
 {

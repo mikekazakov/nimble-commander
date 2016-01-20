@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "ApplicationSkins.h"
+#pragma once
 
+#include "ApplicationSkins.h"
 
 @class MainWindowController;
 @class MyToolbar;

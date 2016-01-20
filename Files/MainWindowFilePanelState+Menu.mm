@@ -21,7 +21,7 @@
 #include "PanelController.h"
 #include "FilePanelMainSplitView.h"
 #include "Common.h"
-#include "ExternalEditorInfo.h"
+//#include "ExternalEditorInfo.h"
 #include "MainWindowController.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";

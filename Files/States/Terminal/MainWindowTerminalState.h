@@ -6,9 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
-#import "MainWindowStateProtocol.h"
+#pragma once
+#include "../../MainWindowStateProtocol.h"
 
 @interface MainWindowTerminalState : NSView<MainWindowStateProtocol>
 

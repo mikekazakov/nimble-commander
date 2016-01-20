@@ -33,9 +33,11 @@
 		CF86292C1B96C79700B33CFD /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF86292B1B96C79700B33CFD /* VariableContainer_Tests.mm */; };
 		CF86293D1B986C4300B33CFD /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86293B1B986C4300B33CFD /* CFString.cpp */; };
 		CF86293E1B986C4300B33CFD /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CF86293C1B986C4300B33CFD /* CFString.h */; };
-		CFB517F71BDE529C000AAE89 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517F51BDE529C000AAE89 /* KVO.cpp */; settings = {ASSET_TAGS = (); }; };
-		CFB517F81BDE529C000AAE89 /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB517F61BDE529C000AAE89 /* KVO.h */; settings = {ASSET_TAGS = (); }; };
-		CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE14A661BCA982400CD7B92 /* spinlock.h */; settings = {ASSET_TAGS = (); }; };
+		CFB517F71BDE529C000AAE89 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517F51BDE529C000AAE89 /* KVO.cpp */; };
+		CFB517F81BDE529C000AAE89 /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB517F61BDE529C000AAE89 /* KVO.h */; };
+		CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE14A661BCA982400CD7B92 /* spinlock.h */; };
+		CFED5A021C4F676700BFCB5C /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A001C4F676700BFCB5C /* debug.cpp */; };
+		CFED5A031C4F676700BFCB5C /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CFED5A011C4F676700BFCB5C /* debug.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +83,8 @@
 		CFB517F51BDE529C000AAE89 /* KVO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KVO.cpp; sourceTree = "<group>"; };
 		CFB517F61BDE529C000AAE89 /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KVO.h; sourceTree = "<group>"; };
 		CFE14A661BCA982400CD7B92 /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spinlock.h; sourceTree = "<group>"; };
+		CFED5A001C4F676700BFCB5C /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
+		CFED5A011C4F676700BFCB5C /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +155,8 @@
 				CF2D2F6A1B8B2BBD00111C75 /* IdleSleepPreventer.cpp */,
 				CF86293C1B986C4300B33CFD /* CFString.h */,
 				CF86293B1B986C4300B33CFD /* CFString.cpp */,
+				CFED5A011C4F676700BFCB5C /* debug.h */,
+				CFED5A001C4F676700BFCB5C /* debug.cpp */,
 			);
 			path = Habanero;
 			sourceTree = "<group>";
@@ -201,6 +207,7 @@
 				CF2D2F8C1B8B5DD700111C75 /* CommonPaths.h in Headers */,
 				CF86293E1B986C4300B33CFD /* CFString.h in Headers */,
 				CF2D2F761B8B385C00111C75 /* tiny_string.h in Headers */,
+				CFED5A031C4F676700BFCB5C /* debug.h in Headers */,
 				CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -294,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF2D2F791B8B3BC000111C75 /* Hash.cpp in Sources */,
+				CFED5A021C4F676700BFCB5C /* debug.cpp in Sources */,
 				CF2D2F8B1B8B5DD700111C75 /* CommonPaths.cpp in Sources */,
 				CF2D2F851B8B47B700111C75 /* FontExtras.cpp in Sources */,
 				CF8629291B96BAFF00B33CFD /* variable_container.cpp in Sources */,

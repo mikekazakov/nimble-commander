@@ -86,6 +86,12 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
             return move(json);
         }
     }
+    else if( tag == VFSArchiveHost::Tag ||
+             tag == VFSArchiveUnRARHost::Tag ) {
+        json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
+        json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
+        return move(json);
+    }
     return nullopt;
 }
 
@@ -133,6 +139,24 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                     }
                     else
                         return VFSError::GenericError; // failed to find connection by uuid
+                }
+                else if( tag == VFSArchiveHost::Tag ) {
+                    if( !has_string(g_HostInfoJunctionKey) )
+                        return VFSError::GenericError; // invalid data
+                    if( vfs.size() < 1 )
+                        return VFSError::GenericError; // invalid data
+                    
+                    auto host = make_shared<VFSArchiveHost>( h[g_HostInfoJunctionKey].GetString(), vfs.back() );
+                    vfs.emplace_back( host );
+                }
+                else if( tag == VFSArchiveUnRARHost::Tag ) {
+                    if( !has_string(g_HostInfoJunctionKey) )
+                        return VFSError::GenericError; // invalid data
+                    if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
+                        return VFSError::GenericError; // invalid data
+                    
+                    auto host = make_shared<VFSArchiveUnRARHost>( h[g_HostInfoJunctionKey].GetString() );
+                    vfs.emplace_back( host );
                 }
                 // ...
             }

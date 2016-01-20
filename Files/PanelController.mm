@@ -811,17 +811,21 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             [m_View loadRestorableState:_state[g_RestorationViewKey]];
         
         if( _state.HasMember(g_RestorationDataKey) ) {
-            auto &data = _state[g_RestorationDataKey];
-            VFSHostPtr host;
-            // this should be async:
-            if( PanelDataPersisency::CreateVFSFromState(data, host) == VFSError::Ok ) {
-                string path = PanelDataPersisency::GetPathFromState(data);
-                
-                auto context = make_shared<PanelControllerGoToDirContext>();
-                context->VFS = host;
-                context->RequestedDirectory = path;
-                [self GoToDirWithContext:context];
-            }
+            auto data = make_shared<rapidjson::StandaloneValue>();
+            data->CopyFrom(_state[g_RestorationDataKey], rapidjson::g_CrtAllocator);
+            m_DirectoryLoadingQ->Run([=]{
+                VFSHostPtr host;
+                if( PanelDataPersisency::CreateVFSFromState(*data, host) == VFSError::Ok ) {
+                    string path = PanelDataPersisency::GetPathFromState(*data);
+                    dispatch_to_main_queue([=]{
+                        auto context = make_shared<PanelControllerGoToDirContext>();
+                        context->VFS = host;
+                        context->PerformAsynchronous = true;
+                        context->RequestedDirectory = path;
+                        [self GoToDirWithContext:context];
+                    });
+                }
+            });
         }
         return true;
     }

@@ -727,14 +727,6 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     [self saveOverlappedTerminalSettings];
 }
 
-//- (void)SavePanelPaths
-//{
-//    if(PanelController *pc = self.leftPanelController)
-//        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"FirstPanelPath"];
-//    if(PanelController *pc = self.rightPanelController)
-//        [NSUserDefaults.standardUserDefaults setObject:[NSString stringWithUTF8String:pc.lastNativeDirectoryPath.c_str()] forKey:@"SecondPanelPath"];
-//}
-
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
     if (m_OperationsController.OperationsCount == 0 &&

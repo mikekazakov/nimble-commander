@@ -88,9 +88,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
 - (void) markRestorableStateAsInvalid;
 
-//- (void) savePanelOptionsFor:(PanelController*)_pc;
-
-
 /**
  * Return currently active file panel if any.
  */
@@ -141,7 +138,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @interface MainWindowFilePanelState ()
 
-//- (void)savePanelsOptions;
 - (void)updateBottomConstraint;
 
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc;

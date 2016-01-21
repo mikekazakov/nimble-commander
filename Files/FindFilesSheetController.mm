@@ -174,7 +174,10 @@ private:
     NSTimer                    *m_BatchDrainTimer;
     SerialQueue                 m_BatchQueue;
     DispatchGroup               m_StatGroup;
-    
+
+    string                      m_LookingInPath;
+    spinlock                    m_LookingInPathGuard;
+    NSTimer                    *m_LookingInPathUpdateTimer;
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
     void                        (^m_Handler)();
@@ -318,6 +321,10 @@ private:
         m_BatchDrainTimer = nil;
         self.SearchButton.state = NSOffState;
   
+        [m_LookingInPathUpdateTimer invalidate];
+        m_LookingInPathUpdateTimer = nil;
+        self.LookingIn.stringValue = @"";
+        
         if( [self.ArrayController.arrangedObjects count] > 0 )
             [self.window makeFirstResponder:self.TableView];
     });
@@ -389,10 +396,10 @@ private:
     if(self.SearchForDirsButton.intValue)
         search_options |= FileSearch::Options::SearchForDirs;
     
-    bool r = m_FileSearch->Go(m_Path.c_str(),
+    bool r = m_FileSearch->Go(m_Path,
                               m_Host,
                               search_options,
-                              ^(const char *_filename, const char *_in_path, CFRange _cont_pos){
+                              [=](const char *_filename, const char *_in_path, CFRange _cont_pos){
                                   FindFilesSheetControllerFoundItem it;
                                   it.filename = _filename;
                                   it.dir_path = _in_path;
@@ -423,8 +430,12 @@ private:
                                   if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
                                       m_FileSearch->Stop(); // gorshochek, ne vari!!!
                               },
-                              ^{
+                              [=]{
                                   [self OnFinishedSearch];
+                              },
+                              [=](const char *_path) {
+                                  LOCK_GUARD(m_LookingInPathGuard)
+                                    m_LookingInPath = _path;
                               }
                               );
     if(r) {
@@ -435,10 +446,25 @@ private:
                                                            userInfo:nil
                                                             repeats:YES];
         [m_BatchDrainTimer setSafeTolerance];
+
+        m_LookingInPathUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
+                                                             target:self
+                                                           selector:@selector(updateLookingInByTimer:)
+                                                           userInfo:nil
+                                                            repeats:YES];
+        [m_LookingInPathUpdateTimer setSafeTolerance];
     }
     else {
         self.SearchButton.state = NSOffState;
     }
+}
+
+- (void)updateLookingInByTimer:(NSTimer*)theTimer
+{
+    NSString *new_title;
+    LOCK_GUARD(m_LookingInPathGuard)
+        new_title = [NSString stringWithUTF8StdString:m_LookingInPath];
+    self.LookingIn.stringValue = new_title;
 }
 
 - (void) UpdateByTimer:(NSTimer*)theTimer

@@ -22,19 +22,22 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     return encodings::FromComAppleTextEncodingXAttr(buf);
 }
 
-FileSearch::FileSearch():
-    m_FilterName(nullptr),
-    m_Queue(SerialQueueT::Make())
+FileSearch::FileSearch()
 {
-    m_Queue->OnDry(^{
-        auto tmp = m_FinishCallback;
-        m_FinishCallback = nil;
-        m_Callback = nil;
+    m_Queue->OnDry([=]{
+        m_Callback = nullptr;
+        m_LookingInCallback = nullptr;
         m_SearchOptions = 0;
-        
-        if(tmp)
-            tmp();
+        if( m_FinishCallback ) {
+            m_FinishCallback();
+            m_FinishCallback = nullptr;
+        }
     });
+}
+
+FileSearch::~FileSearch()
+{
+    Wait();
 }
 
 void FileSearch::SetFilterName(FilterName *_filter)
@@ -59,24 +62,27 @@ void FileSearch::SetFilterContent(FilterContent *_filter)
         m_FilterContent.reset( new FilterContent(*_filter));
 }
 
-bool FileSearch::Go(string _from_path,
-                    shared_ptr<VFSHost> _in_host,
+bool FileSearch::Go(const string &_from_path,
+                    const VFSHostPtr &_in_host,
                     int _options,
                     FoundCallBack _found_callback,
-                    FinishCallBack _finish_callback)
+                    function<void()> _finish_callback,
+                    function<void(const char*)> _looking_in_callback
+                    )
 {
     if(IsRunning())
         return false;
         
-    assert(m_Callback == nil);
+    assert( !m_Callback );
     
-    m_Callback = _found_callback;
-    m_FinishCallback = _finish_callback;
+    m_Callback = move(_found_callback);
+    m_FinishCallback = move(_finish_callback);
+    m_LookingInCallback = move(_looking_in_callback);
     m_SearchOptions = _options;
-    m_DirsFIFO.clear();
+    m_DirsFIFO = {};
     
     m_Queue->Run([=]{
-        AsyncProcPrologue(_from_path, _in_host);
+        AsyncProc( _from_path.c_str(), *_in_host );
     });
     
     return true;
@@ -92,24 +98,26 @@ void FileSearch::Wait()
     m_Queue->Wait();
 }
 
-void FileSearch::AsyncProcPrologue(string _from_path, shared_ptr<VFSHost> _in_host)
+void FileSearch::NotifyLookingIn(const char* _path) const
 {
-    AsyncProc(_from_path.c_str(), _in_host.get());
+    if( m_LookingInCallback )
+        m_LookingInCallback(_path);
 }
 
-void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
+void FileSearch::AsyncProc(const char *_from_path, VFSHost &_in_host)
 {
-    m_DirsFIFO.emplace_front(_from_path);
+    m_DirsFIFO.emplace(_from_path);
     
-    while(!m_DirsFIFO.empty())
-    {
-        if(m_Queue->IsStopped())
+    while( !m_DirsFIFO.empty() ) {
+        if( m_Queue->IsStopped() )
             break;
         
-        string path = m_DirsFIFO.front();
-        m_DirsFIFO.pop_front();
+        string path = move( m_DirsFIFO.front() );
+        m_DirsFIFO.pop();
         
-        _in_host->IterateDirectoryListing(path.c_str(),
+        NotifyLookingIn( path.c_str() );
+        
+        _in_host.IterateDirectoryListing(path.c_str(),
                                       [&](const VFSDirEnt &_dirent)
                                       {
                                           if(m_Queue->IsStopped())
@@ -132,7 +140,7 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost *_in_host)
 void FileSearch::ProcessDirent(const char* _full_path,
                                const char* _dir_path,
                                const VFSDirEnt &_dirent,
-                               VFSHost *_in_host
+                               VFSHost &_in_host
                                )
 {
     bool failed_filtering = false;
@@ -154,7 +162,7 @@ void FileSearch::ProcessDirent(const char* _full_path,
     if(failed_filtering == false && m_FilterSize) {
         if(_dirent.type == VFSDirEnt::Reg) {
             VFSStat st;
-            if(_in_host->Stat(_full_path, st, 0, 0) == 0) {
+            if(_in_host.Stat(_full_path, st, 0, 0) == 0) {
                 if(st.size < m_FilterSize->min ||
                    st.size > m_FilterSize->max )
                     failed_filtering = true;
@@ -177,23 +185,21 @@ void FileSearch::ProcessDirent(const char* _full_path,
     if(failed_filtering == false)
         ProcessValidEntry(_full_path, _dir_path, _dirent, _in_host, content_pos);
     
-    if(m_SearchOptions & Options::GoIntoSubDirs)
-    {
-        if(_dirent.type == VFSDirEnt::Dir)
-        {
-            m_DirsFIFO.emplace_back(_full_path);
-        }
-    }
+    if( m_SearchOptions & Options::GoIntoSubDirs )
+        if( _dirent.type == VFSDirEnt::Dir )
+            m_DirsFIFO.emplace(_full_path);
 }
 
-bool FileSearch::FilterByContent(const char* _full_path, VFSHost *_in_host, CFRange &_r)
+bool FileSearch::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
 {
     VFSFilePtr file;
-    if(_in_host->CreateFile(_full_path, file, 0) != 0)
+    if(_in_host.CreateFile(_full_path, file, 0) != 0)
         return false;
     
     if(file->Open(VFSFlags::OF_Read) != 0)
         return false;
+    
+    NotifyLookingIn( _full_path );
     
     FileWindow fw;
     if(fw.OpenFile(file) != 0 )
@@ -237,7 +243,7 @@ bool FileSearch::FilterByFilename(const char* _filename)
 void FileSearch::ProcessValidEntry(const char* _full_path,
                        const char* _dir_path,
                        const VFSDirEnt &_dirent,
-                       VFSHost *_in_host,
+                       VFSHost &_in_host,
                        CFRange _cont_range)
 {
     if(m_Callback)

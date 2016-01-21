@@ -38,6 +38,7 @@ struct FindFilesSheetControllerFoundItem
 @property (strong) IBOutlet NSComboBox *MaskComboBox;
 @property (strong) IBOutlet NSComboBox *TextComboBox;
 @property (strong) IBOutlet NSButton *ViewButton;
+@property (strong) IBOutlet NSTextField *LookingIn;
 
 @property (strong) IBOutlet NSTableView *TableView;
 @property (strong) IBOutlet NSButton *CaseSensitiveButton;

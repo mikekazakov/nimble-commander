@@ -40,26 +40,36 @@ FileSearch::~FileSearch()
     Wait();
 }
 
-void FileSearch::SetFilterName(FilterName *_filter)
+void FileSearch::SetFilterName(const FilterName &_filter)
 {
-    if(_filter == nullptr)
-    {
-        m_FilterName.reset();
-        m_FilterNameMask.reset();
-    }
-    else
-    {
-        m_FilterName.reset(new FilterName(*_filter));
-        m_FilterNameMask.reset( new FileMask(m_FilterName->mask) );
-    }
+    if( IsRunning() )
+        throw logic_error("Filters can't be changed during background search process");
+    m_FilterName = _filter;
+    m_FilterNameMask = FileMask(m_FilterName->mask);
 }
 
-void FileSearch::SetFilterContent(FilterContent *_filter)
+void FileSearch::SetFilterContent(const FilterContent &_filter)
 {
-    if(_filter == nullptr)
-        m_FilterContent.reset();
-    else
-        m_FilterContent.reset( new FilterContent(*_filter));
+    if( IsRunning() )
+        throw logic_error("Filters can't be changed during background search process");
+    m_FilterContent = _filter;
+}
+
+void FileSearch::SetFilterSize(const FilterSize &_filter)
+{
+    if( IsRunning() )
+        throw logic_error("Filters can't be changed during background search process");
+    m_FilterSize = _filter;
+}
+
+void FileSearch::ClearFilters()
+{
+    if( IsRunning() )
+        throw logic_error("Filters can't be changed during background search process");
+    m_FilterName = nullopt;
+    m_FilterNameMask = nullopt;
+    m_FilterContent = nullopt;
+    m_FilterSize = nullopt;
 }
 
 bool FileSearch::Go(const string &_from_path,
@@ -70,7 +80,7 @@ bool FileSearch::Go(const string &_from_path,
                     function<void(const char*)> _looking_in_callback
                     )
 {
-    if(IsRunning())
+    if( IsRunning() )
         return false;
         
     assert( !m_Callback );
@@ -192,6 +202,7 @@ void FileSearch::ProcessDirent(const char* _full_path,
 
 bool FileSearch::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
 {
+    assert(m_FilterContent);
     VFSFilePtr file;
     if(_in_host.CreateFile(_full_path, file, 0) != 0)
         return false;
@@ -250,15 +261,7 @@ void FileSearch::ProcessValidEntry(const char* _full_path,
         m_Callback(_dirent.name, _dir_path, _cont_range);
 }
 
-bool FileSearch::IsRunning() const
+bool FileSearch::IsRunning() const noexcept
 {
     return m_Queue->Empty() == false;
-}
-
-void FileSearch::SetFilterSize(FilterSize *_filter)
-{
-    if(_filter == nullptr)
-        m_FilterSize.reset();
-    else
-        m_FilterSize.reset( new FilterSize(*_filter));
 }

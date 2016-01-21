@@ -107,12 +107,12 @@ void SerialQueueT::Wait()
     m_Queue.sync(^{});
 }
 
-int SerialQueueT::Length() const
+int SerialQueueT::Length() const noexcept
 {
     return m_Length;
 }
 
-bool SerialQueueT::Empty() const
+bool SerialQueueT::Empty() const noexcept
 {
     return m_Length == 0;
 }

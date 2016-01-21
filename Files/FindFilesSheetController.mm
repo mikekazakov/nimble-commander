@@ -341,19 +341,19 @@ private:
     [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
     m_ControllerIsAdding = false;
     
+    m_FileSearch->ClearFilters();
+    
     NSString *mask = self.MaskComboBox.stringValue;
     if(mask != nil &&
        [mask isEqualToString:@""] == false &&
        [mask isEqualToString:@"*"] == false) {
         FileSearch::FilterName filter_name;
         filter_name.mask = mask;
-        m_FileSearch->SetFilterName(&filter_name);
+        m_FileSearch->SetFilterName(filter_name);
         m_MaskHistory->insert_unique( mask.UTF8String );
     }
-    else {
-        m_FileSearch->SetFilterName(nullptr);
+    else
         m_MaskHistory->insert_unique("*");
-    }
     
     NSString *cont_text = self.TextComboBox.stringValue;
     if([cont_text isEqualToString:@""] == false) {
@@ -362,10 +362,8 @@ private:
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
-        m_FileSearch->SetFilterContent(&filter_content);
+        m_FileSearch->SetFilterContent(filter_content);
     }
-    else
-        m_FileSearch->SetFilterContent(nullptr);
     m_TextHistory->insert_unique( cont_text ? cont_text.UTF8String : "" );
     
     if([self.SizeTextField.stringValue isEqualToString:@""] == false)
@@ -385,10 +383,8 @@ private:
         else if(self.SizeRelationPopUp.selectedTag == 1) // "="
             filter_size.min = filter_size.max = value;
         
-        m_FileSearch->SetFilterSize(&filter_size);        
+        m_FileSearch->SetFilterSize(filter_size);
     }
-        else m_FileSearch->SetFilterSize(nullptr);
-    
         
     int search_options = 0;
     if(self.SearchInSubDirsButton.intValue)

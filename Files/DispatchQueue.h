@@ -59,12 +59,12 @@ public:
      * Returns count of block commited into queue, including current running block, if any.
      * Zero returned length means that queue is dry.
      */
-    int Length() const;
+    int Length() const noexcept;
     
     /**
      * Actually returns Length() == 0. Just a syntax sugar.
      */
-    bool Empty() const;
+    bool Empty() const noexcept;
     
     /**
      * Sets handler to be called when queue becomes dry (no blocks are commited or running).

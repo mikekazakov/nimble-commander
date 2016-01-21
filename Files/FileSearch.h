@@ -48,19 +48,25 @@ public:
     ~FileSearch();
     
     /**
-     * Can be nullptr, so just reset current if any.
+     * Sets filename filtering. Should not be called with background search going on.
      */
-    void SetFilterName(FilterName *_filter);
+    void SetFilterName(const FilterName &_filter);
     
     /**
-     * Can be nullptr, so just reset current if any.
+     * Sets file content filtering. Should not be called with background search going on.
      */
-    void SetFilterContent(FilterContent *_filter);
+    void SetFilterContent(const FilterContent &_filter);
 
     /**
-     * Can be nullptr, so just reset current if any.
+     * Sets file size filtering. Should not be called with background search going on.
      */
-    void SetFilterSize(FilterSize *_filter);
+    void SetFilterSize(const FilterSize &_filter);
+    
+    /**
+     * Removes all previously set filters, supposing following SetFilerXXX calls.
+     * Should not be called with background search going on.
+     */
+    void ClearFilters();
     
     /**
      * Returns immediately, run in background thread. Options is a bitfield with bits from Options:: enum.
@@ -79,14 +85,14 @@ public:
     void Stop();
     
     /**
-     *
+     * Synchronously wait until job finishes.
      */
     void Wait();
     
     /**
      * Shows if search for files is currently performing by this object.
      */
-    bool IsRunning() const;
+    bool IsRunning() const noexcept;
     
 private:
     void AsyncProc(const char* _from_path, VFSHost &_in_host);
@@ -106,10 +112,10 @@ private:
     bool FilterByFilename(const char* _filename);
     
     SerialQueue                 m_Queue = SerialQueueT::Make();
-    unique_ptr<FilterName>      m_FilterName;
-    unique_ptr<FileMask>        m_FilterNameMask;
-    unique_ptr<FilterContent>   m_FilterContent;
-    unique_ptr<FilterSize>      m_FilterSize;
+    optional<FilterName>        m_FilterName;
+    optional<FileMask>          m_FilterNameMask;
+    optional<FilterContent>     m_FilterContent;
+    optional<FilterSize>        m_FilterSize;
     
     FoundCallBack               m_Callback;
     function<void()>            m_FinishCallback;

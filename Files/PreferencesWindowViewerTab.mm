@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "States/Viewer/BigFileViewHistory.h"
 #include "PreferencesWindowViewerTab.h"
 #include "Encodings.h"
-#include "BigFileViewHistory.h"
 #include "Config.h"
 #include "Common.h"
 

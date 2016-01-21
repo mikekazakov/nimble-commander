@@ -7,7 +7,8 @@
 //
 
 #pragma once
-#import "FileWindow.h"
+
+#include "../../FileWindow.h"
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

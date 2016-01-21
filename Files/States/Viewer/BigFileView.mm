@@ -6,15 +6,15 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../DataBlockAnalysis.h"
+#include "../../Common.h"
+#include "../../AppDelegate.h"
+#include "../../Config.h"
+#include "../../HexadecimalColor.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
-#include "DataBlockAnalysis.h"
-#include "Common.h"
-#include "AppDelegate.h"
 #include "BigFileViewDataBackend.h"
-#include "Config.h"
-#include "HexadecimalColor.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";

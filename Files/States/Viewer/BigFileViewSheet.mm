@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileViewSheet.h"
-#import "ProcessSheetController.h"
-#import "Common.h"
-#import "MainWindowBigFileViewState.h"
+#include "../../ProcessSheetController.h"
+#include "../../Common.h"
+#include "MainWindowBigFileViewState.h"
+#include "BigFileViewSheet.h"
 
 @implementation BigFileViewSheet
 {

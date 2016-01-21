@@ -6,19 +6,18 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "vfs/VFS.h"
+#include "../../FileWindow.h"
+#include "../../MainWindowController.h"
+#include "../../Common.h"
+#include "../../SearchInFile.h"
+#include "../../DispatchQueue.h"
+#include "../../ProcessSheetController.h"
+#include "../../ActionsShortcutsManager.h"
+#include "../../ByteCountFormatter.h"
+#include "../../Config.h"
 #include "MainWindowBigFileViewState.h"
 #include "BigFileView.h"
-#include "FileWindow.h"
-#include "MainWindowController.h"
-#include "Common.h"
-#include "SearchInFile.h"
 #include "BigFileViewHistory.h"
-#include "DispatchQueue.h"
-#include "ProcessSheetController.h"
-#include "ActionsShortcutsManager.h"
-#include "ByteCountFormatter.h"
-#include "Config.h"
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";

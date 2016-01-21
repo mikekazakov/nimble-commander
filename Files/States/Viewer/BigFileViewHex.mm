@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileViewHex.h"
-#import "BigFileView.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "BigFileViewHex.h"
+#include "BigFileView.h"
 
 static const unsigned g_BytesPerHexLine = 16;
 static const unsigned g_RowOffsetSymbs = 10;

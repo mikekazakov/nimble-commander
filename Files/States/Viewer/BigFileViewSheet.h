@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "SheetController.h"
+#include "../../vfs/VFS.h"
+#include "../../SheetController.h"
 #include "BigFileView.h"
-#include "vfs/VFS.h"
 
 @interface BigFileViewSheet : SheetController
 

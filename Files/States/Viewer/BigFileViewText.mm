@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileViewText.h"
-#import "BigFileView.h"
-#import "Common.h"
+#include "../../Common.h"
+#include "BigFileViewText.h"
+#include "BigFileView.h"
 
 static unsigned ShouldBreakLineBySpaces(CFStringRef _string, unsigned _start, double _font_width, double _line_width)
 {

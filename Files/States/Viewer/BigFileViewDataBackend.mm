@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BigFileViewDataBackend.h"
-#import "Encodings.h"
+#include "../../Encodings.h"
+#include "BigFileViewDataBackend.h"
 
 BigFileViewDataBackend::BigFileViewDataBackend(FileWindow *_fw, int _encoding):
     m_FileWindow(_fw),

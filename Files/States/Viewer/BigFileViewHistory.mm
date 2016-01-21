@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/NSFileManager+DirectoryLocations.h"
+#import "../../3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../Encodings.h"
+#include "../../DispatchQueue.h"
+#include "../../Config.h"
 #include "BigFileViewHistory.h"
-#include "Encodings.h"
-#include "DispatchQueue.h"
-#include "Config.h"
 
 static NSString *g_FileName = @"/bigfileviewhistory.bplist"; // bplist file name
 static NSString *g_PathArchiveKey = @"path";

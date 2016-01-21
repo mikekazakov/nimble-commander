@@ -7,12 +7,12 @@
 //
 
 #include <Habanero/dispatch_cpp.h>
+#include "States/Viewer/BigFileViewSheet.h"
 #include "SheetWithHotkeys.h"
 #include "FindFilesSheetController.h"
 #include "Encodings.h"
 #include "FileSearch.h"
 #include "Common.h"
-#include "BigFileViewSheet.h"
 #include "ByteCountFormatter.h"
 #include "AppDelegate.h"
 #include "Config.h"

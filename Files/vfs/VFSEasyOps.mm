@@ -10,7 +10,6 @@
 #include <sys/dirent.h>
 #include "VFSEasyOps.h"
 #include "VFSError.h"
-#include "../path_manip.h"
 #include "../DispatchQueue.h"
 #include "../Common.h"
 

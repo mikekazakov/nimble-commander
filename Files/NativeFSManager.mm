@@ -10,9 +10,9 @@
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
+#include "Utility/SystemInformation.h"
 #include "NativeFSManager.h"
 #include "FSEventsDirUpdate.h"
-#include "sysinfo.h"
 
 static NativeFSManager *g_SharedFSManager;
 

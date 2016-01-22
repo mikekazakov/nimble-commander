@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../path_manip.h"
 #include "../VFSListingInput.h"
 #include "VFSNetFTPHost.h"
 #include "VFSNetFTPInternals.h"

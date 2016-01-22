@@ -38,6 +38,7 @@
 		CFE14A671BCA982400CD7B92 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE14A661BCA982400CD7B92 /* spinlock.h */; };
 		CFED5A021C4F676700BFCB5C /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A001C4F676700BFCB5C /* debug.cpp */; };
 		CFED5A031C4F676700BFCB5C /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CFED5A011C4F676700BFCB5C /* debug.h */; };
+		CFED5A601C520E7400BFCB5C /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A5F1C520E7400BFCB5C /* CommonPaths.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		CFE14A661BCA982400CD7B92 /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spinlock.h; sourceTree = "<group>"; };
 		CFED5A001C4F676700BFCB5C /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		CFED5A011C4F676700BFCB5C /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		CFED5A5F1C520E7400BFCB5C /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CommonPaths.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 				CF5738211BA2ABFD00B7D53C /* algo.h */,
 				CF2D2F8A1B8B5DD700111C75 /* CommonPaths.h */,
 				CF2D2F891B8B5DD700111C75 /* CommonPaths.cpp */,
+				CFED5A5F1C520E7400BFCB5C /* CommonPaths.mm */,
 				CF2D2F841B8B47B700111C75 /* FontExtras.h */,
 				CF2D2F831B8B47B700111C75 /* FontExtras.cpp */,
 				CF2D2F781B8B3BC000111C75 /* Hash.h */,
@@ -308,6 +311,7 @@
 				CF2D2F751B8B385C00111C75 /* tiny_string.cpp in Sources */,
 				CF2D2F6C1B8B2BBD00111C75 /* IdleSleepPreventer.cpp in Sources */,
 				CF2D2F911B8B6F2D00111C75 /* mach_time.cpp in Sources */,
+				CFED5A601C520E7400BFCB5C /* CommonPaths.mm in Sources */,
 				CFB517F71BDE529C000AAE89 /* KVO.cpp in Sources */,
 				CF86293D1B986C4300B33CFD /* CFString.cpp in Sources */,
 				CF2D2F8E1B8B6B7800111C75 /* dispatch_cpp.mm in Sources */,

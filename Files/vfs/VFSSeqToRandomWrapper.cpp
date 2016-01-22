@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/algo.h>
+#include <Habanero/CommonPaths.h>
 #include "../Common.h"
 #include "VFSSeqToRandomWrapper.h"
 #include "VFSError.h"
@@ -74,7 +75,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     else {
         // we need to write it into a temp dir and delete it upon finish
         char pattern_buf[MAXPATHLEN];
-        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", AppTemporaryDirectory().c_str());
+        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
         
         int fd = mkstemp(pattern_buf);
         

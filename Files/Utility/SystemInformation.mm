@@ -6,30 +6,12 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <SystemConfiguration/SystemConfiguration.h>
-#import <IOKit/IOKitLib.h>
-#import <sys/sysctl.h>
-//#import <sys/proc.h>
-//#import <sys/user.h>
-//#import <sys/stat.h>
-//#import <sys/ioctl.h>
-//#import <sys/mount.h>
-//#import <sys/resourcevar.h>
-//#import <sys/vmmeter.h>
-//#import <sys/resource.h>
-//#import <mach/host_info.h>
-//#import <mach/mach_host.h>
-//#import <mach/task_info.h>
-//#import <mach/task.h>
-#import <mach/mach.h>
-//#import <mach/mach_error.h>
-//#import <mach/policy.h>
-//#import <mach/thread_info.h>
-//#import <mach/processor_info.h>
-//#import <stdint.h>
-//#import <libproc.h>
-#import "sysinfo.h"
-#import "Common.h"
+#include <SystemConfiguration/SystemConfiguration.h>
+#include <IOKit/IOKitLib.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
+#include "ObjCpp.h"
+#include "SystemInformation.h"
 
 namespace sysinfo
 {
@@ -124,7 +106,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     return err;
 }
     
-bool GetMemoryInfo(MemoryInfo &_mem)
+bool GetMemoryInfo(MemoryInfo &_mem) noexcept
 {
     static int pagesize = 0;
     static uint64_t memsize = 0;
@@ -176,7 +158,7 @@ bool GetMemoryInfo(MemoryInfo &_mem)
     return true;
 }
     
-bool GetCPULoad(CPULoad &_load)
+bool GetCPULoad(CPULoad &_load) noexcept
 {
     unsigned int *cpuInfo;
     mach_msg_type_number_t numCpuInfo;
@@ -227,33 +209,34 @@ bool GetCPULoad(CPULoad &_load)
 
 OSXVersion GetOSXVersion() noexcept
 {
-    static OSXVersion version = OSXVersion::OSX_Unknown;
-    static once_flag once;
-    call_once(once, []{
-        if(NSDictionary *d = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"])
-            if( auto prod_ver = objc_cast<NSString>([d objectForKey:@"ProductVersion"]) ) {
-                if([prod_ver hasPrefix:@"10.10"])     version = OSXVersion::OSX_10;
-                else if([prod_ver hasPrefix:@"10.9"]) version = OSXVersion::OSX_9;
-                else if([prod_ver hasPrefix:@"10.8"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.7"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.6"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.5"]) version = OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.4"]) version = OSXVersion::OSX_Old;
+    static OSXVersion version = []{
+        if( auto dict = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] )
+            if( auto prod_ver = objc_cast<NSString>([dict objectForKey:@"ProductVersion"]) ) {
+                if([prod_ver hasPrefix:@"10.11"])       return OSXVersion::OSX_11;
+                else if([prod_ver hasPrefix:@"10.10"])  return OSXVersion::OSX_10;
+                else if([prod_ver hasPrefix:@"10.9"])   return OSXVersion::OSX_9;
+                else if([prod_ver hasPrefix:@"10.8"])   return OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.7"])   return OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.6"])   return OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.5"])   return OSXVersion::OSX_Old;
+                else if([prod_ver hasPrefix:@"10.4"])   return OSXVersion::OSX_Old;
             }
-    });
+        return OSXVersion::OSX_Unknown;
+    }();
     return version;
 }
- 
+
 bool GetSystemOverview(SystemOverview &_overview)
 {
     // get machine name everytime
     CFStringRef computer_name = SCDynamicStoreCopyComputerName(0, 0);
     if(computer_name == NULL)
         return false;
-    _overview.computer_name =  (__bridge NSString*)computer_name;
+    _overview.computer_name =  ((__bridge NSString*)computer_name).UTF8String;
+    CFRelease(computer_name);
     
     // get full user name everytime
-    _overview.user_full_name = NSFullUserName();
+    _overview.user_full_name = NSFullUserName().UTF8String;
     
     // get machine model once
     static NSString *human_model = @"N/A";
@@ -296,7 +279,7 @@ bool GetSystemOverview(SystemOverview &_overview)
         }
     });
     
-    _overview.human_model = human_model;
+    _overview.human_model = human_model.UTF8String;
     
     return true;
 }    

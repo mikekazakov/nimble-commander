@@ -36,7 +36,6 @@
 #include "MASAppInstalledChecker.h"
 #include "TrialWindowController.h"
 #include "RoutedIO.h"
-#include "sysinfo.h"
 #include "AppStoreRatings.h"
 #include "FeatureNotAvailableWindowController.h"
 #include "Config.h"

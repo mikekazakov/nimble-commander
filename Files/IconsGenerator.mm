@@ -6,15 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Quartz/Quartz.h>
-#import <sys/stat.h>
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import "IconsGenerator.h"
-#import "QLThumbnailsCache.h"
-#import "QLVFSThumbnailsCache.h"
-#import "WorkspaceIconsCache.h"
-#import "Common.h"
+#include <Quartz/Quartz.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/dirent.h>
+#include <Habanero/CommonPaths.h>
+#include "IconsGenerator.h"
+#include "QLThumbnailsCache.h"
+#include "QLVFSThumbnailsCache.h"
+#include "WorkspaceIconsCache.h"
+#include "Common.h"
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -63,7 +64,7 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
         return 0;
     
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", AppTemporaryDirectory().c_str());
+    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)

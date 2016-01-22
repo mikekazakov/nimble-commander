@@ -6,9 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "SheetController.h"
-#import "sysinfo.h"
-#import "Common.h"
+#include "SheetController.h"
+#include "Common.h"
 
 @implementation SheetController
 {

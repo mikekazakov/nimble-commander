@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FileWindow.h"
-#import "Encodings.h"
-#import "SearchInFile.h"
+#include "Utility/Encodings.h"
+#include "FileWindow.h"
+#include "SearchInFile.h"
 
 static const unsigned g_MaximumCodeUnit = 2;
 

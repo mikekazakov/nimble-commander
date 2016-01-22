@@ -7,9 +7,9 @@
 //
 
 #include "Utility/HexadecimalColor.h"
+#include "Utility/Encodings.h"
 #include "ClassicPanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
-#include "Encodings.h"
 #include "PanelView.h"
 #include "PanelData.h"
 #include "FontCache.h"

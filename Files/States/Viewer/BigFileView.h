@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include "../../Utility/Encodings.h"
 #include "../../FileWindow.h"
-#include "../../Encodings.h"
 #include "../../OrthodoxMonospace.h"
 
 enum class BigFileViewModes

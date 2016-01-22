@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "Utility/Encodings.h"
 #include "ByteCountFormatter.h"
-#include "Encodings.h"
 
 static inline void strsubst(char *_s, char _what, char _to)
 {

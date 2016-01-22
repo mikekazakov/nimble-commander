@@ -6,13 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/types.h>
-#import <sys/dirent.h>
-#import <sys/stat.h>
-#import <sys/xattr.h>
-#import <dirent.h>
-#import "TemporaryNativeFileStorage.h"
-#import "Common.h"
+#include <sys/types.h>
+#include <sys/dirent.h>
+#include <sys/stat.h>
+#include <sys/xattr.h>
+#include <dirent.h>
+#include <Habanero/CommonPaths.h>
+#include "TemporaryNativeFileStorage.h"
+#include "Common.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
@@ -117,7 +118,7 @@ TemporaryNativeFileStorage &TemporaryNativeFileStorage::Instance()
 string TemporaryNativeFileStorage::NewTempDir()
 {
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s%sXXXXXX", AppTemporaryDirectory().c_str(), g_Pref.c_str());
+    sprintf(pattern_buf, "%s%sXXXXXX", CommonPaths::AppTemporaryDirectory().c_str(), g_Pref.c_str());
     char *res = mkdtemp(pattern_buf);
     if(res == 0)
         return {};
@@ -370,7 +371,7 @@ static bool DoSubDirPurge(const char *_dir)
 
 static void DoTempPurge()
 {
-    DIR *dirp = opendir(AppTemporaryDirectory().c_str());
+    DIR *dirp = opendir(CommonPaths::AppTemporaryDirectory().c_str());
     if(!dirp)
         return;
     
@@ -383,7 +384,7 @@ static void DoTempPurge()
            )
         {
             char fn[MAXPATHLEN];
-            strcpy(fn, AppTemporaryDirectory().c_str());
+            strcpy(fn, CommonPaths::AppTemporaryDirectory().c_str());
             strcat(fn, entp->d_name);
             strcat(fn, "/");
             

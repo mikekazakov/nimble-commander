@@ -33,24 +33,23 @@ struct CPULoad
     // system + user + idle = 1.0
 };
     
-#ifdef __OBJC__
 struct SystemOverview
 {
-    NSString *computer_name;
-    NSString *user_full_name;
-    NSString *human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
+    string computer_name;
+    string user_full_name;
+    string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
 };
-#endif
 
 enum class OSXVersion
 {
     OSX_Old     = 1080,
     OSX_9       = 1090,
     OSX_10      = 1100,
+    OSX_11      = 1110,
     OSX_Unknown = 100500
 };
     
-bool GetMemoryInfo(MemoryInfo &_mem);
+bool GetMemoryInfo(MemoryInfo &_mem) noexcept;
     
 /**
  * Synchronously reads current CPU load, divided in system, user and idle
@@ -58,7 +57,7 @@ bool GetMemoryInfo(MemoryInfo &_mem);
  * @param _load - CPULoad structure to fill
  * @return true on success
  */
-bool GetCPULoad(CPULoad &_load);
+bool GetCPULoad(CPULoad &_load) noexcept;
     
 /**
  * Returns currently running OSX Version or 
@@ -71,9 +70,7 @@ OSXVersion GetOSXVersion() noexcept;
 /**
  * Returns common information about system, such as computer name, computer model, user name etc
  */
-#ifdef __OBJC__
 bool GetSystemOverview(SystemOverview &_overview);
-#endif
 
 /**
  * Returns a list of all BSD processes on the system.  This routine

@@ -8,9 +8,9 @@
 
 #include <Habanero/dispatch_cpp.h>
 #include "States/Viewer/BigFileViewSheet.h"
+#include "Utility/Encodings.h"
 #include "SheetWithHotkeys.h"
 #include "FindFilesSheetController.h"
-#include "Encodings.h"
 #include "FileSearch.h"
 #include "Common.h"
 #include "ByteCountFormatter.h"

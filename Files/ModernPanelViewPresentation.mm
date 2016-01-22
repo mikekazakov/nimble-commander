@@ -7,10 +7,10 @@
 //
 
 #include "Utility/HexadecimalColor.h"
+#include "Utility/Encodings.h"
 #include "PanelView.h"
 #include "ModernPanelViewPresentation.h"
 #include "PanelData.h"
-#include "Encodings.h"
 #include "Common.h"
 #include "IconsGenerator.h"
 #include "ModernPanelViewPresentationHeader.h"

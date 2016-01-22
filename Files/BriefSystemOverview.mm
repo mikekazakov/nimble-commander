@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "BriefSystemOverview.h"
-#import "sysinfo.h"
-#import "Common.h"
-#import "ByteCountFormatter.h"
+#include "Utility/SystemInformation.h"
+#include "Common.h"
+#include "ByteCountFormatter.h"
+#include "BriefSystemOverview.h"
 
 static NSTextField *CreateStockTF()
 {
@@ -465,9 +465,9 @@ static NSTextField *CreateStockTF()
     m_TextMemTotal.stringValue = f.ToNSString(m_MemoryInfo.total_hw, ByteCountFormatter::Adaptive8);
     m_TextMemUsed.stringValue = f.ToNSString(m_MemoryInfo.used, ByteCountFormatter::Adaptive8);
     m_TextMemSwap.stringValue = f.ToNSString(m_MemoryInfo.swap, ByteCountFormatter::Adaptive8);
-    m_TextMachineModel.stringValue = m_Overview.human_model;
-    m_TextComputerName.stringValue = m_Overview.computer_name;
-    m_TextUserName.stringValue = m_Overview.user_full_name;
+    m_TextMachineModel.stringValue = [NSString stringWithUTF8StdString:m_Overview.human_model];
+    m_TextComputerName.stringValue = [NSString stringWithUTF8StdString:m_Overview.computer_name];
+    m_TextUserName.stringValue = [NSString stringWithUTF8StdString:m_Overview.user_full_name];
     if(!m_StatFS.volume_name.empty())
         m_TextVolumeName.stringValue = [NSString stringWithUTF8String:m_StatFS.volume_name.c_str()];
     else

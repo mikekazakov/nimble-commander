@@ -9,7 +9,8 @@
 
 #include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
 #include "3rd_party/rapidjson/include/rapidjson/document.h"
-#include "path_manip.h"
+#include "Utility/PathManip.h"
+#include "Utility/ObjCpp.h"
 
 // TODO: remove it.
 struct DialogResult
@@ -51,9 +52,6 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);
 
-/** returns a value from NSTemporaryDirectory, once captured. Contains a path with a trailing slash. */
-const string &AppTemporaryDirectory() noexcept;
-
 struct MachTimeBenchmark
 {
     MachTimeBenchmark() noexcept;
@@ -66,19 +64,6 @@ private:
 };
 
 #ifdef __OBJC__
-
-/**
- * Returns a _T_ class object if _from_ can be converted to it.
- * If _from_ can't be converted to _T_ - returns nil.
- * If _from_ is nil - returns nil.
- */
-template<typename T>
-T* objc_cast(id from) noexcept {
-    static const auto class_meta = [T class];
-    if( [from isKindOfClass:class_meta] )
-        return static_cast<T*>(from);
-    return nil;
-}
 
 void SyncMessageBoxNS(NSString *_ns_string);
 

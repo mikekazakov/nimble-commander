@@ -15,6 +15,7 @@
 #include "States/Terminal/MainWindowTerminalState.h"
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"
 #include "States/Viewer/MainWindowBigFileViewState.h"
+#include "Utility/SystemInformation.h"
 #include "MainWindowController.h"
 #include "MainWindow.h"
 #include "AppDelegate.h"
@@ -22,7 +23,7 @@
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "Common.h"
-#include "sysinfo.h"
+
 #include "ActionsShortcutsManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";

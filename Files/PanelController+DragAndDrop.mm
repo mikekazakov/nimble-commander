@@ -13,7 +13,6 @@
 #include "Operations/OperationsController.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
-#include "path_manip.h"
 #include "Common.h"
 #include "Config.h"
 

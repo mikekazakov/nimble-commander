@@ -7,7 +7,7 @@
 //
 
 #import "../../3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Encodings.h"
+#include "../../Utility/Encodings.h"
 #include "../../DispatchQueue.h"
 #include "../../Config.h"
 #include "BigFileViewHistory.h"

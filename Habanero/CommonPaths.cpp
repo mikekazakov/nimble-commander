@@ -31,73 +31,73 @@ static std::string ensure_tr_slash( std::string _str )
     return _str;
 }
 
-const std::string &AppBundle()
+const std::string &AppBundle() noexcept
 {
     static auto path = ensure_tr_slash(GetMainBundlePath());
     return path;
 }
 
-const std::string &Home()
+const std::string &Home() noexcept
 {
     static auto path = ensure_tr_slash(getpwuid(getuid())->pw_dir);
     return path;
 }
 
-const std::string &Documents()
+const std::string &Documents() noexcept
 {
     static auto path = Home() + "Documents/";
     return path;
 }
 
-const std::string &Desktop()
+const std::string &Desktop() noexcept
 {
     static auto path = Home() + "Desktop/";
     return path;
 }
 
-const std::string &Downloads()
+const std::string &Downloads() noexcept
 {
     static auto path = Home() + "Downloads/";
     return path;
 }
 
-const std::string &Applications()
+const std::string &Applications() noexcept
 {
     static auto path = std::string("/Applications/");
     return path;
 }
 
-const std::string &Utilities()
+const std::string &Utilities() noexcept
 {
     static auto path = std::string("/Applications/Utilities/");
     return path;
 }
 
-const std::string &Library()
+const std::string &Library() noexcept
 {
     static auto path = Home() + "Library/";
     return path;
 }
 
-const std::string &Pictures()
+const std::string &Pictures() noexcept
 {
     static auto path = Home() + "Pictures/";
     return path;
 }
 
-const std::string &Music()
+const std::string &Music() noexcept
 {
     static auto path = Home() + "Music/";
     return path;
 }
 
-const std::string &Movies()
+const std::string &Movies() noexcept
 {
     static auto path = Home() + "Movies/";
     return path;
 }
 
-const std::string &Root()
+const std::string &Root() noexcept
 {
     static auto path = std::string("/");
     return path;

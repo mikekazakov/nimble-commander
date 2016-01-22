@@ -24,7 +24,6 @@
 #include "MainWindowController.h"
 #include "FilePanelMainSplitView.h"
 #include "BriefSystemOverview.h"
-#include "sysinfo.h"
 #include "LSUrls.h"
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"

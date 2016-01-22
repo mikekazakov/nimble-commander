@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <stdio.h>
-#import <string.h>
-#import "Encodings.h"
+#include <stdio.h>
+#include <string.h>
+#include "Encodings.h"
 
 namespace encodings
 {

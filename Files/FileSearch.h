@@ -9,9 +9,9 @@
 #pragma once
 
 #include "vfs/VFS.h"
+#include "Utility/Encodings.h"
 #include "DispatchQueue.h"
 #include "FileMask.h"
-#include "Encodings.h"
 
 class FileSearch
 {

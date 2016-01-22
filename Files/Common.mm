@@ -1,4 +1,4 @@
-#import "Common.h"
+#include "Common.h"
 
 // REMOVE THIS WHEN CLANG WILL HAVE IT INSIDE DEFAULT LIB
 bad_optional_access::~bad_optional_access() noexcept = default;
@@ -346,12 +346,6 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
                                          kCFStringEncodingMacRoman,
                                          false,
                                          kCFAllocatorNull);
-}
-
-const string &AppTemporaryDirectory() noexcept
-{
-    static string path = NSTemporaryDirectory().fileSystemRepresentation;
-    return path;
 }
 
 MachTimeBenchmark::MachTimeBenchmark() noexcept:

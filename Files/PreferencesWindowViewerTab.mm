@@ -7,8 +7,8 @@
 //
 
 #include "States/Viewer/BigFileViewHistory.h"
+#include "Utility/Encodings.h"
 #include "PreferencesWindowViewerTab.h"
-#include "Encodings.h"
 #include "Config.h"
 #include "Common.h"
 

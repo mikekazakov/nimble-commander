@@ -18,8 +18,8 @@
 #include <termios.h>
 #include <string.h>
 #include <libproc.h>
+#include "../../Utility/SystemInformation.h"
 #include "../../Common.h"
-#include "../../sysinfo.h"
 #include "TermShellTask.h"
 
 static const char *g_ShellProg     = "/bin/bash";

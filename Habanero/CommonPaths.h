@@ -13,16 +13,17 @@
 namespace CommonPaths
 {    
     // returned paths will contain a trailing slash
-    const std::string &AppBundle();
-    const std::string &Home();
-    const std::string &Documents();
-    const std::string &Desktop();
-    const std::string &Downloads();
-    const std::string &Applications();
-    const std::string &Utilities();
-    const std::string &Library();
-    const std::string &Pictures();
-    const std::string &Music();
-    const std::string &Movies();
-    const std::string &Root();
+    const std::string &AppBundle() noexcept;
+    const std::string &Home() noexcept;
+    const std::string &Documents() noexcept;
+    const std::string &Desktop() noexcept;
+    const std::string &Downloads() noexcept;
+    const std::string &Applications() noexcept;
+    const std::string &Utilities() noexcept;
+    const std::string &Library() noexcept;
+    const std::string &Pictures() noexcept;
+    const std::string &Music() noexcept;
+    const std::string &Movies() noexcept;
+    const std::string &Root() noexcept;
+    const std::string &AppTemporaryDirectory() noexcept;
 };

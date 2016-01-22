@@ -8,9 +8,7 @@
 
 #include <sys/stat.h>
 #include "../Common.h"
-#include "../path_manip.h"
 #include "VFSHost.h"
-
 
 static_assert(sizeof(VFSStat) == 128, "");
 const char *VFSHost::Tag = "nullfs";

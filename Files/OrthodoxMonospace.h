@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Encodings.h"
+#include "Utility/Encodings.h"
 
 class FontCache;
 

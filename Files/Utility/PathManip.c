@@ -8,7 +8,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "path_manip.h"
+#include "PathManip.h"
 
 bool EliminateTrailingSlashInPath(char *_path)
 {

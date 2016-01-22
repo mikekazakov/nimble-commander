@@ -6,9 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "tests_common.h"
-#include "../Files/Encodings.h"
-
+#include "../../Files Tests/tests_common.h"
+#include "Encodings.h"
 
 @interface Encodings_Tests : XCTestCase
 

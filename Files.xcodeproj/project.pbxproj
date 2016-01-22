@@ -57,7 +57,6 @@
 		CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
 		CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF23295D1BDCEC600092BCAD /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */; };
-		CF23295E1BDCECA00092BCAD /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */; };
 		CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */; };
 		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
@@ -699,6 +698,7 @@
 		CFED5A671C52105D00BFCB5C /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A611C52105800BFCB5C /* Encodings.cpp */; };
 		CFED5A681C52105F00BFCB5C /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */; };
 		CFED5A691C52106000BFCB5C /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */; };
+		CFED5A6C1C52136500BFCB5C /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1356,7 +1356,6 @@
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB190D717A3B1FA005B8B15 /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFB190D817A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
-		CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Encodings_Tests.mm; sourceTree = "<group>"; };
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB56283194ECA1B00A3B70E /* FPSLimitedDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPSLimitedDrawer.h; sourceTree = "<group>"; };
@@ -1582,6 +1581,7 @@
 		CFED5A611C52105800BFCB5C /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Encodings.cpp; path = Utility/Encodings.cpp; sourceTree = "<group>"; };
 		CFED5A621C52105800BFCB5C /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = Utility/Encodings.h; sourceTree = "<group>"; };
 		CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingsAdditions.mm; path = Utility/EncodingsAdditions.mm; sourceTree = "<group>"; };
+		CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = Utility/Encodings_Tests.mm; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
@@ -2043,7 +2043,6 @@
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
 				CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */,
-				CFB1E08219F8ED4300AD567A /* Encodings_Tests.mm */,
 				CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */,
@@ -2785,6 +2784,7 @@
 				CFED5A611C52105800BFCB5C /* Encodings.cpp */,
 				CFED5A621C52105800BFCB5C /* Encodings.h */,
 				CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */,
+				CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */,
 				CFED5A5B1C520D3F00BFCB5C /* PathManip.h */,
 				CFED5A5A1C520D3F00BFCB5C /* PathManip.c */,
 				CFED5A591C520A6500BFCB5C /* ObjCpp.h */,
@@ -3293,12 +3293,12 @@
 			files = (
 				CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */,
 				CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */,
+				CFED5A6C1C52136500BFCB5C /* Encodings_Tests.mm in Sources */,
 				CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */,
 				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */,
 				CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */,
-				CF23295E1BDCECA00092BCAD /* Encodings_Tests.mm in Sources */,
 				CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,

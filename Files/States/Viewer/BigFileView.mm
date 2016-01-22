@@ -10,7 +10,7 @@
 #include "../../Common.h"
 #include "../../AppDelegate.h"
 #include "../../Config.h"
-#include "../../HexadecimalColor.h"
+#include "../../Utility/HexadecimalColor.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"

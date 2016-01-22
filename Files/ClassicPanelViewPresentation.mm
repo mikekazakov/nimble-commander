@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "Utility/HexadecimalColor.h"
 #include "ClassicPanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
 #include "Encodings.h"
@@ -13,7 +14,6 @@
 #include "PanelData.h"
 #include "FontCache.h"
 #include "ByteCountFormatter.h"
-#include "HexadecimalColor.h"
 #include "Common.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////

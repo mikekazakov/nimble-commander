@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "Utility/HexadecimalColor.h"
 #include "PreferencesWindowPanelsTab.h"
 #include "ClassicPanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "ByteCountFormatter.h"
 #include "Common.h"
-#include "HexadecimalColor.h"
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"

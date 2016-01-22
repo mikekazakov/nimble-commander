@@ -10,7 +10,7 @@
 #include "../../FontCache.h"
 #include "../../Common.h"
 #include "../../BlinkingCaret.h"
-#include "../../HexadecimalColor.h"
+#include "../../Utility/HexadecimalColor.h"
 #include "../../Config.h"
 #include "TermView.h"
 #include "TermScreen.h"

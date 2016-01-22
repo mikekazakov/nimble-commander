@@ -7,8 +7,8 @@
 //
 
 #include <sys/stat.h>
+#include "Utility/HexadecimalColor.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
-#include "HexadecimalColor.h"
 
 static tribool to_tribool(NSNumber *_n)
 {

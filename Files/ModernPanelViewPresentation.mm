@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "Utility/HexadecimalColor.h"
 #include "PanelView.h"
 #include "ModernPanelViewPresentation.h"
 #include "PanelData.h"
@@ -16,7 +17,6 @@
 #include "ModernPanelViewPresentationItemsFooter.h"
 #include "ModernPanelViewPresentationVolumeFooter.h"
 #include "ByteCountFormatter.h"
-#include "HexadecimalColor.h"
 
 static const auto g_ConfigShowVolumeBar         = "filePanel.general.showVolumeInformationBar";
 static const auto g_ConfigFontSize              = "filePanel.modern.fontSize";

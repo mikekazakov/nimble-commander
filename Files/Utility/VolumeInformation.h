@@ -162,7 +162,7 @@ struct VolumeAttributesInformation
     bool      is_sw_ejectable;
     bool      is_sw_removable;
     bool      is_local;
-
+    bool      is_internal;
 };
 
 // all functions below return 0 on successful completion or errno on error

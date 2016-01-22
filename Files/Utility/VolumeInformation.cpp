@@ -11,7 +11,7 @@
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <unistd.h>
-#include "filesysinfo.h"
+#include "VolumeInformation.h"
 
 int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c)
 {
@@ -297,15 +297,9 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
     _a->fs_owner = stat_fs.f_owner;
     
 
-    {
-    // NB! kCFURLVolumeLocalizedFormatDescriptionKey is available in OSX 10.6 and later
-    // other tasty things in OX10.7 and later: kCFURLVolumeIsEjectableKey, kCFURLVolumeIsRemovableKey, kCFURLVolumeIsInternalKey
     CFURLRef cfurl = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_path, strlen(_path), false);
     CFStringRef fsverbname;
-//    CFErrorRef error;
-//    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, &error) == false)
-    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, 0) == false)
-    {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeLocalizedFormatDescriptionKey, &fsverbname, nullptr) == false ) {
         CFRelease(cfurl);
         return -1; // what to return???
     }
@@ -313,34 +307,33 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
     // "Mac OS Extended (Journaled)" instead of "Mac OS Extended (журнальный)"
     // need to investigate why
     CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
-//    CFRelease(error);
     CFRelease(fsverbname);
         
     CFBooleanRef isejectable;
-    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0))
-    {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) ) {
         _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
         
     CFBooleanRef isremovable;
-    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0))
-    {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) ) {
         _a->is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
 
     CFBooleanRef islocal;
-    if(CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0))
-    {
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0) ) {
         _a->is_local = CFBooleanGetValue(islocal);
         CFRelease(islocal);
     }
         
-            
+    CFBooleanRef isinternal;
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) ) {
+        _a->is_internal = CFBooleanGetValue(isinternal);
+        CFRelease(isinternal);
+    }
         
     CFRelease(cfurl);
-    }
     
     return 0;
 }

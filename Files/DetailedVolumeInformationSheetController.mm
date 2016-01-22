@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "DetailedVolumeInformationSheetController.h"
-#include "filesysinfo.h"
+#include "Utility/VolumeInformation.h"
+#include "DetailedVolumeInformationSheetController.h"
 #include "NativeFSManager.h"
 #include "Common.h"
 

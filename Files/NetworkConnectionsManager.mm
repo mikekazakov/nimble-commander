@@ -3,12 +3,13 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include <Habanero/spinlock.h>
+#include "vfs/vfs_net_ftp.h"
+#include "vfs/vfs_net_sftp.h"
 #include "AppDelegate.h"
 #include "NetworkConnectionsManager.h"
 #include "KeychainServices.h"
 #include "Common.h"
-#include "vfs/vfs_net_ftp.h"
-#include "vfs/vfs_net_sftp.h"
+#include "AskForPasswordWindowController.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";
@@ -123,6 +124,15 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return c->user;
+    return "";
+}
+
+static string ResourceNameForUIFromConnection( const NetworkConnectionsManager::Connection& _c )
+{
+    if( auto c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
+        return "ftp://" + (c->user.empty() ? ""s : c->user + "@") + c->host;
+    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+        return "sftp://" + c->user + "@" + c->host;
     return "";
 }
 
@@ -305,11 +315,18 @@ bool NetworkConnectionsManager::SetPassword(const Connection &_conn, const strin
                                                     _password);
 }
 
-bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password) const
+bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password, bool _allow_interactive_ui)
 {
-    return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
-                                                    KeychainAccountFromConnection(_conn),
-                                                    _password);
+    if( KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password) )
+        return true;
+    
+    if( _allow_interactive_ui )
+        if( RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password) ) {
+            SetPassword(_conn, _password);
+            return true;
+        }
+    
+    return false;
 }
 
 optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::ConnectionForVFS(const VFSHost& _vfs) const
@@ -344,8 +361,6 @@ VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &
     string passwd;
     if( !GetPassword(_connection, passwd) )
         return nullptr;
-
-    // TODO: user-interactive password asking if it wasn't found
     
     try {
         VFSHostPtr host;

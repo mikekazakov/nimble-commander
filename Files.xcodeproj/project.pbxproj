@@ -65,6 +65,12 @@
 		CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
 		CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CF29313417D9915600648A90 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
+		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
+		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
+		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
+		CF2C4DF11C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2C4DED1C57A00400DEC75A /* AskForPasswordWindowController.xib */; };
+		CF2C4DF21C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2C4DED1C57A00400DEC75A /* AskForPasswordWindowController.xib */; };
+		CF2C4DF31C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2C4DED1C57A00400DEC75A /* AskForPasswordWindowController.xib */; };
 		CF2D2F671B8B252800111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
 		CF2D2F691B8B258600111C75 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF2D2F931B8B745400111C75 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
@@ -1053,6 +1059,9 @@
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
 		CF29313217D9915600648A90 /* rdrand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rdrand.c; path = 3rd_party/rdrand/rdrand.c; sourceTree = "<group>"; };
 		CF29313317D9915600648A90 /* rdrand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rdrand.h; path = 3rd_party/rdrand/rdrand.h; sourceTree = "<group>"; };
+		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AskForPasswordWindowController.h; sourceTree = "<group>"; };
+		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AskForPasswordWindowController.mm; sourceTree = "<group>"; };
+		CF2C4DED1C57A00400DEC75A /* AskForPasswordWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AskForPasswordWindowController.xib; sourceTree = "<group>"; };
 		CF2D2F5E1B8B23CC00111C75 /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Habanero.xcodeproj; sourceTree = "<group>"; };
 		CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionsMenuDelegate.h; sourceTree = "<group>"; };
 		CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionsMenuDelegate.mm; sourceTree = "<group>"; };
@@ -2260,6 +2269,9 @@
 				CF9DBE121A48831D00FF735B /* SavedNetworkConnectionsManager.mm */,
 				CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */,
 				CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */,
+				CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */,
+				CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */,
+				CF2C4DED1C57A00400DEC75A /* AskForPasswordWindowController.xib */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -3075,6 +3087,7 @@
 				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFB598C5196E3A4400D4C108 /* pref_hotkeys_icon.png in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
+				CF2C4DF21C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
@@ -3161,6 +3174,7 @@
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
+				CF2C4DF11C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */,
 				CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC71A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
@@ -3210,6 +3224,7 @@
 				CFF6F3841A13567C00011177 /* pref_panels_icon.png in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
+				CF2C4DF31C57A00400DEC75A /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
@@ -3442,6 +3457,7 @@
 				CF6D9C52196678010077B146 /* MainWndGoToButton.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
 				CF6D9C54196678010077B146 /* FindFilesSheetController.mm in Sources */,
+				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CF50C4481C0ADEF5009DF611 /* VFSNativeHost.mm in Sources */,
 				CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */,
@@ -3597,6 +3613,7 @@
 				CF73D1E21BE6155E0014C88F /* VFSNetFTPCache.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
+				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CFA0B22C186412BD00501C35 /* DispatchQueue.cpp in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
@@ -3828,6 +3845,7 @@
 				CF50C4421C0ADEE7009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF50B6C81A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D11A15167800E3D96D /* VFSPath.cpp in Sources */,
+				CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */,
 				CFF6F3001A13567C00011177 /* MainWindowFilePanelState.mm in Sources */,
 				CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */,

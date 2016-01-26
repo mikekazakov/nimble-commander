@@ -30,9 +30,8 @@ public:
     vector<Connection> FTPConnectionsByMRU() const;
     vector<Connection> SFTPConnectionsByMRU() const;
     
-    
     bool SetPassword(const Connection &_conn, const string& _password);
-    bool GetPassword(const Connection &_conn, string& _password) const;
+    bool GetPassword(const Connection &_conn, string& _password, bool _allow_interactive_ui = true);
     
     string TitleForConnection(const Connection &_conn) const;
     

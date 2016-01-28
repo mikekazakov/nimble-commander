@@ -31,11 +31,23 @@ public:
     vector<Connection> SFTPConnectionsByMRU() const;
     
     bool SetPassword(const Connection &_conn, const string& _password);
-    bool GetPassword(const Connection &_conn, string& _password, bool _allow_interactive_ui = true);
+    
+    /**
+     * Retrieves password stored in Keychain and returns it.
+     */
+    bool GetPassword(const Connection &_conn, string& _password);
+    
+    /**
+     * Runs modal UI Dialog and asks user to enter an appropriate password
+     */
+    bool AskForPassword(const Connection &_conn, string& _password);
+//#ifdef __OBJC__
+//    bool GetPassword(const Connection &_conn, string& _password, NSWindow *_window_for_passwd_sheet);
+//#endif
     
     string TitleForConnection(const Connection &_conn) const;
     
-    VFSHostPtr SpawnHostFromConnection(const Connection &_conn);
+    VFSHostPtr SpawnHostFromConnection(const Connection &_conn, bool _allow_password_ui = true);
     
 private:
     void Save();

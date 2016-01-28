@@ -15,6 +15,8 @@ bool RunAskForPasswordModalWindow( const string& _password_for, string &_passwd 
 
 #ifdef __OBJC__
 
+//bool RunAskForPasswordSheet( const string& _password_for, string &_passwd, NSWindow *_for_window );
+
 @interface AskForPasswordWindowController : NSWindowController
 
 - (id)initWithResourceName:(NSString *)_name;

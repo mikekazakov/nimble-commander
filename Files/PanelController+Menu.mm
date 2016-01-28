@@ -249,9 +249,10 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         [self handleGoIntoDirOrArchiveSync:false];
 }
 
-- (void) GoToFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
+- (bool) GoToFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
                       password:(const string&)_passwd
 {
+    dispatch_assert_background_queue();    
     auto &info = _connection.Get<NetworkConnectionsManager::FTPConnection>();
     try {
         auto host = make_shared<VFSNetFTPHost>(info.host,
@@ -267,6 +268,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         
         // save successful connection usage to history
         NetworkConnectionsManager::Instance().ReportUsage(_connection);
+        
+        return true;
     } catch (VFSErrorException &e) {
         dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -276,6 +279,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             [alert runModal];
         });
     }
+    return false;
 }
 
 - (void) showGoToFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
@@ -303,9 +307,10 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     [self showGoToFTPSheet:nullopt];
 }
 
-- (void) GoToSFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
+- (bool) GoToSFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
                        password:(const string&)_passwd
 {
+    dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::SFTPConnection>();
     try {
         auto host = make_shared<VFSNetSFTPHost>(info.host,
@@ -321,6 +326,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         
         // save successful connection to history
         NetworkConnectionsManager::Instance().ReportUsage(_connection);
+
+        return true;
     } catch (const VFSErrorException &e) {
         dispatch_to_main_queue([=]{
             NSAlert *alert = [[NSAlert alloc] init];
@@ -330,6 +337,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             [alert runModal];
         });
     }
+    return false;
 }
 
 - (void) showGoToSFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
@@ -360,16 +368,24 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
     string passwd;
-    if( !NetworkConnectionsManager::Instance().GetPassword(connection, passwd) )
-        return;
+    bool should_save_passwd = false;
+    if( !NetworkConnectionsManager::Instance().GetPassword(connection, passwd) ) {
+        if( !NetworkConnectionsManager::Instance().AskForPassword(connection, passwd) )
+            return;
+        should_save_passwd = true;
+    }
+    
+    auto epilog = [=](bool _success) { if(_success && should_save_passwd ) NetworkConnectionsManager::Instance().SetPassword(connection, passwd); };
     
     if( connection.IsType<NetworkConnectionsManager::FTPConnection>() )
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToFTPWithConnection:connection password:passwd];
+            bool success = [self GoToFTPWithConnection:connection password:passwd];
+            epilog(success);
         });
     else if( connection.IsType<NetworkConnectionsManager::SFTPConnection>() )
         m_DirectoryLoadingQ->Run([=]{
-            [self GoToSFTPWithConnection:connection password:passwd];
+            bool success = [self GoToSFTPWithConnection:connection password:passwd];
+            epilog(success);
         });
 }
 

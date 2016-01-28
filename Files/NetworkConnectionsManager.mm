@@ -315,18 +315,16 @@ bool NetworkConnectionsManager::SetPassword(const Connection &_conn, const strin
                                                     _password);
 }
 
-bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password, bool _allow_interactive_ui)
+bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password)
 {
-    if( KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password) )
-        return true;
-    
-    if( _allow_interactive_ui )
-        if( RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password) ) {
-            SetPassword(_conn, _password);
-            return true;
-        }
-    
-    return false;
+    return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
+                                                    KeychainAccountFromConnection(_conn),
+                                                    _password);
+}
+
+bool NetworkConnectionsManager::AskForPassword(const Connection &_conn, string& _password)
+{
+    return RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password);
 }
 
 optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::ConnectionForVFS(const VFSHost& _vfs) const
@@ -356,11 +354,15 @@ optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::Conne
     return nullopt;
 }
 
-VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection)
+VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection, bool _allow_password_ui)
 {
     string passwd;
-    if( !GetPassword(_connection, passwd) )
-        return nullptr;
+    bool shoud_save_passwd = false;
+    if( !GetPassword(_connection, passwd) ) {
+        if( !_allow_password_ui || !AskForPassword(_connection, passwd) )
+            return nullptr;
+        shoud_save_passwd = true;
+    }
     
     try {
         VFSHostPtr host;
@@ -371,6 +373,8 @@ VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &
         
         if( host ) {
             ReportUsage(_connection);
+            if( shoud_save_passwd )
+                SetPassword(_connection, passwd);
             return host;
         }
     }

@@ -5,11 +5,20 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <assert.h>
 
 // synopsis
 
 /** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
 bool dispatch_is_main_queue() noexcept;
+
+/** effectively assert( dispatch_is_main_queue() ) */
+#define dispatch_assert_main_queue() \
+    assert( dispatch_is_main_queue() );
+
+/** effectively assert( !dispatch_is_main_queue() ) */
+#define dispatch_assert_background_queue() \
+    assert( !dispatch_is_main_queue() );
 
 template <class T>
 void dispatch_async( dispatch_queue_t queue, T f );

@@ -76,3 +76,9 @@ bool RunAskForPasswordModalWindow( const string& _password_for, string &_passwd 
     }
     return false;
 }
+//
+//bool RunAskForPasswordSheet( const string& _password_for, string &_passwd, NSWindow *_for_window )
+//{
+//    
+//    
+//}

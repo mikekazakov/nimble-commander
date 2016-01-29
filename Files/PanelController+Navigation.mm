@@ -78,9 +78,9 @@
                 async:true];
 }
 
-- (int) GoToDir:(string)_dir
+- (int) GoToDir:(const string&)_dir
             vfs:(VFSHostPtr)_vfs
-   select_entry:(string)_filename
+   select_entry:(const string&)_filename
           async:(bool)_asynchronous
 {
     return [self GoToDir:_dir
@@ -90,9 +90,9 @@
                    async:_asynchronous];
 }
 
-- (int) GoToDir:(string)_dir
+- (int) GoToDir:(const string&)_dir
             vfs:(VFSHostPtr)_vfs
-   select_entry:(string)_filename
+   select_entry:(const string&)_filename
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous
 {

@@ -145,7 +145,10 @@
     }
 
     // sub-dir
-    path p = self.currentDirectoryPath;    
+    path p = self.currentDirectoryPath;
+    if( p.empty() )
+        return {};
+
     if( _ref.find("./", 0, 2) == 0 )
         p /= _ref.substr(2);
     else

@@ -28,9 +28,19 @@
 
         "general": {
             /**
-             * When create a first window, should app restore the last state
+             * When creating a first window, should app restore the last state
              */
             "restoreLastWindowState": true,
+            
+            /**
+             * Initial path for left panel
+             */
+            "initialLeftPanelPath": "~/",
+
+            /**
+             * Initial path for right panel
+             */
+            "initialRightPanelPath": "~/",
             
             /**
              * Should selection by mask (cmd+=, alt+cmd+= etc) ignore when enumerating entries

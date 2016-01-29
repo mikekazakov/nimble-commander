@@ -41,14 +41,14 @@ public:
 
 // will not load previous view state if any
 // don't use the following methds. use GoToDirWithContext instead.
-- (int) GoToDir:(string)_dir
+- (int) GoToDir:(const string&)_dir
             vfs:(VFSHostPtr)_vfs
-   select_entry:(string)_filename
+   select_entry:(const string&)_filename
           async:(bool)_asynchronous;
 
-- (int) GoToDir:(string)_dir
+- (int) GoToDir:(const string&)_dir
             vfs:(VFSHostPtr)_vfs
-   select_entry:(string)_filename
+   select_entry:(const string&)_filename
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous;
 

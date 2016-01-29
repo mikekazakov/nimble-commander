@@ -296,7 +296,7 @@ string PanelData::DirectoryPathWithTrailingSlash() const
 {
     if(!m_Listing->HasCommonDirectory())
         return "";
-    return m_Listing->Directory(0);
+    return m_Listing->Directory();
 }
 
 string PanelData::DirectoryPathShort() const

@@ -30,6 +30,8 @@
 #include "FilePanelOverlappedTerminal.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
+static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
+static const auto g_ConfigInitialRightPath  = "filePanel.general.initialRightPanelPath";
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
 static const auto g_ResorationPanelsKey     = "panels_v1";
 
@@ -62,16 +64,33 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     return source_items;
 }
 
+static string ExpandPath(const string &_ref )
+{
+    if( _ref.empty() )
+        return {};
+    
+    if( _ref.front() == '/' ) // absolute path
+        return _ref;
+    
+    if( _ref.front() == '~' ) { // relative to home
+        auto ref = _ref.substr(1);
+        path p = path(CommonPaths::Home());
+        if( !ref.empty() )
+            p.remove_filename();
+        p /= ref;
+        return p.native();
+    }
+    
+    return {};
+}
+
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 {
-    self = [super initWithFrame:frameRect];
-    if(self)
-    {
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if( self = [super initWithFrame:frameRect] ) {
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );
@@ -82,81 +101,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         
         m_LeftPanelControllers.emplace_back([PanelController new]);
         m_RightPanelControllers.emplace_back([PanelController new]);
-  
-        auto left_controller = m_LeftPanelControllers.front();
-        auto right_controller = m_RightPanelControllers.front();
         
         [self CreateControls];
         
         // panel creation and preparation
-        left_controller.state = self;
-        [left_controller AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
-        right_controller.state = self;
-        [right_controller AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
-
+        m_LeftPanelControllers.front().state = self;
+        [m_LeftPanelControllers.front() AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        m_RightPanelControllers.front().state = self;
+        [m_RightPanelControllers.front() AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
         
-//        left_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
-//        right_controller.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
-
-        
-        // initially - go into home dir
-//        NSString *lp = [defaults stringForKey:@"FirstPanelPath"];
-//        NSString *rp = [defaults stringForKey:@"SecondPanelPath"];
-        
-        if(!configuration::is_sandboxed) { // regular waypath
-            [left_controller GoToDir:CommonPaths::Home()
-                                 vfs:VFSNativeHost::SharedHost()
-                        select_entry:""
-                               async:false];
-            [right_controller GoToDir:CommonPaths::Home()
-                                  vfs:VFSNativeHost::SharedHost()
-                         select_entry:""
-                                async:false];
-        }
-        else { // on sandboxed version it's bit more complicated
-            if(!SandboxManager::Instance().CanAccessFolder(CommonPaths::Home()) ||
-               [left_controller GoToDir:CommonPaths::Home()
-                                    vfs:VFSNativeHost::SharedHost()
-                           select_entry:""
-                                  async:false] < 0) {
-                   // failed to load saved panel path (or there was no saved path)
-                   // try to go to some path we can
-                   if(SandboxManager::Instance().Empty() ||
-                      [left_controller GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
-                                                 vfs:VFSNativeHost::SharedHost()
-                                        select_entry:""
-                                               async:false] < 0) {
-                          // failed to go to folder with granted access(or no such folders)
-                          // as last resort - go to startup cwd
-                          [left_controller GoToDir:AppDelegate.me.startupCWD
-                                               vfs:VFSNativeHost::SharedHost()
-                                      select_entry:""
-                                             async:false];
-                    }
-            }
-            
-            if(!SandboxManager::Instance().CanAccessFolder(CommonPaths::Home()) ||
-               [right_controller GoToDir:CommonPaths::Home()
-                                     vfs:VFSNativeHost::SharedHost()
-                            select_entry:""
-                                   async:false] < 0) {
-                   // failed to load saved panel path (or there was no saved path)
-                   // try to go to some path we can
-                   if(SandboxManager::Instance().Empty() ||
-                      [right_controller GoToDir:SandboxManager::Instance().FirstFolderWithAccess()
-                                                  vfs:VFSNativeHost::SharedHost()
-                                         select_entry:""
-                                                async:false] < 0) {
-                          // failed to go to folder with granted access(or no such folders)
-                          // as last resort - go to startup cwd
-                          [right_controller GoToDir:AppDelegate.me.startupCWD
-                                                vfs:VFSNativeHost::SharedHost()
-                                       select_entry:""
-                                              async:false];
-                      }
-               }
-        }
-        
+        [self loadInitialPanelData];
         [self updateTabBarsVisibility];
         [self layoutSubtreeIfNeeded];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];
@@ -180,6 +134,48 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 - (BOOL)acceptsFirstResponder { return true; }
 - (NSToolbar*)toolbar { return m_Toolbar; }
 - (NSView*) windowContentView { return self; }
+
+- (void) loadInitialPanelData
+{
+    auto left_controller = m_LeftPanelControllers.front();
+    auto right_controller = m_RightPanelControllers.front();
+    
+    vector<string> left_panel_desired_paths, right_panel_desired_paths;
+    
+    // 1st attempt - load editable default path from config
+    if( auto v = GlobalConfig().GetString(g_ConfigInitialLeftPath) )
+        left_panel_desired_paths.emplace_back( ExpandPath(*v) );
+    if( auto v = GlobalConfig().GetString(g_ConfigInitialRightPath) )
+        right_panel_desired_paths.emplace_back( ExpandPath(*v) );
+    
+    // 2nd attempt - load home path
+    left_panel_desired_paths.emplace_back( CommonPaths::Home() );
+    right_panel_desired_paths.emplace_back( CommonPaths::Home() );
+    
+    // 3rd attempt - load first reachable folder in case of sandboxed environment
+    if( configuration::is_sandboxed ) {
+        left_panel_desired_paths.emplace_back( SandboxManager::Instance().FirstFolderWithAccess() );
+        right_panel_desired_paths.emplace_back( SandboxManager::Instance().FirstFolderWithAccess() );
+    }
+    
+    // 4rth attempt - load dir at startup cwd
+    left_panel_desired_paths.emplace_back(AppDelegate.me.startupCWD);
+    right_panel_desired_paths.emplace_back(AppDelegate.me.startupCWD);
+    
+    for( auto &p: left_panel_desired_paths ) {
+        if( configuration::is_sandboxed && !SandboxManager::Instance().CanAccessFolder(p) )
+            continue;
+        if( [left_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
+            break;
+    }
+
+    for( auto &p: right_panel_desired_paths ) {
+        if( configuration::is_sandboxed && !SandboxManager::Instance().CanAccessFolder(p) )
+            continue;
+        if( [right_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
+            break;
+    }
+}
 
 - (void) CreateControls
 {

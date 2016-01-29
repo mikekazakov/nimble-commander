@@ -1049,6 +1049,7 @@
 		CF14BE171931AD40008DDF6A /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkspaceIconsCache.h; sourceTree = "<group>"; };
 		CF17D1F01A049E1700B523C9 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
 		CF17D1F11A049E1700B523C9 /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindow.mm; sourceTree = "<group>"; };
+		CF1D0E691C5B91D300438108 /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = vfs/VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
 		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
@@ -1108,7 +1109,6 @@
 		CF50B6BC1A15167800E3D96D /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFile.h; path = vfs/VFSFile.h; sourceTree = "<group>"; };
 		CF50B6C11A15167800E3D96D /* VFSPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPath.cpp; path = vfs/VFSPath.cpp; sourceTree = "<group>"; };
 		CF50B6C21A15167800E3D96D /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPath.h; path = vfs/VFSPath.h; sourceTree = "<group>"; };
-		CF50B7381A15173100E3D96D /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = vfs/VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveProxy.mm; path = vfs/VFSArchiveProxy.mm; sourceTree = "<group>"; };
 		CF50B73A1A15173100E3D96D /* VFSEasyOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSEasyOps.h; path = vfs/VFSEasyOps.h; sourceTree = "<group>"; };
 		CF50B73B1A15173100E3D96D /* VFSEasyOps.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSEasyOps.mm; path = vfs/VFSEasyOps.mm; sourceTree = "<group>"; };
@@ -2246,7 +2246,7 @@
 		CF9D0EE017CE11A000CB8146 /* Wrapping */ = {
 			isa = PBXGroup;
 			children = (
-				CF50B7381A15173100E3D96D /* VFSArchiveProxy.h */,
+				CF1D0E691C5B91D300438108 /* VFSArchiveProxy.h */,
 				CF50B7391A15173100E3D96D /* VFSArchiveProxy.mm */,
 				CF50B73A1A15173100E3D96D /* VFSEasyOps.h */,
 				CF50B73B1A15173100E3D96D /* VFSEasyOps.mm */,

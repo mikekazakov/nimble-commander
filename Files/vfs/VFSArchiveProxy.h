@@ -15,12 +15,13 @@ class VFSArchiveProxy
 {
 public:
     
-static bool CanOpenFileAsArchive(const string &_path,
-                                  shared_ptr<VFSHost> _parent
-                                  );
+//static bool CanOpenFileAsArchive(const string &_path,
+//                                  shared_ptr<VFSHost> _parent
+//                                  );
 
-static shared_ptr<VFSHost> OpenFileAsArchive(const string &_path,
-                                             shared_ptr<VFSHost> _parent
-                                             );
+    static VFSHostPtr OpenFileAsArchive(const string &_path,
+                                        const VFSHostPtr &_parent,
+                                        function<string()> _passwd = nullptr
+                                        );
 };
 

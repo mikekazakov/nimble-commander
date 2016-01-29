@@ -137,7 +137,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
             XCTAssert( file->Open(VFSFlags::OF_Read) == 0);
             this_thread::sleep_for(5ms);
             auto d = file->ReadFile();
-            XCTAssert(d.get() != nullptr);
+            XCTAssert(d);
             XCTAssert(d->size() > 0);
             XCTAssert(d->size() == st.size);
         });

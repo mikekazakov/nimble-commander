@@ -21,6 +21,7 @@
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
 #include "PanelDataPersistency.h"
+#include "AskForPasswordWindowController.h"
 
 static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
@@ -336,9 +337,11 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     }
     // archive stuff here
     else if(configuration::has_archives_browsing) {
-        if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) )
-            if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host()) )
+        if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) ) {
+            auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
+            if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host(), pwd_ask) )
                 return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
+        }
     }
     
     return false;

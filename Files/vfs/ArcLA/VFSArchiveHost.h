@@ -19,7 +19,7 @@ struct VFSArchiveState;
 class VFSArchiveHost : public VFSHost
 {
 public:
-    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent); // flags will be added later
+    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt); // flags will be added later
     VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSArchiveHost();
     
@@ -105,6 +105,7 @@ public:
     
 private:
     int DoInit();
+    const class VFSArchiveHostConfiguration &Config() const;
     
     int ReadArchiveListing();
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
@@ -138,6 +139,6 @@ private:
     recursive_mutex                         m_SymlinksResolveLock;
     
     vector< pair<VFSArchiveDir*, uint32_t>> m_EntryByUID; // points to directory and entry No inside it
-    list<unique_ptr<VFSArchiveState>>       m_States;
+    vector<unique_ptr<VFSArchiveState>>     m_States;
     mutex                                   m_StatesLock;
 };

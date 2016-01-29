@@ -36,6 +36,7 @@ namespace VFSError
         ArclibFileFormat    = -2000, // Unrecognized or invalid file format.
         ArclibProgError     = -2001, // Illegal usage of the library.
         ArclibMiscError     = -2002, // Unknown or unclassified error.
+        ArclibPasswordRequired = -2003, // Password needed.
         
         // UnRAR error codes convert:
         UnRARFailedToOpenArchive = -2100,

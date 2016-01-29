@@ -22,6 +22,7 @@ class VFSArchiveHostConfiguration
 {
 public:
     string path;
+    optional<string> password;
     
     const char *Tag() const
     {
@@ -35,20 +36,22 @@ public:
     
     bool operator==(const VFSArchiveHostConfiguration&_rhs) const
     {
-        return path == _rhs.path;
+        return path == _rhs.path &&
+           password == _rhs.password;
     }
 };
 
-static VFSConfiguration ComposeConfiguration(const string &_path)
+static VFSConfiguration ComposeConfiguration(const string &_path, optional<string> _passwd)
 {
     VFSArchiveHostConfiguration config;
     config.path = _path;
+    config.password = move(_passwd);
     return VFSConfiguration( move(config) );
 }
 
-VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent):
+VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password):
     VFSHost(_path.c_str(), _parent, Tag),
-    m_Configuration( ComposeConfiguration(_path) )
+    m_Configuration( ComposeConfiguration(_path, move(_password)) )
 {
     assert(_parent);
     int rc = DoInit();
@@ -92,6 +95,11 @@ VFSConfiguration VFSArchiveHost::Configuration() const
     return m_Configuration;
 }
 
+const VFSArchiveHostConfiguration &VFSArchiveHost::Config() const
+{
+    return m_Configuration.GetUnchecked<VFSArchiveHostConfiguration>();
+}
+
 VFSMeta VFSArchiveHost::Meta()
 {
     VFSMeta m;
@@ -132,8 +140,7 @@ int VFSArchiveHost::DoInit()
     archive_read_set_read_callback(m_Arc, VFSArchiveMediator::myread);
     archive_read_set_seek_callback(m_Arc, VFSArchiveMediator::myseek);
     res = archive_read_open1(m_Arc);
-    if(res < 0)
-    {
+    if( res < 0 ) {
         archive_read_free(m_Arc);
         m_Arc = 0;
         m_Mediator.reset();
@@ -141,8 +148,14 @@ int VFSArchiveHost::DoInit()
         return -1; // TODO: right error code
     }
     
+    // we should fail is archive is encrypted and there's no password provided
+    if( archive_read_has_encrypted_entries(m_Arc) > 0 && !Config().password )
+        return VFSError::ArclibPasswordRequired;
+    
     res = ReadArchiveListing();
-    m_ArchiveFileSize = m_ArFile->Size();    
+    m_ArchiveFileSize = m_ArFile->Size();
+    if( archive_read_has_encrypted_entries(m_Arc) > 0 && !Config().password )
+        return VFSError::ArclibPasswordRequired;
     
     return res;
 }
@@ -602,20 +615,19 @@ unique_ptr<VFSArchiveState> VFSArchiveHost::ClosestState(uint32_t _requested_ite
 
     uint32_t best_delta = numeric_limits<uint32_t>::max();
     auto best = m_States.end();
-    for(auto i = m_States.begin(); i != m_States.end(); ++i) {
+    for( auto i = m_States.begin(), e = m_States.end(); i != e; ++i )
         if(  (*i)->UID() < _requested_item ||
            ( (*i)->UID() == _requested_item && !(*i)->Consumed() ) ) {
-                uint32_t delta = _requested_item - (*i)->UID();
-                if(delta < best_delta) {
-                    best_delta = delta;
-                    best = i;
-                    if(delta <= 1) // the closest one is found, no need to search further
-                        break;
-                }
+            uint32_t delta = _requested_item - (*i)->UID();
+            if(delta < best_delta) {
+                best_delta = delta;
+                best = i;
+                if(delta <= 1) // the closest one is found, no need to search further
+                    break;
             }
         }
     
-    if(best != m_States.end()) {
+    if( best != m_States.end() ) {
         auto state = move(*best);
         m_States.erase(best);
         return move(state);
@@ -715,6 +727,8 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
     archive_read_support_format_warc(arc);
     archive_read_support_format_xar(arc);
     archive_read_support_format_zip_seekable(arc);
+    if( Config().password )
+        archive_read_add_passphrase(arc, Config().password->c_str());
     return arc;
 }
 

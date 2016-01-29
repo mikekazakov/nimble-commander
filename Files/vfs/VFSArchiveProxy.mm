@@ -45,6 +45,8 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
     } catch (VFSErrorException &e) {
         if( e.code() == VFSError::ArclibPasswordRequired && _passwd ) {
             auto passwd = _passwd();
+            if( passwd.empty() )
+                return nullptr;
             try {
                 auto archive = make_shared<VFSArchiveHost>(_path, _parent, passwd);
                 return archive;

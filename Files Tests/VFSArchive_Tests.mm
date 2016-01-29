@@ -17,6 +17,7 @@ static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";
 static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
+static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
@@ -171,6 +172,30 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto d = file->ReadFile();
     XCTAssert( d->size() == 1207 );
     auto ref = "var value = element(by.binding('example.value | date: \"yyyy-Www\"'));";
+    XCTAssert( memcmp(d->data(), ref, strlen(ref)) == 0 );
+}
+
+- (void)testEncrypted
+{
+    const auto passwd = "pass1"s;
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_Encrypted.c_str(), VFSNativeHost::SharedHost(), passwd);
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    XCTAssert( host->StatTotalFiles() == 2 );
+    XCTAssert( host->StatTotalRegs() == 2 );
+    XCTAssert( host->StatTotalDirs() == 0 );
+    
+    VFSFilePtr file;
+    auto fn = "/file2";
+    XCTAssert( host->CreateFile(fn, file, nullptr) == 0);
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0);
+    auto d = file->ReadFile();
+    XCTAssert( d->size() == 19 );
+    auto ref = "contents of file2.\0A";
     XCTAssert( memcmp(d->data(), ref, strlen(ref)) == 0 );
 }
 

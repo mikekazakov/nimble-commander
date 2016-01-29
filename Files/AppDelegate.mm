@@ -51,6 +51,7 @@ static GenericConfig *g_Config = nullptr;
 static GenericConfig *g_State = nullptr;
 
 static const auto g_ConfigGeneralSkin = "general.skin";
+static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -465,7 +466,8 @@ static AppDelegate *g_Me = nil;
 {
     if( m_MainWindows.empty() ) {
         auto mw = [self AllocateNewMainWindow];
-        [mw restoreDefaultWindowStateFromConfig];
+        if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
+            [mw restoreDefaultWindowStateFromConfig];
     }
     return true;
 }

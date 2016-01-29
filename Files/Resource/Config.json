@@ -28,6 +28,11 @@
 
         "general": {
             /**
+             * When create a first window, should app restore the last state
+             */
+            "restoreLastWindowState": true,
+            
+            /**
              * Should selection by mask (cmd+=, alt+cmd+= etc) ignore when enumerating entries
              */
             "ignoreDirectoriesOnSelectionWithMask": true,

@@ -889,13 +889,13 @@
             <point key="canvasLocation" x="417.5" y="91.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
-        <stackView orientation="vertical" alignment="left" spacing="5" hasEqualSpacing="YES" horizontalStackHuggingPriority="1000" horizontalHuggingPriority="249" verticalHuggingPriority="249" id="cMG-5Y-D3j" customClass="PreferencesWindowPanelsTabFlippedStackView">
-            <rect key="frame" x="0.0" y="0.0" width="378" height="178"/>
+        <stackView orientation="vertical" alignment="left" spacing="5" hasEqualSpacing="YES" horizontalStackHuggingPriority="1000" horizontalHuggingPriority="249" verticalHuggingPriority="249" misplaced="YES" id="cMG-5Y-D3j" customClass="PreferencesWindowPanelsTabFlippedStackView">
+            <rect key="frame" x="0.0" y="0.0" width="378" height="196"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <edgeInsets key="edgeInsets" left="2" right="2" top="2" bottom="2"/>
             <beginningViews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                    <rect key="frame" x="0.0" y="160" width="378" height="18"/>
+                    <rect key="frame" x="0.0" y="178" width="378" height="18"/>
                     <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -904,8 +904,18 @@
                         <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.ignoreDirectoriesOnSelectionWithMask" id="Zni-rD-RvB"/>
                     </connections>
                 </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gE9-bs-3HL">
+                    <rect key="frame" x="0.0" y="159" width="378" height="18"/>
+                    <buttonCell key="cell" type="check" title="Restore last window state" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="BgA-eM-bfl">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="-3" name="value" keyPath="delegate.config.filePanel.general.restoreLastWindowState" id="W6f-82-5lt"/>
+                    </connections>
+                </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
-                    <rect key="frame" x="0.0" y="141" width="378" height="18"/>
+                    <rect key="frame" x="0.0" y="140" width="378" height="18"/>
                     <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -915,7 +925,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">
-                    <rect key="frame" x="0.0" y="122" width="378" height="18"/>
+                    <rect key="frame" x="0.0" y="121" width="378" height="18"/>
                     <buttonCell key="cell" type="check" title="Use ~ to go Home" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GBa-AA-rRO">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -925,7 +935,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
-                    <rect key="frame" x="0.0" y="103" width="378" height="18"/>
+                    <rect key="frame" x="0.0" y="102" width="378" height="18"/>
                     <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -935,7 +945,7 @@
                     </connections>
                 </button>
                 <stackView orientation="horizontal" alignment="centerY" horizontalHuggingPriority="249" verticalHuggingPriority="249" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g0x-BO-igL">
-                    <rect key="frame" x="2" y="78" width="374" height="22"/>
+                    <rect key="frame" x="2" y="78" width="374" height="21"/>
                     <beginningViews>
                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O3v-fq-9DO">
                             <rect key="frame" x="-2" y="2" width="56" height="18"/>
@@ -948,7 +958,7 @@
                             </connections>
                         </button>
                         <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jkP-c6-fJK">
-                            <rect key="frame" x="60" y="0.0" width="29" height="22"/>
+                            <rect key="frame" x="60" y="0.0" width="29" height="21"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="24" id="HQG-EQ-EV1"/>
                             </constraints>
@@ -966,7 +976,7 @@
                             </connections>
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
-                            <rect key="frame" x="95" y="3" width="281" height="17"/>
+                            <rect key="frame" x="95" y="2" width="281" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1036,6 +1046,7 @@
                 <integer value="1000"/>
                 <integer value="1000"/>
                 <integer value="1000"/>
+                <integer value="1000"/>
             </visibilityPriorities>
             <customSpacing>
                 <real value="3.4028234663852886e+38"/>
@@ -1047,8 +1058,9 @@
                 <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>
+                <real value="3.4028234663852886e+38"/>
             </customSpacing>
-            <point key="canvasLocation" x="394" y="464.5"/>
+            <point key="canvasLocation" x="184" y="444"/>
         </stackView>
     </objects>
 </document>

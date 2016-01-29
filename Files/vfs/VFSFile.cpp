@@ -10,7 +10,7 @@
 #import "VFSError.h"
 #import "VFSHost.h"
 
-VFSFile::VFSFile(const char* _relative_path, shared_ptr<VFSHost> _host):
+VFSFile::VFSFile(const char* _relative_path, const VFSHostPtr &_host):
     m_RelativePath(_relative_path ? _relative_path : ""),
     m_Host(_host),
     m_LastError(0)

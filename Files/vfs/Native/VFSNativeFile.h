@@ -14,7 +14,7 @@ class VFSNativeHost;
 class VFSNativeFile : public VFSFile
 {
 public:
-    VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host);
+    VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNativeHost> &_host);
     ~VFSNativeFile();
     
     virtual int     Open(int _open_flags, VFSCancelChecker _cancel_checker) override;

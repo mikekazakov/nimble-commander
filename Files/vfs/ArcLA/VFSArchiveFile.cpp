@@ -12,7 +12,7 @@
 #include "VFSArchiveFile.h"
 #include "VFSArchiveInternal.h"
 
-VFSArchiveFile::VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host):
+VFSArchiveFile::VFSArchiveFile(const char* _relative_path, const shared_ptr<VFSArchiveHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }

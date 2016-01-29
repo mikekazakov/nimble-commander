@@ -15,7 +15,7 @@ struct AppleDoubleEA;
 class VFSArchiveFile : public VFSFile
 {
 public:
-    VFSArchiveFile(const char* _relative_path, shared_ptr<VFSArchiveHost> _host);
+    VFSArchiveFile(const char* _relative_path, const shared_ptr<VFSArchiveHost> &_host);
     ~VFSArchiveFile();
     
     

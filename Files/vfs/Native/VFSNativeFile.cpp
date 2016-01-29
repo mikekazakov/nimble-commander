@@ -12,7 +12,7 @@
 #include "../../NativeFSManager.h"
 #include "../../RoutedIO.h"
 
-VFSNativeFile::VFSNativeFile(const char* _relative_path, shared_ptr<VFSNativeHost> _host):
+VFSNativeFile::VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNativeHost> &_host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
     m_Position(0),

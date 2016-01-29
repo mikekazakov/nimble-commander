@@ -45,7 +45,7 @@ public:
         NoWrite     = 0
     };
     
-    VFSFile(const char* _relative_path, shared_ptr<VFSHost> _host);
+    VFSFile(const char* _relative_path, const VFSHostPtr &_host);
     virtual ~VFSFile();
 
     virtual int     Open(int _open_flags,

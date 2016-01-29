@@ -97,31 +97,31 @@ void VFSFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handle
 {
 }
 
-unique_ptr<vector<uint8_t>> VFSFile::ReadFile()
+optional<vector<uint8_t>> VFSFile::ReadFile()
 {
     if(!IsOpened())
-        return 0;
+        return nullopt;
     
     if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
-        return 0;
+        return nullopt;
     
     if(Pos() != 0 && Seek(Seek_Set, 0) < 0)
-        return 0; // can't rewind file
+        return nullopt; // can't rewind file
     
     uint64_t sz = Size();
-    auto buf = make_unique<vector<uint8_t>>(sz);
+    auto buf = vector<uint8_t>(sz);
     
-    uint8_t *buftmp = buf->data();
+    uint8_t *buftmp = buf.data();
     uint64_t szleft = sz;
     while(szleft) {
         ssize_t r = Read(buftmp, szleft);
         if(r < 0)
-            return nullptr;
+            return nullopt;
         szleft -= r;
         buftmp += r;
     }
     
-    return buf;
+    return move(buf);
 }
 
 int VFSFile::WriteFile(const void *_d, size_t _sz)

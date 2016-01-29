@@ -154,7 +154,7 @@ public:
     /**
      * ReadFile() return full file content in vector<uint8_t> or nullptr.
      */
-    unique_ptr<vector<uint8_t>> ReadFile();
+    optional<vector<uint8_t>> ReadFile();
     
     /**
      * Will call Write until data ends or an error occurs;

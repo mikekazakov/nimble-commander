@@ -320,10 +320,10 @@ vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _
     return move(eas);
 }
 
-void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
+void *BuildAppleDoubleFromEA(VFSFile &_file,
                              size_t *_buf_sz)
 {
-    unsigned ret_xattr_count = _file->XAttrCount();
+    unsigned ret_xattr_count = _file.XAttrCount();
     if(ret_xattr_count == 0)
         return 0;
     
@@ -346,7 +346,7 @@ void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
     
     bool has_finfo = false;
     
-    _file->XAttrIterateNames([&](auto _name){
+    _file.XAttrIterateNames([&](auto _name){
             assert(eas_count < max_eas);
             file_eas[eas_count].name_len = (int)strlen(_name);
             assert(file_eas[eas_count].name_len < 256);
@@ -360,12 +360,12 @@ void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
         });
     
     for(int i = 0; i < eas_count; ++i) {
-        ssize_t sz = _file->XAttrGet(file_eas[i].name, 0, 0);
+        ssize_t sz = _file.XAttrGet(file_eas[i].name, 0, 0);
         if(sz > 0) {
             file_eas[i].data = alloca(sz);
             assert(file_eas[i].data);
             file_eas[i].data_sz = (unsigned)sz;
-            _file->XAttrGet(file_eas[i].name, file_eas[i].data, file_eas[i].data_sz);
+            _file.XAttrGet(file_eas[i].name, file_eas[i].data, file_eas[i].data_sz);
         }
     }
 

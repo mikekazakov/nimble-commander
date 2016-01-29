@@ -334,20 +334,20 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     
     int ret;
     VFSFilePtr file1, file2;
-    unique_ptr<vector<uint8_t>> data1, data2;
+    optional<vector<uint8_t>> data1, data2;
     
     if( (ret = _file1_host->CreateFile(_file1_full_path, file1, 0)) != 0 )
         return ret;
     if( (ret = file1->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
-    if( (data1 = file1->ReadFile()) == nullptr )
+    if( !(data1 = file1->ReadFile()))
         return file1->LastError();
     
     if( (ret = _file2_host->CreateFile(_file2_full_path, file2, 0)) != 0 )
         return ret;
     if( (ret = file2->Open(VFSFlags::OF_Read)) != 0 )
         return ret;
-    if( (data2 = file2->ReadFile()) == nullptr )
+    if( !(data2 = file2->ReadFile()) )
         return file2->LastError();
     
     if( data1->size() < data2->size() )

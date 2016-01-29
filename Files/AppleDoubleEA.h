@@ -26,5 +26,5 @@ struct AppleDoubleEA
   */
 vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
 
-void *BuildAppleDoubleFromEA(shared_ptr<VFSFile> _file,
+void *BuildAppleDoubleFromEA(VFSFile &_file,
                              size_t *_buf_sz);

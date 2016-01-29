@@ -5,7 +5,7 @@ bool FileWindow::FileOpened() const
     return m_Window.get() != nullptr;
 }
 
-int FileWindow::OpenFile(shared_ptr<VFSFile> _file, int _window_size)
+int FileWindow::OpenFile(const shared_ptr<VFSFile> &_file, int _window_size)
 {
     if(!_file->IsOpened())
         return VFSError::InvalidCall;

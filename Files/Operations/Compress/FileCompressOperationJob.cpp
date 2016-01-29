@@ -33,7 +33,7 @@ static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _p
     return ret == _md_s;
 }
 
-static bool WriteEAsIfAny(shared_ptr<VFSFile> _src, struct archive *_a, const char *_source_fn)
+static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)
 {
     assert(!IsPathWithTrailingSlash(_source_fn));
     
@@ -284,7 +284,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         vfs->CreateFile(sourcepath.c_str(), src_file, 0);
         if(src_file->Open(VFSFlags::OF_Read) >= 0) {
             itemname[strlen(itemname)-1] = 0; // our paths extracting routine don't works with paths like /Dir/
-            WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
+            WriteEAsIfAny(*src_file, m_Archive, itemname); // metadata, currently no error processing here
         }
     }
     else if( meta.flags & (int)ItemFlags::symlink ) { // symlinks
@@ -376,7 +376,7 @@ void FileCompressOperationJob::ProcessItem(const chained_strings::node *_node, i
         }
         
         // all was ok, clean will be upon exit
-        WriteEAsIfAny(src_file, m_Archive, itemname); // metadata, currently no error processing here
+        WriteEAsIfAny(*src_file, m_Archive, itemname); // metadata, currently no error processing here
     }
 }
 

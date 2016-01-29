@@ -14,7 +14,7 @@ public:
      * For files with Sequential and Seek read paradigms, FileWindow need exclusive access to VFSFile,
      * so that no one else can touch it's seek pointers.
      */
-    int OpenFile(shared_ptr<VFSFile> _file, int _window_size = DefaultWindowSize);
+    int OpenFile(const shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
     int CloseFile();
     bool FileOpened() const;

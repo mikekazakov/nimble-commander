@@ -39,31 +39,31 @@ static PosixIOInterface &IOWrappedCreateProxy()
     }
 }
 
-static unique_ptr<vector<uint8_t>> ReadFile(const char *_path)
+static optional<vector<uint8_t>> ReadFile(const char *_path)
 {
     int fd = open(_path, O_RDONLY);
     if(fd < 0)
-        return nullptr;
+        return nullopt;
 
     long size = lseek(fd, 0, SEEK_END);
     lseek(fd, 0, SEEK_SET);
 
-    auto buf = make_unique<vector<uint8_t>>(size);
+    auto buf = vector<uint8_t>(size);
     
-    uint8_t *buftmp = buf->data();
+    uint8_t *buftmp = buf.data();
     uint64_t szleft = size;
     while(szleft) {
         ssize_t r = read(fd, buftmp, szleft);
         if(r < 0) {
             close(fd);
-            return nullptr;
+            return nullopt;
         }
         szleft -= r;
         buftmp += r;
     }
     
     close(fd);
-    return buf;
+    return move(buf);
 }
 
 static const char *InstalledPath()

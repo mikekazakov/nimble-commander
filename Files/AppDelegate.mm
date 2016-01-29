@@ -464,6 +464,9 @@ static AppDelegate *g_Me = nil;
 
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)sender
 {
+    if(m_IsRunningTests)
+        return false;
+    
     if( m_MainWindows.empty() ) {
         auto mw = [self AllocateNewMainWindow];
         if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )

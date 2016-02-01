@@ -10,12 +10,11 @@ static vector<weak_ptr<FontCache>> g_Caches;
 
 static bool IsLastResortFont(CTFontRef _font)
 {
-    CFStringRef family = (CFStringRef)CTFontCopyAttribute(_font, kCTFontFamilyNameAttribute);
+    CFStringRef family = (CFStringRef)CTFontCopyPostScriptName(_font);
     if(!family)
         return false;
     
-    bool is_resort = (CFStringCompare(family, CFSTR ("LastResort"), 0)  == kCFCompareEqualTo) || // <= 10.10
-                     (CFStringCompare(family, CFSTR (".LastResort"), 0) == kCFCompareEqualTo);   // >= 10.11
+    bool is_resort = CFStringCompare(family, CFSTR ("LastResort"), 0) == kCFCompareEqualTo;
     
     CFRelease(family);
     return is_resort;

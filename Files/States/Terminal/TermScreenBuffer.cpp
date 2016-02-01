@@ -105,6 +105,103 @@ const _::LineMeta *_::MetaFromLineNo( int _line_number ) const
         return nullptr;
 }
 
+vector<uint32_t> _::DumpUnicodeString( const TermScreenPoint _begin, const TermScreenPoint _end ) const
+{
+    if( _begin >= _end )
+        return {};
+    
+    vector<uint32_t> unicode;
+    TermScreenPoint curr = _begin;
+    while( curr < _end ) {
+        auto line = LineFromNo( curr.y );
+        
+        if( !line ) {
+            curr.y++;
+            continue;
+        }
+
+        bool any_inserted = false;
+        auto chars_len = OccupiedChars(line.first, line.second);
+        for( ; curr.x < chars_len && curr < _end; ++curr.x ) {
+            auto &sp = line.first[curr.x];
+            if( sp.l == MultiCellGlyph )
+                continue;
+            unicode.push_back(sp.l != 0 ? sp.l : ' ');
+            if(sp.c1 != 0) unicode.push_back(sp.c1);
+            if(sp.c2 != 0) unicode.push_back(sp.c2);
+            any_inserted = true;
+        }
+        
+        if( curr >= _end )
+            break;
+        
+        if( any_inserted && !LineWrapped( curr.y ) )
+            unicode.push_back(0x000A);
+        
+        curr.y++;
+        curr.x = 0;
+    }
+    
+    return unicode;
+}
+
+pair<vector<uint16_t>, vector<TermScreenPoint>> _::DumpUTF16StringWithLayout( const TermScreenPoint _begin, const TermScreenPoint _end ) const
+{
+    if( _begin >= _end )
+        return {};
+    
+    vector<uint16_t> unichars;
+    vector<TermScreenPoint> positions;
+    
+    TermScreenPoint curr = _begin;
+    
+    auto put = [&](uint16_t _unichar) {
+        unichars.emplace_back(_unichar);
+        positions.emplace_back(curr);
+    };
+    
+    while( curr < _end ) {
+        auto line = LineFromNo( curr.y );
+        
+        if( !line ) {
+            curr.y++;
+            continue;
+        }
+
+        bool any_inserted = false;
+        auto chars_len = OccupiedChars(line.first, line.second);
+        for( ; curr.x < chars_len && curr < _end; ++curr.x ) {
+            auto &sp = line.first[curr.x];
+            if( sp.l == MultiCellGlyph )
+                continue;
+            
+            uint16_t utf16[2];
+            if( CFStringGetSurrogatePairForLongCharacter(sp.l != 0 ? sp.l : ' ', utf16) ) {
+                put(utf16[0]);
+                put(utf16[1]);
+            }
+            else
+                put(utf16[0]);
+    
+            if(sp.c1 != 0) put(sp.c1);
+            if(sp.c2 != 0) put(sp.c2);
+            
+            any_inserted = true;
+        }
+        
+        if( curr >= _end )
+            break;
+        
+        if( any_inserted && !LineWrapped( curr.y ) )
+            put(0x000A);
+        
+        curr.y++;
+        curr.x = 0;
+    }
+    
+    return pair<vector<uint16_t>, vector<TermScreenPoint>>( move(unichars), move(positions) );
+}
+
 string _::DumpScreenAsANSI() const
 {
     string result;

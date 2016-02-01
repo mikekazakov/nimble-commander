@@ -904,11 +904,11 @@
                         <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.ignoreDirectoriesOnSelectionWithMask" id="Zni-rD-RvB"/>
                     </connections>
                 </button>
-                <customView verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="zP5-4m-HNN">
-                    <rect key="frame" x="2" y="172" width="374" height="68"/>
+                <customView verticalHuggingPriority="1000" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zP5-4m-HNN">
+                    <rect key="frame" x="2" y="172" width="374" height="58"/>
                     <subviews>
-                        <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gE9-bs-3HL">
-                            <rect key="frame" x="-2" y="42" width="378" height="18"/>
+                        <button translatesAutoresizingMaskIntoConstraints="NO" id="gE9-bs-3HL">
+                            <rect key="frame" x="-2" y="52" width="378" height="18"/>
                             <buttonCell key="cell" type="check" title="Restore last window state" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="BgA-eM-bfl">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -917,16 +917,16 @@
                                 <binding destination="-3" name="value" keyPath="delegate.config.filePanel.general.restoreLastWindowState" id="W6f-82-5lt"/>
                             </connections>
                         </button>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ctP-zl-GEx">
-                            <rect key="frame" x="18" y="19" width="151" height="17"/>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ctP-zl-GEx">
+                            <rect key="frame" x="-2" y="29" width="151" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default left panel path:" id="GnB-SA-FAJ">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Dv-Ox-hiC">
-                            <rect key="frame" x="175" y="16" width="179" height="22"/>
+                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Dv-Ox-hiC">
+                            <rect key="frame" x="155" y="26" width="199" height="22"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" usesSingleLineMode="YES" id="ZSl-uv-pH6">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -936,16 +936,16 @@
                                 <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.initialLeftPanelPath" id="TOz-47-3Ly"/>
                             </connections>
                         </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n76-Id-JEc">
-                            <rect key="frame" x="18" y="-6" width="151" height="17"/>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n76-Id-JEc">
+                            <rect key="frame" x="-2" y="4" width="151" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default right panel path:" id="pes-Xh-MY9">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="naE-Zr-UF7">
-                            <rect key="frame" x="175" y="-9" width="179" height="22"/>
+                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="naE-Zr-UF7">
+                            <rect key="frame" x="155" y="1" width="199" height="22"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" usesSingleLineMode="YES" id="0bc-Sn-VFs">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -965,7 +965,7 @@
                         <constraint firstAttribute="trailing" secondItem="naE-Zr-UF7" secondAttribute="trailing" constant="20" symbolic="YES" id="Fgw-hy-nTU"/>
                         <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="n76-Id-JEc" secondAttribute="trailing" constant="8" symbolic="YES" id="IGQ-po-u1J"/>
                         <constraint firstAttribute="bottom" secondItem="n76-Id-JEc" secondAttribute="bottom" constant="4" id="Knr-dH-Knm"/>
-                        <constraint firstItem="ctP-zl-GEx" firstAttribute="leading" secondItem="zP5-4m-HNN" secondAttribute="leading" constant="20" symbolic="YES" id="bOL-nJ-YwV"/>
+                        <constraint firstItem="ctP-zl-GEx" firstAttribute="leading" secondItem="zP5-4m-HNN" secondAttribute="leading" id="bOL-nJ-YwV"/>
                         <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="ctP-zl-GEx" secondAttribute="trailing" constant="8" symbolic="YES" id="cQ9-IK-wSd"/>
                         <constraint firstItem="ctP-zl-GEx" firstAttribute="top" secondItem="gE9-bs-3HL" secondAttribute="bottom" constant="8" symbolic="YES" id="ep9-bf-uIJ"/>
                         <constraint firstItem="8Dv-Ox-hiC" firstAttribute="baseline" secondItem="ctP-zl-GEx" secondAttribute="baseline" id="g1r-np-5h8"/>

@@ -138,8 +138,8 @@ static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
 //        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         panels_state->Accept(writer);
-        if(AmIBeingDebugged())
-            cout << buffer.GetString() << endl;
+//        if(AmIBeingDebugged())
+//            cout << buffer.GetString() << endl;
         [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_CocoaRestorationFilePanelsStateKey];
     }
 }
@@ -154,8 +154,8 @@ static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey]) ) {
-        if(AmIBeingDebugged())
-            NSLog(@"%@", json);
+//        if(AmIBeingDebugged())
+//            NSLog(@"%@", json);
         rapidjson::StandaloneDocument state;
         rapidjson::ParseResult ok = state.Parse<rapidjson::kParseCommentsFlag>( json.UTF8String );
         if( ok )

@@ -31,6 +31,20 @@ struct TermScreenColors
     }; // need 5 bits to store this color
 };
 
+struct TermScreenPoint
+{
+    int x = 0;
+    int y = 0;
+    inline TermScreenPoint() noexcept {};
+    inline TermScreenPoint(int _x, int _y) noexcept: x(_x), y(_y) {};
+    inline bool operator > (const TermScreenPoint&_r) const noexcept { return (y > _r.y) || (y == _r.y && x >  _r.x); }
+    inline bool operator >=(const TermScreenPoint&_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
+    inline bool operator < (const TermScreenPoint&_r) const noexcept { return !(*this >= _r); }
+    inline bool operator <=(const TermScreenPoint&_r) const noexcept { return !(*this >  _r); }
+    inline bool operator ==(const TermScreenPoint&_r) const noexcept { return y == _r.y && x == _r.x; }
+    inline bool operator !=(const TermScreenPoint&_r) const noexcept { return y != _r.y || x != _r.x; }
+};
+
 class TermScreenBuffer
 {
 public:
@@ -46,7 +60,10 @@ public:
         unsigned underline  :1;
         unsigned reverse    :1;
     }; // 10 bytes per screen space
+    static_assert( sizeof(Space) == 10, "" );
 #pragma pop
+    
+    static const unsigned short MultiCellGlyph = 0xFFFE;    
     
     TermScreenBuffer(unsigned _width, unsigned _height);
     
@@ -85,6 +102,9 @@ public:
      * if screen is absolutely clean it will return nullopt
      */
     optional<pair<int, int>> OccupiedOnScreenLines() const;
+    
+    vector<uint32_t> DumpUnicodeString( TermScreenPoint _begin, TermScreenPoint _end ) const;
+    pair<vector<uint16_t>, vector<TermScreenPoint>> DumpUTF16StringWithLayout( TermScreenPoint _begin, TermScreenPoint _end ) const;
     
     // use for diagnose and test purposes only
     string DumpScreenAsANSI() const;

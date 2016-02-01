@@ -41,17 +41,7 @@ static const auto g_ConfigAnsi13 = "terminal.AnsiColor13";
 static const auto g_ConfigAnsi14 = "terminal.AnsiColor14";
 static const auto g_ConfigAnsi15 = "terminal.AnsiColor15";
 
-struct SelPoint
-{
-    int x;
-    int y;
-    inline bool operator > (const SelPoint&_r) const { return (y > _r.y) || (y == _r.y && x >  _r.x); }
-    inline bool operator >=(const SelPoint&_r) const { return (y > _r.y) || (y == _r.y && x >= _r.x); }
-    inline bool operator < (const SelPoint&_r) const { return !(*this >= _r); }
-    inline bool operator <=(const SelPoint&_r) const { return !(*this >  _r); }
-    inline bool operator ==(const SelPoint&_r) const { return y == _r.y && x == _r.x; }
-    inline bool operator !=(const SelPoint&_r) const { return y != _r.y || x != _r.x; }
-};
+using SelPoint = TermScreenPoint;
 
 static uint32_t ConfigColor(const char *_path)
 {
@@ -591,13 +581,75 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) mouseDown:(NSEvent *)_event
 {
-
-//    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-//    [self ProjectPoint:[self convertPoint:[_event locationInWindow] fromView:nil]];
-    [self HandleSelectionWithMouseDragging:_event];
+    if(_event.clickCount > 2)
+        [self handleSelectionWithTripleClick:_event];
+    else if(_event.clickCount == 2 )
+        [self handleSelectionWithDoubleClick:_event];
+    else
+        [self handleSelectionWithMouseDragging:_event];
 }
 
-- (void) HandleSelectionWithMouseDragging: (NSEvent*) event
+- (void) handleSelectionWithTripleClick:(NSEvent *) event
+{
+    // TODO: implement
+}
+
+- (void) handleSelectionWithDoubleClick:(NSEvent *) event
+{
+    NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
+    SelPoint position = [self ProjectPoint:click_location];
+    
+    auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y-1), SelPoint(1024, position.y+1));
+    auto &utf16 = data.first;
+    auto &layout = data.second;
+
+    if( utf16.empty() )
+        return;
+    
+    NSString *string = [[NSString alloc] initWithBytesNoCopy:(void*)utf16.data()
+                                                      length:utf16.size()*sizeof(uint16_t)
+                                                    encoding:NSUTF16LittleEndianStringEncoding
+                                                freeWhenDone:false];
+    if( !string )
+        return;
+    
+    optional<pair<SelPoint, SelPoint>> search_result;
+    [string enumerateSubstringsInRange:NSMakeRange(0, string.length)
+                               options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
+                            usingBlock:[&](NSString*,
+                                           NSRange wordRange,
+                                           NSRange,
+                                           BOOL *stop){
+                                if( wordRange.location < layout.size() ) {
+                                    auto begin = layout[wordRange.location];
+                                    if( position >= begin ) {
+                                        auto end = wordRange.location + wordRange.length < layout.size() ?
+                                                layout[wordRange.location + wordRange.length] :
+                                                layout.back();
+                                        if( position < end ) {
+                                            search_result = make_pair(begin, end);
+                                            *stop = true;
+                                        }
+                                    }
+                                    else
+                                        *stop = YES;
+                                }
+                                else
+                                    *stop = YES;
+                            }];
+    
+    if( search_result ) {
+        m_SelStart = search_result->first;
+        m_SelEnd = search_result->second;
+    }
+    else {
+        m_SelStart = position;
+        m_SelEnd = SelPoint(position.x+1, position.y);
+    }
+    [self setNeedsDisplay];
+}
+
+- (void) handleSelectionWithMouseDragging: (NSEvent*) event
 {
     // TODO: not a precise selection modification. look at viewer, it has better implementation.
     
@@ -646,39 +698,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if(m_SelStart == m_SelEnd)
         return;
     
-    vector<uint32_t> unichars;
-    SelPoint curr = m_SelStart;
-    while(true)
-    {
-        if(curr >= m_SelEnd) break;
-        
-        auto line = m_Screen->Buffer().LineFromNo( curr.y );
-        
-        if( !line ) {
-            curr.y++;
-            continue;
-        }
-        
-        bool any_inserted = false;
-        auto chars_len = line.second - line.first;
-        for(; curr.x < chars_len && ( (curr.y == m_SelEnd.y) ? (curr.x < m_SelEnd.x) : true); ++curr.x) {
-            auto &sp = line.first[curr.x];
-            if(sp.l == TermScreen::MultiCellGlyph) continue;
-            unichars.push_back(sp.l != 0 ? sp.l : ' ');
-            if(sp.c1 != 0) unichars.push_back(sp.c1);
-            if(sp.c2 != 0) unichars.push_back(sp.c2);
-            any_inserted = true;
-        }
-    
-        if(curr >= m_SelEnd)
-            break;
-        
-        if(any_inserted && !m_Screen->Buffer().LineWrapped( curr.y ))
-            unichars.push_back(0x000A);
-        
-        curr.y++;
-        curr.x = 0;
-    }
+    vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
     
     NSString *result = [[NSString alloc] initWithBytes:unichars.data()
                                                 length:unichars.size() * sizeof(uint32_t)

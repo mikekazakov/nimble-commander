@@ -13,7 +13,7 @@
 class TermScreen
 {
 public:
-    static const unsigned short MultiCellGlyph = 0xFFFE;
+    static const unsigned short MultiCellGlyph = TermScreenBuffer::MultiCellGlyph;
     using Space = TermScreenBuffer::Space;
     
     TermScreen(unsigned _width, unsigned _height);

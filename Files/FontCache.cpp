@@ -14,7 +14,8 @@ static bool IsLastResortFont(CTFontRef _font)
     if(!family)
         return false;
     
-    bool is_resort = CFStringCompare(family, CFSTR ("LastResort"), 0) == kCFCompareEqualTo;
+    bool is_resort = (CFStringCompare(family, CFSTR ("LastResort"), 0)  == kCFCompareEqualTo) || // <= 10.10
+                     (CFStringCompare(family, CFSTR (".LastResort"), 0) == kCFCompareEqualTo);   // >= 10.11
     
     CFRelease(family);
     return is_resort;

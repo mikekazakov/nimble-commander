@@ -572,7 +572,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
  * x values are trivial - float x position divided by font's width
  * returned points may not correlate with real lines' lengths or scroll sizes, so they need to be treated carefully
  */
-- (SelPoint)ProjectPoint:(NSPoint)_point
+- (SelPoint)projectPoint:(NSPoint)_point
 {
     int line_predict = floor(_point.y / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
     int col_predict = floor(_point.x / m_FontCache->Width());
@@ -591,13 +591,28 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) handleSelectionWithTripleClick:(NSEvent *) event
 {
-    // TODO: implement
+    NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
+    SelPoint position = [self projectPoint:click_location];
+    if( m_Screen->Buffer().LineFromNo(position.y) ) {
+        m_HasSelection = true;
+        m_SelStart = TermScreenPoint( 0, position.y );
+        m_SelEnd = TermScreenPoint( m_Screen->Buffer().Width(), position.y );
+        while( m_Screen->Buffer().LineWrapped(m_SelStart.y-1) )
+            m_SelStart.y--;
+        while( m_Screen->Buffer().LineWrapped(m_SelEnd.y) )
+            m_SelEnd.y++;
+    }
+    else {
+        m_HasSelection = false;
+        m_SelStart = m_SelEnd = {0, 0};
+    }
+    [self setNeedsDisplay];
 }
 
 - (void) handleSelectionWithDoubleClick:(NSEvent *) event
 {
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
-    SelPoint position = [self ProjectPoint:click_location];
+    SelPoint position = [self projectPoint:click_location];
     
     auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y-1), SelPoint(1024, position.y+1));
     auto &utf16 = data.first;
@@ -660,8 +675,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     {
         NSPoint curr_loc = [self convertPoint:[event locationInWindow] fromView:nil];
         
-        SelPoint start = [self ProjectPoint:first_loc];
-        SelPoint end   = [self ProjectPoint:curr_loc];
+        SelPoint start = [self projectPoint:first_loc];
+        SelPoint end   = [self projectPoint:curr_loc];
         
         if(start > end)
             swap(start, end);

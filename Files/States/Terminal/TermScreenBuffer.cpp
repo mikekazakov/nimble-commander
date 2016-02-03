@@ -339,6 +339,11 @@ static inline bool IsOccupiedChar( const _::Space &_s )
     return _s.l != 0;
 }
 
+unsigned _::OccupiedChars( const RangePair<const Space> &_line )
+{
+    return OccupiedChars( _line.first, _line.second );
+}
+
 unsigned _::OccupiedChars( const Space *_begin, const Space *_end )
 {
     assert( _end >= _end );

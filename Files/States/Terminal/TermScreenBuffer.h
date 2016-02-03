@@ -113,7 +113,8 @@ public:
     void MakeSnapshot();
     void RevertToSnapshot();
     void DropSnapshot();
-    
+
+    static unsigned OccupiedChars( const RangePair<const Space> &_line );
     static unsigned OccupiedChars( const Space *_begin, const Space *_end );
     static bool HasOccupiedChars( const Space *_begin, const Space *_end );
     unsigned OccupiedChars( int _line_no ) const;

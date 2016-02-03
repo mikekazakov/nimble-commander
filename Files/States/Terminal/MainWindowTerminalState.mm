@@ -79,46 +79,13 @@
     
     m_Task->SetOnChildOutput([=](const void* _d, int _sz){
         if(MainWindowTerminalState *strongself = weakself) {
-
-
-            
             bool newtitle = false;
-            strongself->m_TermScrollView.screen.Lock();
-
-            
-//                        MachTimeBenchmark mtb;
-
-            
-            int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-            
-//                        auto nanos = mtb.Delta();
-//                        static unsigned long nanos_total(0);
-//                        nanos_total += nanos.count();
-//                        static unsigned long bytes_total(0);
-//                        bytes_total += _sz;
-//                        auto nanos_pb = double(nanos_total) / double(bytes_total);
-//                        printf( "parsing speed avg: %.0f\n", nanos_pb );
-            
-            
-            
-            
-            if(flags & TermParser::Result_ChangedTitle)
-                newtitle = true;
-        
-            strongself->m_TermScrollView.screen.Unlock();
-            
-            
-
-            
-            
-            
+            if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
+                int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
+                if(flags & TermParser::Result_ChangedTitle)
+                    newtitle = true;
+            }
             [strongself->m_TermScrollView.view.fpsDrawer invalidate];
-            
-//            mtb.ResetNano("Parsed in: ");
-//            printf("(data size: %d)\n", _sz);
-
-            
-        
             dispatch_to_main_queue( [=]{
                 [strongself->m_TermScrollView.view adjustSizes:false];
                 if(newtitle)
@@ -141,9 +108,8 @@
 
 - (void) UpdateTitle
 {
-    m_TermScrollView.screen.Lock();
+    auto lock = m_TermScrollView.screen.AcquireLock();
     NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
-    m_TermScrollView.screen.Unlock();
     
     if(title.length == 0) {
         string cwd = m_Task->CWD();        

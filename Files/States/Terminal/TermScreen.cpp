@@ -358,16 +358,12 @@ void TermScreen::ResizeScreen(unsigned _new_sx, unsigned _new_sy)
     if( _new_sx == 0 || _new_sy == 0 )
         throw invalid_argument("TermScreen::ResizeScreen sizes can't be zero");
     
-    Lock();
-
     bool feed_from_bs = m_PosY == Height() - 1; // questionable!
     
     m_Buffer.ResizeScreen(_new_sx, _new_sy, feed_from_bs && !m_AlternateScreen);
     
     // adjust cursor Y if it was at the bottom prior to resizing
     GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
-    
-    Unlock();
 }
 
 void TermScreen::SetTitle(const char *_t)

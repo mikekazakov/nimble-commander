@@ -81,9 +81,8 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (void) onChildOutput:(const void*)_d size:(int)_sz
 {
-    m_TermScrollView.screen.Lock();
-    m_Parser->EatBytes((const unsigned char*)_d, _sz);
-    m_TermScrollView.screen.Unlock();
+    if( auto lock = m_TermScrollView.screen.AcquireLock() )
+        m_Parser->EatBytes((const unsigned char*)_d, _sz);
     [m_TermScrollView.view.fpsDrawer invalidate];
     
     dispatch_to_main_queue( [=]{
@@ -135,16 +134,17 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (void) guessWhereCommandLineIs
 {
-    m_TermScrollView.screen.Lock();
+//    m_TermScrollView.screen.Lock();
 
 //    cout << m_TermScrollView.screen.Buffer().DumpScreenAsANSI() << endl;
 //    printf( "cursor is at (%d, %d)\n",
 //           m_TermScrollView.screen.CursorX(),
 //           m_TermScrollView.screen.CursorY());
+    auto lock = m_TermScrollView.screen.AcquireLock();
     m_BashCommandStartX = m_TermScrollView.screen.CursorX();
     m_BashCommandStartY = m_TermScrollView.screen.CursorY();
     
-    m_TermScrollView.screen.Unlock();
+//    m_TermScrollView.screen.Unlock();
 }
 
 - (double) bottomGapForLines:(int)_lines_amount
@@ -223,14 +223,15 @@ static const auto g_LongProcessDelay = 100ms;
         return false;
     
     auto virgin = false;
-    m_TermScrollView.screen.Lock();
+    auto lock = m_TermScrollView.screen.AcquireLock();
+//    m_TermScrollView.screen.Lock();
     if( auto line = m_TermScrollView.screen.Buffer().LineFromNo( m_BashCommandStartY ) ) {
         auto i = min( max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
         auto e = end( line );
         if( !TermScreenBuffer::HasOccupiedChars(i, e) )
             virgin = true;
     }
-    m_TermScrollView.screen.Unlock();
+//    m_TermScrollView.screen.Unlock();
     
     return virgin;
 }

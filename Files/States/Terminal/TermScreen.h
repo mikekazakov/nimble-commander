@@ -18,8 +18,7 @@ public:
     
     TermScreen(unsigned _width, unsigned _height);
     
-    inline void                     Lock()    const { m_Lock.lock();            }
-    inline void                     Unlock()  const { m_Lock.unlock();          }
+    unique_lock<mutex>              AcquireLock()    const { return unique_lock<mutex>(m_Lock); }
     inline const TermScreenBuffer  &Buffer()  const { return m_Buffer;          }
     inline int                      Width()   const { return m_Buffer.Width();  }
     inline int                      Height()  const { return m_Buffer.Height(); }

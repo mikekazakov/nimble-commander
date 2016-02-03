@@ -65,17 +65,12 @@
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
             if(MainWindowExternalTerminalEditorState *strongself = weakself) {
                 bool newtitle = false;
-                strongself->m_TermScrollView.screen.Lock();
-
-                for(int i = 0; i < _sz; ++i) {
-                    int flags = 0;
-                    strongself->m_Parser->EatByte(((const char*)_d)[i], flags);
+                if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
+                    int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
                     if(flags & TermParser::Result_ChangedTitle)
                         newtitle = true;
+                    strongself->m_Parser->Flush();
                 }
-                
-                strongself->m_Parser->Flush();
-                strongself->m_TermScrollView.screen.Unlock();
                 [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                 
                 dispatch_to_main_queue( [=]{
@@ -115,9 +110,8 @@
 
 - (void) updateTitle
 {
-    m_TermScrollView.screen.Lock();
+    auto lock = m_TermScrollView.screen.AcquireLock();
     NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
-    m_TermScrollView.screen.Unlock();
     
     if(title.length == 0)
         title = [NSString stringWithFormat:@"%@ - %@",

@@ -333,7 +333,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
     
     
-    m_Screen->Lock();
+    auto lock = m_Screen->AcquireLock();
     
 //    oms::SetParamsForUserASCIIArt(context, m_FontCache);
     oms::SetParamsForUserReadableText(context, m_FontCache.get());
@@ -365,7 +365,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 //    [self drawBackscreenOnscreenBorder:context];
 #endif
     
-    m_Screen->Unlock();
     
 //    mtb.ResetMilli();
 }

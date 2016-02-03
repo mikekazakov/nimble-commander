@@ -141,6 +141,7 @@ static const auto g_ConfigFont = "terminal.font";
     int sx = floor(m_View.frame.size.width / m_View.fontCache.Width());
 
     if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
+        auto lock = m_Screen->AcquireLock();
         m_Screen->ResizeScreen(sx, sy);
         if( auto p = m_View.parser )
             p->Resized();

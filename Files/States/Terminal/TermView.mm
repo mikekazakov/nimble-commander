@@ -592,6 +592,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
+    auto lock = m_Screen->AcquireLock();
     if( m_Screen->Buffer().LineFromNo(position.y) ) {
         m_HasSelection = true;
         m_SelStart = TermScreenPoint( 0, position.y );
@@ -612,7 +613,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
-    
+    auto lock = m_Screen->AcquireLock();
     auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y-1), SelPoint(1024, position.y+1));
     auto &utf16 = data.first;
     auto &layout = data.second;
@@ -711,7 +712,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     if(m_SelStart == m_SelEnd)
         return;
-    
+
+    auto lock = m_Screen->AcquireLock();
     vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
     
     NSString *result = [[NSString alloc] initWithBytes:unichars.data()

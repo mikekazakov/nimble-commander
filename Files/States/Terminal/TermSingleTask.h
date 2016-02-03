@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import "TermTask.h"
+#include "TermTask.h"
 
 class TermSingleTask : public TermTask
 {

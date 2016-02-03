@@ -9,8 +9,10 @@
 #include "../../FontCache.h"
 #include "../../Common.h"
 #include "../../Config.h"
-#include "TermScrollView.h"
 #include "TermParser.h"
+#include "TermView.h"
+#include "TermScreen.h"
+#include "TermScrollView.h"
 
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 static const auto g_ConfigFont = "terminal.font";

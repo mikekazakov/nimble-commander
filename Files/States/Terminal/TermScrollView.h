@@ -6,8 +6,10 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "TermView.h"
-#import "TermScreen.h"
+#pragma once
+
+@class TermView;
+class TermScreen;
 
 @interface TermScrollView : NSScrollView
 

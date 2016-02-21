@@ -810,7 +810,6 @@ void TermParser::PushRawTaskInput(NSString *_str)
  * That's a hacky implementation, it mimicks the real deadKeyState.
  * This can serve for purposes of decoding a single option-modified keypress, but can't be used for double keys decoding
  */
-//static CFStringRef GetModifiedCharactersForKeyPress(NSEvent *event)
 static CFStringRef GetModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags)
 {
     // http://stackoverflow.com/questions/12547007/convert-key-code-into-key-equivalent-string
@@ -863,6 +862,116 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
     const char *seq_resp = nullptr;
     switch (unicode)
     {
+            
+/**
+ <key>$F709</key>
+	<string>[26~</string>
+	<key>F70A</key>
+	<string>[18~</string>
+	<key>^F728</key>
+	<string>[3;5~</string>
+	<key>$F70A</key>
+	<string>[28~</string>
+	<key>F717</key>
+	<string>[34~</string>
+	<key>~F70D</key>
+	<string>[28~</string>
+	<key>$F70E</key>
+	<string>[33~</string>
+	<key>~^F728</key>
+	<string>[3;5~</string>
+	<key>F70B</key>
+	<string>[19~</string>
+	<key>F710</key>
+	<string>[25~</string>
+	<key>$F702</key>
+	<string>[1;2D</string>
+	<key>^F703</key>
+	<string>[1;5C</string>
+	<key>~F705</key>
+	<string>[18~</string>
+	<key>~F712</key>
+	<string>[34~</string>
+	<key>~F709</key>
+	<string>[23~</string>
+	<key>F711</key>
+	<string>[26~</string>
+	<key>F704</key>
+	<string>OP</string>
+	<key>$F728</key>
+	<string>[3;2~</string>
+	<key>F70C</key>
+	<string>[20~</string>
+	<key>~F70A</key>
+	<string>[24~</string>
+	<key>$F70B</key>
+	<string>[29~</string>
+	<key>~F70E</key>
+	<string>[29~</string>
+	<key>$F70F</key>
+	<string>[34~</string>
+	<key>F712</key>
+	<string>[28~</string>
+	<key>F70D</key>
+	<string>[21~</string>
+	<key>$F703</key>
+	<string>[1;2C</string>
+	<key>F705</key>
+	<string>OQ</string>
+	<key>~F702</key>
+	<string>b</string>
+	<key>~F706</key>
+	<string>[19~</string>
+	<key>F713</key>
+	<string>[29~</string>
+	<key>F70E</key>
+	<string>[23~</string>
+	<key>F706</key>
+	<string>OR</string>
+	<key>~F70B</key>
+	<string>[25~</string>
+	<key>$F70C</key>
+	<string>[31~</string>
+	<key>F728</key>
+	<string>[3~</string>
+	<key>~F70F</key>
+	<string>[31~</string>
+	<key>F707</key>
+	<string>OS</string>
+	<key>~F703</key>
+	<string>f</string>
+	<key>F70F</key>
+	<string>[24~</string>
+	<key>F714</key>
+	<string>[31~</string>
+	<key>~F710</key>
+	<string>[32~</string>
+	<key>~F707</key>
+	<string>[20~</string>
+	<key>$F708</key>
+	<string>[25~</string>
+	<key>F715</key>
+	<string>[32~</string>
+	<key>F708</key>
+	<string>[15~</string>
+	<key>~F70C</key>
+	<string>[26~</string>
+	<key>$F70D</key>
+	<string>[32~</string>
+	<key>^F702</key>
+	<string>[1;5D</string>
+	<key>~F704</key>
+	<string>[17~</string>
+	<key>F716</key>
+	<string>[33~</string>
+	<key>F709</key>
+	<string>[17~</string>
+	<key>~F711</key>
+	<string>[33~</string>
+	<key>~F708</key>                NSF5FunctionKey             = 0xF708,
+	<string>[21~</string>
+**/
+            
         case NSUpArrowFunctionKey:      seq_resp = "\eOA"; break;
         case NSDownArrowFunctionKey:    seq_resp = "\eOB"; break;
         case NSRightArrowFunctionKey:   seq_resp = "\eOC"; break;
@@ -879,10 +988,12 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         case NSF10FunctionKey:          seq_resp = "\e[21~"; break;
         case NSF11FunctionKey:          seq_resp = "\e[23~"; break;
         case NSF12FunctionKey:          seq_resp = "\e[24~"; break;
-        case NSHomeFunctionKey:         seq_resp = "\e[1~"; break;
+//        case NSHomeFunctionKey:         seq_resp = "\e[1~"; break;
+        case NSHomeFunctionKey:         seq_resp = "\eOH"; break;
         case NSInsertFunctionKey:       seq_resp = "\e[2~"; break;
         case NSDeleteFunctionKey:       seq_resp = "\e[3~"; break;
-        case NSEndFunctionKey:          seq_resp = "\e[4~"; break;
+//        case NSEndFunctionKey:          seq_resp = "\e[4~"; break;
+        case NSEndFunctionKey:         seq_resp = "\eOF"; break;
         case NSPageUpFunctionKey:       seq_resp = "\e[5~"; break;
         case NSPageDownFunctionKey:     seq_resp = "\e[6~"; break;
         case 9: /* tab */

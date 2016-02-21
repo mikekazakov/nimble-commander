@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Carbon/Carbon.h>
 #include "../../Common.h"
 #include "../../OrthodoxMonospace.h"
 #include "../../FontCache.h"
@@ -805,27 +806,61 @@ void TermParser::PushRawTaskInput(NSString *_str)
     m_TaskInput(utf8str, (int)sz);
 }
 
+/**
+ * That's a hacky implementation, it mimicks the real deadKeyState.
+ * This can serve for purposes of decoding a single option-modified keypress, but can't be used for double keys decoding
+ */
+//static CFStringRef GetModifiedCharactersForKeyPress(NSEvent *event)
+static CFStringRef GetModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags)
+{
+    // http://stackoverflow.com/questions/12547007/convert-key-code-into-key-equivalent-string
+    // http://stackoverflow.com/questions/8263618/convert-virtual-key-code-to-unicode-string
+    // http://stackoverflow.com/questions/22566665/how-to-capture-unicode-from-key-events-without-an-nstextview
+    
+    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
+    CFDataRef layoutData = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
+    const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
+    const UInt8 kbdType = LMGetKbdType();
+    const UInt32 modifierKeyState = (_flags >> 16) & 0xFF;
+    
+    UInt32 deadKeyState = 0;
+    const size_t unicodeStringLength = 4;
+    UniChar unicodeString[unicodeStringLength];
+    UniCharCount realLength;
+    
+    UCKeyTranslate(keyboardLayout,
+                   _keycode,
+                   kUCKeyActionDown,
+                   modifierKeyState,
+                   kbdType,
+                   0,
+                   &deadKeyState,
+                   unicodeStringLength,
+                   &realLength,
+                   unicodeString);
+    UCKeyTranslate(keyboardLayout,
+                   _keycode,
+                   kUCKeyActionDown,
+                   modifierKeyState,
+                   kbdType,
+                   0,
+                   &deadKeyState,
+                   unicodeStringLength,
+                   &realLength,
+                   unicodeString);
+    CFRelease(currentKeyboard);
+    return CFStringCreateWithCharacters(kCFAllocatorDefault, unicodeString, realLength);
+}
+
 void TermParser::ProcessKeyDown(NSEvent *_event)
 {
-    NSString* character = [_event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) return;
-    unichar const unicode        = [character characterAtIndex:0];
-//    unsigned short const keycode = [_event keyCode];
-//    NSLog(@"%i", (int) keycode);
-    
+    NSString* character = _event.charactersIgnoringModifiers;
+    if( character.length != 1 )
+        return;
+    const uint16_t unicode = [character characterAtIndex:0];
 
-//    static char buf[20];
-
-    NSUInteger modflag = [_event modifierFlags];
-/*    int mod=0;
-    if((modflag & NSControlKeyMask) && (modflag&NSShiftKeyMask)) mod=6;
-    else if(modflag & NSControlKeyMask) mod=5;
-    else if(modflag & NSShiftKeyMask) mod=2;*/
-    
-    
-    const char *seq_resp = 0;
-//#define CURSOR_MOD_UP        "\033[1;%dA"
-//#define KEY_FUNCTION_FORMAT  "\033[%d~"
+    NSEventModifierFlags modflags = _event.modifierFlags;
+    const char *seq_resp = nullptr;
     switch (unicode)
     {
         case NSUpArrowFunctionKey:      seq_resp = "\eOA"; break;
@@ -851,31 +886,20 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         case NSPageUpFunctionKey:       seq_resp = "\e[5~"; break;
         case NSPageDownFunctionKey:     seq_resp = "\e[6~"; break;
         case 9: /* tab */
-            if (modflag & NSShiftKeyMask) /* do we really getting these messages? */
+            if (modflags & NSShiftKeyMask) /* do we really getting these messages? */
                 seq_resp = "\e[Z";
             else
                 seq_resp = "\011";
             break;
-            
-//        case NSDownArrowFunctionKey: m_Task->WriteChildInput("\033[1B", 4); return;
-//        case NSDownArrowFunctionKey: m_Task->WriteChildInput("\033OP", 3); return;
-            
-            /*
-#define CURSOR_MOD_DOWN      "\033[1;%dB"
-#define CURSOR_MOD_UP        "\033[1;%dA"
-#define CURSOR_MOD_RIGHT     "\033[1;%dC"
-#define CURSOR_MOD_LEFT      "\033[1;%dD"
-*/
     }
     
-    if(seq_resp != 0) {
+    if( seq_resp ) {
         m_TaskInput(seq_resp, (int)strlen(seq_resp));
         return;
-        
     }
     
     // process regular keys down
-    if(modflag & NSControlKeyMask) {
+    if( modflags & NSControlKeyMask ) {
         unsigned short cc = 0xFFFF;
         if (unicode >= 'a' && unicode <= 'z')                           cc = unicode - 'a' + 1;
         else if (unicode == ' ' || unicode == '2' || unicode == '@')    cc = 0;
@@ -888,14 +912,13 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
         return;
     }
 
-    if( (modflag&NSDeviceIndependentModifierFlagsMask) == NSAlphaShiftKeyMask )
+    if( modflags & NSAlternateKeyMask )
+        character = (NSString*)CFBridgingRelease( GetModifiedCharactersForKeyPress(_event.keyCode, modflags) );
+    else if( (modflags&NSDeviceIndependentModifierFlagsMask) == NSAlphaShiftKeyMask )
         character = _event.characters;
     
-    const char* utf8 = [character UTF8String];
+    const char* utf8 = character.UTF8String;
     m_TaskInput(utf8, (int)strlen(utf8));
-    
-//    unsigned char c = unicode;
-//    m_Task->WriteChildInput(&c, 1);
 }
 
 void TermParser::CSI_P()

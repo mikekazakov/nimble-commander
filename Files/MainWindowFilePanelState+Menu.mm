@@ -21,7 +21,6 @@
 #include "PanelController.h"
 #include "FilePanelMainSplitView.h"
 #include "Common.h"
-//#include "ExternalEditorInfo.h"
 #include "MainWindowController.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
@@ -29,6 +28,23 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 @implementation MainWindowFilePanelState (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    try
+    {
+        return [self validateMenuItemImpl:item];
+    }
+    catch(exception &e)
+    {
+        cout << "Exception caught: " << e.what() << endl;
+    }
+    catch(...)
+    {
+        cout << "Caught an unhandled exception!" << endl;
+    }
+    return false;
+}
+
+- (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;

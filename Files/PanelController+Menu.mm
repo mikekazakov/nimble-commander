@@ -73,6 +73,23 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
+    try
+    {
+        return [self validateMenuItemImpl:item];
+    }
+    catch(exception &e)
+    {
+        cout << "Exception caught: " << e.what() << endl;
+    }
+    catch(...)
+    {
+        cout << "Caught an unhandled exception!" << endl;
+    }
+    return false;
+}
+
+- (BOOL) validateMenuItemImpl:(NSMenuItem *)item
+{
     auto upd_for_sort = [](NSMenuItem * _item, PanelSortMode _mode, PanelSortMode::Mode _mask){
         static NSImage *img = [NSImage imageNamed:NSImageNameRemoveTemplate];
         if(_mode.sort & _mask) {
@@ -126,7 +143,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
     IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return self.isUniform && self.vfs->IsNativeFS() && m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;

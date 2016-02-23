@@ -436,7 +436,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
         return;
     
     auto *panel = m_IsRight ? state.rightPanelController : state.leftPanelController;
-    if(!panel)
+    if( !panel || !panel.isUniform )
         return;
     
     m_CurrentPath = panel.currentDirectoryPath;

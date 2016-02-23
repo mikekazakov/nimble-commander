@@ -20,7 +20,7 @@
 @optional
 - (void)Assigned;
 - (void)Resigned;
-- (void)DidBecomeKeyWindow;
+- (void)didBecomeKeyWindow;
 - (void)WindowDidResize;
 - (void)WindowWillClose;
 - (void)WindowWillBeginSheet;

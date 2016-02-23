@@ -690,7 +690,7 @@ static string ExpandPath(const string &_ref )
     [self updateTabNameForController:_panel];    
 }
 
-- (void) DidBecomeKeyWindow
+- (void) didBecomeKeyWindow
 {
     // update key modifiers state for views
     unsigned long flags = [NSEvent modifierFlags];

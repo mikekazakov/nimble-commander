@@ -385,6 +385,7 @@ static AppDelegate *g_Me = nil;
     return NO;
 }
 
+// AllocateNewMainWindow and NewWindow are pretty similar, it's bad they are different methods
 - (MainWindowController*)AllocateNewMainWindow
 {
     MainWindowController *mwc = [MainWindowController new];
@@ -395,7 +396,10 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)NewWindow:(id)sender
 {
-    [self AllocateNewMainWindow];
+    MainWindowController *mwc = [MainWindowController new];
+    [mwc restoreDefaultWindowStateFromLastOpenedWindow];
+    m_MainWindows.push_back(mwc);
+    [mwc showWindow:self];
 }
 
 - (void) RemoveMainWindow:(MainWindowController*) _wnd

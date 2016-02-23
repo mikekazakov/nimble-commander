@@ -30,6 +30,7 @@
                                           file:(const string&)_file_path;
 
 - (void)restoreDefaultWindowStateFromConfig;
+- (void)restoreDefaultWindowStateFromLastOpenedWindow;
 
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window

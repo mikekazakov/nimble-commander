@@ -28,7 +28,8 @@
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static auto g_CocoaRestorationFilePanelsStateKey = @"filePanelsState";
-static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
+static const auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
+static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 @implementation MainWindowController
 {
@@ -82,7 +83,7 @@ static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
         [self PushNewWindowState:m_PanelState];
         
         [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(DidBecomeKeyWindow)
+                                               selector:@selector(didBecomeKeyWindow)
                                                    name:NSWindowDidBecomeKeyNotification
                                                  object:self.window];
         
@@ -149,6 +150,14 @@ static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
     auto panels_state = StateConfig().Get(g_JSONRestorationFilePanelsStateKey);
     if( !panels_state.IsNull() )
         [m_PanelState decodeRestorableState:panels_state];
+}
+
+- (void)restoreDefaultWindowStateFromLastOpenedWindow
+{
+    if( MainWindowController *last = g_LastFocusedMainWindowController ) {
+        [m_PanelState.leftPanelController copyOptionsFromController:last->m_PanelState.leftPanelController];
+        [m_PanelState.rightPanelController copyOptionsFromController:last->m_PanelState.rightPanelController];
+    }
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
@@ -244,10 +253,12 @@ static auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
     return true;
 }
 
-- (void)DidBecomeKeyWindow {
+- (void)didBecomeKeyWindow
+{
+    g_LastFocusedMainWindowController = self;
     for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(DidBecomeKeyWindow)])
-            [i DidBecomeKeyWindow];
+        if([i respondsToSelector:@selector(didBecomeKeyWindow)])
+            [i didBecomeKeyWindow];
 }
 
 - (void)windowWillBeginSheet:(NSNotification *)notification

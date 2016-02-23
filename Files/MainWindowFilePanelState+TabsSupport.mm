@@ -1,8 +1,10 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
-#import "MainWindowFilePanelState+TabsSupport.h"
-#import "PanelView.h"
-#import "PanelController.h"
-#import "FilePanelMainSplitView.h"
+#include <Habanero/CommonPaths.h>
+#include "vfs/vfs_native.h"
+#include "MainWindowFilePanelState+TabsSupport.h"
+#include "PanelView.h"
+#include "PanelController.h"
+#include "FilePanelMainSplitView.h"
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)
@@ -64,33 +66,29 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {
     PanelController *pc = [PanelController new];
     pc.state = self;
-    
-    // TODO: copy options from current panel controller
-    
-    string path;
-    VFSHostPtr vfs;
-    if(aTabView == m_MainSplitView.leftTabbedHolder.tabView) {
-//        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsLeftOptions];
-        vfs = self.leftPanelController.vfs;
-        path = self.leftPanelController.currentDirectoryPath;
-        
+    PanelController *source = nil;
+    if( aTabView == m_MainSplitView.leftTabbedHolder.tabView ) {
+        source = self.leftPanelController;
         m_LeftPanelControllers.emplace_back(pc);
         [m_MainSplitView.leftTabbedHolder addPanel:pc.view];
     }
-    else if(aTabView == m_MainSplitView.rightTabbedHolder.tabView) {
-//        pc.options = [NSUserDefaults.standardUserDefaults dictionaryForKey:g_DefsPanelsRightOptions];
-        vfs = self.rightPanelController.vfs;
-        path = self.rightPanelController.currentDirectoryPath;
+    else if( aTabView == m_MainSplitView.rightTabbedHolder.tabView ) {
+        source = self.rightPanelController;
         m_RightPanelControllers.emplace_back(pc);
         [m_MainSplitView.rightTabbedHolder addPanel:pc.view];
     }
     else
         assert(0); // something is really broken
-    
-    [pc GoToDir:path
-            vfs:vfs
-   select_entry:""
-          async:false];
+
+    [pc copyOptionsFromController:source];
+    if( source.isUniform ) {
+        [pc GoToDir:source.currentDirectoryPath vfs:source.vfs select_entry:"" async:false];
+    }
+    else if( !source.history.Empty() ) {
+        [pc GoToVFSPathStack:source.history.All().back()];
+    }
+    else
+        [pc GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:false];
     
     [self ActivatePanelByController:pc];
 }

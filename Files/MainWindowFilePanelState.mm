@@ -602,20 +602,6 @@ static string ExpandPath(const string &_ref )
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-//- (void) savePanelsOptions
-//{
-//    [self savePanelOptionsFor:self.leftPanelController];
-//    [self savePanelOptionsFor:self.rightPanelController];
-//}
-//
-//- (void) savePanelOptionsFor:(PanelController*)_pc
-//{
-//    if(_pc == self.leftPanelController)
-//        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsLeftOptions];
-//    else if(_pc == self.rightPanelController)
-//        [NSUserDefaults.standardUserDefaults setObject:_pc.options forKey:g_DefsPanelsRightOptions];
-//}
-
 - (void)flagsChanged:(NSEvent *)event
 {
     for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];

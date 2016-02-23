@@ -102,6 +102,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 @synthesize view = m_View;
 @synthesize data = m_Data;
 @synthesize lastNativeDirectoryPath = m_LastNativeDirectory;
+@synthesize history = m_History;
 
 - (id) init
 {
@@ -208,38 +209,13 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return GlobalConfig().GetBool(g_ConfigIgnoreDirectoriesOnMaskSelection);
 }
 
-//- (void) setOptions:(NSDictionary *)options
-//{
-//    auto hard_filtering = m_Data.HardFiltering();
-//    hard_filtering.show_hidden = [[options valueForKey:@"ViewHiddenFiles"] boolValue];
-//    [self ChangeHardFilteringTo:hard_filtering];
-//    
-//    auto sort_mode = m_Data.SortMode();
-//    sort_mode.sep_dirs = [[options valueForKey:@"SeparateDirectories"] boolValue];
-//    sort_mode.case_sens = [[options valueForKey:@"CaseSensitiveComparison"] boolValue];
-//    sort_mode.numeric_sort = [[options valueForKey:@"NumericSort"] boolValue];
-//    sort_mode.sort = (PanelSortMode::Mode)[[options valueForKey:@"SortMode"] integerValue];
-//    [self ChangeSortingModeTo:sort_mode];
-//    
-//    m_View.type = (PanelViewType)[[options valueForKey:@"ViewMode"] integerValue];
-//}
-//
-//- (NSDictionary*) options
-//{
-//    auto mode = m_Data.SortMode();
-//    return [NSDictionary dictionaryWithObjectsAndKeys:
-//            [NSNumber numberWithBool:(mode.sep_dirs != false)], @"SeparateDirectories",
-//            [NSNumber numberWithBool:(m_Data.HardFiltering().show_hidden != false)], @"ViewHiddenFiles",
-//            [NSNumber numberWithBool:(mode.case_sens != false)], @"CaseSensitiveComparison",
-//            [NSNumber numberWithBool:(mode.numeric_sort != false)], @"NumericSort",
-//            [NSNumber numberWithInt:(int)m_View.type], @"ViewMode",
-//            [NSNumber numberWithInt:(int)mode.sort], @"SortMode",
-//            nil];
-//}
-
 - (void) copyOptionsFromController:(PanelController*)_pc
 {
-    // TODO: write
+    if( !_pc )
+        return;
+    
+    [self.view loadRestorableState:_pc.view.encodeRestorableState];
+    self.data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
 }
 
 - (bool) isActive

@@ -133,6 +133,7 @@ namespace panel
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) PanelData& data;
+@property (nonatomic, readonly) const PanelHistory& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;
@@ -148,6 +149,10 @@ namespace panel
 - (void) RefreshDirectory; // user pressed cmd+r by default
 - (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
+
+/**
+ * Will copy view options and sorting options.
+ */
 - (void) copyOptionsFromController:(PanelController*)_pc;
 
 @end

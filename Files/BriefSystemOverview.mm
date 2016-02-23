@@ -107,11 +107,11 @@ static NSTextField *CreateStockTF()
             m_IsRight = true;
     }
     if(m_IsRight != was_right)
-    {
-        [self CreateControls];
-        [self UpdateControls];
-        [self setNeedsDisplay];
-    }
+        dispatch_to_main_queue([=]{
+            [self CreateControls];
+            [self UpdateControls];
+            [self setNeedsDisplay];
+        });
 }
 
 - (void)viewDidMoveToSuperview

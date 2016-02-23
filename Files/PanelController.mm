@@ -737,6 +737,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 - (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view
 {
     [self.state activePanelChangedTo:self];
+    [self ModifierFlagsChanged:[NSEvent modifierFlags]];
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select

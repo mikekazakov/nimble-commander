@@ -214,6 +214,15 @@ void ModernPanelViewPresentation::BuildGeometry()
         m_VolumeFooter.reset();
 }
 
+static NSLineBreakMode PanelViewFilenameTrimmingToLineBreakMode(PanelViewFilenameTrimming _method)
+{
+    if( _method == PanelViewFilenameTrimming::Heading )
+        return NSLineBreakByTruncatingHead;
+    if( _method == PanelViewFilenameTrimming::Trailing )
+        return NSLineBreakByTruncatingTail;
+    return NSLineBreakByTruncatingMiddle;
+}
+
 void ModernPanelViewPresentation::BuildAppearance()
 {
     assert(dispatch_is_main_queue()); // STA api design
@@ -248,37 +257,39 @@ void ModernPanelViewPresentation::BuildAppearance()
         m_ColoringAttrs.emplace_back();
         auto &ca = m_ColoringAttrs.back();
         
-        NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
-        item_text_pstyle.alignment = NSLeftTextAlignment;
-        item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+        if(NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new]) {
+            item_text_pstyle.alignment = NSLeftTextAlignment;
+            item_text_pstyle.lineBreakMode = PanelViewFilenameTrimmingToLineBreakMode(m_State->Trimming);
+            
+            ca.focused = @{NSFontAttributeName: m_Font,
+                           NSForegroundColorAttributeName: c.focused,
+                           NSParagraphStyleAttributeName: item_text_pstyle};
+            
+            ca.regular = @{NSFontAttributeName: m_Font,
+                           NSForegroundColorAttributeName: c.regular,
+                           NSParagraphStyleAttributeName: item_text_pstyle};
+        }
     
-        ca.focused = @{NSFontAttributeName: m_Font,
-                               NSForegroundColorAttributeName: c.focused,
-                               NSParagraphStyleAttributeName: item_text_pstyle};
-    
-        ca.regular = @{NSFontAttributeName: m_Font,
-                       NSForegroundColorAttributeName: c.regular,
-                       NSParagraphStyleAttributeName: item_text_pstyle};
-    
-        NSMutableParagraphStyle *size_col_text_pstyle = [NSMutableParagraphStyle new];
-        size_col_text_pstyle.alignment = NSRightTextAlignment;
-        size_col_text_pstyle.lineBreakMode = NSLineBreakByClipping;
-
-        ca.focused_size = @{NSFontAttributeName: m_Font,
-                                    NSForegroundColorAttributeName: c.focused,
-                                    NSParagraphStyleAttributeName: size_col_text_pstyle};
-
-        ca.regular_size = @{NSFontAttributeName: m_Font,
-                            NSForegroundColorAttributeName: c.regular,
-                            NSParagraphStyleAttributeName: size_col_text_pstyle};
-
-        ca.focused_time = @{NSFontAttributeName: m_Font,
-                                    NSForegroundColorAttributeName: c.focused,
-                                    NSParagraphStyleAttributeName: size_col_text_pstyle};
-    
-        ca.regular_time = @{NSFontAttributeName: m_Font,
-                            NSForegroundColorAttributeName: c.regular,
-                            NSParagraphStyleAttributeName: size_col_text_pstyle};
+        if( NSMutableParagraphStyle *size_col_text_pstyle = [NSMutableParagraphStyle new] ) {
+            size_col_text_pstyle.alignment = NSRightTextAlignment;
+            size_col_text_pstyle.lineBreakMode = NSLineBreakByClipping;
+            
+            ca.focused_size = @{NSFontAttributeName: m_Font,
+                                NSForegroundColorAttributeName: c.focused,
+                                NSParagraphStyleAttributeName: size_col_text_pstyle};
+            
+            ca.regular_size = @{NSFontAttributeName: m_Font,
+                                NSForegroundColorAttributeName: c.regular,
+                                NSParagraphStyleAttributeName: size_col_text_pstyle};
+            
+            ca.focused_time = @{NSFontAttributeName: m_Font,
+                                NSForegroundColorAttributeName: c.focused,
+                                NSParagraphStyleAttributeName: size_col_text_pstyle};
+            
+            ca.regular_time = @{NSFontAttributeName: m_Font,
+                                NSForegroundColorAttributeName: c.regular,
+                                NSParagraphStyleAttributeName: size_col_text_pstyle};
+        }
     }
     SetViewNeedsDisplay();
 }

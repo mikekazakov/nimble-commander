@@ -554,6 +554,15 @@ int ClassicPanelViewPresentation::Granularity()
     return m_FontCache->Width();
 }
 
+static function<void(oms::StringBuf<MAXPATHLEN> &_fn, int _width)> TrimmingFunction(PanelViewFilenameTrimming _method)
+{
+    if( _method == PanelViewFilenameTrimming::Heading)
+        return [](oms::StringBuf<MAXPATHLEN> &_fn, int _width) { _fn.TrimEllipsisLeft( _width ); };
+    if( _method == PanelViewFilenameTrimming::Middle )
+        return [](oms::StringBuf<MAXPATHLEN> &_fn, int _width) { _fn.TrimEllipsisMiddle(_width); };
+    return [](oms::StringBuf<MAXPATHLEN> &_fn, int _width) { _fn.TrimRight(_width); };
+}
+
 void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
 {
     // layout preparation
@@ -583,11 +592,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     
     oms::Context omsc(context, fontcache);
 
-    auto trim_panel_fn = [](oms::StringBuf<MAXPATHLEN> &_fn, int _width) {
-//        _fn.TrimEllipsisLeft( _width );
-//        _fn.TrimRight(_width);
-        _fn.TrimEllipsisMiddle(_width);
-    };
+    const auto trim_panel_fn = TrimmingFunction(m_State->Trimming);
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names

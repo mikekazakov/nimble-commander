@@ -18,12 +18,20 @@ enum class PanelViewType
     Wide    = 3
 };
 
+enum class PanelViewFilenameTrimming
+{
+    Heading     = 0,
+    Middle      = 1,
+    Trailing    = 2
+};
+
 struct PanelViewState
 {
-    PanelData       *Data        = nullptr;
-    int             CursorPos    = -1;
-    PanelViewType   ViewType     = PanelViewType::Medium;
-    int             ItemsDisplayOffset  = 0;
+    PanelData                  *Data                = nullptr;
+    int                         CursorPos           = -1;
+    PanelViewType               ViewType            = PanelViewType::Medium;
+    PanelViewFilenameTrimming   Trimming            = PanelViewFilenameTrimming::Middle;
+    int                         ItemsDisplayOffset  = 0;
 };
 
 namespace PanelViewHitTest {

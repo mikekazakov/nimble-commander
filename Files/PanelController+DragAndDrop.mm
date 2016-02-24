@@ -334,14 +334,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
     dragPosition.x -= 16;
     dragPosition.y -= 16;
-    
-    NSMutableArray *pasteboard_types = [NSMutableArray new];
-    [pasteboard_types addObject:g_PasteboardFileURLPromiseUTI];
-    [pasteboard_types addObject:g_PrivateDragUTI];
-    if( all_items_native ) {
-        [pasteboard_types addObject:g_PasteboardFilenamesUTI];
-        [pasteboard_types addObject:g_PasteboardFileURLUTI];
-    }
+
+    NSArray *pasteboard_types = all_items_native ?
+        @[g_PasteboardFileURLPromiseUTI, g_PrivateDragUTI, g_PasteboardFilenamesUTI, g_PasteboardFileURLUTI] :
+        @[g_PasteboardFileURLPromiseUTI, g_PrivateDragUTI];
     
     for(auto &i: vfs_items) {
         PanelDraggingItem *pbItem = [PanelDraggingItem new];

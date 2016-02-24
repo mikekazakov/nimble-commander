@@ -234,12 +234,11 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     }
 }
 
-
 - (void)pasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item provideDataForType:(NSString *)type
 {
     // OldStyleDone means that we already pushed the whole files list at once
     // in this case any other items should be simply ignored
-    if(m_FilenamesPasteboardDone)
+    if(m_FilenamesPasteboardDone || !item.item)
         return;
     
     if(m_FilenamesPasteboardEnabled && [type isEqualToString:g_PasteboardFilenamesUTI])
@@ -330,6 +329,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     else
         vfs_items = m_Data.SelectedEntries();
     
+    const bool all_items_native = all_of(begin(vfs_items), end(vfs_items), [](auto &i){ return i.Host()->IsNativeFS(); });
+    
     NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
     dragPosition.x -= 16;
     dragPosition.y -= 16;
@@ -337,7 +338,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     NSMutableArray *pasteboard_types = [NSMutableArray new];
     [pasteboard_types addObject:g_PasteboardFileURLPromiseUTI];
     [pasteboard_types addObject:g_PrivateDragUTI];
-    if( self.isUniform && self.vfs->IsNativeFS() ) {
+    if( all_items_native ) {
         [pasteboard_types addObject:g_PasteboardFilenamesUTI];
         [pasteboard_types addObject:g_PasteboardFileURLUTI];
     }

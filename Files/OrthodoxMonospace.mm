@@ -262,7 +262,7 @@ int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_a
 // returns a pair of (Position,Amount)
 range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount)
 {
-    if(_unic_amount == 0)
+    if(_unic_amount == 0 || _symb_amount == 0 )
         return range{0, 0};
     int cpos = 0, i=(int)_unic_amount-1;
     _s += i;

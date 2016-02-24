@@ -242,12 +242,13 @@ static oms::StringBuf<MAXPATHLEN> ComposeFooterFileNameForEntry(const VFSListing
     if(!_dirent.IsSymlink()) {
         if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
             out.FromUTF8(_dirent.Filename()); // we're on regular panel - just use filename
-
-        // we're on non-uniform panel like temporary, will return full path for short and medium view types
-        if( _view_type == PanelViewType::Short || _view_type == PanelViewType::Medium )
-            out.FromUTF8(_dirent.Path());
-        else
-            out.FromUTF8(_dirent.Filename());
+        else {
+            // we're on non-uniform panel like temporary, will return full path for short and medium view types
+            if( _view_type == PanelViewType::Short || _view_type == PanelViewType::Medium )
+                out.FromUTF8(_dirent.Path());
+            else
+                out.FromUTF8(_dirent.Filename());
+        }
     }
     else if(_dirent.Symlink() != 0)
         {
@@ -581,6 +582,12 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     auto fontcache = m_FontCache.get();
     
     oms::Context omsc(context, fontcache);
+
+    auto trim_panel_fn = [](oms::StringBuf<MAXPATHLEN> &_fn, int _width) {
+//        _fn.TrimEllipsisLeft( _width );
+//        _fn.TrimRight(_width);
+        _fn.TrimEllipsisMiddle(_width);
+    };
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names
@@ -624,7 +631,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             if(focused)
                 omsc.DrawBackground(m_CursorBackgroundColor, X, Y, columns_width[CN] - 1);
         
-            fn.TrimEllipsisLeft(columns_width[CN] - 1);
+            trim_panel_fn(fn, columns_width[CN] - 1);
             omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(columns_width[CN] - 1), X, Y, text_color);
         
             if(m_State->ViewType==PanelViewType::Wide) {
@@ -652,7 +659,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
             }
             
             if(full_columns_width[0] > 0) {
-                fn.TrimEllipsisLeft(full_columns_width[0] - 1);
+                trim_panel_fn(fn, full_columns_width[0] - 1);
                 omsc.DrawString(fn.Chars(), 0, fn.MaxForSpaceLeft(full_columns_width[0] - 1), X, Y, text_color);
             }
             omsc.DrawString(size_info.Chars(), 0, size_info.Capacity, 1 + full_column_fr_pos[0], Y, text_color);

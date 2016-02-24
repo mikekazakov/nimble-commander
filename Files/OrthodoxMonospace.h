@@ -269,12 +269,12 @@ public:
         return CalculateSymbolsSpaceForString(m_Buff, m_Size);
     }
     
-    unsigned MaxForSpaceLeft(unsigned _space)
+    unsigned MaxForSpaceLeft(unsigned _space) const
     {
         return CalculateUniCharsAmountForSymbolsFromLeft(m_Buff, m_Size, _space);
     }
 
-    range MaxForSpaceRight(unsigned _space)
+    range MaxForSpaceRight(unsigned _space) const
     {
         return CalculateUniCharsAmountForSymbolsFromRight(m_Buff, m_Size, _space);
     }
@@ -285,6 +285,29 @@ public:
         int n = PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(m_Buff, m_Size, _max_space, tmp);
         memcpy(m_Buff, tmp, sizeof(uint16_t) * n);
         m_Size = n;
+    }
+    
+    void TrimEllipsisMiddle(unsigned _max_space)
+    {
+        unsigned orig_space = CalculateSymbolsSpaceForString(m_Buff, m_Size);
+        if( orig_space <= _max_space )
+            return;
+        
+        unsigned left = MaxForSpaceLeft( (_max_space-3) / 2 + (_max_space-3) % 2 );
+        range right = MaxForSpaceRight( (_max_space-3) / 2 );
+
+        memmove(m_Buff + left + 3, m_Buff+right.loc, sizeof(uint16_t)*right.len);
+        m_Buff[left+0] = '.';
+        m_Buff[left+1] = '.';
+        m_Buff[left+2] = '.';
+        m_Size = left + 3 + right.len;
+    }
+    
+    void TrimRight(unsigned _max_space)
+    {
+        int len = CalculateUniCharsAmountForSymbolsFromLeft(m_Buff, m_Size, _max_space);
+        if( len < m_Size )
+            m_Size = len;
     }
     
     bool CanBeComposed() const

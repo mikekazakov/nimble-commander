@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "PanelViewTypes.h"
 #include "vfs/VFS.h"
+#include "PanelViewTypes.h"
 #include "DispatchQueue.h"
 #include "ByteCountFormatter.h"
 #include "Config.h"
@@ -66,6 +66,9 @@ public:
     inline ByteCountFormatter::Type FileSizeFormat() const { return m_FileSizeFormat; }
     inline ByteCountFormatter::Type SelectionSizeFormat() const { return m_SelectionSizeFormat; }
     
+    inline PanelViewFilenameTrimming Trimming() const { return m_Trimming; };
+    virtual void SetTrimming(PanelViewFilenameTrimming _mode);
+    
 protected:
     virtual int GetMaxItemsPerColumn() const = 0;
     int GetNumberOfItemColumns() const;
@@ -75,7 +78,7 @@ protected:
     inline const VFSStatFS &StatFS() const { return m_StatFS; }
     void UpdateStatFS();
     
-    PanelViewState * const         m_State;
+    PanelViewState * const          m_State;
     
     inline PanelView *View() { return m_View; }
 private:
@@ -87,6 +90,7 @@ private:
     VFSHost                       *m_StatFSLastHost = nullptr;
     string                         m_StatFSLastPath;
     
+    PanelViewFilenameTrimming      m_Trimming = PanelViewFilenameTrimming::Middle;
     ByteCountFormatter::Type       m_FileSizeFormat = ByteCountFormatter::Fixed6;
     ByteCountFormatter::Type       m_SelectionSizeFormat = ByteCountFormatter::SpaceSeparated;
     __unsafe_unretained PanelView * const m_View = nil;

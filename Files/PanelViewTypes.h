@@ -30,7 +30,6 @@ struct PanelViewState
     PanelData                  *Data                = nullptr;
     int                         CursorPos           = -1;
     PanelViewType               ViewType            = PanelViewType::Medium;
-    PanelViewFilenameTrimming   Trimming            = PanelViewFilenameTrimming::Middle;
     int                         ItemsDisplayOffset  = 0;
 };
 

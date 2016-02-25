@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -145,6 +145,51 @@
                                     <constraint firstItem="wNP-w9-Qcg" firstAttribute="leading" secondItem="qvH-9U-kwb" secondAttribute="trailing" constant="8" symbolic="YES" id="vBc-e0-E1Q"/>
                                     <constraint firstAttribute="trailing" secondItem="y2K-Vy-fyD" secondAttribute="trailing" constant="17" id="wys-nt-jVy"/>
                                     <constraint firstItem="xmO-TZ-Bgm" firstAttribute="baseline" secondItem="M7w-Ea-gHV" secondAttribute="baseline" id="yZX-DO-rbc"/>
+                                </constraints>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="Presentation" identifier="" id="4hW-2A-CMN">
+                            <view key="view" id="ZHg-CC-MJJ">
+                                <rect key="frame" x="10" y="33" width="453" height="289"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="akq-5t-0gg">
+                                        <rect key="frame" x="18" y="252" width="132" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Trim filenames at the" id="HwC-SG-gm8">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJX-fB-ocG">
+                                        <rect key="frame" x="154" y="246" width="98" height="26"/>
+                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="38H-gd-nHF">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="kXk-id-QqV">
+                                                <items>
+                                                    <menuItem title="Beginning" id="Nvh-L7-hpr">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="Middle" tag="1" id="KcP-Bb-M1p">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="End" tag="2" id="WKT-MU-zWB">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="-3" name="selectedTag" keyPath="delegate.config.filePanel.presentation.filenamesTrimmingMode" id="rzu-uo-RUm"/>
+                                        </connections>
+                                    </popUpButton>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="akq-5t-0gg" firstAttribute="leading" secondItem="ZHg-CC-MJJ" secondAttribute="leading" constant="20" symbolic="YES" id="29p-3b-SFM"/>
+                                    <constraint firstItem="dJX-fB-ocG" firstAttribute="baseline" secondItem="akq-5t-0gg" secondAttribute="baseline" id="FrV-tJ-yEV"/>
+                                    <constraint firstItem="akq-5t-0gg" firstAttribute="top" secondItem="ZHg-CC-MJJ" secondAttribute="top" constant="20" symbolic="YES" id="TWU-mB-s4S"/>
+                                    <constraint firstItem="dJX-fB-ocG" firstAttribute="leading" secondItem="akq-5t-0gg" secondAttribute="trailing" constant="8" symbolic="YES" id="XS7-DG-Ykx"/>
                                 </constraints>
                             </view>
                         </tabViewItem>
@@ -1130,7 +1175,7 @@
                 <real value="3.4028234663852886e+38"/>
                 <real value="3.4028234663852886e+38"/>
             </customSpacing>
-            <point key="canvasLocation" x="184" y="472.5"/>
+            <point key="canvasLocation" x="452" y="536.5"/>
         </stackView>
     </objects>
 </document>

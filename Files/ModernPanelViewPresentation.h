@@ -22,6 +22,7 @@ class ModernPanelViewPresentationVolumeFooter;
 
 class ModernPanelViewPresentation : public PanelViewPresentation
 {
+    typedef PanelViewPresentation super;
 public:
     ModernPanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state);
     ~ModernPanelViewPresentation() override;
@@ -42,6 +43,10 @@ public:
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     
     NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelVolatileData &_vd) const;
+
+protected:
+    virtual void SetTrimming(PanelViewFilenameTrimming _mode) override;
+    
 private:
     struct ColoringAttrs {
         NSDictionary *focused;

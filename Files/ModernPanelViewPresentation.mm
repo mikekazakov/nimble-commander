@@ -259,7 +259,7 @@ void ModernPanelViewPresentation::BuildAppearance()
         
         if(NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new]) {
             item_text_pstyle.alignment = NSLeftTextAlignment;
-            item_text_pstyle.lineBreakMode = PanelViewFilenameTrimmingToLineBreakMode(m_State->Trimming);
+            item_text_pstyle.lineBreakMode = PanelViewFilenameTrimmingToLineBreakMode(Trimming());
             
             ca.focused = @{NSFontAttributeName: m_Font,
                            NSForegroundColorAttributeName: c.focused,
@@ -745,4 +745,10 @@ void ModernPanelViewPresentation::SetupFieldRenaming(NSScrollView *_editor, int 
     tv.font = m_Font;
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
+}
+
+void ModernPanelViewPresentation::SetTrimming(PanelViewFilenameTrimming _mode)
+{
+    super::SetTrimming(_mode);
+    BuildAppearance();
 }

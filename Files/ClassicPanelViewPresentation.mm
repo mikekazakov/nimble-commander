@@ -592,7 +592,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
     
     oms::Context omsc(context, fontcache);
 
-    const auto trim_panel_fn = TrimmingFunction(m_State->Trimming);
+    const auto trim_panel_fn = TrimmingFunction(Trimming());
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // draw file names

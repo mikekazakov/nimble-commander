@@ -135,6 +135,19 @@
         },
         
         /**
+         * Section about common visual appearance of panels
+         */
+        "presentation": {
+            /**
+             * How to trim a filename in case it doesn't fit the column width, integer enumeration:
+             * 0 - Heading
+             * 1 - Middle
+             * 2 - Trailing
+             */
+            "filenamesTrimmingMode": 1
+        },
+        
+        /**
          * Section about QuickSearch - instant search for filenames in current panel by typing
          */
         "quickSearch": {

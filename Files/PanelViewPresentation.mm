@@ -15,18 +15,26 @@
 
 static const auto g_ConfigFileSizeFormat = "filePanel.general.fileSizeFormat";
 static const auto g_ConfigSelectionSizeFormat = "filePanel.general.selectionSizeFormat";
+static const auto g_ConfigTrimmingMode = "filePanel.presentation.filenamesTrimmingMode";
 
 PanelViewPresentation::PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state):
     m_View(_parent_view),
     m_State(_view_state)
 {
-    LoadSizeFormats();
     auto reload_fmts = [=]{
         LoadSizeFormats();
         SetViewNeedsDisplay();
     };
+    reload_fmts();
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigFileSizeFormat, reload_fmts) );
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigSelectionSizeFormat, reload_fmts) );
+    
+    auto reload_trim = [=]{
+        SetTrimming( (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode) );
+        SetViewNeedsDisplay();
+    };
+    reload_trim();
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigTrimmingMode, reload_trim) );
 }
 
 PanelViewPresentation::~PanelViewPresentation()
@@ -328,4 +336,9 @@ void PanelViewPresentation::LoadSizeFormats()
 
 void PanelViewPresentation::OnDirectoryChanged()
 {
+}
+
+void PanelViewPresentation::SetTrimming(PanelViewFilenameTrimming _mode)
+{
+    m_Trimming = _mode;
 }

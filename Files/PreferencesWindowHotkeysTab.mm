@@ -62,7 +62,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     self.Table.delegate = self;
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"action"];
-    column.width = 350;
+    column.width = 450;
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Action";
     [self.Table addTableColumn:column];
     

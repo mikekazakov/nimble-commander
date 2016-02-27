@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowExternalEditorsTab">
@@ -15,24 +14,24 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="368" height="267"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="350"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="8G6-nH-UUs">
-                    <rect key="frame" x="20" y="56" width="328" height="191"/>
-                    <clipView key="contentView" misplaced="YES" id="pjZ-Ta-3LC">
-                        <rect key="frame" x="1" y="17" width="326" height="173"/>
+                    <rect key="frame" x="20" y="56" width="600" height="274"/>
+                    <clipView key="contentView" id="pjZ-Ta-3LC">
+                        <rect key="frame" x="1" y="0.0" width="598" height="273"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="9HZ-fC-91A" id="p39-Vd-dj2">
-                                <rect key="frame" x="0.0" y="0.0" width="326" height="19"/>
+                                <rect key="frame" x="0.0" y="0.0" width="598" height="250"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn width="160.56640625" minWidth="40" maxWidth="1000" id="pPs-JA-wnQ">
+                                    <tableColumn width="200" minWidth="40" maxWidth="1000" id="pPs-JA-wnQ">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="External editor">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -52,7 +51,7 @@
                                             </binding>
                                         </connections>
                                     </tableColumn>
-                                    <tableColumn width="159" minWidth="40" maxWidth="1000" id="gJg-B1-OAZ">
+                                    <tableColumn width="392" minWidth="40" maxWidth="1000" id="gJg-B1-OAZ">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="File mask">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -78,17 +77,18 @@
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </clipView>
                     <constraints>
-                        <constraint firstAttribute="height" constant="191" id="VjI-Dx-65q"/>
-                        <constraint firstAttribute="width" constant="328" id="nsh-jo-14q"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="191" id="VjI-Dx-65q"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="328" id="nsh-jo-14q"/>
                     </constraints>
                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="E5U-F4-mIG">
+                        <rect key="frame" x="1" y="221" width="598" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="FDT-5O-jYy">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="FDT-5O-jYy">
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <tableHeaderView key="headerView" id="9HZ-fC-91A">
-                        <rect key="frame" x="0.0" y="0.0" width="326" height="17"/>
+                        <rect key="frame" x="0.0" y="0.0" width="598" height="23"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
@@ -106,8 +106,8 @@
                         <action selector="OnNewEditor:" target="-2" id="GTJ-3a-QuP"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
-                    <rect key="frame" x="70" y="20" width="280" height="28"/>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" preferredMaxLayoutWidth="276" translatesAutoresizingMaskIntoConstraints="NO" id="Lza-Yw-trV">
+                    <rect key="frame" x="70" y="20" width="552" height="28"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When choosing which editor to start they are checked in order of appearance in this list." id="OHQ-k9-cKW">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>

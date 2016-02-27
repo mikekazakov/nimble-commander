@@ -95,6 +95,7 @@ domkdir2:
             return;
         }
     }
+    m_Stats.AddValue(1);
 
     if(CheckPauseOrStop()) { SetStopped(); return; }
     SetCompleted();

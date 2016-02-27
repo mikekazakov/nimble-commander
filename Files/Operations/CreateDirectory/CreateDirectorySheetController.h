@@ -9,15 +9,10 @@
 #pragma once
 
 #include "../../Common.h"
+#include "../../SheetController.h"
 
-typedef void (^CreateDirectorySheetCompletionHandler)(int result);
+@interface CreateDirectorySheetController : SheetController
 
-@interface CreateDirectorySheetController : NSWindowController
-- (IBAction)OnCreate:(id)sender;
-- (IBAction)OnCancel:(id)sender;
-@property (strong) IBOutlet NSTextField *TextField;
-@property (strong) IBOutlet NSButton *CreateButton;
-
-- (void)ShowSheet: (NSWindow *)_window handler:(CreateDirectorySheetCompletionHandler)_handler;
+@property (readonly) const string &result;
 
 @end

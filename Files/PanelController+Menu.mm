@@ -846,23 +846,15 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 - (IBAction)OnCreateDirectoryCommand:(id)sender
 {
     CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
-    [cd ShowSheet:self.window handler:^(int _ret)
-     {
-         if(_ret == DialogResult::Create &&
-            cd.TextField.stringValue.fileSystemRepresentation)
-         {
+    [cd beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+         if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
              string pdir = m_Data.DirectoryPathWithoutTrailingSlash();
              
              CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
              if(self.vfs->IsNativeFS())
-                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
-                              rootpath:pdir.c_str()
-                       ];
+                 op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str()];
              else
-                 op = [op initWithPath:cd.TextField.stringValue.fileSystemRepresentation
-                              rootpath:pdir.c_str()
-                                    at:self.vfs
-                       ];
+                 op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str() at:self.vfs];
              op.TargetPanel = self;
              [self.state AddOperation:op];
          }

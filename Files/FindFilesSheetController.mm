@@ -262,7 +262,10 @@ private:
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
     if( configuration::version == configuration::Version::Lite ) {
         self.PanelButton.target = AppDelegate.me;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wselector"
         self.PanelButton.action = @selector(showFeatureNotSupportedWindow:);
+#pragma clang diagnostic pop
     }
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
     if( configuration::version == configuration::Version::Lite ) {

@@ -172,6 +172,8 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
         };
     } __attribute__((aligned(4), packed)) info;
     
+    memset(_a, 0, sizeof(VolumeAttributesInformation));
+    
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
@@ -309,26 +311,26 @@ int FetchVolumeAttributesInformation(const char *_path, const VolumeCapabilities
     CFStringGetCString(fsverbname, _a->fs_type_verb, sizeof(_a->fs_type_verb), kCFStringEncodingUTF8);
     CFRelease(fsverbname);
         
-    CFBooleanRef isejectable;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) ) {
+    CFBooleanRef isejectable = nullptr;
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsEjectableKey, &isejectable, 0) && isejectable ) {
         _a->is_sw_ejectable = CFBooleanGetValue(isejectable);
         CFRelease(isejectable);
     }
         
-    CFBooleanRef isremovable;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) ) {
+    CFBooleanRef isremovable = nullptr;
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsRemovableKey, &isremovable, 0) && isremovable ) {
         _a->is_sw_removable = CFBooleanGetValue(isremovable);
         CFRelease(isremovable);
     }
 
-    CFBooleanRef islocal;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0) ) {
+    CFBooleanRef islocal = nullptr;
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsLocalKey, &islocal, 0) && islocal ) {
         _a->is_local = CFBooleanGetValue(islocal);
         CFRelease(islocal);
     }
         
-    CFBooleanRef isinternal;
-    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) ) {
+    CFBooleanRef isinternal = nullptr;
+    if( CFURLCopyResourcePropertyForKey(cfurl, kCFURLVolumeIsInternalKey, &isinternal, 0) && isinternal ) {
         _a->is_internal = CFBooleanGetValue(isinternal);
         CFRelease(isinternal);
     }

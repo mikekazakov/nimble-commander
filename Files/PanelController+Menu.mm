@@ -141,7 +141,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
-    IF_MENU_TAG("menu.command.volume_information")      return self.isUniform && self.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.volume_information")      return !self.isUniform || self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
@@ -502,15 +502,27 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }];
 }
 
-- (IBAction)OnDetailedVolumeInformation:(id)sender {
-    if(!m_Data.Host()->IsNativeFS())
-        return; // currently support volume info only on native fs
+// currently support volume info only on native fs
+- (IBAction)OnDetailedVolumeInformation:(id)sender
+{
+    string path;
+    if( auto i = self.view.item ) {
+        if( !i.Host()->IsNativeFS() )
+            return;
+        if( !i.IsDotDot() )
+            path = i.Path();
+        else
+            path = i.Directory();
+    }
+    else if( self.isUniform ) {
+        if( !m_Data.Host()->IsNativeFS() )
+            return;
+        path = self.currentDirectoryPath;
+    }
+    else
+        return;
     
-    string path = self.currentDirectoryPath;
-    if(m_View.item && !m_View.item.IsDotDot())
-        path += m_View.item.Name();
-    
-    [[DetailedVolumeInformationSheetController new] ShowSheet:self.window destpath:path.c_str()];
+    [[DetailedVolumeInformationSheetController new] showSheetForWindow:self.window withPath:path];
 }
 
 - (IBAction)performFindPanelAction:(id)sender {

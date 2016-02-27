@@ -11,17 +11,36 @@
 #include "NativeFSManager.h"
 #include "Common.h"
 
+@interface DetailedVolumeInformationSheetController ()
+
+@property (strong) IBOutlet NSButton *OkButton;
+- (IBAction)OnOK:(id)sender;
+@property (strong) IBOutlet NSTextField *NameTextField;
+@property (strong) IBOutlet NSTextField *MountedAtTextField;
+@property (strong) IBOutlet NSTextField *DeviceTextField;
+@property (strong) IBOutlet NSTextField *FormatTextField;
+@property (strong) IBOutlet NSTextField *TotalBytesTextField;
+@property (strong) IBOutlet NSTextField *FreeBytesTextField;
+@property (strong) IBOutlet NSTextField *AvailableBytesTextField;
+@property (strong) IBOutlet NSTextField *UsedBytesTextField;
+@property (strong) IBOutlet NSTextField *ObjectsCountTextField;
+@property (strong) IBOutlet NSTextField *FileCountTextField;
+@property (strong) IBOutlet NSTextField *FoldersCountTextField;
+@property (strong) IBOutlet NSTextField *MaxObjectsTextField;
+@property (strong) IBOutlet NSTextField *IOBlockSizeTextField;
+@property (strong) IBOutlet NSTextField *MinAllocationTextField;
+@property (strong) IBOutlet NSTextField *AllocationClumpTextField;
+@property (strong) IBOutlet NSTextView *AdvancedTextView;
+
+@end
+
+
 @implementation DetailedVolumeInformationSheetController
 {
     string                        m_Root;
     VolumeCapabilitiesInformation m_Capabilities;
     VolumeAttributesInformation   m_Attributes;
     NSTimer                      *m_UpdateTimer;
-}
-
-- (id)init {
-    self = [super initWithWindowNibName:@"DetailedVolumeInformationSheetController"];
-    return self;
 }
 
 static NSString* Bool2ToString(const bool b[2])
@@ -276,23 +295,17 @@ static NSString* Bool2ToString(const bool b[2])
     [[self AdvancedTextView] setString:advstr];
 }
 
-- (void)ShowSheet: (NSWindow *)_window destpath: (const char*)_path
+- (void)showSheetForWindow:(NSWindow *)_window withPath: (const string&)_path
 {
-    auto volume = NativeFSManager::Instance().VolumeFromPath(_path);
-    if(volume)
+    if( auto volume = NativeFSManager::Instance().VolumeFromPath(_path) )
         m_Root = volume->mounted_at_path;
     
-    if(FetchVolumeCapabilitiesInformation(m_Root.c_str(), &m_Capabilities) != 0)
+    if( FetchVolumeCapabilitiesInformation(m_Root.c_str(), &m_Capabilities) != 0 )
         return;
-    if(FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) != 0)
+    if( FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) != 0 )
         return;
 
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-         contextInfo: nil];
-    self.ME = self;
+    [self beginSheetForWindow:_window completionHandler:^(NSModalResponse returnCode) {}];
 }
 
 - (void) PopulateControls
@@ -323,13 +336,8 @@ static NSString* Bool2ToString(const bool b[2])
 
 - (IBAction)OnOK:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::OK];
+    [m_UpdateTimer invalidate];
+    [self endSheet:NSModalResponseOK];
 }
 
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [[self window] orderOut:self];
-    [m_UpdateTimer invalidate];    
-    self.ME = nil; // let ARC do it's duty
-}
 @end

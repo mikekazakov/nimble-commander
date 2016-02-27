@@ -25,7 +25,4 @@
 @property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
 @property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
-@property (strong) IBOutlet NSScrollView *CommonOptionsScrollView;
-@property (strong) IBOutlet NSStackView *CommonOptionsStackView;
-
 @end

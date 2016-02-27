@@ -472,11 +472,10 @@ static string ExpandPath(const string &_ref )
 
 - (PanelController*) activePanelController
 {
-    if(!self.window)
-        return nil;
-    NSResponder *r = self.window.firstResponder;
-    for(auto pc: m_LeftPanelControllers)  if(r == pc.view) return pc;
-    for(auto pc: m_RightPanelControllers) if(r == pc.view) return pc;
+    if( NSResponder *r = self.window.firstResponder ) {
+        for(auto &pc: m_LeftPanelControllers)  if(r == pc.view) return pc;
+        for(auto &pc: m_RightPanelControllers) if(r == pc.view) return pc;
+    }
     return nil;
 }
 

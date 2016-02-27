@@ -57,10 +57,10 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         self.activePanelView.item && !self.activePanelView.item.IsDir()    && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
-    IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.command.move_as")              return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+    IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
+    IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive;
+    IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive;
+    IF_MENU_TAG("menu.command.move_as")              return self.isPanelActive;
     IF_MENU_TAG("menu.file.close") {
         unsigned tabs = self.currentSideTabsCount;
         if( tabs == 0 ) {
@@ -267,9 +267,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 }
 
 - (IBAction)OnFileCopyCommand:(id)sender{
-    if(!self.activePanelController ||
-       !self.oppositePanelController ||
-       [m_MainSplitView anyCollapsedOrOverlayed])
+    if( !self.activePanelController || !self.oppositePanelController )
         return;
     
     auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
@@ -304,9 +302,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 }
 
 - (IBAction)OnFileCopyAsCommand:(id)sender{
-    if(!self.activePanelController ||
-       !self.oppositePanelController ||
-       [m_MainSplitView anyCollapsedOrOverlayed])
+    if( !self.activePanelController || !self.oppositePanelController )
         return;
     
     // process only current cursor item
@@ -344,9 +340,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 }
 
 - (IBAction)OnFileRenameMoveCommand:(id)sender{
-    if(!self.activePanelController ||
-       !self.oppositePanelController ||
-       [m_MainSplitView anyCollapsedOrOverlayed])
+    if( !self.activePanelController || !self.oppositePanelController )
         return;
     
     if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWriteable() )
@@ -384,9 +378,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 }
 
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender {
-    if(!self.activePanelController ||
-       !self.oppositePanelController ||
-       [m_MainSplitView anyCollapsedOrOverlayed])
+    if( !self.activePanelController || !self.oppositePanelController )
         return;
     
     // process only current cursor item

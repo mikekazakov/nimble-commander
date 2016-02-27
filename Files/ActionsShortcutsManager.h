@@ -178,6 +178,7 @@ private:
         {"menu.command.copy_as",                15120},
         {"menu.command.move_to",                15130},
         {"menu.command.move_as",                15140},
+        {"menu.command.rename_in_place",        15141},
         {"menu.command.create_directory",       15150},
         {"menu.command.move_to_trash",          15160},
         {"menu.command.delete",                 15170},

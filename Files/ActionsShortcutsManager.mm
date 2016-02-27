@@ -115,6 +115,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.copy_as",                    u8"⇧\uF708" }, // shift+F5
         {"menu.command.move_to",                    u8"\uF709"  }, // F6
         {"menu.command.move_as",                    u8"⇧\uF709" }, // shift+F6
+        {"menu.command.rename_in_place",            u8"^\uF709" }, // ctrl+F6
         {"menu.command.create_directory",           u8"\uF70a"  }, // F7
         {"menu.command.move_to_trash",              u8"⌘\u007f" }, // cmd+backspace
         {"menu.command.delete",                     u8"\uF70b"  }, // F8

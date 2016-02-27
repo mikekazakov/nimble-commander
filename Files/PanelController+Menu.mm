@@ -1109,4 +1109,9 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
 }
 
+- (IBAction) OnRenameFileInPlace:(id)sender
+{
+    [self.view startFieldEditorRenaming];
+}
+
 @end

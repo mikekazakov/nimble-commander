@@ -9,60 +9,51 @@
 #include "../../Common.h"
 #include "FileLinkAlterSymlinkSheetController.h"
 
+@interface FileLinkAlterSymlinkSheetController ()
+
+@property (strong) IBOutlet NSTextField *Text;
+@property (strong) IBOutlet NSTextField *SourcePath;
+
+- (IBAction)OnOk:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+
+@end
+
 @implementation FileLinkAlterSymlinkSheetController
 {
-    NSString *m_OriginalSourcePath;
-    NSString *m_LinkName;
-    FileLinkAlterSymlinkSheetCompletionHandler m_Handler;
+    string m_SrcPath;
+    string m_LinkPath;
 }
 
-- (id)init {
-    self = [super initWithWindowNibName:@"FileLinkAlterSymlinkSheetController"];
-    return self;
-}
+@synthesize sourcePath = m_SrcPath;
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
-    [self.Text setStringValue: [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", m_LinkName] ];
-    [self.SourcePath setStringValue:m_OriginalSourcePath];
+    self.Text.stringValue = [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", [NSString stringWithUTF8StdString:m_LinkPath]];
+    self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];
 }
 
-- (void)ShowSheet:(NSWindow *)_window
-       sourcepath:(NSString*)_src
-         linkname:(NSString*)_link_name
-          handler:(FileLinkAlterSymlinkSheetCompletionHandler)_handler
+- (void)showSheetFor:(NSWindow *)_window
+          sourcePath:(const string&)_src_path
+            linkPath:(const string&)_link_path
+   completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
-    m_OriginalSourcePath = _src;
-    m_LinkName = _link_name;
-    m_Handler = _handler;
-    
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];    
+    m_SrcPath = _src_path;
+    m_LinkPath = _link_path;
+    [super beginSheetForWindow:_window completionHandler:_handler];
 }
 
 - (IBAction)OnOk:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::OK];
+    m_SrcPath = self.SourcePath.stringValue.fileSystemRepresentationSafe;
+    [super endSheet:NSModalResponseOK];
 }
 
 - (IBAction)OnCancel:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];
-}
-
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [[self window] orderOut:self];
-    
-    if(m_Handler)
-        m_Handler((int)returnCode);
-    m_Handler = nil;
+    [super endSheet:NSModalResponseCancel];
 }
 
 @end

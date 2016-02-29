@@ -6,21 +6,17 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
 
-typedef void (^FileLinkAlterSymlinkSheetCompletionHandler)(int result);
+#include "../../SheetController.h"
 
-@interface FileLinkAlterSymlinkSheetController : NSWindowController
+@interface FileLinkAlterSymlinkSheetController : SheetController
 
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *SourcePath;
+@property (readonly) const string& sourcePath;
 
-- (IBAction)OnOk:(id)sender;
-- (IBAction)OnCancel:(id)sender;
-
-- (void)ShowSheet:(NSWindow *)_window
-       sourcepath:(NSString*)_src
-         linkname:(NSString*)_link_name
-          handler:(FileLinkAlterSymlinkSheetCompletionHandler)_handler;
+- (void)showSheetFor:(NSWindow *)_window
+          sourcePath:(const string&)_src_path
+            linkPath:(const string&)_link_path
+   completionHandler:(void (^)(NSModalResponse returnCode))_handler;
 
 @end

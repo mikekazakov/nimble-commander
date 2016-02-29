@@ -54,8 +54,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
-    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
-        self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
+    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive;
@@ -189,26 +188,23 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender
 {
-    auto data = self.activePanelData;
-    auto item = self.activePanelView.item;
-    assert(item.IsSymlink());
+    if( !self.activePanelController )
+        return;
     
-    string link_path = data->DirectoryPathWithTrailingSlash() + item.Name();
-    NSString *linkpath = [NSString stringWithUTF8String:link_path.c_str()];
+    auto item = self.activePanelView.item;
+    if( !item || !item.IsSymlink() )
+        return;
     
     FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:item.Symlink()]
-            linkname:[NSString stringWithUTF8String:item.Name()]
-             handler:^(int _result){
-                 if(_result == DialogResult::OK)
-                 {
-                     [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
-                                                                       linkname:[linkpath fileSystemRepresentation]]
-                      ];
-                 }
-             }];
+    [sheet showSheetFor:self.window
+             sourcePath:item.Symlink()
+               linkPath:item.Name()
+      completionHandler:^(NSModalResponse returnCode) {
+          if(returnCode == NSModalResponseOK)
+              [m_OperationsController AddOperation:[[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:sheet.sourcePath.c_str()
+                                                                                                    linkname:item.Path().c_str()]
+               ];
+      }];
 }
 
 - (IBAction)OnCreateHardLinkCommand:(id)sender

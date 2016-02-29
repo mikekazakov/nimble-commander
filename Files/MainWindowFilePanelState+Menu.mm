@@ -52,7 +52,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
     IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot();
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
-        self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
+        self.activePanelView.item && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
@@ -165,36 +165,26 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender
 {
-    if(!self.activePanelController || !self.oppositePanelController)
+    if( !self.activePanelController || !self.oppositePanelController || !self.oppositePanelController.isUniform )
         return;
     
     auto item = self.activePanelView.item;
-    if(!item)
+    if( !item )
         return;
     
-    string source_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    if(!item.IsDotDot())
-        source_path += item.Name();
-    
-    string link_path = self.oppositePanelController.currentDirectoryPath;
-    
-    if(!item.IsDotDot())
-        link_path += item.Name();
-    else
-        link_path += [self activePanelData]->DirectoryPathShort();
+    string source_path = item.Path();
+    string link_path = self.oppositePanelController.currentDirectoryPath + (!item.IsDotDot() ? item.Name() : [self activePanelData]->DirectoryPathShort());
     
     FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcepath:[NSString stringWithUTF8String:source_path.c_str()]
-            linkpath:[NSString stringWithUTF8String:link_path.c_str()]
-             handler:^(int result){
-                 if(result == DialogResult::Create && [[sheet.LinkPath stringValue] length] > 0)
-                     [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithNewSymbolinkLink:[[sheet.SourcePath stringValue] fileSystemRepresentation]
-                                                                 linkname:[[sheet.LinkPath stringValue] fileSystemRepresentation]
-                       ]
-                      ];
-             }];
+    [sheet showSheetFor:self.window
+             sourcePath:source_path
+               linkPath:link_path
+      completionHandler:^(NSModalResponse returnCode) {
+          if( returnCode == NSModalResponseOK && !sheet.linkPath.empty() ) {
+              [m_OperationsController AddOperation:
+               [[FileLinkOperation alloc] initWithNewSymbolinkLink:sheet.sourcePath.c_str()
+                                                          linkname:sheet.linkPath.c_str()]];
+          }}];
 }
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender

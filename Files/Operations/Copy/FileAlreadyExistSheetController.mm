@@ -75,7 +75,7 @@
     [[self RememberCheck] setHidden:m_Single];
 }
 
-- (void)ShowDialogForWindow:(NSWindow *)_parent
+- (void)showDialogForWindow:(NSWindow *)_parent
 {
     dispatch_to_main_queue( [=]{ // really need this dispatch_async?
         [NSApp beginSheet: [self window]

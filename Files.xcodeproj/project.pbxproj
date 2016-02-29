@@ -175,8 +175,6 @@
 		CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
 		CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
 		CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
-		CF50C4201C0ADE75009DF611 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */; };
-		CF50C4211C0ADE75009DF611 /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */; };
 		CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
 		CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
 		CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
@@ -424,7 +422,6 @@
 		CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
 		CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
 		CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
-		CF7D138C1BF5E38B001F53FD /* OperationDialogController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */; };
 		CF7D138D1BF5E38B001F53FD /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
 		CF7D138E1BF5E38B001F53FD /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
 		CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13891BF5E38B001F53FD /* OperationStats.mm */; };
@@ -1274,8 +1271,6 @@
 		CF7D137E1BF5E38B001F53FD /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = Operations/Operation.mm; sourceTree = "<group>"; };
 		CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogAlert.h; path = Operations/OperationDialogAlert.h; sourceTree = "<group>"; };
 		CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationDialogAlert.mm; path = Operations/OperationDialogAlert.mm; sourceTree = "<group>"; };
-		CF7D13811BF5E38B001F53FD /* OperationDialogController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogController.h; path = Operations/OperationDialogController.h; sourceTree = "<group>"; };
-		CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationDialogController.mm; path = Operations/OperationDialogController.mm; sourceTree = "<group>"; };
 		CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogProtocol.h; path = Operations/OperationDialogProtocol.h; sourceTree = "<group>"; };
 		CF7D13841BF5E38B001F53FD /* OperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationJob.cpp; path = Operations/OperationJob.cpp; sourceTree = "<group>"; };
 		CF7D13851BF5E38B001F53FD /* OperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationJob.h; path = Operations/OperationJob.h; sourceTree = "<group>"; };
@@ -2379,8 +2374,6 @@
 				CF7D137E1BF5E38B001F53FD /* Operation.mm */,
 				CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */,
 				CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */,
-				CF7D13811BF5E38B001F53FD /* OperationDialogController.h */,
-				CF7D13821BF5E38B001F53FD /* OperationDialogController.mm */,
 				CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */,
 				CF7D13841BF5E38B001F53FD /* OperationJob.cpp */,
 				CF7D13851BF5E38B001F53FD /* OperationJob.h */,
@@ -3413,7 +3406,6 @@
 				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
-				CF50C4211C0ADE75009DF611 /* OperationDialogController.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CFED5A691C52106000BFCB5C /* EncodingsAdditions.mm in Sources */,
 				CF50B6C71A15167800E3D96D /* VFSFile.cpp in Sources */,
@@ -3537,7 +3529,6 @@
 				CF7D13941BF5E3A8001F53FD /* GenericOperationView.mm in Sources */,
 				CFED5A651C52105800BFCB5C /* EncodingsAdditions.mm in Sources */,
 				CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
-				CF7D138C1BF5E38B001F53FD /* OperationDialogController.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
 				CFED5A511C52037000BFCB5C /* VolumeInformation.cpp in Sources */,
@@ -3800,7 +3791,6 @@
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF50C4261C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
-				CF50C4201C0ADE75009DF611 /* OperationDialogController.mm in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFED5A681C52105F00BFCB5C /* EncodingsAdditions.mm in Sources */,

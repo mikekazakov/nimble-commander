@@ -35,7 +35,7 @@
 - (IBAction)OnHide:(id)sender;
 
 // protocol implementation
-- (void)ShowDialogForWindow:(NSWindow *)_parent;
+- (void)showDialogForWindow:(NSWindow *)_parent;
 - (BOOL)IsVisible;
 - (void)HideDialog;
 - (void)CloseDialogWithResult:(int)_result;

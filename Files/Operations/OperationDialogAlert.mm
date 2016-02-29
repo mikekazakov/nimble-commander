@@ -6,89 +6,23 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "OperationDialogAlert.h"
-
-#import "Operation.h"
-
-const int MaxButtonsCount = 6;
+#include "Operation.h"
+#include "OperationDialogAlert.h"
 
 @implementation OperationDialogAlert
 {
-    NSAlert *m_Alert;
-    __weak Operation *m_Operation;
-    
-    int m_ButtonsResults[MaxButtonsCount];
-    int m_ButtonsCount;
+    NSAlert            *m_Alert;
+    __weak Operation   *m_Operation;
+    int                 m_Result;
 }
+
 @synthesize Result = m_Result;
-
-- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode
-        contextInfo:(void *)contextInfo;
-{
-    NSInteger button_number = returnCode - NSAlertFirstButtonReturn;
-    assert(button_number >=0 && button_number < m_ButtonsCount);
-    int result = m_ButtonsResults[button_number];
-    m_Result = result;
-    
-    if (m_Result != OperationDialogResult::None)
-        [(Operation*)m_Operation OnDialogClosed:self];
-}
-
-- (void)ShowDialogForWindow:(NSWindow *)_parent
-{
-    [m_Alert beginSheetModalForWindow:_parent
-                        modalDelegate:self
-                       didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
-                          contextInfo:nil];
-}
-
-- (BOOL)IsVisible
-{
-    return [m_Alert.window isVisible];
-}
-
-- (void)HideDialog
-{
-    [NSApp endSheet:m_Alert.window returnCode:OperationDialogResult::None];
-}
-
-- (void)CloseDialogWithResult:(int)_result
-{
-    assert(_result != OperationDialogResult::None);
-    
-    if ([self IsVisible])
-        [NSApp endSheet:m_Alert.window returnCode:_result];
-    else
-    {
-        m_Result = _result;
-        
-        if (m_Result != OperationDialogResult::None)
-            [(Operation*)m_Operation OnDialogClosed:self];
-    }
-}
-
-- (int)WaitForResult
-{
-    while (self.Result == OperationDialogResult::None)
-    {
-        usleep(20*1000);
-    }
-    
-    return self.Result;
-}
-
-- (void)OnDialogEnqueued:(Operation *)_operation
-{
-    m_Operation = _operation;
-    m_Result = OperationDialogResult::None;
-}
 
 - (id)init
 {
     self = [super init];
     if (self) {
         m_Alert = [[NSAlert alloc] init];
-        m_ButtonsCount = 0;
     }
     return self;
 }
@@ -124,31 +58,83 @@ const int MaxButtonsCount = 6;
     return self;
 }
 
+- (void)showDialogForWindow:(NSWindow *)_parent
+{
+    dispatch_assert_main_queue();
+    
+    [m_Alert beginSheetModalForWindow:_parent completionHandler:^(NSModalResponse returnCode) {
+        m_Result = (int)returnCode;
+        if( m_Result != OperationDialogResult::None )
+            [(Operation*)m_Operation OnDialogClosed:self];
+    }];
+}
+
+- (BOOL)IsVisible
+{
+    return m_Alert.window.isVisible;
+}
+
+- (void)HideDialog
+{
+    dispatch_assert_main_queue();
+    
+    if( self.IsVisible )
+        [m_Alert.window.parentWindow endSheet:m_Alert.window returnCode:OperationDialogResult::None];
+}
+
+- (void)CloseDialogWithResult:(int)_result
+{
+    if( _result == OperationDialogResult::None )
+        return;
+    
+    [self HideDialog];
+    m_Result = _result;
+    [(Operation*)m_Operation OnDialogClosed:self];
+}
+
+- (int)WaitForResult
+{
+    dispatch_assert_background_queue();
+    
+    while( self.Result == OperationDialogResult::None )
+        usleep(20*1000);
+    
+    return self.Result;
+}
+
+- (void)OnDialogEnqueued:(Operation *)_operation
+{
+    dispatch_assert_main_queue();
+    
+    m_Operation = _operation;
+    m_Result = OperationDialogResult::None;
+}
+
 - (void)SetAlertStyle:(NSAlertStyle)_style
 {
-    [m_Alert setAlertStyle:_style];
+    m_Alert.alertStyle = _style;
 }
 
 - (void)SetIcon:(NSImage *)_icon
 {
-    [m_Alert setIcon:_icon];
+    m_Alert.icon = _icon;
 }
 
 - (void)SetMessageText:(NSString *)_text
 {
-    [m_Alert setMessageText:_text];
+    m_Alert.messageText = _text;
 }
 
 - (void)SetInformativeText:(NSString *)_text
 {
-    [m_Alert setInformativeText:_text];
+    m_Alert.informativeText = _text;
 }
 
 - (NSButton *)AddButtonWithTitle:(NSString *)_title andResult:(int)_result
 {
-    assert(m_ButtonsCount < MaxButtonsCount);
-    m_ButtonsResults[m_ButtonsCount++] = _result;
-    return [m_Alert addButtonWithTitle:_title];
+    NSButton *b = [m_Alert addButtonWithTitle:_title];
+    b.tag = _result;
+    return b;
 }
 
 @end

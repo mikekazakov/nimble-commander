@@ -37,10 +37,10 @@ namespace OperationDialogResult
 @class Operation;
 
 @protocol OperationDialogProtocol <NSObject>
-
+@required
 @property (readonly) volatile int Result;
 
-- (void)ShowDialogForWindow:(NSWindow *)_parent;
+- (void)showDialogForWindow:(NSWindow *)_parent;
 - (BOOL)IsVisible;
 // Hide dialog without any result. Dialog can be presented to user again by ShowDialogForWindow.
 // WaitForResult still blocks.

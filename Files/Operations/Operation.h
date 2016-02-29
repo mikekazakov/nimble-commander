@@ -11,7 +11,6 @@
 
 class OperationStats;
 class OperationJob;
-@class OperationDialogController;
 @class PanelController;
 
 @interface Operation : NSObject

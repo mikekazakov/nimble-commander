@@ -11,7 +11,6 @@
 #include "../AppDelegate.h"
 #include "Operation.h"
 #include "OperationJob.h"
-#include "OperationDialogController.h"
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {
@@ -236,7 +235,7 @@ mutex         OperationsProgressReporter::g_AllOperationsMutex;
 - (void)ShowDialog
 {
     if (!m_Dialogs.empty())
-        [m_Dialogs.front() ShowDialogForWindow:[NSApp mainWindow]];
+        [m_Dialogs.front() showDialogForWindow:[NSApp mainWindow]];
 }
 
 - (id <OperationDialogProtocol>) FrontmostDialog

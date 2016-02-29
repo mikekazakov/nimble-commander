@@ -53,8 +53,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.command.compress")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot();
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
-    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
-        self.activePanelView.item && !self.activePanelView.item.IsDir()    && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
@@ -225,29 +224,23 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (IBAction)OnCreateHardLinkCommand:(id)sender
 {
     auto item = self.activePanelView.item;
-    assert(not item.IsDir());
-    
-    string dir_path = [self activePanelData]->DirectoryPathWithTrailingSlash();
-    string src_path = dir_path + item.Name();
-    NSString *srcpath = [NSString stringWithUTF8String:src_path.c_str()];
-    NSString *dirpath = [NSString stringWithUTF8String:dir_path.c_str()];
+    if( item.IsDir() || !item.Host()->IsNativeFS() )
+        return;
     
     FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
-    [sheet ShowSheet:[self window]
-          sourcename:[NSString stringWithUTF8String:item.Name()]
-             handler:^(int _result){
-                 if(_result == DialogResult::Create)
-                 {
-                     NSString *name = [sheet.LinkName stringValue];
-                     if([name length] == 0) return;
+    [sheet showSheetFor:self.window withSourceName:item.Name() completionHandler:^(NSModalResponse returnCode) {
+                 if( returnCode == NSModalResponseOK ) {
+                     string path = sheet.result;
+                     if( path.empty() )
+                         return;
                      
-                     if([name fileSystemRepresentation][0] != '/')
-                         name = [NSString stringWithFormat:@"%@%@", dirpath, name];
+                     if( path.front() != '/')
+                         path = item.Directory() + path;
                      
                      [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithNewHardLink:[srcpath fileSystemRepresentation]
-                                                            linkname:[name fileSystemRepresentation]]
-                      ];
+                      [[FileLinkOperation alloc] initWithNewHardLink:item.Path().c_str()
+                                                            linkname:path.c_str()
+                      ]];
                  }
              }];
 }

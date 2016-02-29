@@ -9,56 +9,51 @@
 #include "../../Common.h"
 #include "FileLinkNewHardlinkSheetController.h"
 
+@interface FileLinkNewHardlinkSheetController ()
+
+@property (strong) IBOutlet NSTextField *Text;
+@property (strong) IBOutlet NSTextField *LinkName;
+
+- (IBAction)OnCreate:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+
+@end
+
+
 @implementation FileLinkNewHardlinkSheetController
 {
-    NSString *m_SourceName;
-    FileLinkNewHardlinkSheetCompletionHandler m_Handler;
-    
+    string m_SourceName;
+    string m_Result;
 }
 
-- (id)init {
-    self = [super initWithWindowNibName:@"FileLinkNewHardlinkSheetController"];
-    return self;
-}
+@synthesize result = m_Result;
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];    
-    [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", m_SourceName]];
+    [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
     [self.window makeFirstResponder:self.LinkName];
-}
-
-- (void)ShowSheet:(NSWindow *)_window
-       sourcename:(NSString*)_src
-          handler:(FileLinkNewHardlinkSheetCompletionHandler)_handler
-{
-    m_SourceName = _src;
-    m_Handler = _handler;
-    
-    [NSApp beginSheet: [self window]
-       modalForWindow: _window
-        modalDelegate: self
-       didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-          contextInfo: nil];
 }
 
 - (IBAction)OnCreate:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::Create];
+    if( self.LinkName.stringValue )
+        m_Result = self.LinkName.stringValue.fileSystemRepresentationSafe;
+        
+    [self endSheet:NSModalResponseOK];
 }
 
 - (IBAction)OnCancel:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:DialogResult::Cancel];
+    [self endSheet:NSModalResponseCancel];
 }
 
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
+- (void)showSheetFor:(NSWindow *)_window
+      withSourceName:(const string&)_src
+   completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
-    [[self window] orderOut:self];
-    
-    if(m_Handler)
-        m_Handler((int)returnCode);
-    m_Handler = nil;
+    m_SourceName = _src;
+    [super beginSheetForWindow:_window completionHandler:_handler];
 }
 
 @end

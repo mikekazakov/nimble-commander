@@ -6,21 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
 
-typedef void (^FileLinkNewHardlinkSheetCompletionHandler)(int result);
+#include "../../SheetController.h"
 
-@interface FileLinkNewHardlinkSheetController : NSWindowController
+@interface FileLinkNewHardlinkSheetController : SheetController
 
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *LinkName;
+@property (readonly) const string &result;
 
-- (IBAction)OnCreate:(id)sender;
-- (IBAction)OnCancel:(id)sender;
-
-- (void)ShowSheet:(NSWindow *)_window
-       sourcename:(NSString*)_src
-          handler:(FileLinkNewHardlinkSheetCompletionHandler)_handler;
-
+- (void)showSheetFor:(NSWindow *)_window
+      withSourceName:(const string&)_src
+   completionHandler:(void (^)(NSModalResponse returnCode))_handler;
 
 @end

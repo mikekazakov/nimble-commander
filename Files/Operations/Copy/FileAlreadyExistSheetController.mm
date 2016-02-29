@@ -12,6 +12,32 @@
 #include "FileAlreadyExistSheetController.h"
 #include "FileCopyOperation.h"
 
+@interface FileAlreadyExistSheetController ()
+
+@property (strong) IBOutlet NSTextField *TargetFilename;
+@property (strong) IBOutlet NSTextField *NewFileSize;
+@property (strong) IBOutlet NSTextField *ExistingFileSize;
+@property (strong) IBOutlet NSTextField *NewFileTime;
+@property (strong) IBOutlet NSTextField *ExistingFileTime;
+@property (strong) IBOutlet NSButton *RememberCheck;
+@property (strong) IBOutlet NSButton *OverwriteButton;
+- (IBAction)OnOverwrite:(id)sender;
+- (IBAction)OnSkip:(id)sender;
+- (IBAction)OnAppend:(id)sender;
+- (IBAction)OnRename:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+- (IBAction)OnHide:(id)sender;
+
+// protocol implementation
+- (void)showDialogForWindow:(NSWindow *)_parent;
+- (BOOL)IsVisible;
+- (void)HideDialog;
+- (void)CloseDialogWithResult:(int)_result;
+- (int)WaitForResult;
+- (void)OnDialogEnqueued:(Operation *)_operation;
+
+@end
+
 @implementation FileAlreadyExistSheetController
 {
     NSString *m_DestPath;
@@ -33,9 +59,8 @@
           remember:(bool*)  _remb
             single: (bool) _single
 {
-    self = [super initWithWindowNibName:@"FileAlreadyExistSheetController"];
-    if(self)
-    {
+    self = [super init];
+    if(self) {
         m_DestPath = [NSString stringWithUTF8String: _path];
         m_NewSize = _newsize;
         m_NewTime = _newtime;
@@ -77,38 +102,36 @@
 
 - (void)showDialogForWindow:(NSWindow *)_parent
 {
-    dispatch_to_main_queue( [=]{ // really need this dispatch_async?
-        [NSApp beginSheet: [self window]
-           modalForWindow: _parent
-            modalDelegate: self
-           didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
-              contextInfo: nil];
-    });
+    dispatch_assert_main_queue();
+
+    [super beginSheetForWindow:_parent completionHandler:^(NSModalResponse returnCode) {
+        *m_Remember = [[self RememberCheck] state] == NSOnState;
+        m_Result = (int)returnCode;
+        if (m_Result != OperationDialogResult::None)
+            [(Operation*)m_Operation OnDialogClosed:self];
+    }];
 }
 
 - (BOOL)IsVisible
 {
-    return [[self window] isVisible];
+    return self.window.isVisible;
 }
 
 - (void)HideDialog
 {
-    [NSApp endSheet:[self window] returnCode:OperationDialogResult::None];
+    if( self.IsVisible )
+        [super endSheet:OperationDialogResult::None];
 }
 
 - (void)CloseDialogWithResult:(int)_result
 {
-    assert(_result != OperationDialogResult::None);
+    if( _result == OperationDialogResult::None )
+        return;
     
-    if ([self IsVisible])
-        [NSApp endSheet:[self window] returnCode:_result];
-    else
-    {
-        m_Result = _result;
-        
-        if (m_Result != OperationDialogResult::None)
-            [(Operation*)m_Operation OnDialogClosed:self];
-    }
+    [self HideDialog];
+    m_Result = _result;
+    if (m_Result != OperationDialogResult::None)
+        [(Operation*)m_Operation OnDialogClosed:self];
 }
 
 - (void)OnDialogEnqueued:(Operation *)_operation
@@ -119,53 +142,41 @@
 
 - (int)WaitForResult
 {
-    while (self.Result == OperationDialogResult::None)
-    {
+    dispatch_assert_background_queue();
+    
+    while( self.Result == OperationDialogResult::None )
         usleep(33*1000);
-    }
     
     return self.Result;
 }
 
-- (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-    [[self window] orderOut:self];
-    
-    m_Result = (int)returnCode;
-    *m_Remember = [[self RememberCheck] state] == NSOnState;
-
-    if (m_Result != OperationDialogResult::None)
-        [(Operation*)m_Operation OnDialogClosed:self];
-}
-
 - (IBAction)OnOverwrite:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:FileCopyOperationDR::Overwrite];
+    [super endSheet:FileCopyOperationDR::Overwrite];
 }
 
 - (IBAction)OnSkip:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:OperationDialogResult::Skip];
+    [super endSheet:OperationDialogResult::Skip];
 }
 
 - (IBAction)OnAppend:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:FileCopyOperationDR::Append];
+    [super endSheet:FileCopyOperationDR::Append];
 }
 
 - (IBAction)OnRename:(id)sender
 {
-//    [NSApp endSheet:[self window] returnCode:DialogResult::Rename];
     // TODO: implement me later
 }
 
 - (IBAction)OnCancel:(id)sender
 {
-    [NSApp endSheet:[self window] returnCode:OperationDialogResult::Stop];
+    [super endSheet:OperationDialogResult::Stop];
 }
 
 - (IBAction)OnHide:(id)sender {
-    [NSApp endSheet:[self window] returnCode:OperationDialogResult::None];
+    [super endSheet:OperationDialogResult::None];
 }
 
 @end

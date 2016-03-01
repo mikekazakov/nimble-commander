@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.h"
 #include "vfs/VFS.h"
+#include "rapidjson.h"
 
 class PanelDataPersisency
 {

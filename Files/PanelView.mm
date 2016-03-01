@@ -6,13 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "vfs/VFS.h"
+#include "FPSLimitedDrawer.h"
 #include "PanelView.h"
 #include "PanelData.h"
 #include "PanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "ClassicPanelViewPresentation.h"
 #include "Common.h"
-#include "vfs/VFS.h"
 #include "AppDelegate.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
@@ -34,6 +35,7 @@ struct PanelViewStateStorage
 
 @implementation PanelView
 {
+    unsigned long               m_KeyboardModifierFlags;
     CursorSelectionType         m_CursorSelectionType;
     unique_ptr<PanelViewPresentation> m_Presentation;
     PanelViewState              m_State;
@@ -69,6 +71,7 @@ struct PanelViewStateStorage
     self = [super initWithFrame:frame];
     if (self) {
         self.wantsLayer = true;
+        m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
         m_FieldRenamingRequestTicket = 0;
         m_ScrollDY = 0.0;
@@ -254,7 +257,7 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevFile
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     
@@ -268,7 +271,7 @@ struct PanelViewStateStorage
 
 - (void) HandleNextFile
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
@@ -279,7 +282,7 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevPage
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevPage();
@@ -290,7 +293,7 @@ struct PanelViewStateStorage
 
 - (void) HandleNextPage
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextPage();
@@ -301,7 +304,7 @@ struct PanelViewStateStorage
 
 - (void) HandlePrevColumn
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToPrevColumn();
@@ -312,7 +315,7 @@ struct PanelViewStateStorage
 
 - (void) HandleNextColumn
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextColumn();
@@ -323,7 +326,7 @@ struct PanelViewStateStorage
 
 - (void) HandleFirstFile;
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToFirstItem();
@@ -334,7 +337,7 @@ struct PanelViewStateStorage
 
 - (void) HandleLastFile;
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToLastItem();
@@ -345,7 +348,7 @@ struct PanelViewStateStorage
 
 - (void) HandleInsert
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
     m_Presentation->MoveCursorToNextItem();
@@ -360,7 +363,7 @@ struct PanelViewStateStorage
 
 - (void) setCurpos:(int)_pos
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     
     if (m_State.CursorPos == _pos) return;
 
@@ -371,13 +374,13 @@ struct PanelViewStateStorage
 
 - (int) curpos
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     return m_State.CursorPos;
 }
 
 - (void) OnCursorPositionChanged
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     [m_FPSLimitedDrawer invalidate];
     
     if(id<PanelViewDelegate> del = self.delegate)
@@ -396,15 +399,17 @@ struct PanelViewStateStorage
                 return;
     
     NSString* character = [event charactersIgnoringModifiers];
-    if ( [character length] != 1 ) {
+    if ( character.length != 1 ) {
         [super keyDown:event];
         return;
     }
     
-    auto mod = event.modifierFlags;
-    auto unicode = [character characterAtIndex:0];
+    const auto mod = event.modifierFlags;
+    const auto unicode = [character characterAtIndex:0];
+    
+    [self checkKeyboardModifierFlags:mod];
 
-    switch (unicode) {
+    switch( unicode ) {
         case NSHomeFunctionKey:       [self HandleFirstFile];     return;
         case NSEndFunctionKey:        [self HandleLastFile];      return;
         case NSPageDownFunctionKey:   [self HandleNextPage];      return;
@@ -439,29 +444,45 @@ struct PanelViewStateStorage
     [super keyDown:event];
 }
 
-- (void) ModifierFlagsChanged:(unsigned long)_flags
+- (void) checkKeyboardModifierFlags:(unsigned long)_current_flags
 {
-    if( (_flags & NSShiftKeyMask) == 0 ) {
+    if( _current_flags == m_KeyboardModifierFlags )
+        return; // we're ok
+
+    // flags have changed, need to update selection logic
+    m_KeyboardModifierFlags = _current_flags;
+    
+    if( (m_KeyboardModifierFlags & NSShiftKeyMask) == 0 ) {
         // clear selection type when user releases SHIFT button
         m_CursorSelectionType = CursorSelectionType::No;
     }
     else if( m_CursorSelectionType == CursorSelectionType::No ) {
-            // lets decide if we need to select or unselect files when user will use navigation arrows
-            if( auto item = self.item ) {
-                if(!item.IsDotDot()) { // regular case
-                    m_CursorSelectionType = self.item_vd.is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
-                }
-                else {
-                    // need to look at a first file (next to dotdot) for current representation if any.
-                    if(auto item = m_State.Data->EntryAtSortPosition(1))
-                        m_CursorSelectionType = m_State.Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
-                    else // singular case - selection doesn't matter - nothing to select
-                        m_CursorSelectionType = CursorSelectionType::Selection;
-                }
+        // lets decide if we need to select or unselect files when user will use navigation arrows
+        if( auto item = self.item ) {
+            if( !item.IsDotDot() ) { // regular case
+                m_CursorSelectionType = self.item_vd.is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+            }
+            else {
+                // need to look at a first file (next to dotdot) for current representation if any.
+                if( auto item = m_State.Data->EntryAtSortPosition(1) )
+                    m_CursorSelectionType = m_State.Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                else // singular case - selection doesn't matter - nothing to select
+                    m_CursorSelectionType = CursorSelectionType::Selection;
             }
         }
+    }
 }
 
+- (void)modifierFlagsChanged:(unsigned long)_flags
+{
+    [self checkKeyboardModifierFlags:_flags];
+}
+
+- (void)flagsChanged:(NSEvent *)event
+{
+    [self checkKeyboardModifierFlags:event.modifierFlags];
+    [super flagsChanged:event];
+}
 
 - (void) mouseDown:(NSEvent *)_event
 {

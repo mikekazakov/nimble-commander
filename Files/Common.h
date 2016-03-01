@@ -33,14 +33,6 @@ struct DialogResult
     };
 };
 
-namespace rapidjson
-{
-    extern CrtAllocator g_CrtAllocator;
-    typedef GenericDocument<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneDocument;
-    typedef GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneValue;
-    GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const char *_str);
-}
-
 CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept;
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;

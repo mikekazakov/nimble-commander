@@ -9,9 +9,9 @@
 
 #include "vfs/VFS.h"
 #include "PanelViewTypes.h"
-#include "FPSLimitedDrawer.h"
-#include "Common.h"
+#include "rapidjson.h"
 
+@class FPSLimitedDrawer;
 @class PanelView;
 class PanelData;
 class PanelViewPresentation;
@@ -73,7 +73,7 @@ struct PanelVolatileData;
  */
 - (void) dataUpdated;
 
-- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
+- (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 - (rapidjson::StandaloneValue) encodeRestorableState;
 - (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;

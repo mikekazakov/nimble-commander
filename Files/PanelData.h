@@ -1,7 +1,7 @@
 #pragma once
-#include "DispatchQueue.h"
-#include "Common.h"
 #include "vfs/VFS.h"
+#include "DispatchQueue.h"
+#include "rapidjson.h"
 
 struct PanelVolatileData;
 

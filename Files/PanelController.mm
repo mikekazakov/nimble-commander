@@ -520,7 +520,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
 {
-    [m_View ModifierFlagsChanged:_flags];
+    [m_View modifierFlagsChanged:_flags];
 
     if(m_QuickSearchIsSoftFiltering)
         [self QuickSearchClearFiltering];

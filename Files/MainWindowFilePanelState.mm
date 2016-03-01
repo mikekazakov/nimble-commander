@@ -258,6 +258,15 @@ static string ExpandPath(const string &_ref )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
     }
+    else {
+        /* Fixing bugs in NSISEngine, kinda */
+        NSView *dummy = [[NSView alloc] initWithFrame:self.bounds];
+        dummy.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:dummy positioned:NSWindowBelow relativeTo:nil];
+        views = NSDictionaryOfVariableBindings(dummy);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[dummy(>=100)]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[dummy(>=100)]-(0)-|" options:0 metrics:nil views:views]];
+    }
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar

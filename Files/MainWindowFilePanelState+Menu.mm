@@ -126,6 +126,22 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     [(MainWindowController*)self.window.delegate RequestTerminal:path];
 }
 
++ (void)performVFSItemOpenInPanel:(PanelController*)_panel item:(VFSListingItem)_item
+{
+    assert( _panel != nil && (bool)_item );
+    
+    if( _item.IsDir() )
+        [_panel GoToDir:_item.Path()
+                    vfs:_item.Host()
+           select_entry:""
+                  async:true];
+    else
+        [_panel GoToDir:_item.Directory()
+                    vfs:_item.Host()
+           select_entry:_item.Filename()
+                  async:true];
+}
+
 - (IBAction)OnFileOpenInOppositePanel:(id)sender
 {
     if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item)
@@ -135,16 +151,31 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     auto item = cur.view.item;
     if( !cur || !opp || !item )
         return;
-    if( item.IsDir() )
-        [opp GoToDir:item.Path()
-                 vfs:item.Host()
-        select_entry:""
-               async:true];
-    else
-        [opp GoToDir:item.Directory()
-                 vfs:item.Host()
-        select_entry:item.Filename()
-               async:true];
+    
+    [self.class performVFSItemOpenInPanel:opp item:item];
+}
+
+- (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender
+{
+    if( !self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item )
+        return;
+    auto cur = self.activePanelController;
+    if( !cur )
+        return;
+    
+    auto item = cur.view.item;
+    if( !item )
+        return;
+    
+    PanelController *opp = nil;
+    if( cur == self.leftPanelController )
+        opp = [self spawnNewTabInTabView:m_MainSplitView.rightTabbedHolder.tabView autoDirectoryLoading:false activateNewPanel:false];
+    else if( cur == self.rightPanelController )
+        opp = [self spawnNewTabInTabView:m_MainSplitView.leftTabbedHolder.tabView autoDirectoryLoading:false activateNewPanel:false];
+    if( !opp )
+        return;
+    
+    [self.class performVFSItemOpenInPanel:opp item:item];
 }
 
 - (IBAction)OnCompressFiles:(id)sender

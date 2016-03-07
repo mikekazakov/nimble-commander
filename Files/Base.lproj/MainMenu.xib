@@ -138,6 +138,12 @@ DQ
                                     <action selector="OnFileOpenInOppositePanel:" target="-1" id="DYJ-vB-ePl"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Open In Opposite Panel Tab" tag="11024" id="5B1-WV-20L">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnFileOpenInNewOppositePanelTab:" target="-1" id="gpu-X2-2d8"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Paste Filename to Terminal" tag="11022" id="XNI-Bn-uVO">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

@@ -505,7 +505,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             auto result = i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
                                                            [=]{ return _q->IsStopped(); }
                                                            );
-            if( result > 0 )
+            if( result >= 0 )
                 dispatch_to_main_queue([=]{
                     panel::GenericCursorPersistance pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size

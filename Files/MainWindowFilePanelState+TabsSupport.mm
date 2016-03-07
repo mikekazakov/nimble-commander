@@ -64,6 +64,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (void)addNewTabToTabView:(NSTabView *)aTabView
 {
+    [self spawnNewTabInTabView:aTabView autoDirectoryLoading:true activateNewPanel:true];
+}
+
+- (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView autoDirectoryLoading:(bool)_load activateNewPanel:(bool)_activate
+{
     PanelController *pc = [PanelController new];
     pc.state = self;
     PanelController *source = nil;
@@ -79,18 +84,23 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
     else
         assert(0); // something is really broken
-
-    [pc copyOptionsFromController:source];
-    if( source.isUniform ) {
-        [pc GoToDir:source.currentDirectoryPath vfs:source.vfs select_entry:"" async:false];
-    }
-    else if( !source.history.Empty() ) {
-        [pc GoToVFSPathStack:source.history.All().back()];
-    }
-    else
-        [pc GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:false];
     
-    [self ActivatePanelByController:pc];
+    [pc copyOptionsFromController:source];
+    if( _load ) {
+        if( source.isUniform ) {
+            [pc GoToDir:source.currentDirectoryPath vfs:source.vfs select_entry:"" async:false];
+        }
+        else if( !source.history.Empty() ) {
+            [pc GoToVFSPathStack:source.history.All().back()];
+        }
+        else
+            [pc GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:false];
+    }
+    
+    if( _activate )
+        [self ActivatePanelByController:pc];
+    
+    return pc;
 }
 
 /*- (BOOL)tabView:(NSTabView *)aTabView disableTabCloseForTabViewItem:(NSTabViewItem *)tabViewItem

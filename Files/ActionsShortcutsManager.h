@@ -91,6 +91,7 @@ private:
         {"menu.file.open",                      11010},
         {"menu.file.open_native",               11020},
         {"menu.file.open_in_opposite_panel",    11021},
+        {"menu.file.open_in_opposite_panel_tab",11024},
         {"menu.file.feed_filename_to_terminal", 11022},
         {"menu.file.feed_filenames_to_terminal",11023},
         {"menu.file.calculate_sizes",           11030},

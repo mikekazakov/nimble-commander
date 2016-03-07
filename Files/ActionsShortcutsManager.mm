@@ -29,6 +29,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.file.open",                          u8"\\r"     },  // ↵
         {"menu.file.open_native",                   u8"⇧\\r"    },  // shift+↵
         {"menu.file.open_in_opposite_panel",        u8"⌥\\r"    },  // alt+↵
+        {"menu.file.open_in_opposite_panel_tab",    u8"⌥⌘\\r"   },  // alt+cmd+↵
         {"menu.file.calculate_sizes",               u8"⇧⌥\\r"   },  // shift+alt+↵
         {"menu.file.calculate_all_sizes",           u8"⇧^\\r"   },  // shift+ctrl+↵
         {"menu.file.feed_filename_to_terminal",     u8"^⌥\\r"   },  // ctrl+alt+↵

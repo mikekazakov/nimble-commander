@@ -143,6 +143,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 //            cout << buffer.GetString() << endl;
         [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_CocoaRestorationFilePanelsStateKey];
     }
+    
+    [super encodeRestorableStateWithCoder:coder];
 }
 
 - (void)restoreDefaultWindowStateFromConfig
@@ -170,6 +172,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         if( ok )
             [m_PanelState decodeRestorableState:state];
     }
+    
+    [super restoreStateWithCoder:coder];
 }
 
 - (bool)currentStateNeedWindowTitle

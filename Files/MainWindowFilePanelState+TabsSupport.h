@@ -3,7 +3,9 @@
 
 @interface MainWindowFilePanelState (TabsSupport)
 
-- (void) addNewTabToTabView:(NSTabView *)aTabView;
+- (void) addNewTabToTabView:(NSTabView *)aTabView; // will actually call spawnNewTabInTabView
+- (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView autoDirectoryLoading:(bool)_load activateNewPanel:(bool)_activate;
+
 - (void) updateTabNameForController:(PanelController*)_controller;
 - (void) closeCurrentTab;
 - (void) updateTabBarsVisibility;

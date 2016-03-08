@@ -2485,8 +2485,8 @@
 				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
-				CF747BC91C117C280081185B /* Config.mm */,
 				CF747BCA1C117C280081185B /* Config.h */,
+				CF747BC91C117C280081185B /* Config.mm */,
 			);
 			name = Core;
 			sourceTree = "<group>";

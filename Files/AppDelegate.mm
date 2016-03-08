@@ -581,10 +581,12 @@ static AppDelegate *g_Me = nil;
     alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
-    if([alert runModal] == NSAlertFirstButtonReturn) {
+    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+    if( [alert runModal] == NSAlertFirstButtonReturn ) {
         [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
         [NSUserDefaults.standardUserDefaults synchronize];
+        GlobalConfig().ResetToDefaults();
+        StateConfig().ResetToDefaults();
         return  true;
     }
     return false;

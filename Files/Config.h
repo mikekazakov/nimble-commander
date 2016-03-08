@@ -20,6 +20,11 @@ public:
     
     GenericConfig(const string &_defaults, const string &_overwrites);
     
+    /**
+     * This will erase all custom-defined config settings and fire all observers for values that have changed.
+     */
+    void ResetToDefaults();
+    
     void NotifyAboutShutdown();
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
@@ -49,21 +54,7 @@ public:
     bool Set(const char *_path, const string &_value);
     bool Set(const char *_path, const char *_value);
     
-    struct ObservationTicket
-    {
-        ObservationTicket(ObservationTicket &&) noexcept;
-        ~ObservationTicket();
-        const ObservationTicket &operator=(ObservationTicket &&);
-        operator bool() const noexcept;
-    private:
-        ObservationTicket(GenericConfig *_inst, unsigned long _ticket) noexcept;
-        ObservationTicket(const ObservationTicket&) = delete;
-        void operator=(const ObservationTicket&) = delete;
-        
-        GenericConfig  *instance;
-        unsigned long   ticket;
-        friend class GenericConfig;
-    };
+    struct ObservationTicket;
     
     ObservationTicket Observe(const char *_path, function<void()> _change_callback);
     template <typename C, typename T>
@@ -84,8 +75,10 @@ private:
         unsigned long ticket;
     };
     
-    shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const char *_path);
-    void        FireObservers(const char *_path);
+    shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const char *_path) const;
+    shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const string &_path) const;
+    void        FireObservers(const char *_path) const;
+    void        FireObservers(const string& _path) const;
     void        StopObserving(unsigned long _ticket);
     ConfigValue GetInternal(string_view _path) const;
     const rapidjson::Value *FindUnlocked(string_view _path) const;
@@ -115,6 +108,21 @@ private:
     friend struct ObservationTicket;
 };
 
-
 GenericConfig &GlobalConfig() noexcept;
 GenericConfig &StateConfig() noexcept;
+
+struct GenericConfig::ObservationTicket
+{
+    ObservationTicket(ObservationTicket &&) noexcept;
+    ~ObservationTicket();
+    const ObservationTicket &operator=(ObservationTicket &&);
+    operator bool() const noexcept;
+private:
+    ObservationTicket(GenericConfig *_inst, unsigned long _ticket) noexcept;
+    ObservationTicket(const ObservationTicket&) = delete;
+    void operator=(const ObservationTicket&) = delete;
+    
+    GenericConfig  *instance;
+    unsigned long   ticket;
+    friend class GenericConfig;
+};

@@ -120,6 +120,43 @@ static void BuildOverwrites( const rapidjson::Document &_defaults, const rapidjs
     BuildOverwritesRec( _defaults, _staging, _overwrites, _overwrites );
 }
 
+static vector<string> ListDifferencesPaths( const rapidjson::Document &_defaults, const rapidjson::Document &_staging )
+{
+    if( _defaults.GetType() != rapidjson::kObjectType ||
+        _staging.GetType() != rapidjson::kObjectType )
+        return {};
+    
+    vector<string> list;
+    
+    stack< tuple<const rapidjson::Value&, const rapidjson::Value&, string>  > st;
+    st.emplace( _defaults, _staging, "" );
+    
+    while( !st.empty() ) {
+        const rapidjson::Value &defaults = get<0>(st.top());
+        const rapidjson::Value &staging  = get<1>(st.top());
+        string                  prefix   = get<2>(st.top());
+        st.pop();
+        
+        for( auto i = staging.MemberBegin(), e = staging.MemberEnd(); i != e; ++i ) {
+            auto &staging_name = i->name;
+            auto &staging_val = i->value;
+            
+            auto defaults_it = defaults.FindMember(staging_name);
+            if( defaults_it == defaults.MemberEnd() ) // no such item in defaults
+                list.emplace_back( prefix + staging_name.GetString() );
+            else {
+                auto &defaults_val = defaults_it->value;
+                if( defaults_val.GetType() == staging_val.GetType() && defaults_val.GetType() == rapidjson::kObjectType )
+                    st.emplace( defaults_val, staging_val, prefix + staging_name.GetString() + "." );
+                else if( defaults_val != staging_val )
+                    list.emplace_back( prefix + staging_name.GetString() );
+            }
+        }
+    }
+ 
+    return list;
+}
+
 GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites):
     m_OverwritesPath(_overwrites),
     m_DefaultsPath(_defaults)
@@ -159,6 +196,19 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     FSEventsDirUpdate::Instance().AddWatchPath(path(m_OverwritesPath).parent_path().c_str(), [=]{
         OnOverwritesFileDirChanged();
     });
+}
+
+void GenericConfig::ResetToDefaults()
+{
+    vector<string> diff;
+    LOCK_GUARD(m_DocumentLock) {
+        diff = ListDifferencesPaths( m_Defaults, m_Current );
+        m_Current.CopyFrom( m_Defaults, m_Current.GetAllocator() );
+    }
+
+    MarkDirty();
+    for( auto&p: diff )
+        FireObservers( p );
 }
 
 GenericConfig::ConfigValue GenericConfig::Get(const string &_path) const
@@ -428,7 +478,7 @@ void GenericConfig::StopObserving(unsigned long _ticket)
     }
 }
 
-shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path)
+shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path) const
 {
     string path = _path;
     lock_guard<mutex> lock(m_ObserversLock);
@@ -438,7 +488,23 @@ shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObser
     return nullptr;
 }
 
-void GenericConfig::FireObservers(const char *_path)
+shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const string &_path) const
+{
+    lock_guard<mutex> lock(m_ObserversLock);
+    auto observers_it = m_Observers.find(_path);
+    if( observers_it != end(m_Observers) )
+        return  observers_it->second;
+    return nullptr;
+}
+
+void GenericConfig::FireObservers(const char *_path) const
+{
+    if( auto observers = FindObserversLocked(_path) )
+        for( auto &o: *observers )
+            o->callback();
+}
+
+void GenericConfig::FireObservers(const string& _path) const
 {
     if( auto observers = FindObserversLocked(_path) )
         for( auto &o: *observers )
@@ -565,7 +631,7 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
     }
     
     for(auto &path: changes)
-        FireObservers( path.c_str() );
+        FireObservers( path );
 }
 
 @implementation GenericConfigObjC

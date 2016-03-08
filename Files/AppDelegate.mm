@@ -695,7 +695,8 @@ static AppDelegate *g_Me = nil;
 
 - (GenericConfigObjC*) config
 {
-    return g_Config->Bridge();
+    static GenericConfigObjC *global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
+    return global_config_bridge;
 }
 
 @end

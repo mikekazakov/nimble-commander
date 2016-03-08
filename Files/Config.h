@@ -64,10 +64,6 @@ public:
             _storage.emplace_back( Observe(i, _change_callback) );
     }
     
-#ifdef __OBJC__
-    inline GenericConfigObjC    *Bridge() const { return m_Bridge; }
-#endif
-    
 private:
     struct Observer
     {
@@ -98,9 +94,6 @@ private:
     string                                                              m_DefaultsPath;
     string                                                              m_OverwritesPath;
     atomic_ullong                                                       m_ObservationTicket{ 1 };
-#ifdef __OBJC__
-    GenericConfigObjC                                                  *m_Bridge;
-#endif
     SerialQueue                                                         m_IOQueue = SerialQueueT::Make("GenericConfig input/output queue");
     atomic_flag                                                         m_WriteScheduled{ false };
     atomic_flag                                                         m_ReadScheduled{ false };

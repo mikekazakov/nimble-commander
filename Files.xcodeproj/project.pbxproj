@@ -425,6 +425,7 @@
 		CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2011BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp */; };
 		CF73D2071BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D2031BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp */; };
 		CF747BCB1C117C280081185B /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF747BC91C117C280081185B /* Config.mm */; };
+		CF754D4C1C8F11F800381260 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF754D4B1C8F11F800381260 /* Config.cpp */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */; };
 		CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
@@ -1254,6 +1255,7 @@
 		CF73D20E1BE61BEB0014C88F /* vfs_xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_xattr.h; path = vfs/vfs_xattr.h; sourceTree = "<group>"; };
 		CF747BC91C117C280081185B /* Config.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Config.mm; sourceTree = "<group>"; };
 		CF747BCA1C117C280081185B /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		CF754D4B1C8F11F800381260 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionsShortcutsManager.mm; sourceTree = "<group>"; };
 		CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionsShortcutsManager.h; sourceTree = "<group>"; };
@@ -2486,6 +2488,7 @@
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
 				CF747BCA1C117C280081185B /* Config.h */,
+				CF754D4B1C8F11F800381260 /* Config.cpp */,
 				CF747BC91C117C280081185B /* Config.mm */,
 			);
 			name = Core;
@@ -3650,6 +3653,7 @@
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFD6F9191BEC4FEA00A1B046 /* VFSHost.cpp in Sources */,
+				CF754D4C1C8F11F800381260 /* Config.cpp in Sources */,
 				CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */,
 				CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */,
 				CFED5A481C50EA0100BFCB5C /* MainWindowBigFileViewState.mm in Sources */,

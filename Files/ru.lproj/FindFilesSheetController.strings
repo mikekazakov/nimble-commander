@@ -79,9 +79,6 @@
 /* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "dF0-bR-jEM"; */
 "dF0-bR-jEM.headerCell.title" = "Имя файла";
 
-/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "f8y-fY-ZzM"; */
-"f8y-fY-ZzM.title" = "";
-
 /* Class = "NSButtonCell"; title = "Search for directories"; ObjectID = "ia5-oC-fH7"; */
 "ia5-oC-fH7.title" = "Искать папки";
 

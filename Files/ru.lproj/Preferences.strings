@@ -31,9 +31,6 @@
 /* Coloring rules column name */
 "Regular" = "Обычный";
 
-/* Coloring rules column name */
-"Selected" = "Выбранный";
-
 /* General preferences tab title */
 "Terminal" = "Терминал";
 

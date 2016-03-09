@@ -7,6 +7,9 @@
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
 "5.title" = "Все окна - на передний план";
 
+/* Class = "NSMenuItem"; title = "Open In Opposite Panel Tab"; ObjectID = "5B1-WV-20L"; */
+"5B1-WV-20L.title" = "Открыть в противоположной вкладке";
+
 /* Class = "NSMenuItem"; title = "New Folder"; ObjectID = "6A9-YW-RMg"; */
 "6A9-YW-RMg.title" = "Новая папка";
 
@@ -259,8 +262,8 @@
 /* Class = "NSMenuItem"; title = "Numeric Comparison"; ObjectID = "923"; */
 "923.title" = "Численное сравнение";
 
-/* Class = "NSMenuItem"; title = "Alternative Delete..."; ObjectID = "926"; */
-"926.title" = "Альтернативное удаление...";
+/* Class = "NSMenuItem"; title = "Delete Permanently..."; ObjectID = "926"; */
+"926.title" = "Удалить необратимо...";
 
 /* Class = "NSMenuItem"; title = "Utilities"; ObjectID = "BTy-M2-2G2"; */
 "BTy-M2-2G2.title" = "Утилиты";
@@ -357,6 +360,9 @@
 
 /* Class = "NSMenuItem"; title = "Move Down"; ObjectID = "eHg-pH-jwx"; */
 "eHg-pH-jwx.title" = "Сдвинуть вниз";
+
+/* Class = "NSMenuItem"; title = "Rename In Place"; ObjectID = "eqV-zA-nvJ"; */
+"eqV-zA-nvJ.title" = "Переименовать на месте";
 
 /* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "fHK-0D-kaF"; */
 "fHK-0D-kaF.title" = "Закрыть окно";

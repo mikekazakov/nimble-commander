@@ -792,6 +792,9 @@ struct PanelViewStateStorage
 
 - (void)startFieldEditorRenaming
 {
+    if( m_RenamingEditor != nil )
+        return;
+    
     int cursor_pos = m_State.CursorPos;
     if(!m_Presentation->IsItemVisible(cursor_pos))
         return;

@@ -651,6 +651,15 @@ static AppDelegate *g_Me = nil;
             TrialWindowController* twc = [[TrialWindowController alloc] init];
             [twc.window makeKeyAndOrderFront:self];
             [twc.window makeMainWindow];
+            
+#ifndef DEBUG
+            if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/%s", configuration::website_domain, "brown.plist"]] ) {
+                NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+                NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
+                                                        completionHandler:^(NSData *, NSURLResponse *, NSError *) {}];
+                [task resume];
+            }
+#endif
         });
     });
 }

@@ -545,7 +545,7 @@ void GenericConfig::MarkDirty()
         });
 }
 
-void GenericConfig::NotifyAboutShutdown()
+void GenericConfig::Commit()
 {
     if( m_WriteScheduled.test_and_set() ) {
         RunOverwritesDumping();

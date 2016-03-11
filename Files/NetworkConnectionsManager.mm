@@ -152,7 +152,7 @@ NetworkConnectionsManager::NetworkConnectionsManager():
                                                     object:nil
                                                      queue:nil
                                                 usingBlock:^(NSNotification * _Nonnull note) {
-                                                    m_Config.NotifyAboutShutdown();
+                                                    m_Config.Commit();
                                                 }];
 }
 

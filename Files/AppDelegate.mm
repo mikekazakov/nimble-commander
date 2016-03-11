@@ -107,10 +107,9 @@ static AppDelegate *g_Me = nil;
         m_Skin = ApplicationSkin::Modern;
         
         const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
-        if( (NSEvent.modifierFlags & erase_mask) == erase_mask ) {
-            [self askToResetDefaults];
-            exit(0);
-        }
+        if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
+            if( [self askToResetDefaults] )
+                exit(0);
         
         [self setupConfigDirectory];
         g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
@@ -427,8 +426,8 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-    GlobalConfig().NotifyAboutShutdown();
-    StateConfig().NotifyAboutShutdown();
+    GlobalConfig().Commit();
+    StateConfig().Commit();
 }
 
 - (IBAction)OnMenuSendFeedback:(id)sender
@@ -571,6 +570,8 @@ static AppDelegate *g_Me = nil;
         [NSUserDefaults.standardUserDefaults synchronize];
         GlobalConfig().ResetToDefaults();
         StateConfig().ResetToDefaults();
+        GlobalConfig().Commit();
+        StateConfig().Commit();
         return  true;
     }
     return false;

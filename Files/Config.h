@@ -25,7 +25,7 @@ public:
      */
     void ResetToDefaults();
     
-    void NotifyAboutShutdown();
+    void Commit();
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
     

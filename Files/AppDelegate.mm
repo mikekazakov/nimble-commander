@@ -65,6 +65,13 @@ GenericConfig &StateConfig() noexcept
     return *g_State;
 }
 
+static string cwd()
+{
+    char cwd[MAXPATHLEN];
+    getcwd(cwd, MAXPATHLEN);
+    return cwd;
+}
+
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -94,31 +101,23 @@ static AppDelegate *g_Me = nil;
     self = [super init];
     if(self) {
         g_Me = self;
-        
-        char cwd[MAXPATHLEN];
-        getcwd(cwd, MAXPATHLEN);
-        m_StartupCWD = cwd;
-        
+        m_StartupCWD = cwd();
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
+        m_Skin = ApplicationSkin::Modern;
         
-//        NSString *defaults_file = [NSBundle.mainBundle pathForResource:@"Defaults" ofType:@"plist"];
-//        NSDictionary *defaults = [NSDictionary dictionaryWithContentsOfFile:defaults_file];
-//        [NSUserDefaults.standardUserDefaults registerDefaults:defaults];
-//        auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
-//        if((NSEvent.modifierFlags & erase_mask) == erase_mask) {
-//            [self askToResetDefaults];
-//            exit(0);
-//        }
+        const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
+        if( (NSEvent.modifierFlags & erase_mask) == erase_mask ) {
+            [self askToResetDefaults];
+            exit(0);
+        }
         
         [self setupConfigDirectory];
-        g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].UTF8String, self.configDirectory + "Config.json");
-        g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].UTF8String, self.stateDirectory + "State.json");
+        g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
+        g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe, self.stateDirectory + "State.json");
         [self migrateUserDefaultsToJSONConfig_1_1_0_to_1_1_1];
         
-        m_Skin = ApplicationSkin::Modern;
         [self reloadSkinSetting];
-
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
     }
     return self;
@@ -182,52 +181,37 @@ static AppDelegate *g_Me = nil;
         item.target = self;
         item.action = @selector(showFeatureNotSupportedWindow:);
     };
-
     
     if(!configuration::has_psfs)
-        prohibit("menu.go.processes_list");
+                                                        prohibit("menu.go.processes_list");
     if(!configuration::has_terminal) {
-        hide("menu.view.show_terminal");
-        hide("menu.view.panels_position.move_up");
-        hide("menu.view.panels_position.move_down");
-        hide("menu.view.panels_position.showpanels");
-        hide("menu.view.panels_position.focusterminal");
-        hide("menu.file.feed_filename_to_terminal");
-        hide("menu.file.feed_filenames_to_terminal");        
+                                                        hide("menu.view.show_terminal");
+                                                        hide("menu.view.panels_position.move_up");
+                                                        hide("menu.view.panels_position.move_down");
+                                                        hide("menu.view.panels_position.showpanels");
+                                                        hide("menu.view.panels_position.focusterminal");
+                                                        hide("menu.file.feed_filename_to_terminal");
+                                                        hide("menu.file.feed_filenames_to_terminal");
     }
     
     if(!configuration::has_brief_system_overview)       prohibit("menu.command.system_overview");
     if(!configuration::has_unix_attributes_editing)     prohibit("menu.command.file_attributes");
     if(!configuration::has_detailed_volume_information) prohibit("menu.command.volume_information");
     if(!configuration::has_batch_rename)                prohibit("menu.command.batch_rename");
-    // fix for a hanging separator in Lite version
-    // BAD, BAD approach with hardcoded standalone tag!
-    // need to write a mech to hide separators if surrounding menu items became hidden
-    // or just w8 till all upgrade to 10.10, which does it automatically
-//    if(!configuration::has_brief_system_overview &&
-//       !configuration::has_unix_attributes_editing &&
-//       !configuration::has_detailed_volume_information)
-//        [[NSApp mainMenu] itemWithTagHierarchical:15021].hidden = true;
     if(!configuration::has_internal_viewer)             prohibit("menu.command.internal_viewer");
     if(!configuration::has_compression_operation)       prohibit("menu.command.compress");
     if(!configuration::has_fs_links_manipulation) {
-        prohibit("menu.command.link_create_soft");
-        prohibit("menu.command.link_create_hard");
-        prohibit("menu.command.link_edit");
-//        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.command.link_edit")].hidden = true;
+                                                        prohibit("menu.command.link_create_soft");
+                                                        prohibit("menu.command.link_create_hard");
+                                                        prohibit("menu.command.link_edit");
     }
     if(!configuration::has_network_connectivity) {
-        prohibit("menu.go.connect.ftp");
-        prohibit("menu.go.connect.sftp");
-//        prohibit("menu.go.quick_lists.connections");
-//        [[NSApp mainMenu] itemContainingItemWithTagHierarchical:tag_from_lit("menu.go.connect.ftp")].hidden = true;
+                                                        prohibit("menu.go.connect.ftp");
+                                                        prohibit("menu.go.connect.sftp");
     }
     
-    if( !configuration::has_checksum_calculation )
-        prohibit("menu.file.calculate_checksum");
-    if( !configuration::has_xattr_vfs )
-        prohibit("menu.command.open_xattr");
-//    menuitem("menu.file.calculate_checksum").hidden = !configuration::has_checksum_calculation;
+    if( !configuration::has_checksum_calculation )      prohibit("menu.file.calculate_checksum");
+    if( !configuration::has_xattr_vfs )                 prohibit("menu.command.open_xattr");
     menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
 }
 

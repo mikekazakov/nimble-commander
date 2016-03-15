@@ -14,9 +14,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-               BuildableName = "Files.app"
-               BlueprintName = "Files"
-               ReferencedContainer = "container:Files.xcodeproj">
+               BuildableName = "Nimble Commander.app"
+               BlueprintName = "NinmbleCommander NonMAS"
+               ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CF47A97F186C607B00745C4C"
-               BuildableName = "Files Tests.xctest"
-               BlueprintName = "Files Tests"
-               ReferencedContainer = "container:Files.xcodeproj">
+               BuildableName = "NimbleCommander.xctest"
+               BlueprintName = "NimbleCommander Tests"
+               ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Files.app"
-            BlueprintName = "Files"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BuildableName = "Nimble Commander.app"
+            BlueprintName = "NinmbleCommander NonMAS"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Files.app"
-            BlueprintName = "Files"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BuildableName = "Nimble Commander.app"
+            BlueprintName = "NinmbleCommander NonMAS"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -102,9 +102,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Files.app"
-            BlueprintName = "Files"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BuildableName = "Nimble Commander.app"
+            BlueprintName = "NinmbleCommander NonMAS"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

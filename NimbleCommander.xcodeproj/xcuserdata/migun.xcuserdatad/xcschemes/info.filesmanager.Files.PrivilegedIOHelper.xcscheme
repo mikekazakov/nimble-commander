@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFF6F2391A13567C00011177"
-               BuildableName = "Files Pro.app"
-               BlueprintName = "Files Pro"
-               ReferencedContainer = "container:Files.xcodeproj">
+               BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
+               BuildableName = "NimbleCommander"
+               BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+               ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6F2391A13567C00011177"
-            BuildableName = "Files Pro.app"
-            BlueprintName = "Files Pro"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
+            BuildableName = "NimbleCommander"
+            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6F2391A13567C00011177"
-            BuildableName = "Files Pro.app"
-            BlueprintName = "Files Pro"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
+            BuildableName = "NimbleCommander"
+            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6F2391A13567C00011177"
-            BuildableName = "Files Pro.app"
-            BlueprintName = "Files Pro"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
+            BuildableName = "NimbleCommander"
+            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

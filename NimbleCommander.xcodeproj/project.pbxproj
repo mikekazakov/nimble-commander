@@ -664,7 +664,7 @@
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFD54FC31A29C4CA0098A4A9 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */; };
-		CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CFD54FC51A29C6920098A4A9 /* NimbleCommander in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
@@ -1028,7 +1028,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper in CopyFiles */,
+				CFD54FC51A29C6920098A4A9 /* NimbleCommander in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1125,9 +1125,9 @@
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rapidjson.cpp; sourceTree = "<group>"; };
 		CF46D8E91C853C2C009E28B9 /* rapidjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rapidjson.h; sourceTree = "<group>"; };
-		CF47A980186C607C00745C4C /* Files Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Files Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF47A980186C607C00745C4C /* NimbleCommander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NimbleCommander.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		CF47A985186C607C00745C4C /* Files Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Files Tests-Info.plist"; sourceTree = "<group>"; };
+		CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NimbleCommander Tests-Info.plist"; sourceTree = "<group>"; };
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
 		CF47A992186C61A600745C4C /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chained_strings_Tests.mm; sourceTree = "<group>"; };
 		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
@@ -1184,7 +1184,7 @@
 		CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
-		CF6D997D196675290077B146 /* Files Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Files Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF6D997D196675290077B146 /* NimbleCommander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NimbleCommander.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6D9C7819667A180077B146 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = 3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF6D9C7919667A190077B146 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = 3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6D9C7E19667A270077B146 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
@@ -1198,8 +1198,8 @@
 		CF6D9C8E19667A5E0077B146 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C9019667A640077B146 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C9219667A850077B146 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libSystem.dylib; sourceTree = DEVELOPER_DIR; };
-		CF6D9D2B1966A56E0077B146 /* Files-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Files-Info.plist"; path = "Resource/Files-Info.plist"; sourceTree = "<group>"; };
-		CF6D9D2D1966A57B0077B146 /* Files-Lite-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Files-Lite-Info.plist"; path = "Resource/Files-Lite-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Info.plist"; path = "Resource/NimbleCommander-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D2D1966A57B0077B146 /* NimbleCommander-Lite-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Lite-Info.plist"; path = "Resource/NimbleCommander-Lite-Info.plist"; sourceTree = "<group>"; };
 		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Lite.entitlements"; path = "Resource/Files-Lite.entitlements"; sourceTree = "<group>"; };
 		CF6D9D321966AC220077B146 /* Configuration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Configuration.h; sourceTree = "<group>"; };
 		CF6D9D331966BE710077B146 /* SandboxManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxManager.mm; sourceTree = "<group>"; };
@@ -1442,13 +1442,13 @@
 		CFC20B49198F47DD000E73DD /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
 		CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelViewPresentationItemsColoringFilter.mm; sourceTree = "<group>"; };
 		CFC4342216E0E09B001B0512 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
-		CFC5121116C4BD3D00D247EE /* Files.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Files.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC5121416C4BD3D00D247EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CFC5121816C4BD3D00D247EE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CFC5121916C4BD3D00D247EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CFC5122016C4BD3D00D247EE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files-Prefix.pch"; sourceTree = "<group>"; };
+		CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NimbleCommander-Prefix.pch"; sourceTree = "<group>"; };
 		CFC5122616C4BD3D00D247EE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CFC5122716C4BD3D00D247EE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		CFC5123416C5284800D247EE /* PanelData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanelData.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1519,7 +1519,7 @@
 		CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivilegedIOHelper.cpp; sourceTree = "<group>"; };
 		CFD54FB21A29C2560098A4A9 /* PrivilegedIOHelper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Info.plist"; sourceTree = "<group>"; };
 		CFD54FB31A29C2BF0098A4A9 /* PrivilegedIOHelper-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Launchd.plist"; sourceTree = "<group>"; };
-		CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NimbleCommander; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoutedIO.cpp; sourceTree = "<group>"; };
 		CFD54FCD1A29C8C30098A4A9 /* RoutedIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutedIO.h; sourceTree = "<group>"; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
@@ -1639,8 +1639,8 @@
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
-		CFF6F3A11A13567C00011177 /* Files Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Files Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFF6F3A61A13586600011177 /* Files-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Files-Pro-Info.plist"; path = "Resource/Files-Pro-Info.plist"; sourceTree = "<group>"; };
+		CFF6F3A11A13567C00011177 /* NimbleCommander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NimbleCommander.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Pro-Info.plist"; path = "Resource/NimbleCommander-Pro-Info.plist"; sourceTree = "<group>"; };
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
 		CFF6F3A91A135A0E00011177 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Pro/files.icns; sourceTree = "<group>"; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
@@ -2109,7 +2109,7 @@
 			isa = PBXGroup;
 			children = (
 				CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */,
-				CF47A985186C607C00745C4C /* Files Tests-Info.plist */,
+				CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */,
 				CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -2213,7 +2213,7 @@
 		CF6D99A5196675FE0077B146 /* Files Full */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D9D2B1966A56E0077B146 /* Files-Info.plist */,
+				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
 			);
 			name = "Files Full";
 			sourceTree = "<group>";
@@ -2222,7 +2222,7 @@
 			isa = PBXGroup;
 			children = (
 				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
-				CF6D9D2D1966A57B0077B146 /* Files-Lite-Info.plist */,
+				CF6D9D2D1966A57B0077B146 /* NimbleCommander-Lite-Info.plist */,
 			);
 			name = "Files Lite";
 			sourceTree = "<group>";
@@ -2649,11 +2649,11 @@
 		CFC5121216C4BD3D00D247EE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFC5121116C4BD3D00D247EE /* Files.app */,
-				CF47A980186C607C00745C4C /* Files Tests.xctest */,
-				CF6D997D196675290077B146 /* Files Lite.app */,
-				CFF6F3A11A13567C00011177 /* Files Pro.app */,
-				CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */,
+				CFC5121116C4BD3D00D247EE /* Nimble Commander.app */,
+				CF47A980186C607C00745C4C /* NimbleCommander.xctest */,
+				CF6D997D196675290077B146 /* NimbleCommander.app */,
+				CFF6F3A11A13567C00011177 /* NimbleCommander.app */,
+				CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2755,7 +2755,7 @@
 				CF6D99A5196675FE0077B146 /* Files Full */,
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
-				CFC5122216C4BD3D00D247EE /* Files-Prefix.pch */,
+				CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2860,7 +2860,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */,
-				CFF6F3A61A13586600011177 /* Files-Pro-Info.plist */,
+				CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */,
 			);
 			name = "Files Pro";
 			sourceTree = "<group>";
@@ -2868,9 +2868,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CF47A97F186C607B00745C4C /* Files Tests */ = {
+		CF47A97F186C607B00745C4C /* NimbleCommander Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Files Tests" */;
+			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander Tests" */;
 			buildPhases = (
 				CF47A97C186C607B00745C4C /* Sources */,
 				CF47A97D186C607B00745C4C /* Frameworks */,
@@ -2888,14 +2888,14 @@
 				CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */,
 				CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */,
 			);
-			name = "Files Tests";
+			name = "NimbleCommander Tests";
 			productName = "Files Tests";
-			productReference = CF47A980186C607C00745C4C /* Files Tests.xctest */;
+			productReference = CF47A980186C607C00745C4C /* NimbleCommander.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CF6D997C196675290077B146 /* Files Lite */ = {
+		CF6D997C196675290077B146 /* NimbleCommander Lite */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "Files Lite" */;
+			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Lite" */;
 			buildPhases = (
 				CF6D9979196675290077B146 /* Sources */,
 				CF6D997A196675290077B146 /* Frameworks */,
@@ -2907,14 +2907,14 @@
 			);
 			dependencies = (
 			);
-			name = "Files Lite";
+			name = "NimbleCommander Lite";
 			productName = "Files Lite";
-			productReference = CF6D997D196675290077B146 /* Files Lite.app */;
+			productReference = CF6D997D196675290077B146 /* NimbleCommander.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFC5121016C4BD3D00D247EE /* Files */ = {
+		CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "Files" */;
+			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NinmbleCommander NonMAS" */;
 			buildPhases = (
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
@@ -2929,14 +2929,14 @@
 			dependencies = (
 				CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */,
 			);
-			name = Files;
+			name = "NinmbleCommander NonMAS";
 			productName = Directories;
-			productReference = CFC5121116C4BD3D00D247EE /* Files.app */;
+			productReference = CFC5121116C4BD3D00D247EE /* Nimble Commander.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */ = {
+		CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelper" */;
+			buildConfigurationList = CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.NimbleCommander.PrivilegedIOHelper" */;
 			buildPhases = (
 				CFD54FB81A29C4C10098A4A9 /* Sources */,
 				CFD54FB91A29C4C10098A4A9 /* Frameworks */,
@@ -2946,14 +2946,14 @@
 			);
 			dependencies = (
 			);
-			name = info.filesmanager.Files.PrivilegedIOHelper;
+			name = info.filesmanager.NimbleCommander.PrivilegedIOHelper;
 			productName = PrivilegedIOHelper;
-			productReference = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */;
+			productReference = CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */;
 			productType = "com.apple.product-type.tool";
 		};
-		CFF6F2391A13567C00011177 /* Files Pro */ = {
+		CFF6F2391A13567C00011177 /* NimbleCommander Pro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "Files Pro" */;
+			buildConfigurationList = CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Pro" */;
 			buildPhases = (
 				CFF6F23A1A13567C00011177 /* Sources */,
 				CFF6F3531A13567C00011177 /* Frameworks */,
@@ -2965,9 +2965,9 @@
 			);
 			dependencies = (
 			);
-			name = "Files Pro";
+			name = "NimbleCommander Pro";
 			productName = Directories;
-			productReference = CFF6F3A11A13567C00011177 /* Files Pro.app */;
+			productReference = CFF6F3A11A13567C00011177 /* NimbleCommander.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -3002,7 +3002,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "Files" */;
+			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "NimbleCommander" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -3034,11 +3034,11 @@
 			);
 			projectRoot = "";
 			targets = (
-				CFC5121016C4BD3D00D247EE /* Files */,
-				CF6D997C196675290077B146 /* Files Lite */,
-				CFF6F2391A13567C00011177 /* Files Pro */,
-				CF47A97F186C607B00745C4C /* Files Tests */,
-				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */,
+				CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */,
+				CF6D997C196675290077B146 /* NimbleCommander Lite */,
+				CFF6F2391A13567C00011177 /* NimbleCommander Pro */,
+				CF47A97F186C607B00745C4C /* NimbleCommander Tests */,
+				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -3991,47 +3991,47 @@
 /* Begin PBXTargetDependency section */
 		CF47A98D186C607C00745C4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF47A98C186C607C00745C4C /* PBXContainerItemProxy */;
 		};
 		CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* Files */;
+			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
 			targetProxy = CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelper */;
+			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */;
 			targetProxy = CFD54FC61A29C6AD0098A4A9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4396,7 +4396,7 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files Tests/Files Tests-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -4405,9 +4405,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files Tests/Files Tests-Info.plist";
+				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4429,14 +4429,14 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files Tests/Files Tests-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files Tests/Files Tests-Info.plist";
+				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4460,7 +4460,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__FILES_VER_LITE__=1",
@@ -4469,7 +4469,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Lite-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Lite-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4481,7 +4481,7 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 			};
@@ -4506,13 +4506,13 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Lite-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Lite-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4524,7 +4524,7 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -4654,7 +4654,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__FILES_VER_FULL__=1",
@@ -4664,7 +4664,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4677,7 +4677,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
-				PRODUCT_NAME = Files;
+				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
@@ -4706,14 +4706,14 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_FULL__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4726,7 +4726,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
-				PRODUCT_NAME = Files;
+				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
@@ -4768,7 +4768,7 @@
 					__launchd_plist,
 					"Files/PrivilegedIOHelper-Launchd.plist",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -4805,7 +4805,7 @@
 					__launchd_plist,
 					"Files/PrivilegedIOHelper-Launchd.plist",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NimbleCommander;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -4833,7 +4833,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__FILES_VER_PRO__=1",
@@ -4843,7 +4843,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Pro-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Pro-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4852,7 +4852,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
-				PRODUCT_NAME = "Files Pro";
+				PRODUCT_NAME = NimbleCommander;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
@@ -4882,14 +4882,14 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/Files-Prefix.pch";
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_PRO__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/Files-Pro-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Pro-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4898,7 +4898,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
-				PRODUCT_NAME = "Files Pro";
+				PRODUCT_NAME = NimbleCommander;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
@@ -4908,7 +4908,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Files Tests" */ = {
+		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF47A98F186C607C00745C4C /* Debug */,
@@ -4917,7 +4917,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "Files Lite" */ = {
+		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Lite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF6D9998196675290077B146 /* Debug */,
@@ -4926,7 +4926,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "Files" */ = {
+		CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "NimbleCommander" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFC5122C16C4BD3D00D247EE /* Debug */,
@@ -4935,7 +4935,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "Files" */ = {
+		CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NinmbleCommander NonMAS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFC5122F16C4BD3D00D247EE /* Debug */,
@@ -4944,7 +4944,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelper" */ = {
+		CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.NimbleCommander.PrivilegedIOHelper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD54FC11A29C4C10098A4A9 /* Debug */,
@@ -4953,7 +4953,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "Files Pro" */ = {
+		CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Pro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFF6F39F1A13567C00011177 /* Debug */,

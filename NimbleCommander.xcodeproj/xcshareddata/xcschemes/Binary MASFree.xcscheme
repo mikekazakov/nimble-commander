@@ -14,9 +14,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CF6D997C196675290077B146"
-               BuildableName = "Files Lite.app"
-               BlueprintName = "Files Lite"
-               ReferencedContainer = "container:Files.xcodeproj">
+               BuildableName = "NimbleCommander.app"
+               BlueprintName = "NimbleCommander Lite"
+               ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CF6D997C196675290077B146"
-            BuildableName = "Files Lite.app"
-            BlueprintName = "Files Lite"
-            ReferencedContainer = "container:Files.xcodeproj">
+            BuildableName = "NimbleCommander.app"
+            BlueprintName = "NimbleCommander Lite"
+            ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>

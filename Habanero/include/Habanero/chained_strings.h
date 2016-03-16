@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <assert.h>
+#include <string>
+
 class chained_strings
 {
     enum {
@@ -42,7 +45,7 @@ public:
         const char* c_str() const;
         unsigned short size() const;
         void str_with_pref(char *_buf) const;
-        string to_str_with_pref() const;
+        std::string to_str_with_pref() const;
     }; // 24 bytes long
 #pragma pack()
 
@@ -107,7 +110,7 @@ public:
     
     chained_strings();
     chained_strings(const char *_allocate_with_this_string);
-    chained_strings(const string &_allocate_with_this_string);
+    chained_strings(const std::string &_allocate_with_this_string);
     chained_strings(chained_strings&& _rhs);
 
     template<class T>
@@ -127,7 +130,7 @@ public:
     
     void push_back(const char *_str, unsigned _len, const node *_prefix);
     void push_back(const char *_str, const node *_prefix);
-    void push_back(const string& _str, const node *_prefix);
+    void push_back(const std::string& _str, const node *_prefix);
 
     const node &front() const; // O(1)
     const node &back() const;  // O(1)

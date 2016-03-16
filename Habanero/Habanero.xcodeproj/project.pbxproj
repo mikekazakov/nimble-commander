@@ -33,6 +33,8 @@
 		CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
 		CFD62BB81C99C2AE0021EE7F /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
 		CFD62BB91C99C2AE0021EE7F /* variable_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */; };
+		CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BBB1C99C73E0021EE7F /* chained_strings.h */; };
+		CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mach_time.cpp; path = source/mach_time.cpp; sourceTree = "<group>"; };
 		CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiny_string.cpp; path = source/tiny_string.cpp; sourceTree = "<group>"; };
 		CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = variable_container.cpp; path = source/variable_container.cpp; sourceTree = "<group>"; };
+		CFD62BBB1C99C73E0021EE7F /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chained_strings.h; path = include/Habanero/chained_strings.h; sourceTree = "<group>"; };
+		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +100,7 @@
 		CFD62B841C99C2510021EE7F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
 				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
@@ -116,6 +121,7 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
 				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
 				CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */,
@@ -150,6 +156,7 @@
 				CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */,
 				CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */,
 				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,
+				CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */,
 				CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */,
 				CFD62B931C99C2A60021EE7F /* algo.h in Headers */,
 				CFD62B991C99C2A60021EE7F /* Hash.h in Headers */,
@@ -215,6 +222,7 @@
 				CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */,
 				CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */,
 				CFD62BAD1C99C2AE0021EE7F /* CFString.cpp in Sources */,
+				CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */,
 				CFD62BB01C99C2AE0021EE7F /* debug.cpp in Sources */,
 				CFD62BB61C99C2AE0021EE7F /* KVO.cpp in Sources */,
 				CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */,

@@ -6,11 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "chained_strings.h"
-#import "ApplicationSkins.h"
-#import "vfs/VFS.h"
-#import "MainWindowStateProtocol.h"
+#include "ApplicationSkins.h"
+#include "vfs/VFS.h"
+#include "MainWindowStateProtocol.h"
 
 @class OperationsController;
 @class MainWindowFilePanelState;

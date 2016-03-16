@@ -368,7 +368,6 @@
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
-		CF6D9C711966780D0077B146 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
 		CF6D9C731966780D0077B146 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CF6D9C7419667A090077B146 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
@@ -691,7 +690,6 @@
 		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFE1A4F116C5FFEE00EFBA3C /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4EF16C5FFEE00EFBA3C /* FontCache.cpp */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
-		CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
@@ -745,7 +743,6 @@
 		CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
-		CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE2697A16F01BA90048A393 /* chained_strings.cpp */; };
 		CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.cpp */; };
 		CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
@@ -1535,8 +1532,6 @@
 		CFE1A4F016C5FFEE00EFBA3C /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowController.mm; sourceTree = "<group>"; };
-		CFE2697A16F01BA90048A393 /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chained_strings.cpp; sourceTree = "<group>"; };
-		CFE2697B16F01BAA0048A393 /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chained_strings.h; sourceTree = "<group>"; };
 		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
 		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
 		CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationItemsFooter.mm; sourceTree = "<group>"; };
@@ -2397,8 +2392,6 @@
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
 				CFC4342216E0E09B001B0512 /* Common.h */,
 				CFB060DC172E6AC4001F6949 /* Common.mm */,
-				CFE2697A16F01BA90048A393 /* chained_strings.cpp */,
-				CFE2697B16F01BAA0048A393 /* chained_strings.h */,
 				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.cpp */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,
 				CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */,
@@ -3360,7 +3353,6 @@
 				CF46DB831C856F45009E28B9 /* TermSingleTask.mm in Sources */,
 				CF46DB8F1C856F72009E28B9 /* BigFileView.mm in Sources */,
 				CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
-				CF6D9C711966780D0077B146 /* chained_strings.cpp in Sources */,
 				CF50C4541C0ADF0D009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CF6D9C731966780D0077B146 /* FontCache.cpp in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
@@ -3563,7 +3555,6 @@
 				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
-				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
 				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.cpp in Sources */,
@@ -3761,7 +3752,6 @@
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
-				CFF6F2611A13567C00011177 /* chained_strings.cpp in Sources */,
 				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CFF6F2661A13567C00011177 /* FSEventsDirUpdate.cpp in Sources */,
 				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,

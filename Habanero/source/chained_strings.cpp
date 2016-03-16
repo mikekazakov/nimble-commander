@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "chained_strings.h"
 #include <stdlib.h>
 #include <memory.h>
+#include <Habanero/chained_strings.h>
 
 chained_strings::chained_strings():
     m_Begin(nullptr),
@@ -26,7 +26,7 @@ chained_strings::chained_strings(const char *_allocate_with_this_string):
     push_back(_allocate_with_this_string, nullptr);
 }
 
-chained_strings::chained_strings(const string &_allocate_with_this_string):
+chained_strings::chained_strings(const std::string &_allocate_with_this_string):
     m_Begin(nullptr),
     m_Last(nullptr)
 {
@@ -82,7 +82,7 @@ void chained_strings::push_back(const char *_str, const node *_prefix)
     push_back(_str, (unsigned)strlen(_str), _prefix);
 }
 
-void chained_strings::push_back(const string& _str, const node *_prefix)
+void chained_strings::push_back(const std::string& _str, const node *_prefix)
 {
     push_back(_str.c_str(), (unsigned) _str.length(), _prefix);
 }
@@ -164,7 +164,7 @@ void chained_strings::node::str_with_pref(char *_buf) const
     _buf[bufsz] = 0;
 }
 
-string chained_strings::node::to_str_with_pref() const
+std::string chained_strings::node::to_str_with_pref() const
 {
     const node *nodes[max_depth], *n = this;
     int bufsz = 0, nodes_n = 0;
@@ -175,7 +175,7 @@ string chained_strings::node::to_str_with_pref() const
         assert(nodes_n < max_depth);
     } while( (n = n->prefix) != 0 );
     
-    string res;
+    std::string res;
     res.reserve(bufsz);
     for(int i = nodes_n-1; i >= 0; --i)
         res.append(nodes[i]->c_str(), nodes[i]->len);
@@ -207,14 +207,14 @@ bool chained_strings::singleblock() const
 
 void chained_strings::swap(chained_strings &_rhs)
 {
-    ::swap(m_Begin, _rhs.m_Begin);
-    ::swap(m_Last, _rhs.m_Last);
+    std::swap(m_Begin, _rhs.m_Begin);
+    std::swap(m_Last, _rhs.m_Last);
 }
 
 void chained_strings::swap(chained_strings &&_rhs)
 {
-    ::swap(m_Begin, _rhs.m_Begin);
-    ::swap(m_Last, _rhs.m_Last);    
+    std::swap(m_Begin, _rhs.m_Begin);
+    std::swap(m_Last, _rhs.m_Last);
 }
 
 const chained_strings& chained_strings::operator=(chained_strings&& _rhs)

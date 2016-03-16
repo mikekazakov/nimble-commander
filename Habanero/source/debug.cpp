@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/sysctl.h>
-#include "debug.h"
+#include <Habanero/debug.h>
 
 bool AmIBeingDebugged() noexcept
 // Returns true if the current process is being debugged (either

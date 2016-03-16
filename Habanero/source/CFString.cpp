@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 MIchael Kazakov. All rights reserved.
 //
 
-#include "CFString.h"
+#include <Habanero/CFString.h>
 
 CFString::CFString():
     p(nullptr)

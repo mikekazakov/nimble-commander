@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "dispatch_cpp.h"
+#include <Habanero/dispatch_cpp.h>
 
 dispatch_queue::dispatch_queue(const char *label, bool concurrent):
     m_queue(dispatch_queue_create(label,

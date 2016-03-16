@@ -1,5 +1,5 @@
-#import <Foundation/Foundation.h>
-#import "CommonPaths.h"
+#include <Foundation/Foundation.h>
+#include <Habanero/CommonPaths.h>
 
 namespace CommonPaths
 {

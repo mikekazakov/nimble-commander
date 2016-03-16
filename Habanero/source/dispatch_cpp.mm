@@ -7,7 +7,7 @@
 //
 
 #include <Foundation/Foundation.h>
-#include "dispatch_cpp.h"
+#include <Habanero/dispatch_cpp.h>
 
 bool dispatch_is_main_queue() noexcept
 {

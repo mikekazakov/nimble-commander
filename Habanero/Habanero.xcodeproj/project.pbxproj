@@ -1,0 +1,357 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFD62B931C99C2A60021EE7F /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B861C99C2A60021EE7F /* algo.h */; };
+		CFD62B941C99C2A60021EE7F /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B871C99C2A60021EE7F /* CFString.h */; };
+		CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B881C99C2A60021EE7F /* CommonPaths.h */; };
+		CFD62B961C99C2A60021EE7F /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B891C99C2A60021EE7F /* debug.h */; };
+		CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */; };
+		CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8B1C99C2A60021EE7F /* FontExtras.h */; };
+		CFD62B991C99C2A60021EE7F /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8C1C99C2A60021EE7F /* Hash.h */; };
+		CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */; };
+		CFD62B9B1C99C2A60021EE7F /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8E1C99C2A60021EE7F /* KVO.h */; };
+		CFD62B9C1C99C2A60021EE7F /* mach_time.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8F1C99C2A60021EE7F /* mach_time.h */; };
+		CFD62B9D1C99C2A60021EE7F /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B901C99C2A60021EE7F /* spinlock.h */; };
+		CFD62B9E1C99C2A60021EE7F /* tiny_string.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B911C99C2A60021EE7F /* tiny_string.h */; };
+		CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B921C99C2A60021EE7F /* variable_container.h */; };
+		CFD62BAD1C99C2AE0021EE7F /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
+		CFD62BAE1C99C2AE0021EE7F /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
+		CFD62BAF1C99C2AE0021EE7F /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
+		CFD62BB01C99C2AE0021EE7F /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
+		CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
+		CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */; };
+		CFD62BB31C99C2AE0021EE7F /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */; };
+		CFD62BB41C99C2AE0021EE7F /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
+		CFD62BB51C99C2AE0021EE7F /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
+		CFD62BB61C99C2AE0021EE7F /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
+		CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
+		CFD62BB81C99C2AE0021EE7F /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
+		CFD62BB91C99C2AE0021EE7F /* variable_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CFD62B721C99C19A0021EE7F /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD62B861C99C2A60021EE7F /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Habanero/algo.h; sourceTree = "<group>"; };
+		CFD62B871C99C2A60021EE7F /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFString.h; path = include/Habanero/CFString.h; sourceTree = "<group>"; };
+		CFD62B881C99C2A60021EE7F /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonPaths.h; path = include/Habanero/CommonPaths.h; sourceTree = "<group>"; };
+		CFD62B891C99C2A60021EE7F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/Habanero/debug.h; sourceTree = "<group>"; };
+		CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatch_cpp.h; path = include/Habanero/dispatch_cpp.h; sourceTree = "<group>"; };
+		CFD62B8B1C99C2A60021EE7F /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontExtras.h; path = include/Habanero/FontExtras.h; sourceTree = "<group>"; };
+		CFD62B8C1C99C2A60021EE7F /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Habanero/Hash.h; sourceTree = "<group>"; };
+		CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdleSleepPreventer.h; path = include/Habanero/IdleSleepPreventer.h; sourceTree = "<group>"; };
+		CFD62B8E1C99C2A60021EE7F /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVO.h; path = include/Habanero/KVO.h; sourceTree = "<group>"; };
+		CFD62B8F1C99C2A60021EE7F /* mach_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_time.h; path = include/Habanero/mach_time.h; sourceTree = "<group>"; };
+		CFD62B901C99C2A60021EE7F /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spinlock.h; path = include/Habanero/spinlock.h; sourceTree = "<group>"; };
+		CFD62B911C99C2A60021EE7F /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tiny_string.h; path = include/Habanero/tiny_string.h; sourceTree = "<group>"; };
+		CFD62B921C99C2A60021EE7F /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = variable_container.h; path = include/Habanero/variable_container.h; sourceTree = "<group>"; };
+		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
+		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
+		CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommonPaths.mm; path = source/CommonPaths.mm; sourceTree = "<group>"; };
+		CFD62BA31C99C2AE0021EE7F /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = source/debug.cpp; sourceTree = "<group>"; };
+		CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dispatch_cpp.cpp; path = source/dispatch_cpp.cpp; sourceTree = "<group>"; };
+		CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dispatch_cpp.mm; path = source/dispatch_cpp.mm; sourceTree = "<group>"; };
+		CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontExtras.cpp; path = source/FontExtras.cpp; sourceTree = "<group>"; };
+		CFD62BA71C99C2AE0021EE7F /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash.cpp; path = source/Hash.cpp; sourceTree = "<group>"; };
+		CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdleSleepPreventer.cpp; path = source/IdleSleepPreventer.cpp; sourceTree = "<group>"; };
+		CFD62BA91C99C2AE0021EE7F /* KVO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KVO.cpp; path = source/KVO.cpp; sourceTree = "<group>"; };
+		CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mach_time.cpp; path = source/mach_time.cpp; sourceTree = "<group>"; };
+		CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiny_string.cpp; path = source/tiny_string.cpp; sourceTree = "<group>"; };
+		CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = variable_container.cpp; path = source/variable_container.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFD62B6F1C99C19A0021EE7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFD62B691C99C19A0021EE7F = {
+			isa = PBXGroup;
+			children = (
+				CFD62B841C99C2510021EE7F /* Headers */,
+				CFD62B851C99C2590021EE7F /* Source */,
+				CFD62B731C99C19A0021EE7F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFD62B731C99C19A0021EE7F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFD62B721C99C19A0021EE7F /* libHabanero.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFD62B841C99C2510021EE7F /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CFD62B861C99C2A60021EE7F /* algo.h */,
+				CFD62B871C99C2A60021EE7F /* CFString.h */,
+				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
+				CFD62B891C99C2A60021EE7F /* debug.h */,
+				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
+				CFD62B8B1C99C2A60021EE7F /* FontExtras.h */,
+				CFD62B8C1C99C2A60021EE7F /* Hash.h */,
+				CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */,
+				CFD62B8E1C99C2A60021EE7F /* KVO.h */,
+				CFD62B8F1C99C2A60021EE7F /* mach_time.h */,
+				CFD62B901C99C2A60021EE7F /* spinlock.h */,
+				CFD62B911C99C2A60021EE7F /* tiny_string.h */,
+				CFD62B921C99C2A60021EE7F /* variable_container.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CFD62B851C99C2590021EE7F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
+				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
+				CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */,
+				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
+				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
+				CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */,
+				CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */,
+				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
+				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
+				CFD62BA91C99C2AE0021EE7F /* KVO.cpp */,
+				CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */,
+				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
+				CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CFD62B701C99C19A0021EE7F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD62B9C1C99C2A60021EE7F /* mach_time.h in Headers */,
+				CFD62B9B1C99C2A60021EE7F /* KVO.h in Headers */,
+				CFD62B9D1C99C2A60021EE7F /* spinlock.h in Headers */,
+				CFD62B961C99C2A60021EE7F /* debug.h in Headers */,
+				CFD62B941C99C2A60021EE7F /* CFString.h in Headers */,
+				CFD62B9E1C99C2A60021EE7F /* tiny_string.h in Headers */,
+				CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */,
+				CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */,
+				CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */,
+				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,
+				CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */,
+				CFD62B931C99C2A60021EE7F /* algo.h in Headers */,
+				CFD62B991C99C2A60021EE7F /* Hash.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CFD62B711C99C19A0021EE7F /* Habanero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD62B7B1C99C19A0021EE7F /* Build configuration list for PBXNativeTarget "Habanero" */;
+			buildPhases = (
+				CFD62B6E1C99C19A0021EE7F /* Sources */,
+				CFD62B6F1C99C19A0021EE7F /* Frameworks */,
+				CFD62B701C99C19A0021EE7F /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Habanero;
+			productName = Habanero;
+			productReference = CFD62B721C99C19A0021EE7F /* libHabanero.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFD62B6A1C99C19A0021EE7F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "MIchael Kazakov";
+				TargetAttributes = {
+					CFD62B711C99C19A0021EE7F = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CFD62B691C99C19A0021EE7F;
+			productRefGroup = CFD62B731C99C19A0021EE7F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFD62B711C99C19A0021EE7F /* Habanero */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFD62B6E1C99C19A0021EE7F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */,
+				CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */,
+				CFD62BAD1C99C2AE0021EE7F /* CFString.cpp in Sources */,
+				CFD62BB01C99C2AE0021EE7F /* debug.cpp in Sources */,
+				CFD62BB61C99C2AE0021EE7F /* KVO.cpp in Sources */,
+				CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */,
+				CFD62BB81C99C2AE0021EE7F /* tiny_string.cpp in Sources */,
+				CFD62BAF1C99C2AE0021EE7F /* CommonPaths.mm in Sources */,
+				CFD62BB41C99C2AE0021EE7F /* Hash.cpp in Sources */,
+				CFD62BB31C99C2AE0021EE7F /* FontExtras.cpp in Sources */,
+				CFD62BB51C99C2AE0021EE7F /* IdleSleepPreventer.cpp in Sources */,
+				CFD62BAE1C99C2AE0021EE7F /* CommonPaths.cpp in Sources */,
+				CFD62BB91C99C2AE0021EE7F /* variable_container.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFD62B791C99C19A0021EE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		CFD62B7A1C99C19A0021EE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		CFD62B7C1C99C19A0021EE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFD62B7D1C99C19A0021EE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD62B791C99C19A0021EE7F /* Debug */,
+				CFD62B7A1C99C19A0021EE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD62B7B1C99C19A0021EE7F /* Build configuration list for PBXNativeTarget "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD62B7C1C99C19A0021EE7F /* Debug */,
+				CFD62B7D1C99C19A0021EE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFD62B6A1C99C19A0021EE7F /* Project object */;
+}

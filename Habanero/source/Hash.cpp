@@ -9,7 +9,7 @@
 #include <CommonCrypto/CommonDigest.h>
 #include <zlib.h>
 #include <assert.h>
-#include "Hash.h"
+#include <Habanero/Hash.h>
 
 Hash::Hash(Mode _mode):
     m_Mode(_mode)

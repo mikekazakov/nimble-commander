@@ -1,7 +1,7 @@
-#include "algo.h"
-#include "mach_time.h"
-#include "dispatch_cpp.h"
-#include "KVO.h"
+#include <Habanero/algo.h>
+#include <Habanero/mach_time.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Habanero/KVO.h>
 
 void KeyValueObservation::NotifyWillChange(short _key)
 {

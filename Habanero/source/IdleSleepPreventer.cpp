@@ -8,7 +8,7 @@
 
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include "IdleSleepPreventer.h"
+#include <Habanero/IdleSleepPreventer.h>
 
 IdleSleepPreventer::Promise::Promise()
 {

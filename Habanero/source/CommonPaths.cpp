@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <sys/param.h>
-#import <pwd.h>
-#import <unistd.h>
-#import "CommonPaths.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <sys/param.h>
+#include <pwd.h>
+#include <unistd.h>
+#include <Habanero/CommonPaths.h>
 
 namespace CommonPaths
 {

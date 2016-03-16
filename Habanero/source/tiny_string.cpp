@@ -3,7 +3,7 @@
 #include <string>
 #include <stdexcept>
 #include <algorithm>
-#include "tiny_string.h"
+#include <Habanero/tiny_string.h>
 
 using namespace std;
 

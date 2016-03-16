@@ -1,5 +1,10 @@
 #pragma once
 
+#include <CoreFoundation/CoreFoundation.h>
+#include <vector>
+
+using namespace std;
+
 unsigned short SingleByteIntoUniCharUsingCodepage(
                                                     unsigned char _input,
                                                     int _codepage

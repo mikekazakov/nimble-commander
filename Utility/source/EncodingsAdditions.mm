@@ -7,8 +7,16 @@
 //
 
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
-#include "Encodings.h"
+#include <string>
+#include <Cocoa/Cocoa.h>
+#include <mutex>
+
+#include <Utility/Encodings.h>
+//#import <Foundation/Foundation.h>
+//#import <Quartz/Quartz.h>
+
 
 namespace encodings
 {

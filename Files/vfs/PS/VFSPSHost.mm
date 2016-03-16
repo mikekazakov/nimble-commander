@@ -13,7 +13,7 @@
 #define __APPLE_API_PRIVATE
 #include "../../3rd_party/apple_sandbox.h"
 #undef __APPLE_API_PRIVATE
-#include "../../Utility/SystemInformation.h"
+#include <Utility/SystemInformation.h>
 #include "../../Common.h"
 #include "../VFSListingInput.h"
 #include "VFSPSHost.h"

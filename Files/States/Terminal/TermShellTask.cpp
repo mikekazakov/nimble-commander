@@ -18,7 +18,7 @@
 #include <termios.h>
 #include <string.h>
 #include <libproc.h>
-#include "../../Utility/SystemInformation.h"
+#include <Utility/SystemInformation.h>
 #include "../../Common.h"
 #include "TermShellTask.h"
 

@@ -513,6 +513,7 @@
 		CF955F011B8DC105004A25AF /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2D2F641B8B23CC00111C75 /* libHabanero.dylib */; };
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
+		CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF960E2F1C9935C4001D8B02 /* libUtility.a */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -729,24 +730,6 @@
 		CFED5A461C50EA0100BFCB5C /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A3D1C50EA0100BFCB5C /* BigFileViewSheet.mm */; };
 		CFED5A471C50EA0100BFCB5C /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A3F1C50EA0100BFCB5C /* BigFileViewText.mm */; };
 		CFED5A481C50EA0100BFCB5C /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */; };
-		CFED5A4C1C52027300BFCB5C /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A4B1C52027300BFCB5C /* HexadecimalColor.mm */; };
-		CFED5A4D1C52027900BFCB5C /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A4B1C52027300BFCB5C /* HexadecimalColor.mm */; };
-		CFED5A4E1C52027900BFCB5C /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A4B1C52027300BFCB5C /* HexadecimalColor.mm */; };
-		CFED5A511C52037000BFCB5C /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A501C52037000BFCB5C /* VolumeInformation.cpp */; };
-		CFED5A521C52037600BFCB5C /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A501C52037000BFCB5C /* VolumeInformation.cpp */; };
-		CFED5A531C52037700BFCB5C /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A501C52037000BFCB5C /* VolumeInformation.cpp */; };
-		CFED5A561C52091300BFCB5C /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A551C52091300BFCB5C /* SystemInformation.mm */; };
-		CFED5A571C52091800BFCB5C /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A551C52091300BFCB5C /* SystemInformation.mm */; };
-		CFED5A581C52091800BFCB5C /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A551C52091300BFCB5C /* SystemInformation.mm */; };
-		CFED5A5C1C520D3F00BFCB5C /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A5A1C520D3F00BFCB5C /* PathManip.c */; };
-		CFED5A5D1C520D4C00BFCB5C /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A5A1C520D3F00BFCB5C /* PathManip.c */; };
-		CFED5A5E1C520D4D00BFCB5C /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A5A1C520D3F00BFCB5C /* PathManip.c */; };
-		CFED5A641C52105800BFCB5C /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A611C52105800BFCB5C /* Encodings.cpp */; };
-		CFED5A651C52105800BFCB5C /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */; };
-		CFED5A661C52105C00BFCB5C /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A611C52105800BFCB5C /* Encodings.cpp */; };
-		CFED5A671C52105D00BFCB5C /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A611C52105800BFCB5C /* Encodings.cpp */; };
-		CFED5A681C52105F00BFCB5C /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */; };
-		CFED5A691C52106000BFCB5C /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */; };
 		CFED5A6C1C52136500BFCB5C /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1376,6 +1359,8 @@
 		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = Operations/Copy/DialogResults.h; sourceTree = "<group>"; };
 		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = Operations/Copy/Options.h; sourceTree = "<group>"; };
 		CF955F021B8DC6CB004A25AF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Utility.xcodeproj; path = Utility/Utility.xcodeproj; sourceTree = "<group>"; };
+		CF960E2F1C9935C4001D8B02 /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
@@ -1623,18 +1608,6 @@
 		CFED5A3F1C50EA0100BFCB5C /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewText.mm; path = States/Viewer/BigFileViewText.mm; sourceTree = "<group>"; };
 		CFED5A401C50EA0100BFCB5C /* MainWindowBigFileViewState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowBigFileViewState.h; path = States/Viewer/MainWindowBigFileViewState.h; sourceTree = "<group>"; };
 		CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowBigFileViewState.mm; path = States/Viewer/MainWindowBigFileViewState.mm; sourceTree = "<group>"; };
-		CFED5A4A1C52027300BFCB5C /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexadecimalColor.h; path = Utility/HexadecimalColor.h; sourceTree = "<group>"; };
-		CFED5A4B1C52027300BFCB5C /* HexadecimalColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexadecimalColor.mm; path = Utility/HexadecimalColor.mm; sourceTree = "<group>"; };
-		CFED5A4F1C52037000BFCB5C /* VolumeInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeInformation.h; path = Utility/VolumeInformation.h; sourceTree = "<group>"; };
-		CFED5A501C52037000BFCB5C /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = Utility/VolumeInformation.cpp; sourceTree = "<group>"; };
-		CFED5A541C52091300BFCB5C /* SystemInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemInformation.h; path = Utility/SystemInformation.h; sourceTree = "<group>"; };
-		CFED5A551C52091300BFCB5C /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = Utility/SystemInformation.mm; sourceTree = "<group>"; };
-		CFED5A591C520A6500BFCB5C /* ObjCpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjCpp.h; path = Utility/ObjCpp.h; sourceTree = "<group>"; };
-		CFED5A5A1C520D3F00BFCB5C /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = Utility/PathManip.c; sourceTree = "<group>"; };
-		CFED5A5B1C520D3F00BFCB5C /* PathManip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathManip.h; path = Utility/PathManip.h; sourceTree = "<group>"; };
-		CFED5A611C52105800BFCB5C /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Encodings.cpp; path = Utility/Encodings.cpp; sourceTree = "<group>"; };
-		CFED5A621C52105800BFCB5C /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = Utility/Encodings.h; sourceTree = "<group>"; };
-		CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingsAdditions.mm; path = Utility/EncodingsAdditions.mm; sourceTree = "<group>"; };
 		CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = Utility/Encodings_Tests.mm; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
@@ -1692,6 +1665,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */,
 				CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */,
 				CF2D2F671B8B252800111C75 /* libHabanero.dylib in Frameworks */,
 				CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */,
@@ -2636,6 +2610,7 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
+				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF2D2F5E1B8B23CC00111C75 /* Habanero.xcodeproj */,
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121A16C4BD3D00D247EE /* Files */,
@@ -2661,6 +2636,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
 				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
 				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
@@ -2839,19 +2815,7 @@
 			children = (
 				CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */,
 				CF46D8E91C853C2C009E28B9 /* rapidjson.h */,
-				CFED5A611C52105800BFCB5C /* Encodings.cpp */,
-				CFED5A621C52105800BFCB5C /* Encodings.h */,
-				CFED5A631C52105800BFCB5C /* EncodingsAdditions.mm */,
 				CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */,
-				CFED5A5B1C520D3F00BFCB5C /* PathManip.h */,
-				CFED5A5A1C520D3F00BFCB5C /* PathManip.c */,
-				CFED5A591C520A6500BFCB5C /* ObjCpp.h */,
-				CFED5A541C52091300BFCB5C /* SystemInformation.h */,
-				CFED5A551C52091300BFCB5C /* SystemInformation.mm */,
-				CFED5A4F1C52037000BFCB5C /* VolumeInformation.h */,
-				CFED5A501C52037000BFCB5C /* VolumeInformation.cpp */,
-				CFED5A4A1C52027300BFCB5C /* HexadecimalColor.h */,
-				CFED5A4B1C52027300BFCB5C /* HexadecimalColor.mm */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -3385,7 +3349,6 @@
 				CF50C4311C0ADEB8009DF611 /* VFSHost.cpp in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
-				CFED5A5E1C520D4D00BFCB5C /* PathManip.c in Sources */,
 				CF50C43D1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
@@ -3430,7 +3393,6 @@
 				CF6D9BE5196678000077B146 /* ObjcToCppObservingBridge.mm in Sources */,
 				CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */,
 				CF50C4521C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */,
-				CFED5A4E1C52027900BFCB5C /* HexadecimalColor.mm in Sources */,
 				CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CF6D9BE6196678000077B146 /* FileMask.mm in Sources */,
 				CF6D9BE7196678000077B146 /* FileSearch.mm in Sources */,
@@ -3471,7 +3433,6 @@
 				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
-				CFED5A691C52106000BFCB5C /* EncodingsAdditions.mm in Sources */,
 				CF50B6C71A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D01A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
@@ -3501,7 +3462,6 @@
 				CF6D9C49196678010077B146 /* MainWindowFilePanelState.mm in Sources */,
 				CF46DB7B1C856F33009E28B9 /* TermScreen.cpp in Sources */,
 				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
-				CFED5A571C52091800BFCB5C /* SystemInformation.mm in Sources */,
 				CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF6D9C4A196678010077B146 /* MainWindowFilePanelState+Menu.mm in Sources */,
@@ -3541,13 +3501,11 @@
 				CF6D9C5E196678010077B146 /* QLThumbnailsCache.mm in Sources */,
 				CF6D9C5F196678010077B146 /* WorkspaceIconsCache.mm in Sources */,
 				CF50C4471C0ADEF0009DF611 /* VFSNativeFile.cpp in Sources */,
-				CFED5A671C52105D00BFCB5C /* Encodings.cpp in Sources */,
 				CF46DBA11C856FED009E28B9 /* rapidjson.cpp in Sources */,
 				CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CF6D9C60196678010077B146 /* MainWindowController.mm in Sources */,
 				CF6D9C61196678010077B146 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF6D9C62196678010077B146 /* PreferencesWindowPanelsTab.mm in Sources */,
-				CFED5A531C52037700BFCB5C /* VolumeInformation.cpp in Sources */,
 				CF6D9C63196678010077B146 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF6D9C64196678010077B146 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF6D9C65196678010077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
@@ -3602,11 +3560,9 @@
 				CF7D135C1BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CF9069761BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF7D13941BF5E3A8001F53FD /* GenericOperationView.mm in Sources */,
-				CFED5A651C52105800BFCB5C /* EncodingsAdditions.mm in Sources */,
 				CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */,
 				CF3C88D716D73A23006346CD /* PanelController.mm in Sources */,
-				CFED5A511C52037000BFCB5C /* VolumeInformation.cpp in Sources */,
 				CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */,
@@ -3619,7 +3575,6 @@
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFE2697C16F01BAB0048A393 /* chained_strings.cpp in Sources */,
-				CFED5A561C52091300BFCB5C /* SystemInformation.mm in Sources */,
 				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CF02F1D416F387FB000AF870 /* FSEventsDirUpdate.cpp in Sources */,
@@ -3670,12 +3625,10 @@
 				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
-				CFED5A641C52105800BFCB5C /* Encodings.cpp in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
-				CFED5A5C1C520D3F00BFCB5C /* PathManip.c in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF73D1E21BE6155E0014C88F /* VFSNetFTPCache.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
@@ -3757,7 +3710,6 @@
 				CF73D1FB1BE619B20014C88F /* VFSArchiveFile.cpp in Sources */,
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF7D138D1BF5E38B001F53FD /* OperationJob.cpp in Sources */,
-				CFED5A4C1C52027300BFCB5C /* HexadecimalColor.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFB190D917A3B1FA005B8B15 /* ObjcToCppObservingBridge.mm in Sources */,
@@ -3795,7 +3747,6 @@
 				CF50C4301C0ADEB7009DF611 /* VFSHost.cpp in Sources */,
 				CFF6F2411A13567C00011177 /* main.m in Sources */,
 				CF9DBE161A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
-				CFED5A5D1C520D4C00BFCB5C /* PathManip.c in Sources */,
 				CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */,
 				CF50C43C1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */,
 				CFF6F2431A13567C00011177 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
@@ -3841,7 +3792,6 @@
 				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
-				CFED5A4D1C52027900BFCB5C /* HexadecimalColor.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
@@ -3881,7 +3831,6 @@
 				CF50B7451A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
-				CFED5A681C52105F00BFCB5C /* EncodingsAdditions.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
 				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
@@ -3912,7 +3861,6 @@
 				CF46DB7A1C856F33009E28B9 /* TermScreen.cpp in Sources */,
 				CFF6F2EB1A13567C00011177 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
-				CFED5A581C52091800BFCB5C /* SystemInformation.mm in Sources */,
 				CF50C46D1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
@@ -3951,13 +3899,11 @@
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
 				CF50C4461C0ADEEF009DF611 /* VFSNativeFile.cpp in Sources */,
-				CFED5A661C52105C00BFCB5C /* Encodings.cpp in Sources */,
 				CF46DBA01C856FEC009E28B9 /* rapidjson.cpp in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
 				CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */,
-				CFED5A521C52037600BFCB5C /* VolumeInformation.cpp in Sources */,
 				CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */,
 				CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */,
@@ -4565,6 +4511,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
+					Utility/include/,
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
@@ -4613,6 +4560,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
+					Utility/include/,
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;

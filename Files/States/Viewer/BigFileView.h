@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../Utility/Encodings.h"
+#include <Utility/Encodings.h>
 #include "../../FileWindow.h"
 #include "../../OrthodoxMonospace.h"
 

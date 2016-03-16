@@ -6,12 +6,14 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
 #include <sys/sysctl.h>
 #include <mach/mach.h>
-#include "ObjCpp.h"
-#include "SystemInformation.h"
+#include <mutex>
+#include <Utility/ObjCpp.h>
+#include <Utility/SystemInformation.h>
 
 namespace sysinfo
 {

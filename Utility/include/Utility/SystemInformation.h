@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <string>
+
+using namespace std;
+
 typedef struct kinfo_proc kinfo_proc;
 
 namespace sysinfo

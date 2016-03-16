@@ -1,4 +1,4 @@
-#include "HexadecimalColor.h"
+#include <Utility/HexadecimalColor.h>
 
 //In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in memory such that R is at the lowest address,
 //G after it, B after that, and A last.

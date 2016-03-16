@@ -11,7 +11,10 @@
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <unistd.h>
-#include "VolumeInformation.h"
+#include <memory.h>
+#include <errno.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <Utility/VolumeInformation.h>
 
 int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c)
 {

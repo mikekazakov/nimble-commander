@@ -7,43 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF960DDF1C97F833001D8B02 /* Utility.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960DDE1C97F833001D8B02 /* Utility.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CF960DE61C97F833001D8B02 /* Utility.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF960DDB1C97F833001D8B02 /* Utility.framework */; };
-		CF960DEB1C97F833001D8B02 /* UtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF960DEA1C97F833001D8B02 /* UtilityTests.m */; };
+		CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E171C992F2C001D8B02 /* Encodings.h */; };
+		CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E181C992F2C001D8B02 /* HexadecimalColor.h */; };
+		CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E191C992F2C001D8B02 /* ObjCpp.h */; };
+		CF960E201C992F2C001D8B02 /* PathManip.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1A1C992F2C001D8B02 /* PathManip.h */; };
+		CF960E211C992F2C001D8B02 /* SystemInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1B1C992F2C001D8B02 /* SystemInformation.h */; };
+		CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */; };
+		CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E231C992F35001D8B02 /* Encodings.cpp */; };
+		CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */; };
+		CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E251C992F35001D8B02 /* HexadecimalColor.mm */; };
+		CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
+		CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
+		CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E281C992F35001D8B02 /* VolumeInformation.cpp */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CF960DE71C97F833001D8B02 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF960DD21C97F833001D8B02 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CF960DDA1C97F833001D8B02;
-			remoteInfo = Utility;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		CF960DDB1C97F833001D8B02 /* Utility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Utility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF960DDE1C97F833001D8B02 /* Utility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
-		CF960DE01C97F833001D8B02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CF960DE51C97F833001D8B02 /* UtilityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UtilityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF960DEA1C97F833001D8B02 /* UtilityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UtilityTests.m; sourceTree = "<group>"; };
-		CF960DEC1C97F833001D8B02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF960E0C1C97FA73001D8B02 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF960E171C992F2C001D8B02 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = include/Utility/Encodings.h; sourceTree = "<group>"; };
+		CF960E181C992F2C001D8B02 /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexadecimalColor.h; path = include/Utility/HexadecimalColor.h; sourceTree = "<group>"; };
+		CF960E191C992F2C001D8B02 /* ObjCpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjCpp.h; path = include/Utility/ObjCpp.h; sourceTree = "<group>"; };
+		CF960E1A1C992F2C001D8B02 /* PathManip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathManip.h; path = include/Utility/PathManip.h; sourceTree = "<group>"; };
+		CF960E1B1C992F2C001D8B02 /* SystemInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemInformation.h; path = include/Utility/SystemInformation.h; sourceTree = "<group>"; };
+		CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeInformation.h; path = include/Utility/VolumeInformation.h; sourceTree = "<group>"; };
+		CF960E231C992F35001D8B02 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Encodings.cpp; path = source/Encodings.cpp; sourceTree = "<group>"; };
+		CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingsAdditions.mm; path = source/EncodingsAdditions.mm; sourceTree = "<group>"; };
+		CF960E251C992F35001D8B02 /* HexadecimalColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexadecimalColor.mm; path = source/HexadecimalColor.mm; sourceTree = "<group>"; };
+		CF960E261C992F35001D8B02 /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = source/PathManip.c; sourceTree = "<group>"; };
+		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
+		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CF960DD71C97F833001D8B02 /* Frameworks */ = {
+		CF960E091C97FA73001D8B02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF960DE21C97F833001D8B02 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF960DE61C97F833001D8B02 /* Utility.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,8 +51,8 @@
 		CF960DD11C97F833001D8B02 = {
 			isa = PBXGroup;
 			children = (
-				CF960DDD1C97F833001D8B02 /* Utility */,
-				CF960DE91C97F833001D8B02 /* UtilityTests */,
+				CF960E151C992EDC001D8B02 /* Headers */,
+				CF960E161C992EE7001D8B02 /* Source */,
 				CF960DDC1C97F833001D8B02 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,52 +60,63 @@
 		CF960DDC1C97F833001D8B02 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF960DDB1C97F833001D8B02 /* Utility.framework */,
-				CF960DE51C97F833001D8B02 /* UtilityTests.xctest */,
+				CF960E0C1C97FA73001D8B02 /* libUtility.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CF960DDD1C97F833001D8B02 /* Utility */ = {
+		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF960DDE1C97F833001D8B02 /* Utility.h */,
-				CF960DE01C97F833001D8B02 /* Info.plist */,
+				CF960E171C992F2C001D8B02 /* Encodings.h */,
+				CF960E181C992F2C001D8B02 /* HexadecimalColor.h */,
+				CF960E191C992F2C001D8B02 /* ObjCpp.h */,
+				CF960E1A1C992F2C001D8B02 /* PathManip.h */,
+				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
+				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
 			);
-			path = Utility;
+			name = Headers;
 			sourceTree = "<group>";
 		};
-		CF960DE91C97F833001D8B02 /* UtilityTests */ = {
+		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF960DEA1C97F833001D8B02 /* UtilityTests.m */,
-				CF960DEC1C97F833001D8B02 /* Info.plist */,
+				CF960E231C992F35001D8B02 /* Encodings.cpp */,
+				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
+				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
+				CF960E261C992F35001D8B02 /* PathManip.c */,
+				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
+				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
-			path = UtilityTests;
+			name = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CF960DD81C97F833001D8B02 /* Headers */ = {
+		CF960E0A1C97FA73001D8B02 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF960DDF1C97F833001D8B02 /* Utility.h in Headers */,
+				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
+				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
+				CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */,
+				CF960E211C992F2C001D8B02 /* SystemInformation.h in Headers */,
+				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
+				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CF960DDA1C97F833001D8B02 /* Utility */ = {
+		CF960E0B1C97FA73001D8B02 /* Utility */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF960DEF1C97F833001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */;
+			buildConfigurationList = CF960E121C97FA73001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */;
 			buildPhases = (
-				CF960DD61C97F833001D8B02 /* Sources */,
-				CF960DD71C97F833001D8B02 /* Frameworks */,
-				CF960DD81C97F833001D8B02 /* Headers */,
-				CF960DD91C97F833001D8B02 /* Resources */,
+				CF960E081C97FA73001D8B02 /* Sources */,
+				CF960E091C97FA73001D8B02 /* Frameworks */,
+				CF960E0A1C97FA73001D8B02 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -115,26 +124,8 @@
 			);
 			name = Utility;
 			productName = Utility;
-			productReference = CF960DDB1C97F833001D8B02 /* Utility.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		CF960DE41C97F833001D8B02 /* UtilityTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CF960DF21C97F833001D8B02 /* Build configuration list for PBXNativeTarget "UtilityTests" */;
-			buildPhases = (
-				CF960DE11C97F833001D8B02 /* Sources */,
-				CF960DE21C97F833001D8B02 /* Frameworks */,
-				CF960DE31C97F833001D8B02 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CF960DE81C97F833001D8B02 /* PBXTargetDependency */,
-			);
-			name = UtilityTests;
-			productName = UtilityTests;
-			productReference = CF960DE51C97F833001D8B02 /* UtilityTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
+			productReference = CF960E0C1C97FA73001D8B02 /* libUtility.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -145,10 +136,7 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "MIchael Kazakov";
 				TargetAttributes = {
-					CF960DDA1C97F833001D8B02 = {
-						CreatedOnToolsVersion = 7.2.1;
-					};
-					CF960DE41C97F833001D8B02 = {
+					CF960E0B1C97FA73001D8B02 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
 				};
@@ -165,54 +153,26 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CF960DDA1C97F833001D8B02 /* Utility */,
-				CF960DE41C97F833001D8B02 /* UtilityTests */,
+				CF960E0B1C97FA73001D8B02 /* Utility */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		CF960DD91C97F833001D8B02 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF960DE31C97F833001D8B02 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		CF960DD61C97F833001D8B02 /* Sources */ = {
+		CF960E081C97FA73001D8B02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF960DE11C97F833001D8B02 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF960DEB1C97F833001D8B02 /* UtilityTests.m in Sources */,
+				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
+				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
+				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
+				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
+				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
+				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CF960DE81C97F833001D8B02 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CF960DDA1C97F833001D8B02 /* Utility */;
-			targetProxy = CF960DE71C97F833001D8B02 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CF960DED1C97F833001D8B02 /* Debug */ = {
@@ -252,7 +212,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -292,7 +252,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -300,61 +260,23 @@
 			};
 			name = Release;
 		};
-		CF960DF01C97F833001D8B02 /* Debug */ = {
+		CF960E131C97FA73001D8B02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Utility/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = filesmanager.Utility;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
-		CF960DF11C97F833001D8B02 /* Release */ = {
+		CF960E141C97FA73001D8B02 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Utility/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = filesmanager.Utility;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		CF960DF31C97F833001D8B02 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = UtilityTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = filesmanager.UtilityTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CF960DF41C97F833001D8B02 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = UtilityTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = filesmanager.UtilityTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
@@ -370,19 +292,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF960DEF1C97F833001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */ = {
+		CF960E121C97FA73001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CF960DF01C97F833001D8B02 /* Debug */,
-				CF960DF11C97F833001D8B02 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		CF960DF21C97F833001D8B02 /* Build configuration list for PBXNativeTarget "UtilityTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF960DF31C97F833001D8B02 /* Debug */,
-				CF960DF41C97F833001D8B02 /* Release */,
+				CF960E131C97FA73001D8B02 /* Debug */,
+				CF960E141C97FA73001D8B02 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

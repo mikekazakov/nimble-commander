@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/HexadecimalColor.h>
 #include "../../DataBlockAnalysis.h"
 #include "../../Common.h"
 #include "../../AppDelegate.h"
 #include "../../Config.h"
-#include "../../Utility/HexadecimalColor.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"

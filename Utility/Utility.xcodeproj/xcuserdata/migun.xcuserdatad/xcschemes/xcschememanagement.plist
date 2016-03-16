@@ -7,7 +7,7 @@
 		<key>Utility.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>4</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -18,6 +18,11 @@
 			<true/>
 		</dict>
 		<key>CF960DE41C97F833001D8B02</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CF960E0B1C97FA73001D8B02</key>
 		<dict>
 			<key>primary</key>
 			<true/>

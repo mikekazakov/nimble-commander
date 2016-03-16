@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/HexadecimalColor.h>
 #include "../../OrthodoxMonospace.h"
 #include "../../FontCache.h"
 #include "../../Common.h"
 #include "../../BlinkingCaret.h"
-#include "../../Utility/HexadecimalColor.h"
 #include "../../Config.h"
 #include "TermView.h"
 #include "TermScreen.h"

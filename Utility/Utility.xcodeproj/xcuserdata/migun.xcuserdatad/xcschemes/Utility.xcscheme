@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CF960DDA1C97F833001D8B02"
-               BuildableName = "Utility.framework"
+               BlueprintIdentifier = "CF960E0B1C97FA73001D8B02"
+               BuildableName = "libUtility.a"
                BlueprintName = "Utility"
                ReferencedContainer = "container:Utility.xcodeproj">
             </BuildableReference>
@@ -42,8 +42,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CF960DDA1C97F833001D8B02"
-            BuildableName = "Utility.framework"
+            BlueprintIdentifier = "CF960E0B1C97FA73001D8B02"
+            BuildableName = "libUtility.a"
             BlueprintName = "Utility"
             ReferencedContainer = "container:Utility.xcodeproj">
          </BuildableReference>
@@ -64,8 +64,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CF960DDA1C97F833001D8B02"
-            BuildableName = "Utility.framework"
+            BlueprintIdentifier = "CF960E0B1C97FA73001D8B02"
+            BuildableName = "libUtility.a"
             BlueprintName = "Utility"
             ReferencedContainer = "container:Utility.xcodeproj">
          </BuildableReference>
@@ -82,8 +82,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CF960DDA1C97F833001D8B02"
-            BuildableName = "Utility.framework"
+            BlueprintIdentifier = "CF960E0B1C97FA73001D8B02"
+            BuildableName = "libUtility.a"
             BlueprintName = "Utility"
             ReferencedContainer = "container:Utility.xcodeproj">
          </BuildableReference>

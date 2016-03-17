@@ -13,7 +13,6 @@
 #include "States/Terminal/TermParser.h"
 #include "States/Terminal/TermView.h"
 #include "States/Terminal/TermScrollView.h"
-#include "Common.h"
 #include "FilePanelOverlappedTerminal.h"
 
 static const auto g_BashPromptInputDelay = 10ms;

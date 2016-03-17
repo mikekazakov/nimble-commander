@@ -13,7 +13,6 @@
 #include "SheetWithHotkeys.h"
 #include "FindFilesSheetController.h"
 #include "FileSearch.h"
-#include "Common.h"
 #include "ByteCountFormatter.h"
 #include "AppDelegate.h"
 #include "Config.h"

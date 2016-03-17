@@ -7,7 +7,6 @@
 //
 
 #include "../../3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Common.h"
 #include "../../SheetWithHotkeys.h"
 #include "../../SimpleComboBoxPersistentDataSource.h"
 #include "BatchRenameSheetController.h"

@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
 
 @interface AppStoreRatingsSheetController : NSWindowController
 

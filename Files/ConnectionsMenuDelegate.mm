@@ -7,7 +7,6 @@
 //
 
 #include "ConnectionsMenuDelegate.h"
-#include "Common.h"
 #include "PanelController.h"
 
 @interface ConnectionsMenuDelegateInfoWrapper()

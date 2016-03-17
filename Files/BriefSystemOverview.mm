@@ -10,7 +10,6 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NSView+Sugar.h>
-#include "Common.h"
 #include "ByteCountFormatter.h"
 #include "BriefSystemOverview.h"
 

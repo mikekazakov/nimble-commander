@@ -1386,7 +1386,6 @@
 		CFC044F31B303FAE00969A5E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BatchRenameSheetRangeSelectionPopoverController.strings; sourceTree = "<group>"; };
 		CFC20B49198F47DD000E73DD /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
 		CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelViewPresentationItemsColoringFilter.mm; sourceTree = "<group>"; };
-		CFC4342216E0E09B001B0512 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC5121416C4BD3D00D247EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -2368,7 +2367,6 @@
 				CFCD87FB18143F5500D82455 /* AppleDoubleEA.h */,
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
-				CFC4342216E0E09B001B0512 /* Common.h */,
 				CFB060DC172E6AC4001F6949 /* Common.mm */,
 				CF02F1D316F387FB000AF870 /* FSEventsDirUpdate.cpp */,
 				CF02F1D216F387FB000AF870 /* FSEventsDirUpdate.h */,

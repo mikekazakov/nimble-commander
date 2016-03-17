@@ -1,6 +1,5 @@
 #include <Habanero/algo.h>
 #include <Habanero/chained_strings.h>
-#include "Common.h"
 #include "FileMask.h"
 #include "ExtensionLowercaseComparison.h"
 #include "PanelData.h"

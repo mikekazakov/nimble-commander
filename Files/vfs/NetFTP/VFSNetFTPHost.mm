@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/PathManip.h>
 #include "../VFSListingInput.h"
 #include "VFSNetFTPHost.h"
 #include "VFSNetFTPInternals.h"

@@ -8,7 +8,6 @@
 
 #include <sys/stat.h>
 #include "WorkspaceIconsCache.h"
-#include "Common.h"
 
 WorkspaceIconsCache& WorkspaceIconsCache::Instance()
 {

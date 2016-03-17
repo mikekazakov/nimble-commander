@@ -21,7 +21,6 @@
 #include "ActionsShortcutsManager.h"
 #include "PanelController.h"
 #include "FilePanelMainSplitView.h"
-#include "Common.h"
 #include "MainWindowController.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";

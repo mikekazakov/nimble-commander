@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "../../Common.h"
 #include "../../SheetController.h"
 
 @interface CreateDirectorySheetController : SheetController

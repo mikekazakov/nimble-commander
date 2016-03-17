@@ -7,7 +7,7 @@
 //
 
 #include <sys/stat.h>
-#include "../Common.h"
+#include <Utility/PathManip.h>
 #include "VFSHost.h"
 
 static_assert(sizeof(VFSStat) == 128, "");

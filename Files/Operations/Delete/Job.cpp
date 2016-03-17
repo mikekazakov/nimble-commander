@@ -1,6 +1,6 @@
 #include <Habanero/algo.h>
+#include <Utility/PathManip.h>
 #include "../../NativeFSManager.h"
-#include "../../Common.h"
 #include "../../RoutedIO.h"
 #include "Job.h"
 

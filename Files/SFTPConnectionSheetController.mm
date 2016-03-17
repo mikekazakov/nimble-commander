@@ -8,7 +8,6 @@
 
 #include <Habanero/CommonPaths.h>
 #include "SFTPConnectionSheetController.h"
-#include "Common.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 

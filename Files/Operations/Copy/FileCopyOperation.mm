@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/PathManip.h>
 #include "FileCopyOperation.h"
 #include "Job.h"
-#include "../../Common.h"
 #include "../../ByteCountFormatter.h"
 #include "../OperationDialogAlert.h"
 #include "FileAlreadyExistSheetController.h"

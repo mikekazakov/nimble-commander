@@ -6,9 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "LSUrls.h"
-#import "Common.h"
+#include "LSUrls.h"
 
 /**
  * If container is not empty and has only the equal elements - return it.

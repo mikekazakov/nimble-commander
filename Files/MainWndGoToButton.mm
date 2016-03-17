@@ -10,7 +10,6 @@
 #include "vfs/vfs_native.h"
 #include "MainWndGoToButton.h"
 #include "AppDelegate.h"
-#include "Common.h"
 #include "MainWindowFilePanelState.h"
 #include "MainWindowController.h"
 #include "NativeFSManager.h"

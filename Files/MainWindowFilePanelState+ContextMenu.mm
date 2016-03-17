@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <Sparkle/Sparkle.h>
 #include "MainWindowFilePanelState+ContextMenu.h"
-#include "Common.h"
 #include "PanelAux.h"
 #include "LSUrls.h"
 #include "Operations/Delete/FileDeletionOperation.h"

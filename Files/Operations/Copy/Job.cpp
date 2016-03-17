@@ -9,14 +9,7 @@
 #include <sys/xattr.h>
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
-
-//#include <sys/sendfile.h>
-//
-//#include <copyfile.h>
-
-#include "../../Common.h"
-
-
+#include <Utility/PathManip.h>
 #include "../../RoutedIO.h"
 #include "Job.h"
 #include "DialogResults.h"

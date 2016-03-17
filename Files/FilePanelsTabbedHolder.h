@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 @class MMTabBarView;
 @class PanelView;
 @class PanelController;

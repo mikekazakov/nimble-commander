@@ -22,8 +22,6 @@
 #include "QuickPreview.h"
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
-#include "Common.h"
-
 #include "ActionsShortcutsManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";

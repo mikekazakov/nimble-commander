@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "TrialWindowController.h"
-#import "Common.h"
+#include "TrialWindowController.h"
 
 @interface TrialWindow : NSWindow
 @end

@@ -74,6 +74,10 @@
     using boost::logic::indeterminate;
 
     #include <Utility/StringExtras.h>
+
+    #ifdef __OBJC__
+        #include <Utility/ObjCpp.h>
+    #endif
 #endif
 
 #include "Configuration.h"

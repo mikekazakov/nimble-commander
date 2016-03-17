@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Common.h"
-//#include "../../PanelController.h"
 #include "../OperationDialogAlert.h"
 #include "FileDeletionOperation.h"
 #include "Job.h"

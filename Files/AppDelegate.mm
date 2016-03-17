@@ -22,7 +22,6 @@
 #include "AppDelegate.h"
 #include "MainWindowController.h"
 #include "Operations/OperationsController.h"
-#include "Common.h"
 #include "PreferencesWindowGeneralTab.h"
 #include "PreferencesWindowPanelsTab.h"
 #include "PreferencesWindowViewerTab.h"

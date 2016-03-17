@@ -6,8 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "Common.h"
-#import "SimpleComboBoxPersistentDataSource.h"
+#include "SimpleComboBoxPersistentDataSource.h"
 
 @implementation SimpleComboBoxPersistentDataSource
 {

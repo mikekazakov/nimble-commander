@@ -6,8 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FSEventsDirUpdate.h"
-#import "Common.h"
+#include "FSEventsDirUpdate.h"
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.1;
 

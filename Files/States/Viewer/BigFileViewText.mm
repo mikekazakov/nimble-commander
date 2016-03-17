@@ -8,7 +8,6 @@
 
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
-#include "../../Common.h"
 #include "BigFileViewText.h"
 #include "BigFileView.h"
 

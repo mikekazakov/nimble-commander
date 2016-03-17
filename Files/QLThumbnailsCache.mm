@@ -9,7 +9,6 @@
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <Habanero/algo.h>
-#include "Common.h"
 #include "QLThumbnailsCache.h"
 
 QLThumbnailsCache &QLThumbnailsCache::Instance()

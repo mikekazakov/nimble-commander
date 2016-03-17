@@ -13,6 +13,9 @@ class OperationStats;
 class OperationJob;
 @class PanelController;
 
+NSError* ErrnoToNSError(int _error);
+NSError* ErrnoToNSError();
+
 @interface Operation : NSObject
 
 /**

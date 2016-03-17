@@ -7,7 +7,6 @@
 //
 
 #include "BlinkingCaret.h"
-#include "Common.h"
 
 BlinkingCaret::BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, milliseconds _blink_time ):
     m_View( _view ),

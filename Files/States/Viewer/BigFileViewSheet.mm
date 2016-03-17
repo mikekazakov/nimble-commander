@@ -7,7 +7,6 @@
 //
 
 #include "../../ProcessSheetController.h"
-#include "../../Common.h"
 #include "MainWindowBigFileViewState.h"
 #include "BigFileViewSheet.h"
 

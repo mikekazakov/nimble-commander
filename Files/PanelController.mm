@@ -11,7 +11,6 @@
 #include <Utility/NSMenu+Hierarchical.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
-#include "Common.h"
 #include "MainWindowController.h"
 #include "QuickPreview.h"
 #include "MainWindowFilePanelState.h"

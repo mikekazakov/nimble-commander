@@ -7,7 +7,6 @@
 //
 
 #include <Habanero/algo.h>
-#include "../Common.h"
 #include "OperationStats.h"
 
 OperationStats::OperationStats()

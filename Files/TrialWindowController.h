@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#pragma once
 
 @interface TrialWindowController : NSWindowController<NSWindowDelegate>
 - (IBAction)OnClose:(id)sender;

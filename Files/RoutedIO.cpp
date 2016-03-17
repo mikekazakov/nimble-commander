@@ -11,7 +11,6 @@
 #include <Security/AuthorizationDB.h>
 #include <Habanero/CommonPaths.h>
 #include "RoutedIO.h"
-#include "Common.h"
 #include "RoutedIOInterfaces.h"
 
 static PosixIOInterface &IODirectCreateProxy();

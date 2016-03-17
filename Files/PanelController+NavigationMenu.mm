@@ -8,7 +8,6 @@
 
 #include "vfs/vfs_native.h"
 #include "NativeFSManager.h"
-#include "Common.h"
 #include "PanelController+NavigationMenu.h"
 #include "MainWndGoToButton.h"
 

@@ -7,8 +7,7 @@
 //
 
 #import "3rd_party/NSFileManager+DirectoryLocations.h"
-#import "SelectionWithMaskPopupViewController.h"
-#import "Common.h"
+#include "SelectionWithMaskPopupViewController.h"
 
 @interface SelectionWithMaskSheetHistoryEntry : NSObject<NSCoding>
 {

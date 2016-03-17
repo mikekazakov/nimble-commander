@@ -6,13 +6,12 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FilePanelsTabbedHolder.h"
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
-#import "PanelController.h"
-#import "PanelView.h"
-#import "MMTabBarStyle.h"
-#import "Common.h"
+#include "FilePanelsTabbedHolder.h"
+#include "PanelController.h"
+#include "PanelView.h"
+#include "MMTabBarStyle.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 

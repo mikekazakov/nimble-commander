@@ -27,7 +27,6 @@
 #include "ActionsShortcutsManager.h"
 #include "PanelController+Menu.h"
 #include "GoToFolderSheetController.h"
-#include "Common.h"
 #include "MainWindowFilePanelState.h"
 #include "DetailedVolumeInformationSheetController.h"
 #include "FindFilesSheetController.h"
@@ -67,6 +66,13 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
     
     return VFSListing::Build( VFSListing::Compose(listings, indeces) );
+}
+
+static void WriteSingleStringToClipboard(const string &_s)
+{
+    NSPasteboard *pb = NSPasteboard.generalPasteboard;
+    [pb declareTypes:@[NSStringPboardType] owner:nil];
+    [pb setString:[NSString stringWithUTF8StdString:_s] forType:NSStringPboardType];
 }
 
 @implementation PanelController (Menu)
@@ -620,11 +626,11 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 }
 
 - (IBAction)OnCopyCurrentFileName:(id)sender {
-    [NSPasteboard writeSingleString:self.currentFocusedEntryFilename.c_str()];
+    WriteSingleStringToClipboard(self.currentFocusedEntryFilename);
 }
 
 - (IBAction)OnCopyCurrentFilePath:(id)sender {
-    [NSPasteboard writeSingleString:self.currentFocusedEntryPath.c_str()];
+    WriteSingleStringToClipboard(self.currentFocusedEntryPath);
 }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender {

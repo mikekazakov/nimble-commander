@@ -7,7 +7,6 @@
 //
 
 #include "QLVFSThumbnailsCache.h"
-#include "Common.h"
 
 static const nanoseconds g_PurgeDelay = 1min;
 

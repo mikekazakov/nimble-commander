@@ -14,7 +14,6 @@
 #include "PanelView.h"
 #include "PanelData.h"
 #include "ByteCountFormatter.h"
-#include "Common.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.

@@ -13,7 +13,6 @@
 #include "PanelView.h"
 #include "PanelHistory.h"
 #include "Config.h"
-#include "Common.h"
 
 @class QuickLookView;
 @class BriefSystemOverview;

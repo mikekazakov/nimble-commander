@@ -13,7 +13,6 @@
 #include "Operations/OperationsController.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
-#include "Common.h"
 #include "Config.h"
 
 static NSString *g_PrivateDragUTI = @__FILES_IDENTIFIER__".filepanelsdraganddrop";

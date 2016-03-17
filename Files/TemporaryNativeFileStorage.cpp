@@ -12,8 +12,8 @@
 #include <sys/xattr.h>
 #include <dirent.h>
 #include <Habanero/CommonPaths.h>
+#include <Utility/PathManip.h>
 #include "TemporaryNativeFileStorage.h"
-#include "Common.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking

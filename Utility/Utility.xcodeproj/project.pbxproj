@@ -38,6 +38,8 @@
 		CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C001C9A87170021EE7F /* FontExtras.mm */; };
 		CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */; };
 		CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
+		CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C061C9A95240021EE7F /* SyncMessageBox.h */; };
+		CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +75,8 @@
 		CFD62C001C9A87170021EE7F /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontExtras.mm; path = source/FontExtras.mm; sourceTree = "<group>"; };
 		CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMenu+Hierarchical.h"; path = "include/Utility/NSMenu+Hierarchical.h"; sourceTree = "<group>"; };
 		CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSMenu+Hierarchical.mm"; path = "source/NSMenu+Hierarchical.mm"; sourceTree = "<group>"; };
+		CFD62C061C9A95240021EE7F /* SyncMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncMessageBox.h; path = include/Utility/SyncMessageBox.h; sourceTree = "<group>"; };
+		CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyncMessageBox.mm; path = source/SyncMessageBox.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
 				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
@@ -128,6 +133,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
@@ -156,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
+				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
 				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
 				CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */,
 				CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */,
@@ -237,6 +244,7 @@
 				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
 				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
+				CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */,
 				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,

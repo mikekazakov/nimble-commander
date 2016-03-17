@@ -7,9 +7,9 @@
 //
 
 #include <Habanero/algo.h>
+#include <Utility/PathManip.h>
 #include "../../vfs/vfs_native.h"
 #include "../../RoutedIO.h"
-#include "../../Common.h"
 #include "FileSysAttrChangeOperation.h"
 #include "FileSysAttrChangeOperationJob.h"
 

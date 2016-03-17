@@ -6,9 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ActionsShortcutsManager.h"
-#import "Common.h"
-#import "AppDelegate.h"
+#include "ActionsShortcutsManager.h"
+#include "AppDelegate.h"
 
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
 

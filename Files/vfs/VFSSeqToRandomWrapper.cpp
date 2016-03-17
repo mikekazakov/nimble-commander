@@ -8,7 +8,6 @@
 
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
-#include "../Common.h"
 #include "VFSSeqToRandomWrapper.h"
 #include "VFSError.h"
 

@@ -6,7 +6,6 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Common.h"
 #include "AskForPasswordWindowController.h"
 
 @interface AskForPasswordWindowController ()

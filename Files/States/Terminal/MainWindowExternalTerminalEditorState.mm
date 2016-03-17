@@ -7,7 +7,6 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../Common.h"
 #include "../../MainWindowController.h"
 #include "TermSingleTask.h"
 #include "TermScreen.h"

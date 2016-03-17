@@ -8,7 +8,6 @@
 
 #include "SandboxManager.h"
 #include "AppDelegate.h"
-#include "Common.h"
 
 static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 

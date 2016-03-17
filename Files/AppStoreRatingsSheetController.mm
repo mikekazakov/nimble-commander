@@ -6,8 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#import "AppStoreRatingsSheetController.h"
-#import "Common.h"
+#include "AppStoreRatingsSheetController.h"
 
 @implementation AppStoreRatingsSheetController
 

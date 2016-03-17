@@ -12,7 +12,6 @@
 #include "ModernPanelViewPresentation.h"
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "ByteCountFormatter.h"
-#include "Common.h"
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"

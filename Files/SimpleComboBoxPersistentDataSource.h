@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#pragma once
+
 @interface SimpleComboBoxPersistentDataSource : NSObject<NSComboBoxDataSource>
 
 - (instancetype)initWithPlistPath:(NSString*)path;

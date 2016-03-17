@@ -11,7 +11,6 @@
 #include <Habanero/DispatchQueue.h>
 #include "VFSEasyOps.h"
 #include "VFSError.h"
-#include "../Common.h"
 
 static int CopyNodeAttrs(const char *_src_full_path,
                          shared_ptr<VFSHost> _src_host,

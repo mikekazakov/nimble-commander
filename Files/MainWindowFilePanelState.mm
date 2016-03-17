@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
 #include "vfs/vfs_native.h"
 #include "Operations/Copy/FileCopyOperation.h"
@@ -15,7 +16,6 @@
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "PanelController+DataAccess.h"
-#include "Common.h"
 #include "ApplicationSkins.h"
 #include "AppDelegate.h"
 #include "ClassicPanelViewPresentation.h"

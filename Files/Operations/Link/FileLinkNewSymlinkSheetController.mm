@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Common.h"
 #include "FileLinkNewSymlinkSheetController.h"
 
 @interface FileLinkNewSymlinkSheetController()

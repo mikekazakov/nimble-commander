@@ -6,11 +6,20 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../Common.h"
 #include "../ByteCountFormatter.h"
 #include "../AppDelegate.h"
 #include "Operation.h"
 #include "OperationJob.h"
+
+NSError* ErrnoToNSError(int _error)
+{
+    return [NSError errorWithDomain:NSPOSIXErrorDomain code:_error userInfo:nil];
+}
+
+NSError* ErrnoToNSError()
+{
+    return ErrnoToNSError(errno);
+}
 
 static void FormHumanReadableTimeRepresentation(uint64_t _time, char _out[18])
 {

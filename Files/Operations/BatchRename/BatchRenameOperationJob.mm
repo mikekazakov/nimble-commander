@@ -8,7 +8,6 @@
 
 #include "BatchRenameOperationJob.h"
 #include "BatchRenameOperation.h"
-#include "../../Common.h"
 
 static bool LowercaseComparisonEqual(const string &_p1, const string &_p2)
 {

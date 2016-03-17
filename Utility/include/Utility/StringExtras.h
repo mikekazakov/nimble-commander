@@ -18,6 +18,14 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
 
 #ifdef __OBJC__
 
+typedef enum
+{
+    kTruncateAtStart,
+    kTruncateAtMiddle,
+    kTruncateAtEnd
+} ETruncationType;
+NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes);
+
 @interface NSString(PerformanceAdditions)
 
 - (const char *)fileSystemRepresentationSafe;
@@ -30,3 +38,4 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
 @end
 
 #endif
+

@@ -6,7 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "vfs/VFS.h"
+#pragma once
+
+#include "vfs/VFS.h"
 
 struct LauchServicesHandlers
 {

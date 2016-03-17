@@ -12,7 +12,6 @@
 #include "PanelViewPresentation.h"
 #include "PanelView.h"
 #include "PanelData.h"
-#include "Common.h"
 
 static const auto g_ConfigFileSizeFormat = "filePanel.general.fileSizeFormat";
 static const auto g_ConfigSelectionSizeFormat = "filePanel.general.selectionSizeFormat";

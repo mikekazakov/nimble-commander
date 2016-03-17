@@ -1,4 +1,3 @@
-#include "Common.h"
 #include "ExtensionLowercaseComparison.h"
 
 ExtensionLowercaseComparison& ExtensionLowercaseComparison::Instance() noexcept

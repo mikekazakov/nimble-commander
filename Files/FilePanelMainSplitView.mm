@@ -6,14 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FilePanelMainSplitView.h"
-#import "PanelView.h"
-#import "ModernPanelViewPresentation.h"
-#import "ClassicPanelViewPresentation.h"
-#import "FilePanelsTabbedHolder.h"
-#import "AppDelegate.h"
-#import "Common.h"
-#import "ActionsShortcutsManager.h"
+#include "FilePanelMainSplitView.h"
+#include "PanelView.h"
+#include "ModernPanelViewPresentation.h"
+#include "ClassicPanelViewPresentation.h"
+#include "FilePanelsTabbedHolder.h"
+#include "AppDelegate.h"
+#include "ActionsShortcutsManager.h"
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;

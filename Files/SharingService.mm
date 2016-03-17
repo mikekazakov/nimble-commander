@@ -6,11 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/types.h>
-#import <sys/stat.h>
-#import "SharingService.h"
-#import "TemporaryNativeFileStorage.h"
-#import "Common.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "SharingService.h"
+#include "TemporaryNativeFileStorage.h"
 
 static const uint64_t g_MaxFileSizeForVFSShare = 64*1024*1024; // 64mb
 static atomic<int> g_IsCurrentlySharing(0);

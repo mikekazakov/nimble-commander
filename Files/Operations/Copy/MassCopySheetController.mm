@@ -9,7 +9,6 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "MassCopySheetController.h"
-#include "../../Common.h"
 #include "FileCopyOperation.h"
 
 // removes entries of ".." and "."

@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/PathManip.h>
 #include "FileCompressOperation.h"
 #include "FileCompressOperationJob.h"
-#include "../../Common.h"
 
 // TODO: remove this dependency
 #include "../../PanelController.h"

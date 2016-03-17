@@ -8,7 +8,6 @@
 
 #include "vfs/VFS.h"
 #include "GoToFolderSheetController.h"
-#include "Common.h"
 #include "Config.h"
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";

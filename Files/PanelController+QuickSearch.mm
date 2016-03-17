@@ -7,7 +7,6 @@
 //
 
 #include "PanelController+QuickSearch.h"
-#include "Common.h"
 
 static const nanoseconds g_FastSeachDelayTresh = 4s;
 

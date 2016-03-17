@@ -8,7 +8,6 @@
 
 #include "FTPConnectionSheetController.h"
 #include "NetworkConnectionsManager.h"
-#include "Common.h"
 
 @implementation FTPConnectionSheetController
 {

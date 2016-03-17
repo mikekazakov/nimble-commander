@@ -14,7 +14,6 @@
 #include "PanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "ClassicPanelViewPresentation.h"
-#include "Common.h"
 #include "AppDelegate.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";

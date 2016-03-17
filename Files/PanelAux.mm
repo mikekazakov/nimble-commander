@@ -10,7 +10,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include "PanelAux.h"
-#include "Common.h"
 #include "TemporaryNativeFileStorage.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"

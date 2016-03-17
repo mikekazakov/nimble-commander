@@ -9,7 +9,6 @@
 #include <Habanero/DispatchQueue.h>
 #include "../../FileWindow.h"
 #include "../../MainWindowController.h"
-#include "../../Common.h"
 #include "../../SearchInFile.h"
 #include "../../ProcessSheetController.h"
 #include "../../ActionsShortcutsManager.h"

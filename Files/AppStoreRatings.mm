@@ -8,7 +8,6 @@
 
 #include <SystemConfiguration/SystemConfiguration.h>
 #include "AppStoreRatings.h"
-#include "Common.h"
 #include "AppStoreRatingsSheetController.h"
 
 static NSString *g_StateKey = @"CommonRatingsState";

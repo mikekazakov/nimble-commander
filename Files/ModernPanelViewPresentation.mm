@@ -11,7 +11,6 @@
 #include "PanelView.h"
 #include "ModernPanelViewPresentation.h"
 #include "PanelData.h"
-#include "Common.h"
 #include "IconsGenerator.h"
 #include "ModernPanelViewPresentationHeader.h"
 #include "ModernPanelViewPresentationItemsFooter.h"

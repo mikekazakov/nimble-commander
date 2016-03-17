@@ -9,7 +9,6 @@
 #include <Habanero/CommonPaths.h>
 #include "../../MainWindowController.h"
 #include "../../ActionsShortcutsManager.h"
-#include "../../Common.h"
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"
 #include "TermScreen.h"

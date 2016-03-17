@@ -7,7 +7,6 @@
 //
 
 #include <sys/stat.h>
-#include "../../Common.h"
 #include "VFSNetFTPInternals.h"
 #include "VFSNetFTPHost.h"
 

@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "../../RoutedIO.h"
-#include "../../Common.h"
 
 void CreateDirectoryOperationJob::Init(const char *_path, const char *_root_path, CreateDirectoryOperation *_operation)
 {

@@ -19,7 +19,7 @@
 #include <string.h>
 #include <libproc.h>
 #include <Utility/SystemInformation.h>
-#include "../../Common.h"
+#include <Utility/PathManip.h>
 #include "TermShellTask.h"
 
 static const char *g_ShellProg     = "/bin/bash";

@@ -10,7 +10,6 @@
 #include <Utility/FontCache.h>
 #include <Utility/NSView+Sugar.h>
 #include "../../OrthodoxMonospace.h"
-#include "../../Common.h"
 #include "../../BlinkingCaret.h"
 #include "../../Config.h"
 #include "TermView.h"

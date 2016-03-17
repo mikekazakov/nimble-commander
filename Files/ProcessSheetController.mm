@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ProcessSheetController.h"
-#import "Common.h"
+#include "ProcessSheetController.h"
 
 static const nanoseconds g_ShowDelay = 150ms;
 

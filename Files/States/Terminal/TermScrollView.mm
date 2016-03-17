@@ -7,7 +7,6 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../Common.h"
 #include "../../Config.h"
 #include "TermParser.h"
 #include "TermView.h"

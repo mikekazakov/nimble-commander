@@ -10,7 +10,6 @@
 #include "FileSearch.h"
 #include "FileWindow.h"
 #include "SearchInFile.h"
-#include "Common.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {

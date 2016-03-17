@@ -8,7 +8,6 @@
 #include "AppDelegate.h"
 #include "NetworkConnectionsManager.h"
 #include "KeychainServices.h"
-#include "Common.h"
 #include "AskForPasswordWindowController.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";

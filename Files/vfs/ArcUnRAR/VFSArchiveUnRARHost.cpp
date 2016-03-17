@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Common.h"
+#include <Utility/PathManip.h>
 #include "../Native/VFSNativeHost.h"
 #include "../VFSListingInput.h"
 #include "VFSArchiveUnRARHost.h"

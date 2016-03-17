@@ -8,8 +8,6 @@
 
 #include "KeychainServices.h"
 #include "SavedNetworkConnectionsManager.h"
-#include "Common.h"
-
 #include "NetworkConnectionsManager.h"
 
 static NSString *g_DefKey = @"FilePanelsSavedNetworkConnections";

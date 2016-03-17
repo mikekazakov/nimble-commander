@@ -1,4 +1,3 @@
-#include "Common.h"
 #include "Config.h"
 
 @implementation GenericConfigObjC

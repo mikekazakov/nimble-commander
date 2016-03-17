@@ -8,12 +8,12 @@
 
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
+#include <Utility/FSEventsDirUpdate.h>
 #include "DisplayNamesCache.h"
 #include "VFSNativeHost.h"
 #include "VFSNativeFile.h"
 #include "../VFSError.h"
 #include "../VFSListingInput.h"
-#include "../../FSEventsDirUpdate.h"
 #include "../../NativeFSManager.h"
 #include "../../RoutedIO.h"
 

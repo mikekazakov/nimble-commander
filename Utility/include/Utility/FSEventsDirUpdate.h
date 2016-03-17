@@ -9,28 +9,32 @@
 #pragma once
 #import <DiskArbitration/DiskArbitration.h>
 #import <CoreServices/CoreServices.h>
+#include <string>
+#include <functional>
+#include <vector>
+
 
 class FSEventsDirUpdate
 {
 public:
     static FSEventsDirUpdate &Instance();
  
-    uint64_t AddWatchPath(const char *_path, function<void()> _handler);
+    uint64_t AddWatchPath(const char *_path, std::function<void()> _handler);
     // zero returned value means error. any others - valid observation tickets
     
     bool RemoveWatchPathWithTicket(uint64_t _ticket); // it's better to use this method
     
     // called exclusevily by NativeFSManager
-    void OnVolumeDidUnmount(const string &_on_path);
+    void OnVolumeDidUnmount(const std::string &_on_path);
 private:
     struct WatchData
     {
         unsigned                                 path_len;
-        string                                   path;     // canonical fs representation, should include trailing slash
+        std::string                                   path;     // canonical fs representation, should include trailing slash
         FSEventStreamRef                         stream;
-        vector<pair<uint64_t, function<void()>>> handlers;
+        std::vector<std::pair<uint64_t, std::function<void()>>> handlers;
     };
-    vector<unique_ptr<WatchData>> m_Watches;
+    std::vector<std::unique_ptr<WatchData>> m_Watches;
     uint64_t                      m_LastTicket = 1; // no tickets #0, since it'is an error code
         
     FSEventsDirUpdate();

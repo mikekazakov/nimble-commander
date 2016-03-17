@@ -1,11 +1,11 @@
 #include <fstream>
 #include <Habanero/algo.h>
+#include <Utility/FSEventsDirUpdate.h>
 #include "3rd_party/rapidjson/include/rapidjson/error/en.h"
 #include "3rd_party/rapidjson/include/rapidjson/memorystream.h"
 #include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
 #include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
 #include "Config.h"
-#include "FSEventsDirUpdate.h"
 
 static const int g_MaxNamePartLen = 128;
 static const auto g_WriteDelay = 30s;

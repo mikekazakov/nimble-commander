@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "FSEventsDirUpdate.h"
+#include <sys/param.h>
+#include <Utility/FSEventsDirUpdate.h>
+
+using namespace std;
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.1;
 

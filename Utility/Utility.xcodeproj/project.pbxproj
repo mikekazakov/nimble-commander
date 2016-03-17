@@ -40,6 +40,8 @@
 		CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
 		CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C061C9A95240021EE7F /* SyncMessageBox.h */; };
 		CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */; };
+		CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */; };
+		CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +79,8 @@
 		CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSMenu+Hierarchical.mm"; path = "source/NSMenu+Hierarchical.mm"; sourceTree = "<group>"; };
 		CFD62C061C9A95240021EE7F /* SyncMessageBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncMessageBox.h; path = include/Utility/SyncMessageBox.h; sourceTree = "<group>"; };
 		CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyncMessageBox.mm; path = source/SyncMessageBox.mm; sourceTree = "<group>"; };
+		CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsDirUpdate.cpp; path = source/FSEventsDirUpdate.cpp; sourceTree = "<group>"; };
+		CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSEventsDirUpdate.h; path = include/Utility/FSEventsDirUpdate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */,
 				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
 				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
@@ -133,6 +138,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
@@ -171,6 +177,7 @@
 				CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */,
 				CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
+				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
 				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
@@ -246,6 +253,7 @@
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
 				CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */,
 				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
+				CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,

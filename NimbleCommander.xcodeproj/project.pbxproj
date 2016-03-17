@@ -66,7 +66,6 @@
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
 		CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
-		CF29313417D9915600648A90 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
@@ -382,7 +381,6 @@
 		CF6D9C8F19667A5E0077B146 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C8E19667A5E0077B146 /* Cocoa.framework */; };
 		CF6D9C9119667A640077B146 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C9019667A640077B146 /* Quartz.framework */; };
 		CF6D9C9319667A850077B146 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C9219667A850077B146 /* libSystem.dylib */; };
-		CF6D9C9419667BA20077B146 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
@@ -779,7 +777,6 @@
 		CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
-		CFF6F3251A13567C00011177 /* rdrand.c in Sources */ = {isa = PBXBuildFile; fileRef = CF29313217D9915600648A90 /* rdrand.c */; };
 		CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
 		CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
@@ -1051,8 +1048,6 @@
 		CF27415318046A6E006D6687 /* BriefSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BriefSystemOverview.mm; sourceTree = "<group>"; };
 		CF29312E17D79BA100648A90 /* IconsGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconsGenerator.mm; sourceTree = "<group>"; };
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
-		CF29313217D9915600648A90 /* rdrand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rdrand.c; path = 3rd_party/rdrand/rdrand.c; sourceTree = "<group>"; };
-		CF29313317D9915600648A90 /* rdrand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rdrand.h; path = 3rd_party/rdrand/rdrand.h; sourceTree = "<group>"; };
 		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AskForPasswordWindowController.h; sourceTree = "<group>"; };
 		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AskForPasswordWindowController.mm; sourceTree = "<group>"; };
 		CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionsMenuDelegate.h; sourceTree = "<group>"; };
@@ -1308,14 +1303,6 @@
 		CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistSheetController.mm; path = Operations/Copy/FileAlreadyExistSheetController.mm; sourceTree = "<group>"; };
 		CF9069671BB54035000C3CBB /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperation.h; path = Operations/Copy/FileCopyOperation.h; sourceTree = "<group>"; };
 		CF9069681BB54035000C3CBB /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperation.mm; path = Operations/Copy/FileCopyOperation.mm; sourceTree = "<group>"; };
-		CF9069691BB54035000C3CBB /* FileCopyOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperationJob.h; path = Operations/Copy/FileCopyOperationJob.h; sourceTree = "<group>"; };
-		CF90696A1BB54035000C3CBB /* FileCopyOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperationJob.mm; path = Operations/Copy/FileCopyOperationJob.mm; sourceTree = "<group>"; };
-		CF90696B1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperationJobFromGeneric.h; path = Operations/Copy/FileCopyOperationJobFromGeneric.h; sourceTree = "<group>"; };
-		CF90696C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperationJobFromGeneric.mm; path = Operations/Copy/FileCopyOperationJobFromGeneric.mm; sourceTree = "<group>"; };
-		CF90696D1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperationJobGenericToGeneric.h; path = Operations/Copy/FileCopyOperationJobGenericToGeneric.h; sourceTree = "<group>"; };
-		CF90696E1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperationJobGenericToGeneric.mm; path = Operations/Copy/FileCopyOperationJobGenericToGeneric.mm; sourceTree = "<group>"; };
-		CF90696F1BB54035000C3CBB /* FileCopyOperationJobNativeToNative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperationJobNativeToNative.h; path = Operations/Copy/FileCopyOperationJobNativeToNative.h; sourceTree = "<group>"; };
-		CF9069701BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperationJobNativeToNative.mm; path = Operations/Copy/FileCopyOperationJobNativeToNative.mm; sourceTree = "<group>"; };
 		CF9069711BB54035000C3CBB /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = Operations/Copy/Job.cpp; sourceTree = "<group>"; };
 		CF9069721BB54035000C3CBB /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = Operations/Copy/Job.h; sourceTree = "<group>"; };
 		CF9069891BB54052000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileAlreadyExistSheetController.xib; sourceTree = "<group>"; };
@@ -1474,10 +1461,6 @@
 		CFD6F9041BEB02CC00A1B046 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = vfs/VFSListingInput.h; sourceTree = "<group>"; };
 		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = Operations/Delete/FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = Operations/Delete/FileDeletionOperation.mm; sourceTree = "<group>"; };
-		CFD6F9071BEBA96600A1B046 /* FileDeletionOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperationJob.h; path = Operations/Delete/FileDeletionOperationJob.h; sourceTree = "<group>"; };
-		CFD6F9081BEBA96600A1B046 /* FileDeletionOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperationJob.mm; path = Operations/Delete/FileDeletionOperationJob.mm; sourceTree = "<group>"; };
-		CFD6F9091BEBA96600A1B046 /* FileDeletionOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperationVFSJob.h; path = Operations/Delete/FileDeletionOperationVFSJob.h; sourceTree = "<group>"; };
-		CFD6F90A1BEBA96600A1B046 /* FileDeletionOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperationVFSJob.mm; path = Operations/Delete/FileDeletionOperationVFSJob.mm; sourceTree = "<group>"; };
 		CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionSheetController.h; path = Operations/Delete/FileDeletionSheetController.h; sourceTree = "<group>"; };
 		CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionSheetController.mm; path = Operations/Delete/FileDeletionSheetController.mm; sourceTree = "<group>"; };
 		CFD6F9111BEBAADE00A1B046 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = Operations/Delete/Job.cpp; sourceTree = "<group>"; };
@@ -1962,15 +1945,6 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		CF29313117D9914700648A90 /* rdrand */ = {
-			isa = PBXGroup;
-			children = (
-				CF29313217D9915600648A90 /* rdrand.c */,
-				CF29313317D9915600648A90 /* rdrand.h */,
-			);
-			name = rdrand;
-			sourceTree = "<group>";
-		};
 		CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
@@ -2292,10 +2266,6 @@
 				CFD6F9121BEBAADE00A1B046 /* Job.h */,
 				CFD6F9111BEBAADE00A1B046 /* Job.cpp */,
 				CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */,
-				CFD6F9071BEBA96600A1B046 /* FileDeletionOperationJob.h */,
-				CFD6F9081BEBA96600A1B046 /* FileDeletionOperationJob.mm */,
-				CFD6F9091BEBA96600A1B046 /* FileDeletionOperationVFSJob.h */,
-				CFD6F90A1BEBA96600A1B046 /* FileDeletionOperationVFSJob.mm */,
 				CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */,
 				CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */,
 				CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */,
@@ -2329,14 +2299,6 @@
 				CF9069721BB54035000C3CBB /* Job.h */,
 				CF9069711BB54035000C3CBB /* Job.cpp */,
 				CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */,
-				CF9069691BB54035000C3CBB /* FileCopyOperationJob.h */,
-				CF90696A1BB54035000C3CBB /* FileCopyOperationJob.mm */,
-				CF90696B1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.h */,
-				CF90696C1BB54035000C3CBB /* FileCopyOperationJobFromGeneric.mm */,
-				CF90696D1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.h */,
-				CF90696E1BB54035000C3CBB /* FileCopyOperationJobGenericToGeneric.mm */,
-				CF90696F1BB54035000C3CBB /* FileCopyOperationJobNativeToNative.h */,
-				CF9069701BB54035000C3CBB /* FileCopyOperationJobNativeToNative.mm */,
 			);
 			name = FileCopyOperation;
 			sourceTree = "<group>";
@@ -2739,7 +2701,6 @@
 				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
-				CF29313117D9914700648A90 /* rdrand */,
 				CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
@@ -3296,7 +3257,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF9069741BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
-				CF6D9C9419667BA20077B146 /* rdrand.c in Sources */,
 				CF9DBE151A48831D00FF735B /* SavedNetworkConnectionsManager.mm in Sources */,
 				CF50C4311C0ADEB8009DF611 /* VFSHost.cpp in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
@@ -3641,7 +3601,6 @@
 				CF7D138E1BF5E38B001F53FD /* OperationsController.mm in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF46D8EA1C853C2C009E28B9 /* rapidjson.cpp in Sources */,
-				CF29313417D9915600648A90 /* rdrand.c in Sources */,
 				CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */,
 				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF73D2051BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp in Sources */,
@@ -3836,7 +3795,6 @@
 				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
 				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
-				CFF6F3251A13567C00011177 /* rdrand.c in Sources */,
 				CF50C4461C0ADEEF009DF611 /* VFSNativeFile.cpp in Sources */,
 				CF46DBA01C856FEC009E28B9 /* rapidjson.cpp in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,

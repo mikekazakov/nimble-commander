@@ -8,8 +8,8 @@
 
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
+#include <Utility/NativeFSManager.h>
 #include "DetailedVolumeInformationSheetController.h"
-#include "NativeFSManager.h"
 
 @interface DetailedVolumeInformationSheetController ()
 

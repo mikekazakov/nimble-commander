@@ -6,16 +6,28 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <AppKit/AppKit.h>
+#include <DiskArbitration/DiskArbitration.h>
 #include <sys/param.h>
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/FSEventsDirUpdate.h>
-#include "NativeFSManager.h"
+#include <Utility/NativeFSManager.h>
+#include <Utility/StringExtras.h>
 
+using namespace std;
 
 static NativeFSManager *g_SharedFSManager;
+
+static void GetAllInfos(NativeFileSystemInfo &_volume);
+static bool GetBasicInfo(NativeFileSystemInfo &_volume);
+static bool GetFormatInfo(NativeFileSystemInfo &_volume);
+static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
+static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
+static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume);
+static bool VolumeHasTrash(const std::string &_volume_path);
 
 static vector<string> GetFullFSList()
 {
@@ -31,46 +43,41 @@ static vector<string> GetFullFSList()
     return result;
 }
 
-struct NativeFSManagerProxy2
+struct NativeFSManagerProxy2 // this proxy is needed only for private methods access
 {
-    static void OnDidMount(string _on_path)     { g_SharedFSManager->OnDidMount(_on_path);      }
-    static void OnWillUnmount(string _on_path)  { g_SharedFSManager->OnWillUnmount(_on_path);   }
-    static void OnDidUnmount(string _on_path)   { g_SharedFSManager->OnDidUnmount(_on_path);    }
-    static void OnDidRename(string _old_path, string _new_path) { g_SharedFSManager->OnDidRename(_old_path, _new_path); }
+    static void OnDidMount(const string &_on_path)                              { g_SharedFSManager->OnDidMount(_on_path);              }
+    static void OnWillUnmount(const string &_on_path)                           { g_SharedFSManager->OnWillUnmount(_on_path);           }
+    static void OnDidUnmount(const string &_on_path)                            { g_SharedFSManager->OnDidUnmount(_on_path);            }
+    static void OnDidRename(const string &_old_path, const string &_new_path)   { g_SharedFSManager->OnDidRename(_old_path, _new_path); }
 };
 
 @interface NativeFSManagerProxy : NSObject
 @end
 @implementation NativeFSManagerProxy
 + (void) volumeDidMount:(NSNotification *)aNotification
-{    
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
-    assert(path != nil);
-    NativeFSManagerProxy2::OnDidMount([path fileSystemRepresentation]);
+{
+    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
+        NativeFSManagerProxy2::OnDidMount(path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeDidRename:(NSNotification *)aNotification
 {
-    NSURL *new_path = aNotification.userInfo[NSWorkspaceVolumeURLKey];
-    NSURL *old_path = aNotification.userInfo[NSWorkspaceVolumeOldURLKey];
-    assert(new_path != nil);
-    assert(old_path != nil);
-    NativeFSManagerProxy2::OnDidRename(old_path.path.UTF8String,
-                                       new_path.path.UTF8String);
+    if( NSURL *new_path = aNotification.userInfo[NSWorkspaceVolumeURLKey] )
+        if( NSURL *old_path = aNotification.userInfo[NSWorkspaceVolumeOldURLKey] )
+            NativeFSManagerProxy2::OnDidRename(old_path.path.fileSystemRepresentationSafe,
+                                               new_path.path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeWillUnmount:(NSNotification *)aNotification
 {
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
-    assert(path != nil);
-    NativeFSManagerProxy2::OnWillUnmount([path fileSystemRepresentation]);
+    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
+        NativeFSManagerProxy2::OnWillUnmount(path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeDidUnmount:(NSNotification *)aNotification
 {
-    NSString *path = aNotification.userInfo[@"NSDevicePath"];
-    assert(path != nil);
-    NativeFSManagerProxy2::OnDidUnmount([path fileSystemRepresentation]);
+    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
+        NativeFSManagerProxy2::OnDidUnmount(path.fileSystemRepresentationSafe);
 }
 @end
 
@@ -101,10 +108,10 @@ NativeFSManager::NativeFSManager()
     }
     
 	NSNotificationCenter *center = NSWorkspace.sharedWorkspace.notificationCenter;
-	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidMount:) name:NSWorkspaceDidMountNotification object:nil];
-	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidRename:) name:NSWorkspaceDidRenameVolumeNotification object:nil];
-	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeDidUnmount:) name:NSWorkspaceDidUnmountNotification object:nil];
-	[center addObserver:[NativeFSManagerProxy class] selector:@selector(volumeWillUnmount:) name:NSWorkspaceWillUnmountNotification object:nil];
+	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidMount:) name:NSWorkspaceDidMountNotification object:nil];
+	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidRename:) name:NSWorkspaceDidRenameVolumeNotification object:nil];
+	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidUnmount:) name:NSWorkspaceDidUnmountNotification object:nil];
+	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeWillUnmount:) name:NSWorkspaceWillUnmountNotification object:nil];
 }
 
 NativeFSManager &NativeFSManager::Instance()
@@ -116,7 +123,7 @@ NativeFSManager &NativeFSManager::Instance()
     return *g_SharedFSManager;
 }
 
-void NativeFSManager::GetAllInfos(NativeFileSystemInfo &_volume)
+static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
     GetBasicInfo(_volume);
     GetFormatInfo(_volume);
@@ -125,7 +132,7 @@ void NativeFSManager::GetAllInfos(NativeFileSystemInfo &_volume)
     UpdateSpaceInfo(_volume);
 }
 
-bool NativeFSManager::GetBasicInfo(NativeFileSystemInfo &_volume)
+static bool GetBasicInfo(NativeFileSystemInfo &_volume)
 {
     struct statfs stat;
     
@@ -175,7 +182,7 @@ bool NativeFSManager::GetBasicInfo(NativeFileSystemInfo &_volume)
     return true;
 }
 
-bool NativeFSManager::GetFormatInfo(NativeFileSystemInfo &_v)
+static bool GetFormatInfo(NativeFileSystemInfo &_v)
 {
     struct
     {
@@ -213,7 +220,7 @@ bool NativeFSManager::GetFormatInfo(NativeFileSystemInfo &_v)
     return true;
 }
 
-bool NativeFSManager::GetInterfacesInfo(NativeFileSystemInfo &_v)
+static bool GetInterfacesInfo(NativeFileSystemInfo &_v)
 {
     struct
     {
@@ -248,7 +255,7 @@ bool NativeFSManager::GetInterfacesInfo(NativeFileSystemInfo &_v)
     return true;
 }
 
-bool NativeFSManager::GetVerboseInfo(NativeFileSystemInfo &_volume)
+static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
 {
     NSString *path_str = [NSString stringWithUTF8String:_volume.mounted_at_path.c_str()];
     if(path_str == nil)
@@ -292,7 +299,7 @@ bool NativeFSManager::GetVerboseInfo(NativeFileSystemInfo &_volume)
     return true;
 }
 
-void NativeFSManager::OnDidMount(string _on_path)
+void NativeFSManager::OnDidMount(const string &_on_path)
 {
     // presumably called from main thread, so go async to keep UI smooth
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -314,11 +321,11 @@ void NativeFSManager::OnDidMount(string _on_path)
     });
 }
 
-void NativeFSManager::OnWillUnmount(string _on_path)
+void NativeFSManager::OnWillUnmount(const string &_on_path)
 {
 }
 
-void NativeFSManager::OnDidUnmount(string _on_path)
+void NativeFSManager::OnDidUnmount(const string &_on_path)
 {
     m_Lock.lock();
     
@@ -336,7 +343,7 @@ void NativeFSManager::OnDidUnmount(string _on_path)
     FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_on_path);
 }
 
-void NativeFSManager::OnDidRename(string _old_path, string _new_path)
+void NativeFSManager::OnDidRename(const string &_old_path, const string &_new_path)
 {
     m_Lock.lock();
     
@@ -368,7 +375,7 @@ vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes() const
     return m_Volumes;
 }
 
-bool NativeFSManager::UpdateSpaceInfo(NativeFileSystemInfo &_volume)
+static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume)
 {
     struct statfs stat;
     
@@ -508,7 +515,7 @@ void NativeFSManager::EjectVolumeContainingPath(const string &_path)
     });
 }
 
-bool NativeFSManager::VolumeHasTrash(const string &_volume_path)
+static bool VolumeHasTrash(const string &_volume_path)
 {
     return VolumeHasTrash_NSFileManager(_volume_path);
 }

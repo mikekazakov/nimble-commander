@@ -42,6 +42,8 @@
 		CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */; };
 		CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */; };
 		CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */; };
+		CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */; };
+		CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +83,8 @@
 		CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyncMessageBox.mm; path = source/SyncMessageBox.mm; sourceTree = "<group>"; };
 		CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsDirUpdate.cpp; path = source/FSEventsDirUpdate.cpp; sourceTree = "<group>"; };
 		CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSEventsDirUpdate.h; path = include/Utility/FSEventsDirUpdate.h; sourceTree = "<group>"; };
+		CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeFSManager.h; path = include/Utility/NativeFSManager.h; sourceTree = "<group>"; };
+		CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeFSManager.mm; path = source/NativeFSManager.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,21 +118,22 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */,
-				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
-				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
-				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
 				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
+				CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */,
 				CF960E181C992F2C001D8B02 /* HexadecimalColor.h */,
+				CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */,
+				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
 				CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */,
 				CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */,
 				CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */,
 				CF960E191C992F2C001D8B02 /* ObjCpp.h */,
 				CFD62BCD1C9A66C50021EE7F /* ObjcToCppObservingBridge.h */,
 				CF960E1A1C992F2C001D8B02 /* PathManip.h */,
+				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
+				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
 			);
@@ -138,22 +143,23 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
-				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
-				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
 				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
+				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
+				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
+				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
 				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */,
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.c */,
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
+				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
@@ -181,6 +187,7 @@
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
 				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
+				CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */,
 				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
 				CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */,
 				CFD62BCE1C9A66C50021EE7F /* ObjcToCppObservingBridge.h in Headers */,
@@ -248,6 +255,7 @@
 				CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */,
 				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
 				CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */,
+				CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */,
 				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
 				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,

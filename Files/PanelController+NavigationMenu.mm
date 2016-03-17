@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/NativeFSManager.h>
 #include "vfs/vfs_native.h"
-#include "NativeFSManager.h"
 #include "PanelController+NavigationMenu.h"
 #include "MainWndGoToButton.h"
 

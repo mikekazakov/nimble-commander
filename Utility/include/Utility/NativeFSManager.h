@@ -8,10 +8,17 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+#include <memory>
+#include <mutex>
+
 #ifndef __OBJC__
 typedef void *NSString;
 typedef void *NSURL;
 typedef void *NSImage;
+#else
+#include <Foundation/Foundation.h>
 #endif
 
 struct NativeFileSystemInfo
@@ -19,12 +26,12 @@ struct NativeFileSystemInfo
     /**
      * UNIX path to directory at which filesystem is mounted.
      */
-    string mounted_at_path;
+    std::string mounted_at_path;
 
     /**
      * Filesystem's internal name, like "hfs", "devfs", "autofs", "mtmfs" and others.
      */
-    string fs_type_name;
+    std::string fs_type_name;
 
     /**
      * Name or which from this volume was mounted. Can be device name, network path or internal driver name.
@@ -508,77 +515,69 @@ public:
     /**
      * Returns a list of volumes in a system.
      */
-    vector<shared_ptr<NativeFileSystemInfo>> Volumes() const;
+    std::vector<std::shared_ptr<NativeFileSystemInfo>> Volumes() const;
     
-    shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;
-    shared_ptr<const NativeFileSystemInfo> VolumeFromDevID(dev_t _dev_id) const;
-    
-    /**
-     * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
-     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
-     */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const string &_path) const;
+    std::shared_ptr<const NativeFileSystemInfo> VolumeFromFD(int _fd) const;
+    std::shared_ptr<const NativeFileSystemInfo> VolumeFromDevID(dev_t _dev_id) const;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPath(const char* _path) const;
+    std::shared_ptr<NativeFileSystemInfo> VolumeFromPath(const string &_path) const;
+    
+    /**
+     * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
+     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
+     */
+    std::shared_ptr<NativeFileSystemInfo> VolumeFromPath(const char* _path) const;
     
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method dont make any syscalls).
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(const string &_path) const;
+    std::shared_ptr<NativeFileSystemInfo> VolumeFromPathFast(const string &_path) const;
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const string &_mount_point) const;
+    std::shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const string &_mount_point) const;
 
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const char *_mount_point) const;
+    std::shared_ptr<NativeFileSystemInfo> VolumeFromMountPoint(const char *_mount_point) const;
     
     /**
      * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.
      */
-    void UpdateSpaceInformation(const shared_ptr<NativeFileSystemInfo> &_volume);
+    void UpdateSpaceInformation(const std::shared_ptr<NativeFileSystemInfo> &_volume);
     
     /**
      * A very simple function with no error feedback.
      */
-    void EjectVolumeContainingPath(const string &_path);
+    void EjectVolumeContainingPath(const std::string &_path);
     
     /**
      * Return true is volume can be programmatically ejected. Will return false on any errors.
      */
-    bool IsVolumeContainingPathEjectable(const string &_path);
+    bool IsVolumeContainingPathEjectable(const std::string &_path);
     
 private:
     NativeFSManager();
     NativeFSManager(const NativeFSManager&) = delete;
     void operator=(const NativeFSManager&) = delete;
+        
+    void OnDidMount(const std::string &_on_path);
+    void OnWillUnmount(const std::string &_on_path);
+    void OnDidUnmount(const std::string &_on_path);
+    void OnDidRename(const std::string &_old_path, const std::string &_new_path);
     
-    static void GetAllInfos(NativeFileSystemInfo &_volume);
-    static bool GetBasicInfo(NativeFileSystemInfo &_volume);
-    static bool GetFormatInfo(NativeFileSystemInfo &_volume);
-    static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
-    static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
-    static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume);
-    static bool VolumeHasTrash(const string &_volume_path);
-    
-    void OnDidMount(string _on_path);
-    void OnWillUnmount(string _on_path);
-    void OnDidUnmount(string _on_path);
-    void OnDidRename(string _old_path, string _new_path);
-    
-    mutable recursive_mutex                  m_Lock;
-    vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
+    mutable std::recursive_mutex                  m_Lock;
+    std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Volumes;
     
     friend struct NativeFSManagerProxy2;
 };

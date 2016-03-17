@@ -7,9 +7,9 @@
 //
 
 #include <sys/xattr.h>
+#include <Utility/NativeFSManager.h>
 #include "VFSNativeFile.h"
 #include "VFSNativeHost.h"
-#include "../../NativeFSManager.h"
 #include "../../RoutedIO.h"
 
 VFSNativeFile::VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNativeHost> &_host):

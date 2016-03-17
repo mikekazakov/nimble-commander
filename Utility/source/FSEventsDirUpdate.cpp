@@ -6,7 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <DiskArbitration/DiskArbitration.h>
+#include <CoreServices/CoreServices.h>
 #include <sys/param.h>
+#include <vector>
+
 #include <Utility/FSEventsDirUpdate.h>
 
 using namespace std;
@@ -34,7 +38,36 @@ static string GetRealPath(const char *_path_in)
     return path_out;
 }
 
-FSEventsDirUpdate::FSEventsDirUpdate()
+struct FSEventsDirUpdate::Impl
+{
+    struct WatchData
+    {
+        unsigned                                 path_len;
+        string                                   path;     // canonical fs representation, should include trailing slash
+        FSEventStreamRef                         stream;
+        vector<pair<uint64_t, function<void()>>> handlers;
+    };
+    vector<unique_ptr<WatchData>> m_Watches;
+    uint64_t                      m_LastTicket = 1; // no tickets #0, since it'is an error code
+    
+    
+    uint64_t    AddWatchPath(const char *_path, std::function<void()> _handler);
+    bool        RemoveWatchPathWithTicket(uint64_t _ticket);
+    void        OnVolumeDidUnmount(const std::string &_on_path);
+    
+    static void DiskDisappeared(DADiskRef disk, void *context);
+    static void FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
+                                          void *userData,
+                                          size_t numEvents,
+                                          void *eventPaths,
+                                          const FSEventStreamEventFlags eventFlags[],
+                                          const FSEventStreamEventId eventIds[]);
+    
+    
+};
+
+FSEventsDirUpdate::FSEventsDirUpdate():
+    me(make_unique<Impl>())
 {
 }
 
@@ -44,7 +77,7 @@ FSEventsDirUpdate &FSEventsDirUpdate::Instance()
     return *inst;
 }
 
-void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
+void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRef,
                        void *userData,
                        size_t numEvents,
                        void *eventPaths,
@@ -77,6 +110,8 @@ void FSEventsDirUpdate::FSEventsDirUpdateCallback(ConstFSEventStreamRef streamRe
 }
 
 uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _handler)
+{ return me->AddWatchPath( _path, move(_handler) ); }
+uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void()> _handler)
 {
     // convert _path into canonical path of OS
     string dirpath = GetRealPath(_path);
@@ -106,7 +141,7 @@ uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _ha
     CFArrayRef pathsToWatch = CFArrayCreate(0, (const void**)ar, 1, &kCFTypeArrayCallBacks);
         
     FSEventStreamRef stream = FSEventStreamCreate(NULL,
-                                 &FSEventsDirUpdate::FSEventsDirUpdateCallback,
+                                                  &FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback,
                                  &context,
                                  pathsToWatch,
                                  kFSEventStreamEventIdSinceNow,
@@ -127,6 +162,8 @@ uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _ha
 }
 
 bool FSEventsDirUpdate::RemoveWatchPathWithTicket(uint64_t _ticket)
+{ return me->RemoveWatchPathWithTicket(_ticket); }
+bool FSEventsDirUpdate::Impl::RemoveWatchPathWithTicket(uint64_t _ticket)
 {
     if(_ticket == 0)
         return false;
@@ -151,6 +188,8 @@ bool FSEventsDirUpdate::RemoveWatchPathWithTicket(uint64_t _ticket)
 }
 
 void FSEventsDirUpdate::OnVolumeDidUnmount(const string &_on_path)
+{ me->OnVolumeDidUnmount(_on_path); }
+void FSEventsDirUpdate::Impl::OnVolumeDidUnmount(const string &_on_path)
 {
     // when some volume is removed from system we force every panel to reload it's data
     // TODO: this is a brute approach, need to build a more intelligent volume monitoring machinery later

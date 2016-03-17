@@ -309,7 +309,6 @@
 		CF6D9BDA196677CA0077B146 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122016C4BD3D00D247EE /* main.m */; };
 		CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CF6D9BDD196678000077B146 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
-		CF6D9BE2196678000077B146 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
 		CF6D9BE4196678000077B146 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
 		CF6D9BE6196678000077B146 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
@@ -472,7 +471,6 @@
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
-		CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CF9066B919AB5636001DC687 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B819AB5636001DC687 /* libssh2.a */; };
 		CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF9066C219AB791A001DC687 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
@@ -727,7 +725,6 @@
 		CFF6F2511A13567C00011177 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
-		CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */; };
 		CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFF6F26B1A13567C00011177 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC20B4B198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
@@ -1285,8 +1282,6 @@
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanelData_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF8B09CB16ED07DF0013B6A8 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWndGoToButton.h; sourceTree = "<group>"; };
 		CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWndGoToButton.mm; sourceTree = "<group>"; };
-		CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeFSManager.mm; sourceTree = "<group>"; };
-		CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFSManager.h; sourceTree = "<group>"; };
 		CF9066B219AB51B3001DC687 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		CF9066B419AB54CE001DC687 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_party/built/lib/libcrypto.a; sourceTree = "<group>"; };
 		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
@@ -2323,8 +2318,6 @@
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
 				CFB060DC172E6AC4001F6949 /* Common.mm */,
-				CF8F29CB188FEE490095D6F9 /* NativeFSManager.h */,
-				CF8F29CA188FEE490095D6F9 /* NativeFSManager.mm */,
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
@@ -3280,7 +3273,6 @@
 				CF50C4291C0ADE85009DF611 /* GenericOperationView.mm in Sources */,
 				CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF50C4561C0ADF12009DF611 /* VFSNetSFTPFile.cpp in Sources */,
-				CF6D9BE2196678000077B146 /* NativeFSManager.mm in Sources */,
 				CF50C4381C0ADED4009DF611 /* VFSArchiveFile.cpp in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
@@ -3467,7 +3459,6 @@
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CF73D1D81BE608BC0014C88F /* VFSNativeHost.mm in Sources */,
 				CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */,
-				CF8F29CC188FEE490095D6F9 /* NativeFSManager.mm in Sources */,
 				CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
@@ -3654,7 +3645,6 @@
 				CFF6F2511A13567C00011177 /* PanelController.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
-				CFF6F25B1A13567C00011177 /* NativeFSManager.mm in Sources */,
 				CF46DB821C856F44009E28B9 /* TermSingleTask.mm in Sources */,
 				CF46DB8E1C856F71009E28B9 /* BigFileView.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,

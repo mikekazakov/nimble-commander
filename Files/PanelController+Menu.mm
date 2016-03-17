@@ -8,6 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
+#include <Utility/NativeFSManager.h>
 #include "vfs/VFSListingInput.h"
 #include "vfs/vfs_native.h"
 #include "vfs/vfs_ps.h"
@@ -38,7 +39,6 @@
 #include "SelectionWithMaskPopupViewController.h"
 #include "PanelViewPresentation.h"
 #include "CalculateChecksumSheetController.h"
-#include "NativeFSManager.h"
 #include "ConnectionsMenuDelegate.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)

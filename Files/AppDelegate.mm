@@ -9,6 +9,7 @@
 #include <Sparkle/Sparkle.h>
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
+#include <Utility/NativeFSManager.h>
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include "vfs/vfs_native.h"
@@ -29,7 +30,6 @@
 #include "PreferencesWindowTerminalTab.h"
 #include "PreferencesWindowHotkeysTab.h"
 #include "TemporaryNativeFileStorage.h"
-#include "NativeFSManager.h"
 #include "ActionsShortcutsManager.h"
 #include "MainWindowFilePanelState.h"
 #include "SandboxManager.h"

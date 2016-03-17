@@ -12,7 +12,6 @@
 		CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B881C99C2A60021EE7F /* CommonPaths.h */; };
 		CFD62B961C99C2A60021EE7F /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B891C99C2A60021EE7F /* debug.h */; };
 		CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */; };
-		CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8B1C99C2A60021EE7F /* FontExtras.h */; };
 		CFD62B991C99C2A60021EE7F /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8C1C99C2A60021EE7F /* Hash.h */; };
 		CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */; };
 		CFD62B9B1C99C2A60021EE7F /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B8E1C99C2A60021EE7F /* KVO.h */; };
@@ -26,7 +25,6 @@
 		CFD62BB01C99C2AE0021EE7F /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
 		CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
 		CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */; };
-		CFD62BB31C99C2AE0021EE7F /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */; };
 		CFD62BB41C99C2AE0021EE7F /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
 		CFD62BB51C99C2AE0021EE7F /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
 		CFD62BB61C99C2AE0021EE7F /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
@@ -46,7 +44,6 @@
 		CFD62B881C99C2A60021EE7F /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonPaths.h; path = include/Habanero/CommonPaths.h; sourceTree = "<group>"; };
 		CFD62B891C99C2A60021EE7F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/Habanero/debug.h; sourceTree = "<group>"; };
 		CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatch_cpp.h; path = include/Habanero/dispatch_cpp.h; sourceTree = "<group>"; };
-		CFD62B8B1C99C2A60021EE7F /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontExtras.h; path = include/Habanero/FontExtras.h; sourceTree = "<group>"; };
 		CFD62B8C1C99C2A60021EE7F /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Habanero/Hash.h; sourceTree = "<group>"; };
 		CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdleSleepPreventer.h; path = include/Habanero/IdleSleepPreventer.h; sourceTree = "<group>"; };
 		CFD62B8E1C99C2A60021EE7F /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVO.h; path = include/Habanero/KVO.h; sourceTree = "<group>"; };
@@ -60,7 +57,6 @@
 		CFD62BA31C99C2AE0021EE7F /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = source/debug.cpp; sourceTree = "<group>"; };
 		CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dispatch_cpp.cpp; path = source/dispatch_cpp.cpp; sourceTree = "<group>"; };
 		CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = dispatch_cpp.mm; path = source/dispatch_cpp.mm; sourceTree = "<group>"; };
-		CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontExtras.cpp; path = source/FontExtras.cpp; sourceTree = "<group>"; };
 		CFD62BA71C99C2AE0021EE7F /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash.cpp; path = source/Hash.cpp; sourceTree = "<group>"; };
 		CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdleSleepPreventer.cpp; path = source/IdleSleepPreventer.cpp; sourceTree = "<group>"; };
 		CFD62BA91C99C2AE0021EE7F /* KVO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KVO.cpp; path = source/KVO.cpp; sourceTree = "<group>"; };
@@ -111,7 +107,6 @@
 				CFD62B891C99C2A60021EE7F /* debug.h */,
 				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
 				CFD62BC41C9A62320021EE7F /* DispatchQueue.h */,
-				CFD62B8B1C99C2A60021EE7F /* FontExtras.h */,
 				CFD62B8C1C99C2A60021EE7F /* Hash.h */,
 				CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */,
 				CFD62B8E1C99C2A60021EE7F /* KVO.h */,
@@ -134,7 +129,6 @@
 				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
 				CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */,
 				CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */,
-				CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
 				CFD62BA91C99C2AE0021EE7F /* KVO.cpp */,
@@ -164,7 +158,6 @@
 				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,
 				CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */,
 				CFD62BC51C9A62320021EE7F /* DispatchQueue.h in Headers */,
-				CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */,
 				CFD62B931C99C2A60021EE7F /* algo.h in Headers */,
 				CFD62B991C99C2A60021EE7F /* Hash.h in Headers */,
 			);
@@ -237,7 +230,6 @@
 				CFD62BB81C99C2AE0021EE7F /* tiny_string.cpp in Sources */,
 				CFD62BAF1C99C2AE0021EE7F /* CommonPaths.mm in Sources */,
 				CFD62BB41C99C2AE0021EE7F /* Hash.cpp in Sources */,
-				CFD62BB31C99C2AE0021EE7F /* FontExtras.cpp in Sources */,
 				CFD62BB51C99C2AE0021EE7F /* IdleSleepPreventer.cpp in Sources */,
 				CFD62BAE1C99C2AE0021EE7F /* CommonPaths.cpp in Sources */,
 				CFD62BB91C99C2AE0021EE7F /* variable_container.cpp in Sources */,

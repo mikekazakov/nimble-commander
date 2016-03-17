@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/FPSLimitedDrawer.h>
+#include <Utility/NSView+Sugar.h>
 #include "vfs/VFS.h"
-#include "FPSLimitedDrawer.h"
 #include "PanelView.h"
 #include "PanelData.h"
 #include "PanelViewPresentation.h"

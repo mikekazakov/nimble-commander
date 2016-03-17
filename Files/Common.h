@@ -70,12 +70,6 @@ typedef enum
 } ETruncationType;
 NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes);
 
-@interface NSView (Sugar)
-- (void) setNeedsDisplay;
-@end
-
-
-
 @interface NSColor (MyAdditions)
 @property (readonly) CGColorRef copyCGColor;
 @end
@@ -83,10 +77,6 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 @interface NSFont (StringDescription)
 + (NSFont*) fontWithStringDescription:(NSString*)_description;
 - (NSString*) toStringDescription;
-@end
-
-@interface NSTimer (SafeTolerance)
-- (void) setSafeTolerance;
 @end
 
 @interface NSString(PerformanceAdditions)

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/NSTimer+Tolerance.h>
 #include "../Common.h"
 #include "OperationsController.h"
 
@@ -106,7 +107,7 @@ static const milliseconds g_DialogAutoTriggeringTreshMS = 2000ms;
                                                        selector:@selector(Update)
                                                        userInfo:nil
                                                         repeats:YES];
-        [m_UpdateTimer setSafeTolerance];
+        [m_UpdateTimer setDefaultTolerance];
     }
 }
 

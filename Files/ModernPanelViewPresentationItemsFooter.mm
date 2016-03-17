@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Habanero/FontExtras.h>
+#include <Utility/FontExtras.h>
 #include "vfs/VFS.h"
 #include "ModernPanelViewPresentationItemsFooter.h"
 #include "ModernPanelViewPresentation.h"

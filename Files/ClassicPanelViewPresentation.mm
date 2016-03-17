@@ -6,13 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Utility/HexadecimalColor.h"
-#include "Utility/Encodings.h"
+#include <Utility/HexadecimalColor.h>
+#include <Utility/Encodings.h>
+#include <Utility/FontCache.h>
 #include "ClassicPanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
 #include "PanelView.h"
 #include "PanelData.h"
-#include "FontCache.h"
 #include "ByteCountFormatter.h"
 #include "Common.h"
 

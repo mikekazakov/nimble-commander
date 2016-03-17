@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <Cocoa/Cocoa.h>
+
 @interface FPSLimitedDrawer : NSObject
 
 - (id) initWithView:(NSView*)_view;

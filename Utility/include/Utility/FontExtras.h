@@ -16,12 +16,12 @@ public:
     FontGeometryInfo();
     FontGeometryInfo(CTFontRef _font);
     
-    inline double Size() const { return m_Size; }
-    inline double Ascent() const { return m_Ascent; }
-    inline double Descent() const { return m_Descent; }
-    inline double Leading() const { return m_Leading; }
-    inline double LineHeight() const { return m_LineHeight; }
-    inline double MonospaceWidth() const { return m_MonospaceWidth; }
+    inline double Size() const noexcept { return m_Size; }
+    inline double Ascent() const noexcept { return m_Ascent; }
+    inline double Descent() const noexcept { return m_Descent; }
+    inline double Leading() const noexcept { return m_Leading; }
+    inline double LineHeight() const noexcept { return m_LineHeight; }
+    inline double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
     
 private:
     double m_Size;

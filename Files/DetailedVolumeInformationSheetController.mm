@@ -6,7 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Utility/VolumeInformation.h"
+#include <Utility/VolumeInformation.h>
+#include <Utility/NSTimer+Tolerance.h>
 #include "DetailedVolumeInformationSheetController.h"
 #include "NativeFSManager.h"
 #include "Common.h"
@@ -68,7 +69,7 @@ static NSString* Bool2ToString(const bool b[2])
                                                        selector:@selector(UpdateByTimer:)
                                                        userInfo:nil
                                                         repeats:YES];
-    [m_UpdateTimer setSafeTolerance];
+    [m_UpdateTimer setDefaultTolerance];
 
     NSString *uuid = [NSString stringWithFormat:@"UUID:\n\t%@\n",
                       m_Capabilities.attr.vol.uuid[0]?

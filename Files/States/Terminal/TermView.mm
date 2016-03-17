@@ -7,8 +7,9 @@
 //
 
 #include <Utility/HexadecimalColor.h>
+#include <Utility/FontCache.h>
+#include <Utility/NSView+Sugar.h>
 #include "../../OrthodoxMonospace.h"
-#include "../../FontCache.h"
 #include "../../Common.h"
 #include "../../BlinkingCaret.h"
 #include "../../Config.h"

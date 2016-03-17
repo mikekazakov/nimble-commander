@@ -1,12 +1,13 @@
-#include "FontCache.h"
 #include <CoreText/CoreText.h>
 #include <stdlib.h>
 #include <memory.h>
 #include <assert.h>
 #include <wchar.h>
 #include <math.h>
+#include <vector>
+#include <Utility/FontCache.h>
 
-static vector<weak_ptr<FontCache>> g_Caches;
+static std::vector<std::weak_ptr<FontCache>> g_Caches;
 
 static bool IsLastResortFont(CTFontRef _font)
 {
@@ -132,7 +133,7 @@ cleanup:
 }
 
 
-shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
+std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
     CFStringRef full_name = CTFontCopyFullName(_basic_font);
     double font_size = CTFontGetSize(_basic_font);
@@ -148,7 +149,7 @@ shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
     }
     
     CFRelease(full_name);
-    auto font = make_shared<FontCache>(_basic_font);
+    auto font = std::make_shared<FontCache>(_basic_font);
     g_Caches.emplace_back(font);
     return font;
 }

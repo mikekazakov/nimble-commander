@@ -23,6 +23,16 @@
 		CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */; };
 		CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */; };
 		CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */; };
+		CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD51C9A6B4B0021EE7F /* FontCache.h */; };
+		CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD71C9A6B630021EE7F /* FontCache.cpp */; };
+		CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD91C9A6BE30021EE7F /* FontExtras.h */; };
+		CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */; };
+		CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */; };
+		CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */; };
+		CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */; };
+		CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */; };
+		CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */; };
+		CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +53,16 @@
 		CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ObjcToCppObservingBridge.mm; path = source/ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
 		CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+MassObserving.m"; path = "source/NSObject+MassObserving.m"; sourceTree = "<group>"; };
+		CFD62BD51C9A6B4B0021EE7F /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontCache.h; path = include/Utility/FontCache.h; sourceTree = "<group>"; };
+		CFD62BD71C9A6B630021EE7F /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontCache.cpp; path = source/FontCache.cpp; sourceTree = "<group>"; };
+		CFD62BD91C9A6BE30021EE7F /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontExtras.h; path = include/Utility/FontExtras.h; sourceTree = "<group>"; };
+		CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontExtras.cpp; path = source/FontExtras.cpp; sourceTree = "<group>"; };
+		CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FPSLimitedDrawer.h; path = include/Utility/FPSLimitedDrawer.h; sourceTree = "<group>"; };
+		CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FPSLimitedDrawer.mm; path = source/FPSLimitedDrawer.mm; sourceTree = "<group>"; };
+		CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSView+Sugar.h"; path = "include/Utility/NSView+Sugar.h"; sourceTree = "<group>"; };
+		CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSView+Sugar.mm"; path = "source/NSView+Sugar.mm"; sourceTree = "<group>"; };
+		CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSTimer+Tolerance.h"; path = "include/Utility/NSTimer+Tolerance.h"; sourceTree = "<group>"; };
+		CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSTimer+Tolerance.m"; path = "source/NSTimer+Tolerance.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,11 +96,16 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */,
-				CFD62BCD1C9A66C50021EE7F /* ObjcToCppObservingBridge.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
+				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
+				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
+				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
 				CF960E181C992F2C001D8B02 /* HexadecimalColor.h */,
+				CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */,
+				CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */,
+				CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */,
 				CF960E191C992F2C001D8B02 /* ObjCpp.h */,
+				CFD62BCD1C9A66C50021EE7F /* ObjcToCppObservingBridge.h */,
 				CF960E1A1C992F2C001D8B02 /* PathManip.h */,
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
@@ -91,11 +116,16 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
-				CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
+				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
+				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
+				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
+				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
+				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */,
+				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
+				CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.c */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
@@ -112,11 +142,16 @@
 			files = (
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
 				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
+				CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */,
 				CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */,
 				CF960E211C992F2C001D8B02 /* SystemInformation.h in Headers */,
 				CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */,
+				CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */,
+				CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
+				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
+				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
 				CFD62BCE1C9A66C50021EE7F /* ObjcToCppObservingBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,14 +212,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */,
 				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
+				CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */,
 				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
 				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
 				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
+				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,
+				CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */,
 				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,
+				CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,7 +235,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -228,10 +268,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -241,7 +286,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -268,9 +313,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -280,9 +330,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
@@ -290,9 +338,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EXECUTABLE_PREFIX = lib;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/include";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};

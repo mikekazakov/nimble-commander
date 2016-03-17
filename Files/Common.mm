@@ -122,13 +122,6 @@ void SyncMessageBoxNS(NSString *_ns_string)
 
 @end
 
-@implementation NSTimer (SafeTolerance)
-- (void) setSafeTolerance
-{
-    self.tolerance = self.timeInterval/10.;
-}
-@end
-
 @implementation NSString(PerformanceAdditions)
 
 - (const char *)fileSystemRepresentationSafe
@@ -183,17 +176,6 @@ void SyncMessageBoxNS(NSString *_ns_string)
                                                                             kCFAllocatorNull));
 }
 
-@end
-
-
-@implementation NSView (Sugar)
-- (void) setNeedsDisplay
-{
-    if(dispatch_is_main_queue())
-        self.needsDisplay = true;
-    else
-        dispatch_to_main_queue( [=]{ self.needsDisplay = true; } );
-}
 @end
 
 @implementation NSPasteboard(SyntaxSugar)

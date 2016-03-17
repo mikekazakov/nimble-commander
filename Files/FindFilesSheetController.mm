@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/dispatch_cpp.h>
+#include <Utility/NSTimer+Tolerance.h>
 #include "States/Viewer/BigFileViewSheet.h"
 #include "Utility/Encodings.h"
 #include "SheetWithHotkeys.h"
@@ -444,14 +445,14 @@ private:
                                                            selector:@selector(UpdateByTimer:)
                                                            userInfo:nil
                                                             repeats:YES];
-        [m_BatchDrainTimer setSafeTolerance];
+        [m_BatchDrainTimer setDefaultTolerance];
 
         m_LookingInPathUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
                                                              target:self
                                                            selector:@selector(updateLookingInByTimer:)
                                                            userInfo:nil
                                                             repeats:YES];
-        [m_LookingInPathUpdateTimer setSafeTolerance];
+        [m_LookingInPathUpdateTimer setDefaultTolerance];
     }
     else {
         self.SearchButton.state = NSOffState;

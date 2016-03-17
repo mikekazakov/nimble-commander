@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Habanero/FontExtras.h>
+#include <Utility/FontExtras.h>
 #include <Utility/ObjcToCppObservingBridge.h>
 #include "PanelViewPresentation.h"
 #include "PanelViewPresentationItemsColoringFilter.h"

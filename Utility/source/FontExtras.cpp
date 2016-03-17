@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdexcept>
-#include <Habanero/FontExtras.h>
+#include <Utility/FontExtras.h>
 
 /**
  * Grabs geometry information from given font and returns it's line height.

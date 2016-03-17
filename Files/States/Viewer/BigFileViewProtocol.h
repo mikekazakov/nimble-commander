@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "BigFileViewDataBackend.h"
+#pragma once
+
+#include "BigFileViewDataBackend.h"
 
 @class BigFileView;
 

@@ -7,6 +7,7 @@
 //
 
 #include <Utility/HexadecimalColor.h>
+#include <Utility/NSView+Sugar.h>
 #include "../../DataBlockAnalysis.h"
 #include "../../Common.h"
 #include "../../AppDelegate.h"

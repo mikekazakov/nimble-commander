@@ -2,7 +2,10 @@
 
 #include <CoreText/CTFont.h>
 #include <CoreGraphics/CGFont.h>
-#include <Habanero/FontExtras.h>
+#include <array>
+#include <map>
+#include <memory>
+#include "FontExtras.h"
 
 class FontCache
 {
@@ -29,19 +32,19 @@ public:
     
     Pair    Get(uint32_t _c);
     
-    static shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);
+    static std::shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);
     
 private:
     Pair DoGetBMP(uint16_t _c);
     Pair DoGetNonBMP(uint32_t _c);
     unsigned char InsertFont(CTFontRef _font);
     
-    array<CTFontRef, 256> m_CTFonts;    // will anybody need more than 256 fallback fonts?
-                                        // fallbacks start from [1]. [0] is basefont
+    std::array<CTFontRef, 256> m_CTFonts;    // will anybody need more than 256 fallback fonts?
+                                             // fallbacks start from [1]. [0] is basefont
 
-    array<Pair, 65536> m_CacheBMP;
+    std::array<Pair, 65536> m_CacheBMP;
     // TODO: consider mutex locking here
-    map<uint32_t, Pair> m_CacheNonBMP;
+    std::map<uint32_t, Pair> m_CacheNonBMP;
     
     CFStringRef m_FontName;
     FontGeometryInfo m_FontInfo;

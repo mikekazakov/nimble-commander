@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Habanero/FontExtras.h>
+#include <Utility/FontExtras.h>
 #include "ModernPanelViewPresentationVolumeFooter.h"
-#import "ByteCountFormatter.h"
+#include "ByteCountFormatter.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 

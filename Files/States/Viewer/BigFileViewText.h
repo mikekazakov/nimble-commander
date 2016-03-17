@@ -6,9 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <Habanero/FontExtras.h>
-#import "BigFileViewProtocol.h"
+#include <Utility/FontExtras.h>
+#include "BigFileViewProtocol.h"
 
 class BigFileViewText : public BigFileViewImpl
 {

@@ -7,12 +7,12 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <Utility/FontCache.h>
 #include "States/Terminal/TermShellTask.h"
 #include "States/Terminal/TermScreen.h"
 #include "States/Terminal/TermParser.h"
 #include "States/Terminal/TermView.h"
 #include "States/Terminal/TermScrollView.h"
-#include "FontCache.h"
 #include "Common.h"
 #include "FilePanelOverlappedTerminal.h"
 

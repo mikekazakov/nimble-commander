@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../FontCache.h"
+#include <Utility/FontCache.h>
 #include "../../OrthodoxMonospace.h"
 #include "TermScreen.h"
 

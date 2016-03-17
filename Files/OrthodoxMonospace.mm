@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/FontCache.h>
 #include "OrthodoxMonospace.h"
-#include "FontCache.h"
 
 namespace oms
 {

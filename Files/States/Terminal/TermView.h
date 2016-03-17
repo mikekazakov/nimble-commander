@@ -7,7 +7,8 @@
 //
 
 #pragma once
-#include "../../FPSLimitedDrawer.h"
+
+#include <Utility/FPSLimitedDrawer.h>
 
 class TermScreen;
 class TermParser;

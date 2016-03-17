@@ -8,7 +8,8 @@
 
 #pragma once
 
-#import "FPSLimitedDrawer.h"
+
+#include <Utility/FPSLimitedDrawer.h>
 
 class BlinkingCaret
 {

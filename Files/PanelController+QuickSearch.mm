@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelController+QuickSearch.h"
-#import "Common.h"
+#include "PanelController+QuickSearch.h"
+#include "Common.h"
 
 static const nanoseconds g_FastSeachDelayTresh = 4s;
 
@@ -137,10 +137,8 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
-    if(m_Data.ClearTextFiltering()) {
+    if(m_Data.ClearTextFiltering())
         pers.Restore();
-        [m_View setNeedsDisplay];
-    }
     
     m_View.quickSearchPrompt = nil;
 }
@@ -197,7 +195,6 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     {
         int total = (int)m_Data.EntriesBySoftFiltering().size();
         m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
-        [m_View setNeedsDisplay];
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
@@ -275,7 +272,6 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
         m_View.curpos = 1;
     
     [self QuickSearchHardUpdateTypingUI];
-    [m_View setNeedsDisplay];
     
     return true;
 }

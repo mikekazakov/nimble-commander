@@ -6,7 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Utility/SystemInformation.h"
+
+#include <Utility/SystemInformation.h>
+#include <Utility/NSTimer+Tolerance.h>
+#include <Utility/NSView+Sugar.h>
 #include "Common.h"
 #include "ByteCountFormatter.h"
 #include "BriefSystemOverview.h"
@@ -73,7 +76,7 @@ static NSTextField *CreateStockTF()
                                                        selector:@selector(UpdateByTimer:)
                                                        userInfo:nil
                                                         repeats:YES];
-        [m_UpdateTimer setSafeTolerance];
+        [m_UpdateTimer setDefaultTolerance];
     }
     return self;
 }

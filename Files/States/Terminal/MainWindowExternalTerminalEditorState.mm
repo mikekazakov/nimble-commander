@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../FontCache.h"
+#include <Utility/FontCache.h>
 #include "../../Common.h"
 #include "../../MainWindowController.h"
 #include "TermSingleTask.h"

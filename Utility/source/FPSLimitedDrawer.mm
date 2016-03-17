@@ -6,8 +6,15 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "FPSLimitedDrawer.h"
-#import "Common.h"
+#include <atomic>
+#include <Habanero/mach_time.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/FPSLimitedDrawer.h>
+#include <Utility/NSView+Sugar.h>
+#include <Utility/NSTimer+Tolerance.h>
+
+using namespace std;
+using namespace std::chrono;
 
 static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 
@@ -103,7 +110,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
                                                  selector:@selector(UpdateByTimer:)
                                                  userInfo:nil
                                                   repeats:YES];
-    [m_DrawTimer setSafeTolerance];
+    [m_DrawTimer setDefaultTolerance];
     m_LastDrawedTime = machtime();
 }
 

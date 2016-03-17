@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../FontCache.h"
+#include <Utility/FontCache.h>
 #include "../../Common.h"
 #include "../../Config.h"
 #include "TermParser.h"

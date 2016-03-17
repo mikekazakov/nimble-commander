@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/algo.h>
+#include <Utility/NSView+Sugar.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
 #include "Common.h"
@@ -68,6 +69,7 @@ void panel::GenericCursorPersistance::Restore() const
             m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
         }
     }
+    [m_View setNeedsDisplay];
 }
 
 static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
@@ -239,8 +241,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     m_Data.SetSortMode(_mode);
 
     pers.Restore();
-    
-    [m_View setNeedsDisplay];
 }
 
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
@@ -250,8 +250,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     m_Data.SetHardFiltering(_filter);
     
     pers.Restore();
-    
-    [m_View setNeedsDisplay];
 }
 
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev

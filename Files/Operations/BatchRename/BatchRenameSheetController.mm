@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/SheetWithHotkeys.h>
 #include "../../3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../SheetWithHotkeys.h"
 #include "../../SimpleComboBoxPersistentDataSource.h"
 #include "BatchRenameSheetController.h"
 #include "BatchRename.h"

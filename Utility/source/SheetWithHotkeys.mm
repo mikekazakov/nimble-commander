@@ -7,9 +7,7 @@
 //
 
 #include <Carbon/Carbon.h>
-#import "SheetWithHotkeys.h"
-
-
+#include <Utility/SheetWithHotkeys.h>
 
 @implementation SheetWithHotkeys
 

@@ -10,6 +10,10 @@
 
 #include <CoreText/CoreText.h>
 
+#ifdef __OBJC__
+    #include <Cocoa/Cocoa.h>
+#endif
+
 class FontGeometryInfo
 {
 public:
@@ -31,3 +35,14 @@ private:
     double m_LineHeight;
     double m_MonospaceWidth;
 };
+
+#ifdef __OBJC__
+
+@interface NSFont (StringDescription)
+
++ (NSFont*) fontWithStringDescription:(NSString*)_description;
+- (NSString*) toStringDescription;
+
+@end
+
+#endif

@@ -142,7 +142,8 @@ const static double g_BorderWidth = 1.0;
         m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernSelectionColor).value_or(""));
         // todo: switch to NSColor!
         if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-        m_ForegroundColor = [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].copyCGColor;
+        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].CGColor);
+        
         
         if(m_Font) CFRelease(m_Font);
         m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
@@ -155,7 +156,7 @@ const static double g_BorderWidth = 1.0;
         m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
         // todo: switch to NSColor!
         if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-        m_ForegroundColor = [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].copyCGColor;
+        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
         
         if(m_Font) CFRelease(m_Font);
         m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);

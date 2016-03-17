@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/FontExtras.h>
 #include "States/Viewer/BigFileViewHistory.h"
 #include "Utility/Encodings.h"
 #include "PreferencesWindowViewerTab.h"
 #include "Config.h"
-#include "Common.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigModernFont      = "viewer.modern.font";

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include "../../Common.h"
 #include "BigFileViewText.h"

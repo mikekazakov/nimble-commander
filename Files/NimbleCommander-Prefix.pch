@@ -72,6 +72,8 @@
     #include "3rd_party/built/include/boost/logic/tribool.hpp"
     using boost::logic::tribool;
     using boost::logic::indeterminate;
+
+    #include <Utility/StringExtras.h>
 #endif
 
 #include "Configuration.h"

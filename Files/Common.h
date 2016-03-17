@@ -36,27 +36,8 @@ struct DialogResult
     };
 };
 
-CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept;
-CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const string &_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const string &_s) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept;
-
 // intended for debug and development purposes only
 void SyncMessageBoxUTF8(const char *_utf8_string);
-
-struct MachTimeBenchmark
-{
-    MachTimeBenchmark() noexcept;
-    nanoseconds Delta() const;
-    void ResetNano (const char *_msg = "");
-    void ResetMicro(const char *_msg = "");
-    void ResetMilli(const char *_msg = "");
-private:
-    nanoseconds last;
-};
 
 #ifdef __OBJC__
 
@@ -70,32 +51,8 @@ typedef enum
 } ETruncationType;
 NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes);
 
-@interface NSColor (MyAdditions)
-@property (readonly) CGColorRef copyCGColor;
-@end
-
-@interface NSFont (StringDescription)
-+ (NSFont*) fontWithStringDescription:(NSString*)_description;
-- (NSString*) toStringDescription;
-@end
-
-@interface NSString(PerformanceAdditions)
-- (const char *)fileSystemRepresentationSafe;
-- (NSString*)stringByTrimmingLeadingWhitespace;
-+ (instancetype)stringWithUTF8StdString:(const string&)stdstring;
-+ (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;
-+ (instancetype)stringWithUTF8StdStringNoCopy:(const string&)stdstring;
-+ (instancetype)stringWithCharactersNoCopy:(const unichar *)characters length:(NSUInteger)length;
-@end
-
 @interface NSPasteboard(SyntaxSugar)
 + (void) writeSingleString:(const char *)_s;
-@end
-
-@interface NSMenu(Hierarchical)
-- (NSMenuItem *)itemWithTagHierarchical:(NSInteger)tag;
-- (NSMenuItem *)itemContainingItemWithTagHierarchical:(NSInteger)tag;
-- (void)performActionForItemWithTagHierarchical:(NSInteger)tag;
 @end
 
 NSError* ErrnoToNSError(int _error);
@@ -112,15 +69,6 @@ inline string EnsureTrailingSlash(string _s)
     if( _s.empty() || _s.back() != '/' )
         _s.push_back('/');
     return _s;
-}
-
-/**
- * return max(lower, min(n, upper));
- */
-template <typename T__>
-inline T__ clip(const T__& n, const T__& lower, const T__& upper)
-{
-    return max(lower, min(n, upper));
 }
 
 #define __LOCK_GUARD_TOKENPASTE(x, y) x ## y

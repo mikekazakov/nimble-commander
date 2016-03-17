@@ -13,6 +13,15 @@
 #include <string>
 #include <stdio.h>
 
+/**
+ * return max(lower, min(n, upper));
+ */
+template <typename T__>
+inline T__ clip(const T__& n, const T__& lower, const T__& upper)
+{
+    return max(lower, min(n, upper));
+}
+
 template <typename T>
 auto linear_generator( T _base, T _step )
 {

@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowTerminalTab.h"
+#include <Utility/FontExtras.h>
+#include "PreferencesWindowTerminalTab.h"
 #include "Config.h"
-#include "Common.h"
 
 static const auto g_ConfigFont = "terminal.font";
 

@@ -33,6 +33,11 @@
 		CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */; };
 		CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */; };
 		CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */; };
+		CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BFC1C9A84500021EE7F /* StringExtras.h */; };
+		CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFE1C9A84570021EE7F /* StringExtras.mm */; };
+		CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C001C9A87170021EE7F /* FontExtras.mm */; };
+		CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */; };
+		CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +68,11 @@
 		CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSView+Sugar.mm"; path = "source/NSView+Sugar.mm"; sourceTree = "<group>"; };
 		CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSTimer+Tolerance.h"; path = "include/Utility/NSTimer+Tolerance.h"; sourceTree = "<group>"; };
 		CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSTimer+Tolerance.m"; path = "source/NSTimer+Tolerance.m"; sourceTree = "<group>"; };
+		CFD62BFC1C9A84500021EE7F /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringExtras.h; path = include/Utility/StringExtras.h; sourceTree = "<group>"; };
+		CFD62BFE1C9A84570021EE7F /* StringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StringExtras.mm; path = source/StringExtras.mm; sourceTree = "<group>"; };
+		CFD62C001C9A87170021EE7F /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontExtras.mm; path = source/FontExtras.mm; sourceTree = "<group>"; };
+		CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMenu+Hierarchical.h"; path = "include/Utility/NSMenu+Hierarchical.h"; sourceTree = "<group>"; };
+		CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSMenu+Hierarchical.mm"; path = "source/NSMenu+Hierarchical.mm"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +106,8 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
+				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
@@ -116,10 +128,12 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
+				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
 				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
@@ -127,6 +141,7 @@
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.c */,
+				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
@@ -151,7 +166,9 @@
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
+				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
 				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
+				CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */,
 				CFD62BCE1C9A66C50021EE7F /* ObjcToCppObservingBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,7 +229,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */,
 				CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */,
+				CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */,
 				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
 				CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */,
 				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
@@ -222,6 +241,7 @@
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,
+				CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */,
 				CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */,
 				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,
 				CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */,

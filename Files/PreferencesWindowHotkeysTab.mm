@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowHotkeysTab.h"
-#import "ActionsShortcutsManager.h"
-#import "Common.h"
+#include <Utility/NSMenu+Hierarchical.h>
+#include "PreferencesWindowHotkeysTab.h"
+#include "ActionsShortcutsManager.h"
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 {

@@ -8,6 +8,7 @@
 
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
+#include <Utility/NSMenu+Hierarchical.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
 #include "Common.h"

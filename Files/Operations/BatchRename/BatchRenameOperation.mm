@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Common.h"
 #include "BatchRenameOperation.h"
 #include "BatchRenameOperationJob.h"
 

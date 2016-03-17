@@ -12,3 +12,14 @@
 
 /** returns relative Mach time in nanoseconds using mach_absolute_time. */
 std::chrono::nanoseconds machtime() noexcept;
+
+struct MachTimeBenchmark
+{
+    MachTimeBenchmark() noexcept;
+    std::chrono::nanoseconds Delta() const;
+    void ResetNano (const char *_msg = "");
+    void ResetMicro(const char *_msg = "");
+    void ResetMilli(const char *_msg = "");
+private:
+    std::chrono::nanoseconds last;
+};

@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <Utility/NSMenu+Hierarchical.h>
 #include "Operations/Link/FileLinkNewSymlinkSheetController.h"
 #include "Operations/Link/FileLinkAlterSymlinkSheetController.h"
 #include "Operations/Link/FileLinkNewHardlinkSheetController.h"

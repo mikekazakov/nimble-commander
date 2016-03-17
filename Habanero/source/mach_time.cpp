@@ -36,3 +36,34 @@ std::chrono::nanoseconds machtime() noexcept
 {
     return std::chrono::nanoseconds( GetTimeInNanoseconds() );
 }
+
+MachTimeBenchmark::MachTimeBenchmark() noexcept:
+    last(machtime())
+{
+};
+
+std::chrono::nanoseconds MachTimeBenchmark::Delta() const
+{
+    return machtime() - last;
+}
+
+void MachTimeBenchmark::ResetNano(const char *_msg)
+{
+    auto now = machtime();
+    printf("%s%llu\n", _msg, (now - last).count());
+    last = now;
+}
+
+void MachTimeBenchmark::ResetMicro(const char *_msg)
+{
+    auto now = machtime();
+    printf("%s%llu\n", _msg, std::chrono::duration_cast<std::chrono::microseconds>(now - last).count());
+    last = now;
+}
+
+void MachTimeBenchmark::ResetMilli(const char *_msg)
+{
+    auto now = machtime();
+    printf("%s%llu\n", _msg, std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() );
+    last = now;
+}

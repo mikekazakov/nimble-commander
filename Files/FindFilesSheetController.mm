@@ -158,6 +158,34 @@ private:
 @end
 
 
+@interface FindFilesSheetController()
+
+@property (strong) IBOutlet NSButton            *CloseButton;
+@property (strong) IBOutlet NSButton            *SearchButton;
+@property (strong) IBOutlet NSButton            *PanelButton;
+@property (strong) IBOutlet NSComboBox          *MaskComboBox;
+@property (strong) IBOutlet NSComboBox          *TextComboBox;
+@property (strong) IBOutlet NSButton            *ViewButton;
+@property (strong) IBOutlet NSTextField         *LookingIn;
+@property (strong) IBOutlet NSTableView         *TableView;
+@property (strong) IBOutlet NSButton            *CaseSensitiveButton;
+@property (strong) IBOutlet NSButton            *WholePhraseButton;
+@property (strong) IBOutlet NSArrayController   *ArrayController;
+@property (strong) IBOutlet NSPopUpButton       *SizeRelationPopUp;
+@property (strong) IBOutlet NSTextField         *SizeTextField;
+@property (strong) IBOutlet NSPopUpButton       *SizeMetricPopUp;
+@property (strong) IBOutlet NSButton            *SearchForDirsButton;
+@property (strong) IBOutlet NSButton            *SearchInSubDirsButton;
+@property (strong) IBOutlet NSPopUpButton       *EncodingsPopUp;
+@property NSMutableArray            *FoundItems;
+@property FindFilesSheetFoundItem   *focusedItem; // may be nullptr
+
+- (IBAction)OnClose:(id)sender;
+- (IBAction)OnSearch:(id)sender;
+- (IBAction)OnFileView:(id)sender;
+
+@end
+
 @implementation FindFilesSheetController
 {
     shared_ptr<VFSHost>         m_Host;
@@ -187,7 +215,7 @@ private:
 @synthesize FoundItems = m_FoundItems;
 @synthesize host = m_Host;
 @synthesize path = m_Path;
-@synthesize OnPanelize = m_OnPanelize;
+@synthesize onPanelize = m_OnPanelize;
 
 - (id) init
 {
@@ -485,7 +513,7 @@ private:
     });
 }
 
-- (FindFilesSheetControllerFoundItem*) SelectedItem
+- (FindFilesSheetControllerFoundItem*) selectedItem
 {
     if(m_DoubleClickedItem == nil)
         return nullptr;

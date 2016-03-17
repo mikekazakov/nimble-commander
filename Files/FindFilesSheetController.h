@@ -11,8 +11,6 @@
 #include <Utility/SheetController.h>
 #include "vfs/VFS.h"
 
-@class FindFilesSheetFoundItem;
-
 struct FindFilesSheetControllerFoundItem
 {
     string filename;
@@ -25,36 +23,9 @@ struct FindFilesSheetControllerFoundItem
 
 @interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate, NSComboBoxDataSource>
 
-- (IBAction)OnClose:(id)sender;
-- (IBAction)OnSearch:(id)sender;
-- (IBAction)OnFileView:(id)sender;
-
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
-
-@property (strong) IBOutlet NSButton *CloseButton;
-@property (strong) IBOutlet NSButton *SearchButton;
-@property (strong) IBOutlet NSButton *PanelButton;
-@property (strong) IBOutlet NSComboBox *MaskComboBox;
-@property (strong) IBOutlet NSComboBox *TextComboBox;
-@property (strong) IBOutlet NSButton *ViewButton;
-@property (strong) IBOutlet NSTextField *LookingIn;
-
-@property (strong) IBOutlet NSTableView *TableView;
-@property (strong) IBOutlet NSButton *CaseSensitiveButton;
-@property (strong) IBOutlet NSButton *WholePhraseButton;
-
-@property NSMutableArray *FoundItems;
-@property (strong) IBOutlet NSArrayController *ArrayController;
-@property (strong) IBOutlet NSPopUpButton *SizeRelationPopUp;
-@property (strong) IBOutlet NSTextField *SizeTextField;
-@property (strong) IBOutlet NSPopUpButton *SizeMetricPopUp;
-@property (strong) IBOutlet NSButton *SearchForDirsButton;
-@property (strong) IBOutlet NSButton *SearchInSubDirsButton;
-@property (strong) IBOutlet NSPopUpButton *EncodingsPopUp;
-@property FindFilesSheetFoundItem* focusedItem; // may be nullptr
-@property function<void(const map<string, vector<string>>&_dir_to_filenames)> OnPanelize;
-
-- (FindFilesSheetControllerFoundItem*) SelectedItem; // may be nullptr
+@property function<void(const map<string, vector<string>>&_dir_to_filenames)> onPanelize;
+- (FindFilesSheetControllerFoundItem*) selectedItem; // may be nullptr
 
 @end

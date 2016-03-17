@@ -535,7 +535,7 @@ static void WriteSingleStringToClipboard(const string &_s)
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
-    sheet.OnPanelize = [=](const map<string, vector<string>> &_dir_to_filenames) {
+    sheet.onPanelize = [=](const map<string, vector<string>> &_dir_to_filenames) {
         auto host = sheet.host;
         m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
             auto l = FetchSearchResultsAsListing(_dir_to_filenames,
@@ -551,7 +551,7 @@ static void WriteSingleStringToClipboard(const string &_s)
     };
     
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(auto item = sheet.SelectedItem)
+        if(auto item = sheet.selectedItem)
             [self GoToDir:item->dir_path vfs:self.vfs select_entry:item->filename async:true];
     }];
 }

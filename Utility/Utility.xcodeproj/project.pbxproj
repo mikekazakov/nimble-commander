@@ -44,6 +44,8 @@
 		CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */; };
 		CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */; };
 		CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */; };
+		CFD62C1A1C9AFF210021EE7F /* SheetController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C191C9AFF210021EE7F /* SheetController.h */; };
+		CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +87,8 @@
 		CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSEventsDirUpdate.h; path = include/Utility/FSEventsDirUpdate.h; sourceTree = "<group>"; };
 		CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeFSManager.h; path = include/Utility/NativeFSManager.h; sourceTree = "<group>"; };
 		CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeFSManager.mm; path = source/NativeFSManager.mm; sourceTree = "<group>"; };
+		CFD62C191C9AFF210021EE7F /* SheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SheetController.h; path = include/Utility/SheetController.h; sourceTree = "<group>"; };
+		CFD62C1B1C9AFF280021EE7F /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetController.mm; path = source/SheetController.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +122,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C191C9AFF210021EE7F /* SheetController.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
@@ -143,6 +148,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
@@ -189,6 +195,7 @@
 				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
 				CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */,
 				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
+				CFD62C1A1C9AFF210021EE7F /* SheetController.h in Headers */,
 				CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */,
 				CFD62BCE1C9A66C50021EE7F /* ObjcToCppObservingBridge.h in Headers */,
 			);
@@ -265,6 +272,7 @@
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,
+				CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */,
 				CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */,
 				CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */,
 				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,

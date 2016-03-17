@@ -8,8 +8,8 @@
 
 #pragma once
 
+#include <Utility/SheetController.h>
 #include "../../vfs/VFS.h"
-#include "../../SheetController.h"
 
 @interface BatchRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSTextFieldDelegate,NSComboBoxDelegate>
 - (instancetype) initWithItems:(vector<VFSListingItem>)_items;

@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/SheetController.h>
 #include "FileDeletionOperation.h"
 #include "../../ButtonWithOptions.h"
-#include "../../SheetController.h"
 
 @interface FileDeletionSheetController : SheetController
 

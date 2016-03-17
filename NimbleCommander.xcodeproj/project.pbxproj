@@ -390,8 +390,6 @@
 		CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
-		CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
-		CF7249AF1990AC2800583BC5 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF73D1D61BE608BC0014C88F /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D11BE608BC0014C88F /* DisplayNamesCache.mm */; };
 		CF73D1D71BE608BC0014C88F /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D21BE608BC0014C88F /* VFSNativeFile.cpp */; };
@@ -767,7 +765,6 @@
 		CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249AD1990AC2800583BC5 /* SheetController.mm */; };
 		CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
 		CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
@@ -1142,8 +1139,6 @@
 		CF6FAA201B82E1DD006E0742 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_party/Sparkle.framework; sourceTree = "<group>"; };
 		CF7249A41990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowPanelsTabColoringFilterSheet.h; sourceTree = "<group>"; };
 		CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowPanelsTabColoringFilterSheet.mm; sourceTree = "<group>"; };
-		CF7249AC1990AC2800583BC5 /* SheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SheetController.h; sourceTree = "<group>"; };
-		CF7249AD1990AC2800583BC5 /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SheetController.mm; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		CF73A6221816B3C200F59016 /* libquarantine.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libquarantine.dylib; path = usr/lib/system/libquarantine.dylib; sourceTree = SDKROOT; };
 		CF73D1D01BE608BC0014C88F /* DisplayNamesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayNamesCache.h; path = vfs/Native/DisplayNamesCache.h; sourceTree = "<group>"; };
@@ -1765,8 +1760,6 @@
 				CFB709BD18E561F200A83E61 /* ProcessSheetController.h */,
 				CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */,
 				CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */,
-				CF7249AC1990AC2800583BC5 /* SheetController.h */,
-				CF7249AD1990AC2800583BC5 /* SheetController.mm */,
 				CF7B206A1A277A27008F1492 /* TrialWindowController.h */,
 				CF7B206B1A277A27008F1492 /* TrialWindowController.mm */,
 				CF7B206C1A277A27008F1492 /* TrialWindowController.xib */,
@@ -3338,7 +3331,6 @@
 				CF6D9C3F196678010077B146 /* PanelView.mm in Sources */,
 				CF6D9C40196678010077B146 /* PanelController.mm in Sources */,
 				CF50C4371C0ADECE009DF611 /* VFSPSHost.mm in Sources */,
-				CF7249AF1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CF6D9C41196678010077B146 /* PanelController+Navigation.mm in Sources */,
 				CF6D9C42196678010077B146 /* PanelController+DataAccess.mm in Sources */,
 				CF50C46C1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
@@ -3576,7 +3568,6 @@
 				CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
-				CF7249AE1990AC2800583BC5 /* SheetController.mm in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
 				CF7D138E1BF5E38B001F53FD /* OperationsController.mm in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
@@ -3766,7 +3757,6 @@
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF46DB981C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */,
 				CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
-				CFF6F31F1A13567C00011177 /* SheetController.mm in Sources */,
 				CF50C4571C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
 				CF50C4341C0ADEC9009DF611 /* VFSPSFile.cpp in Sources */,
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,

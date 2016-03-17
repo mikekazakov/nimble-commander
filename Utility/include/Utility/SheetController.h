@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <Cocoa/Cocoa.h>
+
 @interface SheetController : NSWindowController
 
 - (void) beginSheetForWindow:(NSWindow*)_wnd

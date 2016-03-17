@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "SheetController.h"
+#include <Utility/SheetController.h>
 #include "vfs/VFS.h"
 
 @interface CalculateChecksumSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate>

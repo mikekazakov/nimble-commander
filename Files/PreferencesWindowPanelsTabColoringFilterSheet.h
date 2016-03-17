@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#include "SheetController.h"
+#include <Utility/SheetController.h>
 #include "PanelViewPresentationItemsColoringFilter.h"
 
 @interface PreferencesWindowPanelsTabColoringFilterSheet : SheetController

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/SheetController.h>
 #include "../../vfs/VFS.h"
-#include "../../SheetController.h"
 #include "../../3rd_party/DisclosureViewController/DisclosureViewController.h"
 
 struct FileCopyOperationOptions;

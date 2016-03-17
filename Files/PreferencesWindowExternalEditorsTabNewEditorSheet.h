@@ -8,8 +8,8 @@
 
 #pragma once
 
-#import "SheetController.h"
-#import "ExternalEditorInfo.h"
+#include <Utility/SheetController.h>
+#include "ExternalEditorInfo.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 

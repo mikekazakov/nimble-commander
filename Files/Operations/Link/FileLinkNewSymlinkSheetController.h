@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../SheetController.h"
+#include <Utility/SheetController.h>
 
 @interface FileLinkNewSymlinkSheetController : SheetController
 

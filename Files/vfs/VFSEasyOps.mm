@@ -8,9 +8,9 @@
 
 #include <sys/stat.h>
 #include <sys/dirent.h>
+#include <Habanero/DispatchQueue.h>
 #include "VFSEasyOps.h"
 #include "VFSError.h"
-#include "../DispatchQueue.h"
 #include "../Common.h"
 
 static int CopyNodeAttrs(const char *_src_full_path,

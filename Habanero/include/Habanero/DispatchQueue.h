@@ -8,7 +8,13 @@
 
 #pragma once
 
-class SerialQueueT : public enable_shared_from_this<SerialQueueT>
+#include <memory>
+#include <functional>
+#include <mutex>
+
+#include "dispatch_cpp.h"
+
+class SerialQueueT : public std::enable_shared_from_this<SerialQueueT>
 {
 public:
     SerialQueueT(const char *_label = NULL);
@@ -17,27 +23,27 @@ public:
     /**
      * Just a form to call the long Run(..) version with dummy parameter
      */
-    void Run( function<void()> _block );
+    void Run( std::function<void()> _block );
     
     /**
      * Starts _block asynchronously in this queue.
      * Run will not start any task if IsStopped() is true.
      */
-    void Run( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
+    void Run( std::function<void(const std::shared_ptr<SerialQueueT> &_que)> _block );
     
     /**
      * Run block synchronous against queue.
      * Will not run block if currently IsStopped() is true.
      * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
      */
-    void RunSync( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
+    void RunSync( std::function<void(const std::shared_ptr<SerialQueueT> &_que)> _block );
 
     /**
      * Run block synchronous againt current queue, just for client's convenience.
      * Will not run block if currently IsStopped() is true.
      * Will not call OnDry/OnWet/OnChange and will not change queue's- length.
      */
-    void RunSyncHere( function<void(const shared_ptr<SerialQueueT> &_que)> _block );
+    void RunSyncHere( std::function<void(const std::shared_ptr<SerialQueueT> &_que)> _block );
     
     /**
      * Raised IsStopped() flag so currently running task can caught it.
@@ -69,22 +75,22 @@ public:
     /**
      * Sets handler to be called when queue becomes dry (no blocks are commited or running).
      */
-    void OnDry( function<void()> _on_dry );
+    void OnDry( std::function<void()> _on_dry );
     
     /**
      * Sets handler to be called when queue becomes wet (when block is commited to run in it).
      */
-    void OnWet( function<void()> _on_wet );
+    void OnWet( std::function<void()> _on_wet );
     
     /**
      * Sets handler to be called when queue length is changed.
      */
-    void OnChange( function<void()> _on_change );
+    void OnChange( std::function<void()> _on_change );
     
     /**
      * Actually make_shared<SerialQueueT>().
      */
-    inline static shared_ptr<SerialQueueT> Make(const char *_label = NULL) { return make_shared<SerialQueueT>(_label); };
+    inline static std::shared_ptr<SerialQueueT> Make(const char *_label = NULL) { return std::make_shared<SerialQueueT>(_label); };
     
 private:
     SerialQueueT(const SerialQueueT&) = delete;
@@ -93,14 +99,14 @@ private:
     void BecameWet();
     void Changed();
     dispatch_queue   m_Queue;
-    atomic_int       m_Length = {0};
-    atomic_bool      m_Stopped = {false};
+    std::atomic_int       m_Length = {0};
+    std::atomic_bool      m_Stopped = {false};
     
-    mutex            m_SignalsGuard;
-    function<void()> m_OnDry;
-    function<void()> m_OnWet;
-    function<void()> m_OnChange;
+    std::mutex            m_SignalsGuard;
+    std::function<void()> m_OnDry;
+    std::function<void()> m_OnWet;
+    std::function<void()> m_OnChange;
 };
 
-typedef shared_ptr<SerialQueueT> SerialQueue;
+typedef std::shared_ptr<SerialQueueT> SerialQueue;
 

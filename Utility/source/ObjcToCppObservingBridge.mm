@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "ObjcToCppObservingBridge.h"
-#import "Common.h"
+#include <Utility/ObjcToCppObservingBridge.h>
+#include <Utility/NSObject+MassObserving.h>
 
 @implementation ObjcToCppObservingBridge
 {

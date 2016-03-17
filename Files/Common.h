@@ -12,8 +12,8 @@
 
 //#include <Utility/
 
-#include "Utility/PathManip.h"
-#include "Utility/ObjCpp.h"
+#include <Utility/PathManip.h>
+#include <Utility/ObjCpp.h>
 
 // TODO: remove it.
 struct DialogResult
@@ -74,11 +74,7 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 - (void) setNeedsDisplay;
 @end
 
-@interface NSObject (MassObserving)
-- (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys;
-- (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys options:(NSKeyValueObservingOptions)options context:(void *)context;
-- (void)removeObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys;
-@end
+
 
 @interface NSColor (MyAdditions)
 @property (readonly) CGColorRef copyCGColor;

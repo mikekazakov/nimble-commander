@@ -6,7 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "DispatchQueue.h"
+#include <Habanero/DispatchQueue.h>
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // SerialQueueT implementation

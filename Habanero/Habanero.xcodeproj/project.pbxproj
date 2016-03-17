@@ -35,6 +35,8 @@
 		CFD62BB91C99C2AE0021EE7F /* variable_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */; };
 		CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BBB1C99C73E0021EE7F /* chained_strings.h */; };
 		CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
+		CFD62BC51C9A62320021EE7F /* DispatchQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BC41C9A62320021EE7F /* DispatchQueue.h */; };
+		CFD62BC71C9A623B0021EE7F /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +69,8 @@
 		CFD62BAC1C99C2AE0021EE7F /* variable_container.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = variable_container.cpp; path = source/variable_container.cpp; sourceTree = "<group>"; };
 		CFD62BBB1C99C73E0021EE7F /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chained_strings.h; path = include/Habanero/chained_strings.h; sourceTree = "<group>"; };
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
+		CFD62BC41C9A62320021EE7F /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchQueue.h; path = include/Habanero/DispatchQueue.h; sourceTree = "<group>"; };
+		CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchQueue.cpp; path = source/DispatchQueue.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,12 +104,13 @@
 		CFD62B841C99C2510021EE7F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
+				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
 				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
 				CFD62B891C99C2A60021EE7F /* debug.h */,
 				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
+				CFD62BC41C9A62320021EE7F /* DispatchQueue.h */,
 				CFD62B8B1C99C2A60021EE7F /* FontExtras.h */,
 				CFD62B8C1C99C2A60021EE7F /* Hash.h */,
 				CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */,
@@ -121,13 +126,14 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
+				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
 				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
 				CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */,
 				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
 				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
 				CFD62BA51C99C2AE0021EE7F /* dispatch_cpp.mm */,
+				CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */,
 				CFD62BA61C99C2AE0021EE7F /* FontExtras.cpp */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
@@ -157,6 +163,7 @@
 				CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */,
 				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,
 				CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */,
+				CFD62BC51C9A62320021EE7F /* DispatchQueue.h in Headers */,
 				CFD62B981C99C2A60021EE7F /* FontExtras.h in Headers */,
 				CFD62B931C99C2A60021EE7F /* algo.h in Headers */,
 				CFD62B991C99C2A60021EE7F /* Hash.h in Headers */,
@@ -219,6 +226,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD62BC71C9A623B0021EE7F /* DispatchQueue.cpp in Sources */,
 				CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */,
 				CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */,
 				CFD62BAD1C99C2AE0021EE7F /* CFString.cpp in Sources */,

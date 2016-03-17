@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Utility//Encodings.h>
+#include <Habanero/DispatchQueue.h>
+#include <Utility/Encodings.h>
 #import "../../3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../DispatchQueue.h"
 #include "../../Config.h"
 #include "BigFileViewHistory.h"
 

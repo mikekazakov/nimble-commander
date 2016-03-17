@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include <Habanero/DispatchQueue.h>
+#include <Utility/Encodings.h>
 #include "vfs/VFS.h"
-#include "Utility/Encodings.h"
-#include "DispatchQueue.h"
 #include "FileMask.h"
 
 class FileSearch

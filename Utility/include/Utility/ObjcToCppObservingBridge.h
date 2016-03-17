@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <Cocoa/Cocoa.h>
+
 typedef void (*ObjcToCppObservingBridge_Handler)(void *_cpp_object,
                                                 NSString *_key_path,
                                                 id _objc_object,

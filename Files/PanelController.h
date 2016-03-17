@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include <Habanero/DispatchQueue.h>
 #include "PanelData.h"
 #include "PanelView.h"
 #include "PanelHistory.h"
-#include "DispatchQueue.h"
 #include "Config.h"
 #include "Common.h"
 

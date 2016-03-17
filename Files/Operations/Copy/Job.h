@@ -9,9 +9,9 @@
 #pragma once
 
 #include <Habanero/algo.h>
+#include <Habanero/DispatchQueue.h>
 #include "../../vfs/VFS.h"
 #include "../../NativeFSManager.h"
-#include "../../DispatchQueue.h"
 #include "../OperationJob.h"
 #include "../OperationDialogProtocol.h"
 #include "Options.h"

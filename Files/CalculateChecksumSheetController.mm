@@ -7,8 +7,8 @@
 //
 
 #include <Habanero/Hash.h>
+#include <Habanero/DispatchQueue.h>
 #include "CalculateChecksumSheetController.h"
-#include "DispatchQueue.h"
 #include "Config.h"
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";

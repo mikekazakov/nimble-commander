@@ -113,26 +113,6 @@ void SyncMessageBoxNS(NSString *_ns_string)
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );
 }
 
-@implementation NSObject (MassObserving)
-- (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys
-{
-    for(NSString *s: keys)
-        [self addObserver:observer forKeyPath:s options:0 context:nil];
-}
-
-- (void)addObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys options:(NSKeyValueObservingOptions)options context:(void *)context
-{
-    for(NSString *s: keys)
-        [self addObserver:observer forKeyPath:s options:options context:context];
-}
-
-- (void)removeObserver:(NSObject *)observer forKeyPaths:(NSArray*)keys
-{
-    for(NSString *s: keys)
-        [self removeObserver:observer forKeyPath:s];
-}
-@end
-
 @implementation NSColor (MyAdditions)
 
 - (CGColorRef) copyCGColor

@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include <Habanero/DispatchQueue.h>
 #include "vfs/VFS.h"
 #include "PanelViewTypes.h"
-#include "DispatchQueue.h"
 #include "ByteCountFormatter.h"
 #include "Config.h"
 

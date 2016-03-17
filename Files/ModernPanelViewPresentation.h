@@ -7,9 +7,9 @@
 //
 
 #include <Habanero/FontExtras.h>
+#include <Utility/ObjcToCppObservingBridge.h>
 #include "PanelViewPresentation.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
-#include "ObjcToCppObservingBridge.h"
 #include "IconsGenerator.h"
 #include "Config.h"
 

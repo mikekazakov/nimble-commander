@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Habanero/DispatchQueue.h>
 #include "../../FileWindow.h"
 #include "../../MainWindowController.h"
 #include "../../Common.h"
 #include "../../SearchInFile.h"
-#include "../../DispatchQueue.h"
 #include "../../ProcessSheetController.h"
 #include "../../ActionsShortcutsManager.h"
 #include "../../ByteCountFormatter.h"

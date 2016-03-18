@@ -12,8 +12,8 @@
 #include <sys/xattr.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
-#include "../../3rd_party/libarchive/archive.h"
-#include "../../3rd_party/libarchive/archive_entry.h"
+#include <libarchive/archive.h>
+#include <libarchive/archive_entry.h>
 #include "../../AppleDoubleEA.h"
 #include "FileCompressOperationJob.h"
 

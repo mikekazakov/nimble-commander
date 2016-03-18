@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <sys/errno.h>
-#import "../3rd_party/libarchive/archive_platform.h"
-#import "VFSError.h"
-#import "VFSDeclarations.h"
+#include <sys/errno.h>
+#include <libarchive/archive_platform.h>
+#include "VFSError.h"
+#include "VFSDeclarations.h"
 
 static NSString *const g_Domain = @__FILES_IDENTIFIER__".vfs";
 

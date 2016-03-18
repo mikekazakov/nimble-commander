@@ -282,9 +282,6 @@
 		CF50C46E1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
 		CF50C46F1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
 		CF50C4701C0DC057009DF611 /* FeatureNotAvailableWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */; };
-		CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
-		CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
-		CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */; };
 		CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
 		CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
 		CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
@@ -646,6 +643,7 @@
 		CFD629631C2CE7030050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD629641C2CE7040050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
 		CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
 		CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
@@ -832,13 +830,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
 			remoteInfo = Files;
-		};
-		CF540EBD1A90804D003CD7A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF540EB21A90804C003CD7A7;
-			remoteInfo = archivelib_LIB;
 		};
 		CF653C5518C3934200502920 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1096,7 +1087,6 @@
 		CF50C46A1C0DC057009DF611 /* FeatureNotAvailableWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FeatureNotAvailableWindowController.xib; sourceTree = "<group>"; };
 		CF50C4761C0EB52A009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
 		CF50C4771C0EB6A0009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MassCopySheetController.strings; sourceTree = "<group>"; };
-		CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = archivelib_LIB.xcodeproj; path = 3rd_party/libarchive/archivelib_LIB/archivelib_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatings.mm; sourceTree = "<group>"; };
 		CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatings.h; sourceTree = "<group>"; };
 		CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatingsSheetController.h; sourceTree = "<group>"; };
@@ -1437,6 +1427,7 @@
 		CFD54FD21A2A01B30098A4A9 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutedIOInterfaces.h; sourceTree = "<group>"; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = Resource/State.json; sourceTree = "<group>"; };
 		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
+		CFD62D9B1C9BC7540021EE7F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = 3rd_Party/libarchive/built/libarchive.a; sourceTree = SOURCE_ROOT; };
 		CFD6F9041BEB02CC00A1B046 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = vfs/VFSListingInput.h; sourceTree = "<group>"; };
 		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = Operations/Delete/FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = Operations/Delete/FileDeletionOperation.mm; sourceTree = "<group>"; };
@@ -1572,7 +1563,6 @@
 				CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */,
 				CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */,
 				CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */,
-				CF540FDE1A90822F003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CF6D9C7419667A090077B146 /* libUnRAR_LIB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1581,6 +1571,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */,
 				CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */,
 				CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */,
 				CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */,
@@ -1601,7 +1592,6 @@
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
 				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
-				CF540FDD1A90822A003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
@@ -1640,7 +1630,6 @@
 				CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */,
 				CFF6F3641A13567C00011177 /* libUnRAR_LIB.a in Frameworks */,
 				CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */,
-				CF540FDF1A908236003CD7A7 /* libarchivelib_LIB.a in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
 				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
 				CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */,
@@ -1988,14 +1977,6 @@
 				CF9DBE171A48836A00FF735B /* Helpers */,
 			);
 			name = PanelMainWindowState;
-			sourceTree = "<group>";
-		};
-		CF540EBA1A90804C003CD7A7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CF55CDD81B29EF52001B4F91 /* BatchRenameOperation */ = {
@@ -2509,6 +2490,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
 				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
@@ -2671,7 +2653,6 @@
 				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
-				CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
 				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,
@@ -2859,10 +2840,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CF540EBA1A90804C003CD7A7 /* Products */;
-					ProjectRef = CF540EB91A90804C003CD7A7 /* archivelib_LIB.xcodeproj */;
-				},
-				{
 					ProductGroup = CFD62B7F1C99C1C90021EE7F /* Products */;
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
@@ -2891,13 +2868,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CF540EBE1A90804D003CD7A7 /* libarchivelib_LIB.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libarchivelib_LIB.a;
-			remoteRef = CF540EBD1A90804D003CD7A7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CF653C5618C3934200502920 /* libUnRAR_LIB.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -4364,6 +4334,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
+					3rd_Party/libarchive/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4414,6 +4385,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
+					3rd_Party/libarchive/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4473,6 +4445,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
@@ -4522,6 +4495,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";

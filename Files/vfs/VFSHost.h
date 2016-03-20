@@ -23,7 +23,7 @@ public:
     ~VFSHostDirObservationTicket();
     
     VFSHostDirObservationTicket &operator=(VFSHostDirObservationTicket &&_rhs);
-    inline operator bool() const noexcept { return valid(); }
+    operator bool() const noexcept;
     bool valid() const noexcept;
     void reset();
     
@@ -210,8 +210,8 @@ public:
 
     static const shared_ptr<VFSHost> &DummyHost();
     
-    inline shared_ptr<VFSHost> SharedPtr() { return shared_from_this(); }
-    inline shared_ptr<const VFSHost> SharedPtr() const { return shared_from_this(); }
+    shared_ptr<VFSHost> SharedPtr();
+    shared_ptr<const VFSHost> SharedPtr() const;
 #define VFS_DECLARE_SHARED_PTR(_cl)\
     shared_ptr<const _cl> SharedPtr() const {return static_pointer_cast<const _cl>(VFSHost::SharedPtr());}\
     shared_ptr<_cl> SharedPtr() {return static_pointer_cast<_cl>(VFSHost::SharedPtr());}

@@ -89,7 +89,7 @@ namespace VFSError
     };
     
     int FromErrno(int _errno);
-    inline int FromErrno() { return FromErrno(errno); }
+    int FromErrno();
     int FromLibarchive(int _errno);
 
 #ifdef __OBJC__

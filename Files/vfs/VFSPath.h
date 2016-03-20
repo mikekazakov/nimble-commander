@@ -43,7 +43,7 @@ public:
          * operation== performs fast comparison by ptrs.
          */
         bool operator==(const Part&_r) const;
-        inline bool operator!=(const Part&_r) const { return !(*this == _r); }
+        bool operator!=(const Part&_r) const;
         
         /**
          * Will compare parts without respect to host ptr and will compare options by it's content.
@@ -54,16 +54,13 @@ public:
     VFSPathStack();
     VFSPathStack(const VFSHostPtr &_vfs, const string &_path);
     
-    inline bool operator==(const VFSPathStack& _r) const {
-        return m_Stack == _r.m_Stack &&
-        m_Path == _r.m_Path;
-    }
-    inline bool operator!=(const VFSPathStack& _r) const { return !(*this == _r); }
-    inline const Part& operator[](size_t _n) const { return m_Stack[_n]; }
-    inline bool empty() const {return m_Stack.empty(); }
-    inline size_t size() const { return m_Stack.size(); }
-    inline const Part& back() const { return m_Stack.back(); }
-    inline const string& path() const { return m_Path; }
+    bool operator==(const VFSPathStack& _r) const;
+    bool operator!=(const VFSPathStack& _r) const;
+    const Part& operator[](size_t _n) const;
+    bool empty() const;
+    size_t size() const;
+    const Part& back() const;
+    const string& path() const;
     bool weak_equal(const VFSPathStack&_r) const;
     string verbose_string() const;
 private:
@@ -78,18 +75,5 @@ struct hash<VFSPathStack>
 {
     typedef VFSPathStack argument_type;
     typedef std::size_t value_type;
-        
-    value_type operator()(argument_type const& _v) const
-    {
-        string str;
-        for(auto &i:_v.m_Stack)
-        {
-            str += i.fs_tag;
-            str += i.junction;
-            // we need to incorporate options somehow here. or not?
-            str += "|"; // really need this?
-        }
-        str += _v.m_Path;
-        return hash<string>()(str);
-    }
+    value_type operator()(argument_type const& _v) const;
 };

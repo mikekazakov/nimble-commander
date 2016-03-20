@@ -7,8 +7,8 @@
 //
 
 #pragma once
-#import "VFSError.h"
-#import "VFSDeclarations.h"
+#include "VFSError.h"
+#include "VFSDeclarations.h"
 
 class VFSFile : public enable_shared_from_this<VFSFile>
 {
@@ -169,8 +169,8 @@ public:
     NSData *ReadFileToNSData();
 #endif
     
-    inline shared_ptr<VFSFile> SharedPtr() { return shared_from_this(); }
-    inline shared_ptr<const VFSFile> SharedPtr() const { return shared_from_this(); }
+    shared_ptr<VFSFile> SharedPtr();
+    shared_ptr<const VFSFile> SharedPtr() const;
     const char* RelativePath() const noexcept;
     const shared_ptr<VFSHost> &Host() const;
 protected:
@@ -192,16 +192,6 @@ private:
     VFSFile(const VFSFile&) = delete;
     void operator=(const VFSFile&) = delete;
 };
-
-inline int VFSFile::SetLastError(int _error) const
-{
-    return m_LastError = _error;
-}
-
-inline int VFSFile::LastError() const
-{
-    return m_LastError;
-}
 
 #ifdef __OBJC__
 inline NSData *VFSFile::ReadFileToNSData()

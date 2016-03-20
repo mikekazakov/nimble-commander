@@ -119,6 +119,11 @@ bool VFSHostDirObservationTicket::valid() const noexcept
     return m_Ticket != 0;
 }
 
+VFSHostDirObservationTicket::operator bool() const noexcept
+{
+    return valid();
+}
+
 void VFSHostDirObservationTicket::reset()
 {
     if(valid()) {
@@ -168,6 +173,16 @@ VFSHost::VFSHost(const char *_junction_path,
 
 VFSHost::~VFSHost()
 {
+}
+
+shared_ptr<VFSHost> VFSHost::SharedPtr()
+{
+    return shared_from_this();
+}
+
+shared_ptr<const VFSHost> VFSHost::SharedPtr() const
+{
+    return shared_from_this();
 }
 
 const char *VFSHost::FSTag() const noexcept

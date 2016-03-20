@@ -46,6 +46,11 @@ int FromErrno(int _errno)
 //    assert(_errno >= 1 && _errno < 200); // actually 106 was max
     return _errno - 1500;
 }
+    
+int FromErrno()
+{
+    return FromErrno(errno);
+}
 
 int FromLibarchive(int _errno)
 {

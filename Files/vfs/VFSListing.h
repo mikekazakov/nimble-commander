@@ -32,12 +32,12 @@ public:
     
     static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker );
     
-    unsigned            Count               () const noexcept { return m_ItemsCount; };
-    bool                IsUniform           () const;
-    bool                HasCommonHost       () const;
-    bool                HasCommonDirectory  () const;
+    unsigned            Count               () const noexcept;
+    bool                IsUniform           () const noexcept;
+    bool                HasCommonHost       () const noexcept;
+    bool                HasCommonDirectory  () const noexcept;
 
-    VFSListingItem     Item                (unsigned _ind) const;
+    VFSListingItem     Item                 (unsigned _ind) const;
 
     const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;
@@ -143,81 +143,77 @@ private:
 class VFSListingItem
 {
 public:
-    VFSListingItem() noexcept:
-        I( numeric_limits<unsigned>::max() ),
-        L( nullptr ) {}
-    VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept:
-        I(_ind),
-        L(_listing) {}
-    operator        bool()              const noexcept { return (bool)L;            }
-    auto&           Listing()           const noexcept { return L;                  }
-    unsigned        Index()             const noexcept { return I;                  }
+    VFSListingItem() noexcept;
+    VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept;
+    operator                                bool()              const noexcept;
+    const shared_ptr<const VFSListing>&     Listing()           const noexcept;
+    unsigned                                Index()             const noexcept;
     
-    string          Path()              const { return L->Path(I);                  }
-    const VFSHostPtr& Host()            const { return L->Host(I);                  }
-    const string&   Directory()         const { return L->Directory(I);             }
+    string          Path()              const;
+    const VFSHostPtr& Host()            const;
+    const string&   Directory()         const;
     
     // currently mimicking old VFSListingItem interface, may change methods names later
-    const string&   Filename()          const { return L->Filename(I);              }
-    const char     *Name()              const { return L->Filename(I).c_str();      }
-    size_t          NameLen()           const { return L->Filename(I).length();     }
-    CFStringRef     CFName()            const { return L->FilenameCF(I);            }
+    const string&   Filename()          const;
+    const char     *Name()              const;
+    size_t          NameLen()           const;
+    CFStringRef     CFName()            const;
 #ifdef __OBJC__
     NSString*       NSName()            const { return L->FilenameNS(I);            }
 #endif
 
-    bool            HasDisplayName()    const { return L->HasDisplayFilename(I);    }
-    CFStringRef     CFDisplayName()     const { return L->DisplayFilenameCF(I);     }
+    bool            HasDisplayName()    const;
+    CFStringRef     CFDisplayName()     const;
 #ifdef __OBJC__
     NSString*       NSDisplayName()     const { return L->DisplayFilenameNS(I);     }
 #endif
 
-    bool            HasExtension()      const { return L->HasExtension(I);          }
-    uint16_t        ExtensionOffset()   const { return L->ExtensionOffset(I);       }
-    const char*     Extension()         const { return L->Extension(I);             }
-    string          FilenameWithoutExt()const { return L->FilenameWithoutExt(I);    }
+    bool            HasExtension()      const;
+    uint16_t        ExtensionOffset()   const;
+    const char*     Extension()         const;
+    string          FilenameWithoutExt()const;
     
-    mode_t          UnixMode()          const { return L->UnixMode(I);              } // resolved for symlinks
-    uint8_t         UnixType()          const { return L->UnixType(I);              } // type is _original_ directory entry, without symlinks resolving
+    mode_t          UnixMode()          const; // resolved for symlinks
+    uint8_t         UnixType()          const; // type is _original_ directory entry, without symlinks resolving
 
-    bool            HasSize()           const { return L->HasSize(I);               }
-    uint64_t        Size()              const { return L->Size(I);                  }
+    bool            HasSize()           const;
+    uint64_t        Size()              const;
 
-    bool            HasInode()          const { return L->HasInode(I);              }
-    uint64_t        Inode()             const { return L->Inode(I);                 }
+    bool            HasInode()          const;
+    uint64_t        Inode()             const;
 
-    bool            HasATime()          const { return L->HasATime(I);              }
-    time_t          ATime()             const { return L->ATime(I);                 }
+    bool            HasATime()          const;
+    time_t          ATime()             const;
 
-    bool            HasMTime()          const { return L->HasMTime(I);              }
-    time_t          MTime()             const { return L->MTime(I);                 }
+    bool            HasMTime()          const;
+    time_t          MTime()             const;
     
-    bool            HasCTime()          const { return L->HasCTime(I);              }
-    time_t          CTime()             const { return L->CTime(I);                 }
+    bool            HasCTime()          const;
+    time_t          CTime()             const;
 
-    bool            HasBTime()          const { return L->HasBTime(I);              }
-    time_t          BTime()             const { return L->BTime(I);                 }
+    bool            HasBTime()          const;
+    time_t          BTime()             const;
     
-    bool            HasUnixFlags()      const { return L->HasUnixFlags(I);          }
-    uint32_t        UnixFlags()         const { return L->UnixFlags(I);             }
+    bool            HasUnixFlags()      const;
+    uint32_t        UnixFlags()         const;
     
-    bool            HasUnixUID()        const { return L->HasUID(I);                }
-    uid_t           UnixUID()           const { return L->UID(I);                   }
+    bool            HasUnixUID()        const;
+    uid_t           UnixUID()           const;
     
-    bool            HasUnixGID()        const { return L->HasGID(I);                }
-    gid_t           UnixGID()           const { return L->GID(I);                   }
+    bool            HasUnixGID()        const;
+    gid_t           UnixGID()           const;
     
-    bool            HasSymlink()        const { return L->HasSymlink(I);            }
-    const char     *Symlink()           const { return L->Symlink(I).c_str();       }
+    bool            HasSymlink()        const;
+    const char     *Symlink()           const;
     
-    bool            IsDir()             const { return L->IsDir(I);                 }
-    bool            IsReg()             const { return L->IsReg(I);                 }
-    bool            IsSymlink()         const { return L->IsSymlink(I);             }
-    bool            IsDotDot()          const { return L->IsDotDot(I);              }
-    bool            IsHidden()          const { return L->IsHidden(I);              }
+    bool            IsDir()             const;
+    bool            IsReg()             const;
+    bool            IsSymlink()         const;
+    bool            IsDotDot()          const;
+    bool            IsHidden()          const;
     
-    bool operator ==(const VFSListingItem&_) const noexcept { return I == _.I && L == _.L; }
-    bool operator !=(const VFSListingItem&_) const noexcept { return I != _.I || L != _.L; }
+    bool operator ==(const VFSListingItem&_) const noexcept;
+    bool operator !=(const VFSListingItem&_) const noexcept;
     
 private:
     shared_ptr<const VFSListing>    L;
@@ -250,19 +246,19 @@ private:
     unsigned                    I;
 };
 
-inline bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept { return   _r == _l ; }
-inline bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept { return !(_r == _l); }
+bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
+bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
 
 struct VFSListing::iterator
 {
-    iterator &operator--() noexcept { i.I--; return *this; } // prefix decrement
-    iterator &operator++() noexcept { i.I++; return *this; } // prefix increment
-    iterator operator--(int) noexcept { auto p = *this; i.I--; return p; } // posfix decrement
-    iterator operator++(int) noexcept { auto p = *this; i.I++; return p; } // posfix increment
+    iterator &operator--() noexcept; // prefix decrement
+    iterator &operator++() noexcept; // prefix increment
+    iterator operator--(int) noexcept; // posfix decrement
+    iterator operator++(int) noexcept; // posfix increment
     
-    bool operator==(const iterator& _r) const noexcept { return i.I == _r.i.I && i.L == _r.i.L; }
-    bool operator!=(const iterator& _r) const noexcept { return !(*this == _r); }
-    const VFSListingItem& operator*() const noexcept { return i; }
+    bool operator==(const iterator& _r) const noexcept;
+    bool operator!=(const iterator& _r) const noexcept;
+    const VFSListingItem& operator*() const noexcept;
 
 private:
     VFSListingItem i;

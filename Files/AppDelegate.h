@@ -8,8 +8,7 @@
 
 #pragma once
 
-#import <Cocoa/Cocoa.h>
-#import "ApplicationSkins.h"
+#include "ApplicationSkins.h"
 
 @class MainWindowController;
 @class GenericConfigObjC;

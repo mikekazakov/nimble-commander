@@ -48,7 +48,7 @@ public:
     /**
      * return current container's type.
      */
-    type mode() const;
+    type mode() const noexcept;
     
     /**
      * reverts container to empty state with specified type.
@@ -177,7 +177,7 @@ variable_container<T>::~variable_container()
 }
 
 template <class T>
-typename variable_container<T>::type variable_container<T>::mode() const
+typename variable_container<T>::type variable_container<T>::mode() const noexcept
 {
     return m_Type;
 }

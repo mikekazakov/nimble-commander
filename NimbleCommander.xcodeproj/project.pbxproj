@@ -292,8 +292,8 @@
 		CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
-		CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -355,7 +355,6 @@
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
 		CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
-		CF6D9C7419667A090077B146 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
@@ -789,7 +788,6 @@
 		CFF6F3611A13567C00011177 /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CFF6F3621A13567C00011177 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
 		CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
-		CFF6F3641A13567C00011177 /* libUnRAR_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF653C5618C3934200502920 /* libUnRAR_LIB.a */; };
 		CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
@@ -830,13 +828,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
 			remoteInfo = Files;
-		};
-		CF653C5518C3934200502920 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF653C4A18C3934100502920;
-			remoteInfo = UnRAR_LIB;
 		};
 		CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1095,8 +1086,8 @@
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
+		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
 		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
-		CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnRAR_LIB.xcodeproj; path = 3rd_party/unrar/UnRAR_LIB/UnRAR_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
 		CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
@@ -1563,7 +1554,6 @@
 				CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */,
 				CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */,
 				CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */,
-				CF6D9C7419667A090077B146 /* libUnRAR_LIB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1571,6 +1561,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */,
 				CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */,
 				CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */,
 				CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */,
@@ -1590,7 +1581,6 @@
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
-				CF653DFD18C3957900502920 /* libUnRAR_LIB.a in Frameworks */,
 				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
@@ -1628,7 +1618,6 @@
 				CFF6F3611A13567C00011177 /* OpenDirectory.framework in Frameworks */,
 				CFF6F3621A13567C00011177 /* Cocoa.framework in Frameworks */,
 				CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */,
-				CFF6F3641A13567C00011177 /* libUnRAR_LIB.a in Frameworks */,
 				CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
 				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
@@ -2045,14 +2034,6 @@
 				CF50B6C21A15167800E3D96D /* VFSPath.h */,
 			);
 			name = Core;
-			sourceTree = "<group>";
-		};
-		CF653C5218C3934100502920 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CF653C5618C3934200502920 /* libUnRAR_LIB.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CF6D99A5196675FE0077B146 /* Files Full */ = {
@@ -2490,6 +2471,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
@@ -2651,7 +2633,6 @@
 				CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */,
 				CFB517F91BDF53C1000AAE89 /* LLVM */,
 				CFA3D7C319625F63006A30A1 /* gtm */,
-				CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */,
 				CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
@@ -2737,9 +2718,9 @@
 			productReference = CF6D997D196675290077B146 /* NimbleCommander.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */ = {
+		CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NinmbleCommander NonMAS" */;
+			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NimbleCommander NonMAS" */;
 			buildPhases = (
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
@@ -2753,7 +2734,7 @@
 			dependencies = (
 				CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */,
 			);
-			name = "NinmbleCommander NonMAS";
+			name = "NimbleCommander NonMAS";
 			productName = Directories;
 			productReference = CFC5121116C4BD3D00D247EE /* Nimble Commander.app */;
 			productType = "com.apple.product-type.application";
@@ -2848,17 +2829,13 @@
 					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
 				},
 				{
-					ProductGroup = CF653C5218C3934100502920 /* Products */;
-					ProjectRef = CF653C5118C3934100502920 /* UnRAR_LIB.xcodeproj */;
-				},
-				{
 					ProductGroup = CF768DEE1C99C0F4002748BC /* Products */;
 					ProjectRef = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */,
+				CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */,
 				CF6D997C196675290077B146 /* NimbleCommander Lite */,
 				CFF6F2391A13567C00011177 /* NimbleCommander Pro */,
 				CF47A97F186C607B00745C4C /* NimbleCommander Tests */,
@@ -2868,13 +2845,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CF653C5618C3934200502920 /* libUnRAR_LIB.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libUnRAR_LIB.a;
-			remoteRef = CF653C5518C3934200502920 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CF768DF51C99C0F4002748BC /* libUtility.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3760,42 +3730,42 @@
 /* Begin PBXTargetDependency section */
 		CF47A98D186C607C00745C4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF47A98C186C607C00745C4C /* PBXContainerItemProxy */;
 		};
 		CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NinmbleCommander NonMAS */;
+			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
 			targetProxy = CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */;
 		};
 		CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */ = {
@@ -4335,6 +4305,7 @@
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
 					3rd_Party/libarchive/include/,
+					3rd_Party/unrar/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4386,6 +4357,7 @@
 				HEADER_SEARCH_PATHS = (
 					Files/3rd_party/built/include/,
 					3rd_Party/libarchive/include/,
+					3rd_Party/unrar/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4446,6 +4418,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
@@ -4496,6 +4469,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
@@ -4712,7 +4686,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NinmbleCommander NonMAS" */ = {
+		CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NimbleCommander NonMAS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFC5122F16C4BD3D00D247EE /* Debug */,

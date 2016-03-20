@@ -15,7 +15,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
                BuildableName = "Nimble Commander.app"
-               BlueprintName = "NinmbleCommander NonMAS"
+               BlueprintName = "NimbleCommander NonMAS"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,7 +44,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
             BuildableName = "Nimble Commander.app"
-            BlueprintName = "NinmbleCommander NonMAS"
+            BlueprintName = "NimbleCommander NonMAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -67,7 +67,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
             BuildableName = "Nimble Commander.app"
-            BlueprintName = "NinmbleCommander NonMAS"
+            BlueprintName = "NimbleCommander NonMAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -103,7 +103,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
             BuildableName = "Nimble Commander.app"
-            BlueprintName = "NinmbleCommander NonMAS"
+            BlueprintName = "NimbleCommander NonMAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

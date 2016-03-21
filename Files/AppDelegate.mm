@@ -40,6 +40,7 @@
 #include "FeatureNotAvailableWindowController.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
+#include "ActivationManager.h"
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -154,8 +155,9 @@ static AppDelegate *g_Me = nil;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-    
-    if(configuration::is_sandboxed) {
+  
+    if( ActivationManager::Instance().Sandboxed() ) {
+//    if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
         if(sm.Empty()) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
@@ -180,38 +182,29 @@ static AppDelegate *g_Me = nil;
         item.target = self;
         item.action = @selector(showFeatureNotSupportedWindow:);
     };
-    
-    if(!configuration::has_psfs)
-                                                        prohibit("menu.go.processes_list");
-    if(!configuration::has_terminal) {
-                                                        hide("menu.view.show_terminal");
-                                                        hide("menu.view.panels_position.move_up");
-                                                        hide("menu.view.panels_position.move_down");
-                                                        hide("menu.view.panels_position.showpanels");
-                                                        hide("menu.view.panels_position.focusterminal");
-                                                        hide("menu.file.feed_filename_to_terminal");
-                                                        hide("menu.file.feed_filenames_to_terminal");
-    }
-    
-    if(!configuration::has_brief_system_overview)       prohibit("menu.command.system_overview");
-    if(!configuration::has_unix_attributes_editing)     prohibit("menu.command.file_attributes");
-    if(!configuration::has_detailed_volume_information) prohibit("menu.command.volume_information");
-    if(!configuration::has_batch_rename)                prohibit("menu.command.batch_rename");
-    if(!configuration::has_internal_viewer)             prohibit("menu.command.internal_viewer");
-    if(!configuration::has_compression_operation)       prohibit("menu.command.compress");
-    if(!configuration::has_fs_links_manipulation) {
-                                                        prohibit("menu.command.link_create_soft");
-                                                        prohibit("menu.command.link_create_hard");
-                                                        prohibit("menu.command.link_edit");
-    }
-    if(!configuration::has_network_connectivity) {
-                                                        prohibit("menu.go.connect.ftp");
-                                                        prohibit("menu.go.connect.sftp");
-    }
-    
-    if( !configuration::has_checksum_calculation )      prohibit("menu.file.calculate_checksum");
-    if( !configuration::has_xattr_vfs )                 prohibit("menu.command.open_xattr");
-    menuitem("menu.files.toggle_admin_mode").hidden = configuration::version != configuration::Version::Full;
+    auto &am = ActivationManager::Instance();
+    if( !am.HasPSFS() )                         prohibit("menu.go.processes_list");
+    if( !am.HasTerminal() ) {                   hide("menu.view.show_terminal");
+                                                hide("menu.view.panels_position.move_up");
+                                                hide("menu.view.panels_position.move_down");
+                                                hide("menu.view.panels_position.showpanels");
+                                                hide("menu.view.panels_position.focusterminal");
+                                                hide("menu.file.feed_filename_to_terminal");
+                                                hide("menu.file.feed_filenames_to_terminal"); }
+    if( !am.HasBriefSystemOverview() )          prohibit("menu.command.system_overview");
+    if( !am.HasUnixAttributesEditing() )        prohibit("menu.command.file_attributes");
+    if( !am.HasDetailedVolumeInformation() )    prohibit("menu.command.volume_information");
+    if( !am.HasBatchRename() )                  prohibit("menu.command.batch_rename");
+    if( !am.HasInternalViewer() )               prohibit("menu.command.internal_viewer");
+    if( !am.HasCompressionOperation() )         prohibit("menu.command.compress");
+    if( !am.HasLinksManipulation() ) {          prohibit("menu.command.link_create_soft");
+                                                prohibit("menu.command.link_create_hard");
+                                                prohibit("menu.command.link_edit"); }
+    if( !am.HasNetworkConnectivity() ) {        prohibit("menu.go.connect.ftp");
+                                                prohibit("menu.go.connect.sftp"); }
+    if( !am.HasChecksumCalculation() )          prohibit("menu.file.calculate_checksum");
+    if( !am.HasXAttrFS() )                      prohibit("menu.command.open_xattr");
+    menuitem("menu.files.toggle_admin_mode").hidden = !am.HasRoutedIO();
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -242,12 +235,11 @@ static AppDelegate *g_Me = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
 
-    if(configuration::is_for_app_store) // if we're building for AppStore - check if we want to ask user for rating
-        AppStoreRatings::Instance().Go();
-    
     [self checkIfNeedToShowNagScreen];
     
-    if( configuration::version == configuration::Version::Full && !self.isRunningTests ) {
+    if( ActivationManager::Instance().ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
+        AppStoreRatings::Instance().Go();
+    else if( !self.isRunningTests ) {
         g_Sparkle = [SUUpdater sharedUpdater];
         
         NSMenuItem *item = [[NSMenuItem alloc] init];
@@ -533,15 +525,14 @@ static AppDelegate *g_Me = nil;
 
 - (void)OnPreferencesCommand:(id)sender
 {
-    if(!m_PreferencesController)
-    {
+    if( !m_PreferencesController ){
         NSMutableArray *controllers = [NSMutableArray new];
         [controllers addObject:[PreferencesWindowGeneralTab new]];
         [controllers addObject:[PreferencesWindowPanelsTab new]];
-        if(configuration::has_internal_viewer)
+        if( ActivationManager::Instance().HasInternalViewer() )
             [controllers addObject:[PreferencesWindowViewerTab new]];
         [controllers addObject:[PreferencesWindowExternalEditorsTab new]];
-        if(configuration::has_terminal)
+        if( ActivationManager::Instance().HasTerminal() )
             [controllers addObject:[PreferencesWindowTerminalTab new]];
         [controllers addObject:[PreferencesWindowHotkeysTab new]];
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
@@ -579,7 +570,7 @@ static AppDelegate *g_Me = nil;
 
 - (void) checkIfNeedToShowNagScreen
 {
-    if(configuration::version != configuration::Version::Full)
+    if( ActivationManager::Instance().ForAppStore() )
         return;
     
     dispatch_to_background([=]{

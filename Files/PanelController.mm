@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "PanelDataPersistency.h"
 #include "AskForPasswordWindowController.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
@@ -114,9 +115,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_IsAnythingWorksInBackground = false;
-        m_DirectorySizeCountingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirsizecounting");
-        m_DirectoryLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirloading");
-        m_DirectoryReLoadingQ = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".paneldirreloading");
+        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirsizecounting");
+        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirloading");
+        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirreloading");
         m_DragDrop.last_valid_items = -1;
         
         __weak PanelController* weakself = self;
@@ -310,7 +311,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return [self GoToDir:entry.Path() vfs:entry.Host() select_entry:"" async:true] == 0;
     }
     // archive stuff here
-    else if(configuration::has_archives_browsing) {
+    else if( ActivationManager::Instance().HasArchivesBrowsing() ) {
         if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) ) {
             auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
             if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host(), pwd_ask) )
@@ -334,10 +335,10 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return;
     
     // need more sophisticated executable handling here
-    if(configuration::has_terminal &&
-       !entry.IsDotDot() &&
-       entry.Host()->IsNativeFS() &&
-       panel::IsEligbleToTryToExecuteInConsole(entry)) {
+    if( ActivationManager::Instance().HasTerminal() &&
+        !entry.IsDotDot() &&
+        entry.Host()->IsNativeFS() &&
+        panel::IsEligbleToTryToExecuteInConsole(entry) ) {
         [self.state requestTerminalExecution:entry.Name() at:entry.Directory()];
         return;
     }
@@ -746,9 +747,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path
 {
-    if(configuration::is_sandboxed &&
-       !SandboxManager::Instance().CanAccessFolder(_path) &&
-       !SandboxManager::Instance().AskAccessForPathSync(_path))
+    if( ActivationManager::Instance().Sandboxed() &&
+        !SandboxManager::Instance().CanAccessFolder(_path) &&
+        !SandboxManager::Instance().AskAccessForPathSync(_path) )
         return false;
     return true;
 }

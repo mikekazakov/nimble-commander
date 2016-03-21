@@ -9,6 +9,7 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #include "AppStoreRatings.h"
 #include "AppStoreRatingsSheetController.h"
+#include "ActivationManager.h"
 
 static NSString *g_StateKey = @"CommonRatingsState";
 static NSString *g_RunsKey = @"CommonRatingsRuns";
@@ -106,7 +107,7 @@ void AppStoreRatings::RunDialog()
 NSURL *AppStoreRatings::MasURL()
 {
     NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
-                                     configuration::appstore_id];
+                                 ActivationManager::Instance().AppStoreID().c_str()];
     return [NSURL URLWithString:mas_url];
 }
 

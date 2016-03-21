@@ -10,6 +10,7 @@
 #include <Habanero/algo.h>
 #include "MassCopySheetController.h"
 #include "FileCopyOperation.h"
+#include "../../ActivationManager.h"
 
 // removes entries of ".." and "."
 // quite a bad implementation with O(n^2) complexity and possibly some allocations
@@ -112,7 +113,7 @@ static string MakeCanonicPath(string _input)
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     [self.VerifySetting selectItemWithTag:(int)m_Options.verification];
-    if( !configuration::has_copy_verification )
+    if( !ActivationManager::Instance().HasCopyVerification() )
         self.VerifySetting.enabled = false;
 }
 

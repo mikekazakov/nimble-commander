@@ -16,6 +16,7 @@
 #include "ByteCountFormatter.h"
 #include "AppDelegate.h"
 #include "Config.h"
+#include "ActivationManager.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
@@ -288,7 +289,7 @@ private:
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
-    if( configuration::version == configuration::Version::Lite ) {
+    if( ActivationManager::Instance().HasTemporaryPanels() ) {
         self.PanelButton.target = AppDelegate.me;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
@@ -296,7 +297,7 @@ private:
 #pragma clang diagnostic pop
     }
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
-    if( configuration::version == configuration::Version::Lite ) {
+    if( !ActivationManager::Instance().HasInternalViewer() ) {
         self.ViewButton.target = AppDelegate.me;
         self.ViewButton.action = @selector(showFeatureNotSupportedWindow:);
     }

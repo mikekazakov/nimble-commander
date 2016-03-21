@@ -14,12 +14,13 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include "TemporaryNativeFileStorage.h"
+#include "ActivationManager.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-static const string g_Pref = __FILES_IDENTIFIER__".tmp.";
+static const string g_Pref = ActivationManager::Instance().BundleID() + ".tmp.";
 
 static void DoTempPurge();
 

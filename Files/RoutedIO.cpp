@@ -12,6 +12,7 @@
 #include <Habanero/CommonPaths.h>
 #include "RoutedIO.h"
 #include "RoutedIOInterfaces.h"
+#include "ActivationManager.h"
 
 static PosixIOInterface &IODirectCreateProxy();
 static PosixIOInterface &IOWrappedCreateProxy();
@@ -28,14 +29,23 @@ static PosixIOInterface &IODirectCreateProxy() {
 
 static PosixIOInterface &IOWrappedCreateProxy()
 {
-    if(configuration::version == configuration::Version::Full) {
-        static PosixIOInterfaceRouted routed(RoutedIO::Instance());
-        return routed;
-    }
-    else {
-        static PosixIOInterfaceNative direct;
-        return direct;
-    }
+    static PosixIOInterface *interface = []() -> PosixIOInterface* {
+        return ActivationManager::Instance().HasRoutedIO() ?
+            new PosixIOInterfaceRouted(RoutedIO::Instance()) :
+            new PosixIOInterfaceNative();
+//            return ;
+//        else
+//            return ;
+        } ();
+    return *interface;
+//    if(configuration::version == configuration::Version::Full) {
+//        static PosixIOInterfaceRouted routed(RoutedIO::Instance());
+//        return routed;
+//    }
+//    else {
+//        static PosixIOInterfaceNative direct;
+//        return direct;
+//    }
 }
 
 static optional<vector<uint8_t>> ReadFile(const char *_path)
@@ -109,7 +119,7 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
-    if(configuration::version < configuration::Version::Full)
+    if( !ActivationManager::Instance().HasRoutedIO() )
         return false;
     
     if(m_Enabled)
@@ -189,7 +199,7 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
 
 bool RoutedIO::AskToInstallHelper()
 {
-    if(configuration::version < configuration::Version::Full)
+    if( !ActivationManager::Instance().HasRoutedIO() )
         return false;
     
     AuthorizationItem   authItem   = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
@@ -214,7 +224,7 @@ bool RoutedIO::AskToInstallHelper()
 
 bool RoutedIO::AuthenticateAsAdmin()
 {
-    if(configuration::version < configuration::Version::Full)
+    if( !ActivationManager::Instance().HasRoutedIO() )
         return false;
     
     if(m_AuthenticatedAsAdmin)
@@ -296,4 +306,15 @@ bool RoutedIO::IsHelperAlive()
     
     xpc_release(reply);
     return result;
+}
+
+PosixIOInterface &RoutedIO::InterfaceForAccess(const char *_path, int _mode) noexcept
+{
+    if( !ActivationManager::Instance().HasRoutedIO() )
+        return Direct;
+    
+    if(!Instance().Enabled())
+        return Direct;
+    
+    return access(_path, _mode) == 0 ? RoutedIO::Direct : RoutedIO::Default;
 }

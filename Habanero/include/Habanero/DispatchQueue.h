@@ -90,7 +90,8 @@ public:
     /**
      * Actually make_shared<SerialQueueT>().
      */
-    inline static std::shared_ptr<SerialQueueT> Make(const char *_label = NULL) { return std::make_shared<SerialQueueT>(_label); };
+    static std::shared_ptr<SerialQueueT> Make(const char *_label = NULL);
+    static std::shared_ptr<SerialQueueT> Make(const std::string &_label);
     
 private:
     SerialQueueT(const SerialQueueT&) = delete;

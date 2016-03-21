@@ -10,6 +10,7 @@
 #include <Habanero/CommonPaths.h>
 #include "VFSSeqToRandomWrapper.h"
 #include "VFSError.h"
+#include "../ActivationManager.h"
 
 VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap):
     VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
@@ -74,7 +75,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     else {
         // we need to write it into a temp dir and delete it upon finish
         char pattern_buf[MAXPATHLEN];
-        sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".vfs.XXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
+        sprintf(pattern_buf, ("%s" + ActivationManager::Instance().BundleID() + ".vfs.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
         
         int fd = mkstemp(pattern_buf);
         

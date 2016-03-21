@@ -326,7 +326,7 @@ ssize_t VFSNativeHost::CalculateDirectorySize(const char *_path,
     char path[MAXPATHLEN];
     strcpy(path, _path);
     
-    dispatch_queue stat_queue(__FILES_IDENTIFIER__".VFSNativeHost.CalculateDirectoriesSizes");
+    dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
     
     int64_t size = 0;
     int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);

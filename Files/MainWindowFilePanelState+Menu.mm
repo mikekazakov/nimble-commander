@@ -22,6 +22,7 @@
 #include "PanelController.h"
 #include "FilePanelMainSplitView.h"
 #include "MainWindowController.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -509,7 +510,8 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     };
 
     // overlapped terminal stuff
-    if( configuration::has_terminal ) {
+    if( ActivationManager::Instance().HasTerminal() ) {
+//    if( configuration::has_terminal ) {
         static const auto filepanels_move_up = am.TagFromAction( "menu.view.panels_position.move_up" );
         if( isshortcut(filepanels_move_up) ) {
             [self OnViewPanelsPositionMoveUp:self];

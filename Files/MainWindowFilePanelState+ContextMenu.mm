@@ -15,6 +15,7 @@
 #include "PanelController.h"
 #include "Operations/Compress/FileCompressOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
+#include "ActivationManager.h"
 
 struct OpenWithHandler
 {
@@ -356,8 +357,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
-    if(configuration::has_compression_operation)
-    {
+    if( ActivationManager::Instance().HasCompressionOperation() ) {
+//    if(configuration::has_compression_operation) {
         NSMenuItem *item = [NSMenuItem new];
         if(m_Items.size() > 1)
             item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),

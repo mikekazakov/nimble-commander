@@ -13,6 +13,16 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 // SerialQueueT implementation
 ////////////////////////////////////////////////////////////////////////////////
+std::shared_ptr<SerialQueueT> SerialQueueT::Make(const char *_label)
+{
+    return std::make_shared<SerialQueueT>(_label);
+};
+
+std::shared_ptr<SerialQueueT> SerialQueueT::Make(const std::string &_label)
+{
+    return Make(_label.c_str());
+};
+
 SerialQueueT::SerialQueueT(const char *_label):
     m_Queue(_label)
 {

@@ -11,7 +11,7 @@
 #include "VFSError.h"
 #include "VFSDeclarations.h"
 
-static NSString *const g_Domain = @__FILES_IDENTIFIER__".vfs";
+static NSString *const g_Domain = @"vfs";
 
 
 /*

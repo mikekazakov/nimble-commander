@@ -54,7 +54,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
         m_Checksums.resize(m_Filenames.size());
         m_Errors.resize(m_Filenames.size());
         m_Path = path;
-        m_WorkQue = make_shared<SerialQueueT>(__FILES_IDENTIFIER__".CalculateChecksumSheetController");
+        m_WorkQue = SerialQueueT::Make("CalculateChecksumSheetController");
         self.isWorking = false;
         self.sumsAvailable = false;
         self.didSaved = false;

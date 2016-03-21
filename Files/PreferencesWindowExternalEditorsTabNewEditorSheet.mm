@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
-#import "FileMask.h"
+#include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
+#include "FileMask.h"
+#include "ActivationManager.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
 @end
@@ -34,7 +35,7 @@
 
 - (bool) hasTerminal
 {
-    return configuration::has_terminal;
+    return ActivationManager::Instance().HasTerminal();
 }
 
 - (IBAction)OnClose:(id)sender

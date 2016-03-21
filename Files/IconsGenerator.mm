@@ -15,6 +15,7 @@
 #include "QLThumbnailsCache.h"
 #include "QLVFSThumbnailsCache.h"
 #include "WorkspaceIconsCache.h"
+#include "ActivationManager.h"
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -63,7 +64,7 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
         return 0;
     
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, "%s" __FILES_IDENTIFIER__ ".ico.XXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
+    sprintf(pattern_buf, ("%s" + ActivationManager::Instance().BundleID() + ".ico.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../ActivationManager.h"
+
 struct FileCopyOperationOptions
 {
     enum class ChecksumVerification
@@ -16,5 +18,6 @@ struct FileCopyOperationOptions
     bool copy_unix_flags = true;
     bool copy_unix_owners = true;
     bool force_overwrite = false;
-    ChecksumVerification verification = configuration::version >= configuration::Version::Pro ? ChecksumVerification::WhenMoves : ChecksumVerification::Never;
+//    ChecksumVerification verification = configuration::version >= configuration::Version::Pro ? ChecksumVerification::WhenMoves : ChecksumVerification::Never;
+    ChecksumVerification verification = ActivationManager::Instance().HasCopyVerification() ? ChecksumVerification::WhenMoves : ChecksumVerification::Never;
 };

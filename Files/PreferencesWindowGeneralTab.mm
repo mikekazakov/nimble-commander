@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PreferencesWindowGeneralTab.h"
-#import "SandboxManager.h"
-#import "AppDelegate.h"
+#include "PreferencesWindowGeneralTab.h"
+#include "SandboxManager.h"
+#include "AppDelegate.h"
+#include "ActivationManager.h"
 
 @implementation PreferencesWindowGeneralTab
 
@@ -25,7 +26,7 @@
 - (void)loadView
 {
     [super loadView];
-    if(!configuration::is_sandboxed) {
+    if( !ActivationManager::Instance().Sandboxed() ) {
         self.FSAccessResetButton.hidden = true;
         self.FSAccessLabel.hidden = true;
     }

@@ -23,6 +23,7 @@
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "ActionsShortcutsManager.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static auto g_CocoaRestorationFilePanelsStateKey = @"filePanelsState";
@@ -61,7 +62,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
     
     if(self = [super initWithWindow:window]) {
-        m_BigFileViewLoadingQ = SerialQueueT::Make(__FILES_IDENTIFIER__".bigfileviewloading");
+        m_BigFileViewLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".bigfileviewloading");
         self.shouldCascadeWindows = NO;
         window.delegate = self;
         

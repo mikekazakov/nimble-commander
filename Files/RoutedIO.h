@@ -82,14 +82,3 @@ inline bool RoutedIO::Enabled() const noexcept
 {
     return m_Enabled;
 }
-
-inline PosixIOInterface &RoutedIO::InterfaceForAccess(const char *_path, int _mode) noexcept
-{
-    if(configuration::version != configuration::Version::Full)
-        return Direct;
-    
-    if(!Instance().Enabled())
-        return Direct;
-    
-    return access(_path, _mode) == 0 ? RoutedIO::Direct : RoutedIO::Default;
-}

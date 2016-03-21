@@ -10,6 +10,7 @@
 #include "States/Terminal/TermSingleTask.h"
 #include "FileMask.h"
 #include "ExternalEditorInfo.h"
+#include "ActivationManager.h"
 
 static NSString *g_FileName = @"/externaleditors.bplist"; // bplist file name
 
@@ -184,7 +185,7 @@ static NSString* StorageFileName()
             m_Editors = [NSMutableArray new];
             
             ExternalEditorInfo *deflt = [ExternalEditorInfo new];
-            if(configuration::has_terminal) {
+            if( ActivationManager::Instance().HasTerminal() ) {
                 deflt.name = @"vi";
                 deflt.path = @"/usr/bin/vi";
                 deflt.arguments = @"%%";

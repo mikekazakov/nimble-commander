@@ -29,6 +29,7 @@
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -138,6 +139,7 @@ static string ExpandPath(const string &_ref )
 
 - (void) loadInitialPanelData
 {
+    auto &am = ActivationManager::Instance();
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
     
@@ -154,7 +156,7 @@ static string ExpandPath(const string &_ref )
     right_panel_desired_paths.emplace_back( CommonPaths::Home() );
     
     // 3rd attempt - load first reachable folder in case of sandboxed environment
-    if( configuration::is_sandboxed ) {
+    if( am.Sandboxed() ) {
         left_panel_desired_paths.emplace_back( SandboxManager::Instance().FirstFolderWithAccess() );
         right_panel_desired_paths.emplace_back( SandboxManager::Instance().FirstFolderWithAccess() );
     }
@@ -164,14 +166,14 @@ static string ExpandPath(const string &_ref )
     right_panel_desired_paths.emplace_back(AppDelegate.me.startupCWD);
     
     for( auto &p: left_panel_desired_paths ) {
-        if( configuration::is_sandboxed && !SandboxManager::Instance().CanAccessFolder(p) )
+        if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
             continue;
         if( [left_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
             break;
     }
 
     for( auto &p: right_panel_desired_paths ) {
-        if( configuration::is_sandboxed && !SandboxManager::Instance().CanAccessFolder(p) )
+        if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
             continue;
         if( [right_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
             break;
@@ -249,7 +251,7 @@ static string ExpandPath(const string &_ref )
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     [self addConstraint:m_MainSplitViewBottomConstraint];
     
-    if( configuration::has_terminal ) {
+    if( ActivationManager::Instance().HasTerminal() ) {
         m_OverlappedTerminal->terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
         m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_OverlappedTerminal->terminal positioned:NSWindowBelow relativeTo:nil];

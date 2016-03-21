@@ -497,6 +497,7 @@
 		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA1834E1C9F028600544633 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; };
+		CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CFA2C0C21C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */; };
 		CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
@@ -1287,6 +1288,7 @@
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CFA1834C1C9F028600544633 /* ActivationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivationManager.cpp; sourceTree = "<group>"; };
 		CFA1834D1C9F028600544633 /* ActivationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivationManager.h; sourceTree = "<group>"; };
+		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
 		CFA2C0C01C2C2AFC00E5B9B5 /* AppDelegate+Migration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Migration.h"; sourceTree = "<group>"; };
 		CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "AppDelegate+Migration.mm"; sourceTree = "<group>"; };
 		CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
@@ -1563,6 +1565,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */,
 				CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */,
 				CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */,
 				CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */,
@@ -2475,6 +2478,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
@@ -4310,6 +4314,7 @@
 					Files/3rd_party/built/include/,
 					3rd_Party/libarchive/include/,
 					3rd_Party/unrar/include/,
+					3rd_Party/AquaticPrime/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4362,6 +4367,7 @@
 					Files/3rd_party/built/include/,
 					3rd_Party/libarchive/include/,
 					3rd_Party/unrar/include/,
+					3rd_Party/AquaticPrime/include/,
 					Utility/include/,
 					Habanero/include/,
 					.,
@@ -4423,6 +4429,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
@@ -4474,6 +4481,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";

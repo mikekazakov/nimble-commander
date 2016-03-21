@@ -1,0 +1,269 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFA183691CA00FF100544633 /* AquaticPrime.c in Sources */ = {isa = PBXBuildFile; fileRef = CFA183681CA00FF100544633 /* AquaticPrime.c */; };
+		CFA1836D1CA0100A00544633 /* AquaticPrime.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA1836C1CA0100A00544633 /* AquaticPrime.h */; };
+		CFA1836F1CA012FC00544633 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA1836E1CA012FC00544633 /* CoreFoundation.framework */; };
+		CFA183711CA0130800544633 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183701CA0130800544633 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CFA1835B1CA00FAA00544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAquaticPrime.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFA183681CA00FF100544633 /* AquaticPrime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AquaticPrime.c; path = source/AquaticPrime.c; sourceTree = "<group>"; };
+		CFA1836C1CA0100A00544633 /* AquaticPrime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AquaticPrime.h; path = source/AquaticPrime.h; sourceTree = "<group>"; };
+		CFA1836E1CA012FC00544633 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		CFA183701CA0130800544633 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFA183581CA00FAA00544633 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA183711CA0130800544633 /* Security.framework in Frameworks */,
+				CFA1836F1CA012FC00544633 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFA183521CA00FAA00544633 = {
+			isa = PBXGroup;
+			children = (
+				CFA183701CA0130800544633 /* Security.framework */,
+				CFA1836E1CA012FC00544633 /* CoreFoundation.framework */,
+				CFA1836B1CA00FFD00544633 /* Headers */,
+				CFA1836A1CA00FF500544633 /* Source */,
+				CFA1835C1CA00FAA00544633 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFA1835C1CA00FAA00544633 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFA1835B1CA00FAA00544633 /* libAquaticPrime.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFA1836A1CA00FF500544633 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CFA183681CA00FF100544633 /* AquaticPrime.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		CFA1836B1CA00FFD00544633 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CFA1836C1CA0100A00544633 /* AquaticPrime.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CFA183591CA00FAA00544633 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA1836D1CA0100A00544633 /* AquaticPrime.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CFA1835A1CA00FAA00544633 /* AquaticPrime */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFA1835F1CA00FAA00544633 /* Build configuration list for PBXNativeTarget "AquaticPrime" */;
+			buildPhases = (
+				CFA183571CA00FAA00544633 /* Sources */,
+				CFA183581CA00FAA00544633 /* Frameworks */,
+				CFA183591CA00FAA00544633 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AquaticPrime;
+			productName = AquaticPrime;
+			productReference = CFA1835B1CA00FAA00544633 /* libAquaticPrime.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFA183531CA00FAA00544633 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "MIchael Kazakov";
+				TargetAttributes = {
+					CFA1835A1CA00FAA00544633 = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = CFA183561CA00FAA00544633 /* Build configuration list for PBXProject "AquaticPrime" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CFA183521CA00FAA00544633;
+			productRefGroup = CFA1835C1CA00FAA00544633 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFA1835A1CA00FAA00544633 /* AquaticPrime */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFA183571CA00FAA00544633 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA183691CA00FF100544633 /* AquaticPrime.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFA1835D1CA00FAA00544633 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CFA1835E1CA00FAA00544633 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CFA183601CA00FAA00544633 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/built/";
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFA183611CA00FAA00544633 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/built/";
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFA183561CA00FAA00544633 /* Build configuration list for PBXProject "AquaticPrime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFA1835D1CA00FAA00544633 /* Debug */,
+				CFA1835E1CA00FAA00544633 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFA1835F1CA00FAA00544633 /* Build configuration list for PBXNativeTarget "AquaticPrime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFA183601CA00FAA00544633 /* Debug */,
+				CFA183611CA00FAA00544633 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFA183531CA00FAA00544633 /* Project object */;
+}

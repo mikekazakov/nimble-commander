@@ -25,7 +25,7 @@ public:
 
     static ActivationManager &Instance();
     constexpr Distribution  Type()          const { return m_Type; }
-    constexpr bool          Sandboxed()     const { return m_IsSandBoxed; }
+    static constexpr bool   Sandboxed()           { return m_IsSandBoxed; }
     constexpr bool          ForAppStore()   const { return Sandboxed(); }
     const string&           BundleID() const;
     const string&           AppStoreID() const;

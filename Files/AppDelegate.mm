@@ -10,6 +10,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManager.h>
+#include <Utility/PathManip.h>
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include "vfs/vfs_native.h"
@@ -41,6 +42,7 @@
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
+
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -85,6 +87,7 @@ static AppDelegate *g_Me = nil;
     double              m_AppProgress;
     bool                m_IsRunningTests;
     string              m_StartupCWD;
+    string              m_SupportDirectory;
     string              m_ConfigDirectory;
     string              m_StateDirectory;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
@@ -96,6 +99,7 @@ static AppDelegate *g_Me = nil;
 @synthesize mainWindowControllers = m_MainWindows;
 @synthesize configDirectory = m_ConfigDirectory;
 @synthesize stateDirectory = m_StateDirectory;
+@synthesize supportDirectory = m_SupportDirectory;
 
 - (id) init
 {
@@ -266,6 +270,8 @@ static AppDelegate *g_Me = nil;
     if( ![fm fileExistsAtPath:state] )
         [fm createDirectoryAtPath:state withIntermediateDirectories:true attributes:nil error:nil];
     m_StateDirectory = state.fileSystemRepresentationSafe;
+    
+    m_SupportDirectory = EnsureTrailingSlash(fm.applicationSupportDirectory.fileSystemRepresentationSafe);
 }
 
 - (void) updateDockTileBadge

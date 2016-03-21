@@ -457,6 +457,7 @@
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
+		CF82FCEB1CA0399700152ADB /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
@@ -1243,6 +1244,8 @@
 		CF81AA111C3F8B3D00C5E531 /* PanelDataPersistency.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PanelDataPersistency.cpp; sourceTree = "<group>"; };
 		CF81AA121C3F8B3D00C5E531 /* PanelDataPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelDataPersistency.h; sourceTree = "<group>"; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
+		CF82FCE91CA038E400152ADB /* AppDelegateCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegateCPP.h; sourceTree = "<group>"; };
+		CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegateCPP.mm; sourceTree = "<group>"; };
 		CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Menu.h"; sourceTree = "<group>"; };
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
@@ -2559,6 +2562,8 @@
 				CFFE09C71B200CE40091ED4F /* Application.mm */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
+				CF82FCE91CA038E400152ADB /* AppDelegateCPP.h */,
+				CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */,
 				CFA2C0C01C2C2AFC00E5B9B5 /* AppDelegate+Migration.h */,
 				CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
@@ -3478,6 +3483,7 @@
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */,
 				CF50C46B1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */,
+				CF82FCEB1CA0399700152ADB /* AppDelegateCPP.mm in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF73D1EA1BE616320014C88F /* VFSNetSFTPFile.cpp in Sources */,

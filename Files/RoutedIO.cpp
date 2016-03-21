@@ -19,6 +19,7 @@ static PosixIOInterface &IOWrappedCreateProxy();
 
 PosixIOInterface &RoutedIO::Direct    = IODirectCreateProxy();
 PosixIOInterface &RoutedIO::Default   = IOWrappedCreateProxy();
+
 static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelper";
 static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
 
@@ -30,7 +31,9 @@ static PosixIOInterface &IODirectCreateProxy() {
 static PosixIOInterface &IOWrappedCreateProxy()
 {
     static PosixIOInterface *interface = []() -> PosixIOInterface* {
-        return ActivationManager::Instance().HasRoutedIO() ?
+//        return ActivationManager::Instance().HasRoutedIO() ?
+//        return !ActivationManager::Instance().Sandboxed() ?
+        return !ActivationManager::Sandboxed() ?
             new PosixIOInterfaceRouted(RoutedIO::Instance()) :
             new PosixIOInterfaceNative();
 //            return ;

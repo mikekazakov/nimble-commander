@@ -26,6 +26,10 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Set the key - must be called first
 Boolean APSetKey(CFStringRef key);
 
@@ -39,3 +43,6 @@ CFStringRef APCopyHash(void);
 void APBlacklistAdd(CFStringRef blacklistEntry);
 void APSetBlacklist(CFArrayRef hashArray);
 
+#ifdef __cplusplus
+}
+#endif

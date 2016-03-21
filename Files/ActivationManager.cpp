@@ -1,9 +1,9 @@
-
-extern "C" {
 #include <AquaticPrime/AquaticPrime.h>
-}
 #include "MASAppInstalledChecker.h"
+#include "AppDelegateCPP.h"
 #include "ActivationManager.h"
+
+static const char *g_LicenseFilename = "registration.nimblecommanderlicence";
 
 static bool UserHasPaidVersionInstalled()
 {
@@ -51,7 +51,7 @@ static bool CheckAquaticLicense( const string& _path )
     CFStringAppend(key, CFSTR("8"));
     CFStringAppend(key, CFSTR("A02025D7CEFD7471B08035C92D0"));
     CFStringAppend(key, CFSTR("8287E0D6F6E05C29BD"));
-    // *** End Public Key *** 
+    // *** End Public Key ***
     
     APSetKey(key);
     
@@ -64,6 +64,11 @@ static bool CheckAquaticLicense( const string& _path )
 	CFRelease(key);
     
     return result;
+}
+
+static bool UserHasValidAquaticLicense()
+{
+    return CheckAquaticLicense( AppDelegateCPP::SupportDirectory() + g_LicenseFilename );
 }
 
 ActivationManager &ActivationManager::Instance()
@@ -80,8 +85,13 @@ ActivationManager::ActivationManager()
         
     }
     else if( m_Type == Distribution::Trial ) {
-
-        m_IsActivated = UserHasPaidVersionInstalled();
+        bool has_mas_paid_version = UserHasPaidVersionInstalled();
+        bool has_valid_license = UserHasValidAquaticLicense();
+        m_IsActivated = has_mas_paid_version || has_valid_license;
+        cout << m_IsActivated << endl;
+        
+//        g_LicenseFilename
+        
 //        bool valid_key = CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" );
 //        cout << CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" ) << endl;
 //        cout << CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" ) << endl;

@@ -1,9 +1,14 @@
 #include <AquaticPrime/AquaticPrime.h>
+#include <copyfile.h>
+#include "vfs/VFS.h"
+#include "vfs/vfs_native.h"
 #include "MASAppInstalledChecker.h"
 #include "AppDelegateCPP.h"
 #include "ActivationManager.h"
 
-static const char *g_LicenseFilename = "registration.nimblecommanderlicence";
+
+static const auto g_LicenseExtension = "nimblecommanderlicense"s;
+static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
 static CFStringRef g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
 static const double g_TrialPeriodTimeInterval = 60.*60.*24.*30.;
 
@@ -68,9 +73,14 @@ static bool CheckAquaticLicense( const string& _path )
     return result;
 }
 
+static string InstalledAquaticLicensePath()
+{
+    return AppDelegateCPP::SupportDirectory() + g_LicenseFilename;
+}
+
 static bool UserHasValidAquaticLicense()
 {
-    return CheckAquaticLicense( AppDelegateCPP::SupportDirectory() + g_LicenseFilename );
+    return CheckAquaticLicense( InstalledAquaticLicensePath() );
 }
 
 static double GetDefaultsDouble(CFStringRef _key) noexcept
@@ -132,7 +142,7 @@ ActivationManager::ActivationManager()
     }
     else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
-        const bool has_valid_license = UserHasValidAquaticLicense();
+        const bool has_valid_license = UserHasValidAquaticLicense();        
         m_IsActivated = has_mas_paid_version || has_valid_license;
         
         if( !m_IsActivated ) {
@@ -250,4 +260,49 @@ bool ActivationManager::IsTrialPeriod() const noexcept
 int ActivationManager::TrialDaysLeft() const noexcept
 {
     return m_TrialDaysLeft;
+}
+
+const string &ActivationManager::LicenseFileExtension() noexcept
+{
+    return g_LicenseExtension;
+}
+
+static bool CopyLicenseFile( const string& _source_path, const string &_dest_path )
+{
+    if( _source_path == _dest_path )
+        return false;
+    
+    VFSFilePtr source;
+    auto host = VFSNativeHost::SharedHost();
+    if( host->CreateFile(_source_path.c_str(), source, nullptr) != VFSError::Ok )
+        return false;
+    
+    if( source->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) != VFSError::Ok )
+        return false;
+    
+    auto data = source->ReadFile();
+    if( !data )
+        return false;
+    
+    source->Close();
+    
+    VFSFilePtr destination;
+    if( host->CreateFile(_dest_path.c_str(), destination, nullptr) != VFSError::Ok )
+        return false;
+    
+    if( destination->Open(VFSFlags::OF_Write | VFSFlags::OF_Truncate) != VFSError::Ok )
+        return false;
+    
+    if( destination->WriteFile(data->data(), data->size()) != VFSError::Ok )
+        return false;
+    
+    return true;
+}
+
+bool ActivationManager::ProcessLicenseFile( const string& _path )
+{
+    if( !CheckAquaticLicense(_path) )
+        return false;
+    
+    return CopyLicenseFile( _path, InstalledAquaticLicensePath() );
 }

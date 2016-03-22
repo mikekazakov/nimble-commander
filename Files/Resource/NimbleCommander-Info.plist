@@ -2,6 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>nimblecommanderlicense</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>License File Type</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -66,7 +81,7 @@ All rights reserved.</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
-		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = "Developer ID Application: Mikhail Kazakov (AC5SJT236H)"</string>
+		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>http://filesmanager.info/downloads/sparkle.xml</string>

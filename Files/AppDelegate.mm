@@ -470,11 +470,28 @@ static AppDelegate *g_Me = nil;
 {
     vector<string> paths;
     for( NSString *pathstring in filenames )
-        if( auto fs = pathstring.fileSystemRepresentation )
+        if( auto fs = pathstring.fileSystemRepresentationSafe ) {
+            static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
+            if( filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
+                string p = fs;
+                dispatch_to_main_queue([=]{ [self processProvidedLicenseFile:p]; });
+                return;
+            }
+            
             paths.emplace_back( fs );
+        }
     
     if( !paths.empty() )
         [self doRevealNativeItems:paths];
+}
+
+- (void) processProvidedLicenseFile:(const string&)_path
+{
+    bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
+    if( valid_and_installed ) {
+        // TODO: thank user for registration and ask to restart NimbleCommander
+        
+    }
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path

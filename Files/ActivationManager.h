@@ -48,6 +48,8 @@ public:
     
     bool IsTrialPeriod() const noexcept;
     int TrialDaysLeft() const noexcept;
+    static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicence"
+    bool ProcessLicenseFile(const string& _path );
     
 private:
     ActivationManager();

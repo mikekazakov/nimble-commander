@@ -4,6 +4,8 @@
 #include "ActivationManager.h"
 
 static const char *g_LicenseFilename = "registration.nimblecommanderlicence";
+static CFStringRef g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
+static const double g_TrialPeriodTimeInterval = 60.*60.*24.*30.;
 
 static bool UserHasPaidVersionInstalled()
 {
@@ -71,6 +73,52 @@ static bool UserHasValidAquaticLicense()
     return CheckAquaticLicense( AppDelegateCPP::SupportDirectory() + g_LicenseFilename );
 }
 
+static double GetDefaultsDouble(CFStringRef _key) noexcept
+{
+    double result = 0.;
+    
+    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
+    if( !val )
+        return result;
+    
+    if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
+        CFNumberRef num = (CFNumberRef)val;
+        CFNumberGetValue(num, kCFNumberDoubleType, &result);
+    }
+    
+    CFRelease(val);
+    
+    return result;
+}
+
+static void SetDefaultsDouble(CFStringRef _key, double _value) noexcept
+{
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
+    CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+    CFRelease(num);
+}
+
+static bool TrialStarted()
+{
+    static const double y2016 = 60.*60.*24.*365.*15.;
+    return GetDefaultsDouble(g_DefaultsTrialExpireDate) > y2016;
+}
+
+static void SetupTrialPeriod()
+{
+    SetDefaultsDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
+}
+
+static int TrialDaysLeft()
+{
+    double v = GetDefaultsDouble(g_DefaultsTrialExpireDate) - CFAbsoluteTimeGetCurrent();
+    v = ceil( v / (60.*60.*24.) );
+    if( v < 0 )
+        return 0;
+    return (int) v;
+}
+
 ActivationManager &ActivationManager::Instance()
 {
     static auto inst = new ActivationManager;
@@ -80,28 +128,28 @@ ActivationManager &ActivationManager::Instance()
 ActivationManager::ActivationManager()
 {
     if( m_Type == Distribution::Paid ) {
-        
         m_IsActivated = true;
-        
     }
     else if( m_Type == Distribution::Trial ) {
-        bool has_mas_paid_version = UserHasPaidVersionInstalled();
-        bool has_valid_license = UserHasValidAquaticLicense();
+        const bool has_mas_paid_version = UserHasPaidVersionInstalled();
+        const bool has_valid_license = UserHasValidAquaticLicense();
         m_IsActivated = has_mas_paid_version || has_valid_license;
-        cout << m_IsActivated << endl;
         
-//        g_LicenseFilename
-        
-//        bool valid_key = CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" );
-//        cout << CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" ) << endl;
-//        cout << CheckAquaticLicense( "/Users/migun/Library/Application Support/Nimble Commander/license.nimblecommanderkey" ) << endl;
-        
+        if( !m_IsActivated ) {
+            if( !TrialStarted() )
+                SetupTrialPeriod();
+
+            m_TrialDaysLeft = TrialDaysLeft();
+            
+            if( m_TrialDaysLeft > 0 ) {
+                m_IsActivated = true;
+                m_IsTrialPeriod = true;
+            }
+        }
     }
     else { // m_Type == Distribution::Free
         // TODO: in-app purchase support
     }
-    
-    
 }
 
 const string& ActivationManager::BundleID() const
@@ -192,4 +240,14 @@ bool ActivationManager::HasCopyVerification() const noexcept
 bool ActivationManager::HasTemporaryPanels() const noexcept
 {
     return m_IsActivated;
+}
+
+bool ActivationManager::IsTrialPeriod() const noexcept
+{
+    return m_IsTrialPeriod;
+}
+
+int ActivationManager::TrialDaysLeft() const noexcept
+{
+    return m_TrialDaysLeft;
 }

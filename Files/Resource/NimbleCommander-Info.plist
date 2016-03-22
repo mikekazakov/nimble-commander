@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>files.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>info.filesmanager.$(PRODUCT_NAME:rfc1034identifier)</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.1</string>
+	<string>1.1.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -26,6 +26,11 @@
 	<string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2013-2016 Michael Kazakov.
 All rights reserved.</string>
@@ -61,14 +66,9 @@ All rights reserved.</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
-		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
+		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = "Developer ID Application: Mikhail Kazakov (AC5SJT236H)"</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>http://filesmanager.info/downloads/sparkle.xml</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 </dict>
 </plist>

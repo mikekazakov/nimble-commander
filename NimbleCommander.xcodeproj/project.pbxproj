@@ -4443,6 +4443,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.files;
 				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
@@ -4495,6 +4496,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.files;
 				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;

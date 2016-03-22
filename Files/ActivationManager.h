@@ -24,9 +24,9 @@ public:
     };
 
     static ActivationManager &Instance();
-    constexpr Distribution  Type()          const { return m_Type; }
-    static constexpr bool   Sandboxed()           { return m_IsSandBoxed; }
-    constexpr bool          ForAppStore()   const { return Sandboxed(); }
+    static constexpr Distribution   Type()          { return m_Type; }
+    static constexpr bool           Sandboxed()     { return m_IsSandBoxed; }
+    static constexpr bool           ForAppStore()   { return Sandboxed(); }
     const string&           BundleID() const;
     const string&           AppStoreID() const;
     bool HasPSFS() const noexcept;
@@ -45,6 +45,9 @@ public:
     bool HasCopyVerification() const noexcept;
     bool HasRoutedIO() const noexcept;
     bool HasTemporaryPanels() const noexcept;
+    
+    bool IsTrialPeriod() const noexcept;
+    int TrialDaysLeft() const noexcept;
     
 private:
     ActivationManager();
@@ -68,5 +71,7 @@ private:
     #error Invalid build configuration - no version type specified
 #endif
 
-    bool m_IsActivated = false;
+    bool    m_IsActivated = false;
+    int     m_TrialDaysLeft = 0;
+    bool    m_IsTrialPeriod = false;
 };

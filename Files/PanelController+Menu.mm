@@ -75,6 +75,16 @@ static void WriteSingleStringToClipboard(const string &_s)
     [pb setString:[NSString stringWithUTF8StdString:_s] forType:NSStringPboardType];
 }
 
+static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
+{
+    vector<VFSListingItem> items;
+    for( auto ind: _data.SortedDirectoryEntries() )
+        if( auto e = _data.EntryAtRawPosition(ind) )
+            if( e.IsDir() && !e.IsDotDot() )
+                items.emplace_back( move(e) );
+    return items;
+}
+
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -677,13 +687,9 @@ static void WriteSingleStringToClipboard(const string &_s)
     [self CalculateSizes:self.selectedEntriesOrFocusedEntryWithDotDot];
 }
 
-- (IBAction)OnCalculateAllSizes:(id)sender {
-    vector<VFSListingItem> filenames;
-    for(auto &i: m_Data.Listing())
-        if(i.IsDir() && !i.IsDotDot())
-            filenames.emplace_back(i);
-    
-    [self CalculateSizes:filenames];
+- (IBAction)OnCalculateAllSizes:(id)sender
+{
+    [self CalculateSizes:DirectoriesWithoutDodDotInSortedOrder(self.data)];
 }
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender{

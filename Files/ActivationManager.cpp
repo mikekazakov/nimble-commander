@@ -142,17 +142,18 @@ ActivationManager::ActivationManager()
     }
     else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
-        const bool has_valid_license = UserHasValidAquaticLicense();        
-        m_IsActivated = has_mas_paid_version || has_valid_license;
+        const bool has_valid_license = UserHasValidAquaticLicense();
+        m_UserHadRegistered = has_mas_paid_version || has_valid_license;
+        m_IsActivated = true /*has_mas_paid_version || has_valid_license*/;
         
-        if( !m_IsActivated ) {
+        if( !m_UserHadRegistered ) {
             if( !TrialStarted() )
                 SetupTrialPeriod();
 
             m_TrialDaysLeft = TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
-                m_IsActivated = true;
+//                m_IsActivated = true;
                 m_IsTrialPeriod = true;
             }
         }
@@ -305,4 +306,9 @@ bool ActivationManager::ProcessLicenseFile( const string& _path )
         return false;
     
     return CopyLicenseFile( _path, InstalledAquaticLicensePath() );
+}
+
+bool ActivationManager::UserHadRegistered() const noexcept
+{
+    return m_UserHadRegistered;
 }

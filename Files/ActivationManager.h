@@ -46,8 +46,9 @@ public:
     bool HasRoutedIO() const noexcept;
     bool HasTemporaryPanels() const noexcept;
     
+    bool UserHadRegistered() const noexcept;
     bool IsTrialPeriod() const noexcept;
-    int TrialDaysLeft() const noexcept;
+    int TrialDaysLeft() const noexcept; // zero means that trial has expired
     static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicence"
     bool ProcessLicenseFile(const string& _path );
     
@@ -74,6 +75,7 @@ private:
 #endif
 
     bool    m_IsActivated = false;
+    bool    m_UserHadRegistered = false;
     int     m_TrialDaysLeft = 0;
     bool    m_IsTrialPeriod = false;
 };

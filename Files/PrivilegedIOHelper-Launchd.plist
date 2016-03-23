@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>info.filesmanager.Files.PrivilegedIOHelper</string>
+	<string>info.filesmanager.Files.PrivilegedIOHelperV2</string>
 	<key>RunAtLoad</key>
 	<true/>
 	<key>MachServices</key>
 	<dict>
-		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
+		<key>info.filesmanager.Files.PrivilegedIOHelperV2</key>
 		<true/>
 	</dict>
 </dict>

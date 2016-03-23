@@ -20,7 +20,7 @@ static PosixIOInterface &IOWrappedCreateProxy();
 PosixIOInterface &RoutedIO::Direct    = IODirectCreateProxy();
 PosixIOInterface &RoutedIO::Default   = IOWrappedCreateProxy();
 
-static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelper";
+static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelperV2";
 static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
 
 static PosixIOInterface &IODirectCreateProxy() {
@@ -219,6 +219,21 @@ bool RoutedIO::AskToInstallHelper()
     CFErrorRef error;
     
     bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, authRef, &error);
+    if( !result && error != nullptr ) {
+        if( CFStringRef desc = CFErrorCopyDescription(error) ) {
+            CFShow(desc);
+            CFRelease(desc);
+        }
+        if( CFStringRef reason = CFErrorCopyFailureReason(error) ) {
+            CFShow(reason);
+            CFRelease(reason);
+        }
+        if( CFStringRef suggestion = CFErrorCopyRecoverySuggestion(error) ) {
+            CFShow(suggestion);
+            CFRelease(suggestion);
+        }
+        CFRelease(error);
+    }
     
     AuthorizationFree(authRef, kAuthorizationFlagDefaults);
     

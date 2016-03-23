@@ -407,7 +407,7 @@ static bool AllowConnectionFrom(const char *_bin_path)
     if(!last_sl)
         return false;
     
-    return strcmp(last_sl, "/Files") == 0;
+    return strcmp(last_sl, "/Nimble Commander") == 0;
 }
 
 static bool CheckSignature(const char *_bin_path)
@@ -487,7 +487,7 @@ int main(int argc, const char *argv[])
     
     umask(0); // no brakes!
 
-    xpc_connection_t service = xpc_connection_create_mach_service("info.filesmanager.Files.PrivilegedIOHelper",
+    xpc_connection_t service = xpc_connection_create_mach_service("info.filesmanager.Files.PrivilegedIOHelperV2",
                                                                   dispatch_get_main_queue(),
                                                                   XPC_CONNECTION_MACH_SERVICE_LISTENER);
     

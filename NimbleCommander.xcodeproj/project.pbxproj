@@ -637,7 +637,7 @@
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFD54FC31A29C4CA0098A4A9 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */; };
-		CFD54FC51A29C6920098A4A9 /* NimbleCommander in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
@@ -947,7 +947,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				CFD54FC51A29C6920098A4A9 /* NimbleCommander in CopyFiles */,
+				CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1417,7 +1417,7 @@
 		CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivilegedIOHelper.cpp; sourceTree = "<group>"; };
 		CFD54FB21A29C2560098A4A9 /* PrivilegedIOHelper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Info.plist"; sourceTree = "<group>"; };
 		CFD54FB31A29C2BF0098A4A9 /* PrivilegedIOHelper-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Launchd.plist"; sourceTree = "<group>"; };
-		CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NimbleCommander; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelperV2; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoutedIO.cpp; sourceTree = "<group>"; };
 		CFD54FCD1A29C8C30098A4A9 /* RoutedIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutedIO.h; sourceTree = "<group>"; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
@@ -2473,7 +2473,7 @@
 				CF47A980186C607C00745C4C /* NimbleCommander.xctest */,
 				CF6D997D196675290077B146 /* NimbleCommander.app */,
 				CFF6F3A11A13567C00011177 /* NimbleCommander.app */,
-				CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */,
+				CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2751,9 +2751,9 @@
 			productReference = CFC5121116C4BD3D00D247EE /* Nimble Commander.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */ = {
+		CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.NimbleCommander.PrivilegedIOHelper" */;
+			buildConfigurationList = CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */;
 			buildPhases = (
 				CFD54FB81A29C4C10098A4A9 /* Sources */,
 				CFD54FB91A29C4C10098A4A9 /* Frameworks */,
@@ -2763,9 +2763,9 @@
 			);
 			dependencies = (
 			);
-			name = info.filesmanager.NimbleCommander.PrivilegedIOHelper;
+			name = info.filesmanager.Files.PrivilegedIOHelperV2;
 			productName = PrivilegedIOHelper;
-			productReference = CFD54FBC1A29C4C10098A4A9 /* NimbleCommander */;
+			productReference = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
 			productType = "com.apple.product-type.tool";
 		};
 		CFF6F2391A13567C00011177 /* NimbleCommander Pro */ = {
@@ -2851,7 +2851,7 @@
 				CF6D997C196675290077B146 /* NimbleCommander Lite */,
 				CFF6F2391A13567C00011177 /* NimbleCommander Pro */,
 				CF47A97F186C607B00745C4C /* NimbleCommander Tests */,
-				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */,
+				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
 		};
 /* End PBXProject section */
@@ -3784,7 +3784,7 @@
 		};
 		CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.NimbleCommander.PrivilegedIOHelper */;
+			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
 			targetProxy = CFD54FC61A29C6AD0098A4A9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4443,7 +4443,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.files;
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
@@ -4496,7 +4496,7 @@
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.files;
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
@@ -4539,7 +4539,8 @@
 					__launchd_plist,
 					"Files/PrivilegedIOHelper-Launchd.plist",
 				);
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files.PrivilegedIOHelperV2;
+				PRODUCT_NAME = info.filesmanager.Files.PrivilegedIOHelperV2;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -4576,7 +4577,8 @@
 					__launchd_plist,
 					"Files/PrivilegedIOHelper-Launchd.plist",
 				);
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files.PrivilegedIOHelperV2;
+				PRODUCT_NAME = info.filesmanager.Files.PrivilegedIOHelperV2;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -4715,7 +4717,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.NimbleCommander.PrivilegedIOHelper" */ = {
+		CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD54FC11A29C4C10098A4A9 /* Debug */,

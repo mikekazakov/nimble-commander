@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-               BuildableName = "NimbleCommander"
-               BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+               BuildableName = "PrivilegedIOHelper"
+               BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "NimbleCommander"
-            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            BuildableName = "PrivilegedIOHelper"
+            BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "NimbleCommander"
-            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            BuildableName = "PrivilegedIOHelper"
+            BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "NimbleCommander"
-            BlueprintName = "info.filesmanager.NimbleCommander.PrivilegedIOHelper"
+            BuildableName = "PrivilegedIOHelper"
+            BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

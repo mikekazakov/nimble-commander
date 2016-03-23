@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>info.filesmanager.NimbleCommander.PrivilegedIOHelper</string>
+	<string>info.filesmanager.Files.PrivilegedIOHelperV2</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PrivilegedIOHelper</string>
+	<string>PrivilegedIOHelperV2</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>SMAuthorizedClients</key>

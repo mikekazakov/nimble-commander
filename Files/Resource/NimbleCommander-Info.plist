@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -11,14 +13,14 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>License File Type</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 	</array>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
@@ -80,8 +82,8 @@ All rights reserved.</string>
 	</array>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
-		<key>info.filesmanager.Files.PrivilegedIOHelper</key>
-		<string>identifier info.filesmanager.Files.PrivilegedIOHelper and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
+		<key>info.filesmanager.Files.PrivilegedIOHelperV2</key>
+		<string>identifier info.filesmanager.Files.PrivilegedIOHelperV2 and certificate leaf[subject.CN] = "Developer ID Application: Mikhail Kazakov (AC5SJT236H)"</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>http://filesmanager.info/downloads/sparkle.xml</string>

@@ -75,6 +75,25 @@ static string cwd()
     return cwd;
 }
 
+static optional<string> AskUserForLicenseFile()
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.resolvesAliases = true;
+    panel.canChooseDirectories = false;
+    panel.canChooseFiles = true;
+    panel.allowsMultipleSelection = false;
+    panel.showsHiddenFiles = true;
+    panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:ActivationManager::LicenseFileExtension()] ];
+    panel.allowsOtherFileTypes = false;
+    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:CommonPaths::Downloads()] isDirectory:true];
+    if( [panel runModal] == NSFileHandlingPanelOKButton )
+        if(panel.URL != nil) {
+            string path = panel.URL.path.fileSystemRepresentationSafe;
+            return path;
+        }
+    return nullopt;
+}
+
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -462,7 +481,7 @@ static AppDelegate *g_Me = nil;
 
 - (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
 {
-    [self  application:sender openFiles:@[filename]];;
+    [self application:sender openFiles:@[filename]];;
     return true;
 }
 
@@ -492,6 +511,16 @@ static AppDelegate *g_Me = nil;
         // TODO: thank user for registration and ask to restart NimbleCommander
         
     }
+}
+
+- (IBAction)OnActivateExternalLicense:(id)sender
+{
+    if( auto path = AskUserForLicenseFile() )
+        [self processProvidedLicenseFile:*path];
+}
+
+- (IBAction)OnPurchaseExternalLicense:(id)sender
+{
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path

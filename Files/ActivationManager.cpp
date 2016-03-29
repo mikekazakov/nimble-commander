@@ -291,7 +291,8 @@ static bool CopyLicenseFile( const string& _source_path, const string &_dest_pat
     if( host->CreateFile(_dest_path.c_str(), destination, nullptr) != VFSError::Ok )
         return false;
     
-    if( destination->Open(VFSFlags::OF_Write | VFSFlags::OF_Truncate) != VFSError::Ok )
+    using namespace VFSFlags;
+    if( destination->Open(OF_Create | OF_Write | OF_Truncate | OF_IWUsr | OF_IRUsr) != VFSError::Ok )
         return false;
     
     if( destination->WriteFile(data->data(), data->size()) != VFSError::Ok )

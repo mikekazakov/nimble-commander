@@ -19,6 +19,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.files.hide_others",                  u8"⌥⌘h"     },  // cmd+alt+h
         {"menu.files.show_all",                     u8""        },
         {"menu.files.quit",                         u8"⌘q"      },  // cmd+q
+        {"menu.files.active_license_file",          u8""        },
 
         {"menu.file.newwindow",                     u8"⌘n"      },  // cmd+n
         {"menu.file.new_folder",                    u8"⇧⌘n"     },  // cmd+shift+n

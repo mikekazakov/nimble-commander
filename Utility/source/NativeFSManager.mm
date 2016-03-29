@@ -302,7 +302,7 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
 void NativeFSManager::OnDidMount(const string &_on_path)
 {
     // presumably called from main thread, so go async to keep UI smooth
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), [=]{
         auto volume = make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume.get());

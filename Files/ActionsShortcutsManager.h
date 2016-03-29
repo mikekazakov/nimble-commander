@@ -82,6 +82,8 @@ private:
         {"menu.files.show_all",                 10040},
         {"menu.files.quit",                     10050},
         {"menu.files.toggle_admin_mode",        10070},
+        {"menu.files.active_license_file",      10080},
+        {"menu.files.purchase_license",         10090},
         
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},

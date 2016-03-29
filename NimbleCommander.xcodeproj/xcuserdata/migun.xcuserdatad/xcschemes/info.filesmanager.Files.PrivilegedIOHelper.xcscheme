@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-               BuildableName = "PrivilegedIOHelper"
+               BuildableName = "info.filesmanager.Files.PrivilegedIOHelperV2"
                BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "PrivilegedIOHelper"
+            BuildableName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "PrivilegedIOHelper"
+            BuildableName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFD54FBB1A29C4C10098A4A9"
-            BuildableName = "PrivilegedIOHelper"
+            BuildableName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             BlueprintName = "info.filesmanager.Files.PrivilegedIOHelperV2"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>

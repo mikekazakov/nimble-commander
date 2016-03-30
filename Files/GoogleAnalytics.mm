@@ -9,12 +9,7 @@ static const auto g_TrackingID = "UA-47180125-2"s;
 static const auto g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 static const auto g_SendingDelay = /*2min*/10s;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
-
-//
-//NSString *const kGAVersion = @"1";
-//NSString *const kGAErrorDomain = @"com.google-analytics.errorDomain";
-//NSString *const kGAReceiverURLString = @"http://www.google-analytics.com/collect";
-
+static const auto g_MessagesOverflowLimit = 100;
 
 static optional<string> GetDefaultsString(CFStringRef _key)
 {
@@ -88,6 +83,8 @@ GoogleAnalytics& GoogleAnalytics::Instance()
 //&aiid=com.android.vending   // App Installer Id.
 //&cd=Home                    // Screen name / content description.
 
+//Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H)
+
 static NSString *GetUserAgent()
 {
     sysinfo::SystemOverview sysoverview;
@@ -95,12 +92,13 @@ static NSString *GetUserAgent()
     
     NSDictionary *osInfo = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
     
-    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
-    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/2.0 (Macintosh; Intel %@ %@; %@-%@; %@)",
+//    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
+//    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@-%@; %@)",
+    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@)",
                     osInfo[@"ProductName"],
                     [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
-                    [currentLocale objectForKey:NSLocaleLanguageCode],
-                    [currentLocale objectForKey:NSLocaleCountryCode],
+//                    [currentLocale objectForKey:NSLocaleLanguageCode],
+//                    [currentLocale objectForKey:NSLocaleCountryCode],
                     [NSString stringWithUTF8StdString:sysoverview.coded_model]
                     ];
     return UA;
@@ -136,16 +134,43 @@ GoogleAnalytics::GoogleAnalytics():
 
 void GoogleAnalytics::PostScreenView(const char *_screen)
 {
+    string message = "t=screenview&cd="s + _screen;
+    
+    AcceptMessage( EscapeString(message) );
+}
+
+void GoogleAnalytics::PostEvent(const char *_category, const char *_action, const char *_label, unsigned _value)
+{
+    // TODO: check if analytics is off
+
+    string message = "t=event&ec="s + _category + "&ea=" + _action + "&el=" + _label + "&ev=" + to_string(_value);
+
+    AcceptMessage( EscapeString(message) );
+}
+
+void GoogleAnalytics::AcceptMessage(string _message)
+{
     // TODO: check if analytics is off
     
-    string message = "t=screenview&cd=";
-    message += EscapeString(_screen);
-    
-    LOCK_GUARD(m_MessagesLock)
-        m_Messages.emplace_back( move(message) );
+    LOCK_GUARD(m_MessagesLock) {
+        if(m_Messages.size() < g_MessagesOverflowLimit)
+            m_Messages.emplace_back( move(_message) );
+    }
     
     MarkDirty();
 }
+
+//Event Tracking
+//
+//v=1              // Version.
+//&tid=UA-XXXXX-Y  // Tracking ID / Property ID.
+//&cid=555         // Anonymous Client ID.
+//
+//&t=event         // Event hit type
+//&ec=video        // Event Category. Required.
+//&ea=play         // Event Action. Required.
+//&el=holiday      // Event label.
+//&ev=300          // Event value.
 
 void GoogleAnalytics::MarkDirty()
 {
@@ -178,7 +203,10 @@ void GoogleAnalytics::PostMessages()
 //        [req addValue:UA forHTTPHeaderField:@"User-Agent"];
         [req setHTTPBody:post_data];
         
-        NSURLSessionDataTask *task = [GetPostingSession() dataTaskWithRequest:req completionHandler:^(NSData*, NSURLResponse*, NSError*){}];
+        NSURLSessionDataTask *task = [GetPostingSession() dataTaskWithRequest:req completionHandler:^(NSData* d, NSURLResponse* r, NSError* e){
+            int a = 10;
+        
+        }];
         [task resume];
     }
 }

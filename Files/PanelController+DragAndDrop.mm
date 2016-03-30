@@ -16,7 +16,7 @@
 #include "Config.h"
 #include "ActivationManager.h"
 
-static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::Instance().BundleID() + ".filepanelsdraganddrop"];
+static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
 static NSString *g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
 static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));

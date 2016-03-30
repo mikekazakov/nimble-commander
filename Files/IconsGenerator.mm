@@ -64,7 +64,7 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
         return 0;
     
     char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, ("%s" + ActivationManager::Instance().BundleID() + ".ico.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
+    sprintf(pattern_buf, ("%s" + ActivationManager::BundleID() + ".ico.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
     
     int fd = mkstemp(pattern_buf);
     if(fd < 0)

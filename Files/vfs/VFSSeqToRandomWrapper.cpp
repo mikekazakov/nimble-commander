@@ -75,7 +75,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     else {
         // we need to write it into a temp dir and delete it upon finish
         char pattern_buf[MAXPATHLEN];
-        sprintf(pattern_buf, ("%s" + ActivationManager::Instance().BundleID() + ".vfs.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
+        sprintf(pattern_buf, ("%s" + ActivationManager::BundleID() + ".vfs.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
         
         int fd = mkstemp(pattern_buf);
         

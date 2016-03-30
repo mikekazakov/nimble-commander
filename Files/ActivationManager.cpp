@@ -5,12 +5,13 @@
 #include "MASAppInstalledChecker.h"
 #include "AppDelegateCPP.h"
 #include "ActivationManager.h"
+#include "GoogleAnalytics.h"
 
 
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
 static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
 static CFStringRef g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
-static const double g_TrialPeriodTimeInterval = 60.*60.*24.*30.;
+static const double g_TrialPeriodTimeInterval = 60.*60.*24.*30.; // 30 days
 
 static bool UserHasPaidVersionInstalled()
 {
@@ -142,7 +143,12 @@ ActivationManager::ActivationManager()
     }
     else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
+        if(has_mas_paid_version)
+            GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "MAS Installed");
         const bool has_valid_license = UserHasValidAquaticLicense();
+        if(has_valid_license)
+            GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "License Installed");
+        
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
         m_IsActivated = true /*has_mas_paid_version || has_valid_license*/;
         
@@ -155,6 +161,11 @@ ActivationManager::ActivationManager()
             if( m_TrialDaysLeft > 0 ) {
 //                m_IsActivated = true;
                 m_IsTrialPeriod = true;
+                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial valid");
+            }
+            else {
+                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial exceeded");
+                m_IsTrialPeriod = false;
             }
         }
     }
@@ -163,9 +174,16 @@ ActivationManager::ActivationManager()
     }
 }
 
-const string& ActivationManager::BundleID() const
+const string& ActivationManager::BundleID()
 {
-    return m_BundleID;
+    static const string bundle_id = []{
+        if( CFStringRef bundle_id = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
+            return CFStringGetUTF8StdString(bundle_id);
+        else
+            return "unknown"s;
+    }();
+    
+    return bundle_id;
 }
 
 const string& ActivationManager::AppStoreID() const

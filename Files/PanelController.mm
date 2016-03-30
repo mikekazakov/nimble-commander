@@ -115,9 +115,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_IsAnythingWorksInBackground = false;
-        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirsizecounting");
-        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirloading");
-        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".paneldirreloading");
+        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirsizecounting");
+        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
+        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirreloading");
         m_DragDrop.last_valid_items = -1;
         
         __weak PanelController* weakself = self;

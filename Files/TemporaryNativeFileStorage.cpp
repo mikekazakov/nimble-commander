@@ -20,7 +20,7 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-static const string g_Pref = ActivationManager::Instance().BundleID() + ".tmp.";
+static const string g_Pref = ActivationManager::BundleID() + ".tmp.";
 
 static void DoTempPurge();
 

@@ -138,7 +138,7 @@ static AppDelegate *g_Me = nil;
         [self setupConfigDirectory];
         g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
         g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe, self.stateDirectory + "State.json");
-        [self migrateUserDefaultsToJSONConfig_1_1_0_to_1_1_1];
+//        [self migrateUserDefaultsToJSONConfig_1_1_0_to_1_1_1];
         
         [self reloadSkinSetting];
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );

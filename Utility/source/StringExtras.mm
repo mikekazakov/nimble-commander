@@ -4,6 +4,15 @@
 using namespace std;
 using namespace std::experimental;
 
+CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept
+{
+    return CFStringCreateWithBytes(0,
+                                   (UInt8*)_s.data(),
+                                   _s.length(),
+                                   kCFStringEncodingUTF8,
+                                   false);
+}
+
 CFStringRef CFStringCreateWithUTF8StringNoCopy(string_view _s) noexcept
 {
     return CFStringCreateWithBytesNoCopy(0,
@@ -73,6 +82,20 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
                                          kCFStringEncodingMacRoman,
                                          false,
                                          kCFAllocatorNull);
+}
+
+string CFStringGetUTF8StdString(CFStringRef _str)
+{
+    if( const char *cstr = CFStringGetCStringPtr(_str, kCFStringEncodingUTF8) )
+        return string(cstr);
+    
+    CFIndex length = CFStringGetLength(_str);
+    CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+    auto buffer = make_unique<char[]>(maxSize);
+    if( CFStringGetCString(_str, &buffer[0], maxSize, kCFStringEncodingUTF8) )
+        return string(buffer.get());
+    
+    return "";
 }
 
 static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)

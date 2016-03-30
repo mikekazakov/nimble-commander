@@ -8,6 +8,8 @@
     #include <Foundation/Foundation.h>
 #endif
 
+std::string CFStringGetUTF8StdString(CFStringRef _str);
+CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(std::experimental::string_view _s) noexcept;
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;

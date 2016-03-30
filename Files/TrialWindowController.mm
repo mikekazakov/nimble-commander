@@ -7,6 +7,7 @@
 //
 
 #include "TrialWindowController.h"
+#include "GoogleAnalytics.h"
 
 @interface TrialWindow : NSWindow
 @end
@@ -62,6 +63,8 @@
     [string appendAttributedString:[[NSMutableAttributedString alloc] initWithString:s2]];
         
     [self.messageTextView.textStorage setAttributedString: string];
+    
+    GoogleAnalytics::Instance().PostScreenView("Trial Nag Screen");
 }
 
 

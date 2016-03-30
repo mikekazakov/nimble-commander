@@ -54,6 +54,10 @@ void dispatch_to_background(T _block);
 template <class T>
 void dispatch_to_main_queue_after(std::chrono::nanoseconds _delay, T _block);
 
+/** syntax sugar for dispatch_after_f(..., dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), _block) call. */
+template <class T>
+void dispatch_to_background_after(std::chrono::nanoseconds _delay, T _block);
+
 /** if current thread is main - just execute a block. otherwise - dispatch it asynchronously to main thread. */
 template <class T>
 void dispatch_or_run_in_main_queue(T _block);
@@ -256,6 +260,12 @@ template <class T>
 inline void dispatch_to_main_queue_after(std::chrono::nanoseconds _delay, T _block)
 {
     dispatch_after(_delay, dispatch_get_main_queue(), std::move(_block));
+}
+
+template <class T>
+inline void dispatch_to_background_after(std::chrono::nanoseconds _delay, T _block)
+{
+    dispatch_after(_delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), std::move(_block));
 }
 
 template <class T>

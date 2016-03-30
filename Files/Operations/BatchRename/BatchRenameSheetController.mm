@@ -9,6 +9,7 @@
 #include <Utility/SheetWithHotkeys.h>
 #include "../../3rd_party/NSFileManager+DirectoryLocations.h"
 #include "../../SimpleComboBoxPersistentDataSource.h"
+#include "../../GoogleAnalytics.h"
 #include "BatchRenameSheetController.h"
 #include "BatchRename.h"
 #include "BatchRenameSheetRangeSelectionPopoverController.h"
@@ -159,6 +160,8 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     sheet.onCtrlT = [sheet makeActionHotkey:@selector(OnInsertTimePlaceholder:)];
     sheet.onCtrlU = [sheet makeClickHotkey:self.CaseProcessing];
     sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
+    
+    GoogleAnalytics::Instance().PostScreenView("Batch Rename");
 }
 
 - (IBAction)OnCancel:(id)sender

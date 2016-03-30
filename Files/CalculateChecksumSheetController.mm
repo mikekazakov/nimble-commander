@@ -10,6 +10,7 @@
 #include <Habanero/DispatchQueue.h>
 #include "CalculateChecksumSheetController.h"
 #include "Config.h"
+#include "GoogleAnalytics.h"
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static string g_SumsFilename = "checksums.txt";
@@ -172,6 +173,8 @@ const static vector<pair<NSString*,int>> g_Algos = {
     self.Progress.maxValue = double(m_TotalSize);
     self.Progress.controlSize = NSMiniControlSize;
     [self.Progress setIndeterminate:false];
+    
+    GoogleAnalytics::Instance().PostScreenView("Calculate Checksum");
 }
 
 - (IBAction)OnClose:(id)sender

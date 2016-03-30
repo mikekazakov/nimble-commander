@@ -2,10 +2,13 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <Habanero/algo.h>
+#include <Utility/SystemInformation.h>
 #include "GoogleAnalytics.h"
 
 static const auto g_TrackingID = "UA-47180125-2"s;
 static const auto g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
+static const auto g_SendingDelay = /*2min*/10s;
+static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 
 //
 //NSString *const kGAVersion = @"1";
@@ -63,6 +66,11 @@ static string EscapeString(const string &_original) // very inefficient
     return [[NSString stringWithUTF8StdString:_original] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet].UTF8String;
 }
 
+static string EscapeString(const char *_original) // very inefficient
+{
+    return [[NSString stringWithUTF8String:_original] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet].UTF8String;
+}
+
 GoogleAnalytics& GoogleAnalytics::Instance()
 {
     static auto inst = new GoogleAnalytics;
@@ -80,98 +88,97 @@ GoogleAnalytics& GoogleAnalytics::Instance()
 //&aiid=com.android.vending   // App Installer Id.
 //&cd=Home                    // Screen name / content description.
 
+static NSString *GetUserAgent()
+{
+    sysinfo::SystemOverview sysoverview;
+    sysinfo::GetSystemOverview(sysoverview);
+    
+    NSDictionary *osInfo = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+    
+    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
+    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/2.0 (Macintosh; Intel %@ %@; %@-%@; %@)",
+                    osInfo[@"ProductName"],
+                    [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
+                    [currentLocale objectForKey:NSLocaleLanguageCode],
+                    [currentLocale objectForKey:NSLocaleCountryCode],
+                    [NSString stringWithUTF8StdString:sysoverview.coded_model]
+                    ];
+    return UA;
+}
 
-//+ (NSCharacterSet *)URLPathAllowedCharacterSet NS_AVAILABLE(10_9, 7_0);
-//
-//// Returns a character set containing the characters allowed in an URL's query component.
-//+ (NSCharacterSet *)URLQueryAllowedCharacterSet NS_AVAILABLE(10_9, 7_0);
-//
-//// Returns a character set containing the characters allowed in an URL's fragment component.
-//+ (NSCharacterSet *)URLFragmentAllowedCharacterSet NS_AVAILABLE(10_9, 7_0);
-//
-//@end
-//
-//
-//@interface NSString (NSURLUtilities)
-//
-//// Returns a new string made from the receiver by replacing all characters not in the allowedCharacters set with percent encoded characters. UTF-8 encoding is used to determine the correct percent encoded characters. Entire URL strings cannot be percent-encoded. This method is intended to percent-encode an URL component or subcomponent string, NOT the entire URL string. Any characters in allowedCharacters outside of the 7-bit ASCII range are ignored.
-//- (nullable NSString *)stringByAddingPercentEncodingWithAllowedCharacters:(NSCharacterSet *)allowedCharacters NS_AVAILABLE(10_9, 7_0);
-
+static NSURLSession *GetPostingSession()
+{
+    static NSURLSession *session = []{
+        NSURLSessionConfiguration *config = NSURLSessionConfiguration.ephemeralSessionConfiguration;
+        config.discretionary = true;
+        config.networkServiceType = NSURLNetworkServiceTypeBackground;
+        config.HTTPShouldSetCookies = false;
+        config.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
+        config.HTTPAdditionalHeaders = @{ @"User-Agent": GetUserAgent() };
+        
+        return [NSURLSession sessionWithConfiguration:config];
+    }();
+    
+    return session;
+}
 
 GoogleAnalytics::GoogleAnalytics():
     m_ClientID( GetStoredOrNewClientID() ),
     m_AppName( GetAppName() ),
     m_AppVersion( GetAppVersion() )
 {
-    cout << "GA user id: " << m_ClientID << endl;
-    
-    
-//    NSDictionary *defaultParams = @{@"v" : kGAVersion, @"tid" : self.trackingId, @"cid" : self.clientId,
-//                                    @"an" : @(self.anonymize),
-//                                    @"sr" : [self screenResolution],
-//                                    @"sd" : [self screenColors],
-//                                    @"ul" : [self userLanguage],
-//                                    };
-//    NSOrderedSet *copyHits = [self.hits copy];
-//postdata="v=1&tid=UA-123456-1&cid=UUID&t=pageview&dp=%2FStart%20screen";
-//            [params addEntriesFromDictionary:@{ @"sc" : @"start" }];
-//        [self.httpClient postPath:@"/collect" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-    
-//    NSDictionary *osInfo = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-//    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
-//    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/2.0 (Macintosh; Intel %@ %@; %@-%@)",
-//                    osInfo[@"ProductName"], [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
-//                    [currentLocale objectForKey:NSLocaleLanguageCode], [currentLocale objectForKey:NSLocaleCountryCode]];
-//    [_httpClient setDefaultHeader:@"User-Agent" value:UA];
-    
-//                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
-    
-//    - (NSString *)appName { return [[[NSBundle mainBundle] infoDictionary] valueForKey:(id)kCFBundleNameKey]; }
-//    - (NSString *)appVersion { return [[[NSBundle mainBundle] infoDictionary] valueForKey:(id)kCFBundleVersionKey]; }
-//    - (NSString *)appId { return [[NSBundle mainBundle] bundleIdentifier]; }
-    
-    
-    
-    
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://www.google-analytics.com/collect"]];
-    [req setHTTPMethod:@"POST"];
-    NSString *post_string = [NSString stringWithFormat:@"v=1&tid=%s&cid=%s&an=%s&av=%s&t=pageview&dp=home",
-                             g_TrackingID.c_str(),
-                             m_ClientID.c_str(),
-                             EscapeString(m_AppName).c_str(),
-                             m_AppVersion.c_str()
-                             ];
-    
-    NSData *post_data = [post_string dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    NSString *post_length = [NSString stringWithFormat:@"%lu",(unsigned long)[post_data length]];
-    [req addValue:post_length forHTTPHeaderField:@"Content-Length"];
-    [req setHTTPBody:post_data];
-    
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:req
-                                            completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                int a = 10;
-                                                // Do something with response data here - convert to JSON, check if error exists, etc....
-                                            }];
-    
-    [task resume];
-    
-//    v=1              // Version.
-//    &tid=UA-XXXXX-Y  // Tracking ID / Property ID.
-//    &cid=555         // Anonymous Client ID.
-//    &t=              // Hit Type.
-    
-    
+    m_PayloadPrefix =   "v=1"s + "&"
+                        "tid=" + g_TrackingID + "&" +
+                        "cid=" + m_ClientID + "&" +
+                        "an="  + EscapeString(m_AppName) + "&" +
+                        "av="  + m_AppVersion + "&";
 }
 
-void GoogleAnalytics::PostPageview(const char *_page)
+void GoogleAnalytics::PostScreenView(const char *_screen)
 {
+    // TODO: check if analytics is off
     
+    string message = "t=screenview&cd=";
+    message += EscapeString(_screen);
     
+    LOCK_GUARD(m_MessagesLock)
+        m_Messages.emplace_back( move(message) );
+    
+    MarkDirty();
 }
 
-int a = []{
-    GoogleAnalytics::Instance();
-    return 0;
-}();
+void GoogleAnalytics::MarkDirty()
+{
+    if( !m_SendingScheduled.test_and_set() )
+        dispatch_to_background_after(g_SendingDelay, [=]{
+            PostMessages();
+            m_SendingScheduled.clear();
+        });
+}
 
+void GoogleAnalytics::PostMessages()
+{
+    dispatch_assert_background_queue();
+    static auto single_url = [NSURL URLWithString:g_URLSingle];
+    
+    vector<string> messages;
+    LOCK_GUARD(m_MessagesLock)
+        messages = move(m_Messages);
+    
+    
+    for(auto &message: messages) {
+        string payload = m_PayloadPrefix + message;
+        
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:single_url];
+        [req setHTTPMethod:@"POST"];
+        
+        // use setValue
+        NSData *post_data = [NSData dataWithBytes:payload.data() length:payload.length()];
+//        [req addValue:[NSString stringWithFormat:@"%lu", post_data.length] forHTTPHeaderField:@"Content-Length"];
+//        [req addValue:UA forHTTPHeaderField:@"User-Agent"];
+        [req setHTTPBody:post_data];
+        
+        NSURLSessionDataTask *task = [GetPostingSession() dataTaskWithRequest:req completionHandler:^(NSData*, NSURLResponse*, NSError*){}];
+        [task resume];
+    }
+}

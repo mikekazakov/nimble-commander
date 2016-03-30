@@ -241,6 +241,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     _overview.user_full_name = NSFullUserName().UTF8String;
     
     // get machine model once
+    static string coded_model = "unknown";
     static NSString *human_model = @"N/A";
     static once_flag once;
     call_once(once, []{
@@ -248,6 +249,7 @@ bool GetSystemOverview(SystemOverview &_overview)
         size_t len = 256;
         if(sysctlbyname("hw.model", model, &len, NULL, 0) == 0)
         {
+            coded_model = model;
             NSString *ns_model = [NSString stringWithUTF8String:model];
             NSDictionary *dict;
             NSBundle *bundle;
@@ -282,6 +284,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     });
     
     _overview.human_model = human_model.UTF8String;
+    _overview.coded_model = coded_model;
     
     return true;
 }    

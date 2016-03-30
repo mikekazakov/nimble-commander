@@ -5,13 +5,21 @@ class GoogleAnalytics
 public:
     static GoogleAnalytics& Instance();
     
-    void PostPageview(const char *_page);
+    void PostScreenView(const char *_screen);
     
 private:
     GoogleAnalytics();
+    GoogleAnalytics(const GoogleAnalytics&) = delete;
     
+    void PostMessages();
+    void MarkDirty();
     
-    const string m_ClientID;
-    const string m_AppName;
-    const string m_AppVersion;
+    atomic_flag     m_SendingScheduled{ false };
+    spinlock        m_MessagesLock;
+    vector<string>  m_Messages;
+    
+    const string    m_ClientID;
+    const string    m_AppName;
+    const string    m_AppVersion;
+    string          m_PayloadPrefix;
 };

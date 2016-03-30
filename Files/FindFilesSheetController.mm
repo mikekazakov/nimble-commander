@@ -17,6 +17,7 @@
 #include "AppDelegate.h"
 #include "Config.h"
 #include "ActivationManager.h"
+#include "GoogleAnalytics.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
@@ -301,6 +302,8 @@ private:
         self.ViewButton.target = AppDelegate.me;
         self.ViewButton.action = @selector(showFeatureNotSupportedWindow:);
     }
+    
+    GoogleAnalytics::Instance().PostScreenView("Find Files");
 }
 
 - (void) dealloc

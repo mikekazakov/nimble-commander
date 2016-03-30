@@ -42,6 +42,7 @@ struct SystemOverview
     string computer_name;
     string user_full_name;
     string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
+    string coded_model; // like "Macmini6,2"
 };
 
 enum class OSXVersion

@@ -11,7 +11,7 @@ static const auto g_TrackingID = "UA-47180125-2"s;
 
 CFStringRef const GoogleAnalytics::g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 CFStringRef const GoogleAnalytics::g_DefaultsTrackingEnabledKey = CFSTR("GATrackingEnabled");
-static const auto g_SendingDelay = /*2min*/10s;
+static const auto g_SendingDelay = 2min/*10s*/;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
 static const auto g_MessagesOverflowLimit = 100;

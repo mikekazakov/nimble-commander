@@ -1278,22 +1278,6 @@
 		CF960E2F1C9935C4001D8B02 /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
 		CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleAnalytics.mm; sourceTree = "<group>"; };
-		CF9A9EFD1CAAC3C80094D6F7 /* GAEventHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAEventHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAEventHit.h"; sourceTree = "<group>"; };
-		CF9A9EFE1CAAC3C80094D6F7 /* GAEventHit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GAEventHit.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAEventHit.m"; sourceTree = "<group>"; };
-		CF9A9EFF1CAAC3C80094D6F7 /* GAExceptionHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAExceptionHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAExceptionHit.h"; sourceTree = "<group>"; };
-		CF9A9F001CAAC3C80094D6F7 /* GAExceptionHit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GAExceptionHit.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAExceptionHit.m"; sourceTree = "<group>"; };
-		CF9A9F011CAAC3C80094D6F7 /* GAGeneralEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAGeneralEvent.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAGeneralEvent.h"; sourceTree = "<group>"; };
-		CF9A9F021CAAC3C80094D6F7 /* GAGeneralEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GAGeneralEvent.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAGeneralEvent.m"; sourceTree = "<group>"; };
-		CF9A9F031CAAC3C80094D6F7 /* GAHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAHit.h"; sourceTree = "<group>"; };
-		CF9A9F041CAAC3C80094D6F7 /* GAItemHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAItemHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAItemHit.h"; sourceTree = "<group>"; };
-		CF9A9F051CAAC3C80094D6F7 /* GAItemHit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GAItemHit.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GAItemHit.m"; sourceTree = "<group>"; };
-		CF9A9F061CAAC3C80094D6F7 /* GASocialHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GASocialHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GASocialHit.h"; sourceTree = "<group>"; };
-		CF9A9F071CAAC3C80094D6F7 /* GASocialHit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GASocialHit.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GASocialHit.m"; sourceTree = "<group>"; };
-		CF9A9F081CAAC3C80094D6F7 /* GATracking-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "GATracking-Prefix.pch"; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GATracking-Prefix.pch"; sourceTree = "<group>"; };
-		CF9A9F091CAAC3C80094D6F7 /* GATracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GATracking.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GATracking.h"; sourceTree = "<group>"; };
-		CF9A9F0A1CAAC3C80094D6F7 /* GATracking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GATracking.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GATracking.m"; sourceTree = "<group>"; };
-		CF9A9F0B1CAAC3C80094D6F7 /* GATransactionEventHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GATransactionEventHit.h; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GATransactionEventHit.h"; sourceTree = "<group>"; };
-		CF9A9F0C1CAAC3C80094D6F7 /* GATransactionEventHit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GATransactionEventHit.m; path = "../../../Files/misc/AnalyticEverything-master/AnalyticEverything/GATransactionEventHit.m"; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
@@ -2135,29 +2119,6 @@
 			name = SFTP;
 			sourceTree = "<group>";
 		};
-		CF9A9EFC1CAAC3AA0094D6F7 /* GA */ = {
-			isa = PBXGroup;
-			children = (
-				CF9A9EFD1CAAC3C80094D6F7 /* GAEventHit.h */,
-				CF9A9EFE1CAAC3C80094D6F7 /* GAEventHit.m */,
-				CF9A9EFF1CAAC3C80094D6F7 /* GAExceptionHit.h */,
-				CF9A9F001CAAC3C80094D6F7 /* GAExceptionHit.m */,
-				CF9A9F011CAAC3C80094D6F7 /* GAGeneralEvent.h */,
-				CF9A9F021CAAC3C80094D6F7 /* GAGeneralEvent.m */,
-				CF9A9F031CAAC3C80094D6F7 /* GAHit.h */,
-				CF9A9F041CAAC3C80094D6F7 /* GAItemHit.h */,
-				CF9A9F051CAAC3C80094D6F7 /* GAItemHit.m */,
-				CF9A9F061CAAC3C80094D6F7 /* GASocialHit.h */,
-				CF9A9F071CAAC3C80094D6F7 /* GASocialHit.m */,
-				CF9A9F081CAAC3C80094D6F7 /* GATracking-Prefix.pch */,
-				CF9A9F091CAAC3C80094D6F7 /* GATracking.h */,
-				CF9A9F0A1CAAC3C80094D6F7 /* GATracking.m */,
-				CF9A9F0B1CAAC3C80094D6F7 /* GATransactionEventHit.h */,
-				CF9A9F0C1CAAC3C80094D6F7 /* GATransactionEventHit.m */,
-			);
-			name = GA;
-			sourceTree = "<group>";
-		};
 		CF9D0B6117CC5F9D00CB8146 /* Archive */ = {
 			isa = PBXGroup;
 			children = (
@@ -2303,7 +2264,6 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF9A9EFC1CAAC3AA0094D6F7 /* GA */,
 				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
 				CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,

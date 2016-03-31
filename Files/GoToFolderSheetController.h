@@ -7,20 +7,16 @@
 //
 
 #pragma once
-#include "PanelController.h"
+
+@class PanelController;
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 
-- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler;
+@property (strong)      PanelController     *panel;
+@property (readonly)    const string        &requestedPath;
 
+- (void)showSheetWithParentWindow:(NSWindow *)_window
+                          handler:(function<void()>)_handler;
 - (void)tellLoadingResult:(int)_code;
-
-- (IBAction)OnGo:(id)sender;
-- (IBAction)OnCancel:(id)sender;
-
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *Error;
-@property (strong) IBOutlet NSButton *GoButton;
-@property (strong) PanelController      *panel;
 
 @end

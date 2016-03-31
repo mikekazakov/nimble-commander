@@ -257,7 +257,7 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     [sheet showSheetWithParentWindow:self.window handler:[=]{
         
         auto c = make_shared<PanelControllerGoToDirContext>();
-        c->RequestedDirectory = [self expandPath:sheet.Text.stringValue.fileSystemRepresentationSafe];
+        c->RequestedDirectory = [self expandPath:sheet.requestedPath];
         c->VFS = self.vfs;
         c->PerformAsynchronous = true;
         c->LoadingResultCallback = [=](int _code) {

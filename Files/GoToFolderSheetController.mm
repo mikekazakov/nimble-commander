@@ -10,6 +10,7 @@
 #include "GoogleAnalytics.h"
 #include "GoToFolderSheetController.h"
 #include "Config.h"
+#include "PanelController.h"
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 
@@ -41,17 +42,24 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 @interface GoToFolderSheetController()
 
-// internal
 @property (readonly) string currentDirectory; // return expanded value
 @property (readonly) string currentFilename;
+@property (strong) IBOutlet NSTextField *Text;
+@property (strong) IBOutlet NSTextField *Error;
+@property (strong) IBOutlet NSButton *GoButton;
+
+- (IBAction)OnGo:(id)sender;
+- (IBAction)OnCancel:(id)sender;
 
 @end
 
 @implementation GoToFolderSheetController
 {
-    function<void()>                m_Handler; // return VFS error code
+    function<void()>        m_Handler; // return VFS error code
     shared_ptr<VFSListing>  m_LastListing;
+    string                  m_RequestedPath;
 }
+@synthesize requestedPath = m_RequestedPath;
 
 - (id)init
 {
@@ -85,6 +93,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 - (IBAction)OnGo:(id)sender
 {
+    m_RequestedPath = self.Text.stringValue.fileSystemRepresentationSafe;
     m_Handler();
 }
 

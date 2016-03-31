@@ -43,7 +43,6 @@
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if(self) {
-        (void)self.window;
         self.window.delegate = self;
         self.window.backgroundColor = NSColor.whiteColor;
         self.window.movableByWindowBackground = true;

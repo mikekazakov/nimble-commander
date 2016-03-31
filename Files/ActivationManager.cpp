@@ -8,16 +8,18 @@
 #include "GoogleAnalytics.h"
 
 
+// trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
 static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
-static CFStringRef g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
-static const double g_TrialPeriodTimeInterval = 60.*60.*24.*30.; // 30 days
+static CFStringRef const g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
+static const int g_TrialPeriodDays = 30;
+static const int g_TrialNagScreenMinDays = 15;
+static const double g_TrialPeriodTimeInterval = 60.*60.*24.*g_TrialPeriodDays; // 30 days
 
 static bool UserHasPaidVersionInstalled()
 {
-    string app_name = "Files Pro.app";
-    string app_id   = "info.filesmanager.Files-Pro";
-    return MASAppInstalledChecker::Instance().Has(app_name, app_id);
+    return MASAppInstalledChecker::Instance().Has("Files Pro.app",            "info.filesmanager.Files-Pro") ||
+           MASAppInstalledChecker::Instance().Has("Nimble Commander Pro.app", "info.filesmanager.Files-Pro");
 }
 
 static bool CheckAquaticLicense( const string& _path )
@@ -330,4 +332,11 @@ bool ActivationManager::ProcessLicenseFile( const string& _path )
 bool ActivationManager::UserHadRegistered() const noexcept
 {
     return m_UserHadRegistered;
+}
+
+bool ActivationManager::ShouldShowTrialNagScreen() const noexcept
+{
+    return Type() == ActivationManager::Distribution::Trial &&
+            m_IsTrialPeriod &&
+            TrialDaysLeft() <= g_TrialNagScreenMinDays ;
 }

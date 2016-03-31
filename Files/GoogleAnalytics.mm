@@ -9,6 +9,7 @@ static const auto g_TrackingID = "UA-47180125-2"s;
 static const auto g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 static const auto g_SendingDelay = /*2min*/10s;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
+static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
 static const auto g_MessagesOverflowLimit = 100;
 
 static optional<string> GetDefaultsString(CFStringRef _key)
@@ -130,10 +131,15 @@ GoogleAnalytics::GoogleAnalytics():
                         "cid=" + m_ClientID + "&" +
                         "an="  + EscapeString(m_AppName) + "&" +
                         "av="  + m_AppVersion + "&";
+    
+    m_Enabled = true;
 }
 
 void GoogleAnalytics::PostScreenView(const char *_screen)
 {
+    if( !m_Enabled )
+        return;
+    
     string message = "t=screenview&cd="s + _screen;
     
     AcceptMessage( EscapeString(message) );
@@ -141,7 +147,8 @@ void GoogleAnalytics::PostScreenView(const char *_screen)
 
 void GoogleAnalytics::PostEvent(const char *_category, const char *_action, const char *_label, unsigned _value)
 {
-    // TODO: check if analytics is off
+    if( !m_Enabled )
+        return;
 
     string message = "t=event&ec="s + _category + "&ea=" + _action + "&el=" + _label + "&ev=" + to_string(_value);
 
@@ -160,18 +167,6 @@ void GoogleAnalytics::AcceptMessage(string _message)
     MarkDirty();
 }
 
-//Event Tracking
-//
-//v=1              // Version.
-//&tid=UA-XXXXX-Y  // Tracking ID / Property ID.
-//&cid=555         // Anonymous Client ID.
-//
-//&t=event         // Event hit type
-//&ec=video        // Event Category. Required.
-//&ea=play         // Event Action. Required.
-//&el=holiday      // Event label.
-//&ev=300          // Event value.
-
 void GoogleAnalytics::MarkDirty()
 {
     if( !m_SendingScheduled.test_and_set() )
@@ -184,29 +179,27 @@ void GoogleAnalytics::MarkDirty()
 void GoogleAnalytics::PostMessages()
 {
     dispatch_assert_background_queue();
-    static auto single_url = [NSURL URLWithString:g_URLSingle];
+    static auto batch_url = [NSURL URLWithString:g_URLBatch];
     
     vector<string> messages;
     LOCK_GUARD(m_MessagesLock)
         messages = move(m_Messages);
     
-    
-    for(auto &message: messages) {
-        string payload = m_PayloadPrefix + message;
+    string payload;
+    for( size_t ind = 0, ind_max = messages.size(); ind < ind_max; ) {
         
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:single_url];
-        [req setHTTPMethod:@"POST"];
+        payload.clear();
+        for(int i = 0; i < 20 && ind < ind_max; ++i, ++ind) {
+            payload += m_PayloadPrefix;
+            payload += messages[ind];
+            payload += "\n";
+        }
         
-        // use setValue
-        NSData *post_data = [NSData dataWithBytes:payload.data() length:payload.length()];
-//        [req addValue:[NSString stringWithFormat:@"%lu", post_data.length] forHTTPHeaderField:@"Content-Length"];
-//        [req addValue:UA forHTTPHeaderField:@"User-Agent"];
-        [req setHTTPBody:post_data];
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:batch_url];
+        req.HTTPMethod = @"POST";
+        req.HTTPBody = [NSData dataWithBytes:payload.data() length:payload.length()];
         
-        NSURLSessionDataTask *task = [GetPostingSession() dataTaskWithRequest:req completionHandler:^(NSData* d, NSURLResponse* r, NSError* e){
-            int a = 10;
-        
-        }];
+        NSURLSessionDataTask *task = [GetPostingSession() dataTaskWithRequest:req completionHandler:^(NSData* d, NSURLResponse* r, NSError* e){}];
         [task resume];
     }
 }

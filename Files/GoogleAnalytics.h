@@ -24,4 +24,5 @@ private:
     const string    m_AppName;
     const string    m_AppVersion;
     string          m_PayloadPrefix;
+    bool            m_Enabled = false;
 };

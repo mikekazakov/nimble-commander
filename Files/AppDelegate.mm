@@ -232,10 +232,7 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
-    
     if( !m_IsRunningTests && m_MainWindows.empty() )
-//        [self AllocateNewMainWindow];
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     [NSApp setServicesProvider:self];
@@ -258,7 +255,11 @@ static AppDelegate *g_Me = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
 
-    [self checkIfNeedToShowNagScreen];
+    // check if we should show a nag screen
+    if( ActivationManager::Instance().ShouldShowTrialNagScreen() )
+        dispatch_to_main_queue_after(500ms, [=]{
+            [[[TrialWindowController alloc] init] doShow];
+        });
     
     if( ActivationManager::Instance().ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
         AppStoreRatings::Instance().Go();
@@ -618,78 +619,6 @@ static AppDelegate *g_Me = nil;
         return  true;
     }
     return false;
-}
-
-- (void) checkIfNeedToShowNagScreen
-{
-    if( ActivationManager::Instance().ForAppStore() )
-        return;
-    
-    dispatch_to_background([=]{
-        string app_name = "Files Pro.app";
-        string app_id   = "info.filesmanager.Files-Pro";
-        bool has_paid = MASAppInstalledChecker::Instance().Has(app_name, app_id);
-        
-        // download "red.plist" for every start of an unregistered copy of application or "green.plist" for registered copy
-#ifndef DEBUG
-        if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/%s", configuration::website_domain, has_paid ? "green.plist" : "red.plist"]] ) {
-            NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
-            NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
-                                                    completionHandler:^(NSData *, NSURLResponse *, NSError *) {}];
-            [task resume];
-        }
-#endif
-        
-        if( has_paid )
-            return;
-        
-        // check cooldown criterias
-        bool usage_time_exceeds_cooldown = false;
-        NSString *def_start = @"CommonTrialFirstRunData";
-        if(NSData *d = [NSUserDefaults.standardUserDefaults dataForKey:def_start]) {
-            NSDate *first_run = objc_cast<NSDate>([NSUnarchiver unarchiveObjectWithData:d]);
-            if( !first_run ) { // broken start date, fix and exit
-                [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:def_start];
-                return;
-            }
-            seconds cooldown = 24h * 10; // 10 days cooldown
-            NSDate *cooldown_ends = [first_run dateByAddingTimeInterval:cooldown.count()];
-            if( [cooldown_ends compare:NSDate.date] == NSOrderedAscending )
-                usage_time_exceeds_cooldown = true;
-        }
-        else
-            [NSUserDefaults.standardUserDefaults setObject:[NSArchiver archivedDataWithRootObject:NSDate.date] forKey:def_start];
-  
-        bool starts_amount_exceeds_cooldown = false;
-        NSString *def_runs  = @"CommonTrialFirstRunsTotal";
-        long app_runs = [NSUserDefaults.standardUserDefaults integerForKey:def_runs];
-        if(app_runs < 0)
-            app_runs = 0;
-        if(app_runs < 20) // 20 app starts cooldown
-            [NSUserDefaults.standardUserDefaults setInteger:++app_runs forKey:def_runs];
-        else
-            starts_amount_exceeds_cooldown = true;
-
-        // if we're still running a cooldown period - don't show a nag screen
-        if(!usage_time_exceeds_cooldown && !starts_amount_exceeds_cooldown)
-            return;
-        
-        // finally - show a nag screen
-        dispatch_to_main_queue_after(500ms, [=]{
-            TrialWindowController* twc = [[TrialWindowController alloc] init];
-            [twc.window makeKeyAndOrderFront:self];
-            [twc.window makeMainWindow];
-            
-#ifndef DEBUG
-            if( NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%s/downloads/%s", configuration::website_domain, "brown.plist"]] ) {
-                NSURLSession *session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
-                NSURLSessionDataTask *task = [session dataTaskWithRequest:[NSURLRequest requestWithURL:url]
-                                                        completionHandler:^(NSData *, NSURLResponse *, NSError *) {}];
-                [task resume];
-            }
-#endif
-        });
-    });
 }
 
 - (IBAction)OnMenuToggleAdminMode:(id)sender

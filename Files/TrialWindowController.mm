@@ -102,4 +102,10 @@
     return attrString;
 }
 
+- (void) doShow
+{
+    [self.window makeKeyAndOrderFront:self];
+    [self.window makeMainWindow];
+}
+
 @end

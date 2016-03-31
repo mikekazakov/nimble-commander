@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */; settings = {ASSET_TAGS = (); }; };
+		CF9A9F171CACDD490094D6F7 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; settings = {ASSET_TAGS = (); }; };
 		CFD62B931C99C2A60021EE7F /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B861C99C2A60021EE7F /* algo.h */; };
 		CFD62B941C99C2A60021EE7F /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B871C99C2A60021EE7F /* CFString.h */; };
 		CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B881C99C2A60021EE7F /* CommonPaths.h */; };
@@ -38,6 +40,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
+		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
 		CFD62B721C99C19A0021EE7F /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD62B861C99C2A60021EE7F /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Habanero/algo.h; sourceTree = "<group>"; };
 		CFD62B871C99C2A60021EE7F /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFString.h; path = include/Habanero/CFString.h; sourceTree = "<group>"; };
@@ -101,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD62B861C99C2A60021EE7F /* algo.h */,
+				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
 				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
 				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
@@ -121,6 +126,7 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
 				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
 				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
@@ -151,6 +157,7 @@
 				CFD62B9D1C99C2A60021EE7F /* spinlock.h in Headers */,
 				CFD62B961C99C2A60021EE7F /* debug.h in Headers */,
 				CFD62B941C99C2A60021EE7F /* CFString.h in Headers */,
+				CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */,
 				CFD62B9E1C99C2A60021EE7F /* tiny_string.h in Headers */,
 				CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */,
 				CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */,
@@ -219,6 +226,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9A9F171CACDD490094D6F7 /* CFDefaultsCPP.cpp in Sources */,
 				CFD62BC71C9A623B0021EE7F /* DispatchQueue.cpp in Sources */,
 				CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */,
 				CFD62BB21C99C2AE0021EE7F /* dispatch_cpp.mm in Sources */,

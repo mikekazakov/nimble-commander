@@ -2,6 +2,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <Habanero/algo.h>
+#include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
 #include "GoogleAnalytics.h"
 
@@ -12,34 +13,13 @@ static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
 static const auto g_MessagesOverflowLimit = 100;
 
-static optional<string> GetDefaultsString(CFStringRef _key)
-{
-    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
-    if( !val )
-        return nullopt;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
-    if( CFGetTypeID(val) ==  CFStringGetTypeID() )
-        return CFStringGetUTF8StdString( (CFStringRef)val );
-    
-    return nullopt;
-}
-
-static void SetDefaultsString(CFStringRef _key, const string &_value)
-{
-    CFStringRef str = CFStringCreateWithUTF8StdString(_value);
-    CFPreferencesSetAppValue(_key, str, kCFPreferencesCurrentApplication);
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-    CFRelease(str);
-}
-
 static string GetStoredOrNewClientID()
 {
-    if( auto stored_id = GetDefaultsString(g_DefaultsClientIDKey) )
+    if( auto stored_id = CFDefaultsGetOptionalString(g_DefaultsClientIDKey) )
         return *stored_id;
-    
+
     auto client_id = to_string( boost::uuids::basic_random_generator<boost::mt19937>()() );
-    SetDefaultsString(g_DefaultsClientIDKey, client_id);
+    CFDefaultsSetString(g_DefaultsClientIDKey, client_id);
     return client_id;
 }
 

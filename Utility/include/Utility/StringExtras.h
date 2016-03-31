@@ -2,21 +2,11 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <string>
-#include <experimental/string_view>
+#include <Habanero/CFString.h>
 
 #ifdef __OBJC__
     #include <Foundation/Foundation.h>
 #endif
-
-std::string CFStringGetUTF8StdString(CFStringRef _str);
-CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(std::experimental::string_view _s) noexcept;
-CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const std::string &_s) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept;
-CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept;
 
 #ifdef __OBJC__
 

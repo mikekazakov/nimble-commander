@@ -1,4 +1,5 @@
 #include <AquaticPrime/AquaticPrime.h>
+#include <Habanero/CFDefaultsCPP.h>
 #include <copyfile.h>
 #include "vfs/VFS.h"
 #include "vfs/vfs_native.h"
@@ -86,46 +87,20 @@ static bool UserHasValidAquaticLicense()
     return CheckAquaticLicense( InstalledAquaticLicensePath() );
 }
 
-static double GetDefaultsDouble(CFStringRef _key) noexcept
-{
-    double result = 0.;
-    
-    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
-    if( !val )
-        return result;
-    
-    if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
-        CFNumberGetValue(num, kCFNumberDoubleType, &result);
-    }
-    
-    CFRelease(val);
-    
-    return result;
-}
-
-static void SetDefaultsDouble(CFStringRef _key, double _value) noexcept
-{
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
-    CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-    CFRelease(num);
-}
-
 static bool TrialStarted()
 {
     static const double y2016 = 60.*60.*24.*365.*15.;
-    return GetDefaultsDouble(g_DefaultsTrialExpireDate) > y2016;
+    return CFDefaultsGetDouble(g_DefaultsTrialExpireDate) > y2016;
 }
 
 static void SetupTrialPeriod()
 {
-    SetDefaultsDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
+    CFDefaultsSetDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
 }
 
 static int TrialDaysLeft()
 {
-    double v = GetDefaultsDouble(g_DefaultsTrialExpireDate) - CFAbsoluteTimeGetCurrent();
+    double v = CFDefaultsGetDouble(g_DefaultsTrialExpireDate) - CFAbsoluteTimeGetCurrent();
     v = ceil( v / (60.*60.*24.) );
     if( v < 0 )
         return 0;

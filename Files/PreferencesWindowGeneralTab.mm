@@ -10,6 +10,14 @@
 #include "SandboxManager.h"
 #include "AppDelegate.h"
 #include "ActivationManager.h"
+#include "GoogleAnalytics.h"
+
+@interface PreferencesWindowGeneralTab()
+
+@property (strong) IBOutlet NSButton *FSAccessResetButton;
+@property (strong) IBOutlet NSTextField *FSAccessLabel;
+
+@end
 
 @implementation PreferencesWindowGeneralTab
 
@@ -64,6 +72,13 @@
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn)
         SandboxManager::Instance().ResetBookmarks();
+}
+
+- (IBAction)OnSendStatisticsChanged:(id)sender
+{
+    dispatch_to_main_queue_after(1s, []{
+        GoogleAnalytics::Instance().UpdateEnabledStatus();
+    });
 }
 
 @end

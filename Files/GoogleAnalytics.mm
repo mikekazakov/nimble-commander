@@ -6,8 +6,11 @@
 #include <Utility/SystemInformation.h>
 #include "GoogleAnalytics.h"
 
+// TODO: difference IDs for versions
 static const auto g_TrackingID = "UA-47180125-2"s;
-static const auto g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
+
+CFStringRef const GoogleAnalytics::g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
+CFStringRef const GoogleAnalytics::g_DefaultsTrackingEnabledKey = CFSTR("GATrackingEnabled");
 static const auto g_SendingDelay = /*2min*/10s;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
@@ -15,11 +18,11 @@ static const auto g_MessagesOverflowLimit = 100;
 
 static string GetStoredOrNewClientID()
 {
-    if( auto stored_id = CFDefaultsGetOptionalString(g_DefaultsClientIDKey) )
+    if( auto stored_id = CFDefaultsGetOptionalString(GoogleAnalytics::g_DefaultsClientIDKey) )
         return *stored_id;
 
     auto client_id = to_string( boost::uuids::basic_random_generator<boost::mt19937>()() );
-    CFDefaultsSetString(g_DefaultsClientIDKey, client_id);
+    CFDefaultsSetString(GoogleAnalytics::g_DefaultsClientIDKey, client_id);
     return client_id;
 }
 
@@ -104,15 +107,19 @@ static NSURLSession *GetPostingSession()
 GoogleAnalytics::GoogleAnalytics():
     m_ClientID( GetStoredOrNewClientID() ),
     m_AppName( GetAppName() ),
-    m_AppVersion( GetAppVersion() )
+    m_AppVersion( GetAppVersion() ),
+    m_Enabled( CFDefaultsGetBool(g_DefaultsTrackingEnabledKey) )
 {
     m_PayloadPrefix =   "v=1"s + "&"
                         "tid=" + g_TrackingID + "&" +
                         "cid=" + m_ClientID + "&" +
                         "an="  + EscapeString(m_AppName) + "&" +
                         "av="  + m_AppVersion + "&";
-    
-    m_Enabled = true;
+}
+
+void GoogleAnalytics::UpdateEnabledStatus()
+{
+    m_Enabled = CFDefaultsGetBool(g_DefaultsTrackingEnabledKey);
 }
 
 void GoogleAnalytics::PostScreenView(const char *_screen)
@@ -137,7 +144,8 @@ void GoogleAnalytics::PostEvent(const char *_category, const char *_action, cons
 
 void GoogleAnalytics::AcceptMessage(string _message)
 {
-    // TODO: check if analytics is off
+    if( !m_Enabled )
+        return;
     
     LOCK_GUARD(m_MessagesLock) {
         if(m_Messages.size() < g_MessagesOverflowLimit)

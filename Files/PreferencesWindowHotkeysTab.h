@@ -7,16 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
-#import "3rd_party/gtm/GTMHotKeyTextField.h"
 
 @interface PreferencesWindowHotkeysTab : NSViewController<RHPreferencesViewControllerProtocol,
                                                             NSTableViewDataSource,
                                                             NSTableViewDelegate>
-@property (strong) IBOutlet NSTableView *Table;
-@property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
-- (IBAction)OnApply:(id)sender;
-- (IBAction)OnDefaults:(id)sender;
 
 @end

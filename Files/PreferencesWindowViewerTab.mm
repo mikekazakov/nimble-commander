@@ -16,6 +16,17 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigModernFont      = "viewer.modern.font";
 static const auto g_ConfigClassicFont     = "viewer.classic.font";
 
+@interface PreferencesWindowViewerTab()
+
+@property (strong) IBOutlet NSPopUpButton *DefaultEncoding;
+
+- (IBAction) OnSetModernFont:(id)sender;
+- (IBAction) OnSetClassicFont:(id)sender;
+- (IBAction) DefaultEncodingChanged:(id)sender;
+- (IBAction) ClearHistory:(id)sender;
+
+@end
+
 @implementation PreferencesWindowViewerTab
 {
     NSFont *m_ModernFont;

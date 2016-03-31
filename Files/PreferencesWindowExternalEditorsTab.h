@@ -11,10 +11,4 @@
 
 @interface PreferencesWindowExternalEditorsTab : NSViewController<RHPreferencesViewControllerProtocol, NSTableViewDataSource>
 
-@property (nonatomic) NSMutableArray *ExtEditors;
-@property (strong) IBOutlet NSArrayController *ExtEditorsController;
-@property (strong) IBOutlet NSTableView *TableView;
-
-- (IBAction)OnNewEditor:(id)sender;
-
 @end

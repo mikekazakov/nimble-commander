@@ -8,6 +8,7 @@
 
 #include <Sparkle/Sparkle.h>
 #include <Habanero/CommonPaths.h>
+#include <Habanero/CFDefaultsCPP.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
@@ -42,7 +43,7 @@
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
-
+#include "GoogleAnalytics.h"
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -94,6 +95,36 @@ static optional<string> AskUserForLicenseFile()
     return nullopt;
 }
 
+static bool AskUserToResetDefaults()
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
+    alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+    if( [alert runModal] == NSAlertFirstButtonReturn ) {
+        [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
+        [NSUserDefaults.standardUserDefaults synchronize];
+        GlobalConfig().ResetToDefaults();
+        StateConfig().ResetToDefaults();
+        GlobalConfig().Commit();
+        StateConfig().Commit();
+        return  true;
+    }
+    return false;
+}
+
+static bool AskUserToProvideUsageStatistics()
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Help product improvement", "Asking user to provide anonymous usage information - message");
+    alert.informativeText = NSLocalizedString(@"Would you like to send anonymous usage statistics to developer? None of your personal data would be collected.", "Asking user to provide anonymous usage information - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"Send", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Don't send", "")];
+    return [alert runModal] == NSAlertFirstButtonReturn;
+}
+
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -132,7 +163,7 @@ static AppDelegate *g_Me = nil;
         
         const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
         if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
-            if( [self askToResetDefaults] )
+            if( AskUserToResetDefaults() )
                 exit(0);
         
         [self setupConfigDirectory];
@@ -163,6 +194,12 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
+    // if no option already set - ask user to provide anonymous usage statistics
+    if( !m_IsRunningTests && !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) ) {
+        CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
+        GoogleAnalytics::Instance().UpdateEnabledStatus();
+    }
+    
     // modules initialization
     VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
     VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
@@ -601,26 +638,6 @@ static AppDelegate *g_Me = nil;
     [NSWorkspace.sharedWorkspace openURL:[NSURL fileURLWithPath:path]];
 }
 
-- (bool)askToResetDefaults
-{
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
-    alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
-    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
-    if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
-        [NSUserDefaults.standardUserDefaults synchronize];
-        GlobalConfig().ResetToDefaults();
-        StateConfig().ResetToDefaults();
-        GlobalConfig().Commit();
-        StateConfig().Commit();
-        return  true;
-    }
-    return false;
-}
-
 - (IBAction)OnMenuToggleAdminMode:(id)sender
 {
     if( RoutedIO::Instance().Enabled() )
@@ -663,6 +680,11 @@ static AppDelegate *g_Me = nil;
 {
     static GenericConfigObjC *global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
     return global_config_bridge;
+}
+
+- (bool) askToResetDefaults
+{
+    return AskUserToResetDefaults();
 }
 
 @end

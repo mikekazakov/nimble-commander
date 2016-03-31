@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import "3rd_party/gtm/GTMHotKeyTextField.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include "PreferencesWindowHotkeysTab.h"
 #include "ActionsShortcutsManager.h"
@@ -25,6 +26,16 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     
     return title;
 }
+
+@interface PreferencesWindowHotkeysTab()
+
+@property (strong) IBOutlet NSTableView *Table;
+@property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
+
+- (IBAction)OnApply:(id)sender;
+- (IBAction)OnDefaults:(id)sender;
+
+@end
 
 @implementation PreferencesWindowHotkeysTab
 {

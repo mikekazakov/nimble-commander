@@ -12,6 +12,16 @@
 
 #define MyPrivateTableViewDataType @"PreferencesWindowExternalEditorsTabPrivateTableViewDataType"
 
+@interface PreferencesWindowExternalEditorsTab ()
+
+@property (nonatomic) NSMutableArray *ExtEditors;
+@property (strong) IBOutlet NSArrayController *ExtEditorsController;
+@property (strong) IBOutlet NSTableView *TableView;
+
+- (IBAction)OnNewEditor:(id)sender;
+
+@end
+
 @implementation PreferencesWindowExternalEditorsTab
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil

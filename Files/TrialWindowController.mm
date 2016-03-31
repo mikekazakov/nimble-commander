@@ -24,6 +24,16 @@
 @end
 
 
+@interface TrialWindowController ()
+
+@property (strong) IBOutlet NSTextField *versionTextField;
+@property (strong) IBOutlet NSTextView *messageTextView;
+@property (strong) IBOutlet NSTextField *copyrightTextField;
+
+- (IBAction)OnClose:(id)sender;
+
+@end
+
 @implementation TrialWindowController
 {
     id m_Self;

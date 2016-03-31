@@ -14,15 +14,5 @@
                                                             NSTableViewDataSource,
                                                             NSTableViewDelegate,
                                                             NSTextFieldDelegate>
-- (IBAction)OnSetClassicFont:(id)sender;
-@property (strong) IBOutlet NSTableView *classicColoringRulesTable;
-- (IBAction)OnAddNewClassicColoringRule:(id)sender;
-- (IBAction)OnRemoveClassicColoringRule:(id)sender;
-
-@property (strong) IBOutlet NSTableView *modernColoringRulesTable;
-- (IBAction)OnAddNewModernColoringRule:(id)sender;
-- (IBAction)OnRemoveModernColoringRule:(id)sender;
-@property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
-@property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
 @end

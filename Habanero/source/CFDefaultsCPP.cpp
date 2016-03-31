@@ -84,3 +84,8 @@ void CFDefaultsSetString(CFStringRef _key, const std::string &_value)
     auto release_val = at_scope_end([=]{ CFRelease(str); });
     CFPreferencesSetAppValue(_key, str, kCFPreferencesCurrentApplication);
 }
+
+void CFDefaultsRemoveValue(CFStringRef _key)
+{
+    CFPreferencesSetAppValue(_key, nullptr, kCFPreferencesCurrentApplication);
+}

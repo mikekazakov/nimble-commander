@@ -9,11 +9,7 @@
 #pragma once
 
 @interface TrialWindowController : NSWindowController<NSWindowDelegate>
-- (IBAction)OnClose:(id)sender;
-- (void) doShow;
-@property (strong) IBOutlet NSTextField *versionTextField;
-@property (strong) IBOutlet NSTextView *messageTextView;
-@property (strong) IBOutlet NSTextField *copyrightTextField;
 
+- (void) doShow;
 
 @end

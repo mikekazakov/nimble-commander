@@ -3,7 +3,15 @@
 class GoogleAnalytics
 {
 public:
+    static CFStringRef const g_DefaultsClientIDKey;
+    static CFStringRef const g_DefaultsTrackingEnabledKey;
+    
     static GoogleAnalytics& Instance();
+    
+    /**
+     * Will check defaults value to permit or prohibit GA logging
+     */
+    void UpdateEnabledStatus();
     
     void PostScreenView(const char *_screen);
     void PostEvent(const char *_category, const char *_action, const char *_label, unsigned _value = 1);

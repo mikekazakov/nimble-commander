@@ -75,6 +75,15 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 }
 @end
 
+@interface PreferencesWindowPanelsTab()
+
+@property (strong) IBOutlet NSTableView *classicColoringRulesTable;
+@property (strong) IBOutlet NSTableView *modernColoringRulesTable;
+@property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
+@property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
+
+@end
+
 @implementation PreferencesWindowPanelsTab
 {
     NSFont *m_ClassicFont;

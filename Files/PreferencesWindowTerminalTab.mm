@@ -12,6 +12,12 @@
 
 static const auto g_ConfigFont = "terminal.font";
 
+@interface PreferencesWindowTerminalTab()
+
+@property (strong) IBOutlet NSTextField *fontVisibleName;
+
+@end
+
 @implementation PreferencesWindowTerminalTab
 {
     NSFont *m_Font;

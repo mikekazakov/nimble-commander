@@ -198,7 +198,6 @@ private:
     NSDateFormatter            *m_DateFormatter;
     
     NSMutableArray             *m_FoundItems; // is controlled by ArrayController
-    atomic_bool                 m_ControllerIsAdding;
     unique_ptr<FindFilesSheetComboHistory>  m_MaskHistory;
     unique_ptr<FindFilesSheetComboHistory>  m_TextHistory;
     
@@ -226,8 +225,8 @@ private:
     self = [super init];
     if(self){
         m_FileSearch = make_unique<FileSearch>();
-        m_FoundItems = [NSMutableArray new];
-        m_FoundItemsBatch = [NSMutableArray new];
+        m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
+        m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
 
         m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory, g_MaskHistoryKey);
         m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory, g_TextHistoryKey);
@@ -380,7 +379,6 @@ private:
 
     NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
     [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
-    m_ControllerIsAdding = false;
     
     m_FileSearch->ClearFilters();
     
@@ -510,16 +508,14 @@ private:
     m_BatchQueue->Run([=]{
         if( m_FoundItemsBatch.count == 0 )
             return; // nothing to add
-        if( m_ControllerIsAdding )
-            return; // controller is already adding objects from a previous batch. skip this iteration to decrease main thread saturation
         
         NSArray *temp = m_FoundItemsBatch;
-        m_FoundItemsBatch = [NSMutableArray new];
+        m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
         
         dispatch_to_main_queue([=]{
-            m_ControllerIsAdding = true;
-            [self.ArrayController addObjects:temp];
-            m_ControllerIsAdding = false;
+            NSMutableArray *new_objects = [m_FoundItems mutableCopy];
+            [new_objects addObjectsFromArray:temp];
+            self.FoundItems = new_objects;
         });
     });
 }

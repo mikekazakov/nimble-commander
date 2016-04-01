@@ -162,12 +162,18 @@ private:
 
 @interface FindFilesSheetController()
 
+@property (nonatomic) bool didAnySearchStarted;
+@property (nonatomic) bool searchingNow;
+
+// bottom buttons
 @property (strong) IBOutlet NSButton            *CloseButton;
 @property (strong) IBOutlet NSButton            *SearchButton;
+@property (strong) IBOutlet NSButton            *GoToButton;
+@property (strong) IBOutlet NSButton            *ViewButton;
 @property (strong) IBOutlet NSButton            *PanelButton;
+
 @property (strong) IBOutlet NSComboBox          *MaskComboBox;
 @property (strong) IBOutlet NSComboBox          *TextComboBox;
-@property (strong) IBOutlet NSButton            *ViewButton;
 @property (strong) IBOutlet NSTextField         *LookingIn;
 @property (strong) IBOutlet NSTableView         *TableView;
 @property (strong) IBOutlet NSButton            *CaseSensitiveButton;
@@ -181,10 +187,6 @@ private:
 @property (strong) IBOutlet NSPopUpButton       *EncodingsPopUp;
 @property NSMutableArray            *FoundItems;
 @property FindFilesSheetFoundItem   *focusedItem; // may be nullptr
-
-- (IBAction)OnClose:(id)sender;
-- (IBAction)OnSearch:(id)sender;
-- (IBAction)OnFileView:(id)sender;
 
 @end
 
@@ -223,7 +225,7 @@ private:
 {
     self = [super init];
     if(self){
-        m_FileSearch.reset(new FileSearch);
+        m_FileSearch = make_unique<FileSearch>();
         m_FoundItems = [NSMutableArray new];
         m_FoundItemsBatch = [NSMutableArray new];
 
@@ -232,6 +234,8 @@ private:
         
         m_BatchQueue = SerialQueueT::Make();
         self.focusedItem = nil;
+        self.didAnySearchStarted = false;
+        self.searchingNow = false;
     }
     return self;
 }
@@ -290,14 +294,16 @@ private:
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
-    if( ActivationManager::Instance().HasTemporaryPanels() ) {
+    sheet.onCtrlG = [sheet makeClickHotkey:self.GoToButton];
+    sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
+    
+    if( !ActivationManager::Instance().HasTemporaryPanels() ) {
         self.PanelButton.target = AppDelegate.me;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
         self.PanelButton.action = @selector(showFeatureNotSupportedWindow:);
 #pragma clang diagnostic pop
     }
-    sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
     if( !ActivationManager::Instance().HasInternalViewer() ) {
         self.ViewButton.target = AppDelegate.me;
         self.ViewButton.action = @selector(showFeatureNotSupportedWindow:);
@@ -354,7 +360,7 @@ private:
     dispatch_to_main_queue([=]{
         [m_BatchDrainTimer invalidate];
         m_BatchDrainTimer = nil;
-        self.SearchButton.state = NSOffState;
+        self.searchingNow = false;
   
         [m_LookingInPathUpdateTimer invalidate];
         m_LookingInPathUpdateTimer = nil;
@@ -470,7 +476,8 @@ private:
                               }
                               );
     if(r) {
-        self.SearchButton.state = NSOnState;
+        self.didAnySearchStarted = true;
+        self.searchingNow = true;
         m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 // 0.5 sec update
                                                              target:self
                                                            selector:@selector(UpdateByTimer:)
@@ -486,7 +493,7 @@ private:
         [m_LookingInPathUpdateTimer setDefaultTolerance];
     }
     else {
-        self.SearchButton.state = NSOffState;
+        self.searchingNow = false;
     }
 }
 
@@ -541,6 +548,14 @@ private:
         self.focusedItem = (FindFilesSheetFoundItem *)[self.ArrayController.arrangedObjects objectAtIndex:row];
     else
         self.focusedItem = nil;
+}
+
+- (IBAction)OnGoToFile:(id)sender
+{
+    if( self.focusedItem ) {
+        m_DoubleClickedItem = self.focusedItem;
+        [self OnClose:self];
+    }
 }
 
 - (IBAction)OnFileView:(id)sender

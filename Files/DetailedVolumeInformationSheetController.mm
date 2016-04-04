@@ -10,6 +10,7 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
 #include "DetailedVolumeInformationSheetController.h"
+#include "GoogleAnalytics.h"
 
 @interface DetailedVolumeInformationSheetController ()
 
@@ -293,6 +294,8 @@ static NSString* Bool2ToString(const bool b[2])
     
     NSString *advstr = [NSString stringWithFormat:@"%@%@%@%@%@%@%@", uuid, formatcap, formatint, attrcmn, attrvol, attrdir, attrfile];
     [[self AdvancedTextView] setString:advstr];
+    
+    GoogleAnalytics::Instance().PostScreenView("Detailed Volume Information");
 }
 
 - (void)showSheetForWindow:(NSWindow *)_window withPath: (const string&)_path

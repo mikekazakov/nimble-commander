@@ -630,6 +630,7 @@ static AppDelegate *g_Me = nil;
     }
     
     [m_PreferencesController showWindow:self];
+    GoogleAnalytics::GoogleAnalytics::Instance().PostScreenView("Preferences Window");
 }
 
 - (IBAction)OnShowHelp:(id)sender

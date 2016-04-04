@@ -14,6 +14,7 @@
 #include "../../ActionsShortcutsManager.h"
 #include "../../ByteCountFormatter.h"
 #include "../../Config.h"
+#include "../../GoogleAnalytics.h"
 #include "MainWindowBigFileViewState.h"
 #include "BigFileView.h"
 #include "BigFileViewHistory.h"
@@ -78,7 +79,8 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 - (void) Assigned
 {
     [self.window makeFirstResponder:m_View];
-    [self UpdateTitle];    
+    [self UpdateTitle];
+    GoogleAnalytics::Instance().PostScreenView("File Viewer State");
 }
 
 - (void) Resigned

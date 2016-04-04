@@ -8,6 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include "SFTPConnectionSheetController.h"
+#include "GoogleAnalytics.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
@@ -55,6 +56,8 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         [self.saved.menu addItem:NSMenuItem.separatorItem];
         [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
     }
+    
+    GoogleAnalytics::Instance().PostScreenView("SFTP Connection");
 }
 
 - (IBAction)OnSaved:(id)sender

@@ -7,6 +7,7 @@
 //
 
 #include "FeatureNotAvailableWindowController.h"
+#include "GoogleAnalytics.h"
 
 static NSMutableAttributedString* Hyperlink(NSString* _string, NSURL* _url)
 {
@@ -143,6 +144,7 @@ static NSMutableAttributedString *PlaceHyperlinks(NSString *_source)
     self.textView.minSize = self.textView.superview.superview.bounds.size;
     self.textView.alignment = NSTextAlignmentCenter;
     [self.textView.textStorage setAttributedString:PlaceHyperlinks(NSLocalizedString(@"__GENERAL_FEATURE_NOT_AVAILABLE", ""))];
+    GoogleAnalytics::GoogleAnalytics::Instance().PostScreenView("Feature Non Available Window");
 }
 
 - (IBAction)OnClose:(id)sender

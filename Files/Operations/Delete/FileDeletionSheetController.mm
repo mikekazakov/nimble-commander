@@ -6,7 +6,21 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
+#include "../../ButtonWithOptions.h"
 #include "FileDeletionSheetController.h"
+
+@interface FileDeletionSheetController()
+
+@property (strong) IBOutlet NSTextField *Label;
+@property (strong) IBOutlet ButtonWithOptions *DeleteButton;
+@property (strong) IBOutlet NSMenu *DeleteButtonMenu;
+
+- (IBAction)OnDeleteAction:(id)sender;
+- (IBAction)OnCancelAction:(id)sender;
+- (IBAction)OnMenuItem:(NSMenuItem *)sender;
+
+@end
 
 @implementation FileDeletionSheetController
 {
@@ -70,6 +84,8 @@
         [self.DeleteButton setSegmentCount:1];
     
     [self buildTitle];
+    
+    GoogleAnalytics::Instance().PostScreenView("Delete Files");
 }
 
 - (IBAction)OnDeleteAction:(id)sender

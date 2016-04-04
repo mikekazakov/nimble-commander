@@ -11,10 +11,18 @@ static const auto g_TrackingID = "UA-47180125-2"s;
 
 CFStringRef const GoogleAnalytics::g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 CFStringRef const GoogleAnalytics::g_DefaultsTrackingEnabledKey = CFSTR("GATrackingEnabled");
-static const auto g_SendingDelay = 2min/*10s*/;
+static const auto g_SendingDelay = 5min/*10s*/;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
 static const auto g_MessagesOverflowLimit = 100;
+
+template <typename C, typename T>
+static bool has( const C &_c, const T &_v )
+{
+    auto b = std::begin(_c), e = std::end(_c);
+    auto it = std::find( b,  e, _v );
+    return it != e;
+}
 
 static string GetStoredOrNewClientID()
 {
@@ -148,8 +156,12 @@ void GoogleAnalytics::AcceptMessage(string _message)
         return;
     
     LOCK_GUARD(m_MessagesLock) {
-        if(m_Messages.size() < g_MessagesOverflowLimit)
-            m_Messages.emplace_back( move(_message) );
+        if( m_FilterRedundantMessages && has(m_Messages, _message) )
+            return;
+        if( m_Messages.size() >= g_MessagesOverflowLimit )
+            return;
+        
+        m_Messages.emplace_back( move(_message) );
     }
     
     MarkDirty();

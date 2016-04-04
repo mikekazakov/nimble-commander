@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
 #include "CreateDirectorySheetController.h"
 
 @interface CreateDirectorySheetController()
@@ -29,6 +30,7 @@
 {
     [super windowDidLoad];
     [self.window makeFirstResponder:self.TextField];
+    GoogleAnalytics::Instance().PostScreenView("Create Directory");
 }
 
 - (IBAction)OnCreate:(id)sender

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
 #include "../Operation.h"
 #include "DialogResults.h"
 #include "FileAlreadyExistSheetController.h"
@@ -97,6 +98,8 @@
     [[self ExistingFileSize] setIntegerValue:m_ExiSize];
     [[self RememberCheck] setState:NSOffState];
     [[self RememberCheck] setHidden:m_Single];
+    
+    GoogleAnalytics::Instance().PostScreenView("File Copy Already Exists");
 }
 
 - (void)showDialogForWindow:(NSWindow *)_parent

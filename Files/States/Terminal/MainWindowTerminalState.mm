@@ -9,6 +9,7 @@
 #include <Habanero/CommonPaths.h>
 #include "../../MainWindowController.h"
 #include "../../ActionsShortcutsManager.h"
+#include "../../GoogleAnalytics.h"
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"
 #include "TermScreen.h"
@@ -102,6 +103,7 @@
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self UpdateTitle];
+    GoogleAnalytics::Instance().PostScreenView("Terminal State");
 }
 
 

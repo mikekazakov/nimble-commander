@@ -7,6 +7,7 @@
 //
 
 #include "../../ProcessSheetController.h"
+#include "../../GoogleAnalytics.h"
 #include "MainWindowBigFileViewState.h"
 #include "BigFileViewSheet.h"
 
@@ -87,6 +88,8 @@
     }
   
     [self.encoding selectItemWithTag:self.view.encoding];
+
+    GoogleAnalytics::Instance().PostScreenView("File View Sheet");
 }
 
 - (IBAction)OnClose:(id)sender

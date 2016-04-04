@@ -8,9 +8,11 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
+#include "../../3rd_party/DisclosureViewController/DisclosureViewController.h"
+#include "../../ActivationManager.h"
+#include "../../GoogleAnalytics.h"
 #include "MassCopySheetController.h"
 #include "FileCopyOperation.h"
-#include "../../ActivationManager.h"
 
 // removes entries of ".." and "."
 // quite a bad implementation with O(n^2) complexity and possibly some allocations
@@ -35,6 +37,30 @@ static string MakeCanonicPath(string _input)
     
     return _input;
 }
+
+@interface MassCopySheetController()
+
+@property (strong) IBOutlet NSButton *CopyButton;
+@property (strong) IBOutlet NSTextField *TextField;
+@property (strong) IBOutlet NSTextField *DescriptionText;
+@property (strong) IBOutlet NSButton *PreserveSymlinksCheckbox;
+@property (strong) IBOutlet NSButton *CopyXattrsCheckbox;
+@property (strong) IBOutlet NSButton *CopyFileTimesCheckbox;
+@property (strong) IBOutlet NSButton *CopyUNIXFlagsCheckbox;
+@property (strong) IBOutlet NSButton *CopyUnixOwnersCheckbox;
+@property (strong) IBOutlet NSButton *CopyButtonStringStub;
+@property (strong) IBOutlet NSButton *RenameButtonStringStub;
+@property bool isValidInput;
+@property (strong) IBOutlet DisclosureViewController *DisclosedViewController;
+@property (strong) IBOutlet NSStackView *StackView;
+@property (strong) IBOutlet NSView *PathPart;
+@property (strong) IBOutlet NSView *ButtonsPart;
+@property (strong) IBOutlet NSPopUpButton *VerifySetting;
+
+- (IBAction)OnCopy:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+
+@end
 
 @implementation MassCopySheetController
 {
@@ -115,6 +141,8 @@ static string MakeCanonicPath(string _input)
     [self.VerifySetting selectItemWithTag:(int)m_Options.verification];
     if( !ActivationManager::Instance().HasCopyVerification() )
         self.VerifySetting.enabled = false;
+    
+    GoogleAnalytics::Instance().PostScreenView("File Copy");
 }
 
 - (IBAction)OnCopy:(id)sender

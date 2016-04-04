@@ -8,6 +8,7 @@
 
 #include "FTPConnectionSheetController.h"
 #include "NetworkConnectionsManager.h"
+#include "GoogleAnalytics.h"
 
 @implementation FTPConnectionSheetController
 {
@@ -38,6 +39,8 @@
         [self.saved.menu addItem:NSMenuItem.separatorItem];
         [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
     }
+    
+    GoogleAnalytics::Instance().PostScreenView("FTP Connection");
 }
 
 - (IBAction)OnSaved:(id)sender

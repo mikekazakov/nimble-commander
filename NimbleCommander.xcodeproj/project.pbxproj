@@ -1979,16 +1979,16 @@
 			children = (
 				CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */,
 				CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */,
+				CFC044EB1B2F325A00969A5E /* BatchRenameSheetController.xib */,
 				CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */,
 				CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */,
+				CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */,
 				CF7D13341BF1AFE0001F53FD /* BatchRename.h */,
 				CF7D13351BF1AFE0001F53FD /* BatchRename.mm */,
 				CF7D13361BF1AFE0001F53FD /* BatchRenameOperation.h */,
 				CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */,
 				CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */,
 				CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */,
-				CFC044EB1B2F325A00969A5E /* BatchRenameSheetController.xib */,
-				CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */,
 			);
 			name = BatchRenameOperation;
 			sourceTree = "<group>";
@@ -2225,12 +2225,12 @@
 		CFAC50CD1714016800A3E5C5 /* FileCopyOperation */ = {
 			isa = PBXGroup;
 			children = (
-				CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */,
 				CF9069981BB542A5000C3CBB /* DialogResults.h */,
 				CF9069991BB55A22000C3CBB /* Options.h */,
 				CF90698D1BB54077000C3CBB /* MassCopySheetController.h */,
 				CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */,
 				CF9069921BB54081000C3CBB /* MassCopySheetController.xib */,
+				CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */,
 				CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */,
 				CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */,
 				CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */,

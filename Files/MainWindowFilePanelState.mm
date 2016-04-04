@@ -30,6 +30,7 @@
 #include "SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
 #include "ActivationManager.h"
+#include "GoogleAnalytics.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -328,6 +329,9 @@ static string ExpandPath(const string &_ref )
     }
     
     [self UpdateTitle];
+    
+    // think it's a bad idea to post messages on every new window created
+    /* GoogleAnalytics::Instance().PostScreenView("File Panels State"); */
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType

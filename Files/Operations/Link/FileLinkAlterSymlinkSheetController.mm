@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
 #include "FileLinkAlterSymlinkSheetController.h"
 
 @interface FileLinkAlterSymlinkSheetController ()
@@ -32,6 +33,7 @@
     self.Text.stringValue = [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", [NSString stringWithUTF8StdString:m_LinkPath]];
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];
+    GoogleAnalytics::Instance().PostScreenView("Symlink Altering");
 }
 
 - (void)showSheetFor:(NSWindow *)_window

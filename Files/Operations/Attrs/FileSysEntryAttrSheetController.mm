@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
+#include "../../GoogleAnalytics.h"
 #include "FileSysEntryAttrSheetController.h"
 #include "FileSysAttrChangeOperationCommand.h"
 
@@ -247,7 +248,67 @@ static vector<group_info> LoadGroupsWithOD()
     
     return result;
 }
-        
+
+
+@interface FileSysEntryAttrSheetController ()
+
+@property (strong) IBOutlet NSButton *OwnerReadCheck;
+@property (strong) IBOutlet NSButton *OwnerWriteCheck;
+@property (strong) IBOutlet NSButton *OwnerExecCheck;
+@property (strong) IBOutlet NSButton *GroupReadCheck;
+@property (strong) IBOutlet NSButton *GroupWriteCheck;
+@property (strong) IBOutlet NSButton *GroupExecCheck;
+@property (strong) IBOutlet NSButton *OthersReadCheck;
+@property (strong) IBOutlet NSButton *OthersWriteCheck;
+@property (strong) IBOutlet NSButton *OthersExecCheck;
+@property (strong) IBOutlet NSButton *StickyCheck;
+@property (strong) IBOutlet NSButton *NoDumpCheck;
+@property (strong) IBOutlet NSButton *UserImmutableCheck;
+@property (strong) IBOutlet NSButton *UserAppendCheck;
+@property (strong) IBOutlet NSButton *UserCompressedCheck;
+@property (strong) IBOutlet NSButton *UserTrackedCheck;
+@property (strong) IBOutlet NSButton *OpaqueCheck;
+@property (strong) IBOutlet NSButton *HiddenCheck;
+@property (strong) IBOutlet NSButton *ArchivedCheck;
+@property (strong) IBOutlet NSButton *SystemImmutableCheck;
+@property (strong) IBOutlet NSButton *SystemAppendCheck;
+@property (strong) IBOutlet NSButton *SetUIDCheck;
+@property (strong) IBOutlet NSButton *SetGIDCheck;
+@property (strong) IBOutlet NSPopUpButton *UsersPopUpButton;
+@property (strong) IBOutlet NSPopUpButton *GroupsPopUpButton;
+
+@property (strong) IBOutlet NSButton *ATimePickerEnabled;
+@property (strong) IBOutlet NSDatePicker *ATimePicker;
+@property (strong) IBOutlet NSButton *MTimePickerEnabled;
+@property (strong) IBOutlet NSDatePicker *MTimePicker;
+@property (strong) IBOutlet NSButton *CTimePickerEnabled;
+@property (strong) IBOutlet NSDatePicker *CTimePicker;
+@property (strong) IBOutlet NSButton *BTimePickerEnabled;
+@property (strong) IBOutlet NSDatePicker *BTimePicker;
+@property (strong) IBOutlet NSButton *ProcessSubfoldersCheck;
+@property (strong) IBOutlet NSTextField *Title;
+
+@property (strong) IBOutlet NSStackView *StackView;
+@property (strong) IBOutlet NSView *StackViewTop;
+@property (strong) IBOutlet NSView *StackViewMiddle;
+@property (strong) IBOutlet NSView *StackViewBottom;
+@property (strong) IBOutlet NSView *StackViewFooter;
+
+- (IBAction)OnApply:(id)sender;
+- (IBAction)OnCancel:(id)sender;
+- (IBAction)OnATimeSet:(id)sender;
+- (IBAction)OnMTimeSet:(id)sender;
+- (IBAction)OnCTimeSet:(id)sender;
+- (IBAction)OnBTimeSet:(id)sender;
+- (IBAction)OnProcessSubfolders:(id)sender;
+- (IBAction)OnFlag:(id)sender;
+- (IBAction)OnUIDSel:(id)sender;
+- (IBAction)OnGIDSel:(id)sender;
+- (IBAction)OnTimeChange:(id)sender;
+- (IBAction)OnTimePickerEnabled:(id)sender;
+
+@end
+
 @implementation FileSysEntryAttrSheetController
 {
     struct
@@ -329,6 +390,7 @@ static vector<group_info> LoadGroupsWithOD()
                                   [NSNumber numberWithInt:(int)m_Items->size()]];
     
     [self PopulateControls];
+    GoogleAnalytics::Instance().PostScreenView("Unix Attributes");
 }
 
 - (void) PopulateControls

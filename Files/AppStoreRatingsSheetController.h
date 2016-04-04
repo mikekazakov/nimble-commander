@@ -11,8 +11,5 @@
 @interface AppStoreRatingsSheetController : NSWindowController
 
 - (NSModalResponse) runModal;
-- (IBAction)OnReview:(id)sender;
-- (IBAction)OnRemind:(id)sender;
-- (IBAction)OnNo:(id)sender;
 
 @end

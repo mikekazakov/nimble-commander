@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
 #include "FileLinkNewSymlinkSheetController.h"
 
 @interface FileLinkNewSymlinkSheetController()
@@ -33,6 +34,7 @@
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     self.LinkPath.stringValue = [NSString stringWithUTF8StdString:m_LinkPath];
     [self.window makeFirstResponder:self.LinkPath];
+    GoogleAnalytics::Instance().PostScreenView("Symlink Create");
 }
 
 - (void)showSheetFor:(NSWindow *)_window

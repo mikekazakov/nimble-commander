@@ -7,6 +7,15 @@
 //
 
 #include "AppStoreRatingsSheetController.h"
+#include "GoogleAnalytics.h"
+
+@interface AppStoreRatingsSheetController()
+
+- (IBAction)OnReview:(id)sender;
+- (IBAction)OnRemind:(id)sender;
+- (IBAction)OnNo:(id)sender;
+
+@end
 
 @implementation AppStoreRatingsSheetController
 
@@ -20,6 +29,7 @@
 
 - (NSModalResponse) runModal
 {
+    GoogleAnalytics::Instance().PostScreenView("App Store Ratings");
     return [NSApplication.sharedApplication runModalForWindow:self.window];
 }
 

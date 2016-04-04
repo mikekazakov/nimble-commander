@@ -33,4 +33,5 @@ private:
     const string    m_AppVersion;
     string          m_PayloadPrefix;
     bool            m_Enabled = false;
+    const bool      m_FilterRedundantMessages = true;
 };

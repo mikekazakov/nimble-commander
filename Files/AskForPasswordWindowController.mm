@@ -7,6 +7,7 @@
 //
 
 #include "AskForPasswordWindowController.h"
+#include "GoogleAnalytics.h"
 
 @interface AskForPasswordWindowController ()
 - (IBAction)onOk:(id)sender;
@@ -24,6 +25,7 @@
     if(self) {
         (void)self.window;
         self.Resource.stringValue = _name;
+        GoogleAnalytics::Instance().PostScreenView("Ask For Password");
     }
     return self;
 }

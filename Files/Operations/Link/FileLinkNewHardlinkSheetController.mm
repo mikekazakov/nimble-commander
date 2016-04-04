@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../GoogleAnalytics.h"
 #include "FileLinkNewHardlinkSheetController.h"
 
 @interface FileLinkNewHardlinkSheetController ()
@@ -32,6 +33,7 @@
     [super windowDidLoad];    
     [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
     [self.window makeFirstResponder:self.LinkName];
+    GoogleAnalytics::Instance().PostScreenView("Hardlink Create");
 }
 
 - (IBAction)OnCreate:(id)sender

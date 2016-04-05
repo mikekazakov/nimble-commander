@@ -12,6 +12,8 @@
 #include <vector>
 
 #include <Utility/FSEventsDirUpdate.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Habanero/spinlock.h>
 
 using namespace std;
 
@@ -42,14 +44,13 @@ struct FSEventsDirUpdate::Impl
 {
     struct WatchData
     {
-        unsigned                                 path_len;
         string                                   path;     // canonical fs representation, should include trailing slash
         FSEventStreamRef                         stream;
         vector<pair<uint64_t, function<void()>>> handlers;
     };
-    vector<unique_ptr<WatchData>> m_Watches;
-    uint64_t                      m_LastTicket = 1; // no tickets #0, since it'is an error code
-    
+    spinlock                            m_Lock;
+    vector<unique_ptr<WatchData>>       m_Watches;
+    atomic_ulong                        m_LastTicket{ 1 }; // no tickets #0, since it'is an error code
     
     uint64_t    AddWatchPath(const char *_path, std::function<void()> _handler);
     bool        RemoveWatchPathWithTicket(uint64_t _ticket);
@@ -92,7 +93,7 @@ void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(ConstFSEventStreamRef st
         const char *path = ((const char**)eventPaths)[i];
         size_t path_len = strlen(path);
         
-        if( path_len == w.path_len && w.path == path ) {
+        if( w.path.length() == path_len && w.path == path ) {
             for(auto &h: w.handlers)
                 h.second();
         }
@@ -101,7 +102,7 @@ void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(ConstFSEventStreamRef st
             // check if watched directory was removed - need to fire on this case too
             if((flags == (kFSEventStreamEventFlagItemRenamed | kFSEventStreamEventFlagItemIsDir)) ||
                (flags == (kFSEventStreamEventFlagItemRemoved | kFSEventStreamEventFlagItemIsDir)) ) {
-                if(path_len < w.path_len && strncmp(w.path.c_str(), path, path_len) == 0)
+                if(path_len < w.path.length() && strncmp(w.path.c_str(), path, path_len) == 0)
                     for(auto &h: w.handlers)
                         h.second();
             }
@@ -113,6 +114,9 @@ uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _ha
 { return me->AddWatchPath( _path, move(_handler) ); }
 uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void()> _handler)
 {
+    if( !_path || !_handler )
+        return 0;
+    
     // convert _path into canonical path of OS
     string dirpath = GetRealPath(_path);
     if(dirpath.empty())
@@ -127,7 +131,6 @@ uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void(
 
     // create new watch stream
     auto w = make_unique<WatchData>();
-    w->path_len = (unsigned)dirpath.length();
     w->path = dirpath;
     w->handlers.emplace_back(m_LastTicket++, move(_handler));
     auto ticket = w->handlers.back().first;
@@ -137,26 +140,40 @@ uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void(
     if(!path)
         return 0;
     
-    void *ar[1] = {(void*)path};
-    CFArrayRef pathsToWatch = CFArrayCreate(0, (const void**)ar, 1, &kCFTypeArrayCallBacks);
-        
-    FSEventStreamRef stream = FSEventStreamCreate(NULL,
-                                                  &FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback,
-                                 &context,
-                                 pathsToWatch,
-                                 kFSEventStreamEventIdSinceNow,
-                                 g_FSEventsLatency,
-                                 0
-                                 );
+    CFArrayRef pathsToWatch = CFArrayCreate(0, (const void**)&path, 1, NULL);
+    FSEventStreamRef stream = nullptr;
+    auto create_stream = [&]{
+        stream = FSEventStreamCreate(NULL,
+                                     &FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback,
+                                     &context,
+                                     pathsToWatch,
+                                     kFSEventStreamEventIdSinceNow,
+                                     g_FSEventsLatency,
+                                     0
+                                     );
+    };
+    
+    if( dispatch_is_main_queue() )
+        create_stream();
+    else
+        dispatch_sync(dispatch_get_main_queue(), create_stream);
+    
     CFRelease(pathsToWatch);
     CFRelease(path);
-    
-    FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-    FSEventStreamStart(stream);
-    
+
     w->stream = stream;
     
-    m_Watches.emplace_back(move(w));
+    LOCK_GUARD(m_Lock) {
+        m_Watches.emplace_back( move(w) );
+    }
+    
+    auto schedule_and_run = [=]{
+        FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+        FSEventStreamStart(stream);
+    };
+    
+    if( dispatch_is_main_queue() ) schedule_and_run();
+    else   dispatch_to_main_queue( schedule_and_run );
     
     return ticket;
 }
@@ -168,21 +185,27 @@ bool FSEventsDirUpdate::Impl::RemoveWatchPathWithTicket(uint64_t _ticket)
     if(_ticket == 0)
         return false;
     
-    for(auto i = begin(m_Watches), e = end(m_Watches); i != e ; ++i) {
-        WatchData *w = i->get();
-        for(auto h = w->handlers.begin(); h < w->handlers.end(); ++h)
-            if(h->first == _ticket) {
-                w->handlers.erase(h);
-                if(w->handlers.empty()) {
-                    FSEventStreamStop(w->stream);
-                    FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-                    FSEventStreamInvalidate(w->stream);
-                    FSEventStreamRelease(w->stream);
-                    m_Watches.erase(i);
-                }
-                return true;
-            }
+    if( !dispatch_is_main_queue() ) {
+        dispatch_to_main_queue( [=]{ RemoveWatchPathWithTicket(_ticket); } );
+        return true;
     }
+    
+    LOCK_GUARD(m_Lock)
+        for(auto i = begin(m_Watches), e = end(m_Watches); i != e ; ++i) {
+            WatchData *w = i->get();
+            for(auto h = w->handlers.begin(); h < w->handlers.end(); ++h)
+                if(h->first == _ticket) {
+                    w->handlers.erase(h);
+                    if(w->handlers.empty()) {
+                        FSEventStreamStop(w->stream);
+                        FSEventStreamUnscheduleFromRunLoop(w->stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+                        FSEventStreamInvalidate(w->stream);
+                        FSEventStreamRelease(w->stream);
+                        m_Watches.erase(i);
+                    }
+                    return true;
+                }
+        }
     
     return false;
 }

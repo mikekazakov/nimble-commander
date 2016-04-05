@@ -10,7 +10,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include "PanelAux.h"
+#include <Utility/FSEventsDirUpdate.h>
 #include "TemporaryNativeFileStorage.h"
+#include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
 
@@ -63,6 +65,20 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         
         if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp))
             return;
+  
+//        dispatch_to_main_queue_after(1ms, [=]{
+//        
+//        FSEventsDirUpdate::Instance().AddWatchPath( path(tmp).parent_path().c_str() ,
+//                                                   []{
+//                                                       cout << "!!!" << endl;
+//                                                   });
+//            
+//        });
+        
+        
+        
+        TemporaryNativeFileChangesSentinel::Instance().WatchFile(tmp, []{});
+        
         
         NSString *fn = [NSString stringWithUTF8StdString:tmp];
         dispatch_to_main_queue([=]{

@@ -809,7 +809,7 @@ void TermParser::PushRawTaskInput(NSString *_str)
  * That's a hacky implementation, it mimicks the real deadKeyState.
  * This can serve for purposes of decoding a single option-modified keypress, but can't be used for double keys decoding
  */
-static CFStringRef GetModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags)
+static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, NSEventModifierFlags _flags)
 {
     // http://stackoverflow.com/questions/12547007/convert-key-code-into-key-equivalent-string
     // http://stackoverflow.com/questions/8263618/convert-virtual-key-code-to-unicode-string
@@ -1023,7 +1023,7 @@ void TermParser::ProcessKeyDown(NSEvent *_event)
     }
 
     if( modflags & NSAlternateKeyMask )
-        character = (NSString*)CFBridgingRelease( GetModifiedCharactersForKeyPress(_event.keyCode, modflags) );
+        character = (NSString*)CFBridgingRelease( CreateModifiedCharactersForKeyPress(_event.keyCode, modflags) );
     else if( (modflags&NSDeviceIndependentModifierFlagsMask) == NSAlphaShiftKeyMask )
         character = _event.characters;
     

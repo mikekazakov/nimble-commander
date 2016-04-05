@@ -489,6 +489,7 @@
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF960E2F1C9935C4001D8B02 /* libUtility.a */; };
 		CF9A9EF81CAAC3020094D6F7 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
+		CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -1278,6 +1279,8 @@
 		CF960E2F1C9935C4001D8B02 /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
 		CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleAnalytics.mm; sourceTree = "<group>"; };
+		CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileChangesSentinel.cpp; sourceTree = "<group>"; };
+		CF9A9F191CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileChangesSentinel.h; sourceTree = "<group>"; };
 		CF9BB36219A7DC5500B9B0FF /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileMask_Tests.mm; sourceTree = "<group>"; };
 		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
 		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
@@ -2264,8 +2267,6 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
-				CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
 				CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */,
 				CFA1834C1C9F028600544633 /* ActivationManager.cpp */,
@@ -2295,6 +2296,8 @@
 				CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */,
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
+				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
+				CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */,
 				CFDA4CCB182A17C7006EC35C /* LSUrls.h */,
 				CFDA4CCC182A17C7006EC35C /* LSUrls.mm */,
 				CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */,
@@ -2308,6 +2311,8 @@
 				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
 				CF07DE3E1769754400757DE1 /* SearchInFile.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
+				CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */,
+				CF9A9F191CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.h */,
 				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
 			);
@@ -3433,6 +3438,7 @@
 				CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */,
 				CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */,
 				CFED5A481C50EA0100BFCB5C /* MainWindowBigFileViewState.mm in Sources */,
+				CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,

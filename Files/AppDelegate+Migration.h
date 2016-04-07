@@ -4,6 +4,6 @@
 
 @interface AppDelegate(Migration)
 
-//- (void) migrateUserDefaultsToJSONConfig_1_1_0_to_1_1_1;
+- (void) migrateAppSupport_1_1_1_to_1_1_2;
 
 @end

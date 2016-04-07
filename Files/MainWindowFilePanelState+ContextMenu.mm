@@ -487,11 +487,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
             vector<string> items;
             for(auto &i: m_Items)
                 items.emplace_back( i.Path() );
-            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id);
+            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id, m_CurrentController);
         }
     }
     else if(m_Items.size() == 1)
-        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path);
+        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path, m_CurrentController);
 }
 
 - (void)OnOpenWithOther:(id)sender

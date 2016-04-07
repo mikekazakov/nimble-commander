@@ -9,34 +9,71 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "PanelAux.h"
-#include <Utility/FSEventsDirUpdate.h>
+#include "Operations/Copy/FileCopyOperation.h"
+#include "Operations/OperationsController.h"
+#include "vfs/vfs_native.h"
 #include "TemporaryNativeFileStorage.h"
 #include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
-#include "AppDelegate.h"
-
-#include "Operations/Copy/FileCopyOperation.h"
-#include "vfs/vfs_native.h"
+#include "PanelController.h"
 #include "MainWindowController.h"
-#include "Operations/OperationsController.h"
-
+#include "PanelAux.h"
 
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
-void PanelVFSFileWorkspaceOpener::Open(string _filename,
-                                       shared_ptr<VFSHost> _host
-                                       )
+static void RegisterRemoteFileUploading(const string& _original_path,
+                                        const VFSHostPtr& _original_vfs,
+                                        const string &_native_path,
+                                        PanelController *_origin )
 {
-    Open(_filename, _host, "");
+    if( _original_vfs->IsNativeFS() )
+       return; // no reason to watch files from native fs
+       
+    if( !_original_vfs->IsWriteable() )
+        return; // no reason to watch file we can't upload then
+    
+    __weak MainWindowController* origin_window = _origin.mainWindowController;
+    VFSHostWeakPtr weak_host(_original_vfs);
+    
+    TemporaryNativeFileChangesSentinel::Instance().WatchFile(_native_path, [=]{
+        if( MainWindowController* window = origin_window )
+            if( auto vfs = weak_host.lock() ) {
+                vector<VFSListingItem> items;
+                int ret = VFSNativeHost::SharedHost()->FetchFlexibleListingItems(path(_native_path).parent_path().native(),
+                                                                                 vector<string>(1, path(_native_path).filename().native()),
+                                                                                 0,
+                                                                                 items,
+                                                                                 nullptr);
+                if( ret == 0 ) {
+                    FileCopyOperationOptions opts;
+                    opts.force_overwrite = true;
+                    auto operation = [[FileCopyOperation alloc] initWithItems:items
+                                                              destinationPath:_original_path
+                                                              destinationHost:vfs
+                                                                      options:opts];
+                    
+                    [window.OperationsController AddOperation:operation];
+                }
+                
+            }
+    });
 }
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,
-                 shared_ptr<VFSHost> _host,
-                 string _with_app_path
-                 )
+                                       shared_ptr<VFSHost> _host,
+                                       PanelController *_panel
+                                       )
+{
+    Open(_filename, _host, "", _panel);
+}
+
+void PanelVFSFileWorkspaceOpener::Open(string _filename,
+                                       shared_ptr<VFSHost> _host,
+                                       string _with_app_path,
+                                       PanelController *_panel
+                                       )
 {
     if(_host->IsNativeFS())
     {
@@ -73,36 +110,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp_path))
             return;
   
-        VFSHostWeakPtr weak_host(_host);
-        TemporaryNativeFileChangesSentinel::Instance().WatchFile(tmp_path, [=]{
-//            cout << "file changed: " << tmp << endl;
-            auto windows = AppDelegate.me.mainWindowControllers;
-            if( windows.empty() )
-                return;
-            auto window = windows.front();
-            
-            if( auto vfs = weak_host.lock() ) {
-                
-                vector<VFSListingItem> items;
-                int ret = VFSNativeHost::SharedHost()->FetchFlexibleListingItems(path(tmp_path).parent_path().native(),
-                                                                                 vector<string>(1, path(tmp_path).filename().native()),
-                                                                                 0,
-                                                                                 items,
-                                                                                 nullptr);
-                if( ret == 0 ) {
-                    FileCopyOperationOptions opts;
-                    opts.force_overwrite = true;
-                    auto operation = [[FileCopyOperation alloc] initWithItems:items
-                                                              destinationPath:_filename
-                                                              destinationHost:vfs
-                                                                      options:opts];
-                    
-                    [window.OperationsController AddOperation:operation];                    
-                }
-
-            }
-        });
-        
+        RegisterRemoteFileUploading( _filename, _host, tmp_path, _panel );
         
         NSString *fn = [NSString stringWithUTF8StdString:tmp_path];
         dispatch_to_main_queue([=]{
@@ -125,8 +133,9 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
 // TODO: write version with FlexListingItem as an input - it would be much simplier
 void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
                                        shared_ptr<VFSHost> _host,
-                                       NSString *_with_app_bundle // can be nil, use default app in such case
-                )
+                                       NSString *_with_app_bundle, // can be nil, use default app in such case
+                                       PanelController *_panel
+                                       )
 {
     if(_host->IsNativeFS())
     {
@@ -162,6 +171,8 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             string tmp;
             if(!TemporaryNativeFileStorage::Instance().CopySingleFile(i, _host, tmp))
                 continue;
+            
+            RegisterRemoteFileUploading( i, _host, tmp, _panel );
             
             if(NSString *s = [NSString stringWithUTF8StdString:tmp])
                 [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];

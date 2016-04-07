@@ -232,7 +232,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"    
     if( auto item = m_View.item )
         PanelVFSFileWorkspaceOpener::Open(item.IsDotDot() ? item.Directory() : item.Path(),
-                                          item.Host());
+                                          item.Host(),
+                                          self);
 }
 
 - (void) ChangeSortingModeTo:(PanelSortMode)_mode

@@ -15,6 +15,13 @@
 #include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
+#include "AppDelegate.h"
+
+#include "Operations/Copy/FileCopyOperation.h"
+#include "vfs/vfs_native.h"
+#include "MainWindowController.h"
+#include "Operations/OperationsController.h"
+
 
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
@@ -61,20 +68,43 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
         if(st.size > g_MaxFileSizeForVFSOpen)
             return;
         
-        string tmp;
+        string tmp_path;
         
-        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp))
+        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp_path))
             return;
   
-        
-        TemporaryNativeFileChangesSentinel::Instance().WatchFile(tmp, [=]{
-            cout << "file changed: " << tmp << endl;
-        
-        
+        VFSHostWeakPtr weak_host(_host);
+        TemporaryNativeFileChangesSentinel::Instance().WatchFile(tmp_path, [=]{
+//            cout << "file changed: " << tmp << endl;
+            auto windows = AppDelegate.me.mainWindowControllers;
+            if( windows.empty() )
+                return;
+            auto window = windows.front();
+            
+            if( auto vfs = weak_host.lock() ) {
+                
+                vector<VFSListingItem> items;
+                int ret = VFSNativeHost::SharedHost()->FetchFlexibleListingItems(path(tmp_path).parent_path().native(),
+                                                                                 vector<string>(1, path(tmp_path).filename().native()),
+                                                                                 0,
+                                                                                 items,
+                                                                                 nullptr);
+                if( ret == 0 ) {
+                    FileCopyOperationOptions opts;
+                    opts.force_overwrite = true;
+                    auto operation = [[FileCopyOperation alloc] initWithItems:items
+                                                              destinationPath:_filename
+                                                              destinationHost:vfs
+                                                                      options:opts];
+                    
+                    [window.OperationsController AddOperation:operation];                    
+                }
+
+            }
         });
         
         
-        NSString *fn = [NSString stringWithUTF8StdString:tmp];
+        NSString *fn = [NSString stringWithUTF8StdString:tmp_path];
         dispatch_to_main_queue([=]{
             
             if(!_with_app_path.empty())

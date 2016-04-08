@@ -28,7 +28,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (void)testPermanentDeletion
 {
     char dir[MAXPATHLEN];
-    sprintf(dir, "%s" __FILES_IDENTIFIER__ ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     XCTAssert( mkdtemp(dir) != nullptr );
     
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",

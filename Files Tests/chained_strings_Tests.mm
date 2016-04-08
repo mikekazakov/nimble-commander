@@ -7,8 +7,8 @@
 //
 
 #include <random>
+#include <Habanero/chained_strings.h>
 #include "tests_common.h"
-#include "../Files/chained_strings.h"
 
 @interface chained_strings_Tests : XCTestCase
 @end

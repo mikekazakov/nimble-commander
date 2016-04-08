@@ -128,7 +128,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];
-    sprintf(dir, "%s" __FILES_IDENTIFIER__ ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     XCTAssert( mkdtemp(dir) != nullptr );
     return dir;
 }

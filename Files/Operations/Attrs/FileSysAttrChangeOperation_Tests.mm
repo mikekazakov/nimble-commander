@@ -7,7 +7,7 @@
 static string MakeTmpDir()
 {
     char dir[MAXPATHLEN];
-    sprintf(dir, "%s" __FILES_IDENTIFIER__ ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
+    sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     if( mkdtemp(dir) )
        return dir;
     return "";

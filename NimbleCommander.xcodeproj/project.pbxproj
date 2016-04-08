@@ -701,7 +701,6 @@
 		CFED5A461C50EA0100BFCB5C /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A3D1C50EA0100BFCB5C /* BigFileViewSheet.mm */; };
 		CFED5A471C50EA0100BFCB5C /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A3F1C50EA0100BFCB5C /* BigFileViewText.mm */; };
 		CFED5A481C50EA0100BFCB5C /* MainWindowBigFileViewState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */; };
-		CFED5A6C1C52136500BFCB5C /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1516,7 +1515,6 @@
 		CFED5A3F1C50EA0100BFCB5C /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewText.mm; path = States/Viewer/BigFileViewText.mm; sourceTree = "<group>"; };
 		CFED5A401C50EA0100BFCB5C /* MainWindowBigFileViewState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowBigFileViewState.h; path = States/Viewer/MainWindowBigFileViewState.h; sourceTree = "<group>"; };
 		CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowBigFileViewState.mm; path = States/Viewer/MainWindowBigFileViewState.mm; sourceTree = "<group>"; };
-		CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = Utility/Encodings_Tests.mm; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
@@ -2672,7 +2670,6 @@
 			children = (
 				CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */,
 				CF46D8E91C853C2C009E28B9 /* rapidjson.h */,
-				CFED5A6A1C52136000BFCB5C /* Encodings_Tests.mm */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -3156,7 +3153,6 @@
 			files = (
 				CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */,
 				CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */,
-				CFED5A6C1C52136500BFCB5C /* Encodings_Tests.mm in Sources */,
 				CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */,
 				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
@@ -4139,7 +4135,7 @@
 		CF47A98F186C607C00745C4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Files.app/Contents/MacOS/Files";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -4151,19 +4147,16 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
-					"__FILES_VER_LITE__=1",
+					"__NC_VERSION_TRIAL__=1",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = NimbleCommander;
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nimble Commander.app/Contents/MacOS/Nimble Commander";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -4171,7 +4164,7 @@
 		CF47A990186C607C00745C4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Files.app/Contents/MacOS/Files";
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -4184,15 +4177,13 @@
 					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = NimbleCommander;
-				TEST_HOST = "$(BUNDLE_LOADER)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nimble Commander.app/Contents/MacOS/Nimble Commander";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
@@ -4215,7 +4206,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__FILES_VER_LITE__=1",
@@ -4261,7 +4251,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4306,6 +4295,7 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -4364,6 +4354,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
@@ -4419,7 +4410,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
@@ -4440,7 +4430,6 @@
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
@@ -4475,7 +4464,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
@@ -4493,7 +4481,6 @@
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
@@ -4510,14 +4497,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -4528,9 +4514,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files/PrivilegedIOHelper-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -4551,8 +4535,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
@@ -4560,15 +4542,14 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files/PrivilegedIOHelper-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -4608,7 +4589,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__FILES_VER_PRO__=1",
@@ -4657,7 +4637,6 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Files/NimbleCommander-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_PRO__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;

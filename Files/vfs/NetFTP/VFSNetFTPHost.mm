@@ -202,11 +202,7 @@ int VFSNetFTPHost::DownloadListing(CURLInstance *_inst,
 
 string VFSNetFTPHost::BuildFullURLString(const char *_path) const
 {
-    // naive implementation
-    string url = "ftp://";
-    url += JunctionPath();
-    url += _path;
-    return url;
+    return "ftp://"s + JunctionPath() + _path; // naive implementation
 }
 
 unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()

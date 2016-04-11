@@ -11,7 +11,7 @@ static const auto g_TrackingID = "UA-47180125-2"s;
 
 CFStringRef const GoogleAnalytics::g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 CFStringRef const GoogleAnalytics::g_DefaultsTrackingEnabledKey = CFSTR("GATrackingEnabled");
-static const auto g_SendingDelay = 5min/*10s*/;
+static const auto g_SendingDelay = 10min;
 static const auto g_URLSingle = @"http://www.google-analytics.com/collect";
 static const auto g_URLBatch  = @"http://www.google-analytics.com/batch";
 static const auto g_MessagesOverflowLimit = 100;
@@ -77,6 +77,10 @@ GoogleAnalytics& GoogleAnalytics::Instance()
 
 //Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H)
 
+//"Files/543 CFNetwork/673.6 Darwin/13.4.0 (x86_64) (MacBookPro5%2C3)"
+//"Files/543 CFNetwork/673.6 Darwin/13.4.0 (x86_64) (MacBookPro5%2C3)"
+//Mozilla/[version] ([system and browser information]) [platform] ([platform details]) [extensions].
+
 static NSString *GetUserAgent()
 {
     sysinfo::SystemOverview sysoverview;
@@ -84,15 +88,26 @@ static NSString *GetUserAgent()
     
     NSDictionary *osInfo = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
     
-//    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
+    NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
 //    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@-%@; %@)",
-    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@)",
+/*    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@)",
                     osInfo[@"ProductName"],
                     [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
 //                    [currentLocale objectForKey:NSLocaleLanguageCode],
 //                    [currentLocale objectForKey:NSLocaleCountryCode],
                     [NSString stringWithUTF8StdString:sysoverview.coded_model]
+                    ];*/
+    
+    // escaping codel_model?
+    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@-%@) (%@)",
+                    osInfo[@"ProductName"],
+                    [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
+                    [currentLocale objectForKey:NSLocaleLanguageCode],
+                    [currentLocale objectForKey:NSLocaleCountryCode],
+                    [NSString stringWithUTF8StdString:sysoverview.coded_model]
+//                    [[NSString stringWithUTF8StdString:sysoverview.coded_model] stringByReplacingOccurrencesOfString:@"," withString:@"%2C"]
                     ];
+    
     return UA;
 }
 

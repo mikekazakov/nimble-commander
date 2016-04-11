@@ -47,7 +47,6 @@
 
 static SUUpdater *g_Sparkle = nil;
 
-//    NSString *config = [fm.applicationSupportDirectory stringByAppendingString:];
 static auto g_ConfigDirPostfix = @"/Config/";
 static auto g_StateDirPostfix = @"/State/";
 
@@ -168,9 +167,9 @@ static AppDelegate *g_Me = nil;
             if( AskUserToResetDefaults() )
                 exit(0);
         
-        [self setupConfigDirectory];
-        g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
-        g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe, self.stateDirectory + "State.json");
+        m_SupportDirectory = EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
+        
+        [self setupConfigs];
         
         [self reloadSkinSetting];
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
@@ -315,8 +314,9 @@ static AppDelegate *g_Me = nil;
     }
 }
 
-- (void) setupConfigDirectory
+- (void) setupConfigs
 {
+    assert( g_Config == nullptr && g_State == nullptr );
     auto fm = NSFileManager.defaultManager;
 
     NSString *config = [fm.applicationSupportDirectory stringByAppendingString:g_ConfigDirPostfix];
@@ -329,7 +329,13 @@ static AppDelegate *g_Me = nil;
         [fm createDirectoryAtPath:state withIntermediateDirectories:true attributes:nil error:nil];
     m_StateDirectory = state.fileSystemRepresentationSafe;
     
-    m_SupportDirectory = EnsureTrailingSlash(fm.applicationSupportDirectory.fileSystemRepresentationSafe);
+    g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
+    g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe, self.stateDirectory + "State.json");
+    
+    atexit([]{ // this callback is quite brutal, but works well. may need to find some more gentle approach
+        GlobalConfig().Commit();
+        StateConfig().Commit();
+    });
 }
 
 - (void) updateDockTileBadge
@@ -478,12 +484,6 @@ static AppDelegate *g_Me = nil;
     }
     
     return NSTerminateNow;
-}
-
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-    GlobalConfig().Commit();
-    StateConfig().Commit();
 }
 
 - (IBAction)OnMenuSendFeedback:(id)sender

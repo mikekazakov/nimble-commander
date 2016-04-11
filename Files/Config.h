@@ -25,6 +25,9 @@ public:
      */
     void ResetToDefaults();
     
+    /**
+     * Force to write data to disk and wait - will block the caller.
+     */
     void Commit();
     
     typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;

@@ -331,7 +331,7 @@ static string ExpandPath(const string &_ref )
     [self UpdateTitle];
     
     // think it's a bad idea to post messages on every new window created
-    /* GoogleAnalytics::Instance().PostScreenView("File Panels State"); */
+    GoogleAnalytics::Instance().PostScreenView("File Panels State");
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType

@@ -98,6 +98,11 @@ static void SetupTrialPeriod()
     CFDefaultsSetDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
 }
 
+static void DeleteTrialPeriodInfo()
+{
+    CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
+}
+
 static int TrialDaysLeft()
 {
     double v = CFDefaultsGetDouble(g_DefaultsTrialExpireDate) - CFAbsoluteTimeGetCurrent();
@@ -133,7 +138,7 @@ ActivationManager::ActivationManager()
             if( !TrialStarted() )
                 SetupTrialPeriod();
 
-            m_TrialDaysLeft = TrialDaysLeft();
+            m_TrialDaysLeft = ::TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
 //                m_IsActivated = true;
@@ -312,6 +317,6 @@ bool ActivationManager::UserHadRegistered() const noexcept
 bool ActivationManager::ShouldShowTrialNagScreen() const noexcept
 {
     return Type() == ActivationManager::Distribution::Trial &&
-            m_IsTrialPeriod &&
+            !m_UserHadRegistered &&
             TrialDaysLeft() <= g_TrialNagScreenMinDays ;
 }

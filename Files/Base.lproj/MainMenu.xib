@@ -850,7 +850,7 @@ CQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="491">
                         <items>
-                            <menuItem title="Files Help" keyEquivalent="?" id="iBP-LD-aNS">
+                            <menuItem title="Nimble Commander Help" keyEquivalent="?" id="iBP-LD-aNS">
                                 <connections>
                                     <action selector="OnShowHelp:" target="-1" id="mbF-jF-ZMK"/>
                                 </connections>

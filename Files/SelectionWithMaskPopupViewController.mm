@@ -8,6 +8,7 @@
 
 #include "SelectionWithMaskPopupViewController.h"
 #include "SimpleComboBoxPersistentDataSource.h"
+#include "GoogleAnalytics.h"
 
 static const auto                       g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
 static unordered_map<void*, NSString*>  g_InitialMask;
@@ -56,6 +57,8 @@ static spinlock                         g_InitialMaskLock;
         auto i = g_InitialMask.find(m_TargetWnd);
         self.comboBox.stringValue = i != end(g_InitialMask) ? (*i).second : @"*.*";
     }
+    
+    GoogleAnalytics::Instance().PostScreenView("Mask Selection Popup");
 }
 
 - (IBAction)OnComboBox:(id)sender

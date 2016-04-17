@@ -217,7 +217,6 @@ static AppDelegate *g_Me = nil;
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
   
     if( ActivationManager::Instance().Sandboxed() ) {
-//    if(configuration::is_sandboxed) {
         auto &sm = SandboxManager::Instance();
         if(sm.Empty()) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);

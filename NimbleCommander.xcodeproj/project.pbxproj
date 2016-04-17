@@ -2055,12 +2055,12 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
-		CF6D99A5196675FE0077B146 /* Files Full */ = {
+		CF6D99A5196675FE0077B146 /* Trial */ = {
 			isa = PBXGroup;
 			children = (
 				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
 			);
-			name = "Files Full";
+			name = Trial;
 			sourceTree = "<group>";
 		};
 		CF6D99A6196676200077B146 /* Files Lite */ = {
@@ -2590,7 +2590,7 @@
 			children = (
 				CF6D99A6196676200077B146 /* Files Lite */,
 				CFF6F3A31A1356F700011177 /* Files Pro */,
-				CF6D99A5196675FE0077B146 /* Files Full */,
+				CF6D99A5196675FE0077B146 /* Trial */,
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
 				CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */,

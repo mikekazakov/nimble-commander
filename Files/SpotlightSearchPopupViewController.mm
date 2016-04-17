@@ -8,6 +8,7 @@
 
 #include "SimpleComboBoxPersistentDataSource.h"
 #include "SpotlightSearchPopupViewController.h"
+#include "GoogleAnalytics.h"
 
 static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.queries";
 
@@ -32,6 +33,8 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
     m_QueryHistory = [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
     self.queryComboBox.usesDataSource = true;
     self.queryComboBox.dataSource = m_QueryHistory;
+    
+    GoogleAnalytics::Instance().PostScreenView("Spotlight Popup");
 }
 
 - (IBAction)onQueryComboBox:(id)sender

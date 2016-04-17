@@ -6,7 +6,10 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
+#include "SimpleComboBoxPersistentDataSource.h"
 #include "SpotlightSearchPopupViewController.h"
+
+static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.queries";
 
 @interface SpotlightSearchPopupViewController ()
 
@@ -16,6 +19,7 @@
 
 @implementation SpotlightSearchPopupViewController
 {
+    SimpleComboBoxPersistentDataSource *m_QueryHistory;
     function<void(const string&)> m_Handler;
 }
 
@@ -24,20 +28,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do view setup here.
+
+    m_QueryHistory = [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
+    self.queryComboBox.usesDataSource = true;
+    self.queryComboBox.dataSource = m_QueryHistory;
 }
 
 - (IBAction)onQueryComboBox:(id)sender
 {
-    if( self.queryComboBox.stringValue == nil || self.queryComboBox.stringValue.length == 0 )
+    NSString *query = self.queryComboBox.stringValue;
+    
+    if( query == nil || query.length == 0 )
         return;
     
+    [m_QueryHistory reportEnteredItem:query];
 
     if( m_Handler )
-        m_Handler( self.queryComboBox.stringValue.UTF8String );
+        m_Handler( query.UTF8String );
     
     [self.view.window performClose:nil];
-    
 }
 
 - (void)popoverDidClose:(NSNotification *)notification

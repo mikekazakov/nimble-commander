@@ -41,6 +41,8 @@
 #include "CalculateChecksumSheetController.h"
 #include "ConnectionsMenuDelegate.h"
 
+#include "SpotlightSearchPopupViewController.h"
+
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
     vector<shared_ptr<VFSListing>> listings;
@@ -66,6 +68,51 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     }
     
     return VFSListing::Build( VFSListing::Compose(listings, indeces) );
+}
+
+static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
+{
+    map<string, vector<string>> dir_to_filenames;
+    
+    for( auto &i: _file_paths ) {
+        path p(i);
+        auto dir = p.parent_path();
+        auto filename = p.filename();
+        dir_to_filenames[ dir.native() ].emplace_back( filename.native() );
+    }
+    
+    return FetchSearchResultsAsListing(dir_to_filenames, _vfs, _fetch_flags, _cancel_checker);
+}
+
+static vector<string> FetchSpotlightResults(const string&_query)
+{
+    NSString *query_string = [NSString stringWithFormat:@"kMDItemFSName == '*%@*'cd", [NSString stringWithUTF8StdString:_query]];
+    
+    MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)query_string, nullptr, nullptr );
+    auto clear_query = at_scope_end([=]{ CFRelease(query); });
+    
+    MDQuerySetMaxCount(query, 512);
+    
+    Boolean query_result = MDQueryExecute( query, kMDQuerySynchronous );
+    if( !query_result)
+        return {};
+    
+    vector<string> result;
+    for( long i = 0, e = MDQueryGetResultCount( query ); i < e; ++i ) {
+
+        MDItemRef item = (MDItemRef)MDQueryGetResultAtIndex( query, i );
+        
+        CFStringRef item_path = (CFStringRef)MDItemCopyAttribute(item, kMDItemPath);
+        auto clear_item_path = at_scope_end([=]{ CFRelease(item_path); });
+        
+        result.emplace_back( CFStringGetUTF8StdString(item_path) );
+    }
+
+    // make results unique - spotlight sometimes produces duplicates
+    sort( begin(result), end(result) );
+    result.erase( unique(begin(result), end(result)), result.end() );
+    
+    return result;
 }
 
 static void WriteSingleStringToClipboard(const string &_s)
@@ -574,34 +621,21 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     }
 }
 
-- (void)DoSelectByMask:(bool)_select {
-    if(m_SelectionWithMaskPopover &&
-       m_SelectionWithMaskPopover.shown)
-        return;
-    
+- (void)DoSelectByMask:(bool)_select
+{
     SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] init];
     [view setupForWindow:self.state.window];
     view.titleLabel.stringValue = _select ?
         NSLocalizedString(@"Select files using mask:", "Title for selection with mask popup") :
         NSLocalizedString(@"Deselect files using mask:", "Title for deselection with mask popup");
     view.handler = ^(NSString *mask) {
-        [m_SelectionWithMaskPopover close];
         if( !FileMask::IsWildCard(mask) )
             mask = FileMask::ToWildCard(mask);
         
         [self SelectEntriesByMask:mask select:_select];
     };
     
-    m_SelectionWithMaskPopover = [NSPopover new];
-    m_SelectionWithMaskPopover.contentViewController = view;
-    m_SelectionWithMaskPopover.behavior = NSPopoverBehaviorTransient;
-    m_SelectionWithMaskPopover.delegate = view;
-    [m_SelectionWithMaskPopover showRelativeToRect:NSMakeRect(0,
-                                                              0,
-                                                              self.view.bounds.size.width,
-                                                              self.view.presentation->GetSingleItemHeight())
-                                            ofView:self.view
-                                     preferredEdge:NSMaxYEdge];
+    [self showPopoverUnderPathBarWithView:view andDelegate:view];
 }
 
 - (IBAction)OnSelectByMask:(id)sender {
@@ -624,9 +658,40 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     [self DoQuickSelectByExtension:true];
 }
 
+- (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view andDelegate:(id<NSPopoverDelegate>)_delegate
+{
+    NSPopover *popover = [NSPopover new];
+    popover.contentViewController = _view;
+    popover.behavior = NSPopoverBehaviorTransient;
+    popover.delegate = _delegate;
+    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, self.view.presentation->GetSingleItemHeight())
+                         ofView:self.view
+                  preferredEdge:NSMaxYEdge];
+    return popover;
+}
+
 - (IBAction)OnQuickDeselectByExtension:(id)sender
 {
     [self DoQuickSelectByExtension:false];
+}
+
+- (IBAction)OnSpotlightSearch:(id)sender
+{
+    SpotlightSearchPopupViewController *view = [[SpotlightSearchPopupViewController alloc] init];
+    view.handler = [=](const string& _query){
+        m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
+            if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
+                                                     VFSNativeHost::SharedHost(),
+                                                     m_VFSFetchingFlags,
+                                                     [=]{ return  _queue->IsStopped(); }
+                                                     ) )
+                dispatch_to_main_queue([=]{
+                    [self loadNonUniformListing:l];
+                });
+        });
+    };
+    
+    [self showPopoverUnderPathBarWithView:view andDelegate:view];
 }
 
 - (IBAction)OnEjectVolume:(id)sender {

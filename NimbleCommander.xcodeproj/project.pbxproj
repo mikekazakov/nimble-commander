@@ -820,6 +820,12 @@
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
+		CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
+		CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
+		CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
+		CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1524,6 +1530,9 @@
 		CFF6F3A91A135A0E00011177 /* files.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = files.icns; path = Resource/Pro/files.icns; sourceTree = "<group>"; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		CFFE09C71B200CE40091ED4F /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Application.mm; sourceTree = "<group>"; };
+		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
+		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
+		CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1871,6 +1880,9 @@
 				CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */,
 				CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */,
 				CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */,
+				CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */,
+				CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */,
+				CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */,
 				B50976A7172A3A0E0080412E /* QuickPreview.h */,
 				B50976A8172A3A0E0080412E /* QuickPreview.mm */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
@@ -2925,6 +2937,7 @@
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
+				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
@@ -2978,6 +2991,7 @@
 				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CFC044E71B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */,
+				CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
@@ -3062,6 +3076,7 @@
 				CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */,
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
+				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFF6F3821A13567C00011177 /* pref_hotkeys_icon.png in Resources */,
@@ -3341,6 +3356,7 @@
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
+				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CF50C43F1C0ADEE2009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF46DB851C856F48009E28B9 /* TermTask.cpp in Sources */,
@@ -3515,6 +3531,7 @@
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
 				CF7D138E1BF5E38B001F53FD /* OperationsController.mm in Sources */,
 				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF46D8EA1C853C2C009E28B9 /* rapidjson.cpp in Sources */,
 				CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */,
 				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
@@ -3721,6 +3738,7 @@
 				CF46DB961C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CF50C43E1C0ADEE1009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,

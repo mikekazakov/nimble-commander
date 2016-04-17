@@ -213,6 +213,12 @@ DQ
                                     <action selector="performFindPanelAction:" target="-1" id="d55-DV-a4f"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Find with Spotlight..." tag="11130" id="jg2-rC-cAS">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnSpotlightSearch:" target="-1" id="fOc-xt-ZL7"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

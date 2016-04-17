@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SpotlightSearchPopupViewController">
+            <connections>
+                <outlet property="queryComboBox" destination="8TS-kP-rE8" id="Fze-Z6-UMR"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="290" height="85"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <comboBox verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8TS-kP-rE8">
+                    <rect key="frame" x="20" y="16" width="253" height="26"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="8yG-6j-1zT"/>
+                    </constraints>
+                    <animations/>
+                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="E0l-6v-dL3">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        <objectValues>
+                            <string>Item 1</string>
+                            <string>Item 2</string>
+                            <string>Item 3</string>
+                        </objectValues>
+                    </comboBoxCell>
+                    <connections>
+                        <action selector="onQueryComboBox:" target="-2" id="QbA-JV-XMK"/>
+                    </connections>
+                </comboBox>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AZN-nx-ebo">
+                    <rect key="frame" x="18" y="48" width="254" height="17"/>
+                    <animations/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Find with Spotlight:" id="2XN-fO-zqw">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="AZN-nx-ebo" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="ElP-jH-BLx"/>
+                <constraint firstItem="AZN-nx-ebo" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="Sjp-fv-1Eh"/>
+                <constraint firstItem="8TS-kP-rE8" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="UFw-Xj-oU1"/>
+                <constraint firstItem="8TS-kP-rE8" firstAttribute="top" secondItem="AZN-nx-ebo" secondAttribute="bottom" constant="8" symbolic="YES" id="bQD-Lb-ysp"/>
+                <constraint firstAttribute="trailing" secondItem="8TS-kP-rE8" secondAttribute="trailing" constant="20" symbolic="YES" id="bkP-jt-QWo"/>
+                <constraint firstAttribute="bottom" secondItem="8TS-kP-rE8" secondAttribute="bottom" constant="20" symbolic="YES" id="hrI-IP-oWU"/>
+                <constraint firstAttribute="trailing" secondItem="AZN-nx-ebo" secondAttribute="trailing" constant="20" symbolic="YES" id="x1f-zl-Soy"/>
+            </constraints>
+            <animations/>
+            <point key="canvasLocation" x="456" y="370.5"/>
+        </customView>
+    </objects>
+</document>

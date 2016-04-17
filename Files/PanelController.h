@@ -120,9 +120,6 @@ namespace panel
         function<void()> done;
     } m_DelayedSelection;
     
-    NSPopover            *m_SelectionWithMaskPopover;
-    
-    
     __weak MainWindowFilePanelState* m_FilePanelState;
     
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;

@@ -169,6 +169,7 @@ static NSString *g_FileName = @"/selectionwithmasksheet.bplist"; // bplist file 
     self.handler( self.comboBox.stringValue );
     self.handler = nil;
     m_TargetWnd = nil;
+    [self.view.window performClose:nil];
 }
 
 - (void)popoverDidClose:(NSNotification *)notification

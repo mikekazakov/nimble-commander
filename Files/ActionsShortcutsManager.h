@@ -102,6 +102,7 @@ private:
         {"menu.file.close_window",              11041},
         {"menu.file.close",                     11040},
         {"menu.file.find",                      11050},
+        {"menu.file.find_with_spotlight",       11130},
         {"menu.file.page_setup",                11060},
         {"menu.file.print",                     11070},
         

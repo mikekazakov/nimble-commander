@@ -2,6 +2,7 @@
     "general": {},
     "filePanel": {
         "findFilesSheet": {},
-        "findWithSpotlightPopup": {}
+        "findWithSpotlightPopup": {},
+        "selectWithMaskPopup": {}
     }
 }

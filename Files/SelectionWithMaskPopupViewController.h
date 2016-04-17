@@ -9,10 +9,9 @@
 #pragma once
 
 @interface SelectionWithMaskPopupViewController : NSViewController<NSPopoverDelegate>
-@property (strong) IBOutlet NSComboBox *comboBox;
-@property (strong) IBOutlet NSTextField *titleLabel;
-@property (strong) void (^handler)(NSString *mask);
 
-- (void) setupForWindow:(NSWindow*)_window;
+- (instancetype) initForWindow:(NSWindow*)_wnd doesSelect:(bool)_select;
+
+@property (nonatomic) function<void(NSString *mask)> handler;
 
 @end

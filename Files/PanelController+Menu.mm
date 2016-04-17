@@ -40,7 +40,6 @@
 #include "PanelViewPresentation.h"
 #include "CalculateChecksumSheetController.h"
 #include "ConnectionsMenuDelegate.h"
-
 #include "SpotlightSearchPopupViewController.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
@@ -623,12 +622,8 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (void)DoSelectByMask:(bool)_select
 {
-    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] init];
-    [view setupForWindow:self.state.window];
-    view.titleLabel.stringValue = _select ?
-        NSLocalizedString(@"Select files using mask:", "Title for selection with mask popup") :
-        NSLocalizedString(@"Deselect files using mask:", "Title for deselection with mask popup");
-    view.handler = ^(NSString *mask) {
+    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] initForWindow:self.state.window doesSelect:_select];
+    view.handler = [=](NSString *mask) {
         if( !FileMask::IsWildCard(mask) )
             mask = FileMask::ToWildCard(mask);
         

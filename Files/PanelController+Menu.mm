@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <boost/algorithm/string/replace.hpp>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
@@ -42,6 +43,9 @@
 #include "ConnectionsMenuDelegate.h"
 #include "SpotlightSearchPopupViewController.h"
 
+static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
+static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
+
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
     vector<shared_ptr<VFSListing>> listings;
@@ -49,6 +53,10 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
     
     for(auto &directory: _dir_to_filenames) {
         shared_ptr<VFSListing> listing;
+        
+        if( _cancel_checker && _cancel_checker() )
+            return nullptr;
+        
         if( _vfs->FetchFlexibleListing(directory.first.c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
             listings.emplace_back(listing);
             indeces.emplace_back();
@@ -66,6 +74,9 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
         }
     }
     
+    if( _cancel_checker && _cancel_checker() )
+        return nullptr;
+        
     return VFSListing::Build( VFSListing::Compose(listings, indeces) );
 }
 
@@ -83,14 +94,15 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &
     return FetchSearchResultsAsListing(dir_to_filenames, _vfs, _fetch_flags, _cancel_checker);
 }
 
-static vector<string> FetchSpotlightResults(const string&_query)
+static vector<string> FetchSpotlightResults(const string& _query)
 {
-    NSString *query_string = [NSString stringWithFormat:@"kMDItemFSName == '*%@*'cd", [NSString stringWithUTF8StdString:_query]];
+    auto format = GlobalConfig().GetString(g_ConfigSpotlightFormat).value_or("kMDItemFSName == '*#{query}*'cd");
+    boost::replace_all(format, "#{query}", _query);
     
-    MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)query_string, nullptr, nullptr );
+    MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)[NSString stringWithUTF8StdString:format], nullptr, nullptr );
     auto clear_query = at_scope_end([=]{ CFRelease(query); });
     
-    MDQuerySetMaxCount(query, 512);
+    MDQuerySetMaxCount( query, GlobalConfig().GetInt(g_ConfigSpotlightMaxCount) );
     
     Boolean query_result = MDQueryExecute( query, kMDQuerySynchronous );
     if( !query_result)

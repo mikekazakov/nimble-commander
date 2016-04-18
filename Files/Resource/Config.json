@@ -180,6 +180,21 @@
              */
             "keyOption": 3            
         },
+  
+        /**
+         * Settings related to Spotlight usage
+         */
+        "spotlight": {
+            /**
+             * Search request formatting. #{query} will be replaced with entered search criteria.
+             */
+            "format": "kMDItemFSName == '*#{query}*'cd",
+            
+            /**
+             * Maximum results count to fetch.
+             */
+            "maxCount": 1024
+        },
         
         /**
          * Settings related to modern presentation mode

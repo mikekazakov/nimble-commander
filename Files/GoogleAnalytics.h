@@ -31,6 +31,7 @@ private:
     const string    m_ClientID;
     const string    m_AppName;
     const string    m_AppVersion;
+    const string    m_UserLanguage;
     string          m_PayloadPrefix;
     bool            m_Enabled = false;
     const bool      m_FilterRedundantMessages = true;

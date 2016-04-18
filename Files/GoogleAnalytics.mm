@@ -81,6 +81,13 @@ GoogleAnalytics& GoogleAnalytics::Instance()
 //"Files/543 CFNetwork/673.6 Darwin/13.4.0 (x86_64) (MacBookPro5%2C3)"
 //Mozilla/[version] ([system and browser information]) [platform] ([platform details]) [extensions].
 
+static string UserLanguage()
+{
+    NSString *lang = [[NSLocale preferredLanguages] objectAtIndex:0];
+    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier: [lang isEqualToString:@"en"] ? @"en_US" : lang];
+    return [NSString stringWithFormat:@"%@-%@", [locale objectForKey:NSLocaleLanguageCode], [locale objectForKey:NSLocaleCountryCode]].UTF8String;
+}
+
 static NSString *GetUserAgent()
 {
     sysinfo::SystemOverview sysoverview;
@@ -131,13 +138,15 @@ GoogleAnalytics::GoogleAnalytics():
     m_ClientID( GetStoredOrNewClientID() ),
     m_AppName( GetAppName() ),
     m_AppVersion( GetAppVersion() ),
+    m_UserLanguage( UserLanguage() ),
     m_Enabled( CFDefaultsGetBool(g_DefaultsTrackingEnabledKey) )
 {
     m_PayloadPrefix =   "v=1"s + "&"
                         "tid=" + g_TrackingID + "&" +
                         "cid=" + m_ClientID + "&" +
                         "an="  + EscapeString(m_AppName) + "&" +
-                        "av="  + m_AppVersion + "&";
+                        "av="  + m_AppVersion + "&" +
+                        "ul="  + m_UserLanguage + "&";
 }
 
 void GoogleAnalytics::UpdateEnabledStatus()

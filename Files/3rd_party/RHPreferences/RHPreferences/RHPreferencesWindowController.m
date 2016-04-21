@@ -80,7 +80,18 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
 
 @end
 
-@implementation RHPreferencesWindowController 
+@implementation RHPreferencesWindowController
+{
+    
+    NSArray *_viewControllers;
+    NSToolbar *_toolbar;
+    NSArray *_toolbarItems;
+    
+    NSViewController<RHPreferencesViewControllerProtocol> *_selectedViewController;
+    NSString *_unloadedWindowTitle;
+    BOOL _windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController;
+    
+}
 
 @synthesize toolbar=_toolbar;
 @synthesize viewControllers=_viewControllers;
@@ -463,7 +474,9 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
 
 -(void)windowWillClose:(NSNotification *)notification{
     // steal firstResponder away from text fields, to commit editing to bindings
+    id curr = self.window.firstResponder;
     [self.window makeFirstResponder:self];
+    [self.window makeFirstResponder:curr];
 }
 
 #pragma mark - NSToolbarDelegate
@@ -484,4 +497,14 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
     return [self toolbarItemIdentifiers];
 }
 
+@end
+
+@interface RHPreferencesWindow : NSWindow
+@end
+
+@implementation RHPreferencesWindow
+- (void)cancelOperation:(id)sender
+{
+    [self performClose:sender];
+}
 @end

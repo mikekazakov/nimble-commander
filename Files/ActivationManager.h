@@ -45,6 +45,7 @@ public:
     bool HasCopyVerification() const noexcept;
     bool HasRoutedIO() const noexcept;
     bool HasTemporaryPanels() const noexcept;
+    bool HasSpotlightSearch() const noexcept;
     
     bool UserHadRegistered() const noexcept;
     bool IsTrialPeriod() const noexcept;

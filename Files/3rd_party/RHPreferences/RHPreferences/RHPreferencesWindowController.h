@@ -32,18 +32,7 @@
 
 @protocol RHPreferencesViewControllerProtocol;
 
-@interface RHPreferencesWindowController : NSWindowController <NSToolbarDelegate>{
-
-    NSArray *_viewControllers;
-    NSToolbar *_toolbar;
-    NSArray *_toolbarItems;
-    
-    NSViewController<RHPreferencesViewControllerProtocol> *_selectedViewController;
-    NSString *_unloadedWindowTitle;
-    BOOL _windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController;
-
-}
-
+@interface RHPreferencesWindowController : NSWindowController <NSToolbarDelegate>
 //init
 -(id)initWithViewControllers:(NSArray*)controllers;
 -(id)initWithViewControllers:(NSArray*)controllers andTitle:(NSString*)title;

@@ -263,6 +263,7 @@ static AppDelegate *g_Me = nil;
                                                 prohibit("menu.go.connect.sftp"); }
     if( !am.HasChecksumCalculation() )          prohibit("menu.file.calculate_checksum");
     if( !am.HasXAttrFS() )                      prohibit("menu.command.open_xattr");
+    if( !am.HasSpotlightSearch() )              prohibit("menu.file.find_with_spotlight");
     menuitem("menu.files.toggle_admin_mode").hidden = !am.HasRoutedIO();
 }
 

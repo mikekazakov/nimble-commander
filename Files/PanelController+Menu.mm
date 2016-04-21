@@ -100,6 +100,8 @@ static vector<string> FetchSpotlightResults(const string& _query)
     boost::replace_all(format, "#{query}", _query);
     
     MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)[NSString stringWithUTF8StdString:format], nullptr, nullptr );
+    if( !query )
+        return {};
     auto clear_query = at_scope_end([=]{ CFRelease(query); });
     
     MDQuerySetMaxCount( query, GlobalConfig().GetInt(g_ConfigSpotlightMaxCount) );

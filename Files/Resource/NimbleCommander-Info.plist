@@ -61,7 +61,7 @@ All rights reserved.</string>
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Reveal in Nimble Commander</string>
+				<string>Files/Reveal in Nimble Commander</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>IClicked</string>

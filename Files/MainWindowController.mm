@@ -191,11 +191,12 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     self.window.toolbar = _toolbar;
     if(self.window.toolbar)
         self.window.toolbar.visible = _toolbar_visible;
-    if(sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_10)
-        self.window.titleVisibility = _needs_title ? NSWindowTitleVisible :
-        ( (_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible );
-    
-    [self.window setFrame:frame display:true animate:false];
+
+    self.window.titleVisibility = _needs_title ? NSWindowTitleVisible : ( (_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible );
+
+    // for non-fullscreen windows we fix up window size after showing/hiding toolbar so it looks more solid
+    if( (self.window.styleMask & NSFullScreenWindowMask) == 0)
+        [self.window setFrame:frame display:true animate:false];
     
     [NSAnimationContext endGrouping];
     m_ToolbarVisible = _toolbar_visible;

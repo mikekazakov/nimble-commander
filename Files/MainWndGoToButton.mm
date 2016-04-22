@@ -70,9 +70,13 @@ static vector<NSURL*> GetFindersFavorites()
         if( urlRef ) {
             NSURL* url = (__bridge NSURL*)urlRef;
             
-            if([url.scheme isEqualToString:@"file"] &&
-               [url.resourceSpecifier rangeOfString:@".cannedSearch/"].location == NSNotFound)
-                result.emplace_back(url);
+            if( [url.scheme isEqualToString:@"file"] ) {
+                NSString *path = url.resourceSpecifier;
+                if( ![path hasSuffix:@".cannedSearch"] &&
+                    ![path hasSuffix:@".cannedSearch/"] &&
+                    ![path hasSuffix:@".savedSearch"] )
+                    result.emplace_back(url);
+            }
             CFRelease(urlRef);
         }
         if( err ) {

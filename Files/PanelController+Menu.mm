@@ -7,6 +7,7 @@
 //
 
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
@@ -94,10 +95,48 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &
     return FetchSearchResultsAsListing(dir_to_filenames, _vfs, _fetch_flags, _cancel_checker);
 }
 
+static string CookSpotlightSearchQuery( const string& _format, const string &_input )
+{
+    bool should_split =
+        _format.find("#{query1}") != string::npos ||
+        _format.find("#{query2}") != string::npos ||
+        _format.find("#{query3}") != string::npos ||
+        _format.find("#{query4}") != string::npos ||
+        _format.find("#{query5}") != string::npos ||
+        _format.find("#{query6}") != string::npos ||
+        _format.find("#{query7}") != string::npos ||
+        _format.find("#{query8}") != string::npos ||
+        _format.find("#{query9}") != string::npos;
+    
+    if( !should_split )
+        return boost::replace_all_copy( _format, "#{query}", _input );
+
+    vector<string> words;
+    boost::split(words,
+                 _input,
+                 [](char _c){ return _c == ' ';},
+                 boost::token_compress_on
+                 );
+    
+    string result = _format;
+    boost::replace_all(result, "#{query}" , _input );
+    boost::replace_all(result, "#{query1}", words.size() > 0 ? words[0] : "" );
+    boost::replace_all(result, "#{query2}", words.size() > 1 ? words[1] : "" );
+    boost::replace_all(result, "#{query3}", words.size() > 2 ? words[2] : "" );
+    boost::replace_all(result, "#{query4}", words.size() > 3 ? words[3] : "" );
+    boost::replace_all(result, "#{query5}", words.size() > 4 ? words[4] : "" );
+    boost::replace_all(result, "#{query6}", words.size() > 5 ? words[5] : "" );
+    boost::replace_all(result, "#{query7}", words.size() > 6 ? words[6] : "" );
+    boost::replace_all(result, "#{query8}", words.size() > 7 ? words[7] : "" );
+    boost::replace_all(result, "#{query9}", words.size() > 8 ? words[8] : "" );
+    
+    return result;
+}
+
 static vector<string> FetchSpotlightResults(const string& _query)
 {
-    auto format = GlobalConfig().GetString(g_ConfigSpotlightFormat).value_or("kMDItemFSName == '*#{query}*'cd");
-    boost::replace_all(format, "#{query}", _query);
+    string format = CookSpotlightSearchQuery( GlobalConfig().GetString(g_ConfigSpotlightFormat).value_or("kMDItemFSName == '*#{query}*'cd"),
+                                              _query );
     
     MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)[NSString stringWithUTF8StdString:format], nullptr, nullptr );
     if( !query )

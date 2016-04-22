@@ -187,6 +187,8 @@
         "spotlight": {
             /**
              * Search request formatting. #{query} will be replaced with entered search criteria.
+             * There's an option to split input parameter string into substrings with spaces(" ") and use them separately.
+             * To do so #{query1}, #{query2}, ..., #{query9} should be used.
              */
             "format": "kMDItemFSName == '*#{query}*'cd",
             

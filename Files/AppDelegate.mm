@@ -264,6 +264,9 @@ static AppDelegate *g_Me = nil;
     if( !am.HasChecksumCalculation() )          prohibit("menu.file.calculate_checksum");
     if( !am.HasXAttrFS() )                      prohibit("menu.command.open_xattr");
     if( !am.HasSpotlightSearch() )              prohibit("menu.file.find_with_spotlight");
+    if( am.ForAppStore() ) {                    hide("menu.files.active_license_file");
+                                                hide("menu.files.purchase_license"); }
+    
     menuitem("menu.files.toggle_admin_mode").hidden = !am.HasRoutedIO();
 }
 
@@ -291,18 +294,18 @@ static AppDelegate *g_Me = nil;
 
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
-
-    // check if we should show a nag screen
-    if( ActivationManager::Instance().ShouldShowTrialNagScreen() )
-        dispatch_to_main_queue_after(500ms, [=]{
-            [[[TrialWindowController alloc] init] doShow];
-        });
     
-    if( ActivationManager::Instance().ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
+    if( ActivationManager::ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
         AppStoreRatings::Instance().Go();
     else if( !self.isRunningTests ) {
+        // check if we should show a nag screen
+        if( ActivationManager::Instance().ShouldShowTrialNagScreen() )
+            dispatch_to_main_queue_after(500ms, [=]{
+                [[[TrialWindowController alloc] init] doShow];
+            });
+
+        // setup Sparkle updater stuff
         g_Sparkle = [SUUpdater sharedUpdater];
-        
         NSMenuItem *item = [[NSMenuItem alloc] init];
         item.title = NSLocalizedString(@"Check For Updates...", "Menu item title for check if any Files updates are here");
         item.target = g_Sparkle;

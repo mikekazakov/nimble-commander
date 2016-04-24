@@ -4,10 +4,13 @@
 #include <Habanero/algo.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
+#include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 
-// TODO: difference IDs for versions
-static const auto g_TrackingID = "UA-47180125-2"s;
+static const auto g_TrackingID =
+    ActivationManager::Type() == ActivationManager::Distribution::Trial ? "UA-47180125-2"s :
+   (ActivationManager::Type() == ActivationManager::Distribution::Free  ? "UA-47180125-3"s :
+                                                                          "UA-47180125-4"s );
 
 CFStringRef const GoogleAnalytics::g_DefaultsClientIDKey = CFSTR("GATrackingUUID");
 CFStringRef const GoogleAnalytics::g_DefaultsTrackingEnabledKey = CFSTR("GATrackingEnabled");

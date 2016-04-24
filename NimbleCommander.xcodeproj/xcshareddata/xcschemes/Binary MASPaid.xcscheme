@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CFF6F2391A13567C00011177"
                BuildableName = "NimbleCommander.app"
-               BlueprintName = "NimbleCommander Pro"
+               BlueprintName = "NimbleCommander Paid MAS"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,7 +34,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFF6F2391A13567C00011177"
             BuildableName = "NimbleCommander.app"
-            BlueprintName = "NimbleCommander Pro"
+            BlueprintName = "NimbleCommander Paid MAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -57,7 +57,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFF6F2391A13567C00011177"
             BuildableName = "NimbleCommander.app"
-            BlueprintName = "NimbleCommander Pro"
+            BlueprintName = "NimbleCommander Paid MAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -76,7 +76,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CFF6F2391A13567C00011177"
             BuildableName = "NimbleCommander.app"
-            BlueprintName = "NimbleCommander Pro"
+            BlueprintName = "NimbleCommander Paid MAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

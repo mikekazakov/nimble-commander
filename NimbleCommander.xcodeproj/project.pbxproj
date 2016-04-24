@@ -375,6 +375,21 @@
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6D9D341966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
 		CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6D9D331966BE710077B146 /* SandboxManager.mm */; };
+		CF6E444E1CC9DABA009F45B0 /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
+		CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
+		CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
+		CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E44551CC9DF05009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF6E44561CC9DF06009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
+		CF6E44581CC9E12A009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E44591CC9E12B009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E445A1CC9E137009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF6E44631CCCAB7E009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44621CCCAB7E009F45B0 /* StoreKit.framework */; };
 		CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
@@ -488,7 +503,6 @@
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF960E301C9935C4001D8B02 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF960E2F1C9935C4001D8B02 /* libUtility.a */; };
-		CF9A9EF81CAAC3020094D6F7 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
 		CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -1118,6 +1132,7 @@
 		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Lite.entitlements"; path = "Resource/Files-Lite.entitlements"; sourceTree = "<group>"; };
 		CF6D9D331966BE710077B146 /* SandboxManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxManager.mm; sourceTree = "<group>"; };
 		CF6D9D361966BE840077B146 /* SandboxManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxManager.h; sourceTree = "<group>"; };
+		CF6E44621CCCAB7E009F45B0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CF6FAA201B82E1DD006E0742 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_party/Sparkle.framework; sourceTree = "<group>"; };
 		CF7249A41990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowPanelsTabColoringFilterSheet.h; sourceTree = "<group>"; };
 		CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowPanelsTabColoringFilterSheet.mm; sourceTree = "<group>"; };
@@ -1548,6 +1563,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
+				CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */,
+				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
+				CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */,
+				CF6E444E1CC9DABA009F45B0 /* libarchive.a in Frameworks */,
 				CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */,
 				CF46F78119BAF4C400625563 /* libssh2.a in Frameworks */,
 				CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */,
@@ -1561,6 +1581,7 @@
 				CF6D9C8919667A4A0077B146 /* QuartzCore.framework in Frameworks */,
 				CF6D9C8719667A420077B146 /* IOKit.framework in Frameworks */,
 				CF6D9C8519667A3B0077B146 /* SystemConfiguration.framework in Frameworks */,
+				CF6E44631CCCAB7E009F45B0 /* StoreKit.framework in Frameworks */,
 				CF6D9C8319667A330077B146 /* Security.framework in Frameworks */,
 				CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */,
 				CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */,
@@ -2055,21 +2076,21 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
-		CF6D99A5196675FE0077B146 /* Trial */ = {
+		CF6D99A5196675FE0077B146 /* NC Trial NonMAS */ = {
 			isa = PBXGroup;
 			children = (
 				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
 			);
-			name = Trial;
+			name = "NC Trial NonMAS";
 			sourceTree = "<group>";
 		};
-		CF6D99A6196676200077B146 /* Files Lite */ = {
+		CF6D99A6196676200077B146 /* NS Free MAS */ = {
 			isa = PBXGroup;
 			children = (
 				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
 				CF6D9D2D1966A57B0077B146 /* NimbleCommander-Lite-Info.plist */,
 			);
-			name = "Files Lite";
+			name = "NS Free MAS";
 			sourceTree = "<group>";
 		};
 		CF768DEE1C99C0F4002748BC /* Products */ = {
@@ -2494,6 +2515,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF6E44621CCCAB7E009F45B0 /* StoreKit.framework */,
 				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
@@ -2588,9 +2610,9 @@
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CF6D99A6196676200077B146 /* Files Lite */,
-				CFF6F3A31A1356F700011177 /* Files Pro */,
-				CF6D99A5196675FE0077B146 /* Trial */,
+				CF6D99A6196676200077B146 /* NS Free MAS */,
+				CFF6F3A31A1356F700011177 /* NC Pro MAS */,
+				CF6D99A5196675FE0077B146 /* NC Trial NonMAS */,
 				CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */,
 				CFC5122016C4BD3D00D247EE /* main.m */,
 				CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */,
@@ -2686,13 +2708,13 @@
 			name = Utility;
 			sourceTree = "<group>";
 		};
-		CFF6F3A31A1356F700011177 /* Files Pro */ = {
+		CFF6F3A31A1356F700011177 /* NC Pro MAS */ = {
 			isa = PBXGroup;
 			children = (
 				CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */,
 				CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */,
 			);
-			name = "Files Pro";
+			name = "NC Pro MAS";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2723,9 +2745,9 @@
 			productReference = CF47A980186C607C00745C4C /* NimbleCommander.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CF6D997C196675290077B146 /* NimbleCommander Lite */ = {
+		CF6D997C196675290077B146 /* NimbleCommander Free MAS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Lite" */;
+			buildConfigurationList = CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Free MAS" */;
 			buildPhases = (
 				CF6D9979196675290077B146 /* Sources */,
 				CF6D997A196675290077B146 /* Frameworks */,
@@ -2737,7 +2759,7 @@
 			);
 			dependencies = (
 			);
-			name = "NimbleCommander Lite";
+			name = "NimbleCommander Free MAS";
 			productName = "Files Lite";
 			productReference = CF6D997D196675290077B146 /* NimbleCommander.app */;
 			productType = "com.apple.product-type.application";
@@ -2780,9 +2802,9 @@
 			productReference = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
 			productType = "com.apple.product-type.tool";
 		};
-		CFF6F2391A13567C00011177 /* NimbleCommander Pro */ = {
+		CFF6F2391A13567C00011177 /* NimbleCommander Paid MAS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Pro" */;
+			buildConfigurationList = CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Paid MAS" */;
 			buildPhases = (
 				CFF6F23A1A13567C00011177 /* Sources */,
 				CFF6F3531A13567C00011177 /* Frameworks */,
@@ -2794,7 +2816,7 @@
 			);
 			dependencies = (
 			);
-			name = "NimbleCommander Pro";
+			name = "NimbleCommander Paid MAS";
 			productName = Directories;
 			productReference = CFF6F3A11A13567C00011177 /* NimbleCommander.app */;
 			productType = "com.apple.product-type.application";
@@ -2815,6 +2837,9 @@
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = AC5SJT236H;
 						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
 							com.apple.Sandbox = {
 								enabled = 1;
 							};
@@ -2860,8 +2885,8 @@
 			projectRoot = "";
 			targets = (
 				CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */,
-				CF6D997C196675290077B146 /* NimbleCommander Lite */,
-				CFF6F2391A13567C00011177 /* NimbleCommander Pro */,
+				CF6D997C196675290077B146 /* NimbleCommander Free MAS */,
+				CFF6F2391A13567C00011177 /* NimbleCommander Paid MAS */,
 				CF47A97F186C607B00745C4C /* NimbleCommander Tests */,
 				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
@@ -3203,6 +3228,7 @@
 				CF46DB7F1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
 				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
+				CF6E44561CC9DF06009F45B0 /* ActivationManager.cpp in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
@@ -3249,6 +3275,7 @@
 				CF50C45C1C0ADF51009DF611 /* JobTrash.mm in Sources */,
 				CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CF50C4501C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
+				CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
@@ -3334,6 +3361,7 @@
 				CF6D9C5C196678010077B146 /* OrthodoxMonospace.mm in Sources */,
 				CF50C4581C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
 				CF50C4351C0ADECA009DF611 /* VFSPSFile.cpp in Sources */,
+				CF6E44591CC9E12B009F45B0 /* AppDelegateCPP.mm in Sources */,
 				CF6D9C5D196678010077B146 /* IconsGenerator.mm in Sources */,
 				CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */,
@@ -3354,6 +3382,7 @@
 				CF46DB971C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
 				CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
+				CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
@@ -3413,7 +3442,6 @@
 				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
 				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */,
-				CF9A9EF81CAAC3020094D6F7 /* GoogleAnalytics.mm in Sources */,
 				CF39F4421C2EB198009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF73D1D71BE608BC0014C88F /* VFSNativeFile.cpp in Sources */,
 				CFC20B4C198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
@@ -3491,6 +3519,7 @@
 				CF7D137B1BF5E0FE001F53FD /* FileCompressOperation.mm in Sources */,
 				CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
+				CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CFED5A451C50EA0100BFCB5C /* BigFileViewHistory.mm in Sources */,
 				B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */,
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
@@ -3585,6 +3614,7 @@
 				CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */,
 				CF46DB7E1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
 				CFF6F2441A13567C00011177 /* AppDelegate.mm in Sources */,
+				CF6E44551CC9DF05009F45B0 /* ActivationManager.cpp in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF6F2471A13567C00011177 /* PanelData.mm in Sources */,
 				CFF6F2481A13567C00011177 /* ActionsShortcutsManager.mm in Sources */,
@@ -3631,6 +3661,7 @@
 				CF50C45D1C0ADF52009DF611 /* JobTrash.mm in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF50C44F1C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
+				CF6E445A1CC9E137009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
@@ -3716,6 +3747,7 @@
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF46DB981C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */,
+				CF6E44581CC9E12A009F45B0 /* AppDelegateCPP.mm in Sources */,
 				CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF50C4571C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
 				CF50C4341C0ADEC9009DF611 /* VFSPSFile.cpp in Sources */,
@@ -3736,6 +3768,7 @@
 				CF46DB8A1C856F69009E28B9 /* BigFileViewHex.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CF46DB961C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
+				CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
@@ -4217,6 +4250,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4226,7 +4260,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__FILES_VER_LITE__=1",
+					"__NC_VERSION_FREE__=1",
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -4237,6 +4271,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = YES;
@@ -4244,7 +4281,9 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = NimbleCommander;
+				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 			};
@@ -4261,6 +4300,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -4269,7 +4309,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_LITE__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_FREE__=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -4279,6 +4319,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = NO;
@@ -4286,7 +4329,9 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1y",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = NimbleCommander;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -4689,7 +4734,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Lite" */ = {
+		CF6D9997196675290077B146 /* Build configuration list for PBXNativeTarget "NimbleCommander Free MAS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF6D9998196675290077B146 /* Debug */,
@@ -4725,7 +4770,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Pro" */ = {
+		CFF6F39E1A13567C00011177 /* Build configuration list for PBXNativeTarget "NimbleCommander Paid MAS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFF6F39F1A13567C00011177 /* Debug */,

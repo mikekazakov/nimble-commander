@@ -122,6 +122,9 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
+    if( ActivationManager::Sandboxed() )
+        return false;
+    
     if( !ActivationManager::Instance().HasRoutedIO() )
         return false;
     
@@ -202,6 +205,9 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
 
 bool RoutedIO::AskToInstallHelper()
 {
+    if( ActivationManager::Sandboxed() )
+        return false;
+        
     if( !ActivationManager::Instance().HasRoutedIO() )
         return false;
     

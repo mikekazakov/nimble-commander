@@ -15,7 +15,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CF6D997C196675290077B146"
                BuildableName = "NimbleCommander.app"
-               BlueprintName = "NimbleCommander Lite"
+               BlueprintName = "NimbleCommander Free MAS"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CF6D997C196675290077B146"
             BuildableName = "NimbleCommander.app"
-            BlueprintName = "NimbleCommander Lite"
+            BlueprintName = "NimbleCommander Free MAS"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

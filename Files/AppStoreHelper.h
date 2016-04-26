@@ -2,7 +2,7 @@
 
 #include <StoreKit/StoreKit.h>
 
-@interface AppStoreHelper : NSObject<SKProductsRequestDelegate>
+@interface AppStoreHelper : NSObject<SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 
 

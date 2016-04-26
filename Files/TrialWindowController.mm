@@ -123,4 +123,9 @@ static NSAttributedString *HyperlinkFromString(NSString *_string, NSURL* _url)
     [self.window makeMainWindow];
 }
 
++ (void) showTrialWindow
+{
+    [[[TrialWindowController alloc] init] doShow];
+}
+
 @end

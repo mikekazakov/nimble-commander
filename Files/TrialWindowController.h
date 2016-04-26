@@ -10,6 +10,6 @@
 
 @interface TrialWindowController : NSWindowController<NSWindowDelegate>
 
-- (void) doShow;
++ (void) showTrialWindow;
 
 @end

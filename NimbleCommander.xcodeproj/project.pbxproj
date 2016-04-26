@@ -1129,7 +1129,7 @@
 		CF6D9C9019667A640077B146 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C9219667A850077B146 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libSystem.dylib; sourceTree = DEVELOPER_DIR; };
 		CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Info.plist"; path = "Resource/NimbleCommander-Info.plist"; sourceTree = "<group>"; };
-		CF6D9D2D1966A57B0077B146 /* NimbleCommander-Lite-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Lite-Info.plist"; path = "Resource/NimbleCommander-Lite-Info.plist"; sourceTree = "<group>"; };
+		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Free-Info.plist"; path = "Resource/NimbleCommander-MAS-Free-Info.plist"; sourceTree = "<group>"; };
 		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Lite.entitlements"; path = "Resource/Files-Lite.entitlements"; sourceTree = "<group>"; };
 		CF6D9D331966BE710077B146 /* SandboxManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxManager.mm; sourceTree = "<group>"; };
 		CF6D9D361966BE840077B146 /* SandboxManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxManager.h; sourceTree = "<group>"; };
@@ -2091,7 +2091,7 @@
 			isa = PBXGroup;
 			children = (
 				CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */,
-				CF6D9D2D1966A57B0077B146 /* NimbleCommander-Lite-Info.plist */,
+				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */,
 			);
 			name = "NS Free MAS";
 			sourceTree = "<group>";
@@ -4272,7 +4272,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Lite-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/NimbleCommander-MAS-Free-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4320,7 +4320,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Lite-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/NimbleCommander-MAS-Free-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

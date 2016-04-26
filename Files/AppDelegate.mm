@@ -126,6 +126,38 @@ static bool AskUserToProvideUsageStatistics()
     return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
+static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
+{
+    NSImageView *iv = [NSImageView new];
+    iv.image = NSApplication.sharedApplication.applicationIconImage;
+    _dock.contentView = iv;
+    
+    NSProgressIndicator *pi = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, _dock.size.width, 18)];
+    pi.style = NSProgressIndicatorBarStyle;
+    pi.indeterminate = NO;
+    pi.bezeled = true;
+    pi.minValue = 0;
+    pi.maxValue = 1;
+    pi.hidden = true;
+    [iv addSubview:pi];
+
+    return pi;
+}
+
+static void BringFeedbackMessageEditor()
+{
+    NSString *toAddress = @"feedback@filesmanager.info";
+    NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
+    NSString *bodyText = @"Write your message here.";
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
+}
+
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -185,9 +217,6 @@ static AppDelegate *g_Me = nil;
         
         [self reloadSkinSetting];
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
-        
-        if( ActivationManager::Type() == ActivationManager::Distribution::Free )
-            m_AppStoreHelper = [AppStoreHelper new];
     }
     return self;
 }
@@ -245,7 +274,7 @@ static AppDelegate *g_Me = nil;
 {
     // disable some features available in menu by configuration limitation
     auto tag_from_lit   = [ ](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s);       };
-    auto menuitem       = [&](const char *s) { return [[NSApp mainMenu] itemWithTagHierarchical:tag_from_lit(s)]; };
+    auto menuitem       = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];   };
     auto hide           = [&](const char *s) {
         auto item = menuitem(s);
         item.alternate = false;
@@ -290,34 +319,21 @@ static AppDelegate *g_Me = nil;
     if( !m_IsRunningTests && m_MainWindows.empty() )
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
-    [NSApp setServicesProvider:self];
+    NSApp.servicesProvider = self;
     NSUpdateDynamicServices();
     
     // init app dock progress bar
     m_DockTile = NSApplication.sharedApplication.dockTile;
-    NSImageView *iv = [NSImageView new];
-    iv.image = NSApplication.sharedApplication.applicationIconImage;
-    m_DockTile.contentView = iv;
-    m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, m_DockTile.size.width, 18)];
-    m_ProgressIndicator.style = NSProgressIndicatorBarStyle;
-    m_ProgressIndicator.indeterminate = NO;
-    m_ProgressIndicator.bezeled = true;
-    m_ProgressIndicator.minValue = 0;
-    m_ProgressIndicator.maxValue = 1;
-    m_ProgressIndicator.hidden = true;
-    [iv addSubview:m_ProgressIndicator];
-
+    m_ProgressIndicator = AddDockProgressIndicator(m_DockTile);
+    
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
     
     if( ActivationManager::ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
         AppStoreRatings::Instance().Go();
     else if( !self.isRunningTests ) {
-        // check if we should show a nag screen
-        if( ActivationManager::Instance().ShouldShowTrialNagScreen() )
-            dispatch_to_main_queue_after(500ms, [=]{
-                [[[TrialWindowController alloc] init] doShow];
-            });
+        if( ActivationManager::Instance().ShouldShowTrialNagScreen() ) // check if we should show a nag screen
+            dispatch_to_main_queue_after(500ms, []{ [TrialWindowController showTrialWindow]; });
 
         // setup Sparkle updater stuff
         g_Sparkle = [SUUpdater sharedUpdater];
@@ -330,6 +346,10 @@ static AppDelegate *g_Me = nil;
 #pragma clang diagnostic pop
         [[[NSApp mainMenu] itemAtIndex:0].submenu insertItem:item atIndex:1];
     }
+    
+    // initialize stuff related with in-app purchases
+    if( ActivationManager::Type() == ActivationManager::Distribution::Free )
+        m_AppStoreHelper = [AppStoreHelper new];
 }
 
 - (void) setupConfigs
@@ -385,63 +405,6 @@ static AppDelegate *g_Me = nil;
     
     [m_DockTile display];
 }
-
-//- (void)applicationDidBecomeActive:(NSNotification *)aNotification
-//{
-//    if(configuration::is_sandboxed &&
-//       [NSApp modalWindow] != nil)
-//        return; // we can show NSOpenPanel on startup. in this case applicationDidBecomeActive should be ignored
-//    
-//    if(m_MainWindows.empty())
-//    {
-//        if(!m_IsRunningTests)
-//            [self AllocateNewMainWindow];
-//    }
-//    else
-//    {
-//        // check that any window is visible, otherwise bring to front last window
-//        bool anyvisible = false;
-//        for(auto c: m_MainWindows)
-//            if(c.window.isVisible)
-//                anyvisible = true;
-//        
-//        if(!anyvisible)
-//        {
-//            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
-//            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
-//        }     
-//    }
-//}
-//
-//- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
-//{
-//    if(m_IsRunningTests)
-//        return false;
-//    
-//    if(flag)
-//    {
-//        // check that any window is visible, otherwise bring to front last window
-//        bool anyvisible = false;
-//        for(auto c: m_MainWindows)
-//            if(c.window.isVisible)
-//                anyvisible = true;
-//        
-//        if(!anyvisible)
-//        {
-//            NSArray *windows = NSApplication.sharedApplication.orderedWindows;
-//            [(NSWindow *)[windows objectAtIndex:0] makeKeyAndOrderFront:self];
-//        }
-//        
-//        return NO;
-//    }
-//    else
-//    {
-//        if(m_MainWindows.empty())
-//            [self AllocateNewMainWindow];
-//        return YES;
-//    }
-//
-//}
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
 {
@@ -506,16 +469,7 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnMenuSendFeedback:(id)sender
 {
-    NSString *toAddress = @"feedback@filesmanager.info";
-    NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
-    NSString *bodyText = @"Write your message here.";
-    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
-    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
+    BringFeedbackMessageEditor();
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender

@@ -18,8 +18,6 @@
 - (IBAction)NewWindow:(id)sender;
 - (MainWindowController*) AllocateNewMainWindow;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
-- (IBAction)OnMenuSendFeedback:(id)sender;
-- (IBAction)showFeatureNotSupportedWindow:(id)sender;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.

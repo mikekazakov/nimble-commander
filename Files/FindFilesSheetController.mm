@@ -297,15 +297,12 @@ private:
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
     
     if( !ActivationManager::Instance().HasTemporaryPanels() ) {
-        self.PanelButton.target = AppDelegate.me;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
-        self.PanelButton.action = @selector(showFeatureNotSupportedWindow:);
-#pragma clang diagnostic pop
+        [self.PanelButton unbind:@"enabled"];
+        self.PanelButton.enabled = false;
     }
     if( !ActivationManager::Instance().HasInternalViewer() ) {
-        self.ViewButton.target = AppDelegate.me;
-        self.ViewButton.action = @selector(showFeatureNotSupportedWindow:);
+        [self.ViewButton unbind:@"enabled"];
+        self.ViewButton.enabled = false;
     }
     
     GoogleAnalytics::Instance().PostScreenView("Find Files");

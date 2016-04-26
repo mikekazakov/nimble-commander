@@ -275,31 +275,13 @@ static AppDelegate *g_Me = nil;
     auto tag_from_lit       = [ ](const string &s) { return ActionsShortcutsManager::Instance().TagFromAction(s);             };
     auto current_menuitem   = [&](const string &s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];         };
     auto initial_menuitem   = [&](const string &s) { return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];    };
-    auto hide           = [&](const string &s) {
+    auto hide               = [&](const string &s) {
         auto item = current_menuitem(s);
         item.alternate = false;
         item.hidden = true;
     };
-//    auto prohibit       = [&](const string &s) {
-//        auto item = current_menuitem(s);
-//        item.target = self;
-//        item.action = @selector(showFeatureNotSupportedWindow:);
-//    };
-    auto enable       = [&](const string &_action, bool _enabled) {
-        auto item = current_menuitem(_action);
-        assert( item != nil );
-        
-        if( !_enabled ) {
-            item.target = self;
-            item.action = @selector(showFeatureNotSupportedWindow:);
-        }
-        else {
-            auto original_item = initial_menuitem( _action );
-            assert( original_item != nil );
-            item.target = original_item.target;
-            item.action = original_item.action;
-        }
-        
+    auto enable             = [&](const string &_action, bool _enabled) {
+        current_menuitem(_action).action = _enabled ? initial_menuitem(_action).action : nil;
     };
     auto &am = ActivationManager::Instance();
     

@@ -45,6 +45,8 @@
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 
+#include "AppStoreHelper.h"
+
 static SUUpdater *g_Sparkle = nil;
 
 static auto g_ConfigDirPostfix = @"/Config/";
@@ -140,6 +142,10 @@ static AppDelegate *g_Me = nil;
     string              m_ConfigDirectory;
     string              m_StateDirectory;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
+    
+    
+    
+    AppStoreHelper *m_AppStoreHelper;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -159,6 +165,12 @@ static AppDelegate *g_Me = nil;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         m_Skin = ApplicationSkin::Modern;
+
+        if( ActivationManager::ForAppStore() &&
+           ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
+            NSLog(@"no receipt - exit the app with code 173");
+            exit(173);
+        }
         
         [self migrateAppSupport_1_1_1_to_1_1_2];
         
@@ -173,6 +185,9 @@ static AppDelegate *g_Me = nil;
         
         [self reloadSkinSetting];
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
+        
+        if( ActivationManager::Type() == ActivationManager::Distribution::Free )
+            m_AppStoreHelper = [AppStoreHelper new];
     }
     return self;
 }

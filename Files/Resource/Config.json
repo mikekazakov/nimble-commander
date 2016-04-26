@@ -188,7 +188,8 @@
             /**
              * Search request formatting. #{query} will be replaced with entered search criteria.
              * There's an option to split input parameter string into substrings with spaces(" ") and use them separately.
-             * To do so #{query1}, #{query2}, ..., #{query9} should be used.
+             * To do so #{query1}, #{query2}, ..., #{query9} should be used, like the one below:
+             * "kMDItemFSName == '*#{query1}*'cd && kMDItemFSName == '*#{query2}*'cd && kMDItemFSName == '*#{query3}*'cd && kMDItemFSName == '*#{query4}*'cd && kMDItemFSName == '*#{query5}*'cd && kMDItemFSName == '*#{query6}*'cd && kMDItemFSName == '*#{query7}*'cd && kMDItemFSName == '*#{query8}*'cd && kMDItemFSName == '*#{query9}*'cd".
              */
             "format": "kMDItemFSName == '*#{query}*'cd",
             

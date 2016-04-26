@@ -12,14 +12,17 @@
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
 
 static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
-        {"menu.files.about",                        u8""        },
-        {"menu.files.preferences",                  u8"⌘,"      },  // cmd+,
-        {"menu.files.toggle_admin_mode",            u8""        },
-        {"menu.files.hide",                         u8"⌘h"      },  // cmd+h
-        {"menu.files.hide_others",                  u8"⌥⌘h"     },  // cmd+alt+h
-        {"menu.files.show_all",                     u8""        },
-        {"menu.files.quit",                         u8"⌘q"      },  // cmd+q
-        {"menu.files.active_license_file",          u8""        },
+        {"menu.nimble_commander.about",                        u8""     },
+        {"menu.nimble_commander.preferences",                  u8"⌘,"   },  // cmd+,
+        {"menu.nimble_commander.toggle_admin_mode",            u8""     },
+        {"menu.nimble_commander.hide",                         u8"⌘h"   },  // cmd+h
+        {"menu.nimble_commander.hide_others",                  u8"⌥⌘h"  },  // cmd+alt+h
+        {"menu.nimble_commander.show_all",                     u8""     },
+        {"menu.nimble_commander.quit",                         u8"⌘q"   },  // cmd+q
+        {"menu.nimble_commander.active_license_file",          u8""     },
+        {"menu.nimble_commander.purchase_license",             u8""     },
+        {"menu.nimble_commander.purchase_pro_features",        u8""     },
+        {"menu.nimble_commander.restore_purchases",            u8""     },
 
         {"menu.file.newwindow",                     u8"⌘n"      },  // cmd+n
         {"menu.file.new_folder",                    u8"⇧⌘n"     },  // cmd+shift+n
@@ -280,17 +283,17 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 
 int ActionsShortcutsManager::TagFromAction(const string &_action) const
 {
-    for(auto &i: m_ActionsTags)
-        if(i.first == _action)
-            return i.second;
+    auto it = m_ActionToTag.find(_action);
+    if( it != end(m_ActionToTag) )
+        return it->second;
     return -1;
 }
 
 string ActionsShortcutsManager::ActionFromTag(int _tag) const
 {
-    for(auto &i: m_ActionsTags)
-        if(i.second == _tag)
-            return i.first;
+    auto it = m_TagToAction.find(_tag);
+    if( it != end(m_TagToAction) )
+        return it->second;
     return "";
 }
 

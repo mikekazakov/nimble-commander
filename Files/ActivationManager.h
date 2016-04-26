@@ -47,12 +47,17 @@ public:
     bool HasTemporaryPanels() const noexcept;
     bool HasSpotlightSearch() const noexcept;
     
+    // Trial NonMAS version stuff
     bool UserHadRegistered() const noexcept;
     bool IsTrialPeriod() const noexcept;
     int TrialDaysLeft() const noexcept; // zero means that trial has expired
     bool ShouldShowTrialNagScreen() const noexcept;
     static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicence"
     bool ProcessLicenseFile(const string& _path );
+    
+    // Free MAS version stuff
+    bool ReCheckProFeaturesInAppPurchased(); // will recheck receipt file and return true if in-app was purchased
+    bool UsedHadPurchasedProFeatures() const noexcept;
     
 private:
     ActivationManager();

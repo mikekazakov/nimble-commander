@@ -51,6 +51,18 @@
                                     <action selector="OnActivateExternalLicense:" target="-1" id="dEP-2K-I2S"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Purchase Pro Features" tag="10100" id="chd-VR-dSN">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnPurchaseProFeaturesInApp:" target="-1" id="uug-QA-Iud"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Restore Purchases" tag="10110" id="0Y5-VP-Vjw">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnRestoreInAppPurchases:" target="-1" id="gfV-dI-x37"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="fPr-eP-snC">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

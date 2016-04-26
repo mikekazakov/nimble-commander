@@ -174,9 +174,6 @@ static AppDelegate *g_Me = nil;
     string              m_ConfigDirectory;
     string              m_StateDirectory;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
-    
-    
-    
     AppStoreHelper *m_AppStoreHelper;
 }
 
@@ -255,7 +252,7 @@ static AppDelegate *g_Me = nil;
     
     NativeFSManager::Instance();
     
-    [self disableFeaturesByVersion];
+    [self updateMainMenuFeaturesByVersionAndState];
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
@@ -270,23 +267,43 @@ static AppDelegate *g_Me = nil;
     }
 }
 
-- (void)disableFeaturesByVersion
+- (void)updateMainMenuFeaturesByVersionAndState
 {
+    static NSMenu *original_menu_state = [NSApp.mainMenu copy];
+    
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit   = [ ](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s);       };
-    auto menuitem       = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];   };
-    auto hide           = [&](const char *s) {
-        auto item = menuitem(s);
+    auto tag_from_lit       = [ ](const string &s) { return ActionsShortcutsManager::Instance().TagFromAction(s);             };
+    auto current_menuitem   = [&](const string &s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];         };
+    auto initial_menuitem   = [&](const string &s) { return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];    };
+    auto hide           = [&](const string &s) {
+        auto item = current_menuitem(s);
         item.alternate = false;
         item.hidden = true;
     };
-    auto prohibit       = [&](const char *s) {
-        auto item = menuitem(s);
-        item.target = self;
-        item.action = @selector(showFeatureNotSupportedWindow:);
+//    auto prohibit       = [&](const string &s) {
+//        auto item = current_menuitem(s);
+//        item.target = self;
+//        item.action = @selector(showFeatureNotSupportedWindow:);
+//    };
+    auto enable       = [&](const string &_action, bool _enabled) {
+        auto item = current_menuitem(_action);
+        assert( item != nil );
+        
+        if( !_enabled ) {
+            item.target = self;
+            item.action = @selector(showFeatureNotSupportedWindow:);
+        }
+        else {
+            auto original_item = initial_menuitem( _action );
+            assert( original_item != nil );
+            item.target = original_item.target;
+            item.action = original_item.action;
+        }
+        
     };
     auto &am = ActivationManager::Instance();
-    if( !am.HasPSFS() )                         prohibit("menu.go.processes_list");
+    
+    // one-way items hiding
     if( !am.HasTerminal() ) {                   hide("menu.view.show_terminal");
                                                 hide("menu.view.panels_position.move_up");
                                                 hide("menu.view.panels_position.move_down");
@@ -294,24 +311,29 @@ static AppDelegate *g_Me = nil;
                                                 hide("menu.view.panels_position.focusterminal");
                                                 hide("menu.file.feed_filename_to_terminal");
                                                 hide("menu.file.feed_filenames_to_terminal"); }
-    if( !am.HasBriefSystemOverview() )          prohibit("menu.command.system_overview");
-    if( !am.HasUnixAttributesEditing() )        prohibit("menu.command.file_attributes");
-    if( !am.HasDetailedVolumeInformation() )    prohibit("menu.command.volume_information");
-    if( !am.HasBatchRename() )                  prohibit("menu.command.batch_rename");
-    if( !am.HasInternalViewer() )               prohibit("menu.command.internal_viewer");
-    if( !am.HasCompressionOperation() )         prohibit("menu.command.compress");
-    if( !am.HasLinksManipulation() ) {          prohibit("menu.command.link_create_soft");
-                                                prohibit("menu.command.link_create_hard");
-                                                prohibit("menu.command.link_edit"); }
-    if( !am.HasNetworkConnectivity() ) {        prohibit("menu.go.connect.ftp");
-                                                prohibit("menu.go.connect.sftp"); }
-    if( !am.HasChecksumCalculation() )          prohibit("menu.file.calculate_checksum");
-    if( !am.HasXAttrFS() )                      prohibit("menu.command.open_xattr");
-    if( !am.HasSpotlightSearch() )              prohibit("menu.file.find_with_spotlight");
-    if( am.ForAppStore() ) {                    hide("menu.files.active_license_file");
-                                                hide("menu.files.purchase_license"); }
+    if( am.ForAppStore() ) {                    hide("menu.nimble_commander.active_license_file");
+                                                hide("menu.nimble_commander.purchase_license"); }
+    if( am.Type() != ActivationManager::Distribution::Free || am.UsedHadPurchasedProFeatures() ) {
+                                                hide("menu.nimble_commander.purchase_pro_features");
+                                                hide("menu.nimble_commander.restore_purchases"); }
+    if( !am.HasRoutedIO() )                     hide("menu.nimble_commander.toggle_admin_mode");
     
-    menuitem("menu.files.toggle_admin_mode").hidden = !am.HasRoutedIO();
+    // reversible items disabling / enabling
+    enable( "menu.file.calculate_checksum",     am.HasChecksumCalculation() );
+    enable( "menu.file.find_with_spotlight",    am.HasSpotlightSearch() );
+    enable( "menu.go.processes_list",           am.HasPSFS() );
+    enable( "menu.go.connect.ftp",              am.HasNetworkConnectivity() );
+    enable( "menu.go.connect.sftp",             am.HasNetworkConnectivity() );
+    enable( "menu.command.system_overview",     am.HasBriefSystemOverview() );
+    enable( "menu.command.file_attributes",     am.HasUnixAttributesEditing() );
+    enable( "menu.command.volume_information",  am.HasDetailedVolumeInformation() );
+    enable( "menu.command.batch_rename",        am.HasBatchRename() );
+    enable( "menu.command.internal_viewer",     am.HasInternalViewer() );
+    enable( "menu.command.compress",            am.HasCompressionOperation() );
+    enable( "menu.command.link_create_soft",    am.HasLinksManipulation() );
+    enable( "menu.command.link_create_hard",    am.HasLinksManipulation() );
+    enable( "menu.command.link_edit",           am.HasLinksManipulation());
+    enable( "menu.command.open_xattr",          am.HasXAttrFS() );
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -344,12 +366,17 @@ static AppDelegate *g_Me = nil;
 #pragma clang diagnostic ignored "-Wselector"
         item.action = @selector(checkForUpdates:);
 #pragma clang diagnostic pop
-        [[[NSApp mainMenu] itemAtIndex:0].submenu insertItem:item atIndex:1];
+        [[NSApp.mainMenu itemAtIndex:0].submenu insertItem:item atIndex:1];
     }
     
     // initialize stuff related with in-app purchases
-    if( ActivationManager::Type() == ActivationManager::Distribution::Free )
+    if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
+        m_AppStoreHelper.onProductPurchased = [=](const string &_id){
+            if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() )
+                [self updateMainMenuFeaturesByVersionAndState];
+        };
+    }
 }
 
 - (void) setupConfigs
@@ -532,6 +559,17 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
+    // TODO:
+}
+
+- (IBAction)OnPurchaseProFeaturesInApp:(id)sender
+{
+    [m_AppStoreHelper askUserToBuyProFeatures];
+}
+
+- (IBAction)OnRestoreInAppPurchases:(id)sender
+{
+    [m_AppStoreHelper askUserToRestorePurchases];
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path
@@ -633,7 +671,7 @@ static AppDelegate *g_Me = nil;
 {
     auto tag = item.tag;
     
-    IF_MENU_TAG("menu.files.toggle_admin_mode") {
+    IF_MENU_TAG("menu.nimble_commander.toggle_admin_mode") {
         bool enabled = RoutedIO::Instance().Enabled();
         item.title = enabled ?
             NSLocalizedString(@"Disable Admin Mode", "Menu item title for disabling an admin mode") :

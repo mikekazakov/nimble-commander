@@ -7,7 +7,7 @@
 #include "AppDelegateCPP.h"
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
-
+#include "AppStoreHelper.h"
 
 // trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
@@ -17,10 +17,33 @@ static const int g_TrialPeriodDays = 30;
 static const int g_TrialNagScreenMinDays = 15;
 static const double g_TrialPeriodTimeInterval = 60.*60.*24.*g_TrialPeriodDays; // 30 days
 
+// free mas version setup
+static const auto g_ProFeaturesInAppID = "com.magnumbytes.nimblecommander.paid_features"s;
+
 static bool UserHasPaidVersionInstalled()
 {
     return MASAppInstalledChecker::Instance().Has("Files Pro.app",            "info.filesmanager.Files-Pro") ||
            MASAppInstalledChecker::Instance().Has("Nimble Commander Pro.app", "info.filesmanager.Files-Pro");
+}
+
+static bool AppStoreReceiptContainsProFeaturesInApp()
+{
+    string receipt_path = CFBundleGetAppStoreReceiptPath( CFBundleGetMainBundle() );
+    
+    VFSFilePtr source;
+    if( VFSNativeHost::SharedHost()->CreateFile(receipt_path.c_str(), source, nullptr) != VFSError::Ok )
+        return false;
+    
+    if( source->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) != VFSError::Ok )
+        return false;
+    
+    auto data = source->ReadFile();
+    if( !data )
+        return false;
+    
+    source->Close();
+    
+    return memmem( data->data(), data->size(), g_ProFeaturesInAppID.data(), g_ProFeaturesInAppID.length() ) != 0;
 }
 
 static bool CheckAquaticLicense( const string& _path )
@@ -152,7 +175,7 @@ ActivationManager::ActivationManager()
         }
     }
     else { // m_Type == Distribution::Free
-        // TODO: in-app purchase support
+        m_IsActivated = AppStoreReceiptContainsProFeaturesInApp();
     }
 }
 
@@ -324,4 +347,16 @@ bool ActivationManager::ShouldShowTrialNagScreen() const noexcept
     return Type() == ActivationManager::Distribution::Trial &&
             !m_UserHadRegistered &&
             TrialDaysLeft() <= g_TrialNagScreenMinDays ;
+}
+
+bool ActivationManager::ReCheckProFeaturesInAppPurchased()
+{
+    m_IsActivated = AppStoreReceiptContainsProFeaturesInApp();
+    return m_IsActivated;
+}
+
+bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
+{
+    return Type() == Distribution::Free &&
+           m_IsActivated == true;
 }

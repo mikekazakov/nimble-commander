@@ -75,15 +75,17 @@ private:
     
     // persistance holy grail is below, change id's only in emergency case:
     const vector<pair<string,int>> m_ActionsTags = {
-        {"menu.files.about",                    10000},
-        {"menu.files.preferences",              10010},
-        {"menu.files.hide",                     10020},
-        {"menu.files.hide_others",              10030},
-        {"menu.files.show_all",                 10040},
-        {"menu.files.quit",                     10050},
-        {"menu.files.toggle_admin_mode",        10070},
-        {"menu.files.active_license_file",      10080},
-        {"menu.files.purchase_license",         10090},
+        {"menu.nimble_commander.about",                    10000},
+        {"menu.nimble_commander.preferences",              10010},
+        {"menu.nimble_commander.hide",                     10020},
+        {"menu.nimble_commander.hide_others",              10030},
+        {"menu.nimble_commander.show_all",                 10040},
+        {"menu.nimble_commander.quit",                     10050},
+        {"menu.nimble_commander.toggle_admin_mode",        10070},
+        {"menu.nimble_commander.active_license_file",      10080},
+        {"menu.nimble_commander.purchase_license",         10090},
+        {"menu.nimble_commander.purchase_pro_features",    10100},
+        {"menu.nimble_commander.restore_purchases",        10110},
         
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},
@@ -199,8 +201,8 @@ private:
         {"menu.window.bring_all_to_front",      16030}
     };
     
-    map<int, string>        m_TagToAction;
-    map<string, int>        m_ActionToTag;
+    unordered_map<int, string>        m_TagToAction;
+    unordered_map<string, int>        m_ActionToTag;
     
     map<int, ShortCut>      m_ShortCutsDefaults;
     map<int, ShortCut>      m_ShortCutsOverrides;

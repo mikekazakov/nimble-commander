@@ -2,11 +2,30 @@
 
 static const auto g_ProFeaturesInAppID = @"com.magnumbytes.nimblecommander.paid_features";
 
+string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
+{
+    if( !_bundle )
+        return "";
+    
+    CFURLRef url = CFBundleCopyBundleURL( _bundle );
+    if( !url )
+        return "";
+    
+    NSBundle *bundle = [NSBundle bundleWithURL:(NSURL*)CFBridgingRelease(url)];
+    if( !bundle )
+        return "";
+    
+    return bundle.appStoreReceiptURL.fileSystemRepresentation;
+}
+
 @implementation AppStoreHelper
 {
-    SKProductsRequest   *m_ProductRequest;
-    SKProduct           *m_ProFeaturesProduct;
+    SKProductsRequest                   *m_ProductRequest;
+    SKProduct                           *m_ProFeaturesProduct;
+    function<void(const string &_id)>   m_PurchaseCallback;
 }
+
+@synthesize onProductPurchased = m_PurchaseCallback;
 
 - (id) init
 {
@@ -25,68 +44,69 @@ static const auto g_ProFeaturesInAppID = @"com.magnumbytes.nimblecommander.paid_
 // background thread
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
-    int a = 10;
-//    NSArray<SKProduct *> *products
-    
     for( SKProduct* p in response.products ) {
         if( [p.productIdentifier isEqualToString:g_ProFeaturesInAppID] )
             m_ProFeaturesProduct = p;
         
-        NSLog(@"%@ %@ %@", p.productIdentifier, p.localizedTitle, p.price);
-    }
-    
-    
-//    if( m_ProFeaturesProduct ) {
-//        NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
-//        nf.numberStyle = NSNumberFormatterCurrencyStyle;
-//        nf.locale = m_ProFeaturesProduct.priceLocale;
-//        NSString *price = [nf stringFromNumber:m_ProFeaturesProduct.price];
-//        NSLog(@"%@", price);
-//        
-//        
-//     
-//        
-//        SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
-//        [SKPaymentQueue.defaultQueue addPayment:payment];
-//        
-//    }
+//        NSLog(@"%@ %@ %@", p.productIdentifier, p.localizedTitle, p.price);
+    }    
 }
 
 // background thread
 - (void)request:(SKRequest *)request didFailWithError:(nullable NSError *)error
 {
-    int a = 10;
-    
-    
 }
 
 // background thread
 - (void) paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
 {
     for( SKPaymentTransaction *pt in transactions ) {
-        switch (pt.transactionState) {
-//            case SKPaymentTransactionStatePurchasing:;
-//                break;
-            case SKPaymentTransactionStatePurchased:;
+        switch( pt.transactionState ) {
+            case SKPaymentTransactionStatePurchased:
+            case SKPaymentTransactionStateRestored: {
+                string identifier = pt.payment.productIdentifier.UTF8String;
+                auto callback = m_PurchaseCallback;
+                if( callback )
+                    dispatch_to_main_queue([=]{ callback(identifier); } );                
                 [queue finishTransaction:pt];
                 break;
+            }
             case SKPaymentTransactionStateFailed:
-                [queue finishTransaction:pt];
-                break;
-            case SKPaymentTransactionStateRestored:;
-                [queue finishTransaction:pt];
-                break;
             case SKPaymentTransactionStateDeferred:;
                 [queue finishTransaction:pt];
                 break;
             default:
                 break;
         }
-        
     }
-    
-    
-    
 }
+
+- (void) askUserToBuyProFeatures
+{
+    if( !m_ProFeaturesProduct )
+        return;
+    
+    
+    SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
+    [SKPaymentQueue.defaultQueue addPayment:payment];
+}
+
+- (void) askUserToRestorePurchases
+{
+    if( !m_ProFeaturesProduct )
+        return;
+    
+    [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
+}
+
+//- (void) paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue
+//{
+//    auto callback = m_PurchaseCallback;
+//    for( SKPaymentTransaction *transaction in queue.transactions ) {
+//        string identifier = transaction.payment.productIdentifier.UTF8String;
+//        if( callback )
+//            dispatch_to_main_queue([=]{ callback(identifier); } );
+//    }
+//}
 
 @end

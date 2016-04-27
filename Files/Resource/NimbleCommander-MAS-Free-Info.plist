@@ -37,5 +37,26 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>Application</string>
+	<key>NSServices</key>
+	<array>
+		<dict>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Reveal in Nimble Commander</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>IClicked</string>
+			<key>NSPortName</key>
+			<string>Nimble Commander</string>
+			<key>NSRequiredContext</key>
+			<dict/>
+			<key>NSSendTypes</key>
+			<array>
+				<string>public.file-url</string>
+				<string>NSStringPboardType</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

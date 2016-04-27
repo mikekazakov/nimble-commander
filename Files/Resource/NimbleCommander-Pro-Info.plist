@@ -43,22 +43,18 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Files Pro/Reveal in Files Pro</string>
+				<string>Reveal in Nimble Commander</string>
 			</dict>
 			<key>NSMessage</key>
 			<string>IClicked</string>
 			<key>NSPortName</key>
-			<string>Files</string>
+			<string>Nimble Commander</string>
 			<key>NSRequiredContext</key>
-			<dict>
-				<key>NSTextContent</key>
-				<array>
-					<string>FilePath</string>
-				</array>
-			</dict>
+			<dict/>
 			<key>NSSendTypes</key>
 			<array>
 				<string>public.file-url</string>
+				<string>NSStringPboardType</string>
 			</array>
 		</dict>
 	</array>

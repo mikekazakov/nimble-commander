@@ -351,6 +351,8 @@ bool ActivationManager::ShouldShowTrialNagScreen() const noexcept
 
 bool ActivationManager::ReCheckProFeaturesInAppPurchased()
 {
+    if( Type() != ActivationManager::Distribution::Free )
+        return false;
     m_IsActivated = AppStoreReceiptContainsProFeaturesInApp();
     return m_IsActivated;
 }

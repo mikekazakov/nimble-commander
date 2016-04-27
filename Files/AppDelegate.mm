@@ -598,11 +598,16 @@ static AppDelegate *g_Me = nil;
     // extract file paths
     vector<string> paths;
     for( NSPasteboardItem *item in pboard.pasteboardItems )
-        if( NSString *urlstring = [item stringForType:@"public.file-url"] )
+        if( NSString *urlstring = [item stringForType:@"public.file-url"] ) {
             if( NSURL *url = [NSURL URLWithString:urlstring] )
                 if( NSString *unixpath = url.path )
                     if( auto fs = unixpath.fileSystemRepresentation  )
                         paths.emplace_back( fs );
+        }
+        else if( NSString *path_string = [item stringForType:@"NSFilenamesPboardType"]  ) {
+            if( auto fs = path_string.fileSystemRepresentation  )
+                paths.emplace_back( fs );
+        }
 
     if( !paths.empty() )
         [self doRevealNativeItems:paths];

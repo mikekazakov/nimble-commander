@@ -47,6 +47,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
 
         {"menu.edit.copy",                          u8"⌘c"      },  // cmd+c
         {"menu.edit.paste",                         u8"⌘v"      },  // cmd+v
+        {"menu.edit.move_here",                     u8"⌥⌘v"     },  // alt+cmd+v
         {"menu.edit.select_all",                    u8"⌘a"      },  // cmd+a
         {"menu.edit.deselect_all",                  u8"⌥⌘a"     },  // alt+cmd+a
         {"menu.edit.invert_selection",              u8"^⌘a"     },  // ctrl+cmd+a

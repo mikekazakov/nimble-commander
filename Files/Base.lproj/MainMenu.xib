@@ -263,6 +263,12 @@ DQ
                                     <action selector="paste:" target="-1" id="226"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Move Item Here" tag="12050" alternate="YES" id="Mkf-yJ-4e7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="moveItemHere:" target="-1" id="FnT-oa-Fpl"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Select All" tag="12020" keyEquivalent="a" id="198">
                                 <connections>
                                     <action selector="selectAll:" target="-1" id="232"/>

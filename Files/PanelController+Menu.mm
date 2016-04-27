@@ -214,6 +214,24 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const unorde
     return source_items;
 }
 
+static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
+{
+    // check what's inside pasteboard
+    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
+    if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
+        // input should be an array of filepaths as NSStrings
+        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
+    
+        // currently fetching listings synchronously, which is BAAAD (but we're on native vfs)
+        auto items = FetchVFSListingsItemsFromDirectories(LayoutPathsByContainingDirectories(filepaths),
+                                                          *VFSNativeHost::SharedHost());
+        
+        return items;
+    }
+    // TODO: reading from URL pasteboard?
+    return {};
+}
+
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -281,6 +299,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const unorde
     IF(tag_sort_creat)      upd_for_sort(item, m_Data.SortMode(), PanelSortMode::SortByBTimeMask);
 #undef IF
     
+    IF_MENU_TAG("menu.edit.paste")                      return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
+    IF_MENU_TAG("menu.edit.move_here")                  return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
@@ -1280,39 +1300,40 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const unorde
 
 - (IBAction)paste:(id)sender
 {
+    [self pasteOrMoveItems:true];
+}
+
+- (IBAction)moveItemHere:(id)sender
+{
+    [self pasteOrMoveItems:false];
+}
+
+- (void)pasteOrMoveItems:(bool)_paste
+{
     // check if we're on uniform panel with a writeable VFS
     if( !self.isUniform || !self.vfs->IsWriteable() )
         return;
     
-    // check what's inside pasteboard
-    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
-    if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
-        // input should be an array of filepaths as NSStrings
-        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
-        
-        // currently fetching listings synchronously, which is BAAAD (but we're on native vfs)
-        auto source_items = FetchVFSListingsItemsFromDirectories(LayoutPathsByContainingDirectories(filepaths),
-                                                                 *VFSNativeHost::SharedHost());
-        if( source_items.empty() )
-            return; // errors on fetching listings?
-        
-        FileCopyOperationOptions opts;
-        opts.docopy = true;
-        auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                           destinationPath:self.currentDirectoryPath
-                                           destinationHost:self.vfs
-                                                   options:opts];
-        
-        __weak PanelController *wpc = self;
-        [op AddOnFinishHandler:^{
-            dispatch_to_main_queue( [=]{
-                if(PanelController *pc = wpc) [pc RefreshDirectory];
-            });
-        }];
-        
-        [self.state AddOperation:op];
-    }
-    // TODO: reading from URL pasteboard?
+    auto source_items = FetchVFSListingsItemsFromPasteboard();
+    
+    if( source_items.empty() )
+        return; // errors on fetching listings?
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = _paste;
+    auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
+                                       destinationPath:self.currentDirectoryPath
+                                       destinationHost:self.vfs
+                                               options:opts];
+    
+    __weak PanelController *wpc = self;
+    [op AddOnFinishHandler:^{
+        dispatch_to_main_queue( [=]{
+            if(PanelController *pc = wpc) [pc RefreshDirectory];
+        });
+    }];
+    
+    [self.state AddOperation:op];
 }
 
 @end

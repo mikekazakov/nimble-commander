@@ -110,6 +110,7 @@ private:
         
         {"menu.edit.copy",                      12000},
         {"menu.edit.paste",                     12010},
+        {"menu.edit.move_here",                 12050},
         {"menu.edit.select_all",                12020},
         {"menu.edit.deselect_all",              12030},
         {"menu.edit.invert_selection",          12040},

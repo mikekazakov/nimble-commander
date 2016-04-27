@@ -324,6 +324,8 @@ static AppDelegate *g_Me = nil;
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     NSApp.servicesProvider = self;
+    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
+                             returnTypes:@[]]; // pasteboard types provided by PanelController
     NSUpdateDynamicServices();
     
     // init app dock progress bar

@@ -172,6 +172,8 @@ namespace panel
 - (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev;
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
+- (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;
+- (bool) writeURLSPBoard:(NSPasteboard *)pboard;
 @end
 
 #import "PanelController+DataAccess.h"

@@ -38,35 +38,6 @@ static const auto g_ConfigInitialRightPath  = "filePanel.general.initialRightPan
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
 static const auto g_ResorationPanelsKey     = "panels_v1";
 
-static map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
-{
-    if(!_input)
-        return {};
-    map<string, vector<string>> filenames; // root directory to containing filenames map
-    for( NSString *ns_filename in _input ) {
-        if( !objc_cast<NSString>(ns_filename) ) continue; // guard againts malformed input
-        // filenames are without trailing slashes for dirs here
-        char dir[MAXPATHLEN], fn[MAXPATHLEN];
-        if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
-            continue;
-        if(!GetFilenameFromPath([ns_filename fileSystemRepresentation], fn))
-            continue;
-        filenames[dir].push_back(fn);
-    }
-    return filenames;
-}
-
-static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<string, vector<string>>& _input, VFSHost& _host)
-{
-    vector<VFSListingItem> source_items;
-    for( auto &dir: _input ) {
-        vector<VFSListingItem> items_for_dir;
-        if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
-            move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
-    }
-    return source_items;
-}
-
 static string ExpandPath(const string &_ref )
 {
     if( _ref.empty() )
@@ -316,8 +287,6 @@ static string ExpandPath(const string &_ref )
 
 - (void) Assigned
 {
-    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL] returnTypes:@[]];
-    
     if( m_LastResponder ) {
         // if we already were active and have some focused view - restore it
         [self.window makeFirstResponder:m_LastResponder];
@@ -332,67 +301,6 @@ static string ExpandPath(const string &_ref )
     
     // think it's a bad idea to post messages on every new window created
     GoogleAnalytics::Instance().PostScreenView("File Panels State");
-}
-
-- (id)validRequestorForSendType:(NSString *)sendType
-                     returnType:(NSString *)returnType
-{
-    if(([sendType isEqualToString:NSFilenamesPboardType] ||
-        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) &&
-       self.isPanelActive &&
-       self.activePanelData->Listing().HasCommonHost() &&
-       self.activePanelData->Listing().Host()->IsNativeFS() )
-        return self;
-    
-    return [super validRequestorForSendType:sendType returnType:returnType];
-}
-
-- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
-                             types:(NSArray *)types
-{
-    if([types containsObject:NSFilenamesPboardType])
-        return [self writeFilesnamesPBoard:pboard];
-        
-    if([types containsObject:(__bridge NSString *)kUTTypeFileURL])
-        return [self writeURLSPBoard:pboard];
-    
-    return NO;
-}
-
-- (bool)writeFilesnamesPBoard:(NSPasteboard *)pboard
-{
-    if( !self.isPanelActive )
-        return false;
-    
-    NSMutableArray *filenames = [NSMutableArray new];
-    for( auto &i: self.activePanelController.selectedEntriesOrFocusedEntry )
-        if( i.Host()->IsNativeFS() )
-            [filenames addObject:[NSString stringWithUTF8StdString:i.Path()]];
-    
-    if( filenames.count == 0 )
-        return false;
-    
-    [pboard clearContents];
-    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
-    return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
-}
-
-- (bool)writeURLSPBoard:(NSPasteboard *)pboard
-{
-    if(!self.isPanelActive ||
-       !self.activePanelController.vfs->IsNativeFS())
-        return false;
-    
-    NSMutableArray *fileurls = [NSMutableArray new];
-    auto dir = self.activePanelController.currentDirectoryPath;
-    for(auto &i: self.activePanelController.selectedEntriesOrFocusedEntryFilenames)
-        [fileurls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:dir + i]]];
-    
-    if(fileurls.count == 0)
-        return false;
-    
-    [pboard clearContents]; // clear pasteboard to take ownership
-    return [pboard writeObjects:fileurls]; // write the URLs
 }
 
 - (void) Resigned
@@ -771,54 +679,6 @@ static string ExpandPath(const string &_ref )
 
 - (void)OnApplicationWillTerminate
 {
-}
-
-- (IBAction)paste:(id)sender
-{
-    if([m_MainSplitView isViewCollapsedOrOverlayed:self.activePanelView])
-        return;
-
-    // check if we're on uniform panel with a writeable VFS
-    if(!self.isPanelActive ||
-       !self.activePanelController.isUniform ||
-       !self.activePanelController.vfs->IsWriteable())
-        return;
-
-    // check what's inside pasteboard
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
-        // input should be an array of filepaths as NSStrings
-        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
-
-        // currently fetching listings synchronously, which is BAAAD
-        auto source_items = FetchVFSListingsItemsFromDirectories(LayoutPathsByContainingDirectories(filepaths),
-                                                                 *VFSNativeHost::SharedHost());
-        if( source_items.empty() )
-            return; // errors on fetching listings?
-        
-        FileCopyOperationOptions opts;
-        opts.docopy = true;
-        
-        auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                           destinationPath:self.activePanelController.currentDirectoryPath
-                                           destinationHost:self.activePanelController.vfs
-                                                   options:opts];
-
-        __weak PanelController *wpc = self.activePanelController;
-        [op AddOnFinishHandler:^{
-            dispatch_to_main_queue( [=]{
-                if(PanelController *pc = wpc) [pc RefreshDirectory];
-            });
-        }];
-        
-        [m_OperationsController AddOperation:op];
-    }
-}
-
-- (IBAction)copy:(id)sender
-{
-    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
-    // check if we're on native fs now (all others vfs are not-accessible by system and so useless)
 }
 
 - (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths

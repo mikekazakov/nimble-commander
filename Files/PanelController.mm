@@ -812,4 +812,60 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return false;
 }
 
+- (bool)writeFilesnamesPBoard:(NSPasteboard *)pboard
+{
+    NSMutableArray *filenames = [NSMutableArray new];
+    for( auto &i: self.selectedEntriesOrFocusedEntry )
+        if( i.Host()->IsNativeFS() )
+            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
+                [filenames addObject:path];
+    
+    if( filenames.count == 0 )
+        return false;
+    
+    [pboard clearContents];
+    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
+    return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
+}
+
+- (bool)writeURLSPBoard:(NSPasteboard *)pboard
+{
+    NSMutableArray *fileurls = [NSMutableArray new];
+    for( auto &i: self.selectedEntriesOrFocusedEntry )
+        if( i.Host()->IsNativeFS() )
+            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
+                if( auto url = [NSURL fileURLWithPath:path])
+                    [fileurls addObject:url];
+    
+    if( fileurls.count == 0 )
+        return false;
+    
+    [pboard clearContents]; // clear pasteboard to take ownership
+    [pboard declareTypes:@[(__bridge NSString *)kUTTypeFileURL] owner:nil];
+    return [pboard writeObjects:fileurls]; // write the URLs
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    if(([sendType isEqualToString:NSFilenamesPboardType] ||
+        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) /*&&
+        self.isPanelActive &&
+        self.activePanelData->Listing().HasCommonHost() &&
+        self.activePanelData->Listing().Host()->IsNativeFS() */ )
+        return self;
+    
+    return [super validRequestorForSendType:sendType returnType:returnType];
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
+{
+    if( [types containsObject:NSFilenamesPboardType] )
+        return [self writeFilesnamesPBoard:pboard];
+    if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
+        return [self writeURLSPBoard:pboard];
+    
+    return NO;
+}
+
 @end

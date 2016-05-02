@@ -10,6 +10,7 @@
 #include "AppStoreRatings.h"
 #include "AppStoreRatingsSheetController.h"
 #include "ActivationManager.h"
+#include "GoogleAnalytics.h"
 
 static NSString *g_StateKey = @"CommonRatingsState";
 static NSString *g_RunsKey = @"CommonRatingsRuns";
@@ -92,13 +93,16 @@ void AppStoreRatings::RunDialog()
         if( ret == NSAlertFirstButtonReturn ) { // review
             [NSWorkspace.sharedWorkspace openURL:MasURL()];
             SetState(RatingState::Rated);
+            GoogleAnalytics::Instance().PostEvent("App Store Ratings", "User Choice", "Review");
         }
         else if( ret == NSAlertSecondButtonReturn ) { // later
             SetLaterDate();
             SetState(RatingState::Later);
+            GoogleAnalytics::Instance().PostEvent("App Store Ratings", "User Choice", "Later");
         }
         else if( ret == NSAlertThirdButtonReturn ) { // no, thanks
             SetState(RatingState::Denied);
+            GoogleAnalytics::Instance().PostEvent("App Store Ratings", "User Choice", "Denied");
         }
     });
 }

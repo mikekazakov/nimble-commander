@@ -78,7 +78,10 @@
 
 + (NSString *)displayStringForHotKey:(GTMHotKey *)hotKey;
 
-+ (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode;
+- (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode;
+
+@property (readwrite) bool strictModifierRequirement;
+
 @end
 
 // Custom field editor for use with hotkey entry fields (GTMHotKeyTextField).

@@ -137,61 +137,26 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.window.show_previous_tab",           u8"⇧^\t"    }, // shift+ctrl+tab
         {"menu.window.show_next_tab",               u8"^\t"     }, // ctrl+tab
         {"menu.window.bring_all_to_front",          u8""        },
+    
+        {"panel.test",                         u8""}
 };
 
-NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
+ActionsShortcutsManager::ShortCut::ShortCut():
+    unicode(0),
+    modifiers(0)
 {
-    NSString *result = [NSString new];
-    if(modifiers & NSShiftKeyMask)
-        result = [result stringByAppendingString:@"⇧"];
-    if(modifiers & NSControlKeyMask)
-        result = [result stringByAppendingString:@"^"];
-    if(modifiers & NSAlternateKeyMask)
-        result = [result stringByAppendingString:@"⌥"];
-    if(modifiers & NSCommandKeyMask)
-        result = [result stringByAppendingString:@"⌘"];
-
-    if(key != nil)
-    {
-        NSString *str = key;
-        if([str isEqualToString:@"\r"])
-            str = @"\\r";
-    
-        result = [result stringByAppendingString:str];
-    }
-    
-    return result;
 }
 
-bool ActionsShortcutsManager::ShortCut::FromStringAndModif(NSString *_from, unsigned long _modif)
+ActionsShortcutsManager::ShortCut::ShortCut(NSString *_from) :
+    ShortCut()
 {
-    if(_from == nil || _from.length == 0)
-        return false;
-    key = _from;
-    unic = [_from characterAtIndex:0];
-    modifiers = 0;
-    if(_modif & NSShiftKeyMask)     modifiers |= NSShiftKeyMask;
-    if(_modif & NSControlKeyMask)   modifiers |= NSControlKeyMask;
-    if(_modif & NSAlternateKeyMask) modifiers |= NSAlternateKeyMask;
-    if(_modif & NSCommandKeyMask)   modifiers |= NSCommandKeyMask;
-    return true;
-}
-
-bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
-{
-    if(_from.length == 0)
-    {
-        modifiers = 0;
-        key = @"";
-        unic = 0;
-        return true;
-    }
+    if( _from == nil || _from.length == 0 )
+        return;
     
     int len = (int)_from.length;
     unsigned mod_ = 0;
     NSString *key_ = nil;
-    for(int i = 0; i < len; ++i)
-    {
+    for( int i = 0; i < len; ++i ) {
         unichar c = [_from characterAtIndex:i];
         if(c == u'⇧') {
             mod_ |= NSShiftKeyMask;
@@ -215,7 +180,7 @@ bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
     }
     
     if(key_ == nil)
-        return false;
+        return;
     
     if([key_ isEqualToString:@"\\r"])
         key_ = @"\r";
@@ -223,29 +188,75 @@ bool ActionsShortcutsManager::ShortCut::FromPersString(NSString *_from)
         key_ = @"\t";
     
     modifiers = mod_;
-    key = key_;
-    unic = [key characterAtIndex:0];
+    unicode = [key_ characterAtIndex:0];
+}
+
+ActionsShortcutsManager::ShortCut::ShortCut(uint16_t  _unicode, unsigned long _modif)
+{
+    unicode = _unicode;
+    modifiers = 0;
+    if(_modif & NSShiftKeyMask)     modifiers |= NSShiftKeyMask;
+    if(_modif & NSControlKeyMask)   modifiers |= NSControlKeyMask;
+    if(_modif & NSAlternateKeyMask) modifiers |= NSAlternateKeyMask;
+    if(_modif & NSCommandKeyMask)   modifiers |= NSCommandKeyMask;
+}
+
+ActionsShortcutsManager::ShortCut::ShortCut(NSString *_from, unsigned long _modif):
+    ShortCut( (_from != nil && _from.length != 0) ? [_from characterAtIndex:0] : 0, _modif)
+{
+}
+
+ActionsShortcutsManager::ShortCut::operator bool() const
+{
+    return unicode != 0;
+}
+
+
+NSString *ActionsShortcutsManager::ShortCut::ToPersString() const
+{
+    NSString *result = [NSString new];
+    if(modifiers & NSShiftKeyMask)
+        result = [result stringByAppendingString:@"⇧"];
+    if(modifiers & NSControlKeyMask)
+        result = [result stringByAppendingString:@"^"];
+    if(modifiers & NSAlternateKeyMask)
+        result = [result stringByAppendingString:@"⌥"];
+    if(modifiers & NSCommandKeyMask)
+        result = [result stringByAppendingString:@"⌘"];
+
+    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
+        NSString *str = key;
+        if([str isEqualToString:@"\r"])
+            str = @"\\r";
     
-    return true;
+        result = [result stringByAppendingString:str];
+    }
+    
+    return result;
+}
+
+NSString *ActionsShortcutsManager::ShortCut::Key() const
+{
+    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] )
+        return key;
+    return @"";
 }
 
 bool ActionsShortcutsManager::ShortCut::IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const
 {
     // exclude CapsLock from our decision process
     unsigned long clean_modif = _modifiers &
-        (NSDeviceIndependentModifierFlagsMask & ~NSAlphaShiftKeyMask);
+        (NSDeviceIndependentModifierFlagsMask & (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask) );
     
     return modifiers == clean_modif &&
-                unic == _unicode;
+                unicode == _unicode;
 }
 
 bool ActionsShortcutsManager::ShortCut::operator==(const ShortCut&_r) const
 {
     if(modifiers != _r.modifiers)
         return false;
-    if(unic != _r.unic)
-        return false;
-    if(![key isEqualToString:_r.key])
+    if(unicode != _r.unicode)
         return false;
     return true;
 }
@@ -267,8 +278,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         if( i == end(m_ActionToTag) )
             continue;
         
-        ShortCut sc;
-        if( sc.FromPersString([NSString stringWithUTF8StringNoCopy:get<1>(d)]) )
+        if( ShortCut sc{[NSString stringWithUTF8StringNoCopy:get<1>(d)]} )
             m_ShortCutsDefaults[i->second] = sc;
     }
     
@@ -314,7 +324,7 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
             auto scover = m_ShortCutsOverrides.find(tag);
             if(scover != m_ShortCutsOverrides.end())
             {
-                i.keyEquivalent = scover->second.key;
+                i.keyEquivalent = scover->second.Key();
                 i.keyEquivalentModifierMask = scover->second.modifiers;
             }
             else
@@ -322,7 +332,7 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
                 auto sc = m_ShortCutsDefaults.find(tag);
                 if(sc != m_ShortCutsDefaults.end())
                 {
-                    i.keyEquivalent = sc->second.key;
+                    i.keyEquivalent = sc->second.Key();
                     i.keyEquivalentModifierMask = sc->second.modifiers;
                 }
                 else if(m_TagToAction.find(tag) != m_TagToAction.end())
@@ -354,8 +364,7 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
         if([obj isEqualToString:@"default"])
             continue;
         
-        ShortCut sc;
-        if(sc.FromPersString(obj))
+        if( ShortCut sc{obj} )
             m_ShortCutsOverrides[i->second] = sc;
     }
 }

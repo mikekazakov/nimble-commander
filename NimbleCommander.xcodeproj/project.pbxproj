@@ -274,8 +274,6 @@
 		CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
-		CF50C4621C0ADF88009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
-		CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF50C46B1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
 		CF50C46C1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
 		CF50C46D1C0DC057009DF611 /* FeatureNotAvailableWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50C4691C0DC057009DF611 /* FeatureNotAvailableWindowController.mm */; };
@@ -296,6 +294,9 @@
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
+		CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
+		CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
+		CF6A428B1CD7B9C00085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
@@ -379,17 +380,17 @@
 		CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
-		CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
-		CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; settings = {ASSET_TAGS = (); }; };
-		CF6E44551CC9DF05009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; settings = {ASSET_TAGS = (); }; };
-		CF6E44561CC9DF06009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
+		CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
+		CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
+		CF6E44551CC9DF05009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; };
+		CF6E44561CC9DF06009F45B0 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1834C1C9F028600544633 /* ActivationManager.cpp */; };
 		CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
-		CF6E44581CC9E12A009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; settings = {ASSET_TAGS = (); }; };
-		CF6E44591CC9E12B009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; settings = {ASSET_TAGS = (); }; };
-		CF6E445A1CC9E137009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
-		CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
-		CF6E44831CCE121F009F45B0 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */; settings = {ASSET_TAGS = (); }; };
+		CF6E44581CC9E12A009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; };
+		CF6E44591CC9E12B009F45B0 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; };
+		CF6E445A1CC9E137009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CF6E44831CCE121F009F45B0 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */; };
 		CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
 		CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
@@ -504,7 +505,7 @@
 		CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
-		CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -531,7 +532,6 @@
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
-		CFB518001BDF53D0000AAE89 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
 		CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
 		CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989D196E38E400D4C108 /* linkarrow_icon.png */; };
@@ -835,12 +835,12 @@
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
-		CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
-		CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
-		CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; settings = {ASSET_TAGS = (); }; };
-		CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
-		CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
+		CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
+		CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
+		CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
+		CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
+		CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3285,6 +3285,7 @@
 				CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
+				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF46DB8D1C856F6D009E28B9 /* BigFileViewDataBackend.mm in Sources */,
 				CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
@@ -3350,7 +3351,6 @@
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CF50C4481C0ADEF5009DF611 /* VFSNativeHost.mm in Sources */,
-				CF50C4631C0ADF89009DF611 /* shared_mutex.cpp in Sources */,
 				CF6D9C56196678010077B146 /* PanelViewPresentation.mm in Sources */,
 				CF46DB7D1C856F38009E28B9 /* TermScreenBuffer.cpp in Sources */,
 				CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */,
@@ -3554,7 +3554,6 @@
 				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
-				CFB518001BDF53D0000AAE89 /* shared_mutex.cpp in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,
 				CF50B7491A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CF73D2071BE61AAC0014C88F /* VFSArchiveUnRARInternals.cpp in Sources */,
@@ -3589,6 +3588,7 @@
 				CF4C5A5D17A7B48E00B1B061 /* FileMask.mm in Sources */,
 				CFED5A421C50EA0100BFCB5C /* BigFileView.mm in Sources */,
 				CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */,
+				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
@@ -3744,7 +3744,6 @@
 				CFF6F3051A13567C00011177 /* SearchInFile.mm in Sources */,
 				CF50C44A1C0ADEF7009DF611 /* VFSNativeHost.mm in Sources */,
 				CF46DB7C1C856F37009E28B9 /* TermScreenBuffer.cpp in Sources */,
-				CF50C4621C0ADF88009DF611 /* shared_mutex.cpp in Sources */,
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */,
@@ -3786,6 +3785,7 @@
 				CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */,
 				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CF6A428B1CD7B9C00085CAF9 /* shared_mutex.cpp in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
 				CF50C44B1C0ADEFB009DF611 /* xattr.cpp in Sources */,
@@ -4389,7 +4389,10 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
@@ -4441,7 +4444,10 @@
 				LIBRARY_SEARCH_PATHS = Files/3rd_party/built/lib/;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",

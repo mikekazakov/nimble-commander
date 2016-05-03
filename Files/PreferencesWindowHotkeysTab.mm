@@ -100,6 +100,11 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     return m_Shortcuts.size();
 }
 
+- (GTMHotKeyTextField*) makeDefaultGTMHotKeyTextField
+{
+    return [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.HotKeyEditFieldTempl]];
+}
+
 - (NSView *)tableView:(NSTableView *)tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
@@ -125,9 +130,13 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     }
     if([tableColumn.identifier isEqualToString:@"hotkey"])
     {
-        GTMHotKeyTextField *tf = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.HotKeyEditFieldTempl]];
-        GTMHotKey *hk = [GTMHotKey hotKeyWithKey:sc->key modifiers:sc->modifiers];
+        GTMHotKey *hk = [GTMHotKey hotKeyWithKey:sc->Key() modifiers:sc->modifiers];
+        GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
         [(GTMHotKeyTextFieldCell*)tf.cell setObjectValue:hk];
+        
+        if( tag.first[0] == 'p'  )
+            ((GTMHotKeyTextFieldCell*)tf.cell).strictModifierRequirement = false;
+        
         tf.tag = tag.second;
         
         m_EditFields.emplace_back(tf);
@@ -144,9 +153,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
         int tag = int(ed.tag);
         
         GTMHotKey *hk = [ed.cell objectValue];
-        ActionsShortcutsManager::ShortCut sc;
-        sc.FromStringAndModif(hk.key, hk.modifiers);
-        
+        ActionsShortcutsManager::ShortCut sc(hk.key, hk.modifiers);        
         am.SetShortCutOverride(am.ActionFromTag(tag), sc);
     }
     am.SetMenuShortCuts([NSApp mainMenu]);

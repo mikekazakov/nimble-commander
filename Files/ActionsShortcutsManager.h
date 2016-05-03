@@ -31,16 +31,19 @@ public:
     
     struct ShortCut
     {
-        unsigned long modifiers = 0;
-        NSString *key           = @"";
-        uint16_t  unic          = 0; // same as [key characterAtIndex:0], for perfomance purposes
+        ShortCut();
+        ShortCut(NSString *_from); // construct from persistency string
+        ShortCut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
+        ShortCut(NSString *_from, unsigned long _modif); // construct from string and modifiers
+        uint16_t        unicode;
+        uint64_t        modifiers;
 
         bool operator==(const ShortCut&_r) const;
         bool operator!=(const ShortCut&_r) const;
+        operator bool() const;
         
+        NSString *Key() const;
         NSString *ToPersString() const;
-        bool FromPersString(NSString *_from);
-        bool FromStringAndModif(NSString *_from, unsigned long _modif);
         bool IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const;
     };
     
@@ -199,14 +202,16 @@ private:
         {"menu.window.zoom",                    16020},
         {"menu.window.show_previous_tab",       16040},
         {"menu.window.show_next_tab",           16050},
-        {"menu.window.bring_all_to_front",      16030}
+        {"menu.window.bring_all_to_front",      16030},
+
+        {"panel.test",                         100000}
     };
     
     unordered_map<int, string>        m_TagToAction;
     unordered_map<string, int>        m_ActionToTag;
     
-    map<int, ShortCut>      m_ShortCutsDefaults;
-    map<int, ShortCut>      m_ShortCutsOverrides;
+    unordered_map<int, ShortCut>      m_ShortCutsDefaults;
+    unordered_map<int, ShortCut>      m_ShortCutsOverrides;
 };
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y

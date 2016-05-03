@@ -174,6 +174,19 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 {
     GTMHotKey *hotKey_;
     GTMHotKeyFieldEditor *m_FieldEditor;
+    bool m_StrictModifierRequirement;
+}
+
+@synthesize strictModifierRequirement = m_StrictModifierRequirement;
+
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    if( self = [super initWithCoder:aDecoder] ) {
+        m_StrictModifierRequirement = true;
+        
+        
+    }
+    return self;
     
 }
 
@@ -269,7 +282,10 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 
 #pragma mark Useful String Class Methods
 
-+ (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode {
+- (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode {
+    if( !m_StrictModifierRequirement )
+        return false;
+    
     BOOL doesRequire = YES;
     switch(keycode) {
         // These are the keycodes that map to the
@@ -597,7 +613,7 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
   // If the event has no modifiers do nothing
   const NSUInteger allModifiers = (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);
 
-  if ([GTMHotKeyTextFieldCell doesKeyCodeRequireModifier:keycode]) {
+  if ([self.cell doesKeyCodeRequireModifier:keycode]) {
     // If we aren't a function key, and have no modifiers do nothing.
     if (!(flags & allModifiers)) return nil;
     // If the event has high bits in keycode do nothing

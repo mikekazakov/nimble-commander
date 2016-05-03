@@ -411,35 +411,33 @@ struct PanelViewStateStorage
     
     [self checkKeyboardModifierFlags:modifiers];
     
-    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup;
+    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup, hk_insert;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup},
-       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page"}
+       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup, &hk_insert},
+       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page", "panel.move_next_and_invert_selection"}
       );
     hotkeys_updater.CheckAndUpdate();
 
-    if( hk_up.IsKeyDown(unicode, keycode, modifiers) )
+    if( hk_up.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandlePrevFile];
-    else if( hk_down.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_down.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleNextFile];
-    else if( hk_left.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_left.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandlePrevColumn];
-    else if( hk_right.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_right.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleNextColumn];
-    else if( hk_first.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_first.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleFirstFile];
-    else if( hk_last.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_last.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleLastFile];
-    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleNextPage];
-    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandlePrevPage];
-    else {
-        switch( unicode ) {
-            case 0x03:                    [self HandleInsert];        return;
-        }
+    else if( hk_insert.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleInsert];
+    else
         [super keyDown:event];
-    }
 }
 
 - (void) checkKeyboardModifierFlags:(unsigned long)_current_flags

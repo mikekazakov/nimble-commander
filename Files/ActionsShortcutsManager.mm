@@ -146,6 +146,10 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.move_last",                         u8"\uF72B"  }, // end
         {"panel.move_next_page",                    u8"\uF72D"  }, // page up
         {"panel.move_prev_page",                    u8"\uF72C"  }, // page down
+        {"panel.move_next_and_invert_selection",    u8"\u0003"  }, // insert
+        {"panel.go_root",                           u8"/"       }, // slash
+        {"panel.go_home",                           u8"~"       }, // tilde
+        {"panel.show_preview",                      u8" "       }, // space
 };
 
 ActionsShortcutsManager::ShortCut::ShortCut():
@@ -251,9 +255,12 @@ NSString *ActionsShortcutsManager::ShortCut::Key() const
 
 bool ActionsShortcutsManager::ShortCut::IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept
 {
-    // exclude CapsLock from our decision process
+    // exclude CapsLock/NumPad/Func from our decision process
     unsigned long clean_modif = _modifiers &
         (NSDeviceIndependentModifierFlagsMask & (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask) );
+    
+    if( unicode < 128 && modifiers == 0 )
+        clean_modif &= ~NSShiftKeyMask; // some chars were produced by pressing key with shift 
     
     return modifiers == clean_modif &&
                 unicode == _unicode;

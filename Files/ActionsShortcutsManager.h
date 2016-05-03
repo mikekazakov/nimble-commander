@@ -203,6 +203,10 @@ private:
         {"panel.move_last",                    100050},
         {"panel.move_next_page",               100060},
         {"panel.move_prev_page",               100070},
+        {"panel.move_next_and_invert_selection",100080},
+        {"panel.go_root",                      100090},
+        {"panel.go_home",                      100100},
+        {"panel.show_preview",                 100110},
         
     };
     

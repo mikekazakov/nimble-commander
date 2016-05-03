@@ -51,6 +51,7 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
     {76,    0x3,                        @"⌅"},
     {48,    0x9,                        @"⇥"},
     {49,    0x2423,                     @"Space"},
+    {49,    0x0020,                     @"Space"},
     {51,    0x8,                        @"⌫"},
     {71,    NSClearDisplayFunctionKey,  @"Clear"},
     {53,    0x1B,                       @"⎋"},

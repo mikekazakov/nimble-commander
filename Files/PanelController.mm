@@ -438,11 +438,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             [self.state HandleTabButton];
             return true;
         }
-        if(unicode == 0x20 &&
-           !terminal_can_eat) { // Space button
-            [self OnFileViewCommand:self];
-            return true;
-        }
         if(keycode == 53) { // Esc button
             [self CancelBackgroundOperations];
             [self.state CloseOverlay:self];
@@ -451,26 +446,28 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             [self QuickSearchClearFiltering];
             return true;
         }
-        if( unicode == '~' &&
-           (modif & (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
-            GlobalConfig().GetBool(g_ConfigUseTildeAsHomeShortcut) &&
-           !terminal_can_eat) { // Tilde to go Home
+        
+        // handle some actions manually, to prevent annoying by menu highlighting by hotkey
+        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview;
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview}, {"menu.file.open", "menu.file.open_native", "panel.go_root", "panel.go_home", "panel.show_preview"});
+        hotkeys_updater.CheckAndUpdate();
+
+        if( hk_preview.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
+            [self OnFileViewCommand:self];
+            return true;
+        }
+
+        if( hk_go_home.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
             return true;
         }
-        if( unicode == '/' &&
-           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
-           !terminal_can_eat) {
+        
+        if( hk_go_root.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
             return true;
         }
-        
-        // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native}, {"menu.file.open", "menu.file.open_native"});
-        hotkeys_updater.CheckAndUpdate();
         
         if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
             [self handleGoIntoDirOrOpenInSystemSync];

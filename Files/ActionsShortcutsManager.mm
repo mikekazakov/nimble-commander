@@ -417,15 +417,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(co
     int tag = TagFromAction(_action);
     if(tag <= 0)
         return {};
-    auto sc_override = m_ShortCutsOverrides.find(tag);
-    if(sc_override != m_ShortCutsOverrides.end())
-        return sc_override->second;
-    
-    auto sc_default = m_ShortCutsDefaults.find(tag);
-    if(sc_default != m_ShortCutsDefaults.end())
-        return sc_default->second;
-    
-    return {};
+    return ShortCutFromTag(tag);
 }
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const
@@ -441,36 +433,50 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _
     return {};
 }
 
-void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const
+{
+    auto sc_default = m_ShortCutsDefaults.find(_tag);
+    if(sc_default != m_ShortCutsDefaults.end())
+        return sc_default->second;
+    
+    return {};
+}
+
+bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
 {
     int tag = TagFromAction(_action);
-    if(tag <= 0)
-        return;
+    if( tag <= 0 )
+        return false;
     
-    auto &orig = m_ShortCutsDefaults[tag];
-    if(orig == _sc) {
-        m_ShortCutsOverrides.erase(tag);
-        // immediately write to config file
-        WriteOverridesToConfigFile();
-        m_LastChanged = machtime();
-        return;
+    if( m_ShortCutsDefaults[tag] == _sc ) {
+        // hotkey is same as the default one
+        if( m_ShortCutsOverrides.find(tag) != end(m_ShortCutsOverrides) ) {
+            // if something was written as override - erase it
+            m_ShortCutsOverrides.erase(tag);
+            WriteOverridesToConfigFile(); // immediately write to config file
+            m_LastChanged = machtime();
+            return true;
+        }
+        return false;
     }
     
     auto now = m_ShortCutsOverrides.find(tag);
     if( now != end(m_ShortCutsOverrides) && now->second == _sc )
-        return; // nothing new
+        return false; // nothing new, it's the same as currently in overrides
     
     m_ShortCutsOverrides[tag] = _sc;
     
     // immediately write to config file
     WriteOverridesToConfigFile();
-    m_LastChanged = machtime();    
+    m_LastChanged = machtime();
+    return true;
 }
 
 void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
     WriteOverridesToConfigFile();
+    m_LastChanged = machtime();      
 }
 
 bool ActionsShortcutsManager::WriteOverridesToConfigFile() const

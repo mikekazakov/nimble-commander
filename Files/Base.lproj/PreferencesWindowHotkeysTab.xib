@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowHotkeysTab">
@@ -17,32 +17,6 @@
             <rect key="frame" x="0.0" y="0.0" width="640" height="400"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="c5L-7I-Zbu">
-                    <rect key="frame" x="534" y="13" width="92" height="32"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="H9U-sq-4wj"/>
-                    </constraints>
-                    <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OZG-CJ-xeF">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="OnApply:" target="-2" id="qL3-vf-i84"/>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="adE-ah-Kvz">
-                    <rect key="frame" x="442" y="13" width="92" height="32"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="MGD-at-Pn1"/>
-                    </constraints>
-                    <buttonCell key="cell" type="push" title="Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aLv-eW-18q">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                        <connections>
-                            <action selector="OnDefaults:" target="-2" id="2WE-KU-nTu"/>
-                        </connections>
-                    </buttonCell>
-                </button>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hUF-TP-nnB">
                     <rect key="frame" x="20" y="61" width="600" height="319"/>
                     <clipView key="contentView" id="AD4-bi-TU5">
@@ -72,15 +46,26 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="adE-ah-Kvz">
+                    <rect key="frame" x="534" y="13" width="92" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="MGD-at-Pn1"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aLv-eW-18q">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <action selector="OnDefaults:" target="-2" id="2WE-KU-nTu"/>
+                        </connections>
+                    </buttonCell>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="hUF-TP-nnB" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="608-CD-6dL"/>
                 <constraint firstItem="adE-ah-Kvz" firstAttribute="top" secondItem="hUF-TP-nnB" secondAttribute="bottom" constant="20" symbolic="YES" id="7sf-c6-1h1"/>
-                <constraint firstAttribute="bottom" secondItem="c5L-7I-Zbu" secondAttribute="bottom" constant="20" symbolic="YES" id="FpJ-2e-vON"/>
-                <constraint firstItem="c5L-7I-Zbu" firstAttribute="leading" secondItem="adE-ah-Kvz" secondAttribute="trailing" constant="12" symbolic="YES" id="HJo-si-WYf"/>
-                <constraint firstItem="adE-ah-Kvz" firstAttribute="baseline" secondItem="c5L-7I-Zbu" secondAttribute="baseline" id="P1r-Av-Zci"/>
-                <constraint firstAttribute="trailing" secondItem="c5L-7I-Zbu" secondAttribute="trailing" constant="20" symbolic="YES" id="Rhn-Kg-Uns"/>
+                <constraint firstAttribute="trailing" secondItem="adE-ah-Kvz" secondAttribute="trailing" constant="20" symbolic="YES" id="hOd-sa-0pj"/>
                 <constraint firstAttribute="trailing" secondItem="hUF-TP-nnB" secondAttribute="trailing" constant="20" symbolic="YES" id="jVR-Xe-j5F"/>
+                <constraint firstAttribute="bottom" secondItem="adE-ah-Kvz" secondAttribute="bottom" constant="20" symbolic="YES" id="nKi-Uo-bV8"/>
                 <constraint firstItem="hUF-TP-nnB" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="ugD-Ai-Xky"/>
             </constraints>
             <point key="canvasLocation" x="353" y="175"/>

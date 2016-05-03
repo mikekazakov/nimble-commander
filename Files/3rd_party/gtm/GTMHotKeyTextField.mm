@@ -439,6 +439,7 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
 @implementation GTMHotKeyFieldEditor
 {
     NSButton *m_ClearButton;
+    NSButton *m_RevertButton;
 }
 
 + (GTMHotKeyFieldEditor *)sharedHotKeyFieldEditor {
@@ -462,11 +463,9 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
                                            selector:@selector(windowResigned:)
                                                name:NSWindowDidResignKeyNotification
                                              object:self.window];
-    
-    GTMHotKey *cur_hk = [self.cell objectValue];
-    if( cur_hk != nil && !cur_hk.isEmpty ) {
-        m_ClearButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 20)/2, 20, 20)];
-        m_ClearButton.title = @"-";
+    if( !m_ClearButton ) {
+        m_ClearButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 22)/2, 22, 22)];
+        m_ClearButton.title = @"−";
         m_ClearButton.font = [NSFont labelFontOfSize:9];
         m_ClearButton.refusesFirstResponder = true;
         m_ClearButton.bezelStyle = NSCircularBezelStyle;
@@ -476,7 +475,19 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
         [self addSubview:m_ClearButton];
     }
     
-  return [super becomeFirstResponder];
+    if( !m_RevertButton ) {
+        m_RevertButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 36, (self.bounds.size.height - 22)/2, 22, 22)];
+        m_RevertButton.title = @"↺";
+        m_RevertButton.font = [NSFont labelFontOfSize:9];
+        m_RevertButton.refusesFirstResponder = true;
+        m_RevertButton.bezelStyle = NSCircularBezelStyle;
+        m_RevertButton.target = self;
+        m_RevertButton.action = @selector(OnRevertButton:);
+        ((NSButtonCell*)m_RevertButton.cell).controlSize = NSMiniControlSize;
+        [self addSubview:m_RevertButton];
+    }
+    
+    return [super becomeFirstResponder];
 }
 
 - (void)OnClearButton:(id)sender
@@ -484,6 +495,15 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
     [self.cell setObjectValue:GTMHotKey.emptyHotKey];
     [self didChangeText];
     [self.window makeFirstResponder:nil];
+}
+
+- (void)OnRevertButton:(id)sender
+{
+    if( self.cell.defaultHotKey ) {
+        [self.cell setObjectValue:self.cell.defaultHotKey];
+        [self didChangeText];
+        [self.window makeFirstResponder:nil];
+    }
 }
 
 - (BOOL)resignFirstResponder {

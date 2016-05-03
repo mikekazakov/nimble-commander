@@ -55,8 +55,6 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
                                  [](auto &_t) {
                                      if(_t.first.find_first_of("menu.") != 0)
                                          return false;
-                                     if(!ActionsShortcutsManager::Instance().ShortCutFromTag(_t.second))
-                                         return true;
                                      NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
                                      return it == nil || it.isHidden == true;
                                  }),
@@ -78,7 +76,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     [self.Table addTableColumn:column];
     
     column = [[NSTableColumn alloc] initWithIdentifier:@"hotkey"];
-    column.width = 80;
+    column.width = 90;
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Hotkey";
     [self.Table addTableColumn:column];
 }
@@ -111,7 +109,6 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 {
     assert(row < m_Shortcuts.size());
     auto &tag = m_Shortcuts[row];
-    auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);
 
     NSMenuItem *menu_item = [[NSApp mainMenu] itemWithTagHierarchical:tag.second];
     
@@ -128,13 +125,16 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
         tf.drawsBackground = false;
         return tf;
     }
-    if([tableColumn.identifier isEqualToString:@"hotkey"])
-    {
-        GTMHotKey *hk = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
+    if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+        auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);        
+        auto default_sc = ActionsShortcutsManager::Instance().DefaultShortCutFromTag(tag.second);
         GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
-        [(GTMHotKeyTextFieldCell*)tf.cell setObjectValue:hk];
-        
-        if( tag.first[0] == 'p'  )
+        tf.action = @selector(onHKChanged:);
+        tf.target = self;
+        ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
+        ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:default_sc.Key() modifiers:default_sc.modifiers];
+
+        if( tag.first.find_first_of("panel.") == 0 )
             ((GTMHotKeyTextFieldCell*)tf.cell).strictModifierRequirement = false;
         
         tf.tag = tag.second;
@@ -145,18 +145,18 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     return nil;
 }
 
-- (IBAction)OnApply:(id)sender
+- (IBAction)onHKChanged:(id)sender
 {
     auto &am = ActionsShortcutsManager::Instance();
-    for(auto ed: m_EditFields)
-    {
-        int tag = int(ed.tag);
+    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
+        auto tag = int(tf.tag);
+        auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue);
+        auto hk = ActionsShortcutsManager::ShortCut(gtm_hk.key, gtm_hk.modifiers);
+        auto action = am.ActionFromTag(tag);
         
-        GTMHotKey *hk = [ed.cell objectValue];
-        ActionsShortcutsManager::ShortCut sc(hk.key, hk.modifiers);        
-        am.SetShortCutOverride(am.ActionFromTag(tag), sc);
+        if( am.SetShortCutOverride(action, hk) )
+            am.SetMenuShortCuts([NSApp mainMenu]);
     }
-    am.SetMenuShortCuts([NSApp mainMenu]);
 }
 
 - (IBAction)OnDefaults:(id)sender

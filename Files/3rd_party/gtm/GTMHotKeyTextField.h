@@ -81,6 +81,7 @@
 - (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode;
 
 @property (readwrite) bool strictModifierRequirement;
+@property (strong, nonatomic) GTMHotKey *defaultHotKey;
 
 @end
 

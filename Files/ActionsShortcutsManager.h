@@ -17,64 +17,41 @@
 class ActionsShortcutsManager
 {
 public:
+    struct ShortCut;
+    class ShortCutsUpdater;
+    
     static ActionsShortcutsManager &Instance();
     
     /**
      * Return -1 on if tag corresponing _action wasn't found.
      */
     int TagFromAction(const string &_action) const;
-
+    
     /**
      * return "" on if action corresponing _tag wasn't found.
      */
     string ActionFromTag(int _tag) const;
     
-    struct ShortCut
-    {
-        ShortCut();
-        ShortCut(NSString *_from); // construct from persistency string
-        ShortCut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
-        ShortCut(NSString *_from, unsigned long _modif); // construct from string and modifiers
-        
-        bool operator ==(const ShortCut&_r) const;
-        bool operator !=(const ShortCut&_r) const;
-        operator    bool() const;
-        
-        NSString   *Key() const;
-        NSString   *ToPersString() const;
-        bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
-        
-        uint16_t        unicode;
-        uint64_t        modifiers;
-    };
-    
-    class ShortCutsUpdater
-    {
-    public:
-        ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions );
-        
-        void CheckAndUpdate();
-    private:
-        vector< pair<ShortCut*, int> >  m_Pets;
-        nanoseconds                     m_LastUpdated;
-    };
-    
     /**
-     * Return default if can't found.
+     * Return default if can't be found.
      * Overrides has priority over defaults.
      */
     ShortCut ShortCutFromAction(const string &_action) const;
 
     /**
-     * Return default if can't found.
+     * Return default if can't be found.
      * Overrides has priority over defaults.
      */
     ShortCut ShortCutFromTag(int _tag) const;
-    
+
+    /**
+     * Return default if can't be found.
+     */
+    ShortCut DefaultShortCutFromTag(int _tag) const;
     
     void RevertToDefaults();
-    void SetShortCutOverride(const string &_action, const ShortCut& _sc);
     
+    bool SetShortCutOverride(const string &_action, const ShortCut& _sc);
     
     void SetMenuShortCuts(NSMenu *_menu) const;
     
@@ -236,6 +213,36 @@ private:
     unordered_map<int, ShortCut>      m_ShortCutsOverrides;
     
     nanoseconds                       m_LastChanged;
+};
+
+struct ActionsShortcutsManager::ShortCut
+{
+    ShortCut();
+    ShortCut(NSString *_from); // construct from persistency string
+    ShortCut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
+    ShortCut(NSString *_from, unsigned long _modif); // construct from string and modifiers
+    
+    bool operator ==(const ShortCut&_r) const;
+    bool operator !=(const ShortCut&_r) const;
+    operator    bool() const;
+    
+    NSString   *Key() const;
+    NSString   *ToPersString() const;
+    bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
+    
+    uint16_t        unicode;
+    uint64_t        modifiers;
+};
+
+class ActionsShortcutsManager::ShortCutsUpdater
+{
+public:
+    ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions );
+    
+    void CheckAndUpdate();
+private:
+    vector< pair<ShortCut*, int> >  m_Pets;
+    nanoseconds                     m_LastUpdated;
 };
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y

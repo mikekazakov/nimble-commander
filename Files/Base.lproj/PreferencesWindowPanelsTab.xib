@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -29,7 +29,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                                        <rect key="frame" x="18" y="167" width="558" height="18"/>
+                                        <rect key="frame" x="18" y="187" width="558" height="18"/>
                                         <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -85,18 +85,8 @@
                                             <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.allowDraggingIntoFolders" id="Bve-gD-t0x"/>
                                         </connections>
                                     </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="fDV-xp-PQf">
-                                        <rect key="frame" x="18" y="207" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Use ~ to go Home" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GBa-AA-rRO">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.useTildeAsHomeShortcut" id="rJw-UW-eKJ"/>
-                                        </connections>
-                                    </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
-                                        <rect key="frame" x="18" y="187" width="558" height="18"/>
+                                        <rect key="frame" x="18" y="207" width="558" height="18"/>
                                         <buttonCell key="cell" type="check" title="Route keyboard input into overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -133,16 +123,13 @@
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="8Dv-Ox-hiC" secondAttribute="leading" id="Qrv-tN-CRR"/>
                                     <constraint firstAttribute="trailing" secondItem="bG0-HE-nN2" secondAttribute="trailing" constant="20" symbolic="YES" id="ZIo-QV-qAN"/>
                                     <constraint firstAttribute="trailing" secondItem="gE9-bs-3HL" secondAttribute="trailing" constant="20" symbolic="YES" id="Zdd-WO-wwS"/>
-                                    <constraint firstAttribute="trailing" secondItem="fDV-xp-PQf" secondAttribute="trailing" constant="20" symbolic="YES" id="fl0-cY-B7E"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="n76-Id-JEc" secondAttribute="trailing" constant="8" symbolic="YES" id="gVB-Uo-cYg"/>
                                     <constraint firstAttribute="trailing" secondItem="8Dv-Ox-hiC" secondAttribute="trailing" constant="20" symbolic="YES" id="gnA-53-oz5"/>
                                     <constraint firstItem="bG0-HE-nN2" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="hh4-sh-ra5"/>
                                     <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="20" symbolic="YES" id="nms-3v-ixM"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="top" secondItem="22" secondAttribute="top" constant="20" symbolic="YES" id="ovB-Ji-fVk"/>
-                                    <constraint firstItem="fDV-xp-PQf" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" symbolic="YES" id="qCh-IO-p7S"/>
                                     <constraint firstItem="n76-Id-JEc" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="qwL-0l-ASE"/>
-                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="top" secondItem="fDV-xp-PQf" secondAttribute="bottom" constant="6" symbolic="YES" id="rp6-zU-TVL"/>
-                                    <constraint firstItem="fDV-xp-PQf" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="wle-L0-nwu"/>
+                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" symbolic="YES" id="w7b-S7-KW3"/>
                                     <constraint firstAttribute="trailing" secondItem="dyN-tf-vzT" secondAttribute="trailing" constant="20" symbolic="YES" id="zgt-yM-3Cq"/>
                                 </constraints>
                             </view>

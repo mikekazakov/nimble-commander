@@ -63,11 +63,6 @@
             "showVolumeInformationBar": true,
 
             /**
-             * Enable ~ hotkey for fast going into Home directory
-             */
-            "useTildeAsHomeShortcut": true,
-
-            /**
              * Show current paths in other file panels in GoTo pop-up menu
              */
             "appendOtherWindowsPathsToGoToMenu": true,

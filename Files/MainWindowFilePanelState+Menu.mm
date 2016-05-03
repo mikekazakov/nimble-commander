@@ -487,8 +487,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
     
-    const auto &am = ActionsShortcutsManager::Instance();
-    
     // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
     if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
         static const int next_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_next_tab");
@@ -503,35 +501,29 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return true;
     }
 
-    const auto isshortcut = [&](int tag) {
-        if( auto sc = am.ShortCutFromTag(tag) )
-            return sc->IsKeyDown(unicode, kc, mod);
-        return false;
-    };
-
     // overlapped terminal stuff
     if( ActivationManager::Instance().HasTerminal() ) {
-//    if( configuration::has_terminal ) {
-        static const auto filepanels_move_up = am.TagFromAction( "menu.view.panels_position.move_up" );
-        if( isshortcut(filepanels_move_up) ) {
+        static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
+                                                                         {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down", "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
+        hotkeys_updater.CheckAndUpdate();
+        
+        if( hk_move_up.IsKeyDown(unicode, kc, mod)  ) {
             [self OnViewPanelsPositionMoveUp:self];
             return true;
         }
         
-        static const auto filepanels_move_down = am.TagFromAction( "menu.view.panels_position.move_down" );
-        if( isshortcut(filepanels_move_down) ) {
+        if( hk_move_down.IsKeyDown(unicode, kc, mod) ) {
             [self OnViewPanelsPositionMoveDown:self];
             return true;
         }
         
-        static const auto filepanels_showhide = am.TagFromAction( "menu.view.panels_position.showpanels" );
-        if( isshortcut(filepanels_showhide) ) {
+        if( hk_showhide.IsKeyDown(unicode, kc, mod) ) {
             [self OnViewPanelsPositionShowHidePanels:self];
             return true;
         }
         
-        static const auto filepanels_focusterminal = am.TagFromAction( "menu.view.panels_position.focusterminal" );
-        if( isshortcut(filepanels_focusterminal) ) {
+        if( hk_focus.IsKeyDown(unicode, kc, mod) ) {
             [self OnViewPanelsPositionFocusOverlappedTerminal:self];
             return true;
         }

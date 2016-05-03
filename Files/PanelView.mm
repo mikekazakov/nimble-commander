@@ -15,6 +15,7 @@
 #include "ModernPanelViewPresentation.h"
 #include "ClassicPanelViewPresentation.h"
 #include "AppDelegate.h"
+#include "ActionsShortcutsManager.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
 
@@ -404,44 +405,41 @@ struct PanelViewStateStorage
         return;
     }
     
-    const auto mod = event.modifierFlags;
-    const auto unicode = [character characterAtIndex:0];
+    const auto modifiers    = event.modifierFlags;
+    const auto unicode      = [character characterAtIndex:0];
+    const auto keycode      = event.keyCode;
     
-    [self checkKeyboardModifierFlags:mod];
+    [self checkKeyboardModifierFlags:modifiers];
+    
+    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup;
+    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup},
+       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page"}
+      );
+    hotkeys_updater.CheckAndUpdate();
 
-    switch( unicode ) {
-        case NSHomeFunctionKey:       [self HandleFirstFile];     return;
-        case NSEndFunctionKey:        [self HandleLastFile];      return;
-        case NSPageDownFunctionKey:   [self HandleNextPage];      return;
-        case NSPageUpFunctionKey:     [self HandlePrevPage];      return;
-        case 0x03:                    [self HandleInsert];        return;
-        case NSLeftArrowFunctionKey:
-            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
-                [self HandlePrevColumn];
-                return;
-            }
-            break;
-        case NSRightArrowFunctionKey:
-            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
-                [self HandleNextColumn];
-                return;
-            }
-            break;
-        case NSUpArrowFunctionKey:
-            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
-                [self HandlePrevFile];
-                return;
-            }
-            break;
-        case NSDownArrowFunctionKey:
-            if(!(mod & NSControlKeyMask) && !(mod & NSCommandKeyMask) && !(mod & NSAlternateKeyMask) ) {
-                [self HandleNextFile];
-                return;
-            }
-            break;
+    if( hk_up.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandlePrevFile];
+    else if( hk_down.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleNextFile];
+    else if( hk_left.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandlePrevColumn];
+    else if( hk_right.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleNextColumn];
+    else if( hk_first.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleFirstFile];
+    else if( hk_last.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleLastFile];
+    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandleNextPage];
+    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers) )
+        [self HandlePrevPage];
+    else {
+        switch( unicode ) {
+            case 0x03:                    [self HandleInsert];        return;
+        }
+        [super keyDown:event];
     }
-    
-    [super keyDown:event];
 }
 
 - (void) checkKeyboardModifierFlags:(unsigned long)_current_flags

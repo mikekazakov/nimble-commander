@@ -130,7 +130,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     }
     if([tableColumn.identifier isEqualToString:@"hotkey"])
     {
-        GTMHotKey *hk = [GTMHotKey hotKeyWithKey:sc->Key() modifiers:sc->modifiers];
+        GTMHotKey *hk = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
         GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
         [(GTMHotKeyTextFieldCell*)tf.cell setObjectValue:hk];
         

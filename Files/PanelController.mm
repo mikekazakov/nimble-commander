@@ -468,12 +468,15 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         }
         
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-        auto &shortcuts = ActionsShortcutsManager::Instance();
-        if(shortcuts.ShortCutFromAction("menu.file.open")->IsKeyDown(unicode, keycode, modif)) {
+        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native;
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native}, {"menu.file.open", "menu.file.open_native"});
+        hotkeys_updater.CheckAndUpdate();
+        
+        if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
             [self handleGoIntoDirOrOpenInSystemSync];
             return true;
         }
-        if(shortcuts.ShortCutFromAction("menu.file.open_native")->IsKeyDown(unicode, keycode, modif)) {
+        if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
             [self handleOpenInSystem];
             return true;
         }

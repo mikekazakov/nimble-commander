@@ -137,8 +137,15 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.window.show_previous_tab",           u8"⇧^\t"    }, // shift+ctrl+tab
         {"menu.window.show_next_tab",               u8"^\t"     }, // ctrl+tab
         {"menu.window.bring_all_to_front",          u8""        },
-    
-        {"panel.test",                         u8""}
+
+        {"panel.move_up",                           u8"\uF700"  }, // up
+        {"panel.move_down",                         u8"\uF701"  }, // down
+        {"panel.move_left",                         u8"\uF702"  }, // left
+        {"panel.move_right",                        u8"\uF703"  }, // right
+        {"panel.move_first",                        u8"\uF729"  }, // home
+        {"panel.move_last",                         u8"\uF72B"  }, // end
+        {"panel.move_next_page",                    u8"\uF72D"  }, // page up
+        {"panel.move_prev_page",                    u8"\uF72C"  }, // page down
 };
 
 ActionsShortcutsManager::ShortCut::ShortCut():
@@ -242,7 +249,7 @@ NSString *ActionsShortcutsManager::ShortCut::Key() const
     return @"";
 }
 
-bool ActionsShortcutsManager::ShortCut::IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const
+bool ActionsShortcutsManager::ShortCut::IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept
 {
     // exclude CapsLock from our decision process
     unsigned long clean_modif = _modifiers &
@@ -266,6 +273,28 @@ bool ActionsShortcutsManager::ShortCut::operator!=(const ShortCut&_r) const
     return !(*this == _r);
 }
 
+ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions ):
+    m_LastUpdated(0)
+{
+    if( _hotkeys.size() != _actions.size() )
+        throw logic_error("_hotkeys.size() != _actions.size()");
+    
+    auto &am = ActionsShortcutsManager::Instance();
+    for( int i = 0; i < _hotkeys.size(); ++i )
+        m_Pets.emplace_back( _hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]) );
+    CheckAndUpdate();
+}
+
+void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate()
+{
+    auto &am = ActionsShortcutsManager::Instance();
+    if( m_LastUpdated < am.LastChanged() ) {
+        for( auto &i: m_Pets )
+            *i.first = am.ShortCutFromTag(i.second);
+        m_LastUpdated = am.LastChanged();
+    }
+}
+
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
     for(auto &i: m_ActionsTags) {
@@ -284,6 +313,8 @@ ActionsShortcutsManager::ActionsShortcutsManager()
     
     if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
         ReadOverrides(a);
+    
+    m_LastChanged = machtime();
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -381,33 +412,33 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
     }
 }
 
-const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
 {
     int tag = TagFromAction(_action);
     if(tag <= 0)
-        return nullptr;
+        return {};
     auto sc_override = m_ShortCutsOverrides.find(tag);
     if(sc_override != m_ShortCutsOverrides.end())
-        return &sc_override->second;
+        return sc_override->second;
     
     auto sc_default = m_ShortCutsDefaults.find(tag);
     if(sc_default != m_ShortCutsDefaults.end())
-        return &sc_default->second;
+        return sc_default->second;
     
-    return nullptr;
+    return {};
 }
 
-const ActionsShortcutsManager::ShortCut *ActionsShortcutsManager::ShortCutFromTag(int _tag) const
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const
 {
     auto sc_override = m_ShortCutsOverrides.find(_tag);
     if(sc_override != m_ShortCutsOverrides.end())
-        return &sc_override->second;
+        return sc_override->second;
     
     auto sc_default = m_ShortCutsDefaults.find(_tag);
     if(sc_default != m_ShortCutsDefaults.end())
-        return &sc_default->second;
+        return sc_default->second;
     
-    return nullptr;
+    return {};
 }
 
 void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
@@ -419,6 +450,9 @@ void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     auto &orig = m_ShortCutsDefaults[tag];
     if(orig == _sc) {
         m_ShortCutsOverrides.erase(tag);
+        // immediately write to config file
+        WriteOverridesToConfigFile();
+        m_LastChanged = machtime();
         return;
     }
     
@@ -430,6 +464,7 @@ void ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     
     // immediately write to config file
     WriteOverridesToConfigFile();
+    m_LastChanged = machtime();    
 }
 
 void ActionsShortcutsManager::RevertToDefaults()
@@ -445,4 +480,14 @@ bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
 
     return [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
                        atomically:true];
+}
+
+const vector<pair<string,int>>& ActionsShortcutsManager::AllShortcuts() const
+{
+    return m_ActionsTags;
+}
+
+nanoseconds ActionsShortcutsManager::LastChanged() const
+{
+    return m_LastChanged;
 }

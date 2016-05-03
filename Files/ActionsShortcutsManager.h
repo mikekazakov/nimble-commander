@@ -35,29 +35,41 @@ public:
         ShortCut(NSString *_from); // construct from persistency string
         ShortCut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
         ShortCut(NSString *_from, unsigned long _modif); // construct from string and modifiers
+        
+        bool operator ==(const ShortCut&_r) const;
+        bool operator !=(const ShortCut&_r) const;
+        operator    bool() const;
+        
+        NSString   *Key() const;
+        NSString   *ToPersString() const;
+        bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
+        
         uint16_t        unicode;
         uint64_t        modifiers;
-
-        bool operator==(const ShortCut&_r) const;
-        bool operator!=(const ShortCut&_r) const;
-        operator bool() const;
+    };
+    
+    class ShortCutsUpdater
+    {
+    public:
+        ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions );
         
-        NSString *Key() const;
-        NSString *ToPersString() const;
-        bool IsKeyDown(unichar _unicode, unsigned short _keycode, unsigned long _modifiers) const;
+        void CheckAndUpdate();
+    private:
+        vector< pair<ShortCut*, int> >  m_Pets;
+        nanoseconds                     m_LastUpdated;
     };
     
     /**
-     * Return nullptr if can't found.
+     * Return default if can't found.
      * Overrides has priority over defaults.
      */
-    const ShortCut *ShortCutFromAction(const string &_action) const;
+    ShortCut ShortCutFromAction(const string &_action) const;
 
     /**
-     * Return nullptr if can't found.
+     * Return default if can't found.
      * Overrides has priority over defaults.
      */
-    const ShortCut *ShortCutFromTag(int _tag) const;
+    ShortCut ShortCutFromTag(int _tag) const;
     
     
     void RevertToDefaults();
@@ -66,7 +78,9 @@ public:
     
     void SetMenuShortCuts(NSMenu *_menu) const;
     
-    inline const vector<pair<string,int>>& AllShortcuts() const { return m_ActionsTags; }
+    const vector<pair<string,int>>& AllShortcuts() const;
+    
+    nanoseconds LastChanged() const;
     
 private:
     ActionsShortcutsManager();
@@ -204,7 +218,15 @@ private:
         {"menu.window.show_next_tab",           16050},
         {"menu.window.bring_all_to_front",      16030},
 
-        {"panel.test",                         100000}
+        {"panel.move_up",                      100000},
+        {"panel.move_down",                    100010},
+        {"panel.move_left",                    100020},
+        {"panel.move_right",                   100030},
+        {"panel.move_first",                   100040},
+        {"panel.move_last",                    100050},
+        {"panel.move_next_page",               100060},
+        {"panel.move_prev_page",               100070},
+        
     };
     
     unordered_map<int, string>        m_TagToAction;
@@ -212,6 +234,8 @@ private:
     
     unordered_map<int, ShortCut>      m_ShortCutsDefaults;
     unordered_map<int, ShortCut>      m_ShortCutsOverrides;
+    
+    nanoseconds                       m_LastChanged;
 };
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y

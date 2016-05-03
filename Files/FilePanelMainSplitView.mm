@@ -325,22 +325,18 @@ static CGColorRef DividerColor(bool _wnd_active)
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
     auto kc = theEvent.keyCode;
-        
-    const auto &am = ActionsShortcutsManager::Instance();
-    const auto isshortcut = [&](int tag) {
-        if( auto sc = am.ShortCutFromTag(tag) )
-            return sc->IsKeyDown(unicode, kc, mod);
-        return false;
-    };
     
-    static const auto filepanels_move_left = am.TagFromAction( "menu.view.panels_position.move_left" );
-    if( isshortcut(filepanels_move_left) ) {
+    static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
+    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_left, &hk_move_right},
+                                                                     {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
+    hotkeys_updater.CheckAndUpdate();
+    
+    if( hk_move_left.IsKeyDown(unicode, kc, mod) ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    static const auto filepanels_move_right = am.TagFromAction( "menu.view.panels_position.move_right" );
-    if( isshortcut(filepanels_move_right) ) {
+    if( hk_move_right.IsKeyDown(unicode, kc, mod) ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }

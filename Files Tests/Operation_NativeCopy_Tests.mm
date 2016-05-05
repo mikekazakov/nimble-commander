@@ -125,6 +125,56 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+- (void)testCaseRenaming
+{
+    auto dir = self.makeTmpDir;
+    auto host = VFSNativeHost::SharedHost();
+    
+    {
+        __block bool finished = false;
+        auto src = dir / "directory";
+        mkdir(src.c_str(), S_IWUSR | S_IXUSR | S_IRUSR);
+        
+        FileCopyOperationOptions opts;
+        opts.docopy = false;
+        FileCopyOperation *op = [FileCopyOperation alloc];
+        op = [op initWithItems:FetchItems(dir.native(), {"directory"}, *host)
+               destinationPath:(dir / "DIRECTORY").native()
+               destinationHost:host
+                       options:opts];
+        
+        [op AddOnFinishHandler:^{ finished = true; }];
+        [op Start];
+        [self waitUntilFinish:finished];
+        
+        XCTAssert( host->IsDirectory((dir / "DIRECTORY").c_str(), 0, nullptr) == true );
+        XCTAssert( FetchItems(dir.native(), {"DIRECTORY"}, *host).front().Filename() == "DIRECTORY" );
+    }
+    
+    {
+        __block bool finished = false;
+        auto src = dir / "filename";
+        close(open(src.c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR));
+        
+        FileCopyOperationOptions opts;
+        opts.docopy = false;
+        FileCopyOperation *op = [FileCopyOperation alloc];
+        op = [op initWithItems:FetchItems(dir.native(), {"filename"}, *host)
+               destinationPath:(dir / "FILENAME").native()
+               destinationHost:host
+                       options:opts];
+        
+        [op AddOnFinishHandler:^{ finished = true; }];
+        [op Start];
+        [self waitUntilFinish:finished];
+        
+        XCTAssert( host->Exists((dir / "FILENAME").c_str()) == true );
+        XCTAssert( FetchItems(dir.native(), {"FILENAME"}, *host).front().Filename() == "FILENAME" );
+    }
+    
+    XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

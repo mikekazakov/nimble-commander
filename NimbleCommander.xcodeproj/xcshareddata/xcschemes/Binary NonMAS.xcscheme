@@ -34,7 +34,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CF47A97F186C607B00745C4C"
                BuildableName = "NimbleCommander.xctest"
-               BlueprintName = "NimbleCommander Tests"
+               BlueprintName = "Nimble Commander Tests"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </TestableReference>

@@ -1058,7 +1058,7 @@
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rapidjson.cpp; sourceTree = "<group>"; };
 		CF46D8E91C853C2C009E28B9 /* rapidjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rapidjson.h; sourceTree = "<group>"; };
-		CF47A980186C607C00745C4C /* NimbleCommander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NimbleCommander.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF47A980186C607C00745C4C /* Nimble Commander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nimble Commander.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NimbleCommander Tests-Info.plist"; sourceTree = "<group>"; };
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
@@ -2507,7 +2507,7 @@
 			isa = PBXGroup;
 			children = (
 				CFC5121116C4BD3D00D247EE /* Nimble Commander.app */,
-				CF47A980186C607C00745C4C /* NimbleCommander.xctest */,
+				CF47A980186C607C00745C4C /* Nimble Commander.xctest */,
 				CF6D997D196675290077B146 /* Nimble Commander.app */,
 				CFF6F3A11A13567C00011177 /* NimbleCommander.app */,
 				CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
@@ -2725,9 +2725,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CF47A97F186C607B00745C4C /* NimbleCommander Tests */ = {
+		CF47A97F186C607B00745C4C /* Nimble Commander Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander Tests" */;
+			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Nimble Commander Tests" */;
 			buildPhases = (
 				CF47A97C186C607B00745C4C /* Sources */,
 				CF47A97D186C607B00745C4C /* Frameworks */,
@@ -2745,9 +2745,9 @@
 				CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */,
 				CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */,
 			);
-			name = "NimbleCommander Tests";
+			name = "Nimble Commander Tests";
 			productName = "Files Tests";
-			productReference = CF47A980186C607C00745C4C /* NimbleCommander.xctest */;
+			productReference = CF47A980186C607C00745C4C /* Nimble Commander.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		CF6D997C196675290077B146 /* NimbleCommander Free MAS */ = {
@@ -2892,7 +2892,7 @@
 				CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */,
 				CF6D997C196675290077B146 /* NimbleCommander Free MAS */,
 				CFF6F2391A13567C00011177 /* NimbleCommander Paid MAS */,
-				CF47A97F186C607B00745C4C /* NimbleCommander Tests */,
+				CF47A97F186C607B00745C4C /* Nimble Commander Tests */,
 				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
 		};
@@ -4199,6 +4199,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
@@ -4212,7 +4213,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_NAME = "Nimble Commander";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nimble Commander.app/Contents/MacOS/Nimble Commander";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4228,6 +4229,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -4239,7 +4241,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_NAME = "Nimble Commander";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nimble Commander.app/Contents/MacOS/Nimble Commander";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4739,7 +4741,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander Tests" */ = {
+		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Nimble Commander Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF47A98F186C607C00745C4C /* Debug */,

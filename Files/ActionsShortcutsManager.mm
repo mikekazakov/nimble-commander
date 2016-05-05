@@ -259,7 +259,7 @@ bool ActionsShortcutsManager::ShortCut::IsKeyDown(uint16_t _unicode, uint16_t _k
     unsigned long clean_modif = _modifiers &
         (NSDeviceIndependentModifierFlagsMask & (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask) );
     
-    if( unicode < 128 && modifiers == 0 )
+    if( unicode >= 32 && unicode < 128 && modifiers == 0 )
         clean_modif &= ~NSShiftKeyMask; // some chars were produced by pressing key with shift 
     
     return modifiers == clean_modif &&

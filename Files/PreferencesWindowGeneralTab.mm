@@ -64,9 +64,9 @@
     alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to reset granted filesystem access?",
                                                    @"Preferences",
                                                    "Message text asking if user really wants to reset current file system access");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Files to ask you for access upon need.",
+    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Nimble Commander to ask you for access upon need.",
                                                        @"Preferences",
-                                                       "Informative text saying that Files will ask for filesystem access when need it");
+                                                       "Informative text saying that Nimble Commander will ask for filesystem access when need it");
     [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];

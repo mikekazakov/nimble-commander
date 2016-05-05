@@ -34,8 +34,8 @@
 /* General preferences tab title */
 "Terminal" = "Терминал";
 
-/* Informative text saying that Files will ask for filesystem access when need it */
-"This will cause Files to ask you for access upon need." = "Files будет спрашивать вас о предоставлении доступа при необходимости.";
+/* Informative text saying that Nimble Commander will ask for filesystem access when need it */
+"This will cause Nimble Commander to ask you for access upon need." = "Nimble Commander будет спрашивать вас о предоставлении доступа при необходимости.";
 
 /* Informative text when user wants to reset hotkeys to defaults */
 "This will clear any custom set hotkeys." = "Ваши изменения горячих клавиш будут удалены.";

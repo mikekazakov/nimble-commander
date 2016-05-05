@@ -440,7 +440,7 @@ bool VFSListing::HasInode(unsigned _ind) const
 uint64_t VFSListing::Inode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
+    return m_Inodes.has(_ind) ? m_Inodes[_ind] : 0;
 }
 
 bool VFSListing::HasATime(unsigned _ind) const

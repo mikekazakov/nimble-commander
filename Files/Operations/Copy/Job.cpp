@@ -397,12 +397,26 @@ string FileCopyOperationJob::ComposeDestinationNameForItem( int _src_item_index 
     }
 }
 
+// side-effects: none.
+static bool IsSingleDirectoryCaseRenaming( const FileCopyOperationOptions &_options, const vector<VFSListingItem> &_items, const VFSHostPtr& _dest_host, const VFSStat &_dest_stat )
+{
+    return  S_ISDIR(_dest_stat.mode)            &&
+            _options.docopy == false            &&
+            _items.size() == 1                  &&
+            _items.front().Host()->IsNativeFS() &&
+            _items.front().Host() == _dest_host &&
+            _items.front().IsDir()              &&
+            _items.front().Inode() == _dest_stat.inode;
+}
+
 FileCopyOperationJob::PathCompositionType FileCopyOperationJob::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const
 {
     VFSStat st;
     if( m_DestinationHost->Stat(m_InitialDestinationPath.c_str(), st, 0, nullptr ) == 0) {
         // destination entry already exist
-        if( S_ISDIR(st.mode) ) {
+        if( S_ISDIR(st.mode) &&
+            !IsSingleDirectoryCaseRenaming(m_Options, m_VFSListingItems, m_DestinationHost, st) // special exception for renaming a single directory on native case-insensitive fs
+           ) {
             _result_destination = EnsureTrailingSlash( m_InitialDestinationPath );
             return PathCompositionType::PathPreffix;
         }

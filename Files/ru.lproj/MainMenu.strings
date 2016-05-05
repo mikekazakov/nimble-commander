@@ -44,13 +44,13 @@
 "29.title" = "AMainMenu";
 
 /* Class = "NSMenuItem"; title = "Files"; ObjectID = "56"; */
-"56.title" = "Files";
+"56.title" = "Nimble Commander";
 
 /* Class = "NSMenu"; title = "Files"; ObjectID = "57"; */
-"57.title" = "Files";
+"57.title" = "Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "About Files"; ObjectID = "58"; */
-"58.title" = "О Files";
+"58.title" = "О Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Open"; ObjectID = "72"; */
 "72.title" = "Открыть";
@@ -77,10 +77,10 @@
 "131.title" = "Службы";
 
 /* Class = "NSMenuItem"; title = "Hide Files"; ObjectID = "134"; */
-"134.title" = "Скрыть Files";
+"134.title" = "Скрыть Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Quit Files"; ObjectID = "136"; */
-"136.title" = "Завершить Files";
+"136.title" = "Завершить Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
 "145.title" = "Скрыть остальные";
@@ -383,7 +383,7 @@
 "i2G-EV-iTc.title" = "Найти...";
 
 /* Class = "NSMenuItem"; title = "Files Help"; ObjectID = "iBP-LD-aNS"; */
-"iBP-LD-aNS.title" = "Справка Files";
+"iBP-LD-aNS.title" = "Справка Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "Home"; ObjectID = "iGm-8g-qdX"; */
 "iGm-8g-qdX.title" = "Личное";

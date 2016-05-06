@@ -12,6 +12,7 @@
 
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local";
+static const auto g_VBoxDebian8x86      = "192.168.2.173";
 static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 @interface VFSSFTP_Tests : XCTestCase
@@ -44,6 +45,14 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
                                        "qwerty",
                                        "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty",
                                        -1);
+}
+
+- (VFSHostPtr) hostForVBoxDebian8x86
+{
+    return make_shared<VFSNetSFTPHost>(g_VBoxDebian8x86,
+                                       "r2d2",
+                                       "r2d2",
+                                       "");
 }
 
 - (void)testBasicWithHost:(VFSHostPtr)host
@@ -170,6 +179,41 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 }
 
-
+- (void) testSSHlessSFTP
+{
+    try
+    {
+        auto host = self.hostForVBoxDebian8x86;
+        
+        VFSListingPtr listing;
+        XCTAssert( host->FetchFlexibleListing("/", listing, 0, 0) == 0);
+        
+        if(!listing)
+            return;
+        
+        PanelData data;
+        data.Load(listing, PanelData::PanelType::Directory);
+        XCTAssert( data.Listing().Count() == 21);
+        XCTAssert( "root"s == data.EntryAtSortPosition(11).Name() );
+        XCTAssert( "var"s == data.EntryAtSortPosition(18).Name() );
+        XCTAssert( "initrd.img"s == data.EntryAtSortPosition(19).Name() );
+        XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(20).Name() );
+        
+        XCTAssert( data.EntryAtSortPosition(0).IsDir() );
+        
+        
+        VFSFilePtr file;
+        XCTAssert( host->CreateFile("/etc/debian_version", file, 0) == 0);
+        XCTAssert( file->Open( VFSFlags::OF_Read ) == 0);
+        
+        auto cont = file->ReadFile();
+        
+        XCTAssert( cont->size() == 4 );
+        XCTAssert( memcmp(cont->data(), "8.4\n", 4) == 0);
+        
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
 
 @end

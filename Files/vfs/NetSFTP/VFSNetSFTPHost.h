@@ -28,10 +28,11 @@ public:
                    const string &_user,
                    const string &_passwd, // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
                    const string &_keypath, // full path to private key
-                   long   _port = 22);
+                   long          _port = 22,
+                   const string &_home = "");
     VFSNetSFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
     
-    const string& HomeDir() const;
+    const string& HomeDir() const; // no guarantees about trailing slash
     const string& ServerUrl() const noexcept;
     const string& User() const noexcept;
     const string& Keypath() const noexcept;

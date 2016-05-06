@@ -22,7 +22,7 @@ VFSNetSFTPHost::Connection::~Connection()
     }
     
     if(ssh) {
-        libssh2_session_disconnect(ssh, "Farewell from Files!");
+        libssh2_session_disconnect(ssh, "Farewell from Nimble Commander!");
         libssh2_session_free(ssh);
         ssh = nullptr;
     }
@@ -67,6 +67,7 @@ public:
     string keypath;
     string verbose; // cached only. not counted in operator ==
     long   port;
+    string home; // optional ftp ssh servers, mandatory for sftp-only servers
     
     const char *Tag() const
     {
@@ -84,7 +85,8 @@ public:
                user       == _rhs.user &&
                passwd     == _rhs.passwd &&
                keypath    == _rhs.keypath &&
-               port       == _rhs.port;
+               port       == _rhs.port &&
+               home       == _rhs.home;
     }
     
     const char *VerboseJunction() const
@@ -121,7 +123,8 @@ static VFSConfiguration ComposeConfguration(const string &_serv_url,
                                             const string &_user,
                                             const string &_passwd,
                                             const string &_keypath,
-                                            long   _port)
+                                            long   _port,
+                                            const string &_home)
 {
     VFSNetSFTPHostConfiguration config;
     config.server_url = _serv_url;
@@ -130,6 +133,7 @@ static VFSConfiguration ComposeConfguration(const string &_serv_url,
     config.keypath = _keypath;
     config.port = _port;
     config.verbose = "sftp://"s + config.user + "@" + config.server_url;
+    config.home = _home;
     return VFSConfiguration( move(config) );
 }
 
@@ -137,9 +141,10 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
                                const string &_user,
                                const string &_passwd,
                                const string &_keypath,
-                               long   _port):
+                               long   _port,
+                               const string &_home):
     VFSHost(_serv_url.c_str(), nullptr, Tag),
-    m_Config( ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port))
+    m_Config( ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port, _home))
 {    
     int rc = DoInit();
     if(rc < 0)
@@ -166,31 +171,45 @@ int VFSNetSFTPHost::DoInit()
     if(rc != 0)
         return rc;
     
-    LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(conn->ssh);
-    if(channel == nullptr)
-        return VFSError::NetSFTPErrorSSH;
-    
-    rc = libssh2_channel_exec(channel, "pwd");
-    if(rc < 0) {
-        libssh2_channel_close(channel);
-        libssh2_channel_free(channel);
-        return VFSError::NetSFTPErrorSSH;
-    }
-    
-    char buffer[MAXPATHLEN];
-    rc = (int)libssh2_channel_read( channel, buffer, sizeof(buffer) );
-    libssh2_channel_close(channel);
-    libssh2_channel_free(channel);
-    
-    if( rc <= 0 )
-        return VFSError::NetSFTPErrorSSH;
-    buffer[rc - 1] = 0;
-    
-    m_HomeDir = buffer;
-    
     rc = SpawnSFTP(conn);
     if(rc < 0)
         return rc;
+    
+    if( !Config().home.empty() ) {
+        // user specified an initial path - just use it
+        m_HomeDir = Config().home;
+    }
+    else {
+        // firstly try to simulate "pwd" by using readlink() on relative "." path using regular sftp
+        char buffer[MAXPATHLEN];
+        rc = libssh2_sftp_realpath(conn->sftp, ".", buffer, MAXPATHLEN);
+        if( rc >= 0  && buffer[0]=='/' ) {
+            m_HomeDir = buffer;
+        }
+        else {
+            // otherwise - use workaround with ssh commands execution - exec "pwd" on remote server. this will not work on sftp-only servers (with ssh disabled)
+            LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(conn->ssh);
+            if(channel == nullptr)
+                return VFSError::NetSFTPErrorSSH;
+            
+            rc = libssh2_channel_exec(channel, "pwd");
+            if(rc < 0) {
+                libssh2_channel_close(channel);
+                libssh2_channel_free(channel);
+                return VFSError::NetSFTPErrorSSH;
+            }
+            
+            rc = (int)libssh2_channel_read( channel, buffer, sizeof(buffer) );
+            libssh2_channel_close(channel);
+            libssh2_channel_free(channel);
+            
+            if( rc <= 0 )
+                return VFSError::NetSFTPErrorSSH;
+            buffer[rc - 1] = 0;
+            
+            m_HomeDir = buffer;
+        }
+    }
     
     ReturnConnection(move(conn));
     

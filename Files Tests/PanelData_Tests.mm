@@ -50,10 +50,11 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 
 - (void)testBasic
 {
-    auto listing = ProduceDummyListing({@"..",
-                                        @"some filename",
-                                        @"another filename",
-                                        @"even written with какие-то буквы"});
+    NSString* strings[] = { @"..",
+                            @"some filename",
+                            @"another filename",
+                            @"even written with какие-то буквы" };
+    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
     
     PanelData data;
     data.Load(listing, PanelData::PanelType::Directory);
@@ -75,10 +76,11 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 
 - (void)testSortingWithCases
 {
-    auto listing = ProduceDummyListing({@"аааа",
-                                        @"бббб",
-                                        @"АААА",
-                                        @"ББББ"});
+    NSString* strings[] = { @"аааа",
+                            @"бббб",
+                            @"АААА",
+                            @"ББББ" };
+    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
 
     PanelData data;
     auto sorting = data.SortMode();
@@ -103,7 +105,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 - (void)testHardFiltering
 {
     // just my home dir below
-    auto listing = ProduceDummyListing({@"..",
+    NSString* strings[] = {@"..",
         @".cache",
         @"АААА",
         @"ББББ",
@@ -132,11 +134,12 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
         @"Music",
         @"Pictures",
         @"Public"
-    });
+    };
+    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
     
     auto empty_listing = VFSListing::EmptyListing();
     
-    auto almost_empty_listing = ProduceDummyListing({@"какой-то файл"});
+    auto almost_empty_listing = ProduceDummyListing(vector<NSString*>(1, @"какой-то файл"));
     
     PanelData data;
     PanelSortMode sorting = data.SortMode();

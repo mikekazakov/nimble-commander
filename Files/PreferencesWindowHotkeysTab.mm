@@ -162,10 +162,10 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 - (IBAction)OnDefaults:(id)sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to reset hotkeys to defaults?",
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset hotkeys to defaults?",
                                                    @"Preferences",
                                                    "Message text asking if user really wants to reset hotkeys to defaults");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom set hotkeys.",
+    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
                                                        @"Preferences",
                                                        "Informative text when user wants to reset hotkeys to defaults");
     [alert addButtonWithTitle:NSLocalizedString(@"OK","")];

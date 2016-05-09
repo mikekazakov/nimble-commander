@@ -514,7 +514,7 @@ static NSString *ExtractCopyToName(const string&_s)
                                    initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create directory", @"Operations", "Error sheet prompt on dir creation")];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create a directory", @"Operations", "Error sheet prompt on dir creation")];
     [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     [self EnqueueDialog:alert];
     
@@ -540,7 +540,7 @@ static NSString *ExtractCopyToName(const string&_s)
                                    initRetrySkipSkipAllAbortHide:!self.isSingleFileCopy];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to open destination file", @"Operations", "Title on error when destination file can't be opened")];
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to open a destination file", @"Operations", "Title on error when destination file can't be opened")];
     [alert SetInformativeText:[self buildInformativeStringForError:_error onPath:_path]];
     
     [self EnqueueDialog:alert];

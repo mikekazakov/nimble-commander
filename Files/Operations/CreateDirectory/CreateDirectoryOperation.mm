@@ -63,7 +63,7 @@ static NSString *OperationTitleFromPath(const char *_path)
                                    initRetrySkipSkipAllAbortHide:NO];
     
     [alert SetAlertStyle:NSCriticalAlertStyle];
-    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create directory",
+    [alert SetMessageText:NSLocalizedStringFromTable(@"Failed to create a directory",
                                                      @"Operations",
                                                      "Error dialog title on directory creating failure")];
     [alert SetInformativeText:[NSString stringWithFormat:NSLocalizedStringFromTable(@"Error: %@\nPath: %@",

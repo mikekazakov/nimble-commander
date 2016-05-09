@@ -61,10 +61,10 @@
 - (IBAction)OnFSAccessReset:(id)sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to reset granted filesystem access?",
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset granted filesystem access?",
                                                    @"Preferences",
                                                    "Message text asking if user really wants to reset current file system access");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Nimble Commander to ask you for access upon need.",
+    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Nimble Commander to ask you for access when necessary.",
                                                        @"Preferences",
                                                        "Informative text saying that Nimble Commander will ask for filesystem access when need it");
     [alert addButtonWithTitle:NSLocalizedString(@"OK","")];

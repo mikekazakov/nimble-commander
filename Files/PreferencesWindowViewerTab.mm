@@ -123,12 +123,12 @@ static const auto g_ConfigClassicFont     = "viewer.classic.font";
 - (IBAction)ClearHistory:(id)sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(@"Are you sure want to clear saved file states?",
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to clear saved file states?",
                                                    @"Preferences",
                                                    "Message text asking if user really wants to clear saved viewer file states");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will erase stored positions, encodings, selections etc.",
+    alert.informativeText = NSLocalizedStringFromTable(@"This will erase stored positions, encodings, selections, etc.",
                                                        @"Preferences",
-                                                       "Informative text when asking user to clear saved file state");
+                                                       "Informative text displayed when the user is going to clear saved file state");
     [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];

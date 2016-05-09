@@ -133,7 +133,7 @@
 
 /* Error dialog title on directory creating failure
    Error sheet prompt on dir creation */
-"Failed to create directory" = "Не удалось создать папку";
+"Failed to create a directory" = "Не удалось создать папку";
 
 /* Error dialog title when can't delete a directory */
 "Failed to delete a directory" = "Не удалось удалить папку";
@@ -145,7 +145,7 @@
 "Failed to move an item to Trash" = "Не удалось переместить объект в Корзину";
 
 /* Title on error when destination file can't be opened */
-"Failed to open destination file" = "Не удалось открыть целевой файл";
+"Failed to open a destination file" = "Не удалось открыть целевой файл";
 
 /* Error dialog title on chflags failure */
 "Failed to perform chflags" = "Не удалось выполнить chflags";

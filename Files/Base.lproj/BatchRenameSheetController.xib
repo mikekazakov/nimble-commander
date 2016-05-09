@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BatchRenameSheetController">
@@ -39,11 +38,11 @@
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RV2-6w-I75">
                         <rect key="frame" x="20" y="61" width="561" height="220"/>
                         <clipView key="contentView" id="Dto-5V-GUq">
-                            <rect key="frame" x="1" y="17" width="238" height="117"/>
+                            <rect key="frame" x="1" y="0.0" width="559" height="219"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="W7g-Hk-VQP" viewBased="YES" id="C9n-Is-tq6">
-                                    <rect key="frame" x="0.0" y="0.0" width="643" height="0.0"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="693" height="196"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -135,7 +134,7 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <tableHeaderView key="headerView" id="W7g-Hk-VQP">
-                            <rect key="frame" x="0.0" y="0.0" width="238" height="17"/>
+                            <rect key="frame" x="0.0" y="0.0" width="693" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
@@ -278,7 +277,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XbC-0N-Ybp">
-                        <rect key="frame" x="223" y="352" width="76" height="14"/>
+                        <rect key="frame" x="223" y="351" width="75" height="14"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Replace with:" id="q54-cJ-xHR">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -286,7 +285,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kch-iv-6zs">
-                        <rect key="frame" x="223" y="377" width="76" height="14"/>
+                        <rect key="frame" x="223" y="376" width="75" height="14"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search for:" id="hnA-ag-UoB">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -294,7 +293,7 @@
                         </textFieldCell>
                     </textField>
                     <comboBox toolTip="^S" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SI4-vS-Egd">
-                        <rect key="frame" x="300" y="372" width="116" height="26"/>
+                        <rect key="frame" x="299" y="372" width="117" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="V20-pX-rlP"/>
                         </constraints>
@@ -310,7 +309,7 @@
                         </connections>
                     </comboBox>
                     <comboBox toolTip="^W" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RBI-rU-SES">
-                        <rect key="frame" x="300" y="347" width="116" height="26"/>
+                        <rect key="frame" x="299" y="347" width="117" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="HMn-or-k2K"/>
                         </constraints>
@@ -335,7 +334,7 @@
                         <font key="titleFont" metaFont="system"/>
                     </box>
                     <button toolTip="^L" translatesAutoresizingMaskIntoConstraints="NO" id="LEA-CX-gfa">
-                        <rect key="frame" x="242" y="332" width="36" height="18"/>
+                        <rect key="frame" x="244" y="332" width="36" height="18"/>
                         <buttonCell key="cell" type="check" title="Aa" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="KaF-N0-6UU">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -346,7 +345,7 @@
                         </connections>
                     </button>
                     <button toolTip="^O" translatesAutoresizingMaskIntoConstraints="NO" id="0yW-rZ-IWN">
-                        <rect key="frame" x="281" y="332" width="35" height="18"/>
+                        <rect key="frame" x="283" y="332" width="34" height="18"/>
                         <buttonCell key="cell" type="check" title="1x" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="Hbd-mI-Y1C">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -357,7 +356,7 @@
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="Q1g-bb-QBM">
-                        <rect key="frame" x="319" y="332" width="36" height="18"/>
+                        <rect key="frame" x="320" y="332" width="37" height="18"/>
                         <buttonCell key="cell" type="check" title="[E]" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="AXs-d3-i6C">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -368,7 +367,7 @@
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="wTa-vH-MEJ">
-                        <rect key="frame" x="358" y="332" width="57" height="18"/>
+                        <rect key="frame" x="360" y="332" width="55" height="18"/>
                         <buttonCell key="cell" type="check" title="RegEx" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="r4R-K5-WtL">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -420,7 +419,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EVu-PB-uIn">
-                        <rect key="frame" x="428" y="376" width="49" height="14"/>
+                        <rect key="frame" x="428" y="377" width="48" height="14"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Start at:" id="DHj-ql-rAa">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -428,7 +427,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hC6-px-Drj">
-                        <rect key="frame" x="483" y="374" width="77" height="22"/>
+                        <rect key="frame" x="482" y="374" width="78" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="zXw-db-2CM">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -455,7 +454,7 @@
                         </connections>
                     </stepper>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AjF-Fc-xi5">
-                        <rect key="frame" x="428" y="349" width="49" height="14"/>
+                        <rect key="frame" x="428" y="350" width="48" height="14"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Step by:" id="CJg-T2-ViQ">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -471,7 +470,7 @@
                         </connections>
                     </stepper>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NX6-my-Ja7">
-                        <rect key="frame" x="481" y="318" width="82" height="26"/>
+                        <rect key="frame" x="480" y="318" width="83" height="26"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="uSn-uG-JW4">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -496,7 +495,7 @@
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q35-59-7UF">
-                        <rect key="frame" x="428" y="324" width="49" height="14"/>
+                        <rect key="frame" x="428" y="324" width="48" height="14"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Digits:" id="GXj-Bq-G3p">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -504,7 +503,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cC1-qI-LZv">
-                        <rect key="frame" x="483" y="347" width="77" height="22"/>
+                        <rect key="frame" x="482" y="347" width="78" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="DQR-D5-Ed2">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -527,7 +526,7 @@
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="5D9-DQ-UPX"/>
                         </constraints>
-                        <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21D-xw-gDg">
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21D-xw-gDg">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -559,7 +558,7 @@ Gw
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="EZL-Q4-lw0">
-                        <rect key="frame" x="231" y="287" width="36" height="18"/>
+                        <rect key="frame" x="230" y="287" width="37" height="18"/>
                         <buttonCell key="cell" type="check" title="[E]" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="ql9-1w-xJV">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="smallSystem"/>
@@ -694,43 +693,43 @@ Gw
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="aPu-jk-emA"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Nx] xth character of the name" tag="102" id="kfE-p8-aQp">
+                            <menuItem title="[Nx] The xth character of the name" tag="102" id="kfE-p8-aQp">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="9TQ-jO-dJL"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Nx-y] Characters x to y" tag="103" id="0ZZ-ek-ffd">
+                            <menuItem title="[Nx-y] Characters from the xth to the yth" tag="103" id="0ZZ-ek-ffd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="V81-rT-d9o"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Nx,y] y characters starting at character x" tag="104" id="c6B-wg-whY">
+                            <menuItem title="[Nx,y] y characters starting from the xth" tag="104" id="c6B-wg-whY">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="mEC-2w-tCB"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Nx-] Characters starting at character x" tag="105" id="tHH-ES-kVx">
+                            <menuItem title="[Nx-] Characters starting from the xth" tag="105" id="tHH-ES-kVx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="kEa-hA-gKv"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[N0x-y] Characters x-y, padding with zeroes" tag="106" id="5PB-nw-ruW">
+                            <menuItem title="[N0x-y] Characters from the xth to the yth, padded with zeros" tag="106" id="5PB-nw-ruW">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="iZL-nO-mhD"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[N x-y] Characters x-y, padding with spaces" tag="107" id="gxe-Qo-9SB">
+                            <menuItem title="[N x-y] Characters from the xth to the yth, padded with spaces" tag="107" id="gxe-Qo-9SB">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="nMI-S2-9ld"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[N-x,y] y characters starting at the x-last character" tag="108" id="M2c-fE-A0U">
+                            <menuItem title="[N-x,y] y characters starting from the xth-last" tag="108" id="M2c-fE-A0U">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="aPZ-gx-Fab"/>
@@ -742,13 +741,13 @@ Gw
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="OL6-5G-jQP"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Nx--y] Characters from the x to the y-last character" tag="110" id="69b-el-fdg">
+                            <menuItem title="[Nx--y] Characters from the xth to the yth-last" tag="110" id="69b-el-fdg">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="McY-si-c7W"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[N-x-] Characters from the x-last character" tag="111" id="7zz-h6-nzq">
+                            <menuItem title="[N-x-] Characters starting from the xth-last" tag="111" id="7zz-h6-nzq">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="mdW-Pq-dC4"/>
@@ -773,55 +772,55 @@ Gw
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="eHr-h8-9ix"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Ex-y] Characters x to y" tag="203" id="Zbw-tQ-Old">
+                            <menuItem title="[Ex-y] Characters from the xth to the yth" tag="203" id="Zbw-tQ-Old">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="1Om-kR-UJ9"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Ex,y] y characters starting at character x" tag="204" id="tLd-t3-eny">
+                            <menuItem title="[Ex,y] y characters starting from the xth" tag="204" id="tLd-t3-eny">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="zk8-27-dZj"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Ex-] Characters starting at character x" tag="205" id="G5S-W3-9F5">
+                            <menuItem title="[Ex-] Characters starting from the xth" tag="205" id="G5S-W3-9F5">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Lge-ci-LEo"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[E0x-y] Characters x-y, padding with zeroes" tag="206" id="5OS-Hh-oit">
+                            <menuItem title="[E0x-y] Characters from the xth to the yth, padded with zeros" tag="206" id="5OS-Hh-oit">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="k2v-Mq-l72"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[E x-y] Characters x-y, padding with spaces" tag="207" id="sCN-Ho-nlG">
+                            <menuItem title="[E x-y] Characters from the xth to the yth, padded with spaces" tag="207" id="sCN-Ho-nlG">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="A89-3q-a01"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[E-x,y] y characters starting at the x-last character" tag="208" id="s97-nv-BwD">
+                            <menuItem title="[E-x,y] y characters starting from the xth-last" tag="208" id="s97-nv-BwD">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="VDm-2A-NU7"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[E-x-y] Characters from the x-last to the y-last character" tag="209" id="kay-ak-msL">
+                            <menuItem title="[E-x-y] Characters from the xth-last to the yth-last" tag="209" id="kay-ak-msL">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="PuI-Bf-Ncm"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Ex--y] Characters from the x to the y-last character" tag="210" id="nwO-dk-fvy">
+                            <menuItem title="[Ex--y] Characters from the xth to the yth-last" tag="210" id="nwO-dk-fvy">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="q8p-kn-9bB"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[E-x-] Characters from the x-last character" tag="211" id="ekj-0V-KuY">
+                            <menuItem title="[E-x-] Characters starting from the xth-last" tag="211" id="ekj-0V-KuY">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="6e2-Cy-K7A"/>
@@ -840,25 +839,25 @@ Gw
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Dfm-KQ-SdC"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[Y] Year in 4 digit form" tag="302" id="SsN-Yk-hdY">
+                            <menuItem title="[Y] Year in 4-digit format" tag="302" id="SsN-Yk-hdY">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="jNR-z3-5ic"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[y] Year in 2 digit form" tag="303" id="EzQ-Su-4rt">
+                            <menuItem title="[y] Year in 2-digit format" tag="303" id="EzQ-Su-4rt">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="wR6-RP-QfI"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[M] Month in 2 digit form" tag="304" id="8b6-Qd-Tet">
+                            <menuItem title="[M] Month in 2-digit format" tag="304" id="8b6-Qd-Tet">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="sI4-bf-Up8"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[D] Day in 2 digit form" tag="305" id="Mli-E6-Dh0">
+                            <menuItem title="[D] Day in 2-digit format" tag="305" id="Mli-E6-Dh0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="cDa-6S-aUS"/>
@@ -870,19 +869,19 @@ Gw
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="7dY-WO-yvs"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[h] Hours in 2 digit 24 hour format" tag="307" id="Rke-70-QSJ">
+                            <menuItem title="[h] Hours in 2-digit, 24-hour format" tag="307" id="Rke-70-QSJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="QBO-MQ-eAN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[m] Minutes in 2 digit format" tag="308" id="aDt-Fx-JbE">
+                            <menuItem title="[m] Minutes in 2-digit format" tag="308" id="aDt-Fx-JbE">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="Uv2-1J-yLA"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="[s] Seconds in 2 digit format" tag="309" id="7gT-UX-y3n">
+                            <menuItem title="[s] Seconds in 2-digit format" tag="309" id="7gT-UX-y3n">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnInsertPlaceholderFromMenu:" target="-2" id="FyM-Zn-MtV"/>
@@ -985,7 +984,7 @@ Gw
                     </menu>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="120.5" y="587.5"/>
+            <point key="canvasLocation" x="-58" y="332.5"/>
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="b3n-jr-NTb"/>
     </objects>

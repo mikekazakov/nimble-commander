@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FileSysEntryAttrSheetController">
@@ -60,7 +60,6 @@
                 <subviews>
                     <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3mU-TJ-u4k">
                         <rect key="frame" x="0.0" y="0.0" width="469" height="100"/>
-                        <animations/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="3TG-oO-PnH"/>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="ZiI-B9-iEw"/>
@@ -73,7 +72,6 @@
                     <constraint firstAttribute="trailing" secondItem="3mU-TJ-u4k" secondAttribute="trailing" id="ro5-zP-aSI"/>
                     <constraint firstItem="3mU-TJ-u4k" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="xBF-ry-ras"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
@@ -88,7 +86,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="rQL-7O-cfP"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Owner:" id="11">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -100,7 +97,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="LNw-d9-nXx"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Group:" id="17">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -112,7 +108,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="55" id="b9T-bQ-hcC"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Others:" id="23">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -121,7 +116,6 @@
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="27">
                     <rect key="frame" x="68" y="72" width="35" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Read" id="28">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -130,7 +124,6 @@
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="57">
                     <rect key="frame" x="81" y="28" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="59">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -141,7 +134,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="64">
                     <rect key="frame" x="81" y="8" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="65">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -152,7 +144,6 @@
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="73">
                     <rect key="frame" x="101" y="72" width="37" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Write" id="82">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -161,7 +152,6 @@
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="74">
                     <rect key="frame" x="108" y="48" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="80">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -172,7 +162,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="75">
                     <rect key="frame" x="108" y="28" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="78">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -183,7 +172,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="76">
                     <rect key="frame" x="108" y="8" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="77">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -194,7 +182,6 @@
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="113">
                     <rect key="frame" x="135" y="72" width="33" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Exec" id="121">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -203,7 +190,6 @@
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="114">
                     <rect key="frame" x="135" y="48" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="119">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -214,7 +200,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="115">
                     <rect key="frame" x="135" y="28" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="118">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -225,7 +210,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="116">
                     <rect key="frame" x="135" y="8" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="117">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -239,7 +223,6 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="200" id="LK1-0G-flG"/>
                     </constraints>
-                    <animations/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="426" id="424">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -257,7 +240,6 @@
                 </popUpButton>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="444">
                     <rect key="frame" x="200" y="46" width="48" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Owner:" id="445">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -269,7 +251,6 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="200" id="ZnJ-WP-PKq"/>
                     </constraints>
-                    <animations/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="459" id="455">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -287,7 +268,6 @@
                 </popUpButton>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="452">
                     <rect key="frame" x="202" y="15" width="46" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Group:" id="453">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -299,7 +279,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="4HR-nr-1OR"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="center" title="___________" id="1313">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -308,7 +287,6 @@
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="31">
                     <rect key="frame" x="81" y="48" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" inset="2" id="32">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -319,7 +297,6 @@
                 </button>
                 <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="HSK-ed-z2N">
                     <rect key="frame" x="0.0" y="-2" width="469" height="5"/>
-                    <animations/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
@@ -379,7 +356,6 @@
                 <constraint firstItem="116" firstAttribute="leading" secondItem="76" secondAttribute="trailing" constant="9" id="yv0-wl-NpS"/>
                 <constraint firstItem="10" firstAttribute="leading" secondItem="PJW-t5-Gvv" secondAttribute="leading" constant="20" symbolic="YES" id="zh1-Gu-6eK"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="181.5" y="220"/>
         </customView>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="yEq-vZ-i2Z" userLabel="Middle">
@@ -390,7 +366,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="pbS-Wk-ZfH"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="User immutable" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="171">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -404,7 +379,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Y0R-LJ-swb"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Opaque" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="198">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -418,7 +392,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="II7-el-w2B"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="No dump" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="220">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -429,7 +402,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="225">
                     <rect key="frame" x="226" y="127" width="66" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Hidden" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="226">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -443,7 +415,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="i1a-YV-264"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="User append-only" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="238">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -454,7 +425,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="250">
                     <rect key="frame" x="226" y="107" width="76" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Archived" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="251">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -465,7 +435,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="260">
                     <rect key="frame" x="226" y="87" width="134" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="System immutable" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="261">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -476,7 +445,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="304">
                     <rect key="frame" x="226" y="67" width="148" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="System append-only" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="305">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -490,7 +458,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="UI1-Dc-lMh"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Sticky" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="475">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -504,7 +471,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="0Rj-4i-s7r"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Set UID on execution" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="513">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -518,7 +484,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="IY9-EP-e5c"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Set GID on execution" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="525">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -532,7 +497,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Ow6-CG-CIH"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="User compressed" bezelStyle="regularSquare" imagePosition="left" enabled="NO" allowsMixedState="YES" inset="2" id="eue-2Z-nXq">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -543,7 +507,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="P29-hD-cUl"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="User tracked" bezelStyle="regularSquare" imagePosition="left" allowsMixedState="YES" inset="2" id="hRc-N9-NhG">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -554,7 +517,6 @@
                 </button>
                 <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="dMG-1I-d6L">
                     <rect key="frame" x="0.0" y="-2" width="479" height="5"/>
-                    <animations/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
@@ -593,7 +555,6 @@
                 <constraint firstItem="ASx-2K-dy2" firstAttribute="top" secondItem="zd2-GC-23k" secondAttribute="bottom" constant="6" symbolic="YES" id="x2t-gF-gaZ"/>
                 <constraint firstItem="zd2-GC-23k" firstAttribute="top" secondItem="237" secondAttribute="bottom" constant="6" symbolic="YES" id="zBE-Qe-FhR"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="192.5" y="433"/>
         </customView>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xZz-xg-Gyb" userLabel="Bottom">
@@ -604,16 +565,14 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="lPu-Xi-kr5"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Access time:" id="623">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="841">
+                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="841">
                     <rect key="frame" x="137" y="81" width="139" height="22"/>
-                    <animations/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="842">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -633,16 +592,14 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="E68-2S-HpR"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Modify time:" id="1016">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
+                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
                     <rect key="frame" x="137" y="56" width="139" height="22"/>
-                    <animations/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1014">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -657,9 +614,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1214"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
+                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
                     <rect key="frame" x="273" y="49" width="53" height="32"/>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1011">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -673,16 +629,14 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="AW5-LS-GlS"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Change time:" id="1041">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
+                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
                     <rect key="frame" x="137" y="31" width="139" height="22"/>
-                    <animations/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1040">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -697,9 +651,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1215"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
+                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
                     <rect key="frame" x="273" y="24" width="53" height="32"/>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1038">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -713,16 +666,14 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="DC2-S9-Lfx"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Create time:" id="1066">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
+                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
                     <rect key="frame" x="137" y="6" width="139" height="22"/>
-                    <animations/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1065">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -737,9 +688,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1216"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
+                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
                     <rect key="frame" x="273" y="-1" width="53" height="32"/>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1063">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -750,14 +700,12 @@
                 </button>
                 <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="413-Br-NX9">
                     <rect key="frame" x="0.0" y="-2" width="457" height="5"/>
-                    <animations/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
                 </box>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="SLV-zf-H18">
                     <rect key="frame" x="116" y="83" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cj3-dq-s1k">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -768,7 +716,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="H0F-tU-vNy">
                     <rect key="frame" x="116" y="58" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ghQ-tC-7CM">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -779,7 +726,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="5S9-cb-QMV">
                     <rect key="frame" x="116" y="33" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Xdk-Ja-TIT">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -790,7 +736,6 @@
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="DCg-kF-lJg">
                     <rect key="frame" x="116" y="8" width="22" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="daQ-Hg-oic">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -799,9 +744,8 @@
                         <action selector="OnTimePickerEnabled:" target="-2" id="nwv-tz-vkl"/>
                     </connections>
                 </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="967">
+                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="967">
                     <rect key="frame" x="273" y="74" width="53" height="32"/>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="969">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -849,7 +793,6 @@
                 <constraint firstAttribute="trailing" secondItem="413-Br-NX9" secondAttribute="trailing" id="xex-1N-Rlj"/>
                 <constraint firstItem="H0F-tU-vNy" firstAttribute="baseline" secondItem="1006" secondAttribute="baseline" id="yls-0e-XzC"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="187.5" y="637.5"/>
         </customView>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="SAz-B5-BKp" userLabel="Footer">
@@ -860,7 +803,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="zN1-8a-FMk"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -877,7 +819,6 @@ Gw
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="4aB-iZ-KIE"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1219">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -891,7 +832,6 @@ DQ
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="1173">
                     <rect key="frame" x="18" y="18" width="138" height="25"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Process subfolders" bezelStyle="regularSquare" imagePosition="left" inset="2" id="1174">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -912,7 +852,6 @@ DQ
                 <constraint firstItem="1173" firstAttribute="leading" secondItem="SAz-B5-BKp" secondAttribute="leading" constant="20" symbolic="YES" id="tgv-CQ-ivi"/>
                 <constraint firstItem="1218" firstAttribute="top" secondItem="SAz-B5-BKp" secondAttribute="top" constant="20" symbolic="YES" id="uwb-UR-zlS"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="195.5" y="777.5"/>
         </customView>
     </objects>

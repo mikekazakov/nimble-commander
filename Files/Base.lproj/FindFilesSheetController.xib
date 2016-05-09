@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
         <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
@@ -44,7 +44,6 @@
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="oih-vi-Gq4"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PmQ-cC-ryL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -62,7 +61,6 @@ Gw
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="sIp-wL-3ye"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Search" alternateTitle="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oef-aB-x9Q">
                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -85,7 +83,6 @@ DQ
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Jgw-jU-GMB" id="03U-A8-eOk">
                                     <rect key="frame" x="0.0" y="0.0" width="580" height="193"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <animations/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
@@ -169,32 +166,26 @@ DQ
                                     </connections>
                                 </tableView>
                             </subviews>
-                            <animations/>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="0bK-VO-BgC"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="DfM-Id-RDi"/>
                         </constraints>
-                        <animations/>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="gwe-dh-VW0">
                             <rect key="frame" x="1" y="197" width="493" height="15"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="tIw-km-z9S">
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </scroller>
                         <tableHeaderView key="headerView" id="Jgw-jU-GMB">
                             <rect key="frame" x="0.0" y="0.0" width="580" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <animations/>
                         </tableHeaderView>
                     </scrollView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-6C-oal">
                         <rect key="frame" x="18" y="23" width="70" height="14"/>
-                        <animations/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Items found:" id="z2i-rD-QXz">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -213,7 +204,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="ebZ-84-wma"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="___" id="f8y-fY-ZzM">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -233,7 +223,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="LbT-45-6a9"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="View" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cjR-hz-P7N">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -255,9 +244,8 @@ DQ
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
-                                    <rect key="frame" x="83" y="148" width="164" height="17"/>
-                                    <animations/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for files with mask:" id="R8e-FO-aEj">
+                                    <rect key="frame" x="76" y="148" width="171" height="17"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for files using mask:" id="R8e-FO-aEj">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -265,7 +253,6 @@ DQ
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
                                     <rect key="frame" x="147" y="88" width="100" height="17"/>
-                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -274,7 +261,6 @@ DQ
                                 </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="fhx-Hf-f7j">
                                     <rect key="frame" x="256" y="47" width="98" height="18"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="check" title="Case sensitive" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="pbB-zt-FTQ">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -290,7 +276,6 @@ DQ
                                 </button>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="aZ1-vD-r1s">
                                     <rect key="frame" x="256" y="31" width="95" height="18"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="check" title="Whole phrase" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="HbZ-P4-Wk5">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -309,7 +294,6 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="40" id="7D2-hn-HzF"/>
                                     </constraints>
-                                    <animations/>
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fPn-ZK-SEq">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
@@ -338,7 +322,6 @@ DQ
                                 </popUpButton>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTz-uI-fN2">
                                     <rect key="frame" x="367" y="2" width="57" height="26"/>
-                                    <animations/>
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
@@ -370,7 +353,6 @@ DQ
                                 </popUpButton>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-0P-f1V">
                                     <rect key="frame" x="183" y="7" width="64" height="17"/>
-                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="With size:" id="YVt-Nt-3dl">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -379,7 +361,6 @@ DQ
                                 </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="cVD-9V-sOV">
                                     <rect key="frame" x="256" y="113" width="136" height="18"/>
-                                    <animations/>
                                     <buttonCell key="cell" type="check" title="Search for directories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="ia5-oC-fH7">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -394,9 +375,8 @@ DQ
                                     </connections>
                                 </button>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="JW2-j0-Voo">
-                                    <rect key="frame" x="256" y="129" width="144" height="18"/>
-                                    <animations/>
-                                    <buttonCell key="cell" type="check" title="Look in sub-directories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
+                                    <rect key="frame" x="256" y="129" width="139" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Look in subdirectories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
@@ -414,7 +394,6 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="164" id="SHk-od-8tK"/>
                                     </constraints>
-                                    <animations/>
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="s7I-69-JHa">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -431,7 +410,6 @@ DQ
                                 </popUpButton>
                                 <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o7G-2J-2qr">
                                     <rect key="frame" x="585" y="1" width="16" height="16"/>
-                                    <animations/>
                                     <connections>
                                         <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
                                     </connections>
@@ -441,7 +419,6 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
                                     </constraints>
-                                    <animations/>
                                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" numberOfVisibleItems="10" id="QoT-rJ-7t8">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -458,8 +435,7 @@ DQ
                                 </comboBox>
                                 <comboBox toolTip="^T" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CJi-sh-esy">
                                     <rect key="frame" x="253" y="84" width="245" height="26"/>
-                                    <animations/>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Type here a desired text to search" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="17I-3a-9vx">
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="17I-3a-9vx">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -478,7 +454,6 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="60" id="eMz-Z8-F2u"/>
                                     </constraints>
-                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="2dl-Rj-gsT">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -494,7 +469,6 @@ DQ
                                     </connections>
                                 </textField>
                             </subviews>
-                            <animations/>
                         </view>
                         <constraints>
                             <constraint firstItem="CJi-sh-esy" firstAttribute="baseline" secondItem="O0G-eo-ej9" secondAttribute="baseline" id="1QD-Z8-tST"/>
@@ -531,13 +505,11 @@ DQ
                             <constraint firstItem="fhx-Hf-f7j" firstAttribute="top" secondItem="ddq-vO-Myl" secondAttribute="bottom" constant="4" id="vdb-Tu-tMI"/>
                             <constraint firstItem="4kJ-ln-DDa" firstAttribute="leading" secondItem="jb7-tj-7W9" secondAttribute="trailing" constant="8" symbolic="YES" id="ya6-rA-MeF"/>
                         </constraints>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </box>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
                         <rect key="frame" x="18" y="41" width="586" height="14"/>
-                        <animations/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingHead" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" id="vQs-jd-jZW">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -549,7 +521,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ShV-Hs-brh"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Go To" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wf8-iS-Nke">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -569,7 +540,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Frc-uX-PD0"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Panel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a08-QI-zeL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -610,7 +580,6 @@ DQ
                     <constraint firstItem="WmK-6C-oal" firstAttribute="top" secondItem="VVb-jD-bRB" secondAttribute="bottom" constant="4" id="zSk-yB-P5W"/>
                     <constraint firstItem="VVb-jD-bRB" firstAttribute="leading" secondItem="axX-0L-v6g" secondAttribute="leading" id="zsS-VA-bSD"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="initialFirstResponder" destination="4kJ-ln-DDa" id="sXp-iX-M7j"/>

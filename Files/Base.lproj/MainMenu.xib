@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -370,38 +370,38 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Sorting" id="862">
                                     <items>
-                                        <menuItem title="Sort By Name" tag="13090" keyEquivalent="" id="864">
+                                        <menuItem title="Sort by Name" tag="13090" keyEquivalent="" id="864">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleSortByName:" target="-1" id="871"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort By Extention" tag="13100" keyEquivalent="" id="865">
+                                        <menuItem title="Sort by Extention" tag="13100" keyEquivalent="" id="865">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleSortByExt:" target="-1" id="873"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort By Modify Time" tag="13110" keyEquivalent="" id="866">
+                                        <menuItem title="Sort by Modified Time" tag="13110" keyEquivalent="" id="866">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleSortByMTime:" target="-1" id="876"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort By Size" tag="13120" keyEquivalent="" id="867">
+                                        <menuItem title="Sort by Size" tag="13120" keyEquivalent="" id="867">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleSortBySize:" target="-1" id="877"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort By Creation Time" tag="13130" keyEquivalent="" id="868">
+                                        <menuItem title="Sort by Creation Time" tag="13130" keyEquivalent="" id="868">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                             <connections>
                                                 <action selector="ToggleSortByBTime:" target="-1" id="875"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="878"/>
-                                        <menuItem title="Separate Folders From Files" tag="13150" id="870">
+                                        <menuItem title="Separate Folders from Files" tag="13150" id="870">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSeparateFoldersFromFiles:" target="-1" id="874"/>
@@ -676,23 +676,23 @@ DQ
                                     <action selector="OnCopyCurrentFilePath:" target="-1" id="cyu-Ac-y7x"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Select With Mask..." tag="15050" keyEquivalent="=" id="916">
+                            <menuItem title="Select by Mask..." tag="15050" keyEquivalent="=" id="916">
                                 <connections>
                                     <action selector="OnSelectByMask:" target="-1" id="919"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Select With Extension" tag="15051" alternate="YES" id="SXp-Fg-ClM">
+                            <menuItem title="Select by Extension" tag="15051" alternate="YES" id="SXp-Fg-ClM">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnQuickSelectByExtension:" target="-1" id="rys-q4-hpT"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Deselect With Mask..." tag="15060" keyEquivalent="-" id="920">
+                            <menuItem title="Deselect by Mask..." tag="15060" keyEquivalent="-" id="920">
                                 <connections>
                                     <action selector="OnDeselectByMask:" target="-1" id="922"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Deselect With Extension" tag="15061" alternate="YES" id="KwQ-7L-e5N">
+                            <menuItem title="Deselect by Extension" tag="15061" alternate="YES" id="KwQ-7L-e5N">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnQuickDeselectByExtension:" target="-1" id="yDX-6Z-PPS"/>

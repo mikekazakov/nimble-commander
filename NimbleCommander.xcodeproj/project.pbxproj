@@ -1883,17 +1883,17 @@
 			children = (
 				CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */,
 				CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */,
+				CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */,
 				CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */,
 				CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */,
+				CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */,
 				CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */,
 				CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */,
+				CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */,
 				CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */,
 				CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */,
 				CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */,
 				CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */,
-				CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */,
-				CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */,
-				CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */,
 			);
 			name = FileLinkOperation;
 			sourceTree = "<group>";

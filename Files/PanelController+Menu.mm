@@ -608,7 +608,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
         if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) ) {
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = NSLocalizedString(@"Are you sure want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
+            alert.messageText = NSLocalizedString(@"Are you sure you want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
             alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
             [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
             [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
@@ -1142,7 +1142,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     auto files = self.selectedEntriesOrFocusedEntry;
     if(files.empty())
         return;
-    NSString *stub = NSLocalizedString(@"New Folder With Items", "Name for freshly created folder by hotkey with items");
+    NSString *stub = NSLocalizedString(@"New Folder with Items", "Name for freshly created folder by hotkey with items");
     string name = stub.fileSystemRepresentationSafe;
     path dir = self.currentDirectoryPath;
     

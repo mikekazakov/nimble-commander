@@ -169,7 +169,7 @@
     }
     [cap appendString:@"."];
     dialog.informativeText = cap;
-    [dialog addButtonWithTitle:NSLocalizedString(@"Terminate And Close", "User confirmation on message box")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Terminate and Close", "User confirmation on message box")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [dialog beginSheetModalForWindow:sender.window completionHandler:^(NSModalResponse result) {
         if (result == NSAlertFirstButtonReturn)

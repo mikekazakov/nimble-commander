@@ -46,8 +46,8 @@ static spinlock                         g_InitialMaskLock;
     [super viewDidLoad];
 
     self.titleLabel.stringValue = m_DoesSelect ?
-        NSLocalizedString(@"Select files using mask:", "Title for selection with mask popup") :
-        NSLocalizedString(@"Deselect files using mask:", "Title for deselection with mask popup");
+        NSLocalizedString(@"Select files by mask:", "Title for selection by mask popup") :
+        NSLocalizedString(@"Deselect files by mask:", "Title for deselection by mask popup");
     
     m_MaskHistory = [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
     self.comboBox.usesDataSource = true;

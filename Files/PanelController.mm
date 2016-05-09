@@ -705,7 +705,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
                          _filename.length <= 256 ? _filename : [[_filename substringToIndex:256] stringByAppendingString:@"..."]
                          ];
-        a.informativeText = NSLocalizedString(@"Try using a name with fewer characters, or with no punctuation marks.", "Informative text when user is entering an invalid filename");
+        a.informativeText = NSLocalizedString(@"Try using a name with fewer characters or without punctuation marks.", "Informative text when user is entering an invalid filename");
         a.alertStyle = NSCriticalAlertStyle;
         [a runModal];
         return;

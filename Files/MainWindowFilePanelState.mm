@@ -638,9 +638,9 @@ static string ExpandPath(const string &_ref )
         return true;
     
     NSAlert *dialog = [[NSAlert alloc] init];
-    [dialog addButtonWithTitle:NSLocalizedString(@"Stop And Close", "User action to stop running actions and close window")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Stop and Close", "User action to stop running actions and close window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    dialog.messageText = NSLocalizedString(@"Window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
+    dialog.messageText = NSLocalizedString(@"The window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
     [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
         if (result == NSAlertFirstButtonReturn) {
             [m_OperationsController Stop];

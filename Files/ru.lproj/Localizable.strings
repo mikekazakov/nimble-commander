@@ -35,10 +35,10 @@
 "%s: %s available" = "%1$s: %2$s доступно";
 
 /* Asking user if he really wants to delete information about a stored connection */
-"Are you sure want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
+"Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
 
 /* Asking user for confirmation on erasing custom settings - message */
-"Are you sure want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
+"Are you sure you want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
 
 /* Asking user for confirmation for clearing recent connections
    Asking user if he want to clear recent connections */
@@ -63,7 +63,7 @@
 "Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
 
 /* Menu item title for check if any Files updates are here */
-"Check For Updates..." = "Проверить наличие обновлений...";
+"Check for Updates..." = "Проверить наличие обновлений...";
 
 /* Menu item titile for recents clearing action */
 "Clear Recent Servers..." = "Очистить последние серверы...";
@@ -72,7 +72,7 @@
 "Clear Recents" = "Очистить недавние поиски";
 
 /* Asking user for granting file system access for Files */
-"Click ’Open’ to allow access to files contained in the selected directory" = "Нажмите ’Открыть’ чтобы разрешить доступ к выбранной директории";
+"Click “Open” to allow access to files in the selected directory" = "Нажмите “Открыть” чтобы разрешить доступ к выбранной директории";
 
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
@@ -103,7 +103,7 @@
 "Delete Permanently" = "Удалить необратимо";
 
 /* Title for deselection with mask popup */
-"Deselect files using mask:" = "Снять выделение по маске:";
+"Deselect files by mask:" = "Снять выделение по маске:";
 
 /* Menu item title for disabling an admin mode */
 "Disable Admin Mode" = "Выключить режим администратора";
@@ -112,10 +112,10 @@
 "Do you want to close this window?" = "Вы хотите закрыть это окно?";
 
 /* Asking user to delete multiple files */
-"Do you wish to delete %@ items?" = "Вы хотите удалить %@ объектов?";
+"Do you want to delete %@ items?" = "Вы хотите удалить %@ объектов?";
 
 /* Asking user to delete a file */
-"Do you wish to delete “%@”?" = "Вы хотите удалить “%@”?";
+"Do you want to delete “%@”?" = "Вы хотите удалить “%@”?";
 
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
@@ -172,7 +172,7 @@
 "N/A" = "Н/Д";
 
 /* Name for freshly created folder by hotkey with items */
-"New Folder With Items" = "Новая папка с объектами";
+"New Folder with Items" = "Новая папка с объектами";
 
 /* No comment provided by engineer. */
 "No" = "Нет";
@@ -214,7 +214,7 @@
 "Search in file" = "Искать в файле";
 
 /* Title for selection with mask popup */
-"Select files using mask:" = "Выделить по маске:";
+"Select files by mask:" = "Выделить по маске:";
 
 /* Informative text for a bottom information bar in panels, showing size of selection */
 "Selected %@ in %@ files" = "Выделено %1$@ в %2$@ файлах";
@@ -256,10 +256,10 @@
 "Show Toolbar" = "Показать панель инструментов";
 
 /* User action to stop running actions and close window */
-"Stop And Close" = "Остановить и закрыть";
+"Stop and Close" = "Остановить и закрыть";
 
 /* Asking user for quitting app with activity - confirmation */
-"Stop And Quit" = "Остановить и завершить";
+"Stop and Quit" = "Остановить и завершить";
 
 /* Brief System Information storage box title */
 "Storage" = "Хранилище";
@@ -271,7 +271,7 @@
 "System:" = "Система:";
 
 /* User confirmation on message box */
-"Terminate And Close" = "Прервать и закрыть";
+"Terminate and Close" = "Прервать и закрыть";
 
 /* Internal viewer mode - textual */
 "Text" = "Текст";
@@ -292,7 +292,7 @@
 "Total:" = "Всего:";
 
 /* Informative text when user is entering an invalid filename */
-"Try using a name with fewer characters, or with no punctuation marks." = "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации.";
+"Try using a name with fewer characters or without punctuation marks." = "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации.";
 
 /* Brief System Information used label title */
 "Used:" = "Используемая:";
@@ -310,7 +310,7 @@
 "Volumes" = "Тома";
 
 /* Asking user to close window with some operations running */
-"Window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
+"The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
 
 /* Internal viewer checkbox to wrap words */
 "Word wrap" = "Переносить слова";

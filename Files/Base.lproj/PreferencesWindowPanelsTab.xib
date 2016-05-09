@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTab">
@@ -30,7 +30,7 @@
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
                                         <rect key="frame" x="18" y="187" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Ignore directories when selecting with mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
+                                        <buttonCell key="cell" type="check" title="Ignore directories when selecting by mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -77,7 +77,7 @@
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
                                         <rect key="frame" x="18" y="227" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Allow dragging into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
+                                        <buttonCell key="cell" type="check" title="Allow dragging and dropping into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -87,7 +87,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
                                         <rect key="frame" x="18" y="207" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Route keyboard input into overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
+                                        <buttonCell key="cell" type="check" title="Redirect keyboard input to the overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -298,7 +298,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="A0a-2e-yUq">
                                         <rect key="frame" x="18" y="159" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show other windows’ paths in folder changing menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
+                                        <buttonCell key="cell" type="check" title="Show other windows’ paths in folder change menu" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CIY-eD-NSg">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -307,8 +307,8 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dB8-J7-xZw">
-                                        <rect key="frame" x="106" y="140" width="281" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder changing menu" id="uQC-rR-RVO">
+                                        <rect key="frame" x="106" y="140" width="269" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="network connections in folder change menu" id="uQC-rR-RVO">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -513,13 +513,13 @@
                                         </connections>
                                     </colorWell>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r2d-h9-GN7">
-                                        <rect key="frame" x="20" y="31" width="554" height="172"/>
+                                        <rect key="frame" x="20" y="35" width="554" height="168"/>
                                         <clipView key="contentView" id="jVH-T1-DCG">
-                                            <rect key="frame" x="1" y="0.0" width="552" height="171"/>
+                                            <rect key="frame" x="1" y="0.0" width="552" height="167"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" headerView="9Tg-hN-PEV" id="ICM-ex-rxA">
-                                                    <rect key="frame" x="0.0" y="0.0" width="552" height="148"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="552" height="144"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -546,7 +546,7 @@
                                         </tableHeaderView>
                                     </scrollView>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="5XO-Nu-xUb">
-                                        <rect key="frame" x="20" y="3" width="22" height="22"/>
+                                        <rect key="frame" x="20" y="7" width="22" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="22" id="37G-hq-1iZ"/>
                                             <constraint firstAttribute="height" constant="22" id="F0l-Rb-9vk"/>
@@ -560,7 +560,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="B8s-Za-fbG">
-                                        <rect key="frame" x="42" y="3" width="22" height="22"/>
+                                        <rect key="frame" x="42" y="7" width="22" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="22" id="91y-ez-oXd"/>
                                             <constraint firstAttribute="width" constant="22" id="cYn-Q5-WEA"/>
@@ -673,8 +673,8 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xsa-mG-b5a">
-                                        <rect key="frame" x="70" y="3" width="506" height="24"/>
-                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="huB-JX-uOp">
+                                        <rect key="frame" x="70" y="3" width="506" height="28"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order, and the first rule with the appropriate filter is used." id="huB-JX-uOp">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -847,7 +847,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="25">
-                                        <rect key="frame" x="314" y="244" width="172" height="22"/>
+                                        <rect key="frame" x="314" y="244" width="170" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="112" id="nG8-4e-M2T"/>
                                         </constraints>
@@ -858,7 +858,7 @@
                                                 <items>
                                                     <menuItem title="Generic Icons" id="30"/>
                                                     <menuItem title="File Icons" id="29"/>
-                                                    <menuItem title="File Icons And Thumbnails" id="28"/>
+                                                    <menuItem title="File Icons and Thumbnails" id="28"/>
                                                 </items>
                                             </menu>
                                         </popUpButtonCell>
@@ -867,7 +867,7 @@
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="9rK-nA-bFK">
-                                        <rect key="frame" x="20" y="3" width="22" height="22"/>
+                                        <rect key="frame" x="20" y="7" width="22" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="22" id="AGF-s4-4O5"/>
                                             <constraint firstAttribute="width" constant="22" id="jr3-d9-HN9"/>
@@ -881,7 +881,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="iFn-JJ-hX8">
-                                        <rect key="frame" x="42" y="3" width="22" height="22"/>
+                                        <rect key="frame" x="42" y="7" width="22" height="22"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="22" id="Bdg-Zx-CAk"/>
                                             <constraint firstAttribute="width" constant="22" id="sXx-0b-cwE"/>
@@ -895,13 +895,13 @@
                                         </connections>
                                     </button>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcR-wQ-ADP">
-                                        <rect key="frame" x="20" y="31" width="554" height="191"/>
+                                        <rect key="frame" x="20" y="35" width="554" height="187"/>
                                         <clipView key="contentView" id="TdT-Uw-soe">
-                                            <rect key="frame" x="1" y="0.0" width="552" height="190"/>
+                                            <rect key="frame" x="1" y="0.0" width="552" height="186"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Sdc-Nl-SkA" id="vjI-ps-c9i">
-                                                    <rect key="frame" x="0.0" y="0.0" width="552" height="167"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="552" height="163"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -928,16 +928,16 @@
                                         </tableHeaderView>
                                     </scrollView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MZY-TB-fSP">
-                                        <rect key="frame" x="18" y="225" width="135" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filenames coloring rules:" id="cYq-VC-V1Y">
+                                        <rect key="frame" x="18" y="225" width="129" height="14"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filename coloring rules:" id="cYq-VC-V1Y">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6YT-WS-7Ci">
-                                        <rect key="frame" x="70" y="3" width="506" height="24"/>
-                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order and the first rule with appropriate filter is used." id="dVh-IV-Uhm">
+                                        <rect key="frame" x="70" y="3" width="506" height="28"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" title="Coloring rules are checked in the same order, and the first rule with the appropriate filter is used." id="dVh-IV-Uhm">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

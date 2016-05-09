@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowExternalEditorsTabNewEditorSheet">
@@ -15,10 +14,10 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="395" height="278"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="contentRect" x="196" y="240" width="395" height="279"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="395" height="278"/>
+                <rect key="frame" x="0.0" y="0.0" width="395" height="279"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IIA-V6-HXq">
@@ -42,7 +41,7 @@ Gw
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="pnC-QN-9vQ"/>
                         </constraints>
-                        <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DPm-wa-ccm">
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="DPm-wa-ccm">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -95,7 +94,7 @@ DQ
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="I2r-tw-ho5">
-                        <rect key="frame" x="18" y="241" width="114" height="17"/>
+                        <rect key="frame" x="18" y="242" width="114" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="110" id="79y-HW-R5L"/>
                         </constraints>
@@ -124,7 +123,7 @@ DQ
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eM-Ci-zGt">
-                        <rect key="frame" x="18" y="212" width="114" height="17"/>
+                        <rect key="frame" x="18" y="213" width="114" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="110" id="SiP-Bc-PDk"/>
                         </constraints>
@@ -135,7 +134,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WB8-tj-hJt">
-                        <rect key="frame" x="18" y="183" width="114" height="17"/>
+                        <rect key="frame" x="18" y="184" width="114" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="110" id="zeh-hM-ids"/>
                         </constraints>
@@ -156,10 +155,10 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.Info.mask" id="SdM-sO-Ddd">
+                            <binding destination="-2" name="value" keyPath="self.Info.mask" id="hau-43-Cpg">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                    <string key="NSNullPlaceholder">*, *.*, *.cpp, *.*m etc</string>
+                                    <string key="NSNullPlaceholder">*, *.*, *.cpp, *.*m, etc.</string>
                                 </dictionary>
                             </binding>
                         </connections>
@@ -224,17 +223,17 @@ DQ
                             <action selector="OnChoosePath:" target="-2" id="kdt-qq-Oyw"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tZU-6F-gVX">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" preferredMaxLayoutWidth="237" translatesAutoresizingMaskIntoConstraints="NO" id="tZU-6F-gVX">
                         <rect key="frame" x="136" y="49" width="241" height="52"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="justified" id="wWC-fX-UjM">
                             <font key="font" metaFont="system" size="10"/>
-                            <string key="title">Any occurrences of %% will be replaced with file path. You can use backward slashes to escape spaces from being interpreted as parameters dividers.</string>
+                            <string key="title">Any occurrences of %% will be replaced with file path. You can use backslashes to escape spaces, so that they are not interpreted as parameter delimiters.</string>
                             <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kt9-Gh-sCD">
-                        <rect key="frame" x="18" y="111" width="114" height="17"/>
+                        <rect key="frame" x="18" y="112" width="114" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="110" id="4kj-1o-I91"/>
                         </constraints>

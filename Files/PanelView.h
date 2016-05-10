@@ -10,10 +10,10 @@
 #include "vfs/VFS.h"
 #include "PanelViewTypes.h"
 #include "rapidjson.h"
+#include "PanelData.h"
 
 @class FPSLimitedDrawer;
 @class PanelView;
-class PanelData;
 class PanelViewPresentation;
 struct PanelVolatileData;
 
@@ -40,7 +40,7 @@ struct PanelVolatileData;
 @property (nonatomic, readonly) bool active;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
-@property (nonatomic, readonly) const PanelVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
+@property (nonatomic, readonly) const PanelData::PanelVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;

@@ -613,9 +613,9 @@ struct PanelViewStateStorage
     return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
 }
 
-- (const PanelVolatileData &)item_vd
+- (const PanelData::PanelVolatileData &)item_vd
 {
-    static const PanelVolatileData stub{};
+    static const PanelData::PanelVolatileData stub{};
     int indx = m_State.Data->RawIndexForSortIndex( m_State.CursorPos );
     if( indx < 0 )
         return stub;

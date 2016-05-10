@@ -19,7 +19,7 @@ public:
     void Draw(bool _active,       // is panel active now?
               bool _wnd_active,   // is window active now?
               double _width,      // panel width
-              PanelSortMode::Mode _sort_mode
+              PanelData::PanelSortMode::Mode _sort_mode
             );
     void SetTitle(NSString *_title);
     
@@ -30,7 +30,7 @@ private:
     double                          m_FontAscent = 0;
     double                          m_Height = 0;
     
-    PanelSortMode::Mode             m_LastSortMode = PanelSortMode::SortNoSort;
+    PanelData::PanelSortMode::Mode  m_LastSortMode = PanelData::PanelSortMode::SortNoSort;
 
     NSAttributedString             *m_Title = nil;
     NSAttributedString             *m_ModeStr = nil;

@@ -3,76 +3,6 @@
 #include "vfs/VFS.h"
 #include "rapidjson.h"
 
-struct PanelVolatileData;
-
-struct PanelSortMode
-{
-    enum Mode
-    {
-        SortNoSort      = 0x000,
-        SortByName      = 0x001,
-        SortByNameRev   = 0x002,
-        SortByExt       = SortByName    << 2,
-        SortByExtRev    = SortByNameRev << 2,
-        SortBySize      = SortByName    << 4,
-        SortBySizeRev   = SortByNameRev << 4,
-        SortByMTime     = SortByName    << 6,
-        SortByMTimeRev  = SortByNameRev << 6,
-        SortByBTime     = SortByName    << 8,
-        SortByBTimeRev  = SortByNameRev << 8,
-        // for internal usage, seems to be meaningless for human reading (sort by internal UTF8 representation)
-        SortByRawCName  = 0xF0000000,
-        SortByNameMask  = SortByName | SortByNameRev,
-        SortByExtMask   = SortByExt  | SortByExtRev,
-        SortBySizeMask  = SortBySize | SortBySizeRev,
-        SortByMTimeMask = SortByMTime| SortByMTimeRev,
-        SortByBTimeMask = SortByBTime| SortByBTimeRev
-    };
-    
-    Mode sort;
-    bool sep_dirs;      // separate directories from files, like win-like
-    bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
-    bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
-    
-    inline PanelSortMode():
-        sort(SortByRawCName),
-        sep_dirs(false),
-        case_sens(false),
-        numeric_sort(false)
-    {}
-    
-    inline bool isdirect() const
-    {
-        return sort == SortByName || sort == SortByExt || sort == SortBySize || sort == SortByMTime || sort == SortByBTime;
-    }
-    inline bool isrevert() const
-    {
-        return sort == SortByNameRev || sort == SortByExtRev || sort == SortBySizeRev || sort == SortByMTimeRev || sort == SortByBTimeRev;        
-    }
-    static inline bool validate(Mode _mode)
-    {
-        return _mode == SortNoSort ||
-               _mode == SortByName ||
-               _mode == SortByNameRev ||
-               _mode == SortByExt ||
-               _mode == SortByExtRev ||
-               _mode == SortBySize ||
-               _mode == SortBySizeRev ||
-               _mode == SortByMTime ||
-               _mode == SortByMTimeRev ||
-               _mode == SortByBTime ||
-               _mode == SortByBTimeRev;
-    }
-    inline bool operator ==(const PanelSortMode& _r) const
-    {
-        return sort == _r.sort && sep_dirs == _r.sep_dirs && case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
-    }
-    inline bool operator !=(const PanelSortMode& _r) const
-    {
-        return !(*this == _r);
-    }
-};
-
 struct PanelDataTextFiltering
 {
     enum WhereEnum // persistancy-bound values, don't change it
@@ -163,66 +93,6 @@ struct PanelDataHardFiltering
     }
 };
 
-struct PanelDataStatistics
-{
-    /**
-     * All regular files in listing, including hidden ones.
-     * Not counting directories even when it's size was calculated.
-     */
-    uint64_t bytes_in_raw_reg_files = 0;
-    
-    /**
-     * Amount of regular files in directory listing, regardless of sorting.
-     * Includes the possibly hidden ones.
-     */
-    uint32_t raw_reg_files_amount = 0;
-    
-    /**
-     * Total bytes in all selected entries, including reg files and directories (if it's size was calculated).
-     *
-     */
-    uint64_t bytes_in_selected_entries = 0;
-    
-    // trivial
-    uint32_t selected_entries_amount = 0;
-    uint32_t selected_reg_amount = 0;
-    uint32_t selected_dirs_amount = 0;
-    
-    inline bool operator ==(const PanelDataStatistics& _r) const
-    {
-        return
-            bytes_in_raw_reg_files    == _r.bytes_in_raw_reg_files    &&
-            raw_reg_files_amount      == _r.raw_reg_files_amount      &&
-            bytes_in_selected_entries == _r.bytes_in_selected_entries &&
-            selected_entries_amount   == _r.selected_entries_amount   &&
-            selected_reg_amount       == _r.selected_reg_amount       &&
-            selected_dirs_amount      == _r.selected_dirs_amount;
-    }
-    inline bool operator !=(const PanelDataStatistics& _r) const
-    {
-        return !(*this == _r);
-    }
-};
-
-struct PanelVolatileData
-{
-    enum {
-        invalid_size = (0xFFFFFFFFFFFFFFFFu),
-        flag_selected   = 1 << 0,
-        flag_shown      = 1 << 1
-    };
-    
-    uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
-    uint32_t flags = 0;
-    uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
-    
-    bool is_selected()          const { return (flags & flag_selected) != 0; };
-    bool is_shown()             const { return (flags & flag_shown) != 0; }
-    bool is_size_calculated()   const { return size != invalid_size; }
-    void toggle_selected( bool _v )   { flags = (flags & ~flag_selected) | (_v ? flag_selected : 0); }
-    void toggle_shown( bool _v )      { flags = (flags & ~flag_shown)    | (_v ? flag_shown    : 0); }
-};
-
 /**
  * PanelData actually does the following things:
  * - sorting provided data
@@ -253,6 +123,91 @@ public:
         time_t      btime;
         bool        is_dir;
         bool        is_valid() const noexcept;
+    };
+    
+    struct PanelSortMode
+    {
+        enum Mode
+        {
+            SortNoSort      = 0x000,
+            SortByName      = 0x001,
+            SortByNameRev   = 0x002,
+            SortByExt       = SortByName    << 2,
+            SortByExtRev    = SortByNameRev << 2,
+            SortBySize      = SortByName    << 4,
+            SortBySizeRev   = SortByNameRev << 4,
+            SortByMTime     = SortByName    << 6,
+            SortByMTimeRev  = SortByNameRev << 6,
+            SortByBTime     = SortByName    << 8,
+            SortByBTimeRev  = SortByNameRev << 8,
+            // for internal usage, seems to be meaningless for human reading (sort by internal UTF8 representation)
+            SortByRawCName  = 0xF0000000,
+            SortByNameMask  = SortByName | SortByNameRev,
+            SortByExtMask   = SortByExt  | SortByExtRev,
+            SortBySizeMask  = SortBySize | SortBySizeRev,
+            SortByMTimeMask = SortByMTime| SortByMTimeRev,
+            SortByBTimeMask = SortByBTime| SortByBTimeRev
+        };
+        
+        Mode sort;
+        bool sep_dirs;      // separate directories from files, like win-like
+        bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
+        bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
+        
+        PanelSortMode();
+        bool isdirect() const;
+        bool isrevert() const;
+        static bool validate(Mode _mode);
+        bool operator ==(const PanelSortMode& _r) const;
+        bool operator !=(const PanelSortMode& _r) const;
+    };
+
+    struct PanelVolatileData
+    {
+        enum {
+            invalid_size = (0xFFFFFFFFFFFFFFFFu),
+            flag_selected   = 1 << 0,
+            flag_shown      = 1 << 1
+        };
+        
+        uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
+        uint32_t flags = 0;
+        uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
+        
+        bool is_selected() const noexcept;
+        bool is_shown() const noexcept;
+        bool is_size_calculated() const noexcept;
+        void toggle_selected( bool _v ) noexcept;
+        void toggle_shown( bool _v ) noexcept;
+    };
+    
+    struct Statistics
+    {
+        /**
+         * All regular files in listing, including hidden ones.
+         * Not counting directories even when it's size was calculated.
+         */
+        uint64_t bytes_in_raw_reg_files = 0;
+        
+        /**
+         * Amount of regular files in directory listing, regardless of sorting.
+         * Includes the possibly hidden ones.
+         */
+        uint32_t raw_reg_files_amount = 0;
+        
+        /**
+         * Total bytes in all selected entries, including reg files and directories (if it's size was calculated).
+         *
+         */
+        uint64_t bytes_in_selected_entries = 0;
+        
+        // trivial
+        uint32_t selected_entries_amount = 0;
+        uint32_t selected_reg_amount = 0;
+        uint32_t selected_dirs_amount = 0;
+        
+        bool operator ==(const Statistics& _r) const noexcept;
+        bool operator !=(const Statistics& _r) const noexcept;
     };
     
     PanelData();
@@ -371,7 +326,7 @@ public:
      */
     bool ClearTextFiltering();
     
-    const PanelDataStatistics &Stats() const;
+    const Statistics &Stats() const;
     
     // manupulation with user flags for directory entries
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
@@ -413,11 +368,6 @@ private:
     PanelDataHardFiltering  m_HardFiltering;
     PanelDataTextFiltering  m_SoftFiltering;
     DispatchGroup           m_SortExecGroup;
-    PanelDataStatistics     m_Stats;
-    PanelType                    m_Type;
+    Statistics              m_Stats;
+    PanelType               m_Type;
 };
-
-inline const PanelDataStatistics &PanelData::Stats() const
-{
-    return m_Stats;
-}

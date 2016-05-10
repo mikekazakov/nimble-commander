@@ -235,7 +235,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                                           self);
 }
 
-- (void) ChangeSortingModeTo:(PanelSortMode)_mode
+- (void) ChangeSortingModeTo:(PanelData::PanelSortMode)_mode
 {
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
@@ -253,9 +253,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     pers.Restore();
 }
 
-- (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev
+- (void) MakeSortWith:(PanelData::PanelSortMode::Mode)_direct Rev:(PanelData::PanelSortMode::Mode)_rev
 {
-    PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
+    PanelData::PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
     mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
     [self markRestorableStateAsInvalid];

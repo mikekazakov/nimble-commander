@@ -167,9 +167,9 @@ namespace panel
 - (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
 - (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
-- (void) ChangeSortingModeTo:(PanelSortMode)_mode;
+- (void) ChangeSortingModeTo:(PanelData::PanelSortMode)_mode;
 - (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter;
-- (void) MakeSortWith:(PanelSortMode::Mode)_direct Rev:(PanelSortMode::Mode)_rev;
+- (void) MakeSortWith:(PanelData::PanelSortMode::Mode)_direct Rev:(PanelData::PanelSortMode::Mode)_rev;
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;

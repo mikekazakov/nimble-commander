@@ -130,7 +130,7 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelVolatileData& _vd) const
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd) const
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -159,22 +159,22 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentatio
     }
 }
 
-static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
+static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelData::PanelSortMode::Mode _mode)
 {
     char c;
     switch (_mode)
     {
-        case PanelSortMode::SortByName:     c='n'; break;
-        case PanelSortMode::SortByNameRev:  c='N'; break;
-        case PanelSortMode::SortByExt:      c='e'; break;
-        case PanelSortMode::SortByExtRev:   c='E'; break;
-        case PanelSortMode::SortBySize:     c='s'; break;
-        case PanelSortMode::SortBySizeRev:  c='S'; break;
-        case PanelSortMode::SortByMTime:    c='m'; break;
-        case PanelSortMode::SortByMTimeRev: c='M'; break;
-        case PanelSortMode::SortByBTime:    c='b'; break;
-        case PanelSortMode::SortByBTimeRev: c='B'; break;
-        default:                            c='?'; break;
+        case PanelData::PanelSortMode::SortByName:     c='n'; break;
+        case PanelData::PanelSortMode::SortByNameRev:  c='N'; break;
+        case PanelData::PanelSortMode::SortByExt:      c='e'; break;
+        case PanelData::PanelSortMode::SortByExtRev:   c='E'; break;
+        case PanelData::PanelSortMode::SortBySize:     c='s'; break;
+        case PanelData::PanelSortMode::SortBySizeRev:  c='S'; break;
+        case PanelData::PanelSortMode::SortByMTime:    c='m'; break;
+        case PanelData::PanelSortMode::SortByMTimeRev: c='M'; break;
+        case PanelData::PanelSortMode::SortByBTime:    c='b'; break;
+        case PanelData::PanelSortMode::SortByBTimeRev: c='B'; break;
+        default:                                       c='?'; break;
     }
     oms::StringBuf<1> r;
     r.FromChars((uint8_t*)&c, 1);
@@ -317,7 +317,7 @@ void ClassicPanelViewPresentation::BuildAppearance()
     SetViewNeedsDisplay();    
 }
 
-DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelVolatileData& _vd, bool _is_focused)
+DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
         if(r.filter.Filter(_dirent, _vd))

@@ -14,20 +14,20 @@ static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_HeaderStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
 static CGColorRef g_HeaderStrokeColorInact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
 
-static NSString *FormHumanReadableSortModeReprentation(PanelSortMode::Mode _mode)
+static NSString *FormHumanReadableSortModeReprentation(PanelData::PanelSortMode::Mode _mode)
 {
     switch (_mode)
     {
-        case PanelSortMode::SortByName:     return @"n";
-        case PanelSortMode::SortByNameRev:  return @"N";
-        case PanelSortMode::SortByExt:      return @"e";
-        case PanelSortMode::SortByExtRev:   return @"E";
-        case PanelSortMode::SortBySize:     return @"s";
-        case PanelSortMode::SortBySizeRev:  return @"S";
-        case PanelSortMode::SortByMTime:    return @"m";
-        case PanelSortMode::SortByMTimeRev: return @"M";
-        case PanelSortMode::SortByBTime:    return @"b";
-        case PanelSortMode::SortByBTimeRev: return @"B";
+        case PanelData::PanelSortMode::SortByName:     return @"n";
+        case PanelData::PanelSortMode::SortByNameRev:  return @"N";
+        case PanelData::PanelSortMode::SortByExt:      return @"e";
+        case PanelData::PanelSortMode::SortByExtRev:   return @"E";
+        case PanelData::PanelSortMode::SortBySize:     return @"s";
+        case PanelData::PanelSortMode::SortBySizeRev:  return @"S";
+        case PanelData::PanelSortMode::SortByMTime:    return @"m";
+        case PanelData::PanelSortMode::SortByMTimeRev: return @"M";
+        case PanelData::PanelSortMode::SortByBTime:    return @"b";
+        case PanelData::PanelSortMode::SortByBTimeRev: return @"B";
         default:                            return @"?";
     }
 }
@@ -44,7 +44,7 @@ ModernPanelViewPresentationHeader::ModernPanelViewPresentationHeader()
 void ModernPanelViewPresentationHeader::Draw(bool _active,       // is panel active now?
                                              bool _wnd_active,
                                              double _width,      // panel width
-                                             PanelSortMode::Mode _sort_mode)
+                                             PanelData::PanelSortMode::Mode _sort_mode)
 {
     if(!_wnd_active)
         _active = false;

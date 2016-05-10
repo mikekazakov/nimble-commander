@@ -55,7 +55,7 @@ static NSString* FormHumanReadableShortTime(time_t _in)
     return [date_formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_in]];
 }
 
-NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_dirent, const PanelVolatileData &_vd) const
+NSString* ModernPanelViewPresentation::FileSizeToString(const VFSListingItem &_dirent, const PanelData::PanelVolatileData &_vd) const
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -547,7 +547,7 @@ void ModernPanelViewPresentation::OnFrameChanged(NSRect _frame)
     CalculateLayoutFromFrame();
 }
 
-const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::AttrsForItem(const VFSListingItem& _item, const PanelVolatileData& _item_vd) const
+const ModernPanelViewPresentation::ColoringAttrs& ModernPanelViewPresentation::AttrsForItem(const VFSListingItem& _item, const PanelData::PanelVolatileData& _item_vd) const
 {
     size_t i = 0, e = m_ColoringRules.size();
     for(;i<e;++i)

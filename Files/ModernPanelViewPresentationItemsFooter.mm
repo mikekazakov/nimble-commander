@@ -68,7 +68,7 @@ ModernPanelViewPresentationItemsFooter::ModernPanelViewPresentationItemsFooter(M
     m_SizeWidth = ceil([@"999999" sizeWithAttributes:attributes].width) + g_TextInsetsInLine[0] + g_TextInsetsInLine[2];
     
     // flush caches
-    m_LastStatistics = PanelDataStatistics();
+    m_LastStatistics = PanelData::Statistics();
 }
 
 NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files)
@@ -118,8 +118,8 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
 }
 
 void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current_entry,
-                                                  const PanelVolatileData &_current_item_vd,
-                                                  const PanelDataStatistics &_stats,
+                                                  const PanelData::PanelVolatileData &_current_item_vd,
+                                                  const PanelData::Statistics &_stats,
                                                   PanelViewType _view_type,
                                                   bool _active,
                                                   bool _wnd_active,                                                  
@@ -182,7 +182,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current
     }
 }
 
-void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active)
+void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem& _current_item, const PanelData::PanelVolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active)
 {
     if(_stats.selected_entries_amount != 0)
     {

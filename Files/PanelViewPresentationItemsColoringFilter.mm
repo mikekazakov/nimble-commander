@@ -55,7 +55,7 @@ bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
         indeterminate(selected);
 }
 
-bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const PanelVolatileData &_item_vd) const
+bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const PanelData::PanelVolatileData &_item_vd) const
 {
     if( !mask.IsEmpty() &&
         !mask.MatchName(_item.NSDisplayName()) )

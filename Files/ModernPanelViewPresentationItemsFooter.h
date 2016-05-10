@@ -12,8 +12,6 @@
 #include "PanelData.h"
 
 class VFSListingItem;
-struct PanelVolatileData;
-struct PanelDataStatistics;
 class ModernPanelViewPresentation;
 
 class ModernPanelViewPresentationItemsFooter
@@ -22,8 +20,8 @@ public:
     ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent);
     
     void Draw(const VFSListingItem &_current_item,
-              const PanelVolatileData &_current_item_vd,
-              const PanelDataStatistics &_stats,
+              const PanelData::PanelVolatileData &_current_item_vd,
+              const PanelData::Statistics &_stats,
               PanelViewType _view_type,
               bool _active,
               bool _wnd_active,   // is window active now?              
@@ -35,7 +33,7 @@ public:
     
 private:
     NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files);
-    void PrepareToDraw(const VFSListingItem& _current_item, const PanelVolatileData &_current_item_vd, const PanelDataStatistics &_stats, PanelViewType _view_type, bool _active);
+    void PrepareToDraw(const VFSListingItem& _current_item, const PanelData::PanelVolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active);
     
     
     NSFont                          *m_Font = nil;
@@ -49,7 +47,7 @@ private:
     
     bool                            m_LastActive = false;
     PanelViewType                   m_LastViewType;
-    PanelDataStatistics             m_LastStatistics;
+    PanelData::Statistics           m_LastStatistics;
 
     VFSWeakListingItem              m_LastItem;
     uint64_t                        m_LastItemSize = 0;

@@ -148,7 +148,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     if(_key != nil)
     {
         // update soft filtering
-        PanelDataTextFiltering filtering = m_Data.SoftFiltering();
+        auto filtering = m_Data.SoftFiltering();
 
         if(!IsBackspace(_key))
         {
@@ -226,7 +226,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
 
 - (bool)HandleQuickSearchHard: (NSString*) _key
 {
-    PanelDataHardFiltering filtering = m_Data.HardFiltering();
+    auto filtering = m_Data.HardFiltering();
     
     if(_key != nil)
     {

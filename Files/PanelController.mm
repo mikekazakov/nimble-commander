@@ -169,7 +169,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void)configQuickSearchSettingsChanged
 {
-    m_QuickSearchWhere = PanelDataTextFiltering::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
+    m_QuickSearchWhere = PanelData::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
     m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
     m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
     m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
@@ -244,7 +244,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     pers.Restore();
 }
 
-- (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter
+- (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter
 {
     panel::GenericCursorPersistance pers(m_View, m_Data);
     

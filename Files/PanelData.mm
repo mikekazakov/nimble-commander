@@ -152,8 +152,137 @@ bool PanelData::Statistics::operator !=(const PanelData::Statistics& _r) const n
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+// TextualFilter
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool PanelData::TextualFilter::operator==(const TextualFilter& _r) const noexcept
+{
+    if(type != _r.type)
+        return false;
+    
+    if(text == nil && _r.text != nil)
+        return false;
+    
+    if(text != nil && _r.text == nil)
+        return false;
+    
+    if(text == nil && _r.text == nil)
+        return true;
+    
+    return [text isEqualToString:_r.text]; // no decomposion here
+}
+
+bool PanelData::TextualFilter::operator!=(const TextualFilter& _r) const noexcept
+{
+    return !(*this == _r);
+}
+
+PanelData::TextualFilter::Where PanelData::TextualFilter::WhereFromInt(int _v) noexcept
+{
+    if(_v >= 0 && _v <= BeginningOrEnding)
+        return Where(_v);
+    return Anywhere;
+}
+
+PanelData::TextualFilter PanelData::TextualFilter::NoFilter() noexcept
+{
+    TextualFilter filter;
+    filter.type = Anywhere;
+    filter.text = nil;
+    filter.ignoredotdot = true;
+    return filter;
+}
+
+bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item) const
+{
+    if(text == nil)
+        return true;
+    
+    if(ignoredotdot && _item.IsDotDot())
+        return true; // never filter out the Holy Dot-Dot directory!
+    
+    auto textlen = text.length;
+    if(textlen == 0)
+        return true; // will return true on any item with @"" filter
+    
+    NSString *name = _item.NSDisplayName();
+    if(type == Anywhere) {
+        return [name rangeOfString:text
+                           options:NSCaseInsensitiveSearch].length != 0;
+    }
+    else if(type == Beginning) {
+        return [name rangeOfString:text
+                           options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0;
+    }
+    else if(type == Ending || type == BeginningOrEnding) {
+        if((type == BeginningOrEnding) &&
+           [name rangeOfString:text // look at beginning
+                       options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0)
+            return true;
+        
+        if(_item.HasExtension())
+        { // slow path here - look before extension
+            NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
+            if(dotrange.length != 0 &&
+               dotrange.location > textlen) {
+                auto r = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
+                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
+                if(r.length != 0)
+                    return true;
+            }
+        }
+        
+        return [name rangeOfString:text // look at the end at last
+                           options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch].length != 0;
+    }
+    
+    assert(0); // should never came here!
+    return true;
+}
+
+void PanelData::TextualFilter::OnPanelDataLoad()
+{
+    if( clearonnewlisting )
+        text = nil;
+}
+
+bool PanelData::TextualFilter::IsFiltering() const noexcept
+{
+    return text != nil && text.length > 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// HardFilter
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool PanelData::HardFilter::IsValidItem(const VFSListingItem& _item) const
+{
+    if(show_hidden == false && _item.IsHidden())
+        return false;
+    
+    return text.IsValidItem(_item);
+}
+    
+bool PanelData::HardFilter::IsFiltering() const noexcept
+{
+    return !show_hidden || text.IsFiltering();
+}
+
+bool PanelData::HardFilter::operator==(const HardFilter& _r) const noexcept
+{
+    return show_hidden == _r.show_hidden && text == _r.text;
+}
+
+bool PanelData::HardFilter::operator!=(const HardFilter& _r) const noexcept
+{
+    return show_hidden != _r.show_hidden || text != _r.text;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 // PanelData
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+
 PanelData::PanelData():
     m_SortExecGroup(DispatchGroup::High),
     m_Listing(VFSListing::EmptyListing()),
@@ -908,7 +1037,7 @@ bool PanelData::ClearTextFiltering()
     return true;
 }
 
-void PanelData::SetHardFiltering(const PanelDataHardFiltering &_filter)
+void PanelData::SetHardFiltering(const HardFilter &_filter)
 {
     if(m_HardFiltering == _filter)
         return;
@@ -921,60 +1050,9 @@ void PanelData::SetHardFiltering(const PanelDataHardFiltering &_filter)
     UpdateStatictics();
 }
 
-bool PanelDataTextFiltering::IsValidItem(const VFSListingItem& _item) const
+PanelData::HardFilter PanelData::HardFiltering() const
 {
-    if(text == nil)
-        return true;
-    
-    if(ignoredotdot && _item.IsDotDot())
-        return true; // never filter out the Holy Dot-Dot directory!
-    
-    auto textlen = text.length;
-    if(textlen == 0)
-        return true; // will return true on any item with @"" filter
-    
-    NSString *name = _item.NSDisplayName();
-    if(type == Anywhere) {
-        return [name rangeOfString:text
-                           options:NSCaseInsensitiveSearch].length != 0;
-    }
-    else if(type == Beginning) {
-        return [name rangeOfString:text
-                           options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0;
-    }
-    else if(type == Ending || type == BeginningOrEnding) {
-        if((type == BeginningOrEnding) &&
-           [name rangeOfString:text // look at beginning
-                       options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0)
-            return true;
-        
-        if(_item.HasExtension())
-        { // slow path here - look before extension
-            NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
-            if(dotrange.length != 0 &&
-               dotrange.location > textlen) {
-                auto r = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
-                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
-                if(r.length != 0)
-                    return true;
-            }
-        }
-        
-        return [name rangeOfString:text // look at the end at last
-                           options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch].length != 0;
-    }
-
-    assert(0); // should never came here!
-    return true;
-}
-
-bool PanelDataHardFiltering::IsValidItem(const VFSListingItem& _item) const
-{
-    if(show_hidden == false && _item.IsHidden())
-        return false;
-    
-    return text.IsValidItem(_item);
+    return m_HardFiltering;
 }
 
 void PanelData::DoSortWithHardFiltering()
@@ -1019,10 +1097,15 @@ void PanelData::DoSortWithHardFiltering()
     sort(start, end(m_EntriesByCustomSort), pred);
 }
 
-void PanelData::SetSoftFiltering(const PanelDataTextFiltering &_filter)
+void PanelData::SetSoftFiltering(const TextualFilter &_filter)
 {
     m_SoftFiltering = _filter;
     BuildSoftFilteringIndeces();
+}
+
+PanelData::TextualFilter PanelData::SoftFiltering() const
+{
+    return m_SoftFiltering;
 }
 
 const PanelData::DirSortIndT& PanelData::EntriesBySoftFiltering() const

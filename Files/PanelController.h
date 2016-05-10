@@ -70,7 +70,7 @@ namespace panel
     bool                                m_QuickSearchIsSoftFiltering;
     bool                                m_QuickSearchTypingView;
     PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
-    PanelDataTextFiltering::WhereEnum   m_QuickSearchWhere;
+    PanelData::TextualFilter::Where     m_QuickSearchWhere;
     nanoseconds                         m_QuickSearchLastType;
     unsigned                            m_QuickSearchOffset;
     
@@ -168,7 +168,7 @@ namespace panel
 - (void) UpdateBriefSystemOverview;
 - (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
 - (void) ChangeSortingModeTo:(PanelData::PanelSortMode)_mode;
-- (void) ChangeHardFilteringTo:(PanelDataHardFiltering)_filter;
+- (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter;
 - (void) MakeSortWith:(PanelData::PanelSortMode::Mode)_direct Rev:(PanelData::PanelSortMode::Mode)_rev;
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.

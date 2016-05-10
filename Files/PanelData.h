@@ -3,96 +3,6 @@
 #include "vfs/VFS.h"
 #include "rapidjson.h"
 
-struct PanelDataTextFiltering
-{
-    enum WhereEnum // persistancy-bound values, don't change it
-    {
-        Anywhere            = 0,
-        Beginning           = 1,
-        Ending              = 2, // handling extensions somehow
-        BeginningOrEnding   = 3
-    };
-    
-    WhereEnum type = Anywhere;
-    NSString *text = nil;
-    bool      ignoredotdot = true; // will not apply filter on dot-dot entries
-    bool      clearonnewlisting = false; // if true then PanelData will automatically
-                                         // set text to nil on Load method call
-    
-    inline bool operator==(const PanelDataTextFiltering& _r) const
-    {
-        if(type != _r.type)
-            return false;
-        
-        if(text == nil && _r.text != nil)
-            return false;
-        
-        if(text != nil && _r.text == nil)
-            return false;
-        
-        if(text == nil && _r.text == nil)
-            return true;
-        
-        return [text isEqualToString:_r.text]; // no decomposion here
-    }
-    
-    inline bool operator!=(const PanelDataTextFiltering& _r) const
-    {
-        return !(*this == _r);
-    }
-    
-    inline static WhereEnum WhereFromInt(int _v)
-    {
-        if(_v >= 0 && _v <= BeginningOrEnding)
-            return WhereEnum(_v);
-        return Anywhere;
-    }
-    
-    inline static PanelDataTextFiltering NoFiltering()
-    {
-        PanelDataTextFiltering filter;
-        filter.type = Anywhere;
-        filter.text = nil;
-        filter.ignoredotdot = true;
-        return filter;
-    }
-    
-    bool IsValidItem(const VFSListingItem& _item) const;
-    
-    void OnPanelDataLoad()
-    {
-        if(clearonnewlisting)
-            text = nil;
-    }
-
-    inline bool IsFiltering() const
-    {
-        return text != nil && text.length > 0;
-    }
-};
-
-struct PanelDataHardFiltering
-{
-    bool show_hidden = true;
-    PanelDataTextFiltering text = PanelDataTextFiltering::NoFiltering();
-    bool IsValidItem(const VFSListingItem& _item) const;
-
-    bool IsFiltering() const
-    {
-        return !show_hidden || text.IsFiltering();
-    }
-    
-    inline bool operator==(const PanelDataHardFiltering& _r) const
-    {
-        return show_hidden == _r.show_hidden && text == _r.text;
-    }
-    
-    inline bool operator!=(const PanelDataHardFiltering& _r) const
-    {
-        return show_hidden != _r.show_hidden || text != _r.text;
-    }
-};
-
 /**
  * PanelData actually does the following things:
  * - sorting provided data
@@ -210,6 +120,40 @@ public:
         bool operator !=(const Statistics& _r) const noexcept;
     };
     
+    struct TextualFilter
+    {
+        enum Where // persistancy-bound values, don't change it
+        {
+            Anywhere            = 0,
+            Beginning           = 1,
+            Ending              = 2, // handling extensions somehow
+            BeginningOrEnding   = 3
+        };
+        
+        Where     type = Anywhere;
+        NSString *text = nil;
+        bool      ignoredotdot = true; // will not apply filter on dot-dot entries
+        bool      clearonnewlisting = false; // if true then PanelData will automatically set text to nil on Load method call
+        
+        bool operator==(const TextualFilter& _r) const noexcept;
+        bool operator!=(const TextualFilter& _r) const noexcept;
+        static Where WhereFromInt(int _v) noexcept;
+        static TextualFilter NoFilter() noexcept;
+        bool IsValidItem(const VFSListingItem& _item) const;
+        void OnPanelDataLoad();
+        bool IsFiltering() const noexcept;
+    };
+    
+    struct HardFilter
+    {
+        bool show_hidden = true;
+        TextualFilter text = TextualFilter::NoFilter();
+        bool IsValidItem(const VFSListingItem& _item) const;
+        bool IsFiltering() const noexcept;
+        bool operator==(const HardFilter& _r) const noexcept;
+        bool operator!=(const HardFilter& _r) const noexcept;
+    };
+    
     PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
@@ -313,11 +257,11 @@ public:
     void DecodeSortingOptions(const rapidjson::StandaloneValue& _options);
     
     // hard filtering filtering
-    void SetHardFiltering(const PanelDataHardFiltering &_filter);
-    inline PanelDataHardFiltering HardFiltering() const { return m_HardFiltering; }
+    void SetHardFiltering(const HardFilter &_filter);
+    HardFilter HardFiltering() const;
     
-    void SetSoftFiltering(const PanelDataTextFiltering &_filter);
-    inline PanelDataTextFiltering SoftFiltering() const { return m_SoftFiltering; }
+    void SetSoftFiltering(const TextualFilter &_filter);
+    TextualFilter SoftFiltering() const;
 
     /**
      * ClearTextFiltering() efficiently sets SoftFiltering.text = nil and HardFiltering.text.text = nil.
@@ -358,16 +302,16 @@ private:
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    shared_ptr<VFSListing>  m_Listing;
-    vector<PanelVolatileData>       m_VolatileData;
-    DirSortIndT             m_EntriesByRawName;    // sorted with raw strcmp comparison
-    DirSortIndT             m_EntriesByCustomSort; // custom defined sort
-    DirSortIndT             m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
+    shared_ptr<VFSListing>      m_Listing;
+    vector<PanelVolatileData>   m_VolatileData;
+    DirSortIndT                 m_EntriesByRawName;    // sorted with raw strcmp comparison
+    DirSortIndT                 m_EntriesByCustomSort; // custom defined sort
+    DirSortIndT                 m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
     
-    PanelSortMode           m_CustomSortMode;
-    PanelDataHardFiltering  m_HardFiltering;
-    PanelDataTextFiltering  m_SoftFiltering;
-    DispatchGroup           m_SortExecGroup;
-    Statistics              m_Stats;
-    PanelType               m_Type;
+    PanelSortMode               m_CustomSortMode;
+    HardFilter                  m_HardFiltering;
+    TextualFilter               m_SoftFiltering;
+    DispatchGroup               m_SortExecGroup;
+    Statistics                  m_Stats;
+    PanelType                   m_Type;
 };

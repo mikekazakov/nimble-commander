@@ -195,6 +195,19 @@
         },
         
         /**
+         * Settings related to file operations
+         */
+        "operations": {
+            /**
+             * When to check result files after copy/move operation, integer enumeration:
+             * 0 - Never check
+             * 1 - Verify after moving files
+             * 2 - Verify always
+             */
+            "defaultChecksumVerification": 1
+        },
+        
+        /**
          * Settings related to modern presentation mode
          */
         "modern": {

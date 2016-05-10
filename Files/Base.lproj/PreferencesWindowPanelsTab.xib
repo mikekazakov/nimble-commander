@@ -106,23 +106,53 @@
                                             <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.initialRightPanelPath" id="mCR-vE-mut"/>
                                         </connections>
                                     </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VQQ-O6-dIM">
+                                        <rect key="frame" x="18" y="164" width="117" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify copied files:" id="4hI-Sa-VZT">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ebH-ed-TXz">
+                                        <rect key="frame" x="139" y="158" width="120" height="26"/>
+                                        <popUpButtonCell key="cell" type="push" title="Always" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" id="dCU-3l-7rD">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="QtM-HB-dSl">
+                                                <items>
+                                                    <menuItem title="Always" state="on" tag="2" id="UT3-qe-aaM"/>
+                                                    <menuItem title="When moving" tag="1" id="51P-Kf-sgk"/>
+                                                    <menuItem title="Never" id="33G-S7-ZcF"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="-3" name="selectedTag" keyPath="delegate.config.filePanel.operations.defaultChecksumVerification" id="jIT-wa-WaM"/>
+                                        </connections>
+                                    </popUpButton>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="dyN-tf-vzT" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="7Ib-pe-BF6"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="8LY-ag-Nws"/>
                                     <constraint firstItem="760" firstAttribute="top" secondItem="dyN-tf-vzT" secondAttribute="bottom" constant="6" symbolic="YES" id="98H-cQ-6Hh"/>
                                     <constraint firstItem="ctP-zl-GEx" firstAttribute="top" secondItem="gE9-bs-3HL" secondAttribute="bottom" constant="8" symbolic="YES" id="A4e-eO-DlK"/>
+                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="baseline" secondItem="VQQ-O6-dIM" secondAttribute="baseline" id="B5J-g7-icW"/>
                                     <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="naE-Zr-UF7" secondAttribute="bottom" constant="8" symbolic="YES" id="BOX-bB-Vh3"/>
                                     <constraint firstItem="8Dv-Ox-hiC" firstAttribute="baseline" secondItem="ctP-zl-GEx" secondAttribute="baseline" id="EDg-mX-pHW"/>
                                     <constraint firstItem="ctP-zl-GEx" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="Els-Tx-IKw"/>
                                     <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="F7W-yl-XI5"/>
                                     <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="ctP-zl-GEx" secondAttribute="trailing" constant="8" symbolic="YES" id="HPU-ti-ewb"/>
+                                    <constraint firstItem="VQQ-O6-dIM" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="8" symbolic="YES" id="KcI-BC-SVn"/>
                                     <constraint firstAttribute="trailing" secondItem="naE-Zr-UF7" secondAttribute="trailing" constant="20" symbolic="YES" id="M4L-p6-aia"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="baseline" secondItem="n76-Id-JEc" secondAttribute="baseline" id="Mtg-II-of8"/>
                                     <constraint firstItem="n76-Id-JEc" firstAttribute="top" secondItem="ctP-zl-GEx" secondAttribute="bottom" constant="8" symbolic="YES" id="PGA-8I-hcL"/>
+                                    <constraint firstItem="VQQ-O6-dIM" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="PQR-N6-3Ay"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="8Dv-Ox-hiC" secondAttribute="leading" id="Qrv-tN-CRR"/>
+                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="baseline" secondItem="VQQ-O6-dIM" secondAttribute="baseline" id="TJ8-Ge-9p0"/>
                                     <constraint firstAttribute="trailing" secondItem="bG0-HE-nN2" secondAttribute="trailing" constant="20" symbolic="YES" id="ZIo-QV-qAN"/>
                                     <constraint firstAttribute="trailing" secondItem="gE9-bs-3HL" secondAttribute="trailing" constant="20" symbolic="YES" id="Zdd-WO-wwS"/>
+                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="leading" secondItem="VQQ-O6-dIM" secondAttribute="trailing" constant="8" symbolic="YES" id="dfW-nT-wta"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="n76-Id-JEc" secondAttribute="trailing" constant="8" symbolic="YES" id="gVB-Uo-cYg"/>
                                     <constraint firstAttribute="trailing" secondItem="8Dv-Ox-hiC" secondAttribute="trailing" constant="20" symbolic="YES" id="gnA-53-oz5"/>
                                     <constraint firstItem="bG0-HE-nN2" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="hh4-sh-ra5"/>

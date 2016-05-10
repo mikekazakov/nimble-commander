@@ -44,6 +44,7 @@
 #include "CalculateChecksumSheetController.h"
 #include "ConnectionsMenuDelegate.h"
 #include "SpotlightSearchPopupViewController.h"
+#include "PanelAux.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -1161,8 +1162,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     path src = self.currentDirectoryPath;
     path dst = src / name / "/";
     
-    FileCopyOperationOptions opts;
-    opts.docopy = false;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
     auto op = [[FileCopyOperation alloc] initWithItems:files destinationPath:dst.native() destinationHost:self.vfs options:opts];
 
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
@@ -1319,7 +1319,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     if( source_items.empty() )
         return; // errors on fetching listings?
     
-    FileCopyOperationOptions opts;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                        destinationPath:self.currentDirectoryPath

@@ -626,8 +626,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     if( target.empty() )
         return;
 
-    FileCopyOperationOptions opts;
-    opts.docopy = true;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     
     auto op = [[FileCopyOperation alloc] initWithItems:{item} destinationPath:target destinationHost:item.Host() options:opts];
     

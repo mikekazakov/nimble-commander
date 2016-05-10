@@ -7,6 +7,7 @@
 //
 
 #include "vfs/VFS.h"
+#include "Operations/Copy/Options.h"
 
 @class PanelController;
 
@@ -38,4 +39,6 @@ public:
 namespace panel
 {
     bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
+    FileCopyOperationOptions MakeDefaultFileCopyOptions();
+    FileCopyOperationOptions MakeDefaultFileMoveOptions();
 }

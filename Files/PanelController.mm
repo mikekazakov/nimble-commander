@@ -711,9 +711,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return;
     }
     
-    FileCopyOperationOptions opts;
-    opts.docopy = false;
-
     FileCopyOperation *op = [FileCopyOperation singleItemRenameOperation:item newName:target_fn];
 
     if( self.isUniform ) {

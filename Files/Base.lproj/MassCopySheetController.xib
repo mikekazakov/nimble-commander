@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MassCopySheetController">
@@ -30,7 +30,6 @@
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="12">
                     <rect key="frame" x="18" y="36" width="51" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Dummy" usesSingleLineMode="YES" id="13">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -42,7 +41,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="tf1-0r-hzi"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -61,7 +59,6 @@
                 <constraint firstItem="12" firstAttribute="top" secondItem="oVI-wD-asY" secondAttribute="top" constant="20" symbolic="YES" id="vPR-jX-cCV"/>
                 <constraint firstItem="5" firstAttribute="top" secondItem="12" secondAttribute="bottom" constant="8" symbolic="YES" id="wya-Y0-uaF"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="-291" y="600.5"/>
         </customView>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
@@ -73,7 +70,6 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="123"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="Copy" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="17">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -91,7 +87,6 @@ DQ
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="125"/>
                     </constraints>
-                    <animations/>
                     <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="22">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -111,7 +106,6 @@ Gw
                 <constraint firstAttribute="bottom" secondItem="16" secondAttribute="bottom" constant="20" symbolic="YES" id="pTu-KV-EgX"/>
                 <constraint firstItem="16" firstAttribute="centerY" secondItem="21" secondAttribute="centerY" id="uHT-yN-Vxc"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="-535.5" y="754.5"/>
         </customView>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
@@ -124,7 +118,6 @@ Gw
                 <subviews>
                     <stackView orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="250" verticalStackHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AYy-m7-y0I">
                         <rect key="frame" x="0.0" y="0.0" width="485" height="100"/>
-                        <animations/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="lQR-VW-ZZ8"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="rVn-z2-fVm"/>
@@ -137,7 +130,6 @@ Gw
                     <constraint firstItem="AYy-m7-y0I" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="ZYD-fr-QR5"/>
                     <constraint firstAttribute="trailing" secondItem="AYy-m7-y0I" secondAttribute="trailing" id="pGa-yI-K10"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
@@ -147,7 +139,6 @@ Gw
         <button verticalHuggingPriority="750" id="LIR-Na-Bsa">
             <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <animations/>
             <buttonCell key="cell" type="push" title="Copy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UQ3-7b-2zx">
                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                 <font key="font" metaFont="system"/>
@@ -157,7 +148,6 @@ Gw
         <button verticalHuggingPriority="750" id="YbL-01-sYZ">
             <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <animations/>
             <buttonCell key="cell" type="push" title="Rename" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="X52-kY-B6Q">
                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                 <font key="font" metaFont="system"/>
@@ -175,7 +165,6 @@ Gw
             <subviews>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="qsB-Vr-8ZA">
                     <rect key="frame" x="18" y="92" width="176" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Copy extended attributes" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="bVV-Mm-AAW">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -183,7 +172,6 @@ Gw
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="dpu-XA-3T3">
                     <rect key="frame" x="18" y="72" width="112" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Copy file times" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="9bP-RY-UQi">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -191,7 +179,6 @@ Gw
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Qai-ZS-UAD">
                     <rect key="frame" x="18" y="52" width="122" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Copy UNIX flags" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="AJ8-VF-u7U">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -199,7 +186,6 @@ Gw
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="EmM-aw-84e">
                     <rect key="frame" x="18" y="32" width="155" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Copy UNIX ownership" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="y8g-hO-IAN">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -207,21 +193,18 @@ Gw
                 </button>
                 <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8IL-zI-QIe">
                     <rect key="frame" x="20" y="145" width="344" height="5"/>
-                    <animations/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
                 </box>
                 <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="9Yh-TR-VXC">
                     <rect key="frame" x="20" y="-2" width="344" height="5"/>
-                    <animations/>
                     <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                     <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <font key="titleFont" metaFont="system"/>
                 </box>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wBy-zy-hwn">
                     <rect key="frame" x="18" y="9" width="117" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify copied files:" id="zc8-ET-VWt">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -230,7 +213,6 @@ Gw
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ihm-D6-SBj">
                     <rect key="frame" x="139" y="3" width="120" height="26"/>
-                    <animations/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="bg2-66-WSB">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -245,7 +227,6 @@ Gw
                 </popUpButton>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Sz2-k9-71G">
                     <rect key="frame" x="18" y="112" width="164" height="18"/>
-                    <animations/>
                     <buttonCell key="cell" type="check" title="Preserve symbolic links" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="j2d-E0-qK6">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -284,7 +265,6 @@ Gw
                 <constraint firstItem="Qai-ZS-UAD" firstAttribute="top" secondItem="dpu-XA-3T3" secondAttribute="bottom" constant="6" symbolic="YES" id="z1h-IY-v7c"/>
                 <constraint firstItem="wBy-zy-hwn" firstAttribute="leading" secondItem="4Xp-mm-USZ" secondAttribute="leading" constant="20" symbolic="YES" id="zhs-gk-uYN"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="-88" y="799.5"/>
         </customView>
     </objects>

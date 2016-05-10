@@ -20,6 +20,7 @@
 #include "MainWindowFilePanelState+Menu.h"
 #include "ActionsShortcutsManager.h"
 #include "PanelController.h"
+#include "PanelAux.h"
 #include "FilePanelMainSplitView.h"
 #include "MainWindowController.h"
 #include "ActivationManager.h"
@@ -288,8 +289,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
 
-    FileCopyOperationOptions opts;
-    opts.docopy = true;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
@@ -326,8 +326,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
     
-    FileCopyOperationOptions opts;
-    opts.docopy = true;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()
@@ -364,8 +363,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
     
-    FileCopyOperationOptions opts;
-    opts.docopy = false;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
     
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
@@ -398,8 +396,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
         return;
     
-    FileCopyOperationOptions opts;
-    opts.docopy = false;
+    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
 
     auto entries = vector<VFSListingItem>({item});
     auto update_both_panels = self.refreshBothCurrentControllersLambda;

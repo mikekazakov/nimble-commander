@@ -15,6 +15,7 @@
 #include "MainWindowFilePanelState.h"
 #include "Config.h"
 #include "ActivationManager.h"
+#include "PanelAux.h"
 
 static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
@@ -569,7 +570,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             opmask = source_broker.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
         
         if( opmask == NSDragOperationCopy ) {
-            FileCopyOperationOptions opts;
+            FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
@@ -584,8 +585,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             return true;
         }
         else if( opmask == NSDragOperationMove ) {
-            FileCopyOperationOptions opts;
-            opts.docopy = false;
+            FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
@@ -626,8 +626,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         if( source_items.empty() )
             return false; // errors on fetching listings?
         
-        FileCopyOperationOptions opts;
-        opts.docopy = true; // TODO: support move from other apps someday?
+        FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions(); // TODO: support move from other apps someday?
         auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                            destinationPath:destination.Path()
                                            destinationHost:destination.Host()

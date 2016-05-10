@@ -19,8 +19,10 @@
 #include "PanelController.h"
 #include "MainWindowController.h"
 #include "PanelAux.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
+static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
 static void RegisterRemoteFileUploading(const string& _original_path,
@@ -47,7 +49,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                                                                                  items,
                                                                                  nullptr);
                 if( ret == 0 ) {
-                    FileCopyOperationOptions opts;
+                    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
                     opts.force_overwrite = true;
                     auto operation = [[FileCopyOperation alloc] initWithItems:items
                                                               destinationPath:_original_path
@@ -226,4 +228,35 @@ bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
             return true;
     
     return false;
+}
+
+static FileCopyOperationOptions::ChecksumVerification DefaultChecksumVerificationSetting()
+{
+    if( !ActivationManager::Instance().HasCopyVerification() )
+        return FileCopyOperationOptions::ChecksumVerification::Never;
+    int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
+    if( v == (int)FileCopyOperationOptions::ChecksumVerification::Always )
+       return FileCopyOperationOptions::ChecksumVerification::Always;
+    else if( v == (int)FileCopyOperationOptions::ChecksumVerification::WhenMoves )
+        return FileCopyOperationOptions::ChecksumVerification::WhenMoves;
+    else
+        return FileCopyOperationOptions::ChecksumVerification::Never;
+}
+
+FileCopyOperationOptions panel::MakeDefaultFileCopyOptions()
+{
+    FileCopyOperationOptions options;
+    options.docopy = true;
+    options.verification = DefaultChecksumVerificationSetting();
+
+    return options;
+}
+
+FileCopyOperationOptions panel::MakeDefaultFileMoveOptions()
+{
+    FileCopyOperationOptions options;
+    options.docopy = false;
+    options.verification = DefaultChecksumVerificationSetting();
+
+    return options;
 }

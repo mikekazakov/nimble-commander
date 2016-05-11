@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FTPConnectionSheetController">
@@ -17,7 +16,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="374" height="256"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="374" height="256"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -157,7 +156,7 @@
                             <outlet property="nextKeyView" destination="Mm4-jL-QXv" id="Llv-CP-X46"/>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fjO-vO-BQg">
+                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fjO-vO-BQg">
                         <rect key="frame" x="175" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="xEj-sh-bAH"/>
@@ -171,7 +170,7 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnClose:" target="-2" id="hcA-Qs-jGT"/>
-                            <outlet property="nextKeyView" destination="qwA-sf-je9" id="HJl-p6-Hor"/>
+                            <outlet property="nextKeyView" destination="Keo-vb-KpK" id="R0V-Fc-DFb"/>
                         </connections>
                     </button>
                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="qwA-sf-je9">
@@ -216,7 +215,7 @@ Gw
                             <outlet property="nextKeyView" destination="UEI-a2-bDe" id="wSt-NZ-Vee"/>
                         </connections>
                     </textField>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mm4-jL-QXv">
+                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mm4-jL-QXv">
                         <rect key="frame" x="267" y="13" width="93" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ONg-Tn-Wdb"/>

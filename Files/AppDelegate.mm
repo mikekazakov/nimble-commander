@@ -99,7 +99,7 @@ static optional<string> AskUserForLicenseFile()
 static bool AskUserToResetDefaults()
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
+    alert.messageText = NSLocalizedString(@"Are you sure you want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
     alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
@@ -119,8 +119,8 @@ static bool AskUserToResetDefaults()
 static bool AskUserToProvideUsageStatistics()
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Help product improvement", "Asking user to provide anonymous usage information - message");
-    alert.informativeText = NSLocalizedString(@"Would you like to send anonymous usage statistics to developer? None of your personal data would be collected.", "Asking user to provide anonymous usage information - informative text");
+    alert.messageText = NSLocalizedString(@"Please help us to improve the product", "Asking user to provide anonymous usage information - message");
+    alert.informativeText = NSLocalizedString(@"Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected.", "Asking user to provide anonymous usage information - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"Send", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Don't send", "")];
     return [alert runModal] == NSAlertFirstButtonReturn;
@@ -146,7 +146,7 @@ static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
 
 static void BringFeedbackMessageEditor()
 {
-    NSString *toAddress = @"feedback@filesmanager.info";
+    NSString *toAddress = @"feedback@magnumbytes.com";
     NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
@@ -344,7 +344,7 @@ static AppDelegate *g_Me = nil;
         // setup Sparkle updater stuff
         g_Sparkle = [SUUpdater sharedUpdater];
         NSMenuItem *item = [[NSMenuItem alloc] init];
-        item.title = NSLocalizedString(@"Check For Updates...", "Menu item title for check if any Files updates are here");
+        item.title = NSLocalizedString(@"Check for Updates...", "Menu item title for check if any Files updates are here");
         item.target = g_Sparkle;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
@@ -462,7 +462,7 @@ static AppDelegate *g_Me = nil;
     if (has_running_ops) {
         NSAlert *alert = [[NSAlert alloc] init];
         alert.messageText = NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?", "Asking user for quitting app with activity");
-        [alert addButtonWithTitle:NSLocalizedString(@"Stop And Quit", "Asking user for quitting app with activity - confirmation")];
+        [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit", "Asking user for quitting app with activity - confirmation")];
         [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
         NSInteger result = [alert runModal];
         
@@ -563,14 +563,18 @@ static AppDelegate *g_Me = nil;
     string directory;
     vector<string> filenames;
     for( auto &i:_path ) {
-        string parent = path(i).parent_path().native();
-
         if( directory.empty() )
-            directory = parent;
+            directory = path(i).parent_path().native();
         
-        if( i != "/" )
+        if( !i.empty() &&
+            i.front() == '/' &&
+            i != "/"
+           )
             filenames.emplace_back( path(i).filename().native() );
     }
+    
+    if( filenames.empty() )
+        return;
 
     // find window to ask
     NSWindow *target_window = nil;
@@ -647,8 +651,8 @@ static AppDelegate *g_Me = nil;
         bool result = RoutedIO::Instance().TurnOn();
         if( !result ) {
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText = NSLocalizedString(@"Failed to access a privileged helper.", "Information that toggling admin mode on had failed");
-            [alert addButtonWithTitle:NSLocalizedString(@"Ok", "")];
+            alert.messageText = NSLocalizedString(@"Failed to access the privileged helper.", "Information that toggling admin mode on has failed");
+            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         }
     }

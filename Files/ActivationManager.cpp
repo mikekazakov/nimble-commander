@@ -14,7 +14,7 @@ static const auto g_LicenseExtension = "nimblecommanderlicense"s;
 static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
 static CFStringRef const g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
 static const int g_TrialPeriodDays = 30;
-static const int g_TrialNagScreenMinDays = 15;
+static const int g_TrialNagScreenMinDays = 15; // when amount of trial days becomes less that this value - an app will start showing a nag screen upon startup
 static const double g_TrialPeriodTimeInterval = 60.*60.*24.*g_TrialPeriodDays; // 30 days
 
 // free mas version setup

@@ -9,33 +9,6 @@
 #include "TrialWindowController.h"
 #include "GoogleAnalytics.h"
 
-static NSAttributedString *HyperlinkFromString(NSString *_string, NSURL* _url)
-{
-    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString:_string];
-    NSRange range = NSMakeRange(0, attrString.length);
-    
-    [attrString beginEditing];
-    
-    // set url itself
-    [attrString addAttribute:NSLinkAttributeName
-                       value:_url.absoluteString
-                       range:range];
-    
-    // make the text appear in blue
-    [attrString addAttribute:NSForegroundColorAttributeName
-                       value:NSColor.blueColor
-                       range:range];
-    
-    // next make the text appear with an underline
-    [attrString addAttribute:NSUnderlineStyleAttributeName
-                       value:@(NSUnderlineStyleSingle)
-                       range:range];
-    
-    [attrString endEditing];
-    
-    return attrString;
-}
-
 @interface TrialWindow : NSWindow
 @end
 @implementation TrialWindow
@@ -55,7 +28,6 @@ static NSAttributedString *HyperlinkFromString(NSString *_string, NSURL* _url)
 
 @property (strong) IBOutlet NSTextField *versionTextField;
 @property (strong) IBOutlet NSTextView *messageTextView;
-@property (strong) IBOutlet NSTextField *copyrightTextField;
 
 - (IBAction)OnClose:(id)sender;
 
@@ -82,27 +54,20 @@ static NSAttributedString *HyperlinkFromString(NSString *_string, NSURL* _url)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    self.versionTextField.stringValue = [NSString stringWithFormat:@"Version %@ (%@)",
+    
+    NSString *html = [@"<style>body { font-family: Helvetica; font-size: 10pt }</style>" stringByAppendingString:
+                      NSLocalizedString(@"__TRIAL_WINDOW_NOTE", "Nag screen text about test period")];
+    self.messageTextView.textStorage.attributedString = [[NSAttributedString alloc] initWithHTML:[html dataUsingEncoding:NSUTF8StringEncoding] documentAttributes:nil];
+    self.messageTextView.textContainer.lineFragmentPadding = 0;
+    
+    self.versionTextField.stringValue = [NSString stringWithFormat:@"Version %@ (%@)\n%@",
                                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
-                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
-    self.copyrightTextField.stringValue = [NSBundle.mainBundle.infoDictionary objectForKey:@"NSHumanReadableCopyright"];
-    
-    NSMutableAttributedString* string = [[NSMutableAttributedString alloc] init];
-    
-    NSString *s1 = @"This is a trial version of Nimble Commander.\nAfter a period of one month you must have a ";
-    [string appendAttributedString:[[NSMutableAttributedString alloc] initWithString:s1]];
-    
-    NSURL* url = [NSURL URLWithString:@"https://itunes.apple.com/app/files-pro/id942443942?ls=1&mt=12"];
-    [string appendAttributedString:HyperlinkFromString(@"version from App Store", url)];
-    
-    NSString *s2 = @" installed on your hard drive or delete Nimble Commander from this computer.\n\nThis window appears only in trial version.";
-    [string appendAttributedString:[[NSMutableAttributedString alloc] initWithString:s2]];
-        
-    self.messageTextView.textStorage.attributedString = string;
+                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"],
+                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"NSHumanReadableCopyright"]
+                                         ];
     
     GoogleAnalytics::Instance().PostScreenView("Trial Nag Screen");
 }
-
 
 - (IBAction)OnClose:(id)sender
 {

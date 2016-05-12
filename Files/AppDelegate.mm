@@ -675,12 +675,6 @@ static AppDelegate *g_Me = nil;
     return true;
 }
 
-- (IBAction)showFeatureNotSupportedWindow:(id)sender
-{
-    auto wnd = [[FeatureNotAvailableWindowController alloc] init];
-    [NSApp runModalForWindow:wnd.window];
-}
-
 - (GenericConfigObjC*) config
 {
     static GenericConfigObjC *global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];

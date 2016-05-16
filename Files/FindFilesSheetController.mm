@@ -297,6 +297,7 @@ private:
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
     
     if( !ActivationManager::Instance().HasTemporaryPanels() ) {
+        [self.PanelButton unbind:@"enabled2"];
         [self.PanelButton unbind:@"enabled"];
         self.PanelButton.enabled = false;
     }

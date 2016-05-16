@@ -547,6 +547,15 @@ DQ
                         <connections>
                             <action selector="OnPanelize:" target="-2" id="W79-g3-57Y"/>
                             <binding destination="ehN-Ke-Ten" name="enabled" keyPath="arrangedObjects.@count" id="mJe-4x-nsh"/>
+                            <binding destination="-2" name="enabled2" keyPath="self.searchingNow" previousBinding="mJe-4x-nsh" id="SHC-dr-Sgw">
+                                <dictionary key="options">
+                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
                             <outlet property="nextKeyView" destination="40b-pd-d3f" id="pJN-eA-Vk9"/>
                         </connections>
                     </button>

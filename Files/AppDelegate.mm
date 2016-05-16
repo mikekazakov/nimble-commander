@@ -39,7 +39,6 @@
 #include "TrialWindowController.h"
 #include "RoutedIO.h"
 #include "AppStoreRatings.h"
-#include "FeatureNotAvailableWindowController.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
@@ -298,6 +297,9 @@ static AppDelegate *g_Me = nil;
     if( am.Type() != ActivationManager::Distribution::Free || am.UsedHadPurchasedProFeatures() ) {
                                                 hide("menu.nimble_commander.purchase_pro_features");
                                                 hide("menu.nimble_commander.restore_purchases"); }
+    if( am.Type() != ActivationManager::Distribution::Trial || am.UserHadRegistered() ) {
+                                                hide("menu.nimble_commander.active_license_file");
+                                                hide("menu.nimble_commander.purchase_license"); }
     if( !am.HasRoutedIO() )                     hide("menu.nimble_commander.toggle_admin_mode");
     
     // reversible items disabling / enabling
@@ -528,10 +530,16 @@ static AppDelegate *g_Me = nil;
 
 - (void) processProvidedLicenseFile:(const string&)_path
 {
-    bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
+    const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
     if( valid_and_installed ) {
-        // TODO: thank user for registration and ask to restart NimbleCommander
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.icon = [NSImage imageNamed:@"checked_icon"];
+        alert.messageText       = NSLocalizedString(@"__THANKS_FOR_REGISTER_MESSAGE", "Message to thank user for buying");
+        alert.informativeText   = NSLocalizedString(@"__THANKS_FOR_REGISTER_INFORMATIVE", "Informative text to thank user for buying");
+        [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+        [alert runModal];
         
+        [self updateMainMenuFeaturesByVersionAndState];
     }
 }
 
@@ -543,7 +551,7 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
-    // TODO:
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"]];
 }
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender

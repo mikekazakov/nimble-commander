@@ -331,10 +331,18 @@ static bool CopyLicenseFile( const string& _source_path, const string &_dest_pat
 
 bool ActivationManager::ProcessLicenseFile( const string& _path )
 {
+    if( Type() != ActivationManager::Distribution::Trial )
+        return false;
+        
     if( !CheckAquaticLicense(_path) )
         return false;
     
-    return CopyLicenseFile( _path, InstalledAquaticLicensePath() );
+    if( !CopyLicenseFile( _path, InstalledAquaticLicensePath() ) )
+        return false;
+    
+    m_UserHadRegistered = true;
+    
+    return true;;
 }
 
 bool ActivationManager::UserHadRegistered() const noexcept

@@ -61,7 +61,7 @@ DQ
                             <constraint firstAttribute="height" constant="200" id="MUB-tZ-0cm"/>
                             <constraint firstAttribute="width" constant="200" id="Tce-qy-uJD"/>
                         </constraints>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="files" id="wYh-n7-GW3"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="main_icon" id="wYh-n7-GW3"/>
                     </imageView>
                     <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="tmN-Hh-L92">
                         <rect key="frame" x="228" y="51" width="274" height="127"/>
@@ -118,6 +118,6 @@ DQ
         </window>
     </objects>
     <resources>
-        <image name="files" width="512" height="512"/>
+        <image name="main_icon" width="512" height="512"/>
     </resources>
 </document>

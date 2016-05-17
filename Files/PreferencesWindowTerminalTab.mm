@@ -45,7 +45,7 @@ static const auto g_ConfigFont = "terminal.font";
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_term_icon"];
+    return [NSImage imageNamed:@"PreferencesIcons_Terminal"];
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"Terminal",

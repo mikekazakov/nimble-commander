@@ -65,7 +65,7 @@ static const auto g_ConfigClassicFont     = "viewer.classic.font";
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_viewer_icon"];
+    return [NSImage imageNamed:@"PreferencesIcons_Viewer"];    
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"Viewer",

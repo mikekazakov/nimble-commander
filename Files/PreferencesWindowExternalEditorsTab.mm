@@ -48,7 +48,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_extedit_icon"];
+    return [NSImage imageNamed:@"PreferencesIcons_ExtEditors"];
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"Editors",

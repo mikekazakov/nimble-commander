@@ -199,7 +199,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_panels_icon.png"];
+    return [NSImage imageNamed:@"PreferencesIcons_Panels"];
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"Panels",

@@ -82,7 +82,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_hotkeys_icon"];
+    return [NSImage imageNamed:@"PreferencesIcons_Hotkeys"];
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"Hotkeys",

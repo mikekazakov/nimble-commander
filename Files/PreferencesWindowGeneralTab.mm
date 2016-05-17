@@ -45,7 +45,7 @@
     return NSStringFromClass(self.class);
 }
 -(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"pref_general_icon"];
+    return [NSImage imageNamed:NSImageNamePreferencesGeneral];
 }
 -(NSString*)toolbarItemLabel{
     return NSLocalizedStringFromTable(@"General",

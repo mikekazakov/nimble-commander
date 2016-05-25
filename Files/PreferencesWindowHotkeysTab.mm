@@ -27,6 +27,30 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     return title;
 }
 
+static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
+{
+    static const vector< pair<const char *, NSString *> > titles = {
+        {"panel.move_up",                       @"File Panels ▶ move up"},
+        {"panel.move_down",                     @"File Panels ▶ move down"},
+        {"panel.move_left",                     @"File Panels ▶ move left"},
+        {"panel.move_right",                    @"File Panels ▶ move right"},
+        {"panel.move_first",                    @"File Panels ▶ move to first element"},
+        {"panel.move_last",                     @"File Panels ▶ move to last element"},
+        {"panel.move_next_page",                @"File Panels ▶ move to next page"},
+        {"panel.move_prev_page",                @"File Panels ▶ move to previous page"},
+        {"panel.move_next_and_invert_selection",@"File Panels ▶ invert selection and move next"},
+        {"panel.go_root",                       @"File Panels ▶ go to root / directory"},
+        {"panel.go_home",                       @"File Panels ▶ go to home ~ directory"},
+        {"panel.show_preview",                  @"File Panels ▶ show preview"},
+    };
+    
+    for( auto &i: titles )
+        if( i.first == _action )
+            return i.second;
+    
+    return nil;
+}
+
 @interface PreferencesWindowHotkeysTab()
 
 @property (strong) IBOutlet NSTableView *Table;
@@ -115,6 +139,8 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
         tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
         if( auto title = ComposeVerboseMenuItemTitle(menu_item) )
             tf.stringValue = title;
+        else if( auto title = ComposeVerboseNonMenuActionTitle(tag.first) )
+            tf.stringValue = title;            
         else
             tf.stringValue = tf.toolTip;
         tf.bordered = false;

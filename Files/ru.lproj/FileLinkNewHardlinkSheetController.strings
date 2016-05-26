@@ -1,4 +1,4 @@
-/* Class = "NSTextFieldCell"; placeholderString = "Type a hardlink name here"; ObjectID = "11"; */
+/* Class = "NSTextFieldCell"; placeholderString = "Enter a hardlink name"; ObjectID = "11"; */
 "11.placeholderString" = "Введите имя жесткой ссылки";
 
 /* Class = "NSButtonCell"; title = "Create"; ObjectID = "17"; */

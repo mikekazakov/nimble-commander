@@ -34,15 +34,15 @@
 /* Volume information bar, showing volume name and free space */
 "%s: %s available" = "%1$s: %2$s доступно";
 
+/* Asking user for confirmation for clearing recent connections
+   Asking user if he want to clear recent connections */
+"Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
+
 /* Asking user if he really wants to delete information about a stored connection */
 "Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
 
 /* Asking user for confirmation on erasing custom settings - message */
 "Are you sure you want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
-
-/* Asking user for confirmation for clearing recent connections
-   Asking user if he want to clear recent connections */
-"Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
 
 /* Brief System Information overlay title */
 "Brief System Information" = "Краткий обзор системы";
@@ -102,7 +102,7 @@
 /* Menu item title in file deletion sheet */
 "Delete Permanently" = "Удалить необратимо";
 
-/* Title for deselection with mask popup */
+/* Title for deselection by mask popup */
 "Deselect files by mask:" = "Снять выделение по маске:";
 
 /* Menu item title for disabling an admin mode */
@@ -117,11 +117,17 @@
 /* Asking user to delete a file */
 "Do you want to delete “%@”?" = "Вы хотите удалить “%@”?";
 
+/* No comment provided by engineer. */
+"Don't send" = "Не отправлять";
+
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
 
 /* Showing error when connecting to FTP server */
 "FTP connection error:" = "Ошибка подключения FTP:";
+
+/* Information that toggling admin mode on has failed */
+"Failed to access the privileged helper." = "Не удалось связаться с привилегированным помощником.";
 
 /* Showing error when trying to create an empty file */
 "Failed to create an empty file:" = "Не удалось создать пустой файл:";
@@ -180,14 +186,14 @@
 /* No comment provided by engineer. */
 "OK" = "ОК";
 
-/* No comment provided by engineer. */
-"Ok" = "Ок";
-
 /* Title for process sheet when opening a vfs file */
 "Opening file..." = "Открытие файла...";
 
 /* Upper-dirs popup menu title in file panels */
 "Parent Folders" = "Родительские папки";
+
+/* Asking user to provide anonymous usage information - message */
+"Please help us to improve the product" = "Помогите нам улучшить продукт";
 
 /* Brief System Information ram box title */
 "RAM" = "Память";
@@ -213,7 +219,7 @@
 /* Placeholder for search text field in internal viewer */
 "Search in file" = "Искать в файле";
 
-/* Title for selection with mask popup */
+/* Title for selection by mask popup */
 "Select files by mask:" = "Выделить по маске:";
 
 /* Informative text for a bottom information bar in panels, showing size of selection */
@@ -245,6 +251,9 @@
 
 /* Informative text for a bottom information bar in panels, showing size of selection */
 "Selected %@ in 9 files" = "Выделено %@ в 9 файлах";
+
+/* No comment provided by engineer. */
+"Send" = "Отправлять";
 
 /* Menu item title for showing tab bar */
 "Show Tab Bar" = "Показать панель вкладок";
@@ -282,6 +291,9 @@
 /* Message text when user is entering an invalid filename */
 "The name “%@” can’t be used." = "Имя “%@” не может быть использовано.";
 
+/* Asking user to close window with some operations running */
+"The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
+
 /* Asking user for confirmation on erasing custom settings - informative text */
 "This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
 
@@ -309,11 +321,11 @@
 /* Volumes popup menu title in file panels */
 "Volumes" = "Тома";
 
-/* Asking user to close window with some operations running */
-"The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
-
 /* Internal viewer checkbox to wrap words */
 "Word wrap" = "Переносить слова";
+
+/* Asking user to provide anonymous usage information - informative text */
+"Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected." = "Хотели бы Вы отправлять разработчику анонимную статистику об использовании? Никакая личная информация о Вас не будет собираться.";
 
 /* No comment provided by engineer. */
 "Yes" = "Да";
@@ -340,14 +352,20 @@
 /* Fixed-length (6 chars) string for upper-dir, for English is '    Up' */
 "__CLASSICPRESENTATION_UP_WORD" = "Наверх";
 
-/* No comment provided by engineer. */
-"__GENERAL_FEATURE_NOT_AVAILABLE" = "Эта функция недоступна в версии Lite.\rЧтобы использовать её, установите $Files Pro$https://itunes.apple.com/app/files-pro/id942443942?ls=1&mt=12$.\r\r$Узнать больше о возможностях полной версии$http://filesmanager.info/$";
-
 /* Folders dummy string when size is not available, for English is 'Folder' */
 "__MODERNPRESENTATION_FOLDER_WORD" = "Папка";
 
 /* Upper-level in directory, for English is 'Up' */
 "__MODERNPRESENTATION_UP_WORD" = "Наверх";
+
+/* Informative text to thank user for buying */
+"__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
+
+/* Message to thank user for buying */
+"__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
+
+/* Nag screen text about test period */
+"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.<br>Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно <a href=\\\"http://magnumbytes.com/redirectlinks/buy_license\\\">купить лицензию</a> или <a href=\\\"macappstore://itunes.apple.com/app/id942443942\\\">установить платную версию</a> из Mac App Store.<br>Это окно появляется только в пробной версии.";
 
 /* Name for freshly create folder by hotkey */
 "untitled folder" = "Новая папка";

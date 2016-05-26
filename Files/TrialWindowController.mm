@@ -57,7 +57,9 @@
     
     NSString *html = [@"<style>body { font-family: Helvetica; font-size: 10pt }</style>" stringByAppendingString:
                       NSLocalizedString(@"__TRIAL_WINDOW_NOTE", "Nag screen text about test period")];
-    self.messageTextView.textStorage.attributedString = [[NSAttributedString alloc] initWithHTML:[html dataUsingEncoding:NSUTF8StringEncoding] documentAttributes:nil];
+    self.messageTextView.textStorage.attributedString = [[NSAttributedString alloc] initWithHTML:[html dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                         options:@{ NSCharacterEncodingDocumentAttribute: @(NSUTF8StringEncoding) }
+                                                                              documentAttributes:nil];
     self.messageTextView.textContainer.lineFragmentPadding = 0;
     
     self.versionTextField.stringValue = [NSString stringWithFormat:@"Version %@ (%@)\n%@",

@@ -40,7 +40,7 @@
 /* Informative text when user wants to reset hotkeys to defaults */
 "This will clear any custom hotkeys." = "Ваши изменения горячих клавиш будут удалены.";
 
-/* Informative text when asking user to clear saved file state */
+/* Informative text displayed when the user is going to clear saved file state */
 "This will erase stored positions, encodings, selections, etc." = "Будут удалены сохраненные позиции, кодировки, выделения и т.д.";
 
 /* General preferences tab title */

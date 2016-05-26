@@ -19,3 +19,6 @@
 /* Class = "NSTextFieldCell"; title = "Granted filesystem access:"; ObjectID = "q8n-Mc-Nho"; */
 "q8n-Mc-Nho.title" = "Доступ к файловой системе:";
 
+/* Class = "NSButtonCell"; title = "Send anonymous usage statistics to the developer"; ObjectID = "uW2-01-WEk"; */
+"uW2-01-WEk.title" = "Отправлять разработчику анонимную информацию об использовании";
+

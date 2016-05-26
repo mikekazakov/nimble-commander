@@ -7,14 +7,11 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "BxS-J4-CBs"; */
 "BxS-J4-CBs.title" = "Отмена";
 
-/* Class = "NSButtonCell"; title = "Ok"; ObjectID = "DPm-wa-ccm"; */
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "DPm-wa-ccm"; */
 "DPm-wa-ccm.title" = "ОК";
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "J19-J3-pgq"; */
 "J19-J3-pgq.title" = "Имя:";
-
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m etc"; ObjectID = "SdM-sO-Ddd"; */
-"SdM-sO-Ddd.ibShadowedIsNilPlaceholder" = "*, *.*, *.cpp, *.*m и т.д.";
 
 /* Class = "NSTextFieldCell"; title = "File mask:"; ObjectID = "eP4-pl-vw3"; */
 "eP4-pl-vw3.title" = "Маска файлов:";
@@ -25,10 +22,13 @@
 /* Class = "NSButtonCell"; title = "..."; ObjectID = "fkZ-WL-MSq"; */
 "fkZ-WL-MSq.title" = "...";
 
+/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m, etc."; ObjectID = "hau-43-Cpg"; */
+"hau-43-Cpg.ibShadowedIsNilPlaceholder" = "*, *.*, *.cpp, *.*m и т.д.";
+
 /* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
 "mi2-sj-UPs.ibShadowedIsNilPlaceholder" = "%%";
 
-/* Class = "NSTextFieldCell"; title = "Any occurrences of %% will be replaced with file path. You can use backward slashes to escape spaces from being interpreted as parameters dividers."; ObjectID = "wWC-fX-UjM"; */
+/* Class = "NSTextFieldCell"; title = "Any occurrences of %% will be replaced with file path. You can use backslashes to escape spaces, so that they are not interpreted as parameter delimiters."; ObjectID = "wWC-fX-UjM"; */
 "wWC-fX-UjM.title" = "Все экземпляры %% будут заменены на путь файла. Вы можете использовать обратный слэш для избегания интерпретации пробелов как разделитей параметров.";
 
 /* Class = "NSTextFieldCell"; title = "Application path:"; ObjectID = "xCy-eR-Fzk"; */

@@ -16,7 +16,7 @@
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "10X-cZ-a2S"; */
 "10X-cZ-a2S.title" = "";
 
-/* Class = "NSComboBoxCell"; placeholderString = "Type here a desired text to search"; ObjectID = "17I-3a-9vx"; */
+/* Class = "NSComboBoxCell"; placeholderString = "Enter a text to search"; ObjectID = "17I-3a-9vx"; */
 "17I-3a-9vx.placeholderString" = "Введите текст для поиска";
 
 /* Class = "NSTableColumn"; headerCell.title = "Location"; ObjectID = "A8Z-IY-14U"; */
@@ -46,7 +46,7 @@
 /* Class = "NSComboBoxCell"; placeholderString = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "QoT-rJ-7t8"; */
 "QoT-rJ-7t8.placeholderString" = "Маска, например *, или *.txt, или *.txt, *.jpg";
 
-/* Class = "NSTextFieldCell"; title = "Search for files with mask:"; ObjectID = "R8e-FO-aEj"; */
+/* Class = "NSTextFieldCell"; title = "Search for files using mask:"; ObjectID = "R8e-FO-aEj"; */
 "R8e-FO-aEj.title" = "Искать файлы с маской:";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "ROy-iE-OqK"; */
@@ -88,7 +88,7 @@
 /* Class = "NSTableColumn"; headerCell.title = "Size"; ObjectID = "kY9-vv-6NZ"; */
 "kY9-vv-6NZ.headerCell.title" = "Размер";
 
-/* Class = "NSButtonCell"; title = "Look in sub-directories"; ObjectID = "lJf-WO-EGY"; */
+/* Class = "NSButtonCell"; title = "Look in subdirectories"; ObjectID = "lJf-WO-EGY"; */
 "lJf-WO-EGY.title" = "Искать в подпапках";
 
 /* Class = "NSButtonCell"; alternateTitle = "Stop"; ObjectID = "oef-aB-x9Q"; */
@@ -105,6 +105,9 @@
 
 /* Class = "NSMenuItem"; title = "≤"; ObjectID = "udS-8N-4fz"; */
 "udS-8N-4fz.title" = "≤";
+
+/* Class = "NSButtonCell"; title = "Go To"; ObjectID = "wf8-iS-Nke"; */
+"wf8-iS-Nke.title" = "Перейти";
 
 /* Class = "NSMenuItem"; title = "≥"; ObjectID = "ydK-d2-gsz"; */
 "ydK-d2-gsz.title" = "≥";

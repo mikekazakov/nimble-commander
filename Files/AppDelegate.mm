@@ -346,7 +346,7 @@ static AppDelegate *g_Me = nil;
         // setup Sparkle updater stuff
         g_Sparkle = [SUUpdater sharedUpdater];
         NSMenuItem *item = [[NSMenuItem alloc] init];
-        item.title = NSLocalizedString(@"Check for Updates...", "Menu item title for check if any Files updates are here");
+        item.title = NSLocalizedString(@"Check for Updates...", "Menu item title for check if any Nimble Commander updates are available");
         item.target = g_Sparkle;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"

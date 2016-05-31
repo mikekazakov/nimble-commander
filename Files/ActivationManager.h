@@ -65,17 +65,14 @@ private:
 #if   defined(__NC_VERSION_FREE__)
     static const Distribution m_Type = Distribution::Free;
     static const bool m_IsSandBoxed = true;
-//    const string m_BundleID = "info.filesmanager.Files-Lite"s;
     const string m_AppStoreIdentifier = "905202937"s;
 #elif defined(__NC_VERSION_PAID__)
     static const Distribution m_Type = Distribution::Paid;
     static const bool m_IsSandBoxed = true;
-//    const string m_BundleID = "info.filesmanager.Files-Pro"s;
     const string m_AppStoreIdentifier = "942443942"s;
 #elif defined(__NC_VERSION_TRIAL__)
     static const Distribution m_Type = Distribution::Trial;
     static const bool m_IsSandBoxed = false;
-//    const string m_BundleID = "info.filesmanager.Files"s;
     const string m_AppStoreIdentifier = ""s;
 #else
     #error Invalid build configuration - no version type specified

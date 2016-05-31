@@ -56,19 +56,19 @@
 @property (nonatomic, readonly) const string& startupCWD;
 
 /**
- * Support dir, ~/Library/Application Support/Nimble Commander.
+ * Support dir, ~/Library/Application Support/Nimble Commander/.
  * Is in Containers for Sandboxes versions
  */
 @property (nonatomic, readonly) const string& supportDirectory;
 
 /**
- * By default this dir is ~/Library/Application Support/Files(Lite,Pro).
+ * By default this dir is ~/Library/Application Support/Nimble Commander/Config/.
  * May change in the future.
  */
 @property (nonatomic, readonly) const string& configDirectory;
 
 /**
- * This dir is ~/Library/Application Support/Files(Lite,Pro)/State/.
+ * This dir is ~/Library/Application Support/Nimble Commander/State/.
  */
 @property (nonatomic, readonly) const string& stateDirectory;
 

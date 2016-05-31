@@ -26,7 +26,7 @@ public:
         // a child program is running under shell, executed from it's command line
         ProgramInternal = 2,
         
-        // a child program is running under shell, executed from Files' UI
+        // a child program is running under shell, executed from NC's UI
         ProgramExternal = 3,
         
         // shell died

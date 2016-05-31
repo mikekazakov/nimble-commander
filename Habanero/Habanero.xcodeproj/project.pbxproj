@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */; settings = {ASSET_TAGS = (); }; };
-		CF9A9F171CACDD490094D6F7 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; settings = {ASSET_TAGS = (); }; };
+		CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */; };
+		CF9A9F171CACDD490094D6F7 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
 		CFD62B931C99C2A60021EE7F /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B861C99C2A60021EE7F /* algo.h */; };
 		CFD62B941C99C2A60021EE7F /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B871C99C2A60021EE7F /* CFString.h */; };
 		CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B881C99C2A60021EE7F /* CommonPaths.h */; };
@@ -288,6 +288,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -326,6 +327,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;

@@ -1555,7 +1555,7 @@
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
-		CFF6F3A11A13567C00011177 /* NimbleCommander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NimbleCommander.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Pro-Info.plist"; path = "Resource/NimbleCommander-Pro-Info.plist"; sourceTree = "<group>"; };
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
@@ -2530,7 +2530,7 @@
 				CFC5121116C4BD3D00D247EE /* Nimble Commander.app */,
 				CF47A980186C607C00745C4C /* Nimble Commander.xctest */,
 				CF6D997D196675290077B146 /* Nimble Commander.app */,
-				CFF6F3A11A13567C00011177 /* NimbleCommander.app */,
+				CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */,
 				CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
 			name = Products;
@@ -2821,7 +2821,7 @@
 			);
 			name = "NimbleCommander Paid MAS";
 			productName = Directories;
-			productReference = CFF6F3A11A13567C00011177 /* NimbleCommander.app */;
+			productReference = CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -4692,9 +4692,8 @@
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_CPLUSPLUSFLAGS = "";
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
+				PRODUCT_NAME = "Nimble Commander Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
@@ -4740,9 +4739,8 @@
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_CPLUSPLUSFLAGS = "";
-				PRODUCT_NAME = NimbleCommander;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
+				PRODUCT_NAME = "Nimble Commander Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;

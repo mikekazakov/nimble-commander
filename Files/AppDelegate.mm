@@ -234,12 +234,6 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-    // if no option already set - ask user to provide anonymous usage statistics
-    if( !m_IsRunningTests && !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) ) {
-        CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
-        GoogleAnalytics::Instance().UpdateEnabledStatus();
-    }
-    
     // modules initialization
     VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
     VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
@@ -256,13 +250,22 @@ static AppDelegate *g_Me = nil;
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
   
+    bool showed_modal_dialog = false;
     if( ActivationManager::Instance().Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
-        if(sm.Empty()) {
+        if( sm.Empty() ) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
-            if(m_MainWindows.empty())
+            showed_modal_dialog = true;
+            if( m_MainWindows.empty() )
                 [self AllocateNewMainWindow];
         }
+    }
+    
+    
+    // if no option already set - ask user to provide anonymous usage statistics
+    if( !m_IsRunningTests && !showed_modal_dialog && !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) ) {
+        CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
+        GoogleAnalytics::Instance().UpdateEnabledStatus();
     }
 }
 

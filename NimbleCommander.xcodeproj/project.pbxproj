@@ -21,6 +21,32 @@
 		CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
+		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
+		CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
+		CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
+		CF02B5A71D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */; };
+		CF02B5A81D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */; };
+		CF02B5A91D0A63EC00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */; };
+		CF02B5AA1D0A63ED00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */; };
+		CF02B5AB1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */; };
+		CF02B5AC1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */; };
+		CF02B5AD1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */; };
+		CF02B5AE1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */; };
+		CF02B5AF1D0A63F500F2760D /* PreferencesIcons_Panels.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */; };
+		CF02B5B01D0A63F600F2760D /* PreferencesIcons_Panels.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */; };
+		CF02B5B11D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */; };
+		CF02B5B21D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */; };
+		CF02B5B31D0A63FB00F2760D /* PreferencesIcons_Terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */; };
+		CF02B5B41D0A63FC00F2760D /* PreferencesIcons_Terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */; };
+		CF02B5B51D0A63FF00F2760D /* PreferencesIcons_Terminal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */; };
+		CF02B5B61D0A640000F2760D /* PreferencesIcons_Terminal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */; };
+		CF02B5B71D0A640200F2760D /* PreferencesIcons_Viewer.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */; };
+		CF02B5B81D0A640400F2760D /* PreferencesIcons_Viewer.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */; };
+		CF02B5B91D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */; };
+		CF02B5BA1D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */; };
+		CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
+		CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -976,6 +1002,7 @@
 		CF007C561A6BCB8700CB0E48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTab.xib; sourceTree = "<group>"; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
+		CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = NimbleCommander.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = "<group>"; };
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = "<group>"; };
@@ -1627,6 +1654,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
+				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
+				CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */,
+				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
 				CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */,
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
@@ -1776,6 +1807,11 @@
 				CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */,
 			);
 			name = SummaryView;
+			sourceTree = "<group>";
+		};
+		CF02B5A41D0A61F100F2760D /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
 			sourceTree = "<group>";
 		};
 		CF039E981791109000DC85D6 /* RHPreferences */ = {
@@ -2503,6 +2539,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */,
 				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
 				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
@@ -2844,6 +2881,10 @@
 					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
 				},
 				{
+					ProductGroup = CF02B5A41D0A61F100F2760D /* Products */;
+					ProjectRef = CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */;
+				},
+				{
 					ProductGroup = CF768DEE1C99C0F4002748BC /* Products */;
 					ProjectRef = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
 				},
@@ -2911,30 +2952,37 @@
 				CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
+				CF02B5A81D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */,
+				CF02B5B41D0A63FC00F2760D /* PreferencesIcons_Terminal.png in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
+				CF02B5B61D0A640000F2760D /* PreferencesIcons_Terminal@2x.png in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
+				CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */,
 				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
+				CF02B5B01D0A63F600F2760D /* PreferencesIcons_Panels.png in Resources */,
 				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
+				CF02B5B21D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
+				CF02B5AC1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
 				CFA7FA751C1D6E06000D039F /* Config.json in Resources */,
 				CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
@@ -2950,11 +2998,15 @@
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
+				CF02B5B81D0A640400F2760D /* PreferencesIcons_Viewer.png in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CFC044E81B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
+				CF02B5AA1D0A63ED00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */,
+				CF02B5BA1D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */,
 				CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */,
+				CF02B5AE1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */,
 				CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
@@ -3046,30 +3098,37 @@
 				CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */,
 				CFF6F36E1A13567C00011177 /* tab_close.png in Resources */,
 				CFF6F36F1A13567C00011177 /* show_oplist_hl_icon.png in Resources */,
+				CF02B5A71D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */,
+				CF02B5B31D0A63FB00F2760D /* PreferencesIcons_Terminal.png in Resources */,
 				CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFF6F3711A13567C00011177 /* Help.pdf in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
 				CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
+				CF02B5B51D0A63FF00F2760D /* PreferencesIcons_Terminal@2x.png in Resources */,
 				CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CFC044E41B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBD81A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBF1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
+				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
 				CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */,
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
+				CF02B5AF1D0A63F500F2760D /* PreferencesIcons_Panels.png in Resources */,
 				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
+				CF02B5B11D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
+				CF02B5AB1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
 				CFF6F38A1A13567C00011177 /* tab_add.png in Resources */,
@@ -3085,11 +3144,15 @@
 				CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
+				CF02B5B71D0A640200F2760D /* PreferencesIcons_Viewer.png in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
+				CF02B5A91D0A63EC00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */,
+				CF02B5B91D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */,
 				CFC044E91B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
+				CF02B5AD1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */,
 				CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFF6F39C1A13567C00011177 /* pause_icon.png in Resources */,
@@ -4605,6 +4668,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
@@ -4612,7 +4676,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"__FILES_VER_PRO__=1",
+					"__NC_VERSION_PAID__=1",
 				);
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
@@ -4625,6 +4689,8 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";
@@ -4653,12 +4719,13 @@
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "__FILES_VER_PRO__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_PAID__=1";
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -4670,6 +4737,8 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_CPLUSPLUSFLAGS = "";

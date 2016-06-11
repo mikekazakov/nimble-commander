@@ -174,6 +174,7 @@ static AppDelegate *g_Me = nil;
     string              m_StateDirectory;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
     AppStoreHelper *m_AppStoreHelper;
+    bool                m_FinishedLaunching;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -193,6 +194,7 @@ static AppDelegate *g_Me = nil;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         m_Skin = ApplicationSkin::Modern;
+        m_FinishedLaunching = false;
 
         if( ActivationManager::ForAppStore() &&
            ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
@@ -325,6 +327,8 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    m_FinishedLaunching = true;
+    
     if( !m_IsRunningTests && m_MainWindows.empty() )
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
@@ -495,7 +499,7 @@ static AppDelegate *g_Me = nil;
 
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)sender
 {
-    if(m_IsRunningTests)
+    if( !m_FinishedLaunching || m_IsRunningTests )
         return false;
     
     if( m_MainWindows.empty() ) {

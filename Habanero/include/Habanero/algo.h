@@ -103,3 +103,19 @@ inline bool has_prefix( const std::string &_string, const std::string &_prefix )
                     end(_prefix),
                     begin(_string));
 }
+
+class upward_flag
+{
+    bool _state = false;
+public:
+    inline operator bool() const noexcept { return _state; };
+    inline void toggle() noexcept { _state = true; };
+};
+
+class downward_flag
+{
+    bool _state = true;
+public:
+    inline operator bool() const noexcept { return _state; };
+    inline void toggle() noexcept { _state = false; };
+};

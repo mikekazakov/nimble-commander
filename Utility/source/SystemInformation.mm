@@ -287,6 +287,12 @@ bool GetSystemOverview(SystemOverview &_overview)
     _overview.coded_model = coded_model;
     
     return true;
-}    
+}
+
+bool IsThisProcessSandboxed()
+{
+    static const bool is_sandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
+    return is_sandboxed;
+}
     
 }

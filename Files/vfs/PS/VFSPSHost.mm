@@ -14,6 +14,7 @@
 #include "../../3rd_party/apple_sandbox.h"
 #undef __APPLE_API_PRIVATE
 #include <Utility/SystemInformation.h>
+#include "../..//ActivationManager.h"
 #include "../VFSListingInput.h"
 #include "VFSPSHost.h"
 #include "VFSPSInternal.h"
@@ -331,7 +332,7 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
         curr.p_uid = kip.kp_eproc.e_pcred.p_ruid;
         curr.c_uid = kip.kp_eproc.e_ucred.cr_uid;
         curr.cpu_type = ArchTypeFromPID(curr.pid);
-//        if(!configuration::is_for_app_store)
+        if( !ActivationManager::ForAppStore() )
             curr.sandboxed = sandbox_check(curr.pid, NULL, SANDBOX_FILTER_NONE) != 0;
         
         curr.rusage_avail = false;
@@ -447,7 +448,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
         "\n";
     result += "Status: "s + ProcStatus(_info.status) + "\n";
     result += "Architecture: "s + ArchType(_info.cpu_type) + "\n";
-//    if(!configuration::is_for_app_store)
+    if( !ActivationManager::ForAppStore() )
         result += "Sandboxed: "s + (_info.sandboxed ? "yes" : "no") + "\n";
     result += "Image file: "s + (_info.bin_path.empty() ? "N/A" : _info.bin_path) + "\n";
     result += "Arguments: "s + (_info.arguments.empty() ? "N/A" : _info.arguments) + "\n";

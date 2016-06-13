@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="AppStoreRatingsSheetController">
@@ -26,12 +26,10 @@
                             <constraint firstAttribute="height" constant="64" id="LNe-Yj-uEn"/>
                             <constraint firstAttribute="width" constant="64" id="SlC-JS-lUx"/>
                         </constraints>
-                        <animations/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="files" id="AvV-Df-JxQ"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="main_icon" id="AvV-Df-JxQ"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3UW-m8-CIL">
                         <rect key="frame" x="90" y="61" width="318" height="64"/>
-                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="Fj3-M8-hcj">
                             <font key="font" metaFont="system"/>
                             <string key="title">If you like Nimble Commander, would you mind taking a moment to rate it? It won’t take more than a minute! Thanks for your support!</string>
@@ -44,7 +42,6 @@
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="75" id="N93-KJ-lED"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Review Now!" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mUI-zV-RD8">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -61,7 +58,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="75" id="Evi-vh-6d8"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Remind Later!" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qsq-td-Yte">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -78,7 +74,6 @@ Gw
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="75" id="t8O-32-xu1"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="No Thanks!" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uay-HY-gQV">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -104,7 +99,6 @@ Gw
                     <constraint firstItem="fGx-fw-C0m" firstAttribute="baseline" secondItem="fZ3-4m-oRY" secondAttribute="baseline" id="lnm-1s-U5U"/>
                     <constraint firstItem="3UW-m8-CIL" firstAttribute="leading" secondItem="0ZM-mI-vfA" secondAttribute="trailing" constant="8" symbolic="YES" id="zB7-q3-rN8"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
@@ -114,6 +108,6 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="files" width="512" height="512"/>
+        <image name="main_icon" width="512" height="512"/>
     </resources>
 </document>

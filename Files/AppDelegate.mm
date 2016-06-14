@@ -13,6 +13,7 @@
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
+#include <Utility/FunctionKeysPass.h>
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include "vfs/vfs_native.h"
@@ -44,6 +45,7 @@
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
+
 
 #include "AppStoreHelper.h"
 
@@ -370,6 +372,14 @@ static AppDelegate *g_Me = nil;
                 [self updateMainMenuFeaturesByVersionAndState];
         };
     }
+    
+    // accessibility stuff for NonMAS version
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
+        // if this stuff is enabled
+        FunctionalKeysPass::Instance().Enable();
+        
+    }
+    
 }
 
 - (void) setupConfigs

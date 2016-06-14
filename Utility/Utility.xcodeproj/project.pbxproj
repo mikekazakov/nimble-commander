@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */ = {isa = PBXBuildFile; fileRef = CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */; };
+		CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
 		CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E171C992F2C001D8B02 /* Encodings.h */; };
 		CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E181C992F2C001D8B02 /* HexadecimalColor.h */; };
 		CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E191C992F2C001D8B02 /* ObjCpp.h */; };
@@ -51,6 +53,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
+		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
 		CF960E0C1C97FA73001D8B02 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF960E171C992F2C001D8B02 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = include/Utility/Encodings.h; sourceTree = "<group>"; };
 		CF960E181C992F2C001D8B02 /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexadecimalColor.h; path = include/Utility/HexadecimalColor.h; sourceTree = "<group>"; };
@@ -126,6 +130,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */,
 				CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */,
 				CFD62C191C9AFF210021EE7F /* SheetController.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
@@ -153,6 +158,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
 				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
@@ -187,6 +193,7 @@
 			files = (
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
 				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
+				CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */,
 				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
 				CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */,
 				CFD62C1E1C9B01320021EE7F /* SheetWithHotkeys.h in Headers */,
@@ -278,6 +285,7 @@
 				CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */,
 				CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
+				CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,
 				CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */,

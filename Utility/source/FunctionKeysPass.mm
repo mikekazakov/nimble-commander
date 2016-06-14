@@ -9,8 +9,23 @@
 using namespace std;
 
 FunctionalKeysPass::FunctionalKeysPass():
-    m_Port(nullptr)
+    m_Port( nullptr ),
+    m_Enabled( false )
 {
+    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationDidBecomeActiveNotification
+                                                    object:nil
+                                                     queue:nil
+                                                usingBlock:^(NSNotification * _Nonnull note) {
+                                                    if( m_Port && m_Enabled )
+                                                        CGEventTapEnable(m_Port, true);
+                                                }];
+    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationDidResignActiveNotification
+                                                    object:nil
+                                                     queue:nil
+                                                usingBlock:^(NSNotification * _Nonnull note) {
+                                                    if( m_Port && m_Enabled )
+                                                        CGEventTapEnable(m_Port, false);
+                                                }];
 }
 
 FunctionalKeysPass &FunctionalKeysPass::Instance()
@@ -44,10 +59,6 @@ static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags 
 
 CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event)
 {
-    const bool is_active_now = NSApp.isActive;
-    if( !is_active_now )
-        return _event;
-    
     if( _type == kCGEventTapDisabledByTimeout ) {
         assert( m_Port != nullptr );
         cout << "calling CGEventTapEnable()" << endl;
@@ -122,21 +133,21 @@ bool FunctionalKeysPass::Enable()
         m_Port = port; // this port will never be released, since this FunctionalKeysPass object lives forever
         
         CFRunLoopSourceRef keyUpRunLoopSourceRef = CFMachPortCreateRunLoopSource(nullptr, port, 0);
-        
         CFRunLoopAddSource(CFRunLoopGetCurrent(), keyUpRunLoopSourceRef, kCFRunLoopCommonModes);
         CFRelease(keyUpRunLoopSourceRef);
     }
     else {
         CGEventTapEnable(m_Port, true);
     }
-    
+    m_Enabled = true;
     return true;
 }
 
 void FunctionalKeysPass::Disable()
 {
     dispatch_assert_main_queue();
-    
-    if( m_Port )
+    if( m_Port ) {
         CGEventTapEnable(m_Port, false);
+        m_Enabled = false;
+    }
 }

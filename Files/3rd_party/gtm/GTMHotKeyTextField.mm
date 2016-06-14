@@ -46,6 +46,9 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
     {107,   NSF14FunctionKey,           @"F14"},
     {113,   NSF15FunctionKey,           @"F15"},
     {106,   NSF16FunctionKey,           @"F16"},
+    {64,    NSF17FunctionKey,           @"F17"},
+    {79,    NSF18FunctionKey,           @"F18"},
+    {80,    NSF19FunctionKey,           @"F19"},
     {117,   0x2326,                     @"⌦"},
     {36,    '\r',                       @"↩"},
     {76,    0x3,                        @"⌅"},
@@ -307,6 +310,9 @@ static const vector<KeycodesHardcode> g_KeycodesHardcoded = {
         case 107:  //  NSF14FunctionKey
         case 113:  //  NSF15FunctionKey
         case 106:  //  NSF16FunctionKey
+        case 64:   //  NSF17FunctionKey
+        case 79:   //  NSF18FunctionKey
+        case 80:   //  NSF19FunctionKey
         case 115:  //  NSHomeFunctionKey
         case 119:  //  NSEndFunctionKey
         case 116:  //  NSPageUpFunctionKey

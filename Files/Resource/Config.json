@@ -18,7 +18,12 @@
         /**
          * Show/hide tabs bar
          */
-        "showTabs": false
+        "showTabs": false,
+        
+        /**
+         * Force NC to treat incoming FnXX keys as functional ones, not multimedia controls
+         */
+        "alwaysUseFnKeysAsFunctional": true
     },
 
     /**

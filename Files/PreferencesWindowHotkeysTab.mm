@@ -8,8 +8,10 @@
 
 #import "3rd_party/gtm/GTMHotKeyTextField.h"
 #include <Utility/NSMenu+Hierarchical.h>
+#include <Utility/FunctionKeysPass.h>
 #include "PreferencesWindowHotkeysTab.h"
 #include "ActionsShortcutsManager.h"
+#include "ActivationManager.h"
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 {
@@ -55,6 +57,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 
 @property (strong) IBOutlet NSTableView *Table;
 @property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
+@property (strong) IBOutlet NSButton *forceFnButton;
 
 @end
 
@@ -100,6 +103,9 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
     column.width = 90;
     ((NSTableHeaderCell*)column.headerCell).stringValue = @"Hotkey";
     [self.Table addTableColumn:column];
+    
+    if( ActivationManager::Instance().Sandboxed() )
+        self.forceFnButton.hidden = true;
 }
 
 -(NSString*)identifier{
@@ -200,6 +206,14 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
         m_EditFields.clear();
         [self.Table reloadData];
     }
+}
+
+- (IBAction)onForceFnChanged:(id)sender
+{
+    if( self.forceFnButton.state == NSOnState )
+        FunctionalKeysPass::Instance().Enable();
+    else
+        FunctionalKeysPass::Instance().Disable();
 }
 
 @end

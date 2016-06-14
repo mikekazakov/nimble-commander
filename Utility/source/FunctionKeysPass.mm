@@ -6,15 +6,12 @@
 #include <Habanero/dispatch_cpp.h>
 #include "../include/Utility/FunctionKeysPass.h"
 
-
 using namespace std;
 
 FunctionalKeysPass::FunctionalKeysPass():
     m_Port(nullptr)
 {
 }
-
-//    auto release_port = at_scope_end([=]{ CFRelease(port); });
 
 FunctionalKeysPass &FunctionalKeysPass::Instance()
 {
@@ -31,19 +28,14 @@ bool FunctionalKeysPass::Enabled() const
 static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags _flags )
 {
     CGEventRef press = CGEventCreateKeyboardEvent( nullptr, _vk, _key_down );
-    
-    uint64_t flags = 0;
-    if( _flags & kCGEventFlagMaskShift )        flags |= kCGEventFlagMaskShift;
-    if( _flags & kCGEventFlagMaskControl )      flags |= kCGEventFlagMaskControl;
-    if( _flags & kCGEventFlagMaskAlternate )    flags |= kCGEventFlagMaskAlternate;
-    if( _flags & kCGEventFlagMaskCommand )      flags |= kCGEventFlagMaskCommand;
-    
-    if( flags != 0)
+    const uint64_t flags = _flags & (kCGEventFlagMaskShift | kCGEventFlagMaskControl | kCGEventFlagMaskAlternate | kCGEventFlagMaskCommand );
+    if( flags != 0 )
         CGEventSetFlags( press, (CGEventFlags)flags );
     
     return press;
 }
 
+// To consider:
 //I think I fixed this. I had been using +[NSEvent
 //                                         keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:]
 //to create an NSEvent, then returning that event's -CGEvent. I switched to CGEventCreateKeyboardEvent,
@@ -106,38 +98,45 @@ bool FunctionalKeysPass::Enable()
 {
     dispatch_assert_main_queue();
     
-    NSDictionary *options = @{(__bridge NSString*)kAXTrustedCheckOptionPrompt: @YES};
-    bool accessibility_enabled = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options);
-    if( !accessibility_enabled ) {
-        cerr << "can't get accessibility rights" << endl;
-        return false;
+    if( m_Port == nullptr ) {
+        NSDictionary *options = @{(__bridge NSString*)kAXTrustedCheckOptionPrompt: @YES};
+        bool accessibility_enabled = AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)options);
+        if( !accessibility_enabled ) {
+            cerr << "can't get accessibility rights" << endl;
+            return false;
+        }
+        
+        CFMachPortRef port = CGEventTapCreate(kCGHIDEventTap,
+                                              kCGHeadInsertEventTap,
+                                              kCGEventTapOptionDefault,
+                                              CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(NSSystemDefined),
+                                              [](CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event, void *_info) -> CGEventRef {
+                                                  return ((FunctionalKeysPass*)_info)->Callback(_proxy, _type, _event);
+                                              },
+                                              this
+                                              );
+        if( !port ) {
+            cerr << "CGEventTapCreate() failed" << endl;
+            return false;
+        }
+        m_Port = port; // this port will never be released, since this FunctionalKeysPass object lives forever
+        
+        CFRunLoopSourceRef keyUpRunLoopSourceRef = CFMachPortCreateRunLoopSource(nullptr, port, 0);
+        
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), keyUpRunLoopSourceRef, kCFRunLoopCommonModes);
+        CFRelease(keyUpRunLoopSourceRef);
+    }
+    else {
+        CGEventTapEnable(m_Port, true);
     }
     
-    CFMachPortRef port = CGEventTapCreate(kCGHIDEventTap,
-                                          kCGHeadInsertEventTap,
-                                          kCGEventTapOptionDefault,
-                                          CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(NSSystemDefined),
-                                          [](CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event, void *_info) -> CGEventRef {
-                                              return ((FunctionalKeysPass*)_info)->Callback(_proxy, _type, _event);
-                                          },
-                                          this
-                                          );
-    if( !port ) {
-        cerr << "CGEventTapCreate() failed" << endl;
-        return false;
-    }
-    m_Port = port;
-    
-    CFRunLoopSourceRef keyUpRunLoopSourceRef = CFMachPortCreateRunLoopSource(nullptr, port, 0);
-    
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), keyUpRunLoopSourceRef, kCFRunLoopCommonModes);
-    CFRelease(keyUpRunLoopSourceRef);
-    
-    return false;
+    return true;
 }
 
 void FunctionalKeysPass::Disable()
 {
     dispatch_assert_main_queue();
     
+    if( m_Port )
+        CGEventTapEnable(m_Port, false);
 }

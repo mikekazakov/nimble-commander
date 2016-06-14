@@ -59,6 +59,7 @@ static GenericConfig *g_State = nullptr;
 
 static const auto g_ConfigGeneralSkin = "general.skin";
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
+static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -374,12 +375,10 @@ static AppDelegate *g_Me = nil;
     }
     
     // accessibility stuff for NonMAS version
-    if( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
-        // if this stuff is enabled
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+        GlobalConfig().GetBool(g_ConfigForceFn) ) {
         FunctionalKeysPass::Instance().Enable();
-        
     }
-    
 }
 
 - (void) setupConfigs

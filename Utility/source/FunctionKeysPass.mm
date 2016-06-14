@@ -24,16 +24,9 @@ FunctionalKeysPass &FunctionalKeysPass::Instance()
 
 bool FunctionalKeysPass::Enabled() const
 {
-    
-    return false;
+    dispatch_assert_main_queue();
+    return m_Port != nullptr && CGEventTapIsEnabled(m_Port);
 }
-
-//kCGEventFlagMaskAlphaShift =          NX_ALPHASHIFTMASK,
-//kCGEventFlagMaskShift =               NX_SHIFTMASK,
-//kCGEventFlagMaskControl =             NX_CONTROLMASK,
-//kCGEventFlagMaskAlternate =           NX_ALTERNATEMASK,
-//kCGEventFlagMaskCommand =             NX_COMMANDMASK,
-
 
 static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags _flags )
 {
@@ -70,9 +63,9 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
         return nil;
     }
     
-    if( _type == kCGEventKeyDown || _type == kCGEventKeyUp) {        
+    if( _type == kCGEventKeyDown || _type == kCGEventKeyUp) {
         const bool key_down = _type == kCGEventKeyDown;
-        const CGKeyCode keycode = (CGKeyCode)CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode);
+        const CGKeyCode keycode = (CGKeyCode)CGEventGetIntegerValueField( _event, kCGKeyboardEventKeycode );
         switch( keycode ) {
             case 145: return NewFnButtonPress( kVK_F1,  key_down, CGEventGetFlags(_event) );
             case 144: return NewFnButtonPress( kVK_F2,  key_down, CGEventGetFlags(_event) );
@@ -89,11 +82,22 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
             case 80:  return NewFnButtonPress( kVK_F19, key_down, CGEventGetFlags(_event) );
         };
     }
-    
-    
-    
-    
-    
+    else if( _type == NSSystemDefined ) {
+        NSEvent *ev = [NSEvent eventWithCGEvent:_event]; // have to create a NSEvent object for every NSSystemDefined event, which is awful
+        if( ev.subtype == NX_SUBTYPE_AUX_CONTROL_BUTTONS ) {
+            const NSInteger data1 = ev.data1;
+            const int keycode = ((data1 & 0xFFFF0000) >> 16);
+            const bool key_down = (data1 & 0x0000FF00) == 0xA00;
+            switch( keycode ) {
+                case NX_KEYTYPE_REWIND:     return NewFnButtonPress( kVK_F7,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_PLAY:       return NewFnButtonPress( kVK_F8,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_FAST:       return NewFnButtonPress( kVK_F9,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_MUTE:       return NewFnButtonPress( kVK_F10, key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_SOUND_DOWN: return NewFnButtonPress( kVK_F11, key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_SOUND_UP:   return NewFnButtonPress( kVK_F12, key_down, (CGEventFlags) ev.modifierFlags );
+            }
+        }
+    }
 
     return _event;
 }

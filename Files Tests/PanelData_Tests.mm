@@ -65,7 +65,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();
-    sorting.sort = PanelSortMode::SortByName;
+    sorting.sort = PanelData::PanelSortMode::SortByName;
     data.SetSortMode(sorting);
     
     XCTAssert(data.SortedIndexForName(listing->Filename(0).c_str()) == 0);
@@ -84,7 +84,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 
     PanelData data;
     auto sorting = data.SortMode();
-    sorting.sort = PanelSortMode::SortByName;
+    sorting.sort = PanelData::PanelSortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
     data.Load(move(listing), PanelData::PanelType::Directory);
@@ -142,11 +142,12 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     auto almost_empty_listing = ProduceDummyListing(vector<NSString*>(1, @"какой-то файл"));
     
     PanelData data;
-    PanelSortMode sorting = data.SortMode();
-    sorting.sort = PanelSortMode::SortByName;
+    PanelData::PanelSortMode sorting = data.SortMode();
+    sorting.sort = PanelData::PanelSortMode::SortByName;
     data.SetSortMode(sorting);
     
-    PanelDataHardFiltering filtering = data.HardFiltering();
+    
+    auto filtering = data.HardFiltering();
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     
@@ -161,7 +162,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName(".Trash") < 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
 
-    filtering.text.type = PanelDataTextFiltering::Anywhere;
+    filtering.text.type = PanelData::TextualFilter::Anywhere;
     filtering.text.text = @"D";
     data.SetHardFiltering(filtering);
     
@@ -203,7 +204,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName(@"что-то на русском языке".fileSystemRepresentation) >= 0);
     XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".fileSystemRepresentation) >= 0);
     
-    filtering.text.type = PanelDataTextFiltering::Beginning;
+    filtering.text.type = PanelData::TextualFilter::Beginning;
     filtering.text.text = @"APP";
     data.SetHardFiltering(filtering);
     XCTAssert(data.SortedIndexForName("..") == 0);
@@ -215,7 +216,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName("Another app number two") < 0);
 
     // test buggy filtering with @"" string
-    filtering.text.type = PanelDataTextFiltering::Beginning;
+    filtering.text.type = PanelData::TextualFilter::Beginning;
     filtering.text.text = @"";
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);

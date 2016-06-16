@@ -73,6 +73,10 @@
     using boost::logic::tribool;
     using boost::logic::indeterminate;
 
+    #include "3rd_party/any.hpp"
+    using linb::any;
+    using linb::any_cast;
+
     #include <Utility/StringExtras.h>
 
     #ifdef __OBJC__

@@ -1,0 +1,110 @@
+#pragma once
+
+/**
+- produces % symbol:  %%
+- dialog value: %?, %"some text"?
+- directory path: %R, %-R
+- current path: %p, %-p
+- filename: %f, %-f
+- filename without extension: %n, %-n
+- file extension: %e, %-e
+- selected filenames as parameters: %F, %-F, %10F, %-10F
+- selected filepaths as parameters: %P, %-P, %10P, %-10P
+- list of selected files:
+  - filenames: %LF, %-LF, %L10F, %-L50F
+  - filepaths: %LP, %-LP, %L50P, %-L50P
+- toggle left/right instead of source/target and vice versa: %-
+**/
+
+class ExternalToolsParameters
+{
+public:
+    enum class Location {
+        Source,
+        Target,
+        Left,
+        Right
+    };
+    
+    enum class FileInfo {
+        DirectoryPath,
+        Path,
+        Filename,
+        FilenameWithoutExtension,
+        FileExtension
+    };
+    
+    struct UserDefined
+    {
+        string text;
+    };
+    
+    struct EnterValue
+    {
+        string name;
+    };
+    
+    struct CurrentItem
+    {
+        Location location;
+        FileInfo what;
+    };
+
+    struct SelectedItems
+    {
+        Location    location;
+        FileInfo    what;
+        int         max; // maximum of selected items to use as a parameters or as a list content
+        bool        as_parameters; // as a list inside a temp file otherwise
+    };
+    
+    enum class ActionType : short
+    {
+        UserDefined,
+        EnterValue,
+        CurrentItem,
+        SelectedItems
+    };
+    
+    struct Step
+    {
+        ActionType  type;
+        uint16_t    index;
+        Step(ActionType t, uint16_t i);
+    };
+    
+    const Step &StepNo(unsigned _number) const;
+    unsigned StepsAmount() const;
+    const UserDefined   &GetUserDefined  ( unsigned _index ) const;
+    const EnterValue    &GetEnterValue   ( unsigned _index ) const;
+    const CurrentItem   &GetCurrentItem  ( unsigned _index ) const;
+    const SelectedItems &GetSelectedItems( unsigned _index ) const;
+    
+private:
+    void    InsertUserDefinedText(UserDefined _ud);
+    void    InsertValueRequirement(EnterValue _ev);
+    void    InsertCurrentItem(CurrentItem _ci);
+    void    InsertSelectedItem(SelectedItems _si);
+    
+    vector<Step>            m_Steps;
+    vector<UserDefined>     m_UserDefined;
+    vector<EnterValue>      m_EnterValues;
+    vector<CurrentItem>     m_CurrentItems;
+    vector<SelectedItems>   m_SelectedItems;
+    
+    friend class ExternalToolsParametersParser;
+};
+
+class ExternalToolsParametersParser
+{
+public:
+    
+    ExternalToolsParameters Parse( const string &_source, function<void(string)> _parse_error = nullptr );
+    
+private:
+    
+    
+    
+    
+    
+};

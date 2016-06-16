@@ -56,6 +56,8 @@
 		CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
+		CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
+		CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */; };
 		CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
@@ -1021,6 +1023,9 @@
 		CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowFilePanelState.mm; sourceTree = "<group>"; };
 		CF07DE3D1769754400757DE1 /* SearchInFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SearchInFile.mm; sourceTree = "<group>"; };
 		CF07DE3E1769754400757DE1 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInFile.h; sourceTree = "<group>"; };
+		CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolsSupport.h; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.h; sourceTree = SOURCE_ROOT; };
+		CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.mm; sourceTree = SOURCE_ROOT; };
+		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTab.h; sourceTree = "<group>"; };
 		CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTab.mm; sourceTree = "<group>"; };
 		CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = "<group>"; };
@@ -1851,6 +1856,9 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
+				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
+				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CFED5A2A1C4F914000BFCB5C /* ExternalEditorInfo.h */,
 				CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */,
 				CFC5123516C5284800D247EE /* PanelData.h */,
@@ -3224,6 +3232,7 @@
 				CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF23295D1BDCEC600092BCAD /* FileMask_Tests.mm in Sources */,
+				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
 				CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */,
 				CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */,
@@ -3515,6 +3524,7 @@
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
+				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
 				CFA1834E1C9F028600544633 /* ActivationManager.cpp in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,

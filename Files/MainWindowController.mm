@@ -380,18 +380,34 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd
 {
-    if(m_Terminal == nil)
-    {
-        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
+    [self requestTerminalExecution:_filename at:_cwd withParameters:nullptr];
+}
+
+- (void)requestTerminalExecution:(const char*)_filename at:(const char*)_cwd withParameters:(const char*)_params
+{
+    if(m_Terminal == nil) {
+        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
         [state SetInitialWD:_cwd];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }
-    else
-    {
+    else {
         [self PushNewWindowState:m_Terminal];
     }
-    [m_Terminal Execute:_filename at:_cwd];
+    [m_Terminal Execute:_filename at:_cwd with_parameters:_params];
+}
+
+- (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path withParameters:(const char*)_params
+{
+    if(m_Terminal == nil) {
+        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
+        [self PushNewWindowState:state];
+        m_Terminal = state;
+    }
+    else {
+        [self PushNewWindowState:m_Terminal];
+    }
+    [m_Terminal Execute:_binary_path with_parameters:_params];
 }
 
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path

@@ -108,7 +108,6 @@ private:
 class ExternalTool
 {
 public:
-    
     string          m_Name;
     string          m_ExecutablePath; // app by bundle?
     string          m_Parameters;

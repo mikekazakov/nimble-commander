@@ -12,6 +12,7 @@
 #include <sys/xattr.h>
 #include <dirent.h>
 #include <Habanero/CommonPaths.h>
+#include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include "TemporaryNativeFileStorage.h"
 #include "ActivationManager.h"
@@ -166,6 +167,41 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
     return false; // something is very bad with whole system
 }
 
+optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const string& _source)
+{
+    string filename;
+    for(int i = 0; i < 6; ++i)
+        filename += 'A' + rand() % ('Z'-'A');
+    
+    char path[MAXPATHLEN];
+    if( !GetSubDirForFilename(filename.c_str(), path) )
+        return nullopt;
+    strcat(path, filename.c_str());
+    
+    int fd = open(path, O_EXLOCK|O_NONBLOCK|O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+    if(fd < 0)
+        return nullopt;
+    auto close_fd = at_scope_end([=]{ close(fd); });
+    
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
+    
+    const char *buf = _source.c_str();
+    ssize_t left = _source.length();
+    while( left > 0 ) {
+        ssize_t res_write = write( fd, buf, left );
+        if( res_write >= 0 ) {
+            left -= res_write;
+            buf += res_write;
+        }
+        else {
+            unlink(path);
+            return nullopt;
+        }
+    }
+   
+    return string(path);
+}
+
 bool TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
                                                 const VFSHostPtr &_host,
                                                 string& _tmp_filename
@@ -198,10 +234,13 @@ bool TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
     ssize_t res_read;
     while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
         ssize_t res_write;
+        bufp = buf;
         while(res_read > 0) {
-            res_write = write(fd, buf, res_read);
-            if(res_write >= 0)
+            res_write = write(fd, bufp, res_read);
+            if(res_write >= 0) {
                 res_read -= res_write;
+                bufp += res_write;
+            }
             else
                 goto error;
         }

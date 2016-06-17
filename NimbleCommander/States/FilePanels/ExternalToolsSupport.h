@@ -3,7 +3,7 @@
 /**
 - produces % symbol:  %%
 - dialog value: %?, %"some text"?
-- directory path: %R, %-R
+- directory path: %r, %-r
 - current path: %p, %-p
 - filename: %f, %-f
 - filename without extension: %n, %-n
@@ -15,6 +15,8 @@
   - filepaths: %LP, %-LP, %L50P, %-L50P
 - toggle left/right instead of source/target and vice versa: %-
 **/
+
+#include "../../../Files/ActionShortcut.h"
 
 class ExternalToolsParameters
 {
@@ -98,13 +100,22 @@ private:
 class ExternalToolsParametersParser
 {
 public:
-    
     ExternalToolsParameters Parse( const string &_source, function<void(string)> _parse_error = nullptr );
     
 private:
+};
+
+class ExternalTool
+{
+public:
     
+    string          m_Name;
+    string          m_ExecutablePath; // app by bundle?
+    string          m_Parameters;
+    ActionShortcut  m_Shorcut;
     
-    
-    
+    // run in terminal
+    // allow VFS
+    // string directory
     
 };

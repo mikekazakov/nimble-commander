@@ -170,7 +170,8 @@ public:
 
     bool            HasExtension()      const;
     uint16_t        ExtensionOffset()   const;
-    const char*     Extension()         const;
+    const char*     Extension()         const; // unguarded calls whout HasExtension will yeild a whole filename as a result
+    const char*     ExtensionIfAny()    const; // will return "" if there's no extension
     string          FilenameWithoutExt()const;
     
     mode_t          UnixMode()          const; // resolved for symlinks

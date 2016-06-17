@@ -712,6 +712,11 @@ const char* VFSListingItem::Extension() const
     return L->Extension(I);
 }
 
+const char* VFSListingItem::ExtensionIfAny() const
+{
+    return HasExtension() ? Extension() : "";
+}
+
 string VFSListingItem::FilenameWithoutExt() const
 {
     return L->FilenameWithoutExt(I);

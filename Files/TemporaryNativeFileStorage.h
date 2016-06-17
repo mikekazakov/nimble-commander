@@ -26,6 +26,9 @@ public:
                        uint64_t _max_total_size,
                        function<bool()> _cancel_checker,
                        string &_tmp_dirpath);
+    
+    optional<string> WriteStringIntoTempFile( const string& _source);
+    
                        
     static TemporaryNativeFileStorage &Instance();
 private:

@@ -418,20 +418,21 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         unichar const unicode        = [character characterAtIndex:0];
         unsigned short const keycode = event.keyCode;
         
-//        if(keycode == 3 ) { // 'F' button
-//            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-////                [self testNonUniformListing];
+        if(keycode == 3 ) { // 'F' button
+            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+                [self.state runExtTool];
+//                [self testNonUniformListing];
+                
+//                auto host = make_shared<VFSXAttrHost>( self.view.item.Path(), self.view.item.Host() );
+//
+//                auto context = make_shared<PanelControllerGoToDirContext>();
+//                context->VFS = host;
+//                context->RequestedDirectory = "/";
 //                
-////                auto host = make_shared<VFSXAttrHost>( self.view.item.Path(), self.view.item.Host() );
-////
-////                auto context = make_shared<PanelControllerGoToDirContext>();
-////                context->VFS = host;
-////                context->RequestedDirectory = "/";
-////                
-////                [self GoToDirWithContext:context];
-//                return true;
-//            }
-//        }
+//                [self GoToDirWithContext:context];
+                return true;
+            }
+        }
         
         if(unicode == NSTabCharacter) { // Tab button
             [self.state HandleTabButton];

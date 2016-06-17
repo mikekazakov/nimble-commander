@@ -14,10 +14,12 @@
 // ⌥ - NSAlternateKeyMask
 // ⌘ - NSCommandKeyMask
 
+#include "ActionShortcut.h"
+
 class ActionsShortcutsManager
 {
 public:
-    struct ShortCut;
+    using ShortCut = ::ActionShortcut;
     class ShortCutsUpdater;
     
     static ActionsShortcutsManager &Instance();
@@ -219,24 +221,7 @@ private:
     nanoseconds                       m_LastChanged;
 };
 
-struct ActionsShortcutsManager::ShortCut
-{
-    ShortCut();
-    ShortCut(NSString *_from); // construct from persistency string
-    ShortCut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
-    ShortCut(NSString *_from, unsigned long _modif); // construct from string and modifiers
-    
-    bool operator ==(const ShortCut&_r) const;
-    bool operator !=(const ShortCut&_r) const;
-    operator    bool() const;
-    
-    NSString   *Key() const;
-    NSString   *ToPersString() const;
-    bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
-    
-    uint16_t        unicode;
-    uint64_t        modifiers;
-};
+
 
 class ActionsShortcutsManager::ShortCutsUpdater
 {

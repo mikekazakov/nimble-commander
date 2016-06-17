@@ -150,4 +150,5 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 #import "MainWindowFilePanelState+Menu.h"
 #import "MainWindowFilePanelState+TabsSupport.h"
 #import "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+#import "MainWindowFilePanelState+Tools.h"
 

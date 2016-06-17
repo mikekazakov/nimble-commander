@@ -51,11 +51,14 @@
     }
     
     {
-        auto parameters = p.Parse("%f %\"???\"?", unexpected_error_callback);
+        auto parameters = p.Parse("%f%%%\"???\"?", unexpected_error_callback);
         XCTAssert( parameters.StepsAmount() == 3 );
         XCTAssert( parameters.StepNo(0).type == ExternalToolsParameters::ActionType::CurrentItem );
         XCTAssert( parameters.GetCurrentItem(parameters.StepNo(0).index).what == ExternalToolsParameters::FileInfo::Filename );
         XCTAssert( parameters.GetCurrentItem(parameters.StepNo(0).index).location == ExternalToolsParameters::Location::Source );
+        
+        XCTAssert( parameters.StepNo(1).type == ExternalToolsParameters::ActionType::UserDefined );
+        XCTAssert( parameters.GetUserDefined(parameters.StepNo(1).index).text == "%" );
         
         XCTAssert( parameters.StepNo(2).type == ExternalToolsParameters::ActionType::EnterValue );
         XCTAssert( parameters.GetEnterValue(parameters.StepNo(2).index).name == "???" );

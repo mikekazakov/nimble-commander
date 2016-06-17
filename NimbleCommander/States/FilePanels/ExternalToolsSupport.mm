@@ -143,7 +143,7 @@ static pair<any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_
                         result.name = move(prompt_text);
                         return make_pair( any(move(result)), position - _range.location + 1 );
                     }
-                    case 'R': { // terminal - directory path
+                    case 'r': { // terminal - directory path
                         if( number != 0 || !prompt_text.empty() || list_flag != false )
                             return make_pair( any(), 0 ); // malformed string, aborting
                         ExternalToolsParameters::CurrentItem result;
@@ -274,16 +274,3 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
     
     return result;
 }
-
-//static int a = []{
-//    ExternalToolsParametersParser p;
-////    p.Parse("%\"Hello World\"?");
-//    p.Parse("%-f1234556%%%-jd%\"Hello World!!\"?%-?hasd%-50LPbasd",
-//            [](string error){
-//                cout << error << endl;
-//    });
-//    
-//    
-//    return 0;
-//}();
-

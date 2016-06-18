@@ -186,7 +186,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         if( i == end(m_ActionToTag) )
             continue;
         
-        if( ShortCut sc{[NSString stringWithUTF8StringNoCopy:get<1>(d)]} )
+        if( ShortCut sc{get<1>(d)} )
             m_ShortCutsDefaults[i->second] = sc;
     }
     
@@ -274,7 +274,7 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
         if([obj isEqualToString:@"default"])
             continue;
         
-        if( ShortCut sc{obj} )
+        if( ShortCut sc{obj.UTF8String} )
             m_ShortCutsOverrides[i->second] = sc;
     }
 }

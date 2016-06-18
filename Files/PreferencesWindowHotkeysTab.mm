@@ -180,7 +180,8 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
     if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
         auto tag = int(tf.tag);
         auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue);
-        auto hk = ActionsShortcutsManager::ShortCut(gtm_hk.key, gtm_hk.modifiers);
+        auto key = gtm_hk.key.length > 0 ? [gtm_hk.key characterAtIndex:0] : 0;
+        auto hk = ActionsShortcutsManager::ShortCut(key, gtm_hk.modifiers);
         auto action = am.ActionFromTag(tag);
         
         if( am.SetShortCutOverride(action, hk) )

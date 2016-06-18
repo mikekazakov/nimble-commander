@@ -1,3 +1,5 @@
+#include <locale>
+#include <codecvt>
 #include "ActionShortcut.h"
 
 ActionShortcut::ActionShortcut():
@@ -6,69 +8,48 @@ ActionShortcut::ActionShortcut():
 {
 }
 
-ActionShortcut::ActionShortcut(NSString *_from) :
+ActionShortcut::ActionShortcut(const string& _from):
+    ActionShortcut(_from.c_str())
+{
+}
+
+ActionShortcut::ActionShortcut(const char* _from): // construct from persistency string
     ActionShortcut()
 {
-    if( _from == nil || _from.length == 0 )
-        return;
-    
-    int len = (int)_from.length;
-    unsigned mod_ = 0;
-    NSString *key_ = nil;
-    for( int i = 0; i < len; ++i ) {
-        unichar c = [_from characterAtIndex:i];
-        if(c == u'⇧') {
-            mod_ |= NSShiftKeyMask;
-            continue;
+    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    u16string utf16 = convert.from_bytes(_from);
+    u16string_view v(utf16);
+    while( !v.empty() ) {
+        auto c = v.front();
+        if( c == u'⇧' )
+            modifiers |= NSShiftKeyMask;
+        else if( c == u'^' )
+            modifiers |= NSControlKeyMask;
+        else if( c == u'⌥' )
+            modifiers |= NSAlternateKeyMask;
+        else if( c == u'⌘' )
+            modifiers |= NSCommandKeyMask;
+        else {
+            if( v == u"\\r" )
+                unicode = '\r';
+            else if( v == u"\\t" )
+                unicode = '\t';
+            else
+                unicode = v.front();
+            break;
         }
-        if(c == u'^') {
-            mod_ |= NSControlKeyMask;
-            continue;
-        }
-        if(c == u'⌥') {
-            mod_ |= NSAlternateKeyMask;
-            continue;
-        }
-        if(c == u'⌘') {
-            mod_ |= NSCommandKeyMask;
-            continue;
-        }
-        
-        key_ = [_from substringFromIndex:i];
-        break;
+        v.remove_prefix(1);
     }
-    
-    if(key_ == nil)
-        return;
-    
-    if([key_ isEqualToString:@"\\r"])
-        key_ = @"\r";
-    else if([key_ isEqualToString:@"\\t"])
-        key_ = @"\t";
-    
-    modifiers = mod_;
-    unicode = [key_ characterAtIndex:0];
 }
 
-// TODO: write a direct processing code
-ActionShortcut::ActionShortcut(const string& _from):
-    ActionShortcut([NSString stringWithUTF8StdString:_from])
+ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif):
+    unicode(_unicode),
+    modifiers(0)
 {
-}
-
-ActionShortcut::ActionShortcut(uint16_t  _unicode, unsigned long _modif)
-{
-    unicode = _unicode;
-    modifiers = 0;
     if(_modif & NSShiftKeyMask)     modifiers |= NSShiftKeyMask;
     if(_modif & NSControlKeyMask)   modifiers |= NSControlKeyMask;
     if(_modif & NSAlternateKeyMask) modifiers |= NSAlternateKeyMask;
     if(_modif & NSCommandKeyMask)   modifiers |= NSCommandKeyMask;
-}
-
-ActionShortcut::ActionShortcut(NSString *_from, unsigned long _modif):
-    ActionShortcut( (_from != nil && _from.length != 0) ? [_from characterAtIndex:0] : 0, _modif)
-{
 }
 
 ActionShortcut::operator bool() const
@@ -97,51 +78,8 @@ string ActionShortcut::ToPersString() const
         result += str.UTF8String;
     }
     
-//    static NSString *shift = @"⇧", *control =
-//    
-//    NSString *result = [NSString new];
-//    if(modifiers & NSShiftKeyMask)
-//        result = [result stringByAppendingString:@"⇧"];
-//    if(modifiers & NSControlKeyMask)
-//        result = [result stringByAppendingString:@"^"];
-//    if(modifiers & NSAlternateKeyMask)
-//        result = [result stringByAppendingString:@"⌥"];
-//    if(modifiers & NSCommandKeyMask)
-//        result = [result stringByAppendingString:@"⌘"];
-//    
-//    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
-//        NSString *str = key;
-//        if([str isEqualToString:@"\r"])
-//            str = @"\\r";
-//        
-//        result = [result stringByAppendingString:str];
-//    }
-//    
     return result;
 }
-
-//NSString *ActionShortcut::ToPersString() const
-//{
-//    NSString *result = [NSString new];
-//    if(modifiers & NSShiftKeyMask)
-//        result = [result stringByAppendingString:@"⇧"];
-//    if(modifiers & NSControlKeyMask)
-//        result = [result stringByAppendingString:@"^"];
-//    if(modifiers & NSAlternateKeyMask)
-//        result = [result stringByAppendingString:@"⌥"];
-//    if(modifiers & NSCommandKeyMask)
-//        result = [result stringByAppendingString:@"⌘"];
-//    
-//    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
-//        NSString *str = key;
-//        if([str isEqualToString:@"\r"])
-//            str = @"\\r";
-//        
-//        result = [result stringByAppendingString:str];
-//    }
-//    
-//    return result;
-//}
 
 NSString *ActionShortcut::Key() const
 {

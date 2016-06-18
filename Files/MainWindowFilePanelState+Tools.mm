@@ -6,7 +6,7 @@
 #include "MainWindowFilePanelState+Tools.h"
 #include "TemporaryNativeFileStorage.h"
 #include "MainWindowController.h"
-
+#include "AppDelegate.h"
 
 static string EscapeSpaces(string _str)
 {
@@ -100,25 +100,29 @@ static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l
 {
     
 //    auto s = "\\";
+
+    if( AppDelegate.me.externalTools.ToolsCount() == 0 )
+        return;
+    auto et = *AppDelegate.me.externalTools.GetTool(0);
     
-    ExternalTool et;
-//    et.m_ExecutablePath = "/Applications/TextEdit.app";
-    et.m_ExecutablePath = "/bin/ls";
-    
-///Applications/TextEdit.app/Contents/MacOS/TextEdit -NSShowAllViews YES
-    
-//    et.m_ExecutablePath = "/Applications/Sublime Text.app";
-//    et.m_Parameters = "abra cadabra\\ forever!!! %LP";
-//    et.m_Parameters = "-NSShowAllViews YES %5-LP";
-    
-    et.m_Parameters = "-alh %P";
+//    ExternalTool et;
+////    et.m_ExecutablePath = "/Applications/TextEdit.app";
+//    et.m_ExecutablePath = "/bin/ls";
+//    
+/////Applications/TextEdit.app/Contents/MacOS/TextEdit -NSShowAllViews YES
+//    
+////    et.m_ExecutablePath = "/Applications/Sublime Text.app";
+////    et.m_Parameters = "abra cadabra\\ forever!!! %LP";
+////    et.m_Parameters = "-NSShowAllViews YES %5-LP";
+//    
+//    et.m_Parameters = "-alh %P";
 
     //    -NSShowAllViews YES
 
     auto parameters = ExternalToolsParametersParser().Parse(et.m_Parameters);
     string cooked_parameters = [self buildParametersStringForExternalTool:parameters];
     
-    bool in_terminal = true;
+    bool in_terminal = false;
     
     
 //    + (NSURL *)

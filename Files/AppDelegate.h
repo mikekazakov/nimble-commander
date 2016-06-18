@@ -12,6 +12,7 @@
 
 @class MainWindowController;
 @class GenericConfigObjC;
+class ExternalToolsStorage;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -73,5 +74,7 @@
 @property (nonatomic, readonly) const string& stateDirectory;
 
 @property (nonatomic, readonly) GenericConfigObjC *config;
+
+@property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 
 @end

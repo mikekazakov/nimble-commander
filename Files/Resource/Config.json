@@ -435,5 +435,16 @@
         "AnsiColor13": "#E500E5", // bright magenta
         "AnsiColor14": "#00E5E5", // bright cyan
         "AnsiColor15": "#E5E5E5"  // bright white
+    },
+    
+    "externalTools": {
+        "tools_v1": [
+            {
+                     "title": "TextEdit",
+                     "path": "/Applications/TextEdit.app",
+                     "parameters": "%P",
+                     "shortcut": "⇧⌥T"
+            }            
+        ]
     }
 }

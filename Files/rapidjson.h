@@ -9,4 +9,5 @@ namespace rapidjson
     typedef GenericDocument<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneDocument;
     typedef GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneValue;
     GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const char *_str);
+    GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const string &_str);
 }

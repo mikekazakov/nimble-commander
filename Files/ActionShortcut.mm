@@ -50,6 +50,12 @@ ActionShortcut::ActionShortcut(NSString *_from) :
     unicode = [key_ characterAtIndex:0];
 }
 
+// TODO: write a direct processing code
+ActionShortcut::ActionShortcut(const string& _from):
+    ActionShortcut([NSString stringWithUTF8StdString:_from])
+{
+}
+
 ActionShortcut::ActionShortcut(uint16_t  _unicode, unsigned long _modif)
 {
     unicode = _unicode;
@@ -70,29 +76,72 @@ ActionShortcut::operator bool() const
     return unicode != 0;
 }
 
-
-NSString *ActionShortcut::ToPersString() const
+string ActionShortcut::ToPersString() const
 {
-    NSString *result = [NSString new];
-    if(modifiers & NSShiftKeyMask)
-        result = [result stringByAppendingString:@"⇧"];
-    if(modifiers & NSControlKeyMask)
-        result = [result stringByAppendingString:@"^"];
-    if(modifiers & NSAlternateKeyMask)
-        result = [result stringByAppendingString:@"⌥"];
-    if(modifiers & NSCommandKeyMask)
-        result = [result stringByAppendingString:@"⌘"];
-    
+    string result;
+    if( modifiers & NSShiftKeyMask )
+        result += u8"⇧";
+    if( modifiers & NSControlKeyMask )
+        result += u8"^";
+    if( modifiers & NSAlternateKeyMask )
+        result += u8"⌥";
+    if( modifiers & NSCommandKeyMask )
+        result += u8"⌘";
+
+    // TODO: optimize this:
     if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
         NSString *str = key;
         if([str isEqualToString:@"\r"])
             str = @"\\r";
         
-        result = [result stringByAppendingString:str];
+        result += str.UTF8String;
     }
     
+//    static NSString *shift = @"⇧", *control =
+//    
+//    NSString *result = [NSString new];
+//    if(modifiers & NSShiftKeyMask)
+//        result = [result stringByAppendingString:@"⇧"];
+//    if(modifiers & NSControlKeyMask)
+//        result = [result stringByAppendingString:@"^"];
+//    if(modifiers & NSAlternateKeyMask)
+//        result = [result stringByAppendingString:@"⌥"];
+//    if(modifiers & NSCommandKeyMask)
+//        result = [result stringByAppendingString:@"⌘"];
+//    
+//    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
+//        NSString *str = key;
+//        if([str isEqualToString:@"\r"])
+//            str = @"\\r";
+//        
+//        result = [result stringByAppendingString:str];
+//    }
+//    
     return result;
 }
+
+//NSString *ActionShortcut::ToPersString() const
+//{
+//    NSString *result = [NSString new];
+//    if(modifiers & NSShiftKeyMask)
+//        result = [result stringByAppendingString:@"⇧"];
+//    if(modifiers & NSControlKeyMask)
+//        result = [result stringByAppendingString:@"^"];
+//    if(modifiers & NSAlternateKeyMask)
+//        result = [result stringByAppendingString:@"⌥"];
+//    if(modifiers & NSCommandKeyMask)
+//        result = [result stringByAppendingString:@"⌘"];
+//    
+//    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
+//        NSString *str = key;
+//        if([str isEqualToString:@"\r"])
+//            str = @"\\r";
+//        
+//        result = [result stringByAppendingString:str];
+//    }
+//    
+//    return result;
+//}
 
 NSString *ActionShortcut::Key() const
 {

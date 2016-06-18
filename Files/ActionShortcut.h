@@ -4,6 +4,7 @@ struct ActionShortcut
 {
     ActionShortcut();
     ActionShortcut(NSString *_from); // construct from persistency string
+    ActionShortcut(const string& _from); // construct from persistency string
     ActionShortcut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
     ActionShortcut(NSString *_from, unsigned long _modif); // construct from string and modifiers
     
@@ -12,7 +13,8 @@ struct ActionShortcut
     operator    bool() const;
     
     NSString   *Key() const;
-    NSString   *ToPersString() const;
+//    NSString   *ToPersString() const;
+    string      ToPersString() const;
     bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
     
     uint16_t        unicode;

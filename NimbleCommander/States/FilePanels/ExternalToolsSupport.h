@@ -108,7 +108,7 @@ private:
 class ExternalTool
 {
 public:
-    string          m_Name;
+    string          m_Title;
     string          m_ExecutablePath; // app by bundle?
     string          m_Parameters;
     ActionShortcut  m_Shorcut;
@@ -116,5 +116,23 @@ public:
     // run in terminal
     // allow VFS
     // string directory
-    
 };
+
+// supposed to be thread-safe
+class ExternalToolsStorage
+{
+public:
+    ExternalToolsStorage(const char*_config_path);
+    
+    size_t                                  ToolsCount() const;
+    shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
+    vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
+    
+private:
+    void LoadToolsFromConfig();
+    
+    mutable spinlock                        m_ToolsLock;
+    vector<shared_ptr<const ExternalTool>>  m_Tools;
+    const char*                             m_ConfigPath;
+};
+

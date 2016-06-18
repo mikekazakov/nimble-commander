@@ -285,8 +285,8 @@ void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
         int tag = i.second;
         auto scover = m_ShortCutsOverrides.find(tag);
         if(scover != end(m_ShortCutsOverrides)) {
-            [_dict addObject:[NSString stringWithUTF8String:i.first.c_str()]];
-            [_dict addObject:scover->second.ToPersString()];
+            [_dict addObject:[NSString stringWithUTF8StdString:i.first]];
+            [_dict addObject:[NSString stringWithUTF8StdString:scover->second.ToPersString()]];
         }
     }
 }

@@ -1,4 +1,6 @@
 #include "ExternalToolsSupport.h"
+#include "../../../Files/Config.h"
+#include "../../../Files/rapidjson.h"
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i):
     type(t),
@@ -273,4 +275,84 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
     }
     
     return result;
+}
+
+static const auto g_TitleKey = "title";
+static const auto g_PathKey = "path";
+static const auto g_ParametersKey = "parameters";
+static const auto g_ShortcutKey = "shortcut";
+
+static GenericConfig::ConfigValue SaveTool( const ExternalTool& _et )
+{
+    using namespace rapidjson;
+    GenericConfig::ConfigValue v(kObjectType);
+    
+    v.AddMember( MakeStandaloneString(g_TitleKey), MakeStandaloneString(_et.m_Title), g_CrtAllocator );
+    v.AddMember( MakeStandaloneString(g_PathKey), MakeStandaloneString(_et.m_ExecutablePath), g_CrtAllocator );
+    v.AddMember( MakeStandaloneString(g_ParametersKey), MakeStandaloneString(_et.m_Parameters), g_CrtAllocator );
+    v.AddMember( MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator );
+    
+    return v;
+}
+
+static optional<ExternalTool> LoadTool( const GenericConfig::ConfigValue& _from )
+{
+    using namespace rapidjson;
+    if( !_from.IsObject() )
+        return nullopt;
+    
+    ExternalTool et;
+    if( _from.HasMember(g_PathKey) && _from[g_PathKey].IsString() )
+        et.m_ExecutablePath = _from[g_PathKey].GetString();
+    else
+        return nullopt;
+
+    if( _from.HasMember(g_TitleKey) && _from[g_TitleKey].IsString() )
+        et.m_Title = _from[g_TitleKey].GetString();
+
+    if( _from.HasMember(g_ParametersKey) && _from[g_ParametersKey].IsString() )
+        et.m_Parameters = _from[g_ParametersKey].GetString();
+
+    if( _from.HasMember(g_ShortcutKey) && _from[g_ShortcutKey].IsString() )
+        et.m_Shorcut = ActionShortcut( _from[g_ShortcutKey].GetString() );
+    
+    return et;
+}
+
+ExternalToolsStorage::ExternalToolsStorage(const char*_config_path):
+    m_ConfigPath(_config_path)
+{
+    LoadToolsFromConfig();
+}
+
+void ExternalToolsStorage::LoadToolsFromConfig()
+{
+    auto tools = GlobalConfig().Get(m_ConfigPath);
+    if( !tools.IsArray())
+        return;
+    
+    LOCK_GUARD(m_ToolsLock) {
+        m_Tools.clear();
+        for( auto i = tools.Begin(), e = tools.End(); i != e; ++i )
+            if( auto et = LoadTool( *i ) )
+                m_Tools.emplace_back( make_shared<ExternalTool>(move(*et)) );
+    }
+}
+
+size_t ExternalToolsStorage::ToolsCount() const
+{
+    lock_guard<spinlock> guard(m_ToolsLock);
+    return m_Tools.size();
+}
+
+shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
+{
+    lock_guard<spinlock> guard(m_ToolsLock);
+    return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
+}
+
+vector<shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
+{
+    lock_guard<spinlock> guard(m_ToolsLock);
+    return m_Tools;
 }

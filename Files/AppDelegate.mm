@@ -45,7 +45,7 @@
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
-
+#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
 
 #include "AppStoreHelper.h"
 
@@ -60,6 +60,7 @@ static GenericConfig *g_State = nullptr;
 static const auto g_ConfigGeneralSkin = "general.skin";
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
+static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -703,6 +704,12 @@ static AppDelegate *g_Me = nil;
 {
     static GenericConfigObjC *global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
     return global_config_bridge;
+}
+
+- (ExternalToolsStorage&) externalTools
+{
+    static ExternalToolsStorage* i = new ExternalToolsStorage(g_ConfigExternalToolsList);
+    return *i;
 }
 
 - (bool) askToResetDefaults

@@ -9,4 +9,7 @@
 #import "MainWindowFilePanelState.h"
 
 @interface MainWindowFilePanelState (Menu)
+
+- (IBAction)onExternMenuActionCalled:(id)sender;
+
 @end

@@ -96,14 +96,16 @@ static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l
 
 @implementation MainWindowFilePanelState (ToolsSupport)
 
-- (void) runExtTool
+- (void) runExtTool:(shared_ptr<const ExternalTool>)_tool
 {
+    if( !_tool )
+        return;
     
 //    auto s = "\\";
 
-    if( AppDelegate.me.externalTools.ToolsCount() == 0 )
-        return;
-    auto et = *AppDelegate.me.externalTools.GetTool(0);
+//    if( AppDelegate.me.externalTools.ToolsCount() == 0 )
+//        return;
+    auto et = *_tool;
     
 //    ExternalTool et;
 ////    et.m_ExecutablePath = "/Applications/TextEdit.app";

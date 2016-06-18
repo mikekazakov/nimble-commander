@@ -60,6 +60,7 @@
 		CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */; };
 		CF0939421D12B14700D67AC6 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939411D12B14700D67AC6 /* ActionShortcut.mm */; };
 		CF0939451D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939441D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm */; };
+		CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */; };
 		CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
@@ -1032,6 +1033,8 @@
 		CF0939411D12B14700D67AC6 /* ActionShortcut.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionShortcut.mm; sourceTree = "<group>"; };
 		CF0939431D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+Tools.h"; sourceTree = "<group>"; };
 		CF0939441D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Tools.mm"; sourceTree = "<group>"; };
+		CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolsMenuDelegate.h; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.h; sourceTree = SOURCE_ROOT; };
+		CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToolsMenuDelegate.mm; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTab.h; sourceTree = "<group>"; };
 		CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTab.mm; sourceTree = "<group>"; };
 		CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = "<group>"; };
@@ -2217,6 +2220,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */,
+				CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */,
 				CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */,
 				CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */,
 				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
@@ -3532,6 +3537,7 @@
 				CF73D1E21BE6155E0014C88F /* VFSNetFTPCache.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
+				CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,

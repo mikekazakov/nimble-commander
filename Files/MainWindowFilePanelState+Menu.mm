@@ -24,6 +24,7 @@
 #include "FilePanelMainSplitView.h"
 #include "MainWindowController.h"
 #include "ActivationManager.h"
+#include "../NimbleCommander/States/FilePanels/ToolsMenuDelegate.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -565,6 +566,14 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (IBAction)OnFileFeedFilenamesToTerminal:(id)sender
 {
     [self feedOverlappedTerminalWithFilenamesMenu];
+}
+
+- (IBAction)onExternMenuActionCalled:(id)sender
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto rep = objc_cast<ToolsMenuDelegateInfoWrapper>(menuitem.representedObject) )
+            if( auto t = rep.object )
+                [self runExtTool:t];
 }
 
 @end

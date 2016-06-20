@@ -323,6 +323,11 @@ ExternalToolsStorage::ExternalToolsStorage(const char*_config_path):
     m_ConfigPath(_config_path)
 {
     LoadToolsFromConfig();
+  
+    m_ConfigObservations.emplace_back( GlobalConfig().Observe(_config_path, [=]{
+        LoadToolsFromConfig();
+        FireObservers();
+    }) );
 }
 
 void ExternalToolsStorage::LoadToolsFromConfig()
@@ -355,4 +360,26 @@ vector<shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
 {
     lock_guard<spinlock> guard(m_ToolsLock);
     return m_Tools;
+}
+
+shared_ptr<ExternalToolsStorage::ChangesObserver> ExternalToolsStorage::ObserveChanges( function<void()> _callback )
+{
+    shared_ptr<ExternalToolsStorage::ChangesObserver> observer;
+    LOCK_GUARD(m_ObserversLock) {
+        auto o = make_shared<ExternalToolsStorage::ChangesObserver>();
+        o->callback = _callback;
+        m_Observers.emplace_back( o );
+        observer = o;
+    }
+    return observer;
+}
+
+void ExternalToolsStorage::FireObservers()
+{
+    LOCK_GUARD(m_ObserversLock) {
+        for( auto &w: m_Observers )
+            if( auto s = w.lock() )
+                if( s->enabled && s->callback )
+                    s->callback();
+    }
 }

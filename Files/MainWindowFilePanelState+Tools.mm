@@ -83,6 +83,15 @@ static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l
     return result;
 }
 
+static bool ShouldStartToolInTerminal( const string& _path )
+{
+    NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]];
+    if( b != nil )
+        return false;
+    
+    return true;
+}
+
 //static string WriteStringIntoTemporaryFile()
 
 //vector<string> selected_info;
@@ -124,8 +133,7 @@ static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l
     auto parameters = ExternalToolsParametersParser().Parse(et.m_Parameters);
     string cooked_parameters = [self buildParametersStringForExternalTool:parameters];
     
-    bool in_terminal = false;
-    
+    bool in_terminal = ShouldStartToolInTerminal( et.m_ExecutablePath );
     
 //    + (NSURL *)
     

@@ -23,7 +23,8 @@
 
 @implementation ToolsMenuDelegate
 {
-    vector<shared_ptr<const ExternalTool>> m_Tools;
+    vector<shared_ptr<const ExternalTool>>              m_Tools;
+    shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
     bool m_IsDirty;
 }
 
@@ -32,14 +33,20 @@
     self = [super init];
     if( self ) {
         m_IsDirty = true;
-        
     }
     return self;
 }
 
 - (NSInteger)numberOfItemsInMenu:(NSMenu*)menu
 {
-    m_Tools = AppDelegate.me.externalTools.GetAllTools();
+    // deferred observer setup
+    if( !m_ToolsObserver )
+        m_ToolsObserver = AppDelegate.me.externalTools.ObserveChanges([=]{
+            m_IsDirty = true;
+        });
+    
+    if( m_IsDirty )
+        m_Tools = AppDelegate.me.externalTools.GetAllTools();
     
     return m_Tools.size();
 }

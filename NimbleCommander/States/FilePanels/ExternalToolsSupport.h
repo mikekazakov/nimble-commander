@@ -17,6 +17,7 @@
 **/
 
 #include "../../../Files/ActionShortcut.h"
+#include "../../../Files/Config.h"
 
 class ExternalToolsParameters
 {
@@ -128,11 +129,23 @@ public:
     shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
     vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
     
+    struct ChangesObserver
+    {
+        function<void()>    callback;
+        bool                enabled = true;
+    };
+    
+    shared_ptr<ChangesObserver>             ObserveChanges( function<void()> _callback );
+    
 private:
     void LoadToolsFromConfig();
+    void FireObservers();
     
-    mutable spinlock                        m_ToolsLock;
-    vector<shared_ptr<const ExternalTool>>  m_Tools;
-    const char*                             m_ConfigPath;
+    mutable spinlock                                m_ToolsLock;
+    vector<shared_ptr<const ExternalTool>>          m_Tools;
+    const char*                                     m_ConfigPath;
+    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
+    mutable spinlock                                m_ObserversLock;
+    vector<weak_ptr<ChangesObserver>>               m_Observers;
 };
 

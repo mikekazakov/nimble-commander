@@ -68,14 +68,16 @@ string ActionShortcut::ToPersString() const
         result += u8"⌥";
     if( modifiers & NSCommandKeyMask )
         result += u8"⌘";
-
-    // TODO: optimize this:
-    if( NSString *key = [NSString stringWithCharacters:&unicode length:1] ) {
-        NSString *str = key;
-        if([str isEqualToString:@"\r"])
-            str = @"\\r";
-        
-        result += str.UTF8String;
+    
+    if( unicode == '\r' )
+        result += "\\r";
+    else if( unicode == '\t' )
+        result += "\\t";
+    else {
+        u16string key_utf16;
+        key_utf16.push_back(unicode);
+        wstring_convert<codecvt_utf8_utf16<char16_t>,char16_t> convert;
+        result += convert.to_bytes(key_utf16);
     }
     
     return result;

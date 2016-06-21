@@ -370,8 +370,10 @@ static AppDelegate *g_Me = nil;
     if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
         m_AppStoreHelper.onProductPurchased = [=](const string &_id){
-            if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() )
+            if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
+                GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
+            }
         };
     }
     
@@ -557,6 +559,7 @@ static AppDelegate *g_Me = nil;
         [alert runModal];
         
         [self updateMainMenuFeaturesByVersionAndState];
+        GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Successful external license activation");
     }
 }
 
@@ -569,16 +572,19 @@ static AppDelegate *g_Me = nil;
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"]];
+    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender
 {
     [m_AppStoreHelper askUserToBuyProFeatures];
+    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
 }
 
 - (IBAction)OnRestoreInAppPurchases:(id)sender
 {
     [m_AppStoreHelper askUserToRestorePurchases];
+    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path

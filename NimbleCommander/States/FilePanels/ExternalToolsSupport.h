@@ -14,6 +14,7 @@
   - filenames: %LF, %-LF, %L10F, %-L50F
   - filepaths: %LP, %-LP, %L50P, %-L50P
 - toggle left/right instead of source/target and vice versa: %-
+- limit maxium total amount of files output %2T, %15T
 **/
 
 #include "../../../Files/ActionShortcut.h"
@@ -82,6 +83,7 @@ public:
     const EnterValue    &GetEnterValue   ( unsigned _index ) const;
     const CurrentItem   &GetCurrentItem  ( unsigned _index ) const;
     const SelectedItems &GetSelectedItems( unsigned _index ) const;
+    unsigned             GetMaximumTotalFiles() const;
     
 private:
     void    InsertUserDefinedText(UserDefined _ud);
@@ -94,6 +96,7 @@ private:
     vector<EnterValue>      m_EnterValues;
     vector<CurrentItem>     m_CurrentItems;
     vector<SelectedItems>   m_SelectedItems;
+    unsigned                m_MaximumTotalFiles = 0;
     
     friend class ExternalToolsParametersParser;
 };

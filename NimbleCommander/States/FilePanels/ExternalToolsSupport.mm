@@ -61,9 +61,15 @@ const ExternalToolsParameters::SelectedItems &ExternalToolsParameters::GetSelect
     return m_SelectedItems.at(_index);
 }
 
+unsigned ExternalToolsParameters::GetMaximumTotalFiles() const
+{
+    return m_MaximumTotalFiles;
+}
+
 namespace {
     
 struct InterpretInvertFlag{};
+struct SetMaximumFilesFlag{ unsigned maximum; };
     
 }
 
@@ -205,6 +211,13 @@ static pair<any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_
                         result.max = number;
                         return make_pair( any(move(result)), position - _range.location + 1 );
                     }
+                    case 'T': {
+                        if( minus_sign != false || list_flag != false != !prompt_text.empty() )
+                            return make_pair( any(), 0 ); // malformed string, aborting
+                        SetMaximumFilesFlag limit;
+                        limit.maximum = number >= 0 ? number : 0;
+                        return make_pair( any(limit), position - _range.location + 1 );
+                    }
                     default: {
                         if( minus_sign )
                             return make_pair( any(InterpretInvertFlag()), 2 ); // treat this situation as "%-" inversion flag
@@ -257,20 +270,24 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
             auto &v = any_cast<ExternalToolsParameters::UserDefined&>(res.first);
             result.InsertUserDefinedText( move(v) );
         }
-        if( res.first.type() == typeid(ExternalToolsParameters::EnterValue) ) {
+        else if( res.first.type() == typeid(ExternalToolsParameters::EnterValue) ) {
             auto &v = any_cast<ExternalToolsParameters::EnterValue&>(res.first);
             result.InsertValueRequirement( move(v) );
         }
-        if( res.first.type() == typeid(ExternalToolsParameters::CurrentItem) ) {
+        else if( res.first.type() == typeid(ExternalToolsParameters::CurrentItem) ) {
             auto &v = any_cast<ExternalToolsParameters::CurrentItem&>(res.first);
             result.InsertCurrentItem( move(v) );
         }
-        if( res.first.type() == typeid(ExternalToolsParameters::SelectedItems) ) {
+        else if( res.first.type() == typeid(ExternalToolsParameters::SelectedItems) ) {
             auto &v = any_cast<ExternalToolsParameters::SelectedItems&>(res.first);
             result.InsertSelectedItem( move(v) );
         }
         else if( res.first.type() == typeid(InterpretInvertFlag) ) {
             invert_flag = !invert_flag;
+        }
+        else if( res.first.type() == typeid(SetMaximumFilesFlag) ) {
+            auto v = any_cast<SetMaximumFilesFlag>(res.first);
+            result.m_MaximumTotalFiles = v.maximum;
         }
     }
     

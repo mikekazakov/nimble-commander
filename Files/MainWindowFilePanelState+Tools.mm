@@ -244,6 +244,7 @@ static bool ShouldStartToolInTerminal( const string& _path )
     // TODO: there's no VFS files fetching currently.
     // this should be async!
     string params;
+    int max_files_left = _par.GetMaximumTotalFiles() ? _par.GetMaximumTotalFiles() : numeric_limits<int>::max();
     
     for( unsigned n = 0; n < _par.StepsAmount(); ++n ) {
         auto step = _par.StepNo(n);
@@ -257,9 +258,11 @@ static bool ShouldStartToolInTerminal( const string& _path )
         }
         else if( step.type == ExternalToolsParameters::ActionType::CurrentItem ) {
             auto &v = _par.GetCurrentItem(step.index);
-            if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] ) {
-                params += EscapeSpaces( ExtractParamInfoFromListingItem( v.what, context.view.item ) );
-            }
+            if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] )
+                if( max_files_left > 0 ) {
+                    params += EscapeSpaces( ExtractParamInfoFromListingItem( v.what, context.view.item ) );
+                    max_files_left--;
+                }
         }
         else if( step.type == ExternalToolsParameters::ActionType::SelectedItems ) {
             auto &v = _par.GetSelectedItems(step.index);
@@ -267,19 +270,25 @@ static bool ShouldStartToolInTerminal( const string& _path )
                 auto selected_items = context.selectedEntriesOrFocusedEntry;
                 if( v.max > 0 && v.max < selected_items.size() )
                     selected_items.resize( v.max );
+                if( selected_items.size() > max_files_left  )
+                    selected_items.resize( max_files_left );
             
-                vector<string> selected_info;
-                for( auto &i: selected_items )
-                    selected_info.emplace_back( ExtractParamInfoFromListingItem(v.what, i) );
-                
-                if( v.as_parameters ) {
-                    params += CombineStringsIntoEscapedSpaceSeparatedString( selected_info );
+                if( !selected_items.empty() ) {
+                    vector<string> selected_info;
+                    for( auto &i: selected_items )
+                        selected_info.emplace_back( ExtractParamInfoFromListingItem(v.what, i) );
                     
-                }
-                else {
-                    string file = CombineStringsIntoNewlineSeparatedString(selected_info);
-                    if( auto list_name = TemporaryNativeFileStorage::Instance().WriteStringIntoTempFile(file) )
-                        params += *list_name;
+                    if( v.as_parameters ) {
+                        params += CombineStringsIntoEscapedSpaceSeparatedString( selected_info );
+                        
+                    }
+                    else {
+                        string file = CombineStringsIntoNewlineSeparatedString(selected_info);
+                        if( auto list_name = TemporaryNativeFileStorage::Instance().WriteStringIntoTempFile(file) )
+                            params += *list_name;
+                    }
+                    
+                    max_files_left -= selected_items.size();
                 }
             }
         }

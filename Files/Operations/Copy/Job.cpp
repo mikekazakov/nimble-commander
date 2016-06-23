@@ -1214,12 +1214,13 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
         int read_loops = 0; // amount of zero-resulting reads
         optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result =  src_file->Read(read_buffer + has_read, src_preffered_io_size);
+            int64_t read_result = src_file->Read(read_buffer + has_read, to_read);
             if( read_result > 0 ) {
                 if(_source_data_feedback)
                     _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
                 source_bytes_read += read_result;
                 has_read += read_result;
+                assert( to_read >= read_result ); // regression assert
                 to_read -= read_result;
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {

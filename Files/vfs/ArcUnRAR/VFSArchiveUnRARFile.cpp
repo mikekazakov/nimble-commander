@@ -192,7 +192,7 @@ int VFSArchiveUnRARFile::ProcessRARDummy(unsigned int _msg, long _user_data, lon
     return 0;
 }
 
-ssize_t VFSArchiveUnRARFile::Read(void *_buf, size_t _size)
+ssize_t VFSArchiveUnRARFile::Read(void *_buf, const size_t _size)
 {
     if(!m_Archive)
         return SetLastError(VFSError::InvalidCall);
@@ -221,6 +221,8 @@ ssize_t VFSArchiveUnRARFile::Read(void *_buf, size_t _size)
             m_UnpackBufferSize - sz);
     m_UnpackBufferSize -= sz;
     m_Position += sz;
+    
+    assert( sz <= _size );
     return sz;
 }
 

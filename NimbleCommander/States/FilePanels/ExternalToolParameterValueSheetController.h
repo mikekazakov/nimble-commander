@@ -8,6 +8,12 @@
 
 #pragma once
 
-@interface ExternalToolParameterValueSheetController : NSWindowController
+#include <Utility/SheetController.h>
+
+@interface ExternalToolParameterValueSheetController : SheetController
+
+- (id) initWithValueNames:(vector<string>)_names;
+
+@property (readonly) const vector<string>& values;
 
 @end

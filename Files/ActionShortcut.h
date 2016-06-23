@@ -3,7 +3,7 @@
 struct ActionShortcut
 {
     ActionShortcut();
-    ActionShortcut(const string& _from); // construct from persistency string
+    ActionShortcut(const string& _from); // construct from persistency string, utf8
     ActionShortcut(const char* _from); // construct from persistency string
     ActionShortcut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
     

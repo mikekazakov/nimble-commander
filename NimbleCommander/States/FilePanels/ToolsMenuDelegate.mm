@@ -25,14 +25,13 @@
 {
     vector<shared_ptr<const ExternalTool>>              m_Tools;
     shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
-    bool m_IsDirty;
+    __weak NSMenu                                      *m_MyMenu;
 }
 
 - (id) init
 {
     self = [super init];
     if( self ) {
-        m_IsDirty = true;
     }
     return self;
 }
@@ -42,34 +41,44 @@
     // deferred observer setup
     if( !m_ToolsObserver )
         m_ToolsObserver = AppDelegate.me.externalTools.ObserveChanges([=]{
-            m_IsDirty = true;
+            [self menuNeedsUpdate:m_MyMenu];
         });
+    if( m_MyMenu == nil )
+        m_MyMenu = menu;
     
-    if( m_IsDirty )
-        m_Tools = AppDelegate.me.externalTools.GetAllTools();
+    m_Tools = AppDelegate.me.externalTools.GetAllTools();
     
     return m_Tools.size();
 }
 
 - (BOOL)menu:(NSMenu*)menu updateItem:(NSMenuItem*)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel
 {
-    if( !m_IsDirty || index >= m_Tools.size() )
-        return false;
-    
+    assert( index < m_Tools.size() );
     auto et = m_Tools[index];
     item.title = [NSString stringWithUTF8StdString:et->m_Title];
     item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:et];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
     item.action = @selector(onExternMenuActionCalled:);
-#pragma clang diagnostic pop    
+#pragma clang diagnostic pop
     item.keyEquivalent = et->m_Shorcut.Key();
     item.keyEquivalentModifierMask = et->m_Shorcut.modifiers;
-    
-    if( index == m_Tools.size() - 1 )
-        m_IsDirty = false;
-    
     return true;
+}
+
+- (void)menuNeedsUpdate:(NSMenu*)menu
+{
+    if( !m_MyMenu ) m_MyMenu = menu;
+    if( !menu )     menu = m_MyMenu;
+    if( !menu )     return;
+    
+    NSInteger count = [self numberOfItemsInMenu:menu];
+    while( menu.numberOfItems < count )
+        [menu insertItem:[NSMenuItem new] atIndex:0];
+    while( menu.numberOfItems > count )
+        [menu removeItemAtIndex:0];
+    for( NSInteger index = 0; index < count; index++ )
+        [self menu:menu updateItem:[menu itemAtIndex:index] atIndex:index shouldCancel:NO];
 }
 
 @end

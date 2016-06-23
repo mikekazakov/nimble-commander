@@ -35,7 +35,7 @@ ActionShortcut::ActionShortcut(const char* _from): // construct from persistency
             else if( v == u"\\t" )
                 unicode = '\t';
             else
-                unicode = v.front();
+                unicode = towlower( v.front() );
             break;
         }
         v.remove_prefix(1);
@@ -85,6 +85,8 @@ string ActionShortcut::ToPersString() const
 
 NSString *ActionShortcut::Key() const
 {
+    if( !*this )
+        return @"";
     if( NSString *key = [NSString stringWithCharacters:&unicode length:1] )
         return key;
     return @"";

@@ -20,8 +20,8 @@ public:
 
 #define __LOCK_GUARD_TOKENPASTE(x, y) x ## y
 #define __LOCK_GUARD_TOKENPASTE2(x, y) __LOCK_GUARD_TOKENPASTE(x, y)
-#define LOCK_GUARD(lock_object) int __LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) = 1; \
+#define LOCK_GUARD(lock_object) bool __LOCK_GUARD_TOKENPASTE2(__lock_guard_go_, __LINE__) = true; \
     for(std::lock_guard<decltype(lock_object)> __LOCK_GUARD_TOKENPASTE2(__lock_guard_, __LINE__)(lock_object); \
-        __LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) != 0; \
-        --__LOCK_GUARD_TOKENPASTE2(__lock_guard_runs_, __LINE__) \
+        __LOCK_GUARD_TOKENPASTE2(__lock_guard_go_, __LINE__); \
+        __LOCK_GUARD_TOKENPASTE2(__lock_guard_go_, __LINE__) = false \
         )

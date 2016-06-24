@@ -590,6 +590,12 @@
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
+		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
+		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
+		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
+		CFB791871D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
+		CFB791881D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
+		CFB791891D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
@@ -1392,6 +1398,9 @@
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
+		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
+		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
+		CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PreferencesWindowToolsTab.xib; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.xib; sourceTree = SOURCE_ROOT; };
 		CFB8FA291A93A5500009315A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AppStoreRatingsSheetController.strings; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
@@ -1799,6 +1808,9 @@
 				CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */,
 				CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */,
 				CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */,
+				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
+				CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */,
+				CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -2232,17 +2244,17 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */,
-				CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */,
-				CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */,
-				CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */,
-				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
-				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
-				CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */,
-				CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */,
 				CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */,
 				CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */,
 				CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */,
+				CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */,
+				CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */,
+				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
+				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
+				CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */,
+				CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */,
+				CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */,
+				CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -3018,6 +3030,7 @@
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
+				CFB791881D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
 				CF02B5AC1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
 				CFA7FA751C1D6E06000D039F /* Config.json in Resources */,
@@ -3104,6 +3117,7 @@
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
+				CFB791871D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF306F971CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png in Resources */,
 				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
@@ -3166,6 +3180,7 @@
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
+				CFB791891D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
 				CF02B5AB1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
@@ -3449,6 +3464,7 @@
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
 				CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */,
+				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF50C40F1C0ADE38009DF611 /* FileCompressOperation.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -3635,6 +3651,7 @@
 				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF7D138D1BF5E38B001F53FD /* OperationJob.cpp in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
+				CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */,
@@ -3729,6 +3746,7 @@
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
+				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,

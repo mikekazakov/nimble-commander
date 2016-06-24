@@ -258,7 +258,7 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
         if( res.second == 0 ) {
             if( _parse_error ) {
                 NSString *left = [source substringFromIndex:range.location];
-                string error = "Parse error nearby following symbols: \""s + left.UTF8String + "\"";
+                string error = "Parse error nearby following symbols:\n"s + left.UTF8String;
                 _parse_error( move(error) );
             }
             break;
@@ -292,6 +292,20 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
     }
     
     return result;
+}
+
+bool ExternalTool::operator==(const ExternalTool &_rhs) const
+{
+    return
+        m_Title             == _rhs.m_Title &&
+        m_ExecutablePath    == _rhs.m_ExecutablePath &&
+        m_Parameters        == _rhs.m_Parameters &&
+        m_Shorcut           == _rhs.m_Shorcut;
+}
+
+bool ExternalTool::operator!=(const ExternalTool &_rhs) const
+{
+    return !(*this == _rhs);
 }
 
 static const auto g_TitleKey = "title";
@@ -399,4 +413,23 @@ void ExternalToolsStorage::FireObservers()
                 if( s->enabled && s->callback )
                     s->callback();
     }
+}
+
+void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index )
+{
+    LOCK_GUARD(m_ToolsLock) {
+        if( _at_index >= m_Tools.size() )
+            return;
+        if( *m_Tools[_at_index] == _tool )
+            return; // do nothing if _tool is equal
+        m_Tools[_at_index] = make_shared<ExternalTool>( move(_tool) );
+    }
+    FireObservers();
+}
+
+void ExternalToolsStorage::InsertTool( ExternalTool _tool )
+{
+    LOCK_GUARD(m_ToolsLock)
+        m_Tools.emplace_back( make_shared<ExternalTool>(move(_tool)) );
+    FireObservers();
 }

@@ -117,6 +117,9 @@ public:
     string          m_Parameters;
     ActionShortcut  m_Shorcut;
     
+    bool operator==(const ExternalTool &_rhs) const;
+    bool operator!=(const ExternalTool &_rhs) const;
+    
     // run in terminal
     // allow VFS
     // string directory
@@ -131,6 +134,8 @@ public:
     size_t                                  ToolsCount() const;
     shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
     vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
+    void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
+    void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
     
     struct ChangesObserver
     {

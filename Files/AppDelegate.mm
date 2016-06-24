@@ -46,6 +46,7 @@
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
+#include "../NimbleCommander/Preferences/PreferencesWindowToolsTab.h"
 
 #include "AppStoreHelper.h"
 
@@ -660,6 +661,12 @@ static AppDelegate *g_Me = nil;
         if( ActivationManager::Instance().HasTerminal() )
             [controllers addObject:[PreferencesWindowTerminalTab new]];
         [controllers addObject:[PreferencesWindowHotkeysTab new]];
+        
+        // !!!!
+        [controllers addObject:
+         [[PreferencesWindowToolsTab alloc] initWithToolsStorage:
+          [=]()->ExternalToolsStorage&{return self.externalTools;} ] ];
+        
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];
     }

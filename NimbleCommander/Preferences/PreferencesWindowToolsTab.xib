@@ -6,6 +6,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowToolsTab">
             <connections>
+                <outlet property="addParameterButton" destination="Mtl-Sr-Edq" id="7VA-UR-Oco"/>
+                <outlet property="parametersMenu" destination="KfV-1G-V4r" id="Gdu-uk-iRv"/>
                 <outlet property="toolParameters" destination="ikD-oi-3mc" id="pv8-yb-pHM"/>
                 <outlet property="toolPath" destination="tJK-iz-Vmx" id="6Fx-BB-HJI"/>
                 <outlet property="toolTitle" destination="Erl-hM-Whw" id="qXe-LI-vlf"/>
@@ -27,7 +29,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" id="SOK-bw-rQX">
-                                <rect key="frame" x="0.0" y="0.0" width="238" height="279"/>
+                                <rect key="frame" x="0.0" y="0.0" width="238" height="0.0"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -141,7 +143,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tJK-iz-Vmx">
-                    <rect key="frame" x="268" y="219" width="310" height="22"/>
+                    <rect key="frame" x="268" y="219" width="326" height="22"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="e1H-wi-Y8y">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -173,11 +175,11 @@
                     </connections>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FFZ-gZ-3G4">
-                    <rect key="frame" x="586" y="218" width="34" height="24"/>
+                    <rect key="frame" x="602" y="218" width="18" height="24"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="22" id="Fub-cz-2xk"/>
                     </constraints>
-                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSFolder" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7vb-zY-kcK">
+                    <buttonCell key="cell" type="smallSquare" title="..." bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7vb-zY-kcK">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -196,6 +198,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
+                        <action selector="onAddParameter:" target="-2" id="abn-Pn-0fj"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="EmO-8g-3On"/>
                     </connections>
                 </button>
@@ -232,10 +235,349 @@
             <point key="canvasLocation" x="435" y="590.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="4pR-KR-gf2"/>
+        <menu id="KfV-1G-V4r">
+            <items>
+                <menuItem title="Insert Current Item" id="hv1-vC-dN8">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Current Item" id="81Y-Cg-sSQ">
+                        <items>
+                            <menuItem id="II6-Wo-q1C">
+                                <string key="title">%p	Source item path</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%p"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="i6w-EA-Rip"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="dmv-sq-9J8">
+                                <string key="title">%f	Source item filename</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%f"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="fWD-OQ-zmT"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="wfS-Ll-F4V">
+                                <string key="title">%n	Source item filename without extension</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%n"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="i8E-DL-oOW"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="pOe-HA-s3m">
+                                <string key="title">%e	Source item extension</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%e"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="EwV-3h-Ncp"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="X8z-91-qc7">
+                                <string key="title">%r	Source panel path</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%r"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="p9o-rs-0p3"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="XRZ-cr-pgq"/>
+                            <menuItem id="5aN-uP-JYd">
+                                <string key="title">%-p	Target item path</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-p"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="Uoi-Sa-iRB"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="lrv-hw-UfE">
+                                <string key="title">%-f	Target item filename</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-f"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="zpw-LV-FCs"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="t7c-uZ-Wyx">
+                                <string key="title">%-n	Target item filename without extension</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-n"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="Rsy-3o-g9L"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="hhv-Ii-7Ia">
+                                <string key="title">%-e	Target item extension</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-e"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="HMV-14-Uj9"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="qKU-gg-zci">
+                                <string key="title">%-r	Target panel path</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-r"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="8Tg-yK-CWA"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Insert Select Items" id="LrK-w4-iDz">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Insert Select Items" id="o8G-ZY-8l8">
+                        <items>
+                            <menuItem id="oxh-ez-aQd">
+                                <string key="title">%P		Source filepaths as parameters</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%P"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="inY-PO-LVy"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="EL5-2T-5M1">
+                                <string key="title">%10P	Source filepaths as parameters, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10P"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="jYa-S0-NEe"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="Uut-qc-UcK">
+                                <string key="title">%LP		Source filepaths as text file</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%LP"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="quJ-VQ-wgf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="n7P-7k-Ogp">
+                                <string key="title">%10LP 	Source filepaths as text file, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10LP"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="9NU-oi-oqa"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="4qW-yo-KcS">
+                                <string key="title">%F		Source filenames as parameters</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%F"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="7Sm-zg-FEE"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="DYH-oC-XxH">
+                                <string key="title">%10F	Source filenames as parameters, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10F"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="A3z-nx-L9e"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="hk9-iG-W4a">
+                                <string key="title">%LF		Source filenames as text file</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%LF"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="D7f-yU-aVu"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="JUW-5J-iZz">
+                                <string key="title">%10LF 	Source filenames as text file, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10LF"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="Wxs-ur-4pd"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="jAZ-h6-0NH"/>
+                            <menuItem id="E5p-BD-CuB">
+                                <string key="title">%-P 	Target filepaths as parameters</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-P"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="CNX-B4-cuG"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="ZgB-uv-ecs">
+                                <string key="title">%-10P 	Target filepaths as parameters, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10P"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="LYB-Vb-OER"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="XJk-yw-oD6">
+                                <string key="title">%-LP 	Target filepaths as text file</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-LP"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="nVU-QC-Tue"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="PeS-us-ncF">
+                                <string key="title">%-10LP 	Target filepaths as text file, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10LP"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="Id1-J1-kYn"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="bBK-C9-eQV">
+                                <string key="title">%-F 	Target filenames as parameters</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-F"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="ZTg-1E-Jtz"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="xbW-7L-Eo6">
+                                <string key="title">%-10F 	Target filenames as parameters, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10F"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="btZ-Fs-TDt"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="xqa-ff-fmA">
+                                <string key="title">%-LF 	Target filenames as text file</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-LF"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="91b-rq-eIU"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem id="yBx-gj-ydb">
+                                <string key="title">%-10LF 	Target filenames as text file, limited</string>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10LF"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="IOM-PE-LDb"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Ask For Value" id="kbC-Ac-yjQ">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Ask For Value" id="XZ4-7A-fGc">
+                        <items>
+                            <menuItem title="%? Enter parameter value" id="XHU-jz-vdf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%?"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="Jnu-Vr-fI1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="%&quot;Option name&quot;? Enter parameter value, named" id="L1y-lC-7iH">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%&quot;Option name&quot;?"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="FOD-AA-Q0O"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Other" id="NVF-cl-n3F">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Other" id="ezB-E1-baW">
+                        <items>
+                            <menuItem title="%% Put % symbol" id="l99-bl-ad0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%%"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="pdM-OZ-4B4"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="%- Use left/right panels instead of source/target" id="w1u-x0-TD2">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="vFQ-yI-Xc9"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="%5T Limit maxium total amount of files output" id="f5c-Cv-ZFZ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%5T"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onAddParametersMenuItemClicked:" target="-2" id="7Ld-N6-rAY"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="193.5" y="986.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSFolder" width="32" height="32"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
     </resources>
 </document>

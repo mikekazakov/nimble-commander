@@ -16,9 +16,10 @@
 @property (strong) IBOutlet NSTextField                            *toolPath;
 @property (strong) IBOutlet NSTextField                            *toolParameters;
 @property (strong) IBOutlet NSSegmentedControl                     *toolsAddRemove;
+@property (strong) IBOutlet NSMenu                                 *parametersMenu;
+@property (strong) IBOutlet NSButton                               *addParameterButton;
 @property bool                                                      anySelected;
 @property (readonly, nonatomic) shared_ptr<const ExternalTool>      selectedTool;
-
 
 @end
 
@@ -180,11 +181,10 @@
             if( !error.empty() ) {
                 NSHelpManager *helpManager = [NSHelpManager sharedHelpManager];
                 [helpManager setContextHelp:[[NSAttributedString alloc] initWithString:[NSString stringWithUTF8StdString:error]]
-                                  forObject:self.toolParameters];                
+                                  forObject:self.toolParameters];
                 [helpManager showContextHelpForObject:self.toolParameters
                                          locationHint:NSEvent.mouseLocation];
                 [helpManager removeContextHelpForObject:self.toolParameters];
-                
             }
         }
     }
@@ -195,6 +195,44 @@
     NSInteger segment = self.toolsAddRemove.selectedSegment;
     if( segment == 0 )
         m_ToolsStorage().InsertTool( ExternalTool() );
+}
+
+- (IBAction)onAddParameter:(id)sender
+{
+    NSRect r = [self.view.window convertRectToScreen:self.addParameterButton.frame];
+    [self.parametersMenu popUpMenuPositioningItem:nil
+                                       atLocation:NSMakePoint(NSMinX(r), NSMinY(r))
+                                           inView:nil];
+}
+
+- (IBAction)onAddParametersMenuItemClicked:(id)sender
+{
+    if( auto t = objc_cast<NSMenuItem>(sender) )
+        if( auto s = objc_cast<NSString>(t.representedObject) )
+            [self insertStringIntoParameters:s];
+}
+
+- (void)insertStringIntoParameters:(NSString*)_str
+{
+    NSString *current_parameters = self.toolParameters.stringValue ? self.toolParameters.stringValue : @"";
+    if( self.toolParameters.currentEditor ) {
+        NSRange range = self.toolParameters.currentEditor.selectedRange;
+        current_parameters = [current_parameters stringByReplacingCharactersInRange:range withString:_str];
+    }
+    else
+        current_parameters = [current_parameters stringByAppendingString:_str];
+    
+    [self setNewParametersString:current_parameters];
+}
+
+- (void)setNewParametersString:(NSString*)_str
+{
+    [self.toolParameters.undoManager registerUndoWithTarget:self
+                                                   selector:@selector(setNewParametersString:)
+                                                     object:self.toolParameters.stringValue];
+    
+    self.toolParameters.stringValue = _str;
+    [self onToolParametersChanged:self.toolParameters];
 }
 
 @end

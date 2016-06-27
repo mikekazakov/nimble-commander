@@ -25,6 +25,19 @@
 
 static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTableViewDataType";
 
+static bool AskUserToDeleteTool()
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this tool?", "Asking user for confirmation on deleting external tool - message");
+    alert.informativeText = NSLocalizedString(@"This operation is not reversible.", "Asking user for confirmation on deleting external tool - message");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+    if( [alert runModal] == NSAlertFirstButtonReturn )
+        return true;
+    return false;
+}
+
 @implementation PreferencesWindowToolsTab
 {
     function<ExternalToolsStorage&()>                   m_ToolsStorage;
@@ -123,7 +136,6 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
     self.toolTitle.stringValue = [NSString stringWithUTF8StdString:t->m_Title];
     self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
     self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
-//    self.toolParametersParseError.stringValue = @"";
 }
 
 - (void) clearFields
@@ -131,7 +143,6 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
     self.toolTitle.stringValue = @"";
     self.toolPath.stringValue = @"";
     self.toolParameters.stringValue = @"";
-//    self.toolParametersParseError.stringValue = @"";
 }
 
 - (shared_ptr<const ExternalTool>) selectedTool
@@ -194,7 +205,7 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
 
 - (IBAction)onPlusMinusButton:(id)sender
 {
-    NSInteger segment = self.toolsAddRemove.selectedSegment;
+    const auto segment = self.toolsAddRemove.selectedSegment;
     if( segment == 0 ) {
         m_ToolsStorage().InsertTool( ExternalTool() );
         dispatch_to_main_queue_after(10ms, [=]{
@@ -204,6 +215,13 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
                 [self.view.window makeFirstResponder:self.toolTitle];
             }
         });
+    }
+    else if( segment == 1 ) {
+        const auto row = self.toolsTable.selectedRow;
+        if( row < 0 )
+            return;
+        if( AskUserToDeleteTool() )
+            m_ToolsStorage().RemoveTool(row);
     }
 }
 

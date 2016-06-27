@@ -449,3 +449,14 @@ void ExternalToolsStorage::MoveTool( const size_t _at_index, const size_t _to_in
     
     FireObservers();
 }
+
+void ExternalToolsStorage::RemoveTool( size_t _at_index )
+{
+    LOCK_GUARD(m_ToolsLock) {
+        if( _at_index >= m_Tools.size() )
+            return;
+
+        m_Tools.erase( next(begin(m_Tools), _at_index) );
+    }
+    FireObservers();
+}

@@ -134,8 +134,10 @@ public:
     size_t                                  ToolsCount() const;
     shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
     vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
+    
     void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
     void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
+    void                                    RemoveTool( size_t _at_index );
     void                                    MoveTool( size_t _at_index, size_t _to_index );
     
     struct ChangesObserver

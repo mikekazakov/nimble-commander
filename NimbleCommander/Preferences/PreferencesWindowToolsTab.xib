@@ -132,6 +132,7 @@
                     <connections>
                         <action selector="onToolTitleChanged:" target="-2" id="JmZ-0n-cYC"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="u5q-jW-rRO"/>
+                        <outlet property="nextKeyView" destination="tJK-iz-Vmx" id="MRb-a1-sea"/>
                     </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j8B-4J-nM4">
@@ -152,6 +153,7 @@
                     <connections>
                         <action selector="onToolPathChanged:" target="-2" id="8qI-FE-VWO"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="Ymg-og-9OI"/>
+                        <outlet property="nextKeyView" destination="FFZ-gZ-3G4" id="PVZ-nv-YLa"/>
                     </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HGo-IY-2d3">
@@ -172,10 +174,11 @@
                     <connections>
                         <action selector="onToolParametersChanged:" target="-2" id="18t-Kz-GDm"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="mTS-oC-Urp"/>
+                        <outlet property="nextKeyView" destination="Mtl-Sr-Edq" id="yLT-ax-45o"/>
                     </connections>
                 </textField>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FFZ-gZ-3G4">
-                    <rect key="frame" x="602" y="218" width="18" height="24"/>
+                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FFZ-gZ-3G4">
+                    <rect key="frame" x="602" y="219" width="18" height="24"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="22" id="Fub-cz-2xk"/>
                     </constraints>
@@ -184,7 +187,9 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
+                        <action selector="onSetApplicationPathButtonClicked:" target="-2" id="KSc-YT-9vl"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="NGI-a2-5vu"/>
+                        <outlet property="nextKeyView" destination="ikD-oi-3mc" id="mKf-fT-UJo"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mtl-Sr-Edq">

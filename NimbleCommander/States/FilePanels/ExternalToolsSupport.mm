@@ -433,3 +433,19 @@ void ExternalToolsStorage::InsertTool( ExternalTool _tool )
         m_Tools.emplace_back( make_shared<ExternalTool>(move(_tool)) );
     FireObservers();
 }
+
+void ExternalToolsStorage::MoveTool( const size_t _at_index, const size_t _to_index )
+{
+    if( _at_index == _to_index )
+        return;
+    
+    LOCK_GUARD(m_ToolsLock) {
+        if( _at_index >= m_Tools.size() || _to_index >= m_Tools.size() )
+            return;
+        auto v = m_Tools[_at_index];
+        m_Tools.erase( next(begin(m_Tools), _at_index) );
+        m_Tools.insert( next(begin(m_Tools), _to_index), v );
+    }
+    
+    FireObservers();
+}

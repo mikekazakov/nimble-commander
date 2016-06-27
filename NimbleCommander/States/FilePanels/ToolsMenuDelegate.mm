@@ -59,10 +59,14 @@
     item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:et];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
-    item.action = @selector(onExternMenuActionCalled:);
+    if( !et->m_ExecutablePath.empty() )
+        item.action = @selector(onExternMenuActionCalled:);
+    else
+        item.action = nil;
 #pragma clang diagnostic pop
     item.keyEquivalent = et->m_Shorcut.Key();
     item.keyEquivalentModifierMask = et->m_Shorcut.modifiers;
+    
     return true;
 }
 

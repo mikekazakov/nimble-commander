@@ -127,6 +127,10 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
 //        return;
     auto &et = *_tool;
     
+    // do nothing for invalid tools
+    if( et.m_ExecutablePath.empty() )
+        return;
+    
 //    ExternalTool et;
 ////    et.m_ExecutablePath = "/Applications/TextEdit.app";
 //    et.m_ExecutablePath = "/bin/ls";

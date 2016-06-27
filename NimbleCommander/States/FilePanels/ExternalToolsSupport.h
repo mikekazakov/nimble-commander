@@ -136,6 +136,7 @@ public:
     vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
     void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
     void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
+    void                                    MoveTool( size_t _at_index, size_t _to_index );
     
     struct ChangesObserver
     {

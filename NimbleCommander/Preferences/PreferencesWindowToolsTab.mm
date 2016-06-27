@@ -23,6 +23,8 @@
 
 @end
 
+static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTableViewDataType";
+
 @implementation PreferencesWindowToolsTab
 {
     function<ExternalToolsStorage&()>                   m_ToolsStorage;
@@ -74,7 +76,7 @@
         });
     });
     
-    
+    [self.toolsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
     
     
     
@@ -193,8 +195,16 @@
 - (IBAction)onPlusMinusButton:(id)sender
 {
     NSInteger segment = self.toolsAddRemove.selectedSegment;
-    if( segment == 0 )
+    if( segment == 0 ) {
         m_ToolsStorage().InsertTool( ExternalTool() );
+        dispatch_to_main_queue_after(10ms, [=]{
+            if( self.toolsTable.numberOfRows > 0 ) {
+                [self.toolsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.toolsTable.numberOfRows-1]
+                             byExtendingSelection:false];
+                [self.view.window makeFirstResponder:self.toolTitle];
+            }
+        });
+    }
 }
 
 - (IBAction)onAddParameter:(id)sender
@@ -233,6 +243,90 @@
     
     self.toolParameters.stringValue = _str;
     [self onToolParametersChanged:self.toolParameters];
+}
+
+- (void)setNewPathString:(NSString*)_str
+{
+    [self.toolPath.undoManager registerUndoWithTarget:self
+                                             selector:@selector(setNewPathString:)
+                                               object:self.toolPath.stringValue];
+    self.toolPath.stringValue = _str;
+    [self onToolPathChanged:self.toolPath];
+}
+
+- (void)setNewTitleString:(NSString*)_str
+{
+    [self.toolTitle.undoManager registerUndoWithTarget:self
+                                              selector:@selector(setNewPathString:)
+                                                object:self.toolTitle.stringValue];
+    self.toolTitle.stringValue = _str;
+    [self onToolTitleChanged:self.toolTitle];
+}
+
+- (IBAction)onSetApplicationPathButtonClicked:(id)sender
+{
+    if( !self.selectedTool )
+        return;
+    
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.resolvesAliases = false;
+    panel.canChooseDirectories = true;
+    panel.canChooseFiles = true;
+    panel.allowsMultipleSelection = false;
+    panel.showsHiddenFiles = true;
+    panel.treatsFilePackagesAsDirectories = true;
+    
+    if( !self.selectedTool->m_ExecutablePath.empty() )
+        if( auto u = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:self.selectedTool->m_ExecutablePath]] )
+            panel.directoryURL = u;
+    
+    if( [panel runModal] == NSFileHandlingPanelOKButton )
+        if( panel.URL ) {
+            [self setNewPathString:panel.URL.path];
+            
+            dispatch_to_main_queue_after(1ms, [=] {
+                if( auto t = self.selectedTool )
+                    if( t->m_Title.empty() )
+                        if( NSString *name = [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
+                            [self setNewTitleString:name];
+            });
+        }
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+    [pboard declareTypes:@[g_MyPrivateTableViewDataType]
+                   owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes]
+            forType:g_MyPrivateTableViewDataType];
+    return true;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)drag_to
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
+    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSInteger drag_from = inds.firstIndex;
+
+
+    if( drag_to == drag_from ||    // same index, above
+        drag_to == drag_from + 1 ) // same index, below
+        return false;
+
+    if( drag_from < drag_to )
+        drag_to--;
+    
+    m_ToolsStorage().MoveTool( drag_from, drag_to );
+    
+    return true;
 }
 
 @end

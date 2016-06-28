@@ -440,11 +440,17 @@
     "externalTools": {
         "tools_v1": [
             {
-                     "title": "TextEdit",
-                     "path": "/Applications/TextEdit.app",
-                     "parameters": "%P",
-                     "shortcut": "⇧⌥T"
-            }            
+                "title": "Open System Terminal Here",
+                "path": "/Applications/Utilities/Terminal.app",
+                "parameters": "%r",
+                "shortcut": ""
+            },
+            {
+                "title": "XCode Merge",
+                "path": "/Applications/Xcode.app/Contents/Developer/usr/bin/opendiff",
+                "parameters": "%p %-p",
+                "shortcut": ""
+            }
         ]
     }
 }

@@ -55,7 +55,9 @@
 {
     assert( index < m_Tools.size() );
     auto et = m_Tools[index];
-    item.title = [NSString stringWithUTF8StdString:et->m_Title];
+    item.title = et->m_Title.empty() ?
+        [NSString stringWithFormat:@"Tool #%ld", index] :
+        [NSString stringWithUTF8StdString:et->m_Title];
     item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:et];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"

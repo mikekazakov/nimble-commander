@@ -9,6 +9,7 @@
 #import "3rd_party/gtm/GTMHotKeyTextField.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
+#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
 #include "PreferencesWindowHotkeysTab.h"
 #include "ActionsShortcutsManager.h"
 #include "ActivationManager.h"
@@ -32,18 +33,18 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 {
     static const vector< pair<const char *, NSString *> > titles = {
-        {"panel.move_up",                       @"File Panels ▶ move up"},
-        {"panel.move_down",                     @"File Panels ▶ move down"},
-        {"panel.move_left",                     @"File Panels ▶ move left"},
-        {"panel.move_right",                    @"File Panels ▶ move right"},
-        {"panel.move_first",                    @"File Panels ▶ move to first element"},
-        {"panel.move_last",                     @"File Panels ▶ move to last element"},
-        {"panel.move_next_page",                @"File Panels ▶ move to next page"},
-        {"panel.move_prev_page",                @"File Panels ▶ move to previous page"},
-        {"panel.move_next_and_invert_selection",@"File Panels ▶ invert selection and move next"},
-        {"panel.go_root",                       @"File Panels ▶ go to root / directory"},
-        {"panel.go_home",                       @"File Panels ▶ go to home ~ directory"},
-        {"panel.show_preview",                  @"File Panels ▶ show preview"},
+        {"panel.move_up",                       @"File Panels ▶ Move Up"},
+        {"panel.move_down",                     @"File Panels ▶ Move Down"},
+        {"panel.move_left",                     @"File Panels ▶ Move Left"},
+        {"panel.move_right",                    @"File Panels ▶ Move Right"},
+        {"panel.move_first",                    @"File Panels ▶ Move to the First Element"},
+        {"panel.move_last",                     @"File Panels ▶ Move to the Last Element"},
+        {"panel.move_next_page",                @"File Panels ▶ Move to the Next Page"},
+        {"panel.move_prev_page",                @"File Panels ▶ Move to the Previous Page"},
+        {"panel.move_next_and_invert_selection",@"File Panels ▶ Invert Selection and Move Next"},
+        {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"},
+        {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"},
+        {"panel.show_preview",                  @"File Panels ▶ Show Preview"},
     };
     
     for( auto &i: titles )
@@ -52,6 +53,16 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
     
     return nil;
 }
+
+static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _index)
+{
+    return [NSString stringWithFormat:@"Tools  ▶ %@",
+            (_et.m_Title.empty() ?
+             [NSString stringWithFormat:@"Tool #%u", _index] :
+             [NSString stringWithUTF8StdString:_et.m_Title]) ];
+}
+
+//const ExternalTool
 
 @interface PreferencesWindowHotkeysTab()
 
@@ -63,27 +74,30 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 
 @implementation PreferencesWindowHotkeysTab
 {
-    vector<GTMHotKeyTextField *> m_EditFields;
-    vector<pair<string,int>>     m_Shortcuts;
+    vector<pair<string,int>>                            m_Shortcuts;
+    function<ExternalToolsStorage&()>                   m_ToolsStorage;
+    shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
+    vector<shared_ptr<const ExternalTool>>              m_Tools;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
+        m_ToolsStorage = _tool_storage;
         m_Shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
         
         // remove shortcuts whichs are absent in main menu
         m_Shortcuts.erase(remove_if(begin(m_Shortcuts),
                                     end(m_Shortcuts),
-                                 [](auto &_t) {
-                                     if(_t.first.find_first_of("menu.") != 0)
-                                         return false;
-                                     NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
-                                     return it == nil || it.isHidden == true;
-                                 }),
-                       end(m_Shortcuts)
-                       );
+                                    [](auto &_t) {
+                                        if(_t.first.find_first_of("menu.") != 0)
+                                            return false;
+                                        NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
+                                        return it == nil || it.isHidden == true;
+                                    }),
+                          end(m_Shortcuts)
+                          );
     }
     return self;
 }
@@ -91,8 +105,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 - (void)loadView
 {
     [super loadView];
-    self.Table.dataSource = self;
-    self.Table.delegate = self;
+    m_Tools = m_ToolsStorage().GetAllTools();
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"action"];
     column.width = 450;
@@ -106,6 +119,19 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
     
     if( ActivationManager::Instance().Sandboxed() )
         self.forceFnButton.hidden = true;
+    
+    m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{
+        dispatch_to_main_queue([=]{
+            auto old_tools = move(m_Tools);
+            m_Tools = m_ToolsStorage().GetAllTools();
+            
+            
+            if( m_Tools.size() != old_tools.size() )
+                [self.Table noteNumberOfRowsChanged];
+            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(m_Shortcuts.size(), m_Shortcuts.size()+m_Tools.size())]
+                                       columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+        });
+    });
 }
 
 -(NSString*)identifier{
@@ -122,7 +148,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return m_Shortcuts.size();
+    return m_Shortcuts.size() + m_Tools.size();
 }
 
 - (GTMHotKeyTextField*) makeDefaultGTMHotKeyTextField
@@ -134,59 +160,103 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-    assert(row < m_Shortcuts.size());
-    auto &tag = m_Shortcuts[row];
-
-    NSMenuItem *menu_item = [[NSApp mainMenu] itemWithTagHierarchical:tag.second];
-    
-    if([tableColumn.identifier isEqualToString:@"action"])
-    {
-        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
-        if( auto title = ComposeVerboseMenuItemTitle(menu_item) )
-            tf.stringValue = title;
-        else if( auto title = ComposeVerboseNonMenuActionTitle(tag.first) )
-            tf.stringValue = title;            
-        else
-            tf.stringValue = tf.toolTip;
-        tf.bordered = false;
-        tf.editable = false;
-        tf.drawsBackground = false;
-        return tf;
+    if( row >= 0 && row < m_Shortcuts.size() ) {
+        auto &tag = m_Shortcuts[row];
+        NSMenuItem *menu_item = [[NSApp mainMenu] itemWithTagHierarchical:tag.second];
+        
+        if([tableColumn.identifier isEqualToString:@"action"])
+        {
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+            tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
+            if( auto title = ComposeVerboseMenuItemTitle(menu_item) )
+                tf.stringValue = title;
+            else if( auto title = ComposeVerboseNonMenuActionTitle(tag.first) )
+                tf.stringValue = title;
+            else
+                tf.stringValue = tf.toolTip;
+            tf.bordered = false;
+            tf.editable = false;
+            tf.drawsBackground = false;
+            return tf;
+        }
+        if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+            auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);
+            auto default_sc = ActionsShortcutsManager::Instance().DefaultShortCutFromTag(tag.second);
+            GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
+            tf.action = @selector(onHKChanged:);
+            tf.target = self;
+            ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
+            ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:default_sc.Key() modifiers:default_sc.modifiers];
+            
+            if( tag.first.find_first_of("panel.") == 0 )
+                ((GTMHotKeyTextFieldCell*)tf.cell).strictModifierRequirement = false;
+            
+            tf.tag = tag.second;
+            
+            return tf;
+        }
     }
-    if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
-        auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);        
-        auto default_sc = ActionsShortcutsManager::Instance().DefaultShortCutFromTag(tag.second);
-        GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
-        tf.action = @selector(onHKChanged:);
-        tf.target = self;
-        ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
-        ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:default_sc.Key() modifiers:default_sc.modifiers];
-
-        if( tag.first.find_first_of("panel.") == 0 )
-            ((GTMHotKeyTextFieldCell*)tf.cell).strictModifierRequirement = false;
+    else if( row >= 0 && row < m_Shortcuts.size() + m_Tools.size() ) {
+        auto tool_index = row - m_Shortcuts.size();
+        auto &tool = m_Tools[tool_index];
         
-        tf.tag = tag.second;
-        
-        m_EditFields.emplace_back(tf);
-        return tf;
+        if([tableColumn.identifier isEqualToString:@"action"]) {
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+            tf.stringValue = ComposeExternalToolTitle(*tool, (unsigned)tool_index);
+            tf.bordered = false;
+            tf.editable = false;
+            tf.drawsBackground = false;
+            return tf;
+        }
+        if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+            GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
+            tf.action = @selector(onToolHKChanged:);
+            tf.target = self;
+            tf.tag = tool_index;
+            ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:tool->m_Shorcut.Key() modifiers:tool->m_Shorcut.modifiers];
+            ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:tool->m_Shorcut.Key() modifiers:tool->m_Shorcut.modifiers];
+            return tf;            
+        }
     }
     return nil;
+}
+
+- (ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
+{
+    auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : 0;
+    auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    return hk;
+}
+
+- (IBAction)onToolHKChanged:(id)sender
+{
+    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
+        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+            const auto tool_index = tf.tag;
+            const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
+            if( tool_index < m_Tools.size() ) {
+                auto &tool = m_Tools[tool_index];
+                if( hk != tool->m_Shorcut ) {
+                    ExternalTool changed_tool = *tool;
+                    changed_tool.m_Shorcut = hk;
+                    m_ToolsStorage().ReplaceTool(changed_tool, tool_index);
+                }
+            }
+        }
+    }
 }
 
 - (IBAction)onHKChanged:(id)sender
 {
     auto &am = ActionsShortcutsManager::Instance();
-    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
-        auto tag = int(tf.tag);
-        auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue);
-        auto key = gtm_hk.key.length > 0 ? [gtm_hk.key characterAtIndex:0] : 0;
-        auto hk = ActionsShortcutsManager::ShortCut(key, gtm_hk.modifiers);
-        auto action = am.ActionFromTag(tag);
-        
-        if( am.SetShortCutOverride(action, hk) )
-            am.SetMenuShortCuts([NSApp mainMenu]);
-    }
+    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) )
+        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+            auto tag = int(tf.tag);
+            auto hk = [self shortcutFromGTMHotKey:gtm_hk];
+            auto action = am.ActionFromTag(tag);
+            if( am.SetShortCutOverride(action, hk) )
+                am.SetMenuShortCuts([NSApp mainMenu]);
+        }
 }
 
 - (IBAction)OnDefaults:(id)sender
@@ -204,7 +274,6 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
     if([alert runModal] == NSAlertFirstButtonReturn) {
         ActionsShortcutsManager::Instance().RevertToDefaults();
         ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-        m_EditFields.clear();
         [self.Table reloadData];
     }
 }

@@ -9,7 +9,8 @@
 #pragma once
 
 #import "../../Files/3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
-#include "../States/FilePanels/ExternalToolsSupport.h"
+
+class ExternalToolsStorage;
 
 @interface PreferencesWindowToolsTab : NSViewController<RHPreferencesViewControllerProtocol,
                                                         NSTableViewDataSource,

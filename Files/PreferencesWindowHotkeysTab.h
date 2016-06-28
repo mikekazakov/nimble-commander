@@ -6,11 +6,14 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+
+class ExternalToolsStorage;
 
 @interface PreferencesWindowHotkeysTab : NSViewController<RHPreferencesViewControllerProtocol,
                                                             NSTableViewDataSource,
                                                             NSTableViewDelegate>
+
+- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage;
 
 @end

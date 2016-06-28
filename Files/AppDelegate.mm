@@ -652,6 +652,7 @@ static AppDelegate *g_Me = nil;
 - (void)OnPreferencesCommand:(id)sender
 {
     if( !m_PreferencesController ){
+        auto tools_storage = [=]()->ExternalToolsStorage&{return self.externalTools;};
         NSMutableArray *controllers = [NSMutableArray new];
         [controllers addObject:[PreferencesWindowGeneralTab new]];
         [controllers addObject:[PreferencesWindowPanelsTab new]];
@@ -660,12 +661,10 @@ static AppDelegate *g_Me = nil;
         [controllers addObject:[PreferencesWindowExternalEditorsTab new]];
         if( ActivationManager::Instance().HasTerminal() )
             [controllers addObject:[PreferencesWindowTerminalTab new]];
-        [controllers addObject:[PreferencesWindowHotkeysTab new]];
+        [controllers addObject:[[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage]];
         
         // !!!!
-        [controllers addObject:
-         [[PreferencesWindowToolsTab alloc] initWithToolsStorage:
-          [=]()->ExternalToolsStorage&{return self.externalTools;} ] ];
+        [controllers addObject:[[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
         
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];

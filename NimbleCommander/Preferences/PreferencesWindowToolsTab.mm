@@ -90,9 +90,6 @@ static bool AskUserToDeleteTool()
     });
     
     [self.toolsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
-    
-    
-    
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView

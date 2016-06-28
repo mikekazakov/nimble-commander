@@ -415,6 +415,24 @@ void ExternalToolsStorage::FireObservers()
     }
 }
 
+void ExternalToolsStorage::WriteToolsToConfig() const
+{
+    vector<shared_ptr<const ExternalTool>> tools;
+    LOCK_GUARD(m_ToolsLock)
+        tools = m_Tools;
+
+    GenericConfig::ConfigValue json_tools{ rapidjson::kArrayType };
+    for( auto &t: tools )
+        json_tools.PushBack( SaveTool(*t), rapidjson::g_CrtAllocator );
+    GlobalConfig().Set( m_ConfigPath, json_tools );
+}
+
+void ExternalToolsStorage::CommitChanges()
+{
+    FireObservers();
+    dispatch_to_background([=]{ WriteToolsToConfig(); });
+}
+
 void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index )
 {
     LOCK_GUARD(m_ToolsLock) {
@@ -424,14 +442,14 @@ void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index )
             return; // do nothing if _tool is equal
         m_Tools[_at_index] = make_shared<ExternalTool>( move(_tool) );
     }
-    FireObservers();
+    CommitChanges();
 }
 
 void ExternalToolsStorage::InsertTool( ExternalTool _tool )
 {
     LOCK_GUARD(m_ToolsLock)
         m_Tools.emplace_back( make_shared<ExternalTool>(move(_tool)) );
-    FireObservers();
+    CommitChanges();
 }
 
 void ExternalToolsStorage::MoveTool( const size_t _at_index, const size_t _to_index )
@@ -447,7 +465,7 @@ void ExternalToolsStorage::MoveTool( const size_t _at_index, const size_t _to_in
         m_Tools.insert( next(begin(m_Tools), _to_index), v );
     }
     
-    FireObservers();
+    CommitChanges();
 }
 
 void ExternalToolsStorage::RemoveTool( size_t _at_index )
@@ -458,5 +476,5 @@ void ExternalToolsStorage::RemoveTool( size_t _at_index )
 
         m_Tools.erase( next(begin(m_Tools), _at_index) );
     }
-    FireObservers();
+    CommitChanges();
 }

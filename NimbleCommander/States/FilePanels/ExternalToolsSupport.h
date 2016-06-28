@@ -150,6 +150,8 @@ public:
     
 private:
     void LoadToolsFromConfig();
+    void WriteToolsToConfig() const;
+    void CommitChanges();
     void FireObservers();
     
     mutable spinlock                                m_ToolsLock;

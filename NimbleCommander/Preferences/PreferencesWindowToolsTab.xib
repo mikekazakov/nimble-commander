@@ -350,9 +350,9 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Insert Select Items" id="LrK-w4-iDz">
+                <menuItem title="Insert Selected Items" id="LrK-w4-iDz">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Insert Select Items" id="o8G-ZY-8l8">
+                    <menu key="submenu" title="Insert Selected Items" id="o8G-ZY-8l8">
                         <items>
                             <menuItem id="oxh-ez-aQd">
                                 <string key="title">%P		Source filepaths as parameters</string>

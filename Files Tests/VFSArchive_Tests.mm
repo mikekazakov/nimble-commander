@@ -14,6 +14,7 @@
 
 static const string g_Preffix = "/.FilesTestingData/archives/";
 static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
+static const string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";
 static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
@@ -172,6 +173,32 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto d = file->ReadFile();
     XCTAssert( d->size() == 1207 );
     auto ref = "var value = element(by.binding('example.value | date: \"yyyy-Www\"'));";
+    XCTAssert( memcmp(d->data(), ref, strlen(ref)) == 0 );
+}
+
+// symlinks were faulty in <1.1.3
+- (void)testXNU2
+{
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_XNU2.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    VFSStat st;
+    auto fn = "/xnu-3248.20.55/libkern/.clang-format";
+    XCTAssert( host->Stat(fn, st, 0, 0) == 0 );
+    XCTAssert( st.mode_bits.reg );
+    XCTAssert( st.size == 957 );
+    
+    VFSFilePtr file;
+    XCTAssert( host->CreateFile(fn, file, nullptr) == 0);
+    XCTAssert( file->Open(VFSFlags::OF_Read) == 0);
+    auto d = file->ReadFile();
+    XCTAssert( d->size() == 957 );
+    auto ref = "# See top level .clang-format for explanation of options";
     XCTAssert( memcmp(d->data(), ref, strlen(ref)) == 0 );
 }
 

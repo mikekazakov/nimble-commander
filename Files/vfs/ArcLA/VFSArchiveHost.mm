@@ -520,7 +520,12 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     // buf - directory with trailing slash
     // short_name - entry name within that directory
     
-    assert(strcmp(short_name, "..")); // no ".." resolving in VFS (currently?)
+    if( strcmp(short_name, "..") == 0 ) { // special treatment for dot-dot
+        char tmp[1024];
+        if( !GetDirectoryContainingItemFromPath(buf, tmp) )
+            return nullptr;
+        return FindEntry(tmp);
+    }
     
     auto i = m_PathToDir.find(buf);
     if(i == end(m_PathToDir))
@@ -737,7 +742,7 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
     if(!_uid || _uid >= m_EntryByUID.size())
         return;
     
-    auto iter = m_Symlinks.find(_uid);
+    const auto iter = m_Symlinks.find(_uid);
     if(iter == end(m_Symlinks))
         return;
     
@@ -755,18 +760,25 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
         return;
     }
         
-    path dir_path = m_EntryByUID[_uid].first->full_path;
-    path symlink_path = symlink.value;
+    const path dir_path = m_EntryByUID[_uid].first->full_path;
+    const path symlink_path = symlink.value;
     path result_path;
-    if(symlink_path.is_relative()) {
+    if( symlink_path.is_relative() ) {
         result_path = dir_path;
 //        printf("%s\n", result_path.c_str());
         
-        // TODO: process possible ".." and entries
         // TODO: check for loops
         for(auto &i: symlink_path) {
-            if( i != "." )
-                result_path /= i;
+            if( i != "." ) {
+                if( i != ".." ) {
+                    result_path /= i;
+                }
+                else {
+                    if( result_path.filename() == "." )
+                        result_path.remove_filename();
+                    result_path = result_path.parent_path();
+                }
+            }
 //            printf("%s\n", result_path.c_str());
             
             uint32_t curr_uid = ItemUID(result_path.c_str());

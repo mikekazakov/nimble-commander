@@ -43,7 +43,7 @@
         auto task_ptr = m_Task.get();
         m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
-                                               task_ptr->WriteChildInput(_d, _sz);
+                                               task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
         m_Parser->SetTaskScreenResize([=](int sx, int sy) {
             task_ptr->ResizeWindow(sx, sy);
@@ -61,6 +61,12 @@
 - (NSToolbar*) toolbar
 {
     return nil;
+}
+
+- (TermShellTask&) task
+{
+    assert(m_Task);
+    return *m_Task;
 }
 
 - (void) SetInitialWD:(const string&)_wd

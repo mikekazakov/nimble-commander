@@ -48,4 +48,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport
 - (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event;
 - (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event;
 
+- (void) volumeWillUnmount:(NSNotification *)notification;
+
 @end

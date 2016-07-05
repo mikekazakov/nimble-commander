@@ -505,9 +505,8 @@ void NativeFSManager::EjectVolumeContainingPath(const string &_path)
         if(auto volume = VolumeFromPath(_path)) {
             DASessionRef session = DASessionCreate(kCFAllocatorDefault);
             CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
-            DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
-            if(disk) {
-                DADiskUnmount(disk, kDADiskUnmountOptionDefault, NULL, NULL);
+            if( DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url) ) {
+                DADiskUnmount(disk, kDADiskUnmountOptionForce, NULL, NULL);
                 CFRelease(disk);
             }
             CFRelease(session);

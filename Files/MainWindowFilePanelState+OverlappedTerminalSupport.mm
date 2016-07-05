@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Utility/NativeFSManager.h>
 #include "vfs/vfs_native.h"
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "FilePanelOverlappedTerminal.h"
@@ -286,6 +287,23 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
         [self updateBottomConstraint];
         [self activateOverlappedTerminal];
+    }
+}
+
+- (void)volumeWillUnmount:(NSNotification *)notification
+{
+    // manually check if attached terminal is locking the volument is about to be unmounted.
+    // in that case - change working directory so volume can be actually unmounted.    
+    if( !m_OverlappedTerminal->terminal )
+        return;
+    if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
+        auto state = m_OverlappedTerminal->terminal.state;
+        if( state == TermShellTask::TaskState::Shell ) {
+            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( m_OverlappedTerminal->terminal.cwd );
+            auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath( path.fileSystemRepresentationSafe );
+            if( cwd_volume == unmounting_volume )
+                [m_OverlappedTerminal->terminal changeWorkingDirectory:"/Volumes/"]; // TODO: need to do something more elegant
+        }
     }
 }
 

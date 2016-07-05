@@ -85,8 +85,15 @@ inline bool strisdotdot(const std::string &s) noexcept { return strisdotdot( s.c
 
 inline std::string EnsureTrailingSlash(std::string _s)
 {
-    if( _s.empty() || _s.back() != '/' )
+    if( !_s.empty() && _s.back() != '/' )
         _s.push_back('/');
+    return _s;
+}
+
+inline std::string EnsureNoTrailingSlash(std::string _s)
+{
+    if( _s.size() > 1 && _s.back() == '/' )
+        _s.pop_back();
     return _s;
 }
 

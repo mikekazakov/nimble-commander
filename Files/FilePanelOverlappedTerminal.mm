@@ -57,7 +57,7 @@ static const auto g_LongProcessDelay = 100ms;
         auto task_ptr = m_Task.get();
         m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
-                                               task_ptr->WriteChildInput(_d, _sz);
+                                               task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
         m_Parser->SetTaskScreenResize([=](int sx, int sy) {
             task_ptr->ResizeWindow(sx, sy);
@@ -204,8 +204,8 @@ static const auto g_LongProcessDelay = 100ms;
 
     auto esc = TermTask::EscapeShellFeed( _input );
     if( !esc.empty() ) {
-        m_Task->WriteChildInput( esc.c_str(), (int)esc.length() );
-        m_Task->WriteChildInput(" ", 1);
+        esc += " ";
+        m_Task->WriteChildInput( esc );
     }
 }
 
@@ -213,7 +213,7 @@ static const auto g_LongProcessDelay = 100ms;
 {
     if( self.state != TermShellTask::TaskState::Shell )
         return;
-    m_Task->WriteChildInput("\n", strlen("\n"));
+    m_Task->WriteChildInput( "\n" );
 }
 
 - (bool) isShellVirgin

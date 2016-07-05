@@ -9,6 +9,7 @@
 #pragma once
 #include "../../MainWindowStateProtocol.h"
 
+class TermShellTask;
 @interface MainWindowTerminalState : NSView<MainWindowStateProtocol>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
@@ -23,5 +24,7 @@
 - (void) Terminate;
 
 - (string) CWD;
+
+- (TermShellTask&) task;
 
 @end

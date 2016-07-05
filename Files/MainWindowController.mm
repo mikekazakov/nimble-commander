@@ -13,9 +13,11 @@
 #include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
 #include "vfs/vfs_native.h"
 #include "States/Terminal/MainWindowTerminalState.h"
+#include "States/Terminal/TermShellTask.h"
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"
 #include "States/Viewer/MainWindowBigFileViewState.h"
 #include "Utility/SystemInformation.h"
+#include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
 #include "MainWindow.h"
 #include "AppDelegate.h"
@@ -90,6 +92,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                                                selector:@selector(applicationWillTerminate)
                                                    name:NSApplicationWillTerminateNotification
                                                  object:NSApplication.sharedApplication];
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
+                                                           selector:@selector(volumeWillUnmount:)
+                                                               name:NSWorkspaceWillUnmountNotification
+                                                             object:nil];
+        
         __weak MainWindowController* weak_self = self;
         m_ConfigObservationTicktets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar, [=]{ [(MainWindowController*)weak_self onConfigShowToolbarChanged]; }) );
     }
@@ -101,6 +108,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     [self.window saveFrameUsingName:NSStringFromClass(self.class)];
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];
     assert(m_WindowState.empty());
 }
 
@@ -215,7 +223,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         if([i respondsToSelector:@selector(WindowDidResize)])
             [i WindowDidResize];
 }
-
 
 - (void)windowWillClose:(NSNotification *)notification
 {
@@ -439,6 +446,24 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         return self.window.toolbar != nil;
     }
     return true;
+}
+
+
+- (void)volumeWillUnmount:(NSNotification *)notification
+{
+    // manually check if attached terminal is locking the volument is about to be unmounted.
+    // in that case - change working directory so volume can be actually unmounted.
+    if( !m_Terminal )
+        return;
+    if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
+        auto state = m_Terminal.task.State();
+        if( state == TermShellTask::TaskState::Shell ) {
+            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( m_Terminal.CWD );
+            auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath( path.fileSystemRepresentationSafe );
+            if( cwd_volume == unmounting_volume )
+                [m_Terminal ChDir:"/Volumes/"]; // TODO: need to do something more elegant
+        }
+    }
 }
 
 @end

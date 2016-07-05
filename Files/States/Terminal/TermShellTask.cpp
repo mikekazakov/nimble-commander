@@ -36,6 +36,11 @@ static bool IsDirectoryAvailableForBrowsing(const char *_path)
     return true;
 }
 
+static bool IsDirectoryAvailableForBrowsing(const string &_path)
+{
+    return IsDirectoryAvailableForBrowsing(_path.c_str());
+}
+
 TermShellTask::~TermShellTask()
 {
     m_IsShuttingDown = true;
@@ -220,23 +225,20 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         DoCalloutOnChildOutput("\n\r", 2);
 }
 
-void TermShellTask::WriteChildInput(const void *_d, int _sz)
+void TermShellTask::WriteChildInput( string_view _data )
 {
-    if(m_State == TaskState::Inactive ||
-       m_State == TaskState::Dead )
+    if( m_State == TaskState::Inactive || m_State == TaskState::Dead )
         return;
-    
-    if(_sz <= 0)
+    if( _data.empty() )
         return;
 
-    lock_guard<mutex> lock(m_Lock);
+    LOCK_GUARD(m_MasterWriteLock)
+        write( m_MasterFD, _data.data(), _data.size() );
     
-    write(m_MasterFD, _d, _sz);
-    
-    if( ((char*)_d)[_sz-1] == '\n' ||
-        ((char*)_d)[_sz-1] == '\r' )
-        if(m_State == TaskState::Shell)
+    if( (_data.back() == '\n' || _data.back() == '\r') && m_State == TaskState::Shell ) {
+        LOCK_GUARD(m_Lock)
             SetState(TaskState::ProgramInternal);
+    }
 }
 
 void TermShellTask::CleanUp()
@@ -280,8 +282,7 @@ void TermShellTask::CleanUp()
 
 void TermShellTask::ShellDied()
 {
-    if(m_ShellPID > 0) // no need to call it if PID is already set to invalid - we're in closing state
-    {
+    if( m_ShellPID > 0 ) { // no need to call it if PID is already set to invalid - we're in closing state
         SetState(TaskState::Dead);
         CleanUp();
     }
@@ -291,34 +292,38 @@ void TermShellTask::SetState(TaskState _new_state)
 {
     m_State = _new_state;
   
-    if(m_OnStateChanged)
+    if( m_OnStateChanged )
         m_OnStateChanged(m_State);
 //    printf("TermTask state changed to %d\n", _new_state);
 }
 
 void TermShellTask::ChDir(const char *_new_cwd)
 {
-    if(m_State != TaskState::Shell)
+    if( m_State != TaskState::Shell )
         return;
     
-    if(IsCurrentWD(_new_cwd))
-        return; // do nothing if current working directory is the same as requested
+    auto requested_cwd = EnsureTrailingSlash(_new_cwd);
+    LOCK_GUARD(m_Lock)
+        if( m_CWD == requested_cwd )
+            return; // do nothing if current working directory is the same as requested
     
-    char new_cwd[MAXPATHLEN];
-    strcpy(new_cwd, _new_cwd);
-    if(IsPathWithTrailingSlash(new_cwd) && strlen(new_cwd) > 1) // cd command don't like trailing slashes
-       new_cwd[strlen(new_cwd)-1] = 0;
+    requested_cwd = EnsureNoTrailingSlash( requested_cwd ); // cd command don't like trailing slashes
     
-    if(!IsDirectoryAvailableForBrowsing(new_cwd)) // file I/O here
+    // file I/O here    
+    if( !IsDirectoryAvailableForBrowsing(requested_cwd) )
         return;
 
-    m_TemporarySuppressed = true; // will show no output of bash when changing a directory
-    m_RequestedCWD = new_cwd;
+    LOCK_GUARD(m_Lock) {
+        m_TemporarySuppressed = true; // will show no output of bash when changing a directory
+        m_RequestedCWD = requested_cwd;
+    }
     
-    WriteChildInput("\x03", 1); // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
-    WriteChildInput(" cd '", 5);
-    WriteChildInput(new_cwd, (int)strlen(new_cwd));
-    WriteChildInput("'\n", 2);
+    string child_feed;
+    child_feed += "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
+    child_feed += " cd '";
+    child_feed += requested_cwd;
+    child_feed += "'\n";
+    WriteChildInput( child_feed );
 }
 
 bool TermShellTask::IsCurrentWD(const char *_what) const
@@ -326,7 +331,7 @@ bool TermShellTask::IsCurrentWD(const char *_what) const
     char cwd[MAXPATHLEN];
     strcpy(cwd, _what);
     
-    if(!IsPathWithTrailingSlash(cwd))
+    if( !IsPathWithTrailingSlash(cwd) )
         strcat(cwd, "/");
     
     return m_CWD == cwd;
@@ -376,7 +381,7 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
                 );
     
     SetState(TaskState::ProgramExternal);
-    WriteChildInput(input, (int)strlen(input));
+    WriteChildInput( input );
 }
 
 void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
@@ -394,42 +399,38 @@ void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_paramete
             );
 
     SetState(TaskState::ProgramExternal);
-    WriteChildInput(input, (int)strlen(input));
+    WriteChildInput( input );
 }
 
 vector<string> TermShellTask::ChildrenList() const
 {
-    if(m_State == TaskState::Inactive || m_State == TaskState::Dead || m_ShellPID < 0)
-        return vector<string>();
+    if( m_State == TaskState::Inactive || m_State == TaskState::Dead || m_ShellPID < 0 )
+        return {};
     
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
-    if(sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
-        return vector<string>();
+    if( sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
+        return {};
 
     vector<string> result;
-    
-    for(int i = 0; i < proc_cnt; ++i)
-    {
+    for( int i = 0; i < proc_cnt; ++i ) {
         int pid = proc_list[i].kp_proc.p_pid;
         int ppid = proc_list[i].kp_eproc.e_ppid;
         
-again:  if(ppid == m_ShellPID)
-        {
+again:  if( ppid == m_ShellPID ) {
             char name[1024];
-            int ret = proc_name(pid, name, sizeof(name));
+            int ret = proc_name( pid, name, sizeof(name) );
             result.emplace_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
         }
-        else if(ppid >= 1024)
-            for(int j = 0; j < proc_cnt; ++j)
-                if(proc_list[j].kp_proc.p_pid == ppid)
-                {
+        else if( ppid >= 1024 )
+            for( int j = 0; j < proc_cnt; ++j )
+                if( proc_list[j].kp_proc.p_pid == ppid ) {
                     ppid = proc_list[j].kp_eproc.e_ppid;
                     goto again;
                 }
     }
     
-    free(proc_list);
+    free( proc_list );
     return result;
 }
 
@@ -489,4 +490,9 @@ void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd, bool _change
 void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )
 {
     m_OnStateChanged = move( _callback );
+}
+
+TermShellTask::TaskState TermShellTask::State() const
+{
+    return m_State;
 }

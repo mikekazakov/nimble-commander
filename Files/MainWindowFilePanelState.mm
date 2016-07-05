@@ -93,6 +93,10 @@ static string ExpandPath(const string &_ref )
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
+                                                           selector:@selector(volumeWillUnmount:)
+                                                               name:NSWorkspaceWillUnmountNotification
+                                                             object:nil];
         
         __weak MainWindowFilePanelState* weak_self = self;
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralShowTabs, [=]{ [(MainWindowFilePanelState*)weak_self onShowTabsSettingChanged]; }) );
@@ -103,6 +107,7 @@ static string ExpandPath(const string &_ref )
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];    
 }
 
 - (BOOL)acceptsFirstResponder { return true; }

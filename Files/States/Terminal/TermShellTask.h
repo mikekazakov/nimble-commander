@@ -39,6 +39,13 @@ public:
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir, int _sx, int _sy);
     void Terminate();
+    
+    /**
+     * Asks shell to change current working directory.
+     * TaskState should be Shell, otherwise will do nothing.
+     * Does sync I/O on access checking, thus may cause blocking.
+     * Thread-safe.
+     */
     void ChDir(const char *_new_cwd);
     
     /**
@@ -56,31 +63,41 @@ public:
     
     void ResizeWindow(int _sx, int _sy);
     
+    /**
+     * Feeds child process with arbitrary input data.
+     * Task state should not be Inactive or Dead.
+     * Thread-safe.
+     */
+    void WriteChildInput( string_view _data );
     
-    void WriteChildInput(const void *_d, int _sz);
-    
-    
-    
-    inline TaskState State() const { return m_State; }
+    /**
+    * Returns the current shell task state.
+    * Thread-safe.
+    */
+    TaskState State() const;
     
     /**
      * Current working directory. With trailing slash, in form: /Users/migun/.
      * Return string by value to minimize potential chance to get race condition.
+     * Thread-safe.
      */
     string CWD() const;
     
     /**
      * returns a list of children excluding topmost shell (ie bash).
+     * Thread-safe.
      */
     vector<string> ChildrenList() const;
     
     /**
-     * Will return -1 if there's no children on shell or on any errors
-     * Based on same mech as ChildrenList() so may be time-costly
+     * Will return -1 if there's no children on shell or on any errors.
+     * Based on same mech as ChildrenList() so may be time-costly.
+     * Thread-safe.
      */
     int ShellChildPID() const;
     
 private:
+    
     bool IsCurrentWD(const char *_what) const;
     void ProcessBashPrompt(const void *_d, int _sz);
     void SetState(TaskState _new_state);
@@ -92,6 +109,7 @@ private:
     function<void(TaskState _new_state)> m_OnStateChanged;
     volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
+    spinlock     m_MasterWriteLock;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
     volatile bool m_TemporarySuppressed = false; // will give no output until the next bash prompt will show m_RequestedCWD path

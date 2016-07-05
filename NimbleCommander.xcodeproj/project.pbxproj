@@ -25,26 +25,6 @@
 		CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
 		CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
-		CF02B5A71D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */; };
-		CF02B5A81D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */; };
-		CF02B5A91D0A63EC00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */; };
-		CF02B5AA1D0A63ED00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */; };
-		CF02B5AB1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */; };
-		CF02B5AC1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */; };
-		CF02B5AD1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */; };
-		CF02B5AE1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */; };
-		CF02B5AF1D0A63F500F2760D /* PreferencesIcons_Panels.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */; };
-		CF02B5B01D0A63F600F2760D /* PreferencesIcons_Panels.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */; };
-		CF02B5B11D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */; };
-		CF02B5B21D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */; };
-		CF02B5B31D0A63FB00F2760D /* PreferencesIcons_Terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */; };
-		CF02B5B41D0A63FC00F2760D /* PreferencesIcons_Terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */; };
-		CF02B5B51D0A63FF00F2760D /* PreferencesIcons_Terminal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */; };
-		CF02B5B61D0A640000F2760D /* PreferencesIcons_Terminal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */; };
-		CF02B5B71D0A640200F2760D /* PreferencesIcons_Viewer.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */; };
-		CF02B5B81D0A640400F2760D /* PreferencesIcons_Viewer.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */; };
-		CF02B5B91D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */; };
-		CF02B5BA1D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */; };
 		CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */; };
@@ -105,18 +85,7 @@
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
-		CF306F8E1CE9E2F9002326FA /* checked_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F8D1CE9E2F9002326FA /* checked_icon.icns */; };
 		CF306F931CE9E54C002326FA /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
-		CF306F961CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */; };
-		CF306F971CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */; };
-		CF306FA21CEB1E53002326FA /* PreferencesIcons_Hotkeys.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */; };
-		CF306FA31CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */; };
-		CF306FA41CEB1E53002326FA /* PreferencesIcons_Panels.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */; };
-		CF306FA51CEB1E53002326FA /* PreferencesIcons_Panels@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */; };
-		CF306FA61CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */; };
-		CF306FA71CEB1E53002326FA /* PreferencesIcons_Terminal.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */; };
-		CF306FA81CEB1E53002326FA /* PreferencesIcons_Viewer.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */; };
-		CF306FA91CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */; };
 		CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
@@ -190,9 +159,6 @@
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
 		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
-		CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
-		CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
-		CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */ = {isa = PBXBuildFile; fileRef = CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */; };
 		CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
 		CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
 		CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
@@ -476,12 +442,6 @@
 		CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7B206C1A277A27008F1492 /* TrialWindowController.xib */; };
 		CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
-		CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
-		CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
-		CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
-		CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
-		CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
-		CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
 		CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
@@ -575,18 +535,6 @@
 		CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
-		CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
-		CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
-		CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989D196E38E400D4C108 /* linkarrow_icon.png */; };
-		CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989D196E38E400D4C108 /* linkarrow_icon.png */; };
-		CFB598AD196E38E400D4C108 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989E196E38E400D4C108 /* pause_icon.png */; };
-		CFB598AE196E38E400D4C108 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989E196E38E400D4C108 /* pause_icon.png */; };
-		CFB598B9196E38E400D4C108 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
-		CFB598BA196E38E400D4C108 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
-		CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A5196E38E400D4C108 /* show_oplist_hl_icon.png */; };
-		CFB598BC196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A5196E38E400D4C108 /* show_oplist_hl_icon.png */; };
-		CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A6196E38E400D4C108 /* show_oplist_icon.png */; };
-		CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A6196E38E400D4C108 /* show_oplist_icon.png */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
@@ -717,6 +665,9 @@
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
+		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
+		CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
+		CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
@@ -845,19 +796,10 @@
 		CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
-		CFF6F36E1A13567C00011177 /* tab_close.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92181A0B877B00FAE649 /* tab_close.png */; };
-		CFF6F36F1A13567C00011177 /* show_oplist_hl_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A5196E38E400D4C108 /* show_oplist_hl_icon.png */; };
 		CFF6F3711A13567C00011177 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
-		CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */; };
-		CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A6196E38E400D4C108 /* show_oplist_icon.png */; };
-		CFF6F3891A13567C00011177 /* eject_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989B196E38E400D4C108 /* eject_icon.png */; };
-		CFF6F38A1A13567C00011177 /* tab_add.png in Resources */ = {isa = PBXBuildFile; fileRef = CF7C92131A0B865D00FAE649 /* tab_add.png */; };
 		CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
-		CFF6F38C1A13567C00011177 /* linkarrow_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989D196E38E400D4C108 /* linkarrow_icon.png */; };
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
-		CFF6F3941A13567C00011177 /* question_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB598A4196E38E400D4C108 /* question_icon.png */; };
-		CFF6F39C1A13567C00011177 /* pause_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CFB5989E196E38E400D4C108 /* pause_icon.png */; };
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F3AB1A135D4800011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
@@ -1080,18 +1022,7 @@
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
 		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AskForPasswordWindowController.h; sourceTree = "<group>"; };
 		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AskForPasswordWindowController.mm; sourceTree = "<group>"; };
-		CF306F8D1CE9E2F9002326FA /* checked_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = checked_icon.icns; path = Resource/checked_icon.icns; sourceTree = "<group>"; };
 		CF306F921CE9E54C002326FA /* main_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = main_icon.icns; path = Resource/main_icon.icns; sourceTree = "<group>"; };
-		CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesIcons_ExtEditors.png; path = Resource/PreferencesIcons_ExtEditors.png; sourceTree = "<group>"; };
-		CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PreferencesIcons_ExtEditors@2x.png"; path = "Resource/PreferencesIcons_ExtEditors@2x.png"; sourceTree = "<group>"; };
-		CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesIcons_Hotkeys.png; path = Resource/PreferencesIcons_Hotkeys.png; sourceTree = "<group>"; };
-		CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PreferencesIcons_Hotkeys@2x.png"; path = "Resource/PreferencesIcons_Hotkeys@2x.png"; sourceTree = "<group>"; };
-		CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesIcons_Panels.png; path = Resource/PreferencesIcons_Panels.png; sourceTree = "<group>"; };
-		CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PreferencesIcons_Panels@2x.png"; path = "Resource/PreferencesIcons_Panels@2x.png"; sourceTree = "<group>"; };
-		CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PreferencesIcons_Terminal@2x.png"; path = "Resource/PreferencesIcons_Terminal@2x.png"; sourceTree = "<group>"; };
-		CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesIcons_Terminal.png; path = Resource/PreferencesIcons_Terminal.png; sourceTree = "<group>"; };
-		CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesIcons_Viewer.png; path = Resource/PreferencesIcons_Viewer.png; sourceTree = "<group>"; };
-		CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PreferencesIcons_Viewer@2x.png"; path = "Resource/PreferencesIcons_Viewer@2x.png"; sourceTree = "<group>"; };
 		CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionsMenuDelegate.h; sourceTree = "<group>"; };
 		CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ConnectionsMenuDelegate.mm; sourceTree = "<group>"; };
 		CF3120B21A507BB70062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -1130,7 +1061,6 @@
 		CF4E33E11B79B53E005B5292 /* VFSFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFactory.h; path = vfs/VFSFactory.h; sourceTree = "<group>"; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
-		CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_press.png; path = Resource/tab_close_press.png; sourceTree = "<group>"; };
 		CF50B6B71A15164100E3D96D /* VFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFS.h; path = vfs/VFS.h; sourceTree = "<group>"; };
 		CF50B6B81A15167800E3D96D /* VFSDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = VFSDeclarations.h; path = vfs/VFSDeclarations.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF50B6B91A15167800E3D96D /* VFSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSError.h; path = vfs/VFSError.h; sourceTree = "<group>"; };
@@ -1249,9 +1179,6 @@
 		CF7B206C1A277A27008F1492 /* TrialWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrialWindowController.xib; sourceTree = "<group>"; };
 		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
 		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
-		CF7C92131A0B865D00FAE649 /* tab_add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_add.png; path = Resource/tab_add.png; sourceTree = "<group>"; };
-		CF7C92181A0B877B00FAE649 /* tab_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close.png; path = Resource/tab_close.png; sourceTree = "<group>"; };
-		CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tab_close_hover.png; path = Resource/tab_close_hover.png; sourceTree = "<group>"; };
 		CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView_LIB.xcodeproj; path = 3rd_party/MMTabBarView/MMTabBarView_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter.mm; sourceTree = "<group>"; };
 		CF7C93BD1A0DF8BA00FAE649 /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteCountFormatter.h; sourceTree = "<group>"; };
@@ -1387,12 +1314,6 @@
 		CFB060DC172E6AC4001F6949 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
-		CFB5989B196E38E400D4C108 /* eject_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = eject_icon.png; path = Resource/eject_icon.png; sourceTree = "<group>"; };
-		CFB5989D196E38E400D4C108 /* linkarrow_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = linkarrow_icon.png; path = Resource/linkarrow_icon.png; sourceTree = "<group>"; };
-		CFB5989E196E38E400D4C108 /* pause_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pause_icon.png; path = Resource/pause_icon.png; sourceTree = "<group>"; };
-		CFB598A4196E38E400D4C108 /* question_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = question_icon.png; path = Resource/question_icon.png; sourceTree = "<group>"; };
-		CFB598A5196E38E400D4C108 /* show_oplist_hl_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = show_oplist_hl_icon.png; path = Resource/show_oplist_hl_icon.png; sourceTree = "<group>"; };
-		CFB598A6196E38E400D4C108 /* show_oplist_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = show_oplist_icon.png; path = Resource/show_oplist_icon.png; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
 		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
@@ -1527,6 +1448,7 @@
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
+		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
 		CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowTerminalTab.h; sourceTree = "<group>"; };
 		CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowTerminalTab.mm; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
@@ -1729,6 +1651,7 @@
 				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
 				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
 				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
+				CFDF449F1D2B990A0062F7AD /* Media.xcassets */,
 			);
 			name = Resources;
 			path = Files;
@@ -2438,28 +2361,7 @@
 		CFB5989A196E38C700D4C108 /* Art */ = {
 			isa = PBXGroup;
 			children = (
-				CF306F8D1CE9E2F9002326FA /* checked_icon.icns */,
-				CFB5989B196E38E400D4C108 /* eject_icon.png */,
-				CFB5989D196E38E400D4C108 /* linkarrow_icon.png */,
 				CF306F921CE9E54C002326FA /* main_icon.icns */,
-				CFB5989E196E38E400D4C108 /* pause_icon.png */,
-				CF306F941CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png */,
-				CF306F951CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png */,
-				CF306F9A1CEB1E53002326FA /* PreferencesIcons_Hotkeys.png */,
-				CF306F9B1CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png */,
-				CF306F9C1CEB1E53002326FA /* PreferencesIcons_Panels.png */,
-				CF306F9D1CEB1E53002326FA /* PreferencesIcons_Panels@2x.png */,
-				CF306F9F1CEB1E53002326FA /* PreferencesIcons_Terminal.png */,
-				CF306F9E1CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png */,
-				CF306FA01CEB1E53002326FA /* PreferencesIcons_Viewer.png */,
-				CF306FA11CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png */,
-				CFB598A4196E38E400D4C108 /* question_icon.png */,
-				CFB598A5196E38E400D4C108 /* show_oplist_hl_icon.png */,
-				CFB598A6196E38E400D4C108 /* show_oplist_icon.png */,
-				CF7C92131A0B865D00FAE649 /* tab_add.png */,
-				CF7C921B1A0B90D200FAE649 /* tab_close_hover.png */,
-				CF50B6B11A14EDAF00E3D96D /* tab_close_press.png */,
-				CF7C92181A0B877B00FAE649 /* tab_close.png */,
 			);
 			name = Art;
 			sourceTree = "<group>";
@@ -2994,35 +2896,23 @@
 			files = (
 				CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
-				CFB598BC196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
-				CF50B6B31A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
-				CF02B5A81D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */,
-				CF02B5B41D0A63FC00F2760D /* PreferencesIcons_Terminal.png in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
-				CF7C921A1A0B877B00FAE649 /* tab_close.png in Resources */,
-				CF02B5B61D0A640000F2760D /* PreferencesIcons_Terminal@2x.png in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
-				CFB598BE196E38E400D4C108 /* show_oplist_icon.png in Resources */,
-				CFB598AC196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */,
 				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
-				CFB598BA196E38E400D4C108 /* question_icon.png in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF02B5B01D0A63F600F2760D /* PreferencesIcons_Panels.png in Resources */,
 				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
-				CF7C921D1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
-				CF02B5B21D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF0939521D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
@@ -3031,13 +2921,10 @@
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFB791881D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
-				CF02B5AC1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
-				CFB598A8196E38E400D4C108 /* eject_icon.png in Resources */,
 				CFA7FA751C1D6E06000D039F /* Config.json in Resources */,
 				CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBBE1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
-				CFB598AE196E38E400D4C108 /* pause_icon.png in Resources */,
 				CF007C541A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFD83AE11A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CFCABCC81A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
@@ -3046,16 +2933,12 @@
 				CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
+				CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
-				CF02B5B81D0A640400F2760D /* PreferencesIcons_Viewer.png in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CFC044E81B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
-				CF02B5AA1D0A63ED00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */,
-				CF02B5BA1D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */,
-				CF7C92151A0B865D00FAE649 /* tab_add.png in Resources */,
-				CF02B5AE1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */,
 				CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
@@ -3071,14 +2954,9 @@
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
-				CF7C92191A0B877B00FAE649 /* tab_close.png in Resources */,
-				CF306FA51CEB1E53002326FA /* PreferencesIcons_Panels@2x.png in Resources */,
-				CFB598BB196E38E400D4C108 /* show_oplist_hl_icon.png in Resources */,
 				CFC044E71B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
-				CF50B6B21A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
-				CF306FA21CEB1E53002326FA /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
@@ -3091,27 +2969,18 @@
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
-				CF7C921C1A0B90D200FAE649 /* tab_close_hover.png in Resources */,
 				CFCABCD51A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
-				CF306FA91CEB1E53002326FA /* PreferencesIcons_Viewer@2x.png in Resources */,
+				CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
-				CFB598BD196E38E400D4C108 /* show_oplist_icon.png in Resources */,
 				CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
-				CFB598A7196E38E400D4C108 /* eject_icon.png in Resources */,
-				CF306FA31CEB1E53002326FA /* PreferencesIcons_Hotkeys@2x.png in Resources */,
-				CF7C92141A0B865D00FAE649 /* tab_add.png in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
-				CFB598AB196E38E400D4C108 /* linkarrow_icon.png in Resources */,
 				CFCABCDC1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF306FA71CEB1E53002326FA /* PreferencesIcons_Terminal.png in Resources */,
-				CF306F961CEB1DBA002326FA /* PreferencesIcons_ExtEditors.png in Resources */,
 				CF007C531A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CF306FA41CEB1E53002326FA /* PreferencesIcons_Panels.png in Resources */,
 				CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */,
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
@@ -3119,22 +2988,16 @@
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFB791871D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
-				CF306F971CEB1DBA002326FA /* PreferencesIcons_ExtEditors@2x.png in Resources */,
-				CFB598B9196E38E400D4C108 /* question_icon.png in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC71A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
-				CF306FA81CEB1E53002326FA /* PreferencesIcons_Viewer.png in Resources */,
 				CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
-				CF306F8E1CE9E2F9002326FA /* checked_icon.icns in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */,
-				CF306FA61CEB1E53002326FA /* PreferencesIcons_Terminal@2x.png in Resources */,
 				CF0939511D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
-				CFB598AD196E38E400D4C108 /* pause_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3147,16 +3010,10 @@
 				CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
 				CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */,
-				CFF6F36E1A13567C00011177 /* tab_close.png in Resources */,
-				CFF6F36F1A13567C00011177 /* show_oplist_hl_icon.png in Resources */,
-				CF02B5A71D0A63E900F2760D /* PreferencesIcons_ExtEditors.png in Resources */,
-				CF02B5B31D0A63FB00F2760D /* PreferencesIcons_Terminal.png in Resources */,
-				CF50B6B41A14EDAF00E3D96D /* tab_close_press.png in Resources */,
 				CFF6F3711A13567C00011177 /* Help.pdf in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
 				CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
-				CF02B5B51D0A63FF00F2760D /* PreferencesIcons_Terminal@2x.png in Resources */,
 				CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CFC044E41B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
@@ -3165,50 +3022,37 @@
 				CFCCFBBF1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
 				CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
-				CFF6F37E1A13567C00011177 /* tab_close_hover.png in Resources */,
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
-				CF02B5AF1D0A63F500F2760D /* PreferencesIcons_Panels.png in Resources */,
 				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
-				CF02B5B11D0A63F800F2760D /* PreferencesIcons_Panels@2x.png in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF0939531D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
-				CFF6F3871A13567C00011177 /* show_oplist_icon.png in Resources */,
 				CFB791891D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
-				CF02B5AB1D0A63EF00F2760D /* PreferencesIcons_Hotkeys.png in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
-				CFF6F3891A13567C00011177 /* eject_icon.png in Resources */,
-				CFF6F38A1A13567C00011177 /* tab_add.png in Resources */,
 				CFA7FA741C1D6E06000D039F /* Config.json in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
-				CFF6F38C1A13567C00011177 /* linkarrow_icon.png in Resources */,
 				CFCABCDE1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CFD83ADB1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
-				CFF6F3941A13567C00011177 /* question_icon.png in Resources */,
 				CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
+				CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
-				CF02B5B71D0A640200F2760D /* PreferencesIcons_Viewer.png in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
-				CF02B5A91D0A63EC00F2760D /* PreferencesIcons_ExtEditors@2x.png in Resources */,
-				CF02B5B91D0A640700F2760D /* PreferencesIcons_Viewer@2x.png in Resources */,
 				CFC044E91B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
-				CF02B5AD1D0A63F200F2760D /* PreferencesIcons_Hotkeys@2x.png in Resources */,
 				CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */,
-				CFF6F39C1A13567C00011177 /* pause_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

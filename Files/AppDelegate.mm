@@ -662,9 +662,8 @@ static AppDelegate *g_Me = nil;
         if( ActivationManager::Instance().HasTerminal() )
             [controllers addObject:[PreferencesWindowTerminalTab new]];
         [controllers addObject:[[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage]];
-        
-        // !!!!
-        [controllers addObject:[[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
+        if( ActivationManager::Instance().HasExternalTools() )
+            [controllers addObject:[[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
         
         m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
                                                                                         andTitle:@"Preferences"];

@@ -32,6 +32,7 @@ public:
     bool HasPSFS() const noexcept;
     bool HasXAttrFS() const noexcept;
     bool HasTerminal() const noexcept;
+    bool HasExternalTools() const noexcept;
     bool HasBriefSystemOverview() const noexcept;
     bool HasUnixAttributesEditing() const noexcept;
     bool HasDetailedVolumeInformation() const noexcept;

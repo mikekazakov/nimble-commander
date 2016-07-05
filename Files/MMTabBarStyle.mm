@@ -58,9 +58,9 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (NSImage *)closeButtonImageOfType:(MMCloseButtonImageType)type forTabCell:(MMTabBarButtonCell *)cell
 {
-    static NSImage *def   = [NSImage imageNamed:@"tab_close.png"];
-    static NSImage *hover = [NSImage imageNamed:@"tab_close_hover.png"];
-    static NSImage *press = [NSImage imageNamed:@"tab_close_press.png"];
+    static NSImage *def   = [NSImage imageNamed:@"tab_close"];
+    static NSImage *hover = [NSImage imageNamed:@"tab_close_hover"];
+    static NSImage *press = [NSImage imageNamed:@"tab_close_press"];
     
     switch (type) {
         case MMCloseButtonImageTypeStandard:
@@ -163,7 +163,7 @@ static CGColorRef DividerColor(bool _wnd_active)
     static NSImage *img;
     static once_flag once;
     call_once(once, []{
-        img = [NSImage imageNamed:@"tab_add.png"];
+        img = [NSImage imageNamed:@"tab_add"];
         [img setTemplate:true];
     });
     

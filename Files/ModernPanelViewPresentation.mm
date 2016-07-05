@@ -100,7 +100,7 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
 {
     static once_flag once;
     call_once(once, []{
-        m_SymlinkArrowImage = [NSImage imageNamed:@"linkarrow_icon.png"];
+        m_SymlinkArrowImage = [NSImage imageNamed:@"linkarrow_icon"];
     });
     
     m_Size.width = m_Size.height = 0;

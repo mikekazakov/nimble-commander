@@ -221,6 +221,11 @@ bool ActivationManager::HasBriefSystemOverview() const noexcept
     return m_IsActivated;
 }
 
+bool ActivationManager::HasExternalTools() const noexcept
+{
+    return m_IsActivated;
+}
+
 bool ActivationManager::HasUnixAttributesEditing() const noexcept
 {
     return m_IsActivated;

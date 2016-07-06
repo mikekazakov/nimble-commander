@@ -419,14 +419,14 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
                                         params:(const string&)_params
-                                          file:(const string&)_file_path
+                                     fileTitle:(const string&)_file_title
 {
     auto frame = [self.window.contentView frame];
     MainWindowExternalTerminalEditorState *state = [MainWindowExternalTerminalEditorState alloc];
     state = [state initWithFrameAndParams:frame
                                    binary:_full_app_path
                                    params:_params
-                                     file:_file_path
+                                fileTitle:_file_title
              ];
     [self PushNewWindowState:state];
 }

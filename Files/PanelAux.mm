@@ -20,6 +20,7 @@
 #include "MainWindowController.h"
 #include "PanelAux.h"
 #include "ActivationManager.h"
+#include "ExternalEditorInfo.h"
 
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
@@ -97,38 +98,41 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
     }
     
     dispatch_to_default([=]{
-        if(_host->IsDirectory(_filename.c_str(), 0, 0))
+        if( _host->IsDirectory(_filename.c_str(), 0, 0) ) {
+            NSBeep();
             return;
+        }
         
         VFSStat st;
-        if(_host->Stat(_filename.c_str(), st, 0, 0) < 0)
+        if( _host->Stat(_filename.c_str(), st, 0, 0) < 0 ) {
+            NSBeep();
             return;
+        }
         
-        if(st.size > g_MaxFileSizeForVFSOpen)
+        if( st.size > g_MaxFileSizeForVFSOpen ) {
+            NSBeep();
             return;
+        }
         
-        string tmp_path;
-        
-        if(!TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host, tmp_path))
-            return;
-  
-        RegisterRemoteFileUploading( _filename, _host, tmp_path, _panel );
-        
-        NSString *fn = [NSString stringWithUTF8StdString:tmp_path];
-        dispatch_to_main_queue([=]{
+        if( auto tmp_path = TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host) ) {
+            RegisterRemoteFileUploading( _filename, _host, *tmp_path, _panel );
             
-            if(!_with_app_path.empty())
-            {
-                if (![[NSWorkspace sharedWorkspace] openFile:fn
-                                             withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]])
-                    NSBeep();
-            }
-            else
-            {
-                if (![[NSWorkspace sharedWorkspace] openFile:fn])
-                    NSBeep();
-            }
-        });
+            NSString *fn = [NSString stringWithUTF8StdString:*tmp_path];
+            dispatch_to_main_queue([=]{
+                if( !_with_app_path.empty() ) {
+                    if( ![NSWorkspace.sharedWorkspace openFile:fn
+                                               withApplication:[NSString stringWithUTF8StdString:_with_app_path]] )
+                        NSBeep();
+                }
+                else {
+                    if( ![NSWorkspace.sharedWorkspace openFile:fn] )
+                        NSBeep();
+                }
+            });
+        }
+        else
+            NSBeep();
+            
     });
 }
 
@@ -156,7 +160,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
         return;
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_to_default([=]{
         NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
         for(auto &i: _filenames)
         {
@@ -170,14 +174,11 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             if(st.size > g_MaxFileSizeForVFSOpen)
                 continue;
             
-            string tmp;
-            if(!TemporaryNativeFileStorage::Instance().CopySingleFile(i, _host, tmp))
-                continue;
-            
-            RegisterRemoteFileUploading( i, _host, tmp, _panel );
-            
-            if(NSString *s = [NSString stringWithUTF8StdString:tmp])
-                [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
+            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(i, _host) ) {
+                RegisterRemoteFileUploading( i, _host, *tmp, _panel );
+                if( NSString *s = [NSString stringWithUTF8StdString:*tmp] )
+                    [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
+            }
         }
 
         if(![NSWorkspace.sharedWorkspace openURLs:arr
@@ -187,6 +188,50 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
                                 launchIdentifiers:nil])
             NSBeep();
     });
+}
+
+void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
+                                                               VFSHostPtr _host,
+                                                               ExternalEditorInfo *_ext_ed,
+                                                               string _file_title,
+                                                               PanelController *_panel)
+{
+    assert( !_filepath.empty() && _host && _ext_ed && _panel );
+    
+    if( _host->IsNativeFS() ) {
+        if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
+            [wnd RequestExternalEditorTerminalExecution:_ext_ed.path.fileSystemRepresentationSafe
+                                                 params:[_ext_ed substituteFileName:_filepath]
+                                              fileTitle:_file_title];
+    }
+    else
+        dispatch_to_default([=]{ // do downloading down in a background thread
+            if( _host->IsDirectory(_filepath.c_str(), 0, 0) ) {
+                NSBeep();
+                return;
+            }
+            
+            VFSStat st;
+            if( _host->Stat(_filepath.c_str(), st, 0, 0) < 0 ) {
+                NSBeep();
+                return;
+            }
+            
+            if( st.size > g_MaxFileSizeForVFSOpen ) {
+                NSBeep();
+                return;
+            }
+            
+            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(_filepath, _host) ) {
+                RegisterRemoteFileUploading( _filepath, _host, *tmp, _panel );
+                dispatch_to_main_queue([=]{ // when we sucessfuly download a file - request terminal execution in main thread
+                    if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
+                        [wnd RequestExternalEditorTerminalExecution:_ext_ed.path.fileSystemRepresentationSafe
+                                                             params:[_ext_ed substituteFileName:*tmp]
+                                                          fileTitle:_file_title];
+                });
+            }
+        });
 }
 
 bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)

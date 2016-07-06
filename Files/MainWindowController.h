@@ -27,7 +27,7 @@
 - (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path withParameters:(const char*)_params;
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
                                         params:(const string&)_params
-                                          file:(const string&)_file_path;
+                                     fileTitle:(const string&)_file_title;
 
 - (void)restoreDefaultWindowStateFromConfig;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow;

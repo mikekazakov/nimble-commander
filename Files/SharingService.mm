@@ -107,9 +107,8 @@ static atomic<int> g_IsCurrentlySharing(0);
                 if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;
                 if(st.size > g_MaxFileSizeForVFSShare) continue;
                 
-                string native_path;
-                if(TemporaryNativeFileStorage::Instance().CopySingleFile(path, _host, native_path))
-                    m_TmpFilepaths.push_back(native_path);
+                if( auto native_path = TemporaryNativeFileStorage::Instance().CopySingleFile(path, _host) )
+                    m_TmpFilepaths.push_back(*native_path);
             }
             
             if(!m_TmpFilepaths.empty())

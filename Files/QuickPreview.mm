@@ -87,15 +87,14 @@ static const nanoseconds g_Delay = 100ms;
             return;
         }
         
-        string tmp;
-        if(!tnfs.CopySingleFile(_path, _host, tmp))
-            return;
-        NSString *fn = [NSString stringWithUTF8StdString:tmp];
-        if(!m_Closed && fn && _ticket == m_CurrentPreviewTicket)
-            dispatch_to_main_queue( [=]{
-                if(!m_Closed)
-                    self.previewItem = [NSURL fileURLWithPath:fn];
-            });
+        if( auto tmp = tnfs.CopySingleFile(_path, _host) ) {
+            NSString *fn = [NSString stringWithUTF8StdString:*tmp];
+            if( !m_Closed && fn && _ticket == m_CurrentPreviewTicket )
+                dispatch_to_main_queue( [=]{
+                    if(!m_Closed)
+                        self.previewItem = [NSURL fileURLWithPath:fn];
+                });
+        }
     }
     else {
         // basic check that directory looks like a bundle

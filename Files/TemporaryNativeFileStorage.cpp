@@ -202,30 +202,27 @@ optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const stri
     return string(path);
 }
 
-bool TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
-                                                const VFSHostPtr &_host,
-                                                string& _tmp_filename
-                                                )
+optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath, const VFSHostPtr &_host)
 {
     VFSFilePtr vfs_file;
-    if(_host->CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0)
-        return false;
+    if( _host->CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
+        return nullopt;
 
-    if(vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return false;
+    if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
+        return nullopt;
     
     char name[MAXPATHLEN];
-    if(!GetFilenameFromPath(_vfs_filepath.c_str(), name))
-        return false;
+    if( !GetFilenameFromPath(_vfs_filepath.c_str(), name) )
+        return nullopt;
     
     char native_path[MAXPATHLEN];
-    if(!GetSubDirForFilename(name, native_path))
-       return false;
+    if( !GetSubDirForFilename(name, native_path) )
+       return nullopt;
     strcat(native_path, name);
     
     int fd = open(native_path, O_EXLOCK|O_NONBLOCK|O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
-    if(fd < 0)
-        return false;
+    if( fd < 0 )
+        return nullopt;
     
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
     
@@ -258,14 +255,12 @@ bool TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
     }
     
     close(fd);
-    
-    _tmp_filename = native_path;
-    return true;
+    return string(native_path);
     
 error:
     close(fd);
     unlink(native_path);
-    return false;
+    return nullopt;
 }
 
 bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,

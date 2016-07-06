@@ -22,21 +22,19 @@
     TermScrollView             *m_TermScrollView;
     path                        m_BinaryPath;
     string                      m_Params;
-    path                        m_FilePath;
+    string                      m_FileTitle;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const path&)_binary_path
                       params:(const string&)_params
-                        file:(const path&)_file_path
+                   fileTitle:(const string&)_file_title
 {
-    assert(_file_path.is_absolute());
-    
     self = [super initWithFrame:frameRect];
     if (self) {
         m_BinaryPath = _binary_path;
         m_Params = _params;
-        m_FilePath = _file_path;
+        m_FileTitle = _file_title;
 
         m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds attachToTop:true];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -115,7 +113,7 @@
     if(title.length == 0)
         title = [NSString stringWithFormat:@"%@ - %@",
                  [NSString stringWithUTF8StdString:m_Task->TaskBinaryName()],
-                 [NSString stringWithUTF8StdString:m_FilePath.filename().native()]];
+                 [NSString stringWithUTF8StdString:m_FileTitle]];
     
     dispatch_or_run_in_main_queue([=]{
         self.window.title = title;

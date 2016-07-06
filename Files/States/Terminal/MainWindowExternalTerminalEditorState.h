@@ -15,7 +15,7 @@
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const path&)_binary_path
                       params:(const string&)_params
-                        file:(const path&)_file_path;
+                   fileTitle:(const string&)_file_title; // _file_title is used only for window title
 
 @end
 

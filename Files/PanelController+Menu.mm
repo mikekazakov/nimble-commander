@@ -309,7 +309,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
     IF_MENU_TAG("menu.command.volume_information")      return !self.isUniform || self.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS();
+    IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
@@ -914,28 +914,26 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender {
     auto item = m_View.item;
-    if( !item || item.IsDotDot() || !item.Host()->IsNativeFS() )
+    if( !item || item.IsDotDot() )
         return;
     
     ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:item];
-    if(ed == nil) {
+    if( !ed ) {
         NSBeep();
         return;
     }
     
-    if(ed.terminal == false) {
-        if (![NSWorkspace.sharedWorkspace openFile:[NSString stringWithUTF8StdString:item.Path()]
-                                   withApplication:ed.path
-                                     andDeactivate:true])
-            NSBeep();
-    }
-    else {
-        MainWindowController* wnd = (MainWindowController*)self.window.delegate;
-        [wnd RequestExternalEditorTerminalExecution:ed.path.fileSystemRepresentation
-                                             params:[ed substituteFileName:item.Path()]
-                                               file:item.Path()
-         ];
-    }
+    if( ed.terminal == false )
+        PanelVFSFileWorkspaceOpener::Open(item.Path(),
+                                          item.Host(),
+                                          ed.path.fileSystemRepresentationSafe,
+                                          self);
+    else
+        PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(item.Path(),
+                                                                  item.Host(),
+                                                                  ed,
+                                                                  item.Filename(),
+                                                                  self);
 }
 
 - (void)DeleteFiles:(bool)_delete_permanently

@@ -15,10 +15,10 @@
 class TemporaryNativeFileStorage
 {
 public:
-    bool CopySingleFile(const string &_vfs_filepath,
-                        const VFSHostPtr &_host,
-                        string& _tmp_filepath
-                        ); // can run from any thread
+    /**
+     * Thread-safe.
+     */
+    optional<string> CopySingleFile( const string &_vfs_filepath, const VFSHostPtr &_host );
 
     // _vfs_dirpath may be with trailing slash or without
     bool CopyDirectory(const string &_vfs_dirpath,

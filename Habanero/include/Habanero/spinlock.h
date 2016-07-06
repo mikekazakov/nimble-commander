@@ -25,3 +25,10 @@ public:
         __LOCK_GUARD_TOKENPASTE2(__lock_guard_go_, __LINE__); \
         __LOCK_GUARD_TOKENPASTE2(__lock_guard_go_, __LINE__) = false \
         )
+
+template <typename _Lock, typename _Callable>
+auto call_locked( _Lock &_lock, _Callable _callable )
+{
+    std::lock_guard<_Lock> guard(_lock);
+    return _callable();
+}

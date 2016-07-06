@@ -98,6 +98,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
     }
     
     dispatch_to_default([=]{
+        auto activity_ticket = [_panel registerExtActivity];        
         if( _host->IsDirectory(_filename.c_str(), 0, 0) ) {
             NSBeep();
             return;
@@ -161,6 +162,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
     }
     
     dispatch_to_default([=]{
+        auto activity_ticket = [_panel registerExtActivity];
         NSMutableArray *arr = [NSMutableArray arrayWithCapacity:_filenames.size()];
         for(auto &i: _filenames)
         {
@@ -206,6 +208,8 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
     }
     else
         dispatch_to_default([=]{ // do downloading down in a background thread
+            auto activity_ticket = [_panel registerExtActivity];
+            
             if( _host->IsDirectory(_filepath.c_str(), 0, 0) ) {
                 NSBeep();
                 return;

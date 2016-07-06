@@ -14,6 +14,7 @@
 #include "PanelHistory.h"
 #include "Config.h"
 
+@class PanelController;
 @class QuickLookView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
@@ -52,6 +53,23 @@ namespace panel
         string                      m_OldCursorName;
         PanelData::EntrySortKeys    m_OldEntrySortKeys;
     };
+    
+    class ActivityTicket
+    {
+    public:
+        ActivityTicket();
+        ActivityTicket(PanelController *_panel, uint64_t _ticket);
+        ActivityTicket(const ActivityTicket&) = delete;
+        ActivityTicket(ActivityTicket&&);
+        ~ActivityTicket();
+        void operator=(const ActivityTicket&) = delete;
+        void operator=(ActivityTicket&&);
+        
+    private:
+        void Reset();
+        uint64_t                ticket;
+        __weak PanelController *panel;
+    };
 }
 
 @interface PanelController : NSResponder<PanelViewDelegate>
@@ -85,6 +103,11 @@ namespace panel
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
     NSProgressIndicator *m_SpinningIndicator;
+    
+    // Tickets to show some external activities on this panel
+    uint64_t            m_NextActivityTicket;
+    vector<uint64_t>    m_ActivitiesTickets;
+    spinlock            m_ActivitiesTicketsLock;
     
     // QuickLook support
     __weak QuickLookView *m_QuickLook;
@@ -151,10 +174,17 @@ namespace panel
  */
 - (void) copyOptionsFromController:(PanelController*)_pc;
 
+/**
+ * RAII principle - when ActivityTicket dies - it will clear activity flag.
+ * Thread-safe.
+ */
+- (panel::ActivityTicket) registerExtActivity;
+
 @end
 
 // internal stuff, move it somewehere else
 @interface PanelController ()
+- (void) finishExtActivityWithTicket:(uint64_t)_ticket;
 - (void) CancelBackgroundOperations;
 - (void) OnPathChanged;
 - (void) OnCursorChanged;

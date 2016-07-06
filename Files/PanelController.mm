@@ -72,6 +72,49 @@ void panel::GenericCursorPersistance::Restore() const
     [m_View setNeedsDisplay];
 }
 
+panel::ActivityTicket::ActivityTicket():
+    panel(nil),
+    ticket(0)
+{
+}
+
+panel::ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket):
+    panel(_panel),
+    ticket(_ticket)
+{
+}
+
+panel::ActivityTicket::ActivityTicket( ActivityTicket&& _rhs):
+    panel(_rhs.panel),
+    ticket(_rhs.ticket)
+{
+    _rhs.panel = nil;
+    _rhs.ticket = 0;
+}
+
+panel::ActivityTicket::~ActivityTicket()
+{
+    Reset();
+}
+
+void panel::ActivityTicket::operator=(ActivityTicket&&_rhs)
+{
+    Reset();
+    panel = _rhs.panel;
+    ticket = _rhs.ticket;
+    _rhs.panel = nil;
+    _rhs.ticket = 0;
+}
+
+void panel::ActivityTicket::Reset()
+{
+    if( ticket )
+        if( PanelController *pc = panel )
+            [pc finishExtActivityWithTicket:ticket];
+    panel = nil;
+    ticket = 0;
+}
+
 static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
     static const vector<string> archive_extensions = []{
@@ -113,6 +156,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_QuickSearchLastType = 0ns;
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
+        m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
         m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirsizecounting");
         m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
@@ -120,7 +164,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_DragDrop.last_valid_items = -1;
         
         __weak PanelController* weakself = self;
-        auto on_change = ^{
+        auto on_change = [=]{
             dispatch_to_main_queue([=]{
                 [(PanelController*)weakself UpdateSpinningIndicator];
             });
@@ -548,7 +592,13 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) UpdateSpinningIndicator
 {
-    bool is_anything_working = !m_DirectorySizeCountingQ->Empty() || !m_DirectoryLoadingQ->Empty() || !m_DirectoryReLoadingQ->Empty();
+    dispatch_assert_main_queue();
+    
+    size_t ext_activities_no = call_locked(m_ActivitiesTicketsLock, [&]{ return m_ActivitiesTickets.size(); });
+    bool is_anything_working = !m_DirectorySizeCountingQ->Empty() ||
+                               !m_DirectoryLoadingQ->Empty() ||
+                               !m_DirectoryReLoadingQ->Empty() ||
+                                ext_activities_no > 0;
     
     if(is_anything_working == m_IsAnythingWorksInBackground)
         return; // nothing to update;
@@ -863,6 +913,31 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return [self writeURLSPBoard:pboard];
     
     return NO;
+}
+
+- (panel::ActivityTicket) registerExtActivity
+{
+    auto ticket = call_locked(m_ActivitiesTicketsLock, [&]{
+        m_ActivitiesTickets.emplace_back( m_NextActivityTicket );
+        return panel::ActivityTicket(self, m_NextActivityTicket++);
+    });
+    dispatch_to_main_queue([=]{
+        [self UpdateSpinningIndicator];
+    });
+    return ticket;
+}
+
+- (void) finishExtActivityWithTicket:(uint64_t)_ticket
+{
+    LOCK_GUARD(m_ActivitiesTicketsLock) {
+        auto i = find(begin(m_ActivitiesTickets), end(m_ActivitiesTickets), _ticket);
+        if( i == end(m_ActivitiesTickets) )
+            return;
+        m_ActivitiesTickets.erase(i);
+    }
+    dispatch_to_main_queue([=]{
+        [self UpdateSpinningIndicator];
+    });
 }
 
 @end

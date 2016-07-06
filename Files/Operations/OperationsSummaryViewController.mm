@@ -206,6 +206,7 @@
     m_Popover = [NSPopover new];
     m_Popover.contentViewController = self.ScrollViewController;
     m_Popover.behavior = NSPopoverBehaviorTransient;
+    m_Popover.appearance = [NSAppearance appearanceNamed:NSAppearanceNameAqua];
     
     // Calculate height of the expanded list.
     auto item_width  = collection.itemPrototype.view.frame.size.width;

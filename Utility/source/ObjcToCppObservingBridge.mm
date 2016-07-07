@@ -74,11 +74,10 @@
 
 @end
 
-
 @implementation ObjcToCppObservingBlockBridge
 {
     void                            (^m_Block)(NSString *_key_path, id _objc_object, NSDictionary *_changed);
-    NSObject                         *m_ObjcObject;
+    __weak NSObject                  *m_ObjcObject;
     NSArray                          *m_ObservingKeyPaths;
 }
 
@@ -143,8 +142,7 @@
 
 - (void) stopObserving
 {
-    if(m_ObjcObject)
-        [m_ObjcObject removeObserver:self forKeyPaths:m_ObservingKeyPaths];
+    [m_ObjcObject removeObserver:self forKeyPaths:m_ObservingKeyPaths];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

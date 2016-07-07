@@ -289,6 +289,10 @@ public:
     bool SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size);
     bool SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size);
     
+    /**
+     * Call it in emergency case.
+     */
+    void __InvariantCheck() const;
 private:    
     PanelData(const PanelData&) = delete;
     void operator=(const PanelData&) = delete;

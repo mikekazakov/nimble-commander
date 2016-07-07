@@ -64,28 +64,39 @@
 {
     if( auto n = objc_cast<NSNumber>(value) ) {
         auto type = n.objCType;
-        if( strcmp(type, @encode(BOOL)) == 0 )
-            m_Config->Set( keyPath.UTF8String, (bool)n.boolValue );
-        else if( strcmp(type, @encode(int)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.intValue );
-        else if( strcmp(type, @encode(short)) == 0 )
-            m_Config->Set( keyPath.UTF8String, (int)n.shortValue );
-        else if( strcmp(type, @encode(long)) == 0 )
-            m_Config->Set( keyPath.UTF8String, (int)n.longValue );
-        else if( strcmp(type, @encode(long long)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.longLongValue );
-        else if( strcmp(type, @encode(unsigned int)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.unsignedIntValue );
-        else if( strcmp(type, @encode(unsigned short)) == 0 )
-            m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedShortValue );
-        else if( strcmp(type, @encode(unsigned long)) == 0 )
-            m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedLongValue );
-        else if( strcmp(type, @encode(unsigned long long)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.unsignedLongLongValue );
-        else if( strcmp(type, @encode(double)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.doubleValue );
-        else if( strcmp(type, @encode(float)) == 0 )
-            m_Config->Set( keyPath.UTF8String, n.floatValue );
+        if( !type || type[0] == 0 || type[1] != 0 )
+            return;
+        
+        switch( type[0] ) {
+            case 'c': // @encode(BOOL);
+            case 'B': // @encode(bool)
+                m_Config->Set( keyPath.UTF8String, (bool)n.boolValue );
+                break;
+            case 'i': // @encode(int);
+                m_Config->Set( keyPath.UTF8String, n.intValue );
+                break;
+            case 's': // @encode(short);
+                m_Config->Set( keyPath.UTF8String, (int)n.shortValue );
+                break;
+            case 'q': // @encode(long), @encode(long long)
+                m_Config->Set( keyPath.UTF8String, (int)n.longValue );
+                break;
+            case 'I': // @encode(unsigned int)
+                m_Config->Set( keyPath.UTF8String, n.unsignedIntValue );
+                break;
+            case 'S': // @encode(unsigned short)
+                m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedShortValue );
+                break;
+            case 'Q': // @encode(unsigned long), @encode(unsigned long long)
+                m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedLongValue );
+                break;
+            case 'd': // @encode(double)
+                m_Config->Set( keyPath.UTF8String, n.doubleValue );
+                break;
+            case 'f': // @encode(float)
+                m_Config->Set( keyPath.UTF8String, n.floatValue );
+                break;
+        }
     }
     else if( auto s = objc_cast<NSString>(value) )
         m_Config->Set( keyPath.UTF8String, s.UTF8String );

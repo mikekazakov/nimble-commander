@@ -338,6 +338,10 @@ void PanelViewPresentation::OnDirectoryChanged()
 {
 }
 
+void PanelViewPresentation::OnPanelTitleChanged()
+{
+}
+
 void PanelViewPresentation::SetTrimming(PanelViewFilenameTrimming _mode)
 {
     m_Trimming = _mode;

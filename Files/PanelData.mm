@@ -1215,3 +1215,12 @@ const PanelData::Statistics &PanelData::Stats() const
 {
     return m_Stats;
 }
+
+void PanelData::__InvariantCheck() const
+{
+    assert( m_Listing != nullptr );
+    assert( m_VolatileData.size() == m_Listing->Count() );
+    assert( m_EntriesByRawName.size() == m_Listing->Count() );
+    assert( m_EntriesByCustomSort.size() <= m_Listing->Count() );
+    assert( m_EntriesBySoftFiltering.size() <= m_EntriesByCustomSort.size() );    
+}

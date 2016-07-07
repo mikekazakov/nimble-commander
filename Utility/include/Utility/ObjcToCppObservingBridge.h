@@ -10,6 +10,7 @@
 
 #include <Cocoa/Cocoa.h>
 
+__attribute__ ((deprecated))
 typedef void (*ObjcToCppObservingBridge_Handler)(void *_cpp_object,
                                                 NSString *_key_path,
                                                 id _objc_object,
@@ -32,6 +33,7 @@ typedef void (*ObjcToCppObservingBridge_Handler)(void *_cpp_object,
                         context:(void *)context;
 @end
 
+__attribute__ ((deprecated))
 @interface ObjcToCppObservingBlockBridge : NSObject
 
 - (id) initWithObject:(NSObject*) _object

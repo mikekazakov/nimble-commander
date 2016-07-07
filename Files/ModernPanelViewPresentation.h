@@ -7,7 +7,6 @@
 //
 
 #include <Utility/FontExtras.h>
-#include <Utility/ObjcToCppObservingBridge.h>
 #include "PanelViewPresentation.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
 #include "IconsGenerator.h"
@@ -29,7 +28,7 @@ public:
     
     void Draw(NSRect _dirty_rect) override;
     void OnFrameChanged(NSRect _frame) override;
-    
+    void OnPanelTitleChanged() override;
     NSRect GetItemColumnsRect() override;
     int GetItemIndexByPointInView(CGPoint _point, PanelViewHitTest::Options _opt) override;
     
@@ -101,8 +100,6 @@ private:
     vector<ColoringAttrs> m_ColoringAttrs;
     
     static NSImage *m_SymlinkArrowImage;
-    
-    ObjcToCppObservingBlockBridge *m_TitleObserver;
     
     IconsGenerator m_IconCache;
     unique_ptr<ModernPanelViewPresentationHeader> m_Header;

@@ -196,6 +196,13 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return self;
 }
 
+- (void) dealloc
+{
+    // we need to manually set data to nullptr, since PanelView can be destroyed a bit later due to other strong pointers.
+    // in that case view will contain a dangling pointer, which can lead to crash.
+    m_View.data = nullptr;
+}
+
 - (void)configVFSFetchFlagsChanged
 {
     if( GlobalConfig().GetBool(g_ConfigShowDotDotEntry) == false )

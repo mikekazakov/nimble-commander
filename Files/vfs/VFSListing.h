@@ -32,6 +32,9 @@ public:
     
     static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker );
     
+    /**
+     * Returns items amount in this listing. 
+     */
     unsigned            Count               () const noexcept;
     bool                IsUniform           () const noexcept;
     bool                HasCommonHost       () const noexcept;

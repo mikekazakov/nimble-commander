@@ -20,6 +20,8 @@ class PanelViewPresentation
 {
 public:
     PanelViewPresentation(PanelView *_parent_view, PanelViewState *_view_state);
+    PanelViewPresentation(const PanelViewPresentation&) = delete;
+    void operator=(PanelViewPresentation&) = delete;
     virtual ~PanelViewPresentation();
     
     void SetCursorPos(int _pos);
@@ -41,6 +43,7 @@ public:
     virtual void Draw(NSRect _dirty_rect) = 0;
     virtual void OnFrameChanged(NSRect _frame) = 0;
     virtual void OnDirectoryChanged();
+    virtual void OnPanelTitleChanged();
     
     virtual NSRect GetItemColumnsRect() = 0;
     

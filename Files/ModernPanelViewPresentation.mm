@@ -120,13 +120,6 @@ ModernPanelViewPresentation::ModernPanelViewPresentation(PanelView *_parent_view
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigActiveCursor,          [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigInactiveCursor,        [=]{ BuildAppearance(); }));
     m_ConfigObservations.emplace_back( GlobalConfig().Observe(g_ConfigColoring,              [=]{ BuildAppearance(); }));
-
-    m_TitleObserver = [ObjcToCppObservingBlockBridge
-                       bridgeWithObject:_parent_view
-                       forKeyPath:@"headerTitle"
-                       options:0 block:^(NSString *_key_path, id _objc_object, NSDictionary *_changed) {
-                           m_Header->SetTitle(View().headerTitle);
-                       }];
 }
 
 ModernPanelViewPresentation::~ModernPanelViewPresentation()
@@ -139,6 +132,7 @@ ModernPanelViewPresentation::~ModernPanelViewPresentation()
 
 void ModernPanelViewPresentation::OnGeometryOptionsChanged()
 {
+    m_State->Data->__InvariantCheck();
     BuildGeometry();
     CalculateLayoutFromFrame();
     m_State->Data->CustomIconClearAll();
@@ -291,6 +285,11 @@ void ModernPanelViewPresentation::BuildAppearance()
         }
     }
     SetViewNeedsDisplay();
+}
+
+void ModernPanelViewPresentation::OnPanelTitleChanged()
+{
+    m_Header->SetTitle(View().headerTitle);
 }
 
 void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)

@@ -238,8 +238,10 @@ struct PanelViewStateStorage
 
 - (void) setData:(PanelData *)data
 {
-    m_State.Data = data;
     self.needsDisplay = true;
+    m_State.Data = data;
+    if( !data )
+        self.presentation = nullptr;
 }
 
 - (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
@@ -990,7 +992,12 @@ struct PanelViewStateStorage
 
 - (void) setHeaderTitle:(NSString *)headerTitle
 {
-    m_HeaderTitle = headerTitle;
+    dispatch_assert_main_queue();
+    if( ![m_HeaderTitle isEqualToString:headerTitle] ) {
+        m_HeaderTitle = headerTitle;
+        if( m_Presentation )
+            m_Presentation->OnPanelTitleChanged();
+    }
 }
 
 - (NSString *) headerTitle

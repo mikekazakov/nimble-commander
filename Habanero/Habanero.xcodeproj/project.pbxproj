@@ -37,6 +37,7 @@
 		CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
 		CFD62BC51C9A62320021EE7F /* DispatchQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BC41C9A62320021EE7F /* DispatchQueue.h */; };
 		CFD62BC71C9A623B0021EE7F /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */; };
+		CFD930011D2E3ACE00EE77C4 /* CFStackAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
 		CFD62BC41C9A62320021EE7F /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchQueue.h; path = include/Habanero/DispatchQueue.h; sourceTree = "<group>"; };
 		CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchQueue.cpp; path = source/DispatchQueue.cpp; sourceTree = "<group>"; };
+		CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFStackAllocator.h; path = include/Habanero/CFStackAllocator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 		CFD62B841C99C2510021EE7F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */,
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
@@ -160,6 +163,7 @@
 				CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */,
 				CFD62B9E1C99C2A60021EE7F /* tiny_string.h in Headers */,
 				CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */,
+				CFD930011D2E3ACE00EE77C4 /* CFStackAllocator.h in Headers */,
 				CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */,
 				CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */,
 				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,

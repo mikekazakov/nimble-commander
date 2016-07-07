@@ -176,6 +176,9 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate()
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
+    m_TagToAction.reserve(m_ActionsTags.size());
+    m_ActionToTag.reserve(m_ActionsTags.size());
+    
     for(auto &i: m_ActionsTags) {
         m_TagToAction[i.second] = i.first;
         m_ActionToTag[i.first]  = i.second;

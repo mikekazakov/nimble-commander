@@ -66,7 +66,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::ProgramExternal);
     
     // simulates user press Q to quit top
-    shell.WriteChildInput("q", 1);
+    shell.WriteChildInput("q");
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().empty() );
     XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
@@ -79,7 +79,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
     
     // test chdir in the middle of some typing
-    shell.WriteChildInput("ls ", 3);
+    shell.WriteChildInput("ls ");
     cwd = CommonPaths::Home();
     shell.ChDir( cwd.c_str() );
     testMicrosleep( microseconds(1s).count() );
@@ -87,7 +87,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
 
     // check internal program state
-    shell.WriteChildInput("top\r", 4);
+    shell.WriteChildInput("top\r");
     testMicrosleep( microseconds(1s).count() );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );

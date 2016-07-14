@@ -380,6 +380,9 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
                 CGContextSetFillColorWithColor(context, m_OddBackground.CGColor);
                 CGContextFillRect(context, NSIntersectionRect(odd_bg_rct, m_ItemsArea));
             }
+
+            if( count == items_per_column )
+                continue;
             
             const int raw_index = m_State->Data->RawIndexForSortIndex(i);
             const auto item = m_State->Data->EntryAtRawPosition(raw_index);

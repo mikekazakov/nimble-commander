@@ -7,6 +7,7 @@
 //
 
 #include "PreferencesWindowToolsTab.h"
+#include "../../Files/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
 
 @interface PreferencesWindowToolsTab ()
@@ -19,6 +20,7 @@
 @property (strong) IBOutlet NSMenu                                 *parametersMenu;
 @property (strong) IBOutlet NSButton                               *addParameterButton;
 @property bool                                                      anySelected;
+@property (readonly, nonatomic) bool                                haveCommandLineTools;
 @property (readonly, nonatomic) shared_ptr<const ExternalTool>      selectedTool;
 
 @end
@@ -342,6 +344,11 @@ static bool AskUserToDeleteTool()
     m_ToolsStorage().MoveTool( drag_from, drag_to );
     
     return true;
+}
+
+- (bool) haveCommandLineTools
+{
+    return ActivationManager::Instance().HasTerminal();
 }
 
 @end

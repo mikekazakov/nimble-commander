@@ -8,6 +8,7 @@
 #include "MainWindowController.h"
 #include "AppDelegate.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h"
+#include "ActivationManager.h"
 
 static string EscapeSpaces(string _str)
 {
@@ -169,13 +170,14 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
     auto &et = *_tool;
     bool in_terminal = ShouldStartToolInTerminal( et.m_ExecutablePath );
     
-    
     if( in_terminal ) {
+        if( !ActivationManager::Instance().HasTerminal() )
+            return;
+        
         [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:et.m_ExecutablePath.c_str()
                                                                            withParameters:_cooked_params.c_str()];
     }
-
-    if( !in_terminal ) {
+    else { // !in_terminal
         auto pars = SplitByEscapedSpaces(_cooked_params);
         for(auto &s: pars)
             s = UnescapeSpaces(s);
@@ -203,6 +205,7 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
 
 - (PanelController *) externalToolParametersContextFromLocation:(ExternalToolsParameters::Location) _loc
 {
+    dispatch_assert_main_queue();
     if( _loc == ExternalToolsParameters::Location::Left )
         return self.leftPanelController;
     if( _loc == ExternalToolsParameters::Location::Right )

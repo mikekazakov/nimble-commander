@@ -18,8 +18,6 @@
 #include "PanelController+DataAccess.h"
 #include "ApplicationSkins.h"
 #include "AppDelegate.h"
-#include "ClassicPanelViewPresentation.h"
-#include "ModernPanelViewPresentation.h"
 #include "MainWndGoToButton.h"
 #include "QuickPreview.h"
 #include "MainWindowController.h"

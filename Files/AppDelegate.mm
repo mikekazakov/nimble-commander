@@ -236,6 +236,10 @@ static AppDelegate *g_Me = nil;
         [self willChangeValueForKey:@"skin"];
         m_Skin = new_skin;
         [self didChangeValueForKey:@"skin"];
+        
+        GoogleAnalytics::Instance().PostEvent("Appearance",
+                                              "Set",
+                                              new_skin == ApplicationSkin::Classic ? "Classic" : "Modern");
     }
 }
 
@@ -373,7 +377,7 @@ static AppDelegate *g_Me = nil;
         m_AppStoreHelper.onProductPurchased = [=](const string &_id){
             if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
-                GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
+                GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
     }
@@ -560,7 +564,7 @@ static AppDelegate *g_Me = nil;
         [alert runModal];
         
         [self updateMainMenuFeaturesByVersionAndState];
-        GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Successful external license activation");
+        GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Successful external license activation");
     }
 }
 
@@ -573,19 +577,19 @@ static AppDelegate *g_Me = nil;
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"]];
-    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender
 {
     [m_AppStoreHelper askUserToBuyProFeatures];
-    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
 }
 
 - (IBAction)OnRestoreInAppPurchases:(id)sender
 {
     [m_AppStoreHelper askUserToRestorePurchases];
-    GoogleAnalytics::GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path
@@ -670,7 +674,7 @@ static AppDelegate *g_Me = nil;
     }
     
     [m_PreferencesController showWindow:self];
-    GoogleAnalytics::GoogleAnalytics::Instance().PostScreenView("Preferences Window");
+    GoogleAnalytics::Instance().PostScreenView("Preferences Window");
 }
 
 - (IBAction)OnShowHelp:(id)sender

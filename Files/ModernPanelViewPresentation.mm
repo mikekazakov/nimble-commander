@@ -371,20 +371,20 @@ void ModernPanelViewPresentation::Draw(NSRect _dirty_rect)
             CGContextStrokeLineSegments(context, points, 2);
         }
         
-        int count = 0;
-        for (; count < items_per_column; ++count, ++i) {
+        for( int count = 0; count < items_per_column+1; ++count, ++i ) { // explicit +1 to draw odd backgrounds
             const double item_start_y = start_y + count*m_LineHeight;
-            int raw_index = m_State->Data->RawIndexForSortIndex(i);
-            auto item = m_State->Data->EntryAtRawPosition(raw_index);
             
             // Draw alternate background.
-            if(count % 2 == 1) {
+            if( count % 2 == 1 ) {
+                const auto odd_bg_rct = NSMakeRect(start_x + 1, item_start_y, column_width - 2, m_LineHeight);
                 CGContextSetFillColorWithColor(context, m_OddBackground.CGColor);
-                CGContextFillRect(context, NSMakeRect(start_x + 1, item_start_y,
-                                                      column_width - 2, m_LineHeight));
+                CGContextFillRect(context, NSIntersectionRect(odd_bg_rct, m_ItemsArea));
             }
             
-            if (!item)
+            const int raw_index = m_State->Data->RawIndexForSortIndex(i);
+            const auto item = m_State->Data->EntryAtRawPosition(raw_index);
+            
+            if( !item )
                 continue;
             
             auto &item_vd = m_State->Data->VolatileDataAtRawPosition(raw_index);

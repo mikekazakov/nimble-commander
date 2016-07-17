@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FileAlreadyExistSheetController">
@@ -10,7 +10,6 @@
                 <outlet property="ExistingFileTime" destination="98" id="137"/>
                 <outlet property="NewFileSize" destination="82" id="134"/>
                 <outlet property="NewFileTime" destination="87" id="136"/>
-                <outlet property="OverwriteButton" destination="5" id="139"/>
                 <outlet property="RememberCheck" destination="37" id="138"/>
                 <outlet property="TargetFilename" destination="112" id="133"/>
                 <outlet property="window" destination="1" id="3"/>
@@ -27,29 +26,11 @@
                 <rect key="frame" x="0.0" y="0.0" width="529" height="202"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="415" y="13" width="100" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="mKj-FF-YNt"/>
-                        </constraints>
-                        <animations/>
-                        <buttonCell key="cell" type="push" title="Overwrite" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="OnOverwrite:" target="-2" id="140"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="10">
-                        <rect key="frame" x="323" y="13" width="92" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="10">
+                        <rect key="frame" x="334" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="f2o-Me-5Rd"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Skip" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="12">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -58,12 +39,11 @@ DQ
                             <action selector="OnSkip:" target="-2" id="141"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="15">
-                        <rect key="frame" x="231" y="13" width="92" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
+                        <rect key="frame" x="242" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="95"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Append" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="16">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -72,12 +52,11 @@ DQ
                             <action selector="OnAppend:" target="-2" id="142"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="139" y="13" width="92" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
+                        <rect key="frame" x="150" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="4CS-XX-hZG"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Abort" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="31">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -86,9 +65,8 @@ DQ
                             <action selector="OnCancel:" target="-2" id="144"/>
                         </connections>
                     </button>
-                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37">
-                        <rect key="frame" x="18" y="60" width="134" height="18"/>
-                        <animations/>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="37">
+                        <rect key="frame" x="18" y="60" width="90" height="18"/>
                         <buttonCell key="cell" type="check" title="Apply to all" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="38">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -96,7 +74,6 @@ DQ
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="49">
                         <rect key="frame" x="0.0" y="82" width="529" height="5"/>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="system"/>
@@ -106,7 +83,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="73" id="71"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="New:" id="57">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -118,7 +94,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="73" id="wvF-6d-g2u"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Existing:" id="61">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -127,7 +102,6 @@ DQ
                     </textField>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="73">
                         <rect key="frame" x="0.0" y="141" width="529" height="5"/>
-                        <animations/>
                         <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                         <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" metaFont="system"/>
@@ -137,7 +111,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" constant="186" id="cEc-67-o6C"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="83">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -149,7 +122,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="194" id="zcT-q5-3UO"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="88">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -161,7 +133,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="194" id="OxD-o2-uyu"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="99">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -173,7 +144,6 @@ DQ
                         <constraints>
                             <constraint firstAttribute="width" constant="186" id="253-op-D5t"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="105">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -182,19 +152,17 @@ DQ
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="119">
                         <rect key="frame" x="18" y="177" width="493" height="17"/>
-                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="File already exists" id="120">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="149">
-                        <rect key="frame" x="47" y="13" width="92" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="149">
+                        <rect key="frame" x="58" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="150"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Hide" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="151">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -211,17 +179,30 @@ Gw
                         <constraints>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="700" id="ecB-dZ-Nuh"/>
                         </constraints>
-                        <animations/>
                         <textFieldCell key="cell" lineBreakMode="truncatingHead" allowsUndo="NO" sendsActionOnEndEditing="YES" usesSingleLineMode="YES" id="113">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MMA-jI-wCQ" customClass="ButtonWithOptions">
+                        <rect key="frame" x="426" y="18" width="85" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="S9f-nd-CV1"/>
+                        </constraints>
+                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="WZi-jI-2oz">
+                            <font key="font" metaFont="system"/>
+                            <segments>
+                                <segment label="Overwrite"/>
+                            </segments>
+                        </segmentedCell>
+                        <connections>
+                            <action selector="OnOverwrite:" target="-2" id="uu8-zS-4W4"/>
+                            <outlet property="menu" destination="B4u-iS-9bR" id="Khj-AB-7j0"/>
+                        </connections>
+                    </segmentedControl>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" constant="20" symbolic="YES" id="7"/>
-                    <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="20" symbolic="YES" id="8"/>
                     <constraint firstItem="49" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="52"/>
                     <constraint firstItem="49" firstAttribute="trailing" secondItem="2" secondAttribute="trailing" id="54"/>
                     <constraint firstItem="56" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="65"/>
@@ -247,26 +228,39 @@ Gw
                     <constraint firstItem="15" firstAttribute="leading" secondItem="30" secondAttribute="trailing" constant="12" symbolic="YES" id="147"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="149" secondAttribute="trailing" constant="12" symbolic="YES" id="154"/>
                     <constraint firstItem="149" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="155"/>
-                    <constraint firstItem="5" firstAttribute="leading" secondItem="10" secondAttribute="trailing" constant="12" symbolic="YES" id="0ra-2x-Lcz"/>
-                    <constraint firstItem="5" firstAttribute="baseline" secondItem="15" secondAttribute="baseline" id="8vB-ui-QtK"/>
+                    <constraint firstItem="MMA-jI-wCQ" firstAttribute="leading" secondItem="10" secondAttribute="trailing" constant="8" symbolic="YES" id="0fP-tM-nvl"/>
                     <constraint firstItem="87" firstAttribute="leading" secondItem="82" secondAttribute="trailing" constant="8" symbolic="YES" id="ATw-pJ-RlF"/>
-                    <constraint firstItem="5" firstAttribute="baseline" secondItem="30" secondAttribute="baseline" id="a8I-48-N1h"/>
-                    <constraint firstItem="5" firstAttribute="baseline" secondItem="10" secondAttribute="baseline" id="apE-dx-eAc"/>
+                    <constraint firstItem="30" firstAttribute="baseline" secondItem="149" secondAttribute="baseline" id="QGc-DX-6VA"/>
+                    <constraint firstItem="10" firstAttribute="baseline" secondItem="149" secondAttribute="baseline" id="XGm-8H-uUk"/>
                     <constraint firstItem="37" firstAttribute="top" secondItem="49" secondAttribute="bottom" constant="8" symbolic="YES" id="cgO-8m-1eG"/>
                     <constraint firstItem="10" firstAttribute="leading" secondItem="15" secondAttribute="trailing" constant="12" symbolic="YES" id="eQ4-8N-0kY"/>
                     <constraint firstItem="119" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="l27-4v-ARE"/>
+                    <constraint firstAttribute="bottom" secondItem="MMA-jI-wCQ" secondAttribute="bottom" constant="20" symbolic="YES" id="lMM-rk-Rtd"/>
                     <constraint firstItem="98" firstAttribute="leading" secondItem="104" secondAttribute="trailing" constant="8" symbolic="YES" id="nQJ-ZE-1pg"/>
                     <constraint firstItem="112" firstAttribute="top" secondItem="119" secondAttribute="bottom" constant="8" symbolic="YES" id="sro-GF-jVA"/>
+                    <constraint firstItem="15" firstAttribute="baseline" secondItem="149" secondAttribute="baseline" id="wZc-KW-ilR"/>
+                    <constraint firstItem="MMA-jI-wCQ" firstAttribute="baseline" secondItem="149" secondAttribute="baseline" id="wcr-jJ-fRP"/>
                     <constraint firstAttribute="trailing" secondItem="119" secondAttribute="trailing" constant="20" symbolic="YES" id="wiG-HL-nKq"/>
-                    <constraint firstItem="5" firstAttribute="baseline" secondItem="149" secondAttribute="baseline" id="xlw-bE-pLf"/>
+                    <constraint firstAttribute="trailing" secondItem="MMA-jI-wCQ" secondAttribute="trailing" constant="20" symbolic="YES" id="x75-ZV-UF9"/>
                     <constraint firstItem="37" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="zxW-7I-AcK"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
+                <outlet property="initialFirstResponder" destination="MMA-jI-wCQ" id="Xnm-MC-sMJ"/>
             </connections>
-            <point key="canvasLocation" x="411.5" y="360"/>
+            <point key="canvasLocation" x="471.5" y="397"/>
         </window>
+        <menu id="B4u-iS-9bR">
+            <items>
+                <menuItem title="Overwrite Older" toolTip="Item would be skipped otherwise" id="N9p-bP-tMm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="OnOverwriteOlder:" target="-2" id="3PZ-xZ-fe4"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="386.5" y="672.5"/>
+        </menu>
     </objects>
 </document>

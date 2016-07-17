@@ -14,6 +14,7 @@ namespace FileCopyOperationDR
 {
     using namespace OperationDialogResult;
     
-    constexpr int Overwrite = Custom + 1;
-    constexpr int Append    = Custom + 2;
+    constexpr int Overwrite     = Custom + 1;
+    constexpr int OverwriteOld  = Custom + 2;
+    constexpr int Append        = Custom + 3;
 }

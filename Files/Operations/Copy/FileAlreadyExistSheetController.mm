@@ -20,8 +20,8 @@
 @property (strong) IBOutlet NSTextField *NewFileTime;
 @property (strong) IBOutlet NSTextField *ExistingFileTime;
 @property (strong) IBOutlet NSButton *RememberCheck;
-@property (strong) IBOutlet NSButton *OverwriteButton;
 - (IBAction)OnOverwrite:(id)sender;
+- (IBAction)OnOverwriteOlder:(id)sender;
 - (IBAction)OnSkip:(id)sender;
 - (IBAction)OnAppend:(id)sender;
 - (IBAction)OnRename:(id)sender;
@@ -155,6 +155,11 @@
 - (IBAction)OnOverwrite:(id)sender
 {
     [super endSheet:FileCopyOperationDR::Overwrite];
+}
+
+- (IBAction)OnOverwriteOlder:(id)sender
+{
+    [super endSheet:FileCopyOperationDR::OverwriteOld];
 }
 
 - (IBAction)OnSkip:(id)sender

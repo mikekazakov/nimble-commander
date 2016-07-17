@@ -45,8 +45,10 @@ public:
     bool IsSingleInitialItemProcessing() const noexcept;
     bool IsSingleScannedItemProcessing() const noexcept;
     void ToggleSkipAll();
-    void ToggleOverwriteAll();
-    void ToggleAppendAll();
+    void ToggleExistBehaviorSkipAll();
+    void ToggleExistBehaviorOverwriteAll();
+    void ToggleExistBehaviorOverwriteOld();
+    void ToggleExistBehaviorAppendAll();
     
 private:
     virtual void Do() override;
@@ -197,8 +199,6 @@ private:
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
     bool                                        m_SkipAll       = false;
-    bool                                        m_OverwriteAll  = false;
-    bool                                        m_AppendAll     = false;
     JobStage                                    m_Stage         = JobStage::None;
     
     FileCopyOperationOptions                    m_Options;

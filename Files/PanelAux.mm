@@ -51,7 +51,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                                                                                  nullptr);
                 if( ret == 0 ) {
                     FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
-                    opts.force_overwrite = true;
+                    opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
                     auto operation = [[FileCopyOperation alloc] initWithItems:items
                                                               destinationPath:_original_path
                                                               destinationHost:vfs

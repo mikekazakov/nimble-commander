@@ -466,9 +466,10 @@ static NSString *ExtractCopyToName(const string&_s)
                                 remember:&remember_choice]
                        WaitForResult];
         if( remember_choice ) switch (result) {
-                case FileCopyOperationDR::Skip:         m_Job.ToggleSkipAll();      break;
-                case FileCopyOperationDR::Overwrite:    m_Job.ToggleOverwriteAll(); break;
-                case FileCopyOperationDR::Append:       m_Job.ToggleAppendAll();    break;
+                case FileCopyOperationDR::Skip:         m_Job.ToggleExistBehaviorSkipAll();      break;
+                case FileCopyOperationDR::Overwrite:    m_Job.ToggleExistBehaviorOverwriteAll(); break;
+                case FileCopyOperationDR::OverwriteOld: m_Job.ToggleExistBehaviorOverwriteOld(); break;
+                case FileCopyOperationDR::Append:       m_Job.ToggleExistBehaviorAppendAll();    break;
             }
         return result;
     };

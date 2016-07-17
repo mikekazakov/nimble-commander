@@ -97,6 +97,17 @@ static string FilenameFromPath(string _str)
     return _str;
 }
 
+static optional<FileCopyOperationOptions::ExistBehavior> DialogResultToExistBehaviour( int _dr )
+{
+    switch( _dr ) {
+        case FileCopyOperationDR::Overwrite:    return FileCopyOperationOptions::ExistBehavior::OverwriteAll;
+        case FileCopyOperationDR::OverwriteOld: return FileCopyOperationOptions::ExistBehavior::OverwriteOld;
+        case FileCopyOperationDR::Append:       return FileCopyOperationOptions::ExistBehavior::AppendAll;
+        case FileCopyOperationDR::Skip:         return FileCopyOperationOptions::ExistBehavior::SkipAll;
+        default:                                return nullopt;
+    }
+}
+
 FileCopyOperationJob::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
     original_item( _source_ind ),
     destination_path( move(_destination) )
@@ -697,11 +708,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
     if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
         // file already exist. what should we do now?
         dst_existed_before = true;
-        
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::SkipAll )
-            return StepResult::Skipped;
-        
-        auto setup_overwrite = [&]{
+        const auto setup_overwrite = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = true;
             dst_size_on_stop = 0;
@@ -709,7 +716,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
             preallocate_delta = src_stat_buffer.st_size - dst_stat_buffer.st_size; // negative value is ok here
             need_dst_truncate = src_stat_buffer.st_size < dst_stat_buffer.st_size;
         };
-        auto setup_append = [&]{
+        const auto setup_append = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = false;
             do_copy_xattrs = false;
@@ -721,22 +728,17 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
             preallocate_delta = src_stat_buffer.st_size;
         };
         
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteAll )
-            setup_overwrite();
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteOld &&
-            src_stat_buffer.st_mtime > dst_stat_buffer.st_mtime )
-            setup_overwrite();
-        else if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::AppendAll )
-            setup_append();
-        else switch( m_OnFileAlreadyExist( src_stat_buffer, dst_stat_buffer, _dst_path) ) {
-                case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
-                case FileCopyOperationDR::OverwriteOld: if( src_stat_buffer.st_mtime > dst_stat_buffer.st_mtime ) {
-                                                            setup_overwrite(); break; }
-                                                        else
-                                                            return StepResult::Skipped;
-                case FileCopyOperationDR::Append:       setup_append(); break;
-                case FileCopyOperationDR::Skip:         return StepResult::Skipped;
-                default:                                return StepResult::Stop;
+        auto action = m_Options.exist_behavior;
+        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
+            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
+                action = *b;
+        
+        switch( action ) {
+            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
+            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
+            default:                                                    return StepResult::Stop;
         }
     }
     else {
@@ -1039,11 +1041,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
     if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
         // file already exist. what should we do now?
         dst_existed_before = true;
-        
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::SkipAll )
-            return StepResult::Skipped;
-        
-        auto setup_overwrite = [&]{
+        const auto setup_overwrite = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = true;
             dst_size_on_stop = 0;
@@ -1051,7 +1049,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
             preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size; // negative value is ok here
             need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.st_size;
         };
-        auto setup_append = [&]{
+        const auto setup_append = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = false;
             do_copy_xattrs = false;
@@ -1063,20 +1061,17 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
             preallocate_delta = src_stat_buffer.size;
         };
         
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteAll )
-            setup_overwrite();
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteOld &&
-            src_stat_buffer.mtime.tv_sec > dst_stat_buffer.st_mtime )
-            setup_overwrite();
-        else if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::AppendAll )
-            setup_append();
-        else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) {
-            case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
-            case FileCopyOperationDR::OverwriteOld: if( src_stat_buffer.mtime.tv_sec > dst_stat_buffer.st_mtime ) { setup_overwrite(); break; }
-                                                    else return StepResult::Skipped;
-            case FileCopyOperationDR::Append:       setup_append(); break;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            default:                                return StepResult::Stop;
+        auto action = m_Options.exist_behavior;
+        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
+            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) )
+                action = *b;
+        
+        switch( action ) {
+            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
+            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
+            default:                                                    return StepResult::Stop;
         }
     }
     else {
@@ -1370,18 +1365,14 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
     if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, 0) == 0) {
         // file already exist. what should we do now?
         dst_existed_before = true;
-        
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::SkipAll )
-            return StepResult::Skipped;
-        
-        auto setup_overwrite = [&]{
+        const auto setup_overwrite = [&]{
             dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
             do_unlink_on_stop = true;
             dst_size_on_stop = 0;
             do_erase_xattrs = true;
             need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.size;
         };
-        auto setup_append = [&]{
+        const auto setup_append = [&]{
             dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Append | VFSFlags::OF_NoCache;
             do_unlink_on_stop = false;
             do_copy_xattrs = false;
@@ -1392,20 +1383,17 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
             initial_writing_offset = dst_stat_buffer.size;
         };
         
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteAll )
-            setup_overwrite();
-        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteOld &&
-            src_stat_buffer.mtime.tv_sec > dst_stat_buffer.mtime.tv_sec )
-            setup_overwrite();
-        else if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::AppendAll )
-            setup_append();
-        else switch( m_OnFileAlreadyExist( src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) {
-            case FileCopyOperationDR::Overwrite:    setup_overwrite(); break;
-            case FileCopyOperationDR::OverwriteOld: if( src_stat_buffer.mtime.tv_sec > dst_stat_buffer.mtime.tv_sec ) { setup_overwrite(); break; }
-                                                    else return StepResult::Skipped;
-            case FileCopyOperationDR::Append:       setup_append(); break;
-            case FileCopyOperationDR::Skip:         return StepResult::Skipped;
-            default:                                return StepResult::Stop;
+        auto action = m_Options.exist_behavior;
+        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
+            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
+                action = *b;
+        
+        switch( action ) {
+            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.mtime.tv_sec ) return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
+            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
+            default:                                                    return StepResult::Stop;
         }
     }
     else {

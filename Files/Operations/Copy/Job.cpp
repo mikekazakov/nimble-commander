@@ -118,10 +118,7 @@ void FileCopyOperationJob::Init(vector<VFSListingItem> _source_items,
     m_DestinationHost = _dest_host;
     m_Options = _opts;
     m_IsSingleInitialItemProcessing = m_VFSListingItems.size() == 1;
-    
-//    if(m_Options.force_overwrite)
-//        m_OverwriteAll = true;
-    
+        
     if( m_VFSListingItems.empty() )
         cerr << "FileCopyOperationJobNew::Init(..) was called with an empty entries list!" << endl;
 }
@@ -146,11 +143,6 @@ void FileCopyOperationJob::ToggleSkipAll()
     m_SkipAll = true;
 }
 
-//void ToggleExistBehaviorOverwriteAll();
-//void ToggleExistBehaviorOverwriteOld();
-//void ToggleExistBehaviorAppendAll();
-
-
 void FileCopyOperationJob::ToggleExistBehaviorSkipAll()
 {
     m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::SkipAll;
@@ -158,7 +150,6 @@ void FileCopyOperationJob::ToggleExistBehaviorSkipAll()
 
 void FileCopyOperationJob::ToggleExistBehaviorOverwriteAll()
 {
-//    m_OverwriteAll = true;
     m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
 }
 
@@ -1400,17 +1391,6 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
             total_dst_size += dst_stat_buffer.size;
             initial_writing_offset = dst_stat_buffer.size;
         };
-        
-        
-        
-//        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteAll )
-//            setup_overwrite();
-//        if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteOld &&
-//           src_stat_buffer.mtime.tv_sec > dst_stat_buffer.st_mtime )
-//            setup_overwrite();
-//        else if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::AppendAll )
-//            setup_append();
-        
         
         if( m_Options.exist_behavior == FileCopyOperationOptions::ExistBehavior::OverwriteAll )
             setup_overwrite();

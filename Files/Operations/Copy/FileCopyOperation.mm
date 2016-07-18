@@ -454,18 +454,23 @@ static NSString *ExtractCopyToName(const string&_s)
 
 - (void) setupDialogs
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     __weak auto weak_self = self;
-    m_Job.m_OnFileAlreadyExist = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
+    m_Job.m_OnCopyDestinationAlreadyExists = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
         auto self = weak_self; // what a wonderful dirty code!
-        bool remember_choice = false;
-        auto result = [[self OnFileExist:_path.c_str()
-                                newsize:_src_stat.st_size
-                                newtime:_src_stat.st_mtime
-                                exisize:_dst_stat.st_size
-                                exitime:_dst_stat.st_mtime
-                                remember:&remember_choice]
-                       WaitForResult];
-        if( remember_choice ) switch (result) {
+        auto apply_to_all = make_shared<bool>(false);
+        
+        FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
+                                                  initWithDestPath:_path
+                                                  withSourceStat:_src_stat
+                                                  withDestinationStat:_dst_stat];
+        sheet.singleItem = self.isSingleFileCopy;
+        sheet.applyToAll = apply_to_all;
+        [self EnqueueDialog:sheet];
+        auto result = [sheet WaitForResult];
+        
+        if( *apply_to_all ) switch (result) {
                 case FileCopyOperationDR::Skip:         m_Job.ToggleExistBehaviorSkipAll();      break;
                 case FileCopyOperationDR::Overwrite:    m_Job.ToggleExistBehaviorOverwriteAll(); break;
                 case FileCopyOperationDR::OverwriteOld: m_Job.ToggleExistBehaviorOverwriteOld(); break;
@@ -473,9 +478,26 @@ static NSString *ExtractCopyToName(const string&_s)
             }
         return result;
     };
-    m_Job.m_OnRenameDestinationAlreadyExists = [weak_self](string _source, string _destination){
-        auto self = weak_self;
-        return [[self OnRenameDestinationExists:_destination.c_str() Source:_source.c_str()] WaitForResult];
+    m_Job.m_OnRenameDestinationAlreadyExists = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
+        auto self = weak_self; // what a wonderful dirty code!
+        auto apply_to_all = make_shared<bool>(false);
+        
+        FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
+                                                  initWithDestPath:_path
+                                                  withSourceStat:_src_stat
+                                                  withDestinationStat:_dst_stat];
+        sheet.singleItem = self.isSingleFileCopy;
+        sheet.allowAppending = false;
+        sheet.applyToAll = apply_to_all;
+        [self EnqueueDialog:sheet];
+        auto result = [sheet WaitForResult];
+        
+        if( *apply_to_all ) switch (result) {
+            case FileCopyOperationDR::Skip:         m_Job.ToggleExistBehaviorSkipAll();      break;
+            case FileCopyOperationDR::Overwrite:    m_Job.ToggleExistBehaviorOverwriteAll(); break;
+            case FileCopyOperationDR::OverwriteOld: m_Job.ToggleExistBehaviorOverwriteOld(); break;
+        }
+        return result;
     };
     m_Job.m_OnCantOpenDestinationFile = [weak_self](int _vfs_error, string _path){
         auto self = weak_self;
@@ -500,6 +522,7 @@ static NSString *ExtractCopyToName(const string&_s)
     
     m_Job.m_OnCantCreateDestinationRootDir = m_Job.m_OnCantCreateDestinationDir; // it's better to show another dialog in this case... later
     m_Job.m_OnDestinationFileReadError = m_Job.m_OnSourceFileReadError; // -""-
+#pragma clang diagnostic pop
 }
 
 - (NSString*) buildInformativeStringForError:(NSError*)_error onPath:(const char *)_path
@@ -591,26 +614,6 @@ static NSString *ExtractCopyToName(const string&_s)
     [self EnqueueDialog:alert];
     
     return alert;
-}
-
-- (FileAlreadyExistSheetController *)OnFileExist: (const char*)_path
-                                         newsize: (unsigned long)_newsize
-                                         newtime: (time_t) _newtime
-                                         exisize: (unsigned long)_exisize
-                                         exitime: (time_t) _exitime
-                                        remember: (bool*)  _remb
-{
-    FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
-                                              initWithFile:_path
-                                              newsize:_newsize
-                                              newtime:_newtime
-                                              exisize:_exisize
-                                              exitime:_exitime
-                                              remember:_remb
-                                              single:self.isSingleFileCopy];
-
-    [self EnqueueDialog:sheet];
-    return sheet;
 }
 
 - (OperationDialogAlert *)OnRenameDestinationExists:(const char *)_dest

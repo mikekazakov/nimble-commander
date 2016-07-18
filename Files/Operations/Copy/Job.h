@@ -204,42 +204,43 @@ private:
     FileCopyOperationOptions                    m_Options;
     
 public: // yep, ITS VERY BAD to open access to object members, but adding trivial setters makes no sense here
+    
     function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
-        = [](int, string){ return OperationDialogResult::Stop; };
+        = [](...){ return OperationDialogResult::Stop; };
 
-    // expect: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::Append
-    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnFileAlreadyExist
-        = [](const struct stat&, const struct stat&, string) { return FileCopyOperationDR::Stop; };
+    // expect: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::OverwriteOld, FileCopyOperationDR::Append
+    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnCopyDestinationAlreadyExists
+        = [](...) { return FileCopyOperationDR::Stop; };
+    
+    // expects: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::OverwriteOld
+    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnRenameDestinationAlreadyExists
+        = [](...){ return FileCopyOperationDR::Stop; };
     
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
     
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
 
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnDestinationFileReadError
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
     
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
 
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationRootDir
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
 
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationDir
-        = [](int, string){ return FileCopyOperationDR::Stop; };
+        = [](...){ return FileCopyOperationDR::Stop; };
     
-    // expects: FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite
-    function<int(string _source, string _destination)> m_OnRenameDestinationAlreadyExists
-        = [](string, string){ return FileCopyOperationDR::Stop; };
-
     // expects: FileCopyOperationDR::Continue
     function<int(string _path)> m_OnFileVerificationFailed
-        = [](string){ return FileCopyOperationDR::Continue; };
+        = [](...){ return FileCopyOperationDR::Continue; };
 };

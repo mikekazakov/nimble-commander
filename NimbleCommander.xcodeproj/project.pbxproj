@@ -4329,6 +4329,7 @@
 				USER_HEADER_SEARCH_PATHS = "";
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = "";
 			};
 			name = Debug;
 		};
@@ -4384,6 +4385,7 @@
 				USER_HEADER_SEARCH_PATHS = "";
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = "";
 			};
 			name = Release;
 		};

@@ -50,6 +50,7 @@
                         </buttonCell>
                         <connections>
                             <action selector="OnAppend:" target="-2" id="142"/>
+                            <binding destination="-2" name="enabled" keyPath="self.allowAppending" id="wUn-3N-3Rk"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
@@ -71,6 +72,9 @@
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="self.singleItem" id="xAw-MA-dvD"/>
+                        </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="49">
                         <rect key="frame" x="0.0" y="82" width="529" height="5"/>
@@ -262,5 +266,6 @@ Gw
             </items>
             <point key="canvasLocation" x="386.5" y="672.5"/>
         </menu>
+        <userDefaultsController representsSharedInstance="YES" id="fbp-PO-4wn"/>
     </objects>
 </document>

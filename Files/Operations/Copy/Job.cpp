@@ -97,7 +97,7 @@ static string FilenameFromPath(string _str)
     return _str;
 }
 
-static optional<FileCopyOperationOptions::ExistBehavior> DialogResultToExistBehaviour( int _dr )
+static optional<FileCopyOperationOptions::ExistBehavior> DialogResultToExistBehavior( int _dr )
 {
     switch( _dr ) {
         case FileCopyOperationDR::Overwrite:    return FileCopyOperationOptions::ExistBehavior::OverwriteAll;
@@ -730,7 +730,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
         
         auto action = m_Options.exist_behavior;
         if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
+            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
                 action = *b;
         
         switch( action ) {
@@ -1063,7 +1063,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
         
         auto action = m_Options.exist_behavior;
         if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) )
+            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) )
                 action = *b;
         
         switch( action ) {
@@ -1385,7 +1385,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
         
         auto action = m_Options.exist_behavior;
         if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehaviour( m_OnFileAlreadyExist(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
+            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
                 action = *b;
         
         switch( action ) {
@@ -1826,12 +1826,16 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::RenameNativeFile(const st
             // files are different, so renaming into _dst_path will erase it.
             // need to ask user what to do
 
-            switch( m_OnRenameDestinationAlreadyExists( _src_path, _dst_path ) ) {
-                case FileCopyOperationDR::Skip:       	return StepResult::Skipped;
-                case FileCopyOperationDR::SkipAll:      return StepResult::SkipAll;
-                case FileCopyOperationDR::Stop:         return StepResult::Stop;
-                case FileCopyOperationDR::Overwrite:    break;
-                default:                                return StepResult::Stop;
+            auto action = m_Options.exist_behavior;
+            if( action == FileCopyOperationOptions::ExistBehavior::Ask )
+                if( auto b = DialogResultToExistBehavior( m_OnRenameDestinationAlreadyExists(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
+                    action = *b;
+            
+            switch( action ) {
+                case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
+                case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
+                case FileCopyOperationOptions::ExistBehavior::OverwriteAll: break;
+                default:                                                    return StepResult::Stop;
             }
         }
     }
@@ -1878,12 +1882,16 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::RenameVFSFile(VFSHost &_c
         }
         
         // renaming into _dst_path will erase it. need to ask user what to do
-        switch( m_OnRenameDestinationAlreadyExists( _src_path, _dst_path ) ) {
-            case FileCopyOperationDR::Skip:       	return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:      return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:         return StepResult::Stop;
-            case FileCopyOperationDR::Overwrite:    break;
-            default:                                return StepResult::Stop;
+        auto action = m_Options.exist_behavior;
+        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
+            if( auto b = DialogResultToExistBehavior( m_OnRenameDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
+                action = *b;
+        
+        switch( action ) {
+            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_nsec <= dst_stat_buffer.mtime.tv_nsec ) return StepResult::Skipped;
+            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: break;
+            default:                                                    return StepResult::Stop;
         }
     }
 

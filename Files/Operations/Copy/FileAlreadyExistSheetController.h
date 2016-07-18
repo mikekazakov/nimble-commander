@@ -13,12 +13,12 @@
 
 @interface FileAlreadyExistSheetController : SheetController<OperationDialogProtocol>
 
-- (id)initWithFile:(const char*)_path
-           newsize:(unsigned long)_newsize
-           newtime:(time_t) _newtime
-           exisize:(unsigned long)_exisize
-           exitime:(time_t) _exitime
-          remember:(bool*)  _remb
-            single:(bool) _single;
+@property bool allowAppending; // if this is true - "append" button will be enabled
+@property bool singleItem; // if this is true - "apply to all will be hidden"
+@property shared_ptr<bool> applyToAll;
+
+- (id)initWithDestPath:(const string&)_path
+        withSourceStat:(const struct stat &)_src_stat
+   withDestinationStat:(const struct stat &)_dst_stat;
 
 @end

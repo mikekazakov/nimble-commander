@@ -40,34 +40,26 @@
 
 @implementation FileAlreadyExistSheetController
 {
-    NSString *m_DestPath;
-    unsigned long m_NewSize;
-    time_t m_NewTime;
-    unsigned long m_ExiSize;
-    time_t m_ExiTime;
-    bool *m_Remember;
-    bool m_Single;
+    string m_DestPath;
+    struct stat m_SourceStat;
+    struct stat m_DestinationStat;
+    shared_ptr<bool> m_ApplyToAll;
     __weak Operation *m_Operation;
 }
 @synthesize Result = m_Result;
+@synthesize applyToAll = m_ApplyToAll;
 
-- (id)initWithFile: (const char*)_path
-           newsize: (unsigned long)_newsize
-           newtime: (time_t) _newtime
-           exisize: (unsigned long)_exisize
-           exitime: (time_t) _exitime
-          remember:(bool*)  _remb
-            single: (bool) _single
+- (id)initWithDestPath:(const string&)_path
+        withSourceStat:(const struct stat &)_src_stat
+   withDestinationStat:(const struct stat &)_dst_stat
 {
     self = [super init];
     if(self) {
-        m_DestPath = [NSString stringWithUTF8String: _path];
-        m_NewSize = _newsize;
-        m_NewTime = _newtime;
-        m_ExiSize = _exisize;
-        m_ExiTime = _exitime;
-        m_Remember = _remb;
-        m_Single = _single;
+        m_DestPath = _path;
+        m_SourceStat = _src_stat;
+        m_DestinationStat = _dst_stat;
+        self.allowAppending = true;
+        self.singleItem = false;
     }
     return self;
 }
@@ -76,28 +68,17 @@
 {
     [super windowDidLoad];
     
-   [[self TargetFilename] setStringValue:m_DestPath];
+    self.TargetFilename.stringValue = [NSString stringWithUTF8StdString:m_DestPath];
     
-    {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setTimeStyle:NSDateFormatterMediumStyle];
-        [formatter setDateStyle:NSDateFormatterMediumStyle];
-        NSDate *newtime = [NSDate dateWithTimeIntervalSince1970:m_NewTime];
-        [[self NewFileTime] setStringValue:[formatter stringFromDate:newtime]];
-    }
-
-    {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setTimeStyle:NSDateFormatterMediumStyle];
-        [formatter setDateStyle:NSDateFormatterMediumStyle];
-        NSDate *newtime = [NSDate dateWithTimeIntervalSince1970:m_ExiTime];
-        [[self ExistingFileTime] setStringValue:[formatter stringFromDate:newtime]];
-    }
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.timeStyle = NSDateFormatterMediumStyle;
+    formatter.dateStyle = NSDateFormatterMediumStyle;
+    self.NewFileTime.stringValue = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:m_SourceStat.st_mtime]];
+    self.ExistingFileTime.stringValue = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:m_DestinationStat.st_mtime]];
     
-    [[self NewFileSize] setIntegerValue:m_NewSize];
-    [[self ExistingFileSize] setIntegerValue:m_ExiSize];
-    [[self RememberCheck] setState:NSOffState];
-    [[self RememberCheck] setHidden:m_Single];
+    self.NewFileSize.integerValue = m_SourceStat.st_size;
+    self.ExistingFileSize.integerValue = m_DestinationStat.st_size;
+    self.RememberCheck.state = NSOffState;
     
     GoogleAnalytics::Instance().PostScreenView("File Copy Already Exists");
 }
@@ -107,7 +88,9 @@
     dispatch_assert_main_queue();
 
     [super beginSheetForWindow:_parent completionHandler:^(NSModalResponse returnCode) {
-        *m_Remember = [[self RememberCheck] state] == NSOnState;
+        if( m_ApplyToAll )
+            *m_ApplyToAll = self.RememberCheck.state == NSOnState;
+        
         m_Result = (int)returnCode;
         if (m_Result != OperationDialogResult::None)
             [(Operation*)m_Operation OnDialogClosed:self];

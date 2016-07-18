@@ -7,6 +7,7 @@
 //
 
 #include <Utility/FontExtras.h>
+#include <Utility/NativeFSManager.h>
 #include "vfs/vfs_native.h"
 #include "Operations/Link/FileLinkOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
@@ -223,6 +224,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             break;
             
         case NSDraggingContextWithinApplication:
+            // ||!! actually this mask is not used by the receiver !!||
             // need some complex logic here later
             
             if( m_Count > 1 || !self.areAllHostsNative )
@@ -299,6 +301,42 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 @end
 
 
+static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroker *_source, const VFSPath &_destination)
+{
+    const auto kbd = NSEvent.modifierFlags;
+    if( _destination.Host()->IsNativeFS() && _source.areAllHostsNative ) { // special treatment for native fs'es
+        const auto v1 = NativeFSManager::Instance().VolumeFromPathFast( _destination.Path() );
+        const auto v2 = NativeFSManager::Instance().VolumeFromPathFast( _source.items.front().item.Directory() );
+        const bool same_native_fs = (v1 != nullptr && v1 == v2);
+        if( same_native_fs ) {
+            if( kbd & NSCommandKeyMask )
+                return NSDragOperationMove;
+            else if( kbd & NSAlternateKeyMask )
+                return NSDragOperationCopy;
+            else if( kbd & NSControlKeyMask )
+                return NSDragOperationLink;
+            else
+                return NSDragOperationMove;
+        }
+        else {
+            if( kbd & NSCommandKeyMask )
+                return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
+            else if( kbd & NSAlternateKeyMask )
+                return NSDragOperationCopy;
+            else if( kbd & NSControlKeyMask )
+                return NSDragOperationLink;
+            else
+                return NSDragOperationCopy;
+        }
+    }
+    else { // if src or dst is on VFS
+        if( kbd & NSCommandKeyMask )
+            return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
+        else
+            return NSDragOperationCopy;
+    }
+    return NSDragOperationNone;
+}
 
 @implementation PanelController (DragAndDrop)
 
@@ -454,18 +492,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         if( auto source = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
             // drag is from some other panel
             valid_items = (int)source.items.size();
-            if(source.controller == self && !dragging_over_dir) {
+            if( source.controller == self && !dragging_over_dir )
                 result = NSDragOperationNone; // we can't drag into the same dir on the same panel
-            }
-            else {
-                NSDragOperation mask = sender.draggingSourceOperationMask;
-                if( mask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink) ||
-                    mask == (NSDragOperationMove|NSDragOperationLink) ||
-                    mask == (NSDragOperationMove|NSDragOperationCopy) )
-                    result = source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
-                else
-                    result = mask;
-            }
+            else // complex logic with keyboard modifiers
+                result = BuildOperationMaskForLocal(source, destination);
 
             // check that we dont drag an item to the same folder in other panel
             if( any_of(begin(source.items), end(source.items), [&](auto &_i) {
@@ -545,13 +575,12 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     m_View.draggingOver = false;
     m_View.draggingOverItemAtPosition = -1;
     
-    auto destination = [self composeDestinationForDrag:sender];
+    const auto destination = [self composeDestinationForDrag:sender];
     if( !destination )
         return false;
     
-    if( auto source_broker = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
+    if( auto source = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
         // we're dragging something here from another PanelView, lets understand what actually
-        auto opmask = sender.draggingSourceOperationMask;
         
         vector<VFSListingItem> files;
         for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
@@ -564,12 +593,9 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
         if( !destination.Host()->IsWriteable()  )
             return false;
         
-        if( opmask == (NSDragOperationMove|NSDragOperationCopy|NSDragOperationLink) ||
-            opmask == (NSDragOperationMove|NSDragOperationLink) ||
-            opmask == (NSDragOperationMove|NSDragOperationCopy) )
-            opmask = source_broker.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
+        const auto operation = BuildOperationMaskForLocal(source, destination);
         
-        if( opmask == NSDragOperationCopy ) {
+        if( operation == NSDragOperationCopy ) {
             FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
@@ -584,13 +610,13 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             [self.state.OperationsController AddOperation:op];
             return true;
         }
-        else if( opmask == NSDragOperationMove ) {
+        else if( operation == NSDragOperationMove ) {
             FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
                                                        options:opts];
-            __weak PanelController *src_cntr = source_broker.controller;
+            __weak PanelController *src_cntr = source.controller;
             __weak PanelController *dst_cntr = self;
             [op AddOnFinishHandler:^{
                 dispatch_to_main_queue([src_cntr, dst_cntr]{
@@ -601,9 +627,9 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             [self.state.OperationsController AddOperation:op];
             return true;
         }
-        else if( opmask == NSDragOperationLink &&
+        else if( operation == NSDragOperationLink &&
                  files.size() == 1 &&
-                 source_broker.areAllHostsNative &&
+                 source.areAllHostsNative &&
                  destination.Host()->IsNativeFS() ) {
             path source_path = files.front().Path();
             path dest_path = path(destination.Path()) / files.front().Filename();

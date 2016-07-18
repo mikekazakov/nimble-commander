@@ -13,7 +13,11 @@
 
 @interface FilePanelMainSplitView : NSSplitView<NSSplitViewDelegate>
 
-- (void) SwapViews;
+- (void) swapViews;
+- (void) collapseLeftView;
+- (void) expandLeftView;
+- (void) collapseRightView;
+- (void) expandRightView;
 
 @property (nonatomic, readonly) bool anyCollapsed;
 @property (nonatomic, readonly) bool isLeftCollapsed;

@@ -113,6 +113,7 @@ private:
 
         {"menu.view.left_panel_change_folder",  13000},
         {"menu.view.right_panel_change_folder", 13010},
+        {"menu.view.switch_dual_single_mode",   13260},
         {"menu.view.swap_panels",               13020},
         {"menu.view.sync_panels",               13030},
         {"menu.view.refresh",                   13040},

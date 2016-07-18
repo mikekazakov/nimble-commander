@@ -49,7 +49,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
-    auto tag = item.tag;
+    const auto tag = item.tag;
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
@@ -93,6 +93,12 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
         return true;
     }
+    IF_MENU_TAG("menu.view.switch_dual_single_mode") {
+        item.title = m_MainSplitView.anyCollapsed ?
+            NSLocalizedString(@"Toggle Dual-Pane Mode", "Menu item title for switching to dual-pane mode") :
+            NSLocalizedString(@"Toggle Single-Pane Mode", "Menu item title for switching to single-pane mode");
+        return true;
+    }
     
     return true;
 }
@@ -114,7 +120,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     swap(m_LeftPanelControllers, m_RightPanelControllers);
-    [m_MainSplitView SwapViews];
+    [m_MainSplitView swapViews];
     
     [self.leftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
     [self.rightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
@@ -574,6 +580,22 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         if( auto rep = objc_cast<ToolsMenuDelegateInfoWrapper>(menuitem.representedObject) )
             if( auto t = rep.object )
                 [self runExtTool:t];
+}
+
+ - (IBAction)onSwitchDualSinglePaneMode:(id)sender
+{
+    if( m_MainSplitView.anyCollapsed ) {
+        if( m_MainSplitView.isLeftCollapsed )
+            [m_MainSplitView expandLeftView];
+        else if( m_MainSplitView.isRightCollapsed )
+            [m_MainSplitView expandRightView];
+    }
+    else if( auto apc = self.activePanelController) {
+        if( apc == self.leftPanelController )
+            [m_MainSplitView collapseRightView];
+        else if( apc == self.rightPanelController )
+            [m_MainSplitView collapseLeftView];
+    }
 }
 
 @end

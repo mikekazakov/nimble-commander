@@ -318,6 +318,12 @@ DQ
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Switch Dual/Single Pane" tag="13260" id="8SF-LE-kDv">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onSwitchDualSinglePaneMode:" target="-1" id="91Y-wg-brq"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Swap Panels" tag="13020" keyEquivalent="u" id="782">
                                 <connections>
                                     <action selector="OnSwapPanels:" target="-1" id="784"/>

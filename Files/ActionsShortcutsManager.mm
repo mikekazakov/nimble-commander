@@ -54,6 +54,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
 
         {"menu.view.left_panel_change_folder",      u8"\uF704"  },  // F1
         {"menu.view.right_panel_change_folder",     u8"\uF705"  },  // F2
+        {"menu.view.switch_dual_single_mode",       u8"⇧⌘p"     },  // shift+cmd+p 
         {"menu.view.swap_panels",                   u8"⌘u"      },  // cmd+u
         {"menu.view.sync_panels",                   u8"⌥⌘u"     },  // alt+cmd+u
         {"menu.view.refresh",                       u8"⌘r"      },  // cmd+r

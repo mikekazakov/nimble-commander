@@ -175,7 +175,7 @@ static CGColorRef DividerColor(bool _wnd_active)
     return [self isSubviewCollapsed:self.subviews[0]] || [self isSubviewCollapsed:self.subviews[1]];
 }
 
-- (void) SwapViews
+- (void) swapViews
 {
     NSView *left = self.subviews[0];
     NSView *right = self.subviews[1];
@@ -346,8 +346,12 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (IBAction)OnViewPanelsPositionMoveLeft:(id)sender
 {
-    if(self.anyCollapsed)
+    dispatch_assert_main_queue();
+    if( self.anyCollapsed ) {
+        if( self.isRightCollapsed )
+            [self expandRightView];
         return;
+    }
     
     NSView *v1 = self.subviews[0];
     NSView *v2 = self.subviews[1];
@@ -364,14 +368,28 @@ static CGColorRef DividerColor(bool _wnd_active)
         right.size.width += left.size.width;
         left.size.width = 0;
     }
+
+    if( left.size.width < g_MinPanelWidth ) {
+        [self collapseLeftView];
+        if( auto h = objc_cast<FilePanelsTabbedHolder>(v2) )
+            [self.window makeFirstResponder:h.current];
+        else
+            [self.window makeFirstResponder:v2];
+        return;
+    }
+
     v1.frame = left;
     v2.frame = right;
 }
 
 - (IBAction)OnViewPanelsPositionMoveRight:(id)sender
 {
-    if(self.anyCollapsed)
+    dispatch_assert_main_queue();
+    if( self.anyCollapsed ) {
+        if( self.isLeftCollapsed )
+            [self expandLeftView];
         return;
+    }
     
     NSView *v1 = self.subviews[0];
     NSView *v2 = self.subviews[1];
@@ -388,8 +406,78 @@ static CGColorRef DividerColor(bool _wnd_active)
         right.origin.x -= right.size.width;
         right.size.width = 0;
     }
+    
+    if( right.size.width < g_MinPanelWidth ) {
+        [self collapseRightView];
+        if( auto h = objc_cast<FilePanelsTabbedHolder>(v1) )
+            [self.window makeFirstResponder:h.current];
+        else
+            [self.window makeFirstResponder:v1];
+        return;
+    }
+    
     v1.frame = left;
     v2.frame = right;
+}
+
+- (void) collapseLeftView
+{
+    dispatch_assert_main_queue();    
+    if( self.isLeftCollapsed )
+        return;
+    NSView *right = [self.subviews objectAtIndex:1];
+    NSView *left  = [self.subviews objectAtIndex:0];
+    left.hidden = true;
+    right.frameSize = NSMakeSize(self.frame.size.width, right.frame.size.height);
+    [self display];
+}
+
+- (void) expandLeftView
+{
+    dispatch_assert_main_queue();
+    if( !self.isLeftCollapsed )
+        return;
+
+    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *right = [self.subviews objectAtIndex:1];
+    left.hidden = false;
+    CGFloat dividerThickness = self.dividerThickness;
+    NSRect leftFrame = left.frame;
+    NSRect rightFrame = right.frame;
+    rightFrame.size.width = rightFrame.size.width - leftFrame.size.width - dividerThickness;
+    rightFrame.origin.x = leftFrame.size.width + dividerThickness;
+    right.frame = rightFrame;
+    [self display];
+}
+
+- (void) collapseRightView
+{
+    dispatch_assert_main_queue();
+    if( self.isRightCollapsed )
+        return;
+    NSView *right = [self.subviews objectAtIndex:1];
+    NSView *left  = [self.subviews objectAtIndex:0];
+    right.hidden = true;
+    left.frameSize = NSMakeSize(self.frame.size.width, left.frame.size.height);
+    [self display];
+}
+
+- (void) expandRightView
+{
+    dispatch_assert_main_queue();
+    if( !self.isRightCollapsed )
+        return;
+    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *right = [self.subviews objectAtIndex:1];
+    right.hidden = false;
+    CGFloat dividerThickness = self.dividerThickness;
+    NSRect leftFrame = left.frame;
+    NSRect rightFrame = right.frame;
+    leftFrame.size.width = leftFrame.size.width - rightFrame.size.width - dividerThickness;
+    rightFrame.origin.x = leftFrame.size.width + dividerThickness;
+    left.frameSize = leftFrame.size;
+    right.frame = rightFrame;
+    [self display];
 }
 
 @end

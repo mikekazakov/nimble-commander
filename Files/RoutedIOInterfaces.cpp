@@ -41,6 +41,7 @@ int PosixIOInterfaceNative::chmtime(const char *_path, time_t _time) { return Ap
 int PosixIOInterfaceNative::chatime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_ACCTIME); }
 int PosixIOInterfaceNative::chctime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_CHGTIME); }
 int PosixIOInterfaceNative::chbtime(const char *_path, time_t _time) { return ApplyTimeChange(_path, _time, ATTR_CMN_CRTIME); }
+int PosixIOInterfaceNative::killpg(int _pid, int _signal) { return ::killpg(_pid, _signal); }
 
 int PosixIOInterfaceNative::ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr)
 {
@@ -699,6 +700,43 @@ int PosixIOInterfaceRouted::chctime(const char *_path, time_t _time)
     if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
         xpc_release(reply); // connection broken, faling back to native
         return super::chctime(_path, _time);
+    }
+    
+    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = err;
+        return -1;
+    }
+    
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+    
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::killpg(int _pid, int _signal)
+{
+    
+    xpc_connection_t conn = Connection();
+    if(!conn) // fallback to native on disabled routing or on helper connectity problems
+        return super::killpg(_pid, _signal);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "killpg");
+    xpc_dictionary_set_int64 (message, "pid", _pid);
+    xpc_dictionary_set_int64 (message, "signal", _signal);
+    
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+    
+    if(xpc_get_type(reply) == XPC_TYPE_ERROR) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::killpg(_pid, _signal);
     }
     
     if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {

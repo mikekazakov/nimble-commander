@@ -14,7 +14,8 @@
 #include "../../3rd_party/apple_sandbox.h"
 #undef __APPLE_API_PRIVATE
 #include <Utility/SystemInformation.h>
-#include "../..//ActivationManager.h"
+#include "../../ActivationManager.h"
+#include "../../RoutedIO.h"
 #include "../VFSListingInput.h"
 #include "VFSPSHost.h"
 #include "VFSPSInternal.h"
@@ -526,7 +527,7 @@ int VFSPSHost::CreateFile(const char* _path,
     if(_path == nullptr)
         return VFSError::InvalidCall;
     
-    auto index = ProcIndexFromFilepath(_path);
+    auto index = ProcIndexFromFilepath_Unlocked(_path);
     
     if(index < 0)
         return VFSError::NotFound;
@@ -557,7 +558,7 @@ int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecke
     if(_path == nullptr)
         return VFSError::InvalidCall;
     
-    auto index = ProcIndexFromFilepath(_path);
+    auto index = ProcIndexFromFilepath_Unlocked(_path);
     
     if(index < 0)
         return VFSError::NotFound;
@@ -574,7 +575,7 @@ int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecke
     return VFSError::Ok;
 }
 
-int VFSPSHost::ProcIndexFromFilepath(const char *_filepath)
+int VFSPSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
 {
     if(_filepath == nullptr)
         return -1;
@@ -657,4 +658,83 @@ int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _can
 bool VFSPSHost::ShouldProduceThumbnails() const
 {
     return false;
+}
+
+// return true if process has died, if it didn't on timeout - returns false
+// on any errors returns nullopt
+optional<bool> WaitForProcessToDie( int pid )
+{
+    int kq = kqueue();
+    if( kq == -1 )
+        return nullopt;
+    
+    struct kevent ke;
+    EV_SET(&ke, pid, EVFILT_PROC, EV_ADD, NOTE_EXIT, 0, NULL);
+    
+    int i = kevent(kq, &ke, 1, NULL, 0, NULL);
+    if( i == -1 )
+        return nullopt;
+    
+    memset(&ke, 0x00, sizeof(struct kevent));
+    struct timespec tm;
+    tm.tv_sec  = 5;
+    tm.tv_nsec = 0;
+    i = kevent(kq, NULL, 0, &ke, 1, &tm);
+    if( i == -1 )
+        return nullopt;
+    
+    if( ke.fflags & NOTE_EXIT )
+        return true;
+
+    return false;
+}
+
+int VFSPSHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
+{
+    if(_path == nullptr)
+        return VFSError::InvalidCall;
+    
+    int gid = -1;
+    int pid = -1;
+    {
+        lock_guard<mutex> lock(m_Lock);
+        
+        auto index = ProcIndexFromFilepath_Unlocked(_path);
+        if(index < 0)
+            return VFSError::NotFound;
+        
+        auto &proc = m_Data->procs[index];
+        gid = proc.gid;
+        pid = proc.pid;
+    }
+    
+    // 1st try - being gentle, sending SIGTERM
+    int ret = RoutedIO::Default.killpg( gid, SIGTERM );
+    if( ret == -1 ) {
+        if( errno == ESRCH )
+            return VFSError::Ok;
+        if( errno == EPERM )
+            return VFSError::FromErrno();
+        return VFSError::FromErrno();
+    }
+    
+    if( auto died_opt = WaitForProcessToDie(pid) ) {
+        if( *died_opt )
+            return VFSError::Ok; // goodnight, sweet prince...
+        else {
+            // 2nd try - process refused to kill itself in 5 seconds by SIGTERM, well, send SIGKILL to him...
+            ret = RoutedIO::Default.killpg( gid, SIGKILL );
+            if( ret == -1 ) {
+                if( errno == ESRCH )
+                    return VFSError::Ok;
+                if( errno == EPERM )
+                    return VFSError::FromErrno();
+                return VFSError::FromErrno();
+            }
+            // no need to wait after signal 9, seems so..
+            return VFSError::Ok;
+        }
+    }
+    else
+        return VFSError::Ok; // what to return here??
 }

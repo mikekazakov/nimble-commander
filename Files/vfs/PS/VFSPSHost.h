@@ -35,6 +35,8 @@ public:
     
     virtual int StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker) override;
     
+    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker = nullptr) override;
+    
     virtual int FetchFlexibleListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
                                      int _flags,
@@ -62,7 +64,7 @@ public:
 private:
     void UpdateCycle();
     void EnsureUpdateRunning();
-    int ProcIndexFromFilepath(const char *_filepath);
+    int ProcIndexFromFilepath_Unlocked(const char *_filepath);
     
     
     

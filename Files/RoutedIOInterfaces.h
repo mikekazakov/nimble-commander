@@ -38,6 +38,7 @@ public:
     virtual int chctime(const char *_path, time_t _time) override;
     virtual int chbtime(const char *_path, time_t _time) override;
     virtual int chatime(const char *_path, time_t _time) override;
+    virtual int killpg(int _pid, int _signal) override;
 private:
     int ApplyTimeChange(const char *_path, time_t _time, uint32_t _attr);
 };
@@ -66,6 +67,7 @@ public:
     virtual int chctime(const char *_path, time_t _time) override;
     virtual int chbtime(const char *_path, time_t _time) override;
     virtual int chatime(const char *_path, time_t _time) override;
+    virtual int killpg(int _pid, int _signal) override;
 private:
     xpc_connection_t Connection();
     typedef PosixIOInterfaceNative super;

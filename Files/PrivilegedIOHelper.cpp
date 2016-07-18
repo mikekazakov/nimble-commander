@@ -338,6 +338,23 @@ static bool ProcessOperation(const char *_operation,  xpc_object_t _event)
         else
             send_reply_error(_event, errno);
     }
+    else if( strcmp(_operation, "killpg") == 0 ) {
+        xpc_object_t xpc_pid = xpc_dictionary_get_value(_event, "pid");
+        if( xpc_pid == nullptr || xpc_get_type(xpc_pid) != XPC_TYPE_INT64 )
+            return false;
+        pid_t pid = (pid_t)xpc_int64_get_value(xpc_pid);
+        
+        xpc_object_t xpc_signal = xpc_dictionary_get_value(_event, "signal");
+        if( xpc_signal == nullptr || xpc_get_type(xpc_signal) != XPC_TYPE_INT64 )
+            return false;
+        int signal = (int)xpc_int64_get_value(xpc_signal);
+        
+        int result = killpg(pid, signal);
+        if(result == 0)
+            send_reply_ok(_event);
+        else
+            send_reply_error(_event, errno);
+    }
     else
         return false;
     

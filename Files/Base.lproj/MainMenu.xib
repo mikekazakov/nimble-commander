@@ -729,12 +729,6 @@ DQ
                                     <action selector="OnEjectVolume:" target="-1" id="YFm-Fc-LRv"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Compress" tag="15100" id="CEQ-U0-LN9">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnCompressFiles:" target="-1" id="rx8-at-X80"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Batch Rename..." tag="15220" id="PDv-pQ-u5w">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -795,6 +789,18 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
                                     <action selector="OnDeletePermanentlyCommand:" target="-1" id="k7X-O4-IHR"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Compress" tag="15100" id="CEQ-U0-LN9">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onCompressItems:" target="-1" id="rx8-at-X80"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Compress Here" tag="15101" alternate="YES" id="dFg-q8-CBh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onCompressItemsHere:" target="-1" id="z37-uB-jup"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Links" id="908">

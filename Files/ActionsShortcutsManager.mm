@@ -116,7 +116,6 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.internal_viewer",            u8"⌥\uF706" }, // alt+F3
         {"menu.command.external_editor",            u8"\uF707"  }, // F4
         {"menu.command.eject_volume",               u8"⌘e"      }, // cmd+e
-        {"menu.command.compress",                   u8""        },
         {"menu.command.batch_rename",               u8"^m"      }, // ctrl+m
         {"menu.command.copy_to",                    u8"\uF708"  }, // F5
         {"menu.command.copy_as",                    u8"⇧\uF708" }, // shift+F5
@@ -127,6 +126,8 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.command.move_to_trash",              u8"⌘\u007f" }, // cmd+backspace
         {"menu.command.delete",                     u8"\uF70b"  }, // F8
         {"menu.command.delete_permanently",         u8"⇧\uF70b" }, // shift+F8
+        {"menu.command.compress",                   u8"\uF70c"  }, // F9
+        {"menu.command.compress_here",              u8"⇧\uF70c"  },// shift+F9    
         {"menu.command.link_create_soft",           u8""        },
         {"menu.command.link_create_hard",           u8""        },
         {"menu.command.link_edit",                  u8""        },

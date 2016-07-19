@@ -43,6 +43,9 @@
 /* Informative text displayed when the user is going to clear saved file state */
 "This will erase stored positions, encodings, selections, etc." = "Будут удалены сохраненные позиции, кодировки, выделения и т.д.";
 
+/* Tools preferences tab title */
+"Tools" = "Инструменты";
+
 /* General preferences tab title */
 "Viewer" = "Просмотрщик";
 

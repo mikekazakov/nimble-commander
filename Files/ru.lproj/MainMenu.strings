@@ -28,6 +28,9 @@
 /* Class = "NSMenuItem"; title = "New Tab"; ObjectID = "8OH-k8-Scw"; */
 "8OH-k8-Scw.title" = "Новая вкладка";
 
+/* Class = "NSMenuItem"; title = "Switch Dual/Single Pane"; ObjectID = "8SF-LE-kDv"; */
+"8SF-LE-kDv.title" = "Switch Dual/Single Pane";
+
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "9Iz-2J-FE9"; */
 "9Iz-2J-FE9.title" = "Справка";
 
@@ -346,11 +349,17 @@
 /* Class = "NSMenuItem"; title = "History"; ObjectID = "Uht-NR-INk"; */
 "Uht-NR-INk.title" = "История";
 
+/* Class = "NSMenuItem"; title = "Tools"; ObjectID = "V50-xh-PQD"; */
+"V50-xh-PQD.title" = "Инструменты";
+
 /* Class = "NSMenuItem"; title = "Favorites"; ObjectID = "VDF-r2-LBL"; */
 "VDF-r2-LBL.title" = "Избранное";
 
 /* Class = "NSMenuItem"; title = "Show Previous Tab"; ObjectID = "ViK-AU-jLn"; */
 "ViK-AU-jLn.title" = "Показать предыдущую вкладку";
+
+/* Class = "NSMenu"; title = "Tools"; ObjectID = "Wal-pf-St1"; */
+"Wal-pf-St1.title" = "Инструменты";
 
 /* Class = "NSMenuItem"; title = "Paste Filename to Terminal"; ObjectID = "XNI-Bn-uVO"; */
 "XNI-Bn-uVO.title" = "Вставить имя файла в терминал";
@@ -369,6 +378,9 @@
 
 /* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
 "chd-VR-dSN.title" = "Купить расширенный функционал";
+
+/* Class = "NSMenuItem"; title = "Compress Here"; ObjectID = "dFg-q8-CBh"; */
+"dFg-q8-CBh.title" = "Сжать здесь";
 
 /* Class = "NSMenuItem"; title = "Desktop"; ObjectID = "dJC-Rr-wZM"; */
 "dJC-Rr-wZM.title" = "Рабочий стол";

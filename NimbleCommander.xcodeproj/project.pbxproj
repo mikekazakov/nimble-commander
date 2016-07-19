@@ -41,9 +41,6 @@
 		CF0939421D12B14700D67AC6 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939411D12B14700D67AC6 /* ActionShortcut.mm */; };
 		CF0939451D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939441D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm */; };
 		CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */; };
-		CF0939511D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09394D1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib */; };
-		CF0939521D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09394D1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib */; };
-		CF0939531D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF09394D1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib */; };
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
@@ -98,6 +95,12 @@
 		CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
+		CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
+		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
+		CF45CA2A1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
+		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
+		CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
+		CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF46D8EA1C853C2C009E28B9 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */; };
 		CF46DB731C856F2F009E28B9 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
 		CF46DB791C856F2F009E28B9 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
@@ -541,9 +544,6 @@
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
-		CFB791871D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
-		CFB791881D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
-		CFB791891D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
@@ -996,7 +996,6 @@
 		CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolsMenuDelegate.h; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToolsMenuDelegate.mm; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
-		CF09394D1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ExternalToolParameterValueSheetController.xib; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.xib; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTab.h; sourceTree = "<group>"; };
 		CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTab.mm; sourceTree = "<group>"; };
@@ -1046,6 +1045,10 @@
 		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLThumbnailsCache.h; sourceTree = "<group>"; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
+		CF45CA2B1D3E3A6F0074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowToolsTab.xib; sourceTree = "<group>"; };
+		CF45CA301D3E3AA70074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ExternalToolParameterValueSheetController.xib; sourceTree = "<group>"; };
+		CF45CA321D3E433B0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowToolsTab.strings; sourceTree = "<group>"; };
+		CF45CA381D3E433D0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ExternalToolParameterValueSheetController.strings; sourceTree = "<group>"; };
 		CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rapidjson.cpp; sourceTree = "<group>"; };
 		CF46D8E91C853C2C009E28B9 /* rapidjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rapidjson.h; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Nimble Commander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nimble Commander.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1327,7 +1330,6 @@
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSheetController.mm; sourceTree = "<group>"; };
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
 		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
-		CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PreferencesWindowToolsTab.xib; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.xib; sourceTree = SOURCE_ROOT; };
 		CFB8FA291A93A5500009315A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AppStoreRatingsSheetController.strings; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
@@ -1739,7 +1741,7 @@
 				CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */,
 				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
 				CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */,
-				CFB791831D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib */,
+				CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1895,7 +1897,7 @@
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
 				CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */,
 				CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */,
-				CF09394D1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib */,
+				CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */,
 				CF27414A18000832006D6687 /* FilePanelMainSplitView.h */,
 				CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */,
 				CF0A400D1B57E28C002A092B /* FilePanelOverlappedTerminal.h */,
@@ -2920,13 +2922,13 @@
 				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
-				CF0939521D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
+				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
-				CFB791881D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
+				CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFA7FA751C1D6E06000D039F /* Config.json in Resources */,
 				CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBBE1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
@@ -2992,7 +2994,7 @@
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
-				CFB791871D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
+				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
@@ -3003,7 +3005,7 @@
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */,
-				CF0939511D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
+				CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3034,12 +3036,12 @@
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
-				CF0939531D196FB500D67AC6 /* ExternalToolParameterValueSheetController.xib in Resources */,
+				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
-				CFB791891D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.xib in Resources */,
+				CF45CA2A1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFA7FA741C1D6E06000D039F /* Config.json in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
@@ -3800,6 +3802,26 @@
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
+		};
+		CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF45CA2B1D3E3A6F0074F04C /* Base */,
+				CF45CA321D3E433B0074F04C /* ru */,
+			);
+			name = PreferencesWindowToolsTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF45CA301D3E3AA70074F04C /* Base */,
+				CF45CA381D3E433D0074F04C /* ru */,
+			);
+			name = ExternalToolParameterValueSheetController.xib;
+			path = NimbleCommander/States/FilePanels;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */ = {
 			isa = PBXVariantGroup;

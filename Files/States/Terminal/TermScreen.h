@@ -49,6 +49,10 @@ public:
     void DoCursorLeft(int _n = 1);
     void DoCursorRight(int _n = 1);
     
+    /**
+     *
+     * _lines - amount of lines to scroll by
+     */
     void ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines);
     void DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines);
     

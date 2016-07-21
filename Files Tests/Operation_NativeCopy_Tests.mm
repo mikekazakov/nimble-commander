@@ -58,7 +58,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     {
         FileCopyOperationOptions opts;
         opts.docopy = true;
-        opts.force_overwrite = true;
+        opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
         FileCopyOperation *op = [FileCopyOperation alloc];
         op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_small.zzz"}, *host)
                destinationPath:dst.native()
@@ -107,7 +107,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     {
         FileCopyOperationOptions opts;
         opts.docopy = true;
-        opts.force_overwrite = true;
+        opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
         FileCopyOperation *op = [FileCopyOperation alloc];
         op = [op initWithItems:FetchItems((g_DataPref / "operations/copying/").native(), {"overwrite_test_big.zzz"}, *host)
                destinationPath:dst.native()

@@ -295,7 +295,7 @@ int TermParser::EatBytes(const unsigned char *_bytes, unsigned _sz)
 
 void TermParser::EatByte(unsigned char _byte, int &_result_flags)
 {
-    unsigned char c = _byte;
+    const unsigned char c = _byte;
     
     if(c < 32) Flush();
     
@@ -415,9 +415,6 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             switch(c) {
                 case 'h': CSI_DEC_PMS(true);  return;
                 case 'l': CSI_DEC_PMS(false); return;
-            }
-            
-            switch(c) {
                 case 'A': CSI_A(); return;
                 case 'B': case 'e': CSI_B(); return;
                 case 'C': case 'a': CSI_C(); return;

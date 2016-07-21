@@ -299,7 +299,7 @@ void TermScreen::ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines)
         return;
     
     for( int n_dst = _bottom - 1, n_src = _bottom - 1 - _lines;
-        n_dst > 0 && n_src >= 0;
+        n_dst > _top && n_src >= _top;
         --n_dst, --n_src) {
         CopyLineChars(n_src, n_dst);
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));        

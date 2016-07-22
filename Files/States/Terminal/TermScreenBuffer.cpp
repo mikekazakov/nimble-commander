@@ -211,6 +211,17 @@ string _::DumpScreenAsANSI() const
     return result;
 }
 
+string _::DumpScreenAsANSIBreaked() const
+{
+    string result;
+    for( auto &l:m_OnScreenLines ) {
+        for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
+            result += ( ( i->l >= 32 && i->l <= 127 ) ? (char)i->l : ' ');
+        result += '\r';
+    }
+    return result;
+}
+
 bool _::LineWrapped(int _line_number) const
 {
     if(auto l = MetaFromLineNo(_line_number))

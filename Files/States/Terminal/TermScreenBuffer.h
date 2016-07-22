@@ -108,6 +108,7 @@ public:
     
     // use for diagnose and test purposes only
     string DumpScreenAsANSI() const;
+    string DumpScreenAsANSIBreaked() const;
     
     inline bool HasSnapshot() const { return (bool)m_Snapshot; }
     void MakeSnapshot();

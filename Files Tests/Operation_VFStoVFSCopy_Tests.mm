@@ -10,7 +10,11 @@
 #include "../Files/vfs/VFS.h"
 #include "../Files/vfs/vfs_native.h"
 #include "../Files/vfs/vfs_net_ftp.h"
+#include "../Files/vfs/vfs_arc_unrar.h"
+#include "../Files/vfs/vfs_xattr.h"
 #include "../Files/Operations/Copy/FileCopyOperation.h"
+
+static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
@@ -391,8 +395,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
-
-
 - (void)testCopyGenericToGeneric_Modes_RenameToPathName
 {
     // works on single host - In and Out same as where source files are
@@ -422,6 +424,48 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+- (void)testCopyUnRARToXAttr
+{
+    VFSHostPtr host_src;
+    try {
+        host_src = make_shared<VFSArchiveUnRARHost>(g_PhotosRAR);
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    auto dir = self.makeTmpDir;
+    auto file = dir / "tmp";
+    fclose( fopen(file.c_str(), "w") );
+    
+    VFSHostPtr host_dst;
+    try {
+        host_dst = make_shared<VFSXAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    FileCopyOperationOptions opts;
+    opts.docopy = false;
+    FileCopyOperation *op = [FileCopyOperation alloc];
+    ///Чемал-16/IMG_0257.JPG
+    op = [op initWithItems:FetchItems(u8"/Чемал-16/", {"IMG_0257.JPG"}, *host_src)
+           destinationPath:"/"
+           destinationHost:host_dst
+                   options:{}
+          ];
+    
+    __block bool finished = false;
+    [op AddOnFinishHandler:^{ finished = true; }];
+    [op Start];
+    [self waitUntilFinish:finished];
+    
+    int result = 0;
+    XCTAssert( VFSEasyCompareFiles(u8"/Чемал-16/IMG_0257.JPG", host_src, "/IMG_0257.JPG", host_dst, result) == 0);
+    XCTAssert( result == 0 );
+    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
+}
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {

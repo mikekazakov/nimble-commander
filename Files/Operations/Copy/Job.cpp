@@ -1228,7 +1228,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
         int read_loops = 0; // amount of zero-resulting reads
         optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result = src_file->Read(read_buffer + has_read, to_read);
+            int64_t read_result = src_file->Read(read_buffer + has_read, min(to_read, src_preffered_io_size));
             if( read_result > 0 ) {
                 if(_source_data_feedback)
                     _source_data_feedback(read_buffer + has_read, (unsigned)read_result);
@@ -1518,7 +1518,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
         int read_loops = 0; // amount of zero-resulting reads
         optional<StepResult> read_return; // optional storage for error returning
         while( to_read != 0 ) {
-            int64_t read_result =  src_file->Read(read_buffer + has_read, src_preffered_io_size);
+            int64_t read_result =  src_file->Read(read_buffer + has_read, min(to_read, src_preffered_io_size));
             if( read_result > 0 ) {
                 if(_source_data_feedback)
                     _source_data_feedback(read_buffer + has_read, (unsigned)read_result);

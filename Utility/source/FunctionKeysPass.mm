@@ -6,6 +6,9 @@
 #include <Habanero/dispatch_cpp.h>
 #include "../include/Utility/FunctionKeysPass.h"
 
+#include <CoreFoundation/CoreFoundation.h>
+#include <Carbon/Carbon.h>
+
 using namespace std;
 
 FunctionalKeysPass::FunctionalKeysPass():
@@ -57,6 +60,34 @@ static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags 
 //using the an event source create from the original event (with CGEventCreateSourceFromEvent), and
 // returning the event from the callback. All my tests pass now.
 
+static CFStringRef createStringForKey(CGKeyCode keyCode)
+{
+    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
+    CFDataRef layoutData = (CFDataRef)
+    TISGetInputSourceProperty(currentKeyboard,
+                              kTISPropertyUnicodeKeyLayoutData);
+    const UCKeyboardLayout *keyboardLayout =
+    (const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
+    
+    UInt32 keysDown = 0;
+    UniChar chars[4];
+    UniCharCount realLength;
+    
+    UCKeyTranslate(keyboardLayout,
+                   keyCode,
+                   kUCKeyActionDisplay,
+                   0,
+                   LMGetKbdType(),
+                   kUCKeyTranslateNoDeadKeysBit,
+                   &keysDown,
+                   sizeof(chars) / sizeof(chars[0]),
+                   &realLength,
+                   chars);
+    CFRelease(currentKeyboard);
+    
+    return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
+}
+
 CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event)
 {
     if( _type == kCGEventTapDisabledByTimeout ) {
@@ -65,15 +96,22 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
         CGEventTapEnable(m_Port, true);
         return nil;
     }
-    
+//    CGEventSourceGetKeyboardType CGEventSourceKeyboardType UCKeyTranslate TISCopyCurrentKeyboardInputSource LMGetKbdType
     if( _type == kCGEventKeyDown || _type == kCGEventKeyUp) {
         const bool key_down = _type == kCGEventKeyDown;
         const CGKeyCode keycode = (CGKeyCode)CGEventGetIntegerValueField( _event, kCGKeyboardEventKeycode );
+        
+//        CFStringRef ss = createStringForKey(keycode);
+//        int a = [((__bridge NSString*)ss) characterAtIndex:0];
+//        CFRelease(ss);
+        
         switch( keycode ) {
             case 145: return NewFnButtonPress( kVK_F1,  key_down, CGEventGetFlags(_event) );
             case 144: return NewFnButtonPress( kVK_F2,  key_down, CGEventGetFlags(_event) );
             case 160: return NewFnButtonPress( kVK_F3,  key_down, CGEventGetFlags(_event) );
             case 131: return NewFnButtonPress( kVK_F4,  key_down, CGEventGetFlags(_event) );
+                
+            // case 130
             case 96:  return NewFnButtonPress( kVK_F5,  key_down, CGEventGetFlags(_event) );
             case 97:  return NewFnButtonPress( kVK_F6,  key_down, CGEventGetFlags(_event) );
             case 105: return NewFnButtonPress( kVK_F13, key_down, CGEventGetFlags(_event) );

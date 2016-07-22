@@ -38,6 +38,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
         return; // no reason to watch file we can't upload then
     
     __weak MainWindowController* origin_window = _origin.mainWindowController;
+    __weak PanelController* origin_controller = _origin;
     VFSHostWeakPtr weak_host(_original_vfs);
     
     TemporaryNativeFileChangesSentinel::Instance().WatchFile(_native_path, [=]{
@@ -56,7 +57,13 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                                                               destinationPath:_original_path
                                                               destinationHost:vfs
                                                                       options:opts];
-                    
+                    if( auto pc = (PanelController*)origin_controller )
+                        if( !pc.receivesUpdateNotifications )
+                            [operation AddOnFinishHandler:[=]{
+                                dispatch_to_main_queue( [=]{
+                                    [(PanelController*)origin_controller RefreshDirectory]; // perhaps need to check that path didn't changed
+                                });
+                            }];
                     [window.OperationsController AddOperation:operation];
                 }
                 

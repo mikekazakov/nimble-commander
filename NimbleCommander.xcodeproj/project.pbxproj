@@ -2497,14 +2497,11 @@
 			isa = PBXGroup;
 			children = (
 				CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */,
-				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
 				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
-				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
-				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
 				CF9066C319AB7928001DC687 /* libcrypto.dylib */,
 				CF9066B819AB5636001DC687 /* libssh2.a */,
 				CF9066B419AB54CE001DC687 /* libcrypto.a */,
@@ -2523,6 +2520,10 @@
 				CF6D9C7E19667A270077B146 /* Carbon.framework */,
 				CF6D9C7819667A180077B146 /* libbz2.a */,
 				CF6D9C7919667A190077B146 /* liblzma.a */,
+				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
+				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
+				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
+				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
 				CFA3D7C81962613B006A30A1 /* Carbon.framework */,
 				CF1100D1191378BD00E170FC /* LDAP.framework */,
 				CF1100CF1913788800E170FC /* Security.framework */,
@@ -2536,7 +2537,6 @@
 				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF561B1517D6290F009D37A4 /* liblzma.a */,
 				CF561B1317D627B3009D37A4 /* liblzma.a */,
-				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
 				CF47A981186C607C00745C4C /* XCTest.framework */,
 				CFC5121616C4BD3D00D247EE /* Other Frameworks */,
 			);

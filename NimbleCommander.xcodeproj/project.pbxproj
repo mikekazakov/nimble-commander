@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -825,13 +825,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CF47A98C186C607C00745C4C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
 		CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
@@ -846,54 +839,12 @@
 			remoteGlobalIDString = CF7C92271A0B977C00FAE649;
 			remoteInfo = MMTabBarView_LIB;
 		};
-		CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */ = {
+		CFA539451D432E3600C562A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
-		};
-		CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = Files;
+			remoteInfo = "NimbleCommander NonMAS";
 		};
 		CFD54FC61A29C6AD0098A4A9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1290,7 +1241,6 @@
 		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = Operations/Copy/Options.h; sourceTree = "<group>"; };
 		CF955F021B8DC6CB004A25AF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Utility.xcodeproj; path = Utility/Utility.xcodeproj; sourceTree = "<group>"; };
-		CF960E2F1C9935C4001D8B02 /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
 		CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleAnalytics.mm; sourceTree = "<group>"; };
 		CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileChangesSentinel.cpp; sourceTree = "<group>"; };
@@ -1587,6 +1537,7 @@
 				CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */,
 				CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */,
 				CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */,
+				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
 				CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */,
 				CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */,
 				CF9066C419AB7928001DC687 /* libcrypto.dylib in Frameworks */,
@@ -1604,7 +1555,6 @@
 				CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */,
 				CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */,
 				B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */,
-				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
 				CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */,
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
@@ -2510,7 +2460,6 @@
 				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
-				CF960E2F1C9935C4001D8B02 /* libUtility.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
 				CF9066C319AB7928001DC687 /* libcrypto.dylib */,
 				CF9066B819AB5636001DC687 /* libssh2.a */,
@@ -2701,14 +2650,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				CF47A98D186C607C00745C4C /* PBXTargetDependency */,
-				CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */,
-				CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */,
-				CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */,
-				CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */,
-				CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */,
-				CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */,
-				CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */,
+				CFA539461D432E3600C562A7 /* PBXTargetDependency */,
 			);
 			name = "Nimble Commander Tests";
 			productName = "Files Tests";
@@ -2827,7 +2769,7 @@
 				};
 			};
 			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "NimbleCommander" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3738,45 +3680,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CF47A98D186C607C00745C4C /* PBXTargetDependency */ = {
+		CFA539461D432E3600C562A7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF47A98C186C607C00745C4C /* PBXContainerItemProxy */;
-		};
-		CF7F323D198B72AB004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F323C198B72AB004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F3240198B72AB004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F323F198B72AB004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F3242198B72C1004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F3241198B72C1004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F3244198B72C5004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F3243198B72C5004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F3246198B72C9004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F3245198B72C9004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F3248198B72D3004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F3247198B72D3004D8AC0 /* PBXContainerItemProxy */;
-		};
-		CF7F324A198B74F4004D8AC0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CF7F3249198B74F4004D8AC0 /* PBXContainerItemProxy */;
+			targetProxy = CFA539451D432E3600C562A7 /* PBXContainerItemProxy */;
 		};
 		CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

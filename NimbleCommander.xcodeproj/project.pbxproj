@@ -483,6 +483,11 @@
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF82FCEB1CA0399700152ADB /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF82FCEA1CA0399700152ADB /* AppDelegateCPP.mm */; };
 		CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */; };
+		CF844DBC1D43230A00C735DB /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
+		CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
+		CF844DBE1D43231500C735DB /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
+		CF844DBF1D43231600C735DB /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
+		CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
@@ -1540,6 +1545,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
+				CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */,
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
 				CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */,
 				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
@@ -1555,8 +1562,10 @@
 				CF6D9C8F19667A5E0077B146 /* Cocoa.framework in Frameworks */,
 				CF6D9C8D19667A570077B146 /* OpenDirectory.framework in Frameworks */,
 				CF6D9C8B19667A500077B146 /* DiskArbitration.framework in Frameworks */,
+				CF844DBC1D43230A00C735DB /* liblzma.a in Frameworks */,
 				CF6D9C8919667A4A0077B146 /* QuartzCore.framework in Frameworks */,
 				CF6D9C8719667A420077B146 /* IOKit.framework in Frameworks */,
+				CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */,
 				CF6D9C8519667A3B0077B146 /* SystemConfiguration.framework in Frameworks */,
 				CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */,
 				CF6D9C8319667A330077B146 /* Security.framework in Frameworks */,
@@ -1621,6 +1630,7 @@
 				CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
+				CF844DBE1D43231500C735DB /* libz.a in Frameworks */,
 				CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */,
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
 				CFF6F3561A13567C00011177 /* libcurl.a in Frameworks */,
@@ -4229,6 +4239,7 @@
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
+					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = YES;
@@ -4277,6 +4288,7 @@
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
+					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = NO;
@@ -4635,6 +4647,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
@@ -4682,6 +4695,7 @@
 					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";

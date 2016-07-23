@@ -1102,13 +1102,6 @@
 			remoteGlobalIDString = CF7C92271A0B977C00FAE649;
 			remoteInfo = MMTabBarView_LIB;
 		};
-		CFA539451D432E3600C562A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFC5121016C4BD3D00D247EE;
-			remoteInfo = "NimbleCommander NonMAS";
-		};
 		CFA5395B1D433E2A00C562A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
@@ -2984,7 +2977,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFA539461D432E3600C562A7 /* PBXTargetDependency */,
 				CFA53A731D433F8A00C562A7 /* PBXTargetDependency */,
 			);
 			name = "Nimble Commander Tests";
@@ -4300,11 +4292,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CFA539461D432E3600C562A7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFC5121016C4BD3D00D247EE /* NimbleCommander NonMAS */;
-			targetProxy = CFA539451D432E3600C562A7 /* PBXContainerItemProxy */;
-		};
 		CFA5395A1D433E2A00C562A7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;

@@ -9,6 +9,10 @@
       "scale" : "2x"
     },
     {
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
       "idiom" : "mac",
       "filename" : "checked_icon.png",
       "scale" : "1x"

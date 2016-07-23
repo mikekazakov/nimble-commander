@@ -7,14 +7,21 @@
 		<key>Binary MASFree.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Binary MASPaid.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
-		<key>Binary NonMAS.xcscheme_^#shared#^_</key>
+		<key>Binary NonMAS CI.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>isShown</key>
+			<true/>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Binary NonMAS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -22,7 +29,7 @@
 		<key>info.filesmanager.Files.PrivilegedIOHelper.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>4</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -33,6 +40,11 @@
 			<true/>
 		</dict>
 		<key>CF6D997C196675290077B146</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CFA539591D433E2A00C562A7</key>
 		<dict>
 			<key>primary</key>
 			<true/>

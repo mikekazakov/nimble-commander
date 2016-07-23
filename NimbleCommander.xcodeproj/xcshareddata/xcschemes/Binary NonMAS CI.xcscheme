@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
+   LastUpgradeVersion = "0730"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-               BuildableName = "Nimble Commander.app"
-               BlueprintName = "NimbleCommander NonMAS"
+               BlueprintIdentifier = "CFA539591D433E2A00C562A7"
+               BuildableName = "NimbleCommander NonMAS CI.app"
+               BlueprintName = "NimbleCommander NonMAS CI"
                ReferencedContainer = "container:NimbleCommander.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -25,8 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -42,9 +42,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Nimble Commander.app"
-            BlueprintName = "NimbleCommander NonMAS"
+            BlueprintIdentifier = "CFA539591D433E2A00C562A7"
+            BuildableName = "NimbleCommander NonMAS CI.app"
+            BlueprintName = "NimbleCommander NonMAS CI"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -65,33 +65,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Nimble Commander.app"
-            BlueprintName = "NimbleCommander NonMAS"
+            BlueprintIdentifier = "CFA539591D433E2A00C562A7"
+            BuildableName = "NimbleCommander NonMAS CI.app"
+            BlueprintName = "NimbleCommander NonMAS CI"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-NSDebugServices"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "YES"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "CA_DEBUG_TRANSACTIONS"
-            value = "1"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -105,9 +84,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFC5121016C4BD3D00D247EE"
-            BuildableName = "Nimble Commander.app"
-            BlueprintName = "NimbleCommander NonMAS"
+            BlueprintIdentifier = "CFA539591D433E2A00C562A7"
+            BuildableName = "NimbleCommander NonMAS CI.app"
+            BlueprintName = "NimbleCommander NonMAS CI"
             ReferencedContainer = "container:NimbleCommander.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

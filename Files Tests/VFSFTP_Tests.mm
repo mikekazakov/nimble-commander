@@ -66,7 +66,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -137,7 +137,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -250,7 +250,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("macmini.local", "r2d2", "r2d2", "/");
+        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;

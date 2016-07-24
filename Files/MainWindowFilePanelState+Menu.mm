@@ -50,6 +50,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
     const auto tag = item.tag;
+
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;

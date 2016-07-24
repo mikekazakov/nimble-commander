@@ -358,6 +358,8 @@ void SetupUnregisteredLabel(NSView *_background_view)
     auto *selection = m_LeftPanelGoToButton.selection;
     if(!selection)
         return;
+    if( m_MainSplitView.isLeftCollapsed )
+        [m_MainSplitView expandLeftView];
     
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
@@ -384,6 +386,8 @@ void SetupUnregisteredLabel(NSView *_background_view)
     auto *selection = m_RightPanelGoToButton.selection;
     if(!selection)
         return;
+    if( m_MainSplitView.isRightCollapsed )
+        [m_MainSplitView expandRightView];
     
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     

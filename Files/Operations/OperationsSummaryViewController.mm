@@ -72,24 +72,30 @@
 
 @end
 
+@interface OperationsSummaryViewController()
+
+@property (strong) IBOutlet NSCollectionView *CollectionView;
+@property (strong) IBOutlet NSArrayController *OperationsArrayController;
+@property (strong) IBOutlet NSViewController *ScrollViewController;
+
+@end
+
 @implementation OperationsSummaryViewController
 {
-    NSPopover                    *m_Popover;
-    
-    __unsafe_unretained NSWindow *m_Window;
-    OperationsController *m_OperationsController;
-    
-    NSButton *m_ListButton;
+    NSPopover                       *m_Popover;
+    __unsafe_unretained NSWindow    *m_Window;
+    OperationsController            *m_OperationsController;
+    NSButton                        *m_ListButton;
+    NSView                          *m_BackgroundView;
 }
 
 @synthesize OperationsController = m_OperationsController;
+@synthesize backgroundView = m_BackgroundView;
 
 - (id)initWithController:(OperationsController *)_controller
                   window:(NSWindow*)_wnd
 {
-    self = [super initWithNibName:@"OperationsSummaryViewController" bundle:nil];
-    if (self)
-    {
+    if (self = [super initWithNibName:nil bundle:nil]) {
         m_Window = _wnd;
         m_OperationsController = _controller;
         
@@ -102,6 +108,9 @@
         box.titlePosition = NSNoTitle;
         box.contentViewMargins = NSMakeSize(1, 1);
         self.view = box;
+        
+        m_BackgroundView = [[NSView alloc] initWithFrame:self.view.bounds];
+        [m_BackgroundView bind:@"hidden" toObject:self withKeyPath:@"CurrentOperation" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
         
         NSTextField *op_caption = [[NSTextField alloc] initWithFrame:NSMakeRect(18, 16, 262, 13)];
         op_caption.editable = false;
@@ -175,7 +184,8 @@
         list_button.target = self;
         list_button.action = @selector(ShowOpListButtonAction:);
         [list_button bind:@"hidden" toObject:self withKeyPath:@"CurrentOperation" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
-        
+                
+        [self.view addSubview:m_BackgroundView];
         [self.view addSubview:list_button];
         [self.view addSubview:quest_button];
         [self.view addSubview:resume_button];
@@ -224,20 +234,17 @@
 - (void)observeValueForKeyPath:(NSString *)_keypath ofObject:(id)_object
                         change:(NSDictionary *)_change context:(void *)_context
 {
-    if (_object == m_OperationsController && [_keypath isEqualToString:@"OperationsCount"])
-    {
+    if( _object == m_OperationsController && [_keypath isEqualToString:@"OperationsCount"] ) {
         // Count of operations is chaged. Update current operation.
         auto count = m_OperationsController.Operations.count;
-        if (count == 0)
-        {
+        if( count == 0 ) {
             self.CurrentOperation = nil;
-            if (m_Popover.shown)
+            if( m_Popover.shown )
                 [m_Popover close];
         }
-        else
-        {
+        else {
             Operation *first_op = m_OperationsController.Operations[0];
-            if (self.CurrentOperation != first_op)
+            if( self.CurrentOperation != first_op )
                 self.CurrentOperation = first_op;
             
             m_ListButton.image = [NSImage imageNamed:count > 1 ? @"show_oplist_hl_icon" : @"show_oplist_icon"];

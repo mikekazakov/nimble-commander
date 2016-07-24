@@ -56,6 +56,36 @@ static string ExpandPath(const string &_ref )
     return {};
 }
 
+void SetupUnregisteredLabel(NSView *_background_view)
+{
+    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    tf.translatesAutoresizingMaskIntoConstraints = false;
+    tf.stringValue = @"UNREGISTERED";
+    tf.editable = false;
+    tf.bordered = false;
+    tf.drawsBackground = false;
+    tf.alignment = NSTextAlignmentCenter;
+    tf.textColor = NSColor.tertiaryLabelColor;
+    tf.font = [NSFont labelFontOfSize:12];
+    
+    [_background_view addSubview:tf];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                multiplier:1.0
+                                                                  constant:2]];
+    [_background_view layoutSubtreeIfNeeded];
+}
+
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
@@ -70,6 +100,9 @@ static string ExpandPath(const string &_ref )
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
                                                                                      window:_wnd];
+        if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+            !ActivationManager::Instance().UserHadRegistered() )
+            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
         
         m_LeftPanelControllers.emplace_back([PanelController new]);
         m_RightPanelControllers.emplace_back([PanelController new]);

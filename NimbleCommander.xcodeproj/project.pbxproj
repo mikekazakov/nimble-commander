@@ -1213,7 +1213,6 @@
 		CF007C561A6BCB8700CB0E48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTab.xib; sourceTree = "<group>"; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
-		CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = NimbleCommander.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = "<group>"; };
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = "<group>"; };
@@ -1558,7 +1557,6 @@
 		CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowHotkeysTab.h; sourceTree = "<group>"; };
 		CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowHotkeysTab.mm; sourceTree = "<group>"; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFA53A711D433E2A00C562A7 /* NimbleCommander NonMAS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NimbleCommander NonMAS copy-Info.plist"; path = "/Users/migun/Documents/NimbleCommander/source/NimbleCommander NonMAS copy-Info.plist"; sourceTree = "<absolute>"; };
 		CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockAnalysis.h; sourceTree = "<group>"; };
 		CFA7751C1BD08D630045072A /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = xattr.cpp; path = vfs/XAttr/xattr.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -1772,6 +1770,7 @@
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
 		CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
+		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = Operations/OperationsSummaryViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2054,15 +2053,11 @@
 			children = (
 				CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */,
 				CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */,
+				CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */,
 				CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */,
 				CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */,
 			);
 			name = SummaryView;
-			sourceTree = "<group>";
-		};
-		CF02B5A41D0A61F100F2760D /* Products */ = {
-			isa = PBXGroup;
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CF039E981791109000DC85D6 /* RHPreferences */ = {
@@ -2763,7 +2758,6 @@
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
 				CF47A983186C607C00745C4C /* Files Tests */,
-				CFA53A711D433E2A00C562A7 /* NimbleCommander NonMAS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2783,7 +2777,6 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */,
 				CFA183721CA0133600544633 /* libAquaticPrime.a */,
 				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
@@ -3136,10 +3129,6 @@
 				{
 					ProductGroup = CF7C924B1A0B97EC00FAE649 /* Products */;
 					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
-				},
-				{
-					ProductGroup = CF02B5A41D0A61F100F2760D /* Products */;
-					ProjectRef = CF02B5A31D0A61F100F2760D /* NimbleCommander.xcodeproj */;
 				},
 				{
 					ProductGroup = CF768DEE1C99C0F4002748BC /* Products */;

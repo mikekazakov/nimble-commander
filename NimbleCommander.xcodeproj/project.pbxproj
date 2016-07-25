@@ -1085,6 +1085,7 @@
 		CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
 		CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
 		CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
+		CFFFBABB1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1771,6 +1772,7 @@
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
 		CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
 		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = Operations/OperationsSummaryViewController.h; sourceTree = "<group>"; };
+		CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-CI-Info.plist"; path = "Resource/NimbleCommander-CI-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2873,6 +2875,7 @@
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */,
 				CF6D99A6196676200077B146 /* NS Free MAS */,
 				CFF6F3A31A1356F700011177 /* NC Pro MAS */,
 				CF6D99A5196675FE0077B146 /* NC Trial NonMAS */,
@@ -3097,6 +3100,9 @@
 								enabled = 1;
 							};
 						};
+					};
+					CFA539591D433E2A00C562A7 = {
+						DevelopmentTeam = AC5SJT236H;
 					};
 					CFC5121016C4BD3D00D247EE = {
 						DevelopmentTeam = AC5SJT236H;
@@ -3339,6 +3345,7 @@
 				CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */,
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
+				CFFFBABB1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist in Resources */,
 				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
@@ -4849,7 +4856,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-CI-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4901,7 +4908,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
+				INFOPLIST_FILE = "Files/Resource/NimbleCommander-CI-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

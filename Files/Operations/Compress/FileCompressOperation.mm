@@ -90,6 +90,8 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
         m_NeedUpdateCaption = true;
         self.Caption = @"";
   
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak FileCompressOperation* weak_self = self;
         m_Job.SetOnCantAccessSourceItem([=](int _vfs_error, string _path){
             if( FileCompressOperation* strong_self = weak_self )
@@ -111,6 +113,7 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
                 return [[strong_self OnWriteError:VFSError::ToNSError(_vfs_error)] WaitForResult];
             return OperationDialogResult::Stop;
         });
+#pragma clang diagnostic pop
     }
     return self;
 }

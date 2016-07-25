@@ -38,6 +38,8 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
         
         m_Job.Init(move(_files), _type);
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak auto weak_self = self;
         self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
                                     nullptr,
@@ -55,6 +57,7 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
             auto self = weak_self;
             return [[self DialogOnTrashItemError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
         };
+#pragma clang diagnostic pop
     }
     
     return self;

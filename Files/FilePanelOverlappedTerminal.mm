@@ -64,6 +64,8 @@ static const auto g_LongProcessDelay = 100ms;
         });
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak FilePanelOverlappedTerminal *weakself = self;
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
             [(FilePanelOverlappedTerminal*)weakself onChildOutput:_d size:_sz];
@@ -74,6 +76,7 @@ static const auto g_LongProcessDelay = 100ms;
         m_Task->SetOnStateChange([=](TermShellTask::TaskState _state){
             [(FilePanelOverlappedTerminal*)weakself onTaskStateChanged:_state];
         });
+#pragma clang diagnostic pop
     }
     return self;
 }

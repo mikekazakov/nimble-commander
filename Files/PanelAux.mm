@@ -36,7 +36,8 @@ static void RegisterRemoteFileUploading(const string& _original_path,
        
     if( !_original_vfs->IsWriteable() )
         return; // no reason to watch file we can't upload then
-    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     __weak MainWindowController* origin_window = _origin.mainWindowController;
     __weak PanelController* origin_controller = _origin;
     VFSHostWeakPtr weak_host(_original_vfs);
@@ -69,6 +70,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                 
             }
     });
+#pragma clang diagnostic pop
 }
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,

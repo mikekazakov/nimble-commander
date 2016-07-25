@@ -91,6 +91,8 @@ static NSString *ExtractCopyToName(const string&_s)
         
         m_Job.Init(move(_files), _path, _host, _options);
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak auto weak_self = self;
         m_Job.GetStats().RegisterObserver(OperationStats::Nofity::Value,
                                           nullptr,
@@ -110,6 +112,7 @@ static NSString *ExtractCopyToName(const string&_s)
                                nullptr,
                                [weak_self]{ if(auto me = weak_self) [me updateOnStageChanged]; }
                                );
+#pragma diagnostic pop
         
         [self setupDialogs];
     }

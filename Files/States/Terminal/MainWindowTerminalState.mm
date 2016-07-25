@@ -80,6 +80,9 @@
     // need right CWD here
     if(m_Task->State() == TermShellTask::TaskState::Inactive)
         m_Task->Launch(m_InitalWD.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     
     __weak MainWindowTerminalState *weakself = self;
     
@@ -106,6 +109,8 @@
             [strongself UpdateTitle];
         }
     });
+    
+#pragma clang diagnostic pop
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self UpdateTitle];

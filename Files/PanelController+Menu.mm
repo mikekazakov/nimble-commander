@@ -1113,6 +1113,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue([=]{
             PanelController *ss = ws;
@@ -1129,6 +1131,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
             [ss ScheduleDelayedSelectionChangeFor:req];
         });
     }];
+#pragma clang diagnostic pop
     
     [self.state AddOperation:op];
 }
@@ -1165,6 +1168,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue([=]{
             PanelController *ss = ws;
@@ -1181,6 +1186,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
             [ss ScheduleDelayedSelectionChangeFor:req];
         });
     }];
+#pragma clang diagnostic pop
     
     [self.state AddOperation:op];
 }
@@ -1191,6 +1197,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     VFSHostPtr vfs = self.vfs;
     bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *ws = self;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     
     dispatch_to_background([=]{
         NSString *stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
@@ -1240,6 +1248,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
             [ss ScheduleDelayedSelectionChangeFor:req];
         });
     });
+#pragma clang diagnostic pop
 }
 
 - (IBAction)OnBatchRename:(id)sender

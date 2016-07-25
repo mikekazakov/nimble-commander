@@ -82,6 +82,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         
         [m_OverlappedTerminal->terminal runShell:wd];
         
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak MainWindowFilePanelState *weakself = self;
         m_OverlappedTerminal->terminal.onShellCWDChanged = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalShellCWDChanged];
@@ -92,6 +94,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         m_OverlappedTerminal->terminal.onLongTaskFinished = [=]{
             [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskFinished];
         };
+#pragma clang diagnostic pop
     }
 }
 

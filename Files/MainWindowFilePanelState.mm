@@ -124,10 +124,13 @@ void SetupUnregisteredLabel(NSView *_background_view)
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wselector"
         [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
                                                            selector:@selector(volumeWillUnmount:)
                                                                name:NSWorkspaceWillUnmountNotification
                                                              object:nil];
+#pragma clang diagnostic pop
         
         __weak MainWindowFilePanelState* weak_self = self;
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralShowTabs, [=]{ [(MainWindowFilePanelState*)weak_self onShowTabsSettingChanged]; }) );

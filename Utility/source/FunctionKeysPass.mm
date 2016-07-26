@@ -109,9 +109,8 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
             case 145: return NewFnButtonPress( kVK_F1,  key_down, CGEventGetFlags(_event) );
             case 144: return NewFnButtonPress( kVK_F2,  key_down, CGEventGetFlags(_event) );
             case 160: return NewFnButtonPress( kVK_F3,  key_down, CGEventGetFlags(_event) );
+            case 130: // it was used on old Macbooks
             case 131: return NewFnButtonPress( kVK_F4,  key_down, CGEventGetFlags(_event) );
-                
-            // case 130
             case 96:  return NewFnButtonPress( kVK_F5,  key_down, CGEventGetFlags(_event) );
             case 97:  return NewFnButtonPress( kVK_F6,  key_down, CGEventGetFlags(_event) );
             case 105: return NewFnButtonPress( kVK_F13, key_down, CGEventGetFlags(_event) );
@@ -130,12 +129,16 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
             const int keycode = ((data1 & 0xFFFF0000) >> 16);
             const bool key_down = (data1 & 0x0000FF00) == 0xA00;
             switch( keycode ) {
-                case NX_KEYTYPE_REWIND:     return NewFnButtonPress( kVK_F7,  key_down, (CGEventFlags) ev.modifierFlags );
-                case NX_KEYTYPE_PLAY:       return NewFnButtonPress( kVK_F8,  key_down, (CGEventFlags) ev.modifierFlags );
-                case NX_KEYTYPE_FAST:       return NewFnButtonPress( kVK_F9,  key_down, (CGEventFlags) ev.modifierFlags );
-                case NX_KEYTYPE_MUTE:       return NewFnButtonPress( kVK_F10, key_down, (CGEventFlags) ev.modifierFlags );
-                case NX_KEYTYPE_SOUND_DOWN: return NewFnButtonPress( kVK_F11, key_down, (CGEventFlags) ev.modifierFlags );
-                case NX_KEYTYPE_SOUND_UP:   return NewFnButtonPress( kVK_F12, key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_BRIGHTNESS_DOWN:    return NewFnButtonPress( kVK_F1,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_BRIGHTNESS_UP:      return NewFnButtonPress( kVK_F2,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_ILLUMINATION_DOWN:  return NewFnButtonPress( kVK_F5,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_ILLUMINATION_UP:    return NewFnButtonPress( kVK_F6,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_REWIND:             return NewFnButtonPress( kVK_F7,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_PLAY:               return NewFnButtonPress( kVK_F8,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_FAST:               return NewFnButtonPress( kVK_F9,  key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_MUTE:               return NewFnButtonPress( kVK_F10, key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_SOUND_DOWN:         return NewFnButtonPress( kVK_F11, key_down, (CGEventFlags) ev.modifierFlags );
+                case NX_KEYTYPE_SOUND_UP:           return NewFnButtonPress( kVK_F12, key_down, (CGEventFlags) ev.modifierFlags );
             }
         }
     }

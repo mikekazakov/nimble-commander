@@ -140,7 +140,7 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
 
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
     openPanel.message = NSLocalizedString(@"Click “Allow Access” to grant access to files in the selected directory",
-                                          "Asking user for granting file system access for NC");
+                                          "Asking the user to grant filesystem access for NC");
     openPanel.prompt = NSLocalizedString(@"Allow Access",
                                          "Asking user for granting file system access for NC - button title");
     openPanel.canChooseFiles = false;

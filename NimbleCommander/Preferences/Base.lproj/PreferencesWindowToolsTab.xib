@@ -389,7 +389,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="Uut-qc-UcK">
-                                <string key="title">%LP		Source filepaths as text file</string>
+                                <string key="title">%LP		Source filepaths in a text file</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%LP"/>
@@ -399,7 +399,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="n7P-7k-Ogp">
-                                <string key="title">%10LP 	Source filepaths as text file, limited</string>
+                                <string key="title">%10LP 	Source filepaths in a text file, limited</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10LP"/>
@@ -429,7 +429,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="hk9-iG-W4a">
-                                <string key="title">%LF		Source filenames as text file</string>
+                                <string key="title">%LF		Source filenames in a text file</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%LF"/>
@@ -439,7 +439,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="JUW-5J-iZz">
-                                <string key="title">%10LF 	Source filenames as text file, limited</string>
+                                <string key="title">%10LF 	Source filenames in a text file, limited</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%10LF"/>
@@ -470,7 +470,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="XJk-yw-oD6">
-                                <string key="title">%-LP 	Target filepaths as text file</string>
+                                <string key="title">%-LP 	Target filepaths in a text file</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-LP"/>
@@ -480,7 +480,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="PeS-us-ncF">
-                                <string key="title">%-10LP 	Target filepaths as text file, limited</string>
+                                <string key="title">%-10LP 	Target filepaths in a text file, limited</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10LP"/>
@@ -510,7 +510,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="xqa-ff-fmA">
-                                <string key="title">%-LF 	Target filenames as text file</string>
+                                <string key="title">%-LF 	Target filenames in a text file</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-LF"/>
@@ -520,7 +520,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="yBx-gj-ydb">
-                                <string key="title">%-10LF 	Target filenames as text file, limited</string>
+                                <string key="title">%-10LF 	Target filenames in a text file, limited</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%-10LF"/>
@@ -536,7 +536,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Ask For Value" id="XZ4-7A-fGc">
                         <items>
-                            <menuItem title="%? Enter parameter value" id="XHU-jz-vdf">
+                            <menuItem title="%? Enter the value of the parameter" id="XHU-jz-vdf">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%?"/>
@@ -545,7 +545,7 @@
                                     <action selector="onAddParametersMenuItemClicked:" target="-2" id="Jnu-Vr-fI1"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="%&quot;Option name&quot;? Enter parameter value, named" id="L1y-lC-7iH">
+                            <menuItem title="%&quot;Option name&quot;? Enter the value of the parameter named" id="L1y-lC-7iH">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%&quot;Option name&quot;?"/>
@@ -561,7 +561,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Other" id="ezB-E1-baW">
                         <items>
-                            <menuItem title="%% Put % symbol" id="l99-bl-ad0">
+                            <menuItem title="%% Insert the % character" id="l99-bl-ad0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%%"/>
@@ -579,7 +579,7 @@
                                     <action selector="onAddParametersMenuItemClicked:" target="-2" id="vFQ-yI-Xc9"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="%5T Limit maxium total amount of files output" id="f5c-Cv-ZFZ">
+                            <menuItem title="%5T Limit the total number of output files" id="f5c-Cv-ZFZ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%5T"/>

@@ -257,7 +257,7 @@ Gw
         </window>
         <menu id="B4u-iS-9bR">
             <items>
-                <menuItem title="Overwrite Older" toolTip="Item would be skipped otherwise" id="N9p-bP-tMm">
+                <menuItem title="Overwrite Older" toolTip="Otherwise the item will be skipped" id="N9p-bP-tMm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="OnOverwriteOlder:" target="-2" id="3PZ-xZ-fe4"/>

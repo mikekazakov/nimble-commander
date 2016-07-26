@@ -30,8 +30,8 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
 static bool AskUserToDeleteTool()
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this tool?", "Asking user for confirmation on deleting external tool - message");
-    alert.informativeText = NSLocalizedString(@"This operation is not reversible.", "Asking user for confirmation on deleting external tool - message");
+    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this tool?", "Asking the user for confirmation on deleting the external tool - message");
+    alert.informativeText = NSLocalizedString(@"This operation is not reversible.", "Asking the user for confirmation on deleting the external tool - message");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";

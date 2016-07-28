@@ -328,6 +328,7 @@ static AppDelegate *g_Me = nil;
     enable( "menu.command.batch_rename",        am.HasBatchRename() );
     enable( "menu.command.internal_viewer",     am.HasInternalViewer() );
     enable( "menu.command.compress",            am.HasCompressionOperation() );
+    enable( "menu.command.compress_here",       am.HasCompressionOperation() );
     enable( "menu.command.link_create_soft",    am.HasLinksManipulation() );
     enable( "menu.command.link_create_hard",    am.HasLinksManipulation() );
     enable( "menu.command.link_edit",           am.HasLinksManipulation());

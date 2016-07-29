@@ -1086,6 +1086,8 @@
 		CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
 		CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFED08B1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib */; };
 		CFFFBABB1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */; };
+		CFFFBAD41D4B1FAF00DFE4D6 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939441D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm */; };
+		CFFFBAD81D4B1FB000DFE4D6 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939441D12BD3F00D67AC6 /* MainWindowFilePanelState+Tools.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3651,6 +3653,7 @@
 				CF6D9C5B196678010077B146 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF6D9C5C196678010077B146 /* OrthodoxMonospace.mm in Sources */,
 				CF50C4581C0ADF15009DF611 /* VFSNetSFTPHost.cpp in Sources */,
+				CFFFBAD81D4B1FB000DFE4D6 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CF50C4351C0ADECA009DF611 /* VFSPSFile.cpp in Sources */,
 				CF6E44591CC9E12B009F45B0 /* AppDelegateCPP.mm in Sources */,
 				CF6D9C5D196678010077B146 /* IconsGenerator.mm in Sources */,
@@ -4270,6 +4273,7 @@
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CF50C43E1C0ADEE1009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
+				CFFFBAD41D4B1FAF00DFE4D6 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CFF6F3401A13567C00011177 /* FileMask.mm in Sources */,
 				CF46DB841C856F48009E28B9 /* TermTask.cpp in Sources */,
 				CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */,

@@ -7,7 +7,7 @@ ExtensionLowercaseComparison& ExtensionLowercaseComparison::Instance() noexcept
     return *inst;
 }
 
-string ExtensionLowercaseComparison::ProduceFormCLowercase(string_view _string)
+static string ProduceFormCLowercase(string_view _string)
 {
     CFStackAllocator<> allocator;
 

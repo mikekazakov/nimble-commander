@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
 class FileMask
 {
 public:
@@ -31,7 +29,7 @@ public:
     
     /**
      * Return true if _mask is a wildcard(s).
-     * If it's a set of fixed names - return false.
+     * If it's a set of fixed names or a single word - return false.
      */
     static bool IsWildCard(NSString *_mask);
     
@@ -39,7 +37,13 @@ public:
      * Will try to convert _mask into a wildcard, by preffixing it's parts with "*." or with "*".
      * Return nil on errors.
      */
-    static NSString *ToWildCard(NSString *_mask);
+    static NSString *ToExtensionWildCard(NSString *_mask);
+
+    /**
+     * Will try to convert _mask into a wildcard, by preffixing it's parts with "*" and suffixing with "*".
+     * Return nil on errors.
+     */
+    static NSString *ToFilenameWildCard(NSString *_mask);
     
 private:
     static bool CompareAgainstSimpleMask(const string& _mask, NSString *_name);

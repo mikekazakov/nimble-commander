@@ -38,7 +38,7 @@
 #include "Operations/Delete/FileDeletionSheetController.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
-#include "FileMask.h"
+#include "../NimbleCommander/Core/FileMask.h"
 #include "SelectionWithMaskPopupViewController.h"
 #include "PanelViewPresentation.h"
 #include "CalculateChecksumSheetController.h"
@@ -729,7 +729,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] initForWindow:self.state.window doesSelect:_select];
     view.handler = [=](NSString *mask) {
         if( !FileMask::IsWildCard(mask) )
-            mask = FileMask::ToWildCard(mask);
+            mask = FileMask::ToExtensionWildCard(mask);
         
         [self SelectEntriesByMask:mask select:_select];
     };

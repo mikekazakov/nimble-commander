@@ -9,7 +9,7 @@
 #pragma once
 
 #include "vfs/vfs.h"
-#include "FileMask.h"
+#include "../NimbleCommander/Core/FileMask.h"
 #include "PanelData.h"
 #include "Config.h"
 

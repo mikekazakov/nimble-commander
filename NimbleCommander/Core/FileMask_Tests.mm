@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "tests_common.h"
-#include "../Files/FileMask.h"
+//#include "tests_common.h"
+#import <XCTest/XCTest.h>
+#include "FileMask.h"
 
 @interface FileMask_Tests : XCTestCase
 
@@ -90,7 +91,25 @@
     XCTAssert( m9.MatchName(".") == true );
     XCTAssert( m9.MatchName("128736812763.137128736.987391273") == true );
     XCTAssert( m9.MatchName("13123") == false );
+    
+    
+    XCTAssert( FileMask::IsWildCard(@"*.jpg") == true );
+    XCTAssert( FileMask::IsWildCard(@"*") == true );
+    XCTAssert( FileMask::IsWildCard(@"jpg") == false );
+    
+    XCTAssert( [FileMask::ToExtensionWildCard(@"jpg") isEqualToString:@"*.jpg"]);
+    XCTAssert( [FileMask::ToExtensionWildCard(@"jpg,png") isEqualToString:@"*.jpg, *.png"]);
 }
 
+- (void)testWildCards {
+    XCTAssert( FileMask::IsWildCard(@"*.jpg") == true );
+    XCTAssert( FileMask::IsWildCard(@"*") == true );
+    XCTAssert( FileMask::IsWildCard(@"jpg") == false );
+    
+    XCTAssert( [FileMask::ToExtensionWildCard(@"jpg") isEqualToString:@"*.jpg"]);
+    XCTAssert( [FileMask::ToExtensionWildCard(@"jpg,png") isEqualToString:@"*.jpg, *.png"]);
+    XCTAssert( [FileMask::ToFilenameWildCard(@"jpg") isEqualToString:@"*jpg*"]);
+    XCTAssert( [FileMask::ToFilenameWildCard(@"jpg,png") isEqualToString:@"*jpg*, *png*"]);
+}
 
 @end

@@ -202,7 +202,7 @@ bool FileMask::IsWildCard(NSString *_mask)
     return false;
 }
 
-NSString *FileMask::ToWildCard(NSString *_mask)
+static NSString *ToWildCard(NSString *_mask, const bool _for_extension)
 {
     if(!_mask || _mask.length == 0)
         return nil;
@@ -222,22 +222,41 @@ NSString *FileMask::ToWildCard(NSString *_mask)
     NSMutableString *result = [NSMutableString new];
     
     static NSCharacterSet *wildchars = [NSCharacterSet characterSetWithCharactersInString:@"*?"];
-    for(NSString *s: simple_masks) {
-        if([s rangeOfCharacterFromSet:wildchars].length > 0) {
+    for( NSString *s: simple_masks ) {
+        if( [s rangeOfCharacterFromSet:wildchars].length > 0 ) {
+            // just use this part as it is
             if(result.length > 0)
                 [result appendString:@", "];
             [result appendString:s];
         }
-        else if(s.length > 0) {
-            // currently simply append "*."
+        else if( s.length > 0 ) {
+            // currently simply append "*." prefix and "*" suffix
             if(result.length > 0)
                 [result appendString:@", "];
-            [result appendString:@"*"];
-            if([s characterAtIndex:0] != '.')
-                [result appendString:@"."];
-            [result appendString:s];
+            
+            if( _for_extension ) {
+                [result appendString:@"*"];
+                if([s characterAtIndex:0] != '.')
+                    [result appendString:@"."];
+                [result appendString:s];
+            }
+            else {
+                [result appendString:@"*"];
+                [result appendString:s];
+                [result appendString:@"*"];
+            }
         }
     }
     
     return [result copy];
+}
+
+NSString *FileMask::ToExtensionWildCard(NSString *_mask)
+{
+    return ToWildCard(_mask, true);
+}
+
+NSString *FileMask::ToFilenameWildCard(NSString *_mask)
+{
+    return ToWildCard(_mask, false);
 }

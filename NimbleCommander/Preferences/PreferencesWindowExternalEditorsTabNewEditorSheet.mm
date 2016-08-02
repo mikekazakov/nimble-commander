@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/FileMask.h"
+#include "../Core/FileMask.h"
 #include "../../Files/ActivationManager.h"
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 
@@ -46,7 +46,7 @@
 - (IBAction)OnOK:(id)sender
 {
     if( !FileMask::IsWildCard(self.Info.mask) )
-        if(NSString *replace = FileMask::ToWildCard(self.Info.mask))
+        if(NSString *replace = FileMask::ToExtensionWildCard(self.Info.mask))
             self.Info.mask = replace;
     
     [self endSheet:NSModalResponseOK];

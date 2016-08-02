@@ -8,7 +8,7 @@
 
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "States/Terminal/TermSingleTask.h"
-#include "FileMask.h"
+#include "../NimbleCommander/Core/FileMask.h"
 #include "ExternalEditorInfo.h"
 #include "ActivationManager.h"
 

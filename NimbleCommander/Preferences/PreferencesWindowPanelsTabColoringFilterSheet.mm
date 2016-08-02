@@ -72,7 +72,7 @@ static tribool state_to_tribool(NSCellStateValue _val)
     if(mask == nil)
         mask = @"";
     else if( !FileMask::IsWildCard(mask) )
-        if(NSString *replace = FileMask::ToWildCard(mask))
+        if(NSString *replace = FileMask::ToExtensionWildCard(mask))
             mask = replace;
     m_Filter.mask = mask;
     [self endSheet:NSModalResponseOK];

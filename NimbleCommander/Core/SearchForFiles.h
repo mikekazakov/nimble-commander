@@ -10,10 +10,10 @@
 
 #include <Habanero/DispatchQueue.h>
 #include <Utility/Encodings.h>
-#include "vfs/VFS.h"
+#include "../../Files/vfs/VFS.h"
 #include "FileMask.h"
 
-class FileSearch
+class SearchForFiles
 {
 public:
     struct Options {
@@ -44,8 +44,8 @@ public:
                                         const char *_in_path,
                                         CFRange _content_found)>;
     
-    FileSearch();
-    ~FileSearch();
+    SearchForFiles();
+    ~SearchForFiles();
     
     /**
      * Sets filename filtering. Should not be called with background search going on.

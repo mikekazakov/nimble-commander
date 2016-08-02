@@ -7,9 +7,9 @@
 //
 
 #include <sys/stat.h>
-#include "FileSearch.h"
-#include "FileWindow.h"
-#include "SearchInFile.h"
+#include "../../Files/FileWindow.h"
+#include "../../Files/SearchInFile.h"
+#include "SearchForFiles.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -21,7 +21,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
     return encodings::FromComAppleTextEncodingXAttr(buf);
 }
 
-FileSearch::FileSearch()
+SearchForFiles::SearchForFiles()
 {
     m_Queue->OnDry([=]{
         m_Callback = nullptr;
@@ -34,34 +34,39 @@ FileSearch::FileSearch()
     });
 }
 
-FileSearch::~FileSearch()
+SearchForFiles::~SearchForFiles()
 {
     Wait();
 }
 
-void FileSearch::SetFilterName(const FilterName &_filter)
+void SearchForFiles::SetFilterName(const FilterName &_filter)
 {
     if( IsRunning() )
         throw logic_error("Filters can't be changed during background search process");
     m_FilterName = _filter;
+    // substitute simple requests, like "system" with "*system*":
+    if( !FileMask::IsWildCard(m_FilterName->mask) )
+        if( auto wild_card = FileMask::ToFilenameWildCard(m_FilterName->mask) )
+            m_FilterName->mask = wild_card;
+    
     m_FilterNameMask = FileMask(m_FilterName->mask);
 }
 
-void FileSearch::SetFilterContent(const FilterContent &_filter)
+void SearchForFiles::SetFilterContent(const FilterContent &_filter)
 {
     if( IsRunning() )
         throw logic_error("Filters can't be changed during background search process");
     m_FilterContent = _filter;
 }
 
-void FileSearch::SetFilterSize(const FilterSize &_filter)
+void SearchForFiles::SetFilterSize(const FilterSize &_filter)
 {
     if( IsRunning() )
         throw logic_error("Filters can't be changed during background search process");
     m_FilterSize = _filter;
 }
 
-void FileSearch::ClearFilters()
+void SearchForFiles::ClearFilters()
 {
     if( IsRunning() )
         throw logic_error("Filters can't be changed during background search process");
@@ -71,7 +76,7 @@ void FileSearch::ClearFilters()
     m_FilterSize = nullopt;
 }
 
-bool FileSearch::Go(const string &_from_path,
+bool SearchForFiles::Go(const string &_from_path,
                     const VFSHostPtr &_in_host,
                     int _options,
                     FoundCallBack _found_callback,
@@ -97,23 +102,23 @@ bool FileSearch::Go(const string &_from_path,
     return true;
 }
 
-void FileSearch::Stop()
+void SearchForFiles::Stop()
 {
     m_Queue->Stop();
 }
 
-void FileSearch::Wait()
+void SearchForFiles::Wait()
 {
     m_Queue->Wait();
 }
 
-void FileSearch::NotifyLookingIn(const char* _path) const
+void SearchForFiles::NotifyLookingIn(const char* _path) const
 {
     if( m_LookingInCallback )
         m_LookingInCallback(_path);
 }
 
-void FileSearch::AsyncProc(const char *_from_path, VFSHost &_in_host)
+void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 {
     m_DirsFIFO.emplace(_from_path);
     
@@ -146,7 +151,7 @@ void FileSearch::AsyncProc(const char *_from_path, VFSHost &_in_host)
     }
 }
 
-void FileSearch::ProcessDirent(const char* _full_path,
+void SearchForFiles::ProcessDirent(const char* _full_path,
                                const char* _dir_path,
                                const VFSDirEnt &_dirent,
                                VFSHost &_in_host
@@ -199,7 +204,7 @@ void FileSearch::ProcessDirent(const char* _full_path,
             m_DirsFIFO.emplace(_full_path);
 }
 
-bool FileSearch::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
+bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
 {
     assert(m_FilterContent);
     VFSFilePtr file;
@@ -240,7 +245,7 @@ bool FileSearch::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRa
     return false;
 }
 
-bool FileSearch::FilterByFilename(const char* _filename)
+bool SearchForFiles::FilterByFilename(const char* _filename)
 {
     NSString *filename = [NSString stringWithUTF8StringNoCopy:_filename];
     if(filename == nil ||
@@ -250,7 +255,7 @@ bool FileSearch::FilterByFilename(const char* _filename)
     return true;
 }
 
-void FileSearch::ProcessValidEntry(const char* _full_path,
+void SearchForFiles::ProcessValidEntry(const char* _full_path,
                        const char* _dir_path,
                        const VFSDirEnt &_dirent,
                        VFSHost &_in_host,
@@ -260,7 +265,7 @@ void FileSearch::ProcessValidEntry(const char* _full_path,
         m_Callback(_dirent.name, _dir_path, _cont_range);
 }
 
-bool FileSearch::IsRunning() const noexcept
+bool SearchForFiles::IsRunning() const noexcept
 {
     return m_Queue->Empty() == false;
 }

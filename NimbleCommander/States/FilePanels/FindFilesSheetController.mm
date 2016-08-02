@@ -11,7 +11,7 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include "../../Files/States/Viewer/BigFileViewSheet.h"
-#include "../../Files/FileSearch.h"
+#include "../../Core/SearchForFiles.h"
 #include "../../Files/ByteCountFormatter.h"
 #include "../../Files/Config.h"
 #include "../../Files/ActivationManager.h"
@@ -193,7 +193,7 @@ private:
 {
     shared_ptr<VFSHost>         m_Host;
     string                      m_Path;
-    unique_ptr<FileSearch>      m_FileSearch;
+    unique_ptr<SearchForFiles>  m_FileSearch;
     NSDateFormatter            *m_DateFormatter;
     
     NSMutableArray             *m_FoundItems; // is controlled by ArrayController
@@ -223,7 +223,7 @@ private:
 {
     self = [super init];
     if(self){
-        m_FileSearch = make_unique<FileSearch>();
+        m_FileSearch = make_unique<SearchForFiles>();
         m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
 
@@ -383,7 +383,7 @@ private:
     if(mask != nil &&
        [mask isEqualToString:@""] == false &&
        [mask isEqualToString:@"*"] == false) {
-        FileSearch::FilterName filter_name;
+        SearchForFiles::FilterName filter_name;
         filter_name.mask = mask;
         m_FileSearch->SetFilterName(filter_name);
         m_MaskHistory->insert_unique( mask.UTF8String );
@@ -393,7 +393,7 @@ private:
     
     NSString *cont_text = self.TextComboBox.stringValue;
     if([cont_text isEqualToString:@""] == false) {
-        FileSearch::FilterContent filter_content;
+        SearchForFiles::FilterContent filter_content;
         filter_content.text = cont_text;
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
@@ -411,7 +411,7 @@ private:
             case 3: value *= 1024*1024*1024; break;
             default: break;
         }
-        FileSearch::FilterSize filter_size;
+        SearchForFiles::FilterSize filter_size;
         if(self.SizeRelationPopUp.selectedTag == 0) // "≥"
             filter_size.min = value;
         else if(self.SizeRelationPopUp.selectedTag == 2) // "≤"
@@ -424,9 +424,9 @@ private:
         
     int search_options = 0;
     if(self.SearchInSubDirsButton.intValue)
-        search_options |= FileSearch::Options::GoIntoSubDirs;
+        search_options |= SearchForFiles::Options::GoIntoSubDirs;
     if(self.SearchForDirsButton.intValue)
-        search_options |= FileSearch::Options::SearchForDirs;
+        search_options |= SearchForFiles::Options::SearchForDirs;
     
     bool r = m_FileSearch->Go(m_Path,
                               m_Host,

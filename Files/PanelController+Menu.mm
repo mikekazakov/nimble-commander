@@ -33,7 +33,7 @@
 #include "GoToFolderSheetController.h"
 #include "MainWindowFilePanelState.h"
 #include "DetailedVolumeInformationSheetController.h"
-#include "FindFilesSheetController.h"
+#include "../NimbleCommander/States/FilePanels/FindFilesSheetController.h"
 #include "MainWindowController.h"
 #include "Operations/Delete/FileDeletionSheetController.h"
 #include "FTPConnectionSheetController.h"

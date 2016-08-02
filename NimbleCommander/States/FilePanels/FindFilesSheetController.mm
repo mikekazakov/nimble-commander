@@ -9,15 +9,14 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
-#include "States/Viewer/BigFileViewSheet.h"
-#include "Utility/Encodings.h"
+#include <Utility/Encodings.h>
+#include "../../Files/States/Viewer/BigFileViewSheet.h"
+#include "../../Files/FileSearch.h"
+#include "../../Files/ByteCountFormatter.h"
+#include "../../Files/Config.h"
+#include "../../Files/ActivationManager.h"
+#include "../../Files/GoogleAnalytics.h"
 #include "FindFilesSheetController.h"
-#include "FileSearch.h"
-#include "ByteCountFormatter.h"
-#include "AppDelegate.h"
-#include "Config.h"
-#include "ActivationManager.h"
-#include "GoogleAnalytics.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";

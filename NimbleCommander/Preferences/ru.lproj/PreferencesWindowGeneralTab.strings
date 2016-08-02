@@ -1,0 +1,24 @@
+/* Class = "NSMenuItem"; title = "Modern"; ObjectID = "12"; */
+"12.title" = "Modern";
+
+/* Class = "NSMenuItem"; title = "Classic"; ObjectID = "13"; */
+"13.title" = "Classic";
+
+/* Class = "NSTextFieldCell"; title = "Application appearance:"; ObjectID = "14"; */
+"14.title" = "Внешний вид:";
+
+/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "31"; */
+"31.title" = "По умолчанию";
+
+/* Class = "NSTextFieldCell"; title = "Settings:"; ObjectID = "56"; */
+"56.title" = "Настройки:";
+
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "Geu-Lq-Yub"; */
+"Geu-Lq-Yub.title" = "Сбросить";
+
+/* Class = "NSTextFieldCell"; title = "Granted filesystem access:"; ObjectID = "q8n-Mc-Nho"; */
+"q8n-Mc-Nho.title" = "Доступ к файловой системе:";
+
+/* Class = "NSButtonCell"; title = "Send anonymous usage statistics to the developer"; ObjectID = "uW2-01-WEk"; */
+"uW2-01-WEk.title" = "Отправлять разработчику анонимную информацию об использовании";
+

@@ -27,12 +27,7 @@
 #include "AppDelegate.h"
 #include "MainWindowController.h"
 #include "Operations/OperationsController.h"
-#include "PreferencesWindowGeneralTab.h"
-#include "PreferencesWindowPanelsTab.h"
-#include "PreferencesWindowViewerTab.h"
-#include "PreferencesWindowExternalEditorsTab.h"
-#include "PreferencesWindowTerminalTab.h"
-#include "PreferencesWindowHotkeysTab.h"
+#include "../NimbleCommander/Preferences/Preferences.h"
 #include "TemporaryNativeFileStorage.h"
 #include "ActionsShortcutsManager.h"
 #include "MainWindowFilePanelState.h"
@@ -46,7 +41,6 @@
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
-#include "../NimbleCommander/Preferences/PreferencesWindowToolsTab.h"
 
 #include "AppStoreHelper.h"
 

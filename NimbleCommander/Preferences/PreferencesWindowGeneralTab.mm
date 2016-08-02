@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../Files/SandboxManager.h"
+#include "../../Files/AppDelegate.h"
+#include "../../Files/ActivationManager.h"
+#include "../../Files/GoogleAnalytics.h"
 #include "PreferencesWindowGeneralTab.h"
-#include "SandboxManager.h"
-#include "AppDelegate.h"
-#include "ActivationManager.h"
-#include "GoogleAnalytics.h"
 
 @interface PreferencesWindowGeneralTab()
 

@@ -1,0 +1,102 @@
+/* Class = "NSTabViewItem"; label = "Common"; ObjectID = "4"; */
+"4.label" = "Общее";
+
+/* Class = "NSTabViewItem"; label = "Classic"; ObjectID = "5"; */
+"5.label" = "Classic";
+
+/* Class = "NSTabViewItem"; label = "Modern"; ObjectID = "18"; */
+"18.label" = "Modern";
+
+/* Class = "NSButtonCell"; title = "Antialiasing"; ObjectID = "21"; */
+"21.title" = "Антиалиасинг";
+
+/* Class = "NSButtonCell"; title = "Smoothing"; ObjectID = "43"; */
+"43.title" = "Сглаживание";
+
+/* Class = "NSTextFieldCell"; title = "Background color:"; ObjectID = "63"; */
+"63.title" = "Цвет фона:";
+
+/* Class = "NSTextFieldCell"; title = "Selection color:"; ObjectID = "88"; */
+"88.title" = "Цвет выделения:";
+
+/* Class = "NSTextFieldCell"; title = "Text color:"; ObjectID = "103"; */
+"103.title" = "Цвет текста:";
+
+/* Class = "NSButtonCell"; title = "Font"; ObjectID = "109"; */
+"109.title" = "Шрифт";
+
+/* Class = "NSButtonCell"; title = "Font"; ObjectID = "193"; */
+"193.title" = "Шрифт";
+
+/* Class = "NSTextFieldCell"; title = "Text color:"; ObjectID = "195"; */
+"195.title" = "Цвет текста:";
+
+/* Class = "NSTextFieldCell"; title = "Selection color:"; ObjectID = "198"; */
+"198.title" = "Цвет выделения:";
+
+/* Class = "NSTextFieldCell"; title = "Background color:"; ObjectID = "201"; */
+"201.title" = "Цвет фона:";
+
+/* Class = "NSButtonCell"; title = "Smoothing"; ObjectID = "203"; */
+"203.title" = "Сглаживание";
+
+/* Class = "NSButtonCell"; title = "Antialiasing"; ObjectID = "205"; */
+"205.title" = "Антиалиасинг";
+
+/* Class = "NSButtonCell"; title = "Auto-detect encoding"; ObjectID = "263"; */
+"263.title" = "Автоопределение кодировки";
+
+/* Class = "NSTextFieldCell"; title = "Default encoding:"; ObjectID = "273"; */
+"273.title" = "Кодировка по умолчанию:";
+
+/* Class = "NSTextFieldCell"; title = "Text rendering:"; ObjectID = "318"; */
+"318.title" = "Рендеринг текста:";
+
+/* Class = "NSTextFieldCell"; title = "Text rendering:"; ObjectID = "335"; */
+"335.title" = "Рендеринг текста:";
+
+/* Class = "NSTextFieldCell"; title = "File history:"; ObjectID = "340"; */
+"340.title" = "История файлов:";
+
+/* Class = "NSButtonCell"; title = "Save position"; ObjectID = "348"; */
+"348.title" = "Сохранять позицию";
+
+/* Class = "NSButtonCell"; title = "Save view mode"; ObjectID = "375"; */
+"375.title" = "Сохранять режим отображения";
+
+/* Class = "NSButtonCell"; title = "Save encoding"; ObjectID = "382"; */
+"382.title" = "Сохранять кодировку";
+
+/* Class = "NSButtonCell"; title = "Save wrapping"; ObjectID = "389"; */
+"389.title" = "Сохранять перенос";
+
+/* Class = "NSButtonCell"; title = "Save selection"; ObjectID = "396"; */
+"396.title" = "Сохранять выделение";
+
+/* Class = "NSButtonCell"; title = "Clear history"; ObjectID = "596"; */
+"596.title" = "Очистить историю";
+
+/* Class = "NSTextFieldCell"; title = "File window size:"; ObjectID = "606"; */
+"606.title" = "Размер окна файла:";
+
+/* Class = "NSMenuItem"; title = "32 Kb"; ObjectID = "616"; */
+"616.title" = "32 Кб";
+
+/* Class = "NSMenuItem"; title = "64 Kb"; ObjectID = "617"; */
+"617.title" = "64 Кб";
+
+/* Class = "NSMenuItem"; title = "128 Kb"; ObjectID = "618"; */
+"618.title" = "128 Кб";
+
+/* Class = "NSMenuItem"; title = "256 Kb"; ObjectID = "636"; */
+"636.title" = "256 Кб";
+
+/* Class = "NSMenuItem"; title = "512 Kb"; ObjectID = "637"; */
+"637.title" = "512 Кб";
+
+/* Class = "NSMenuItem"; title = "1024 Kb"; ObjectID = "638"; */
+"638.title" = "1024 Кб";
+
+/* Class = "NSButtonCell"; title = "Check com.apple.TextEncoding"; ObjectID = "dec-0H-tCg"; */
+"dec-0H-tCg.title" = "Проверять com.apple.TextEncoding";
+

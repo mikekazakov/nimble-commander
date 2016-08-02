@@ -13,12 +13,6 @@
 		B52D9A801736DDF300EC7154 /* ClassicPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */; };
 		B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
-		CF007C4C1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */; };
-		CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */; };
-		CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */; };
-		CF007C531A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */; };
-		CF007C541A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */; };
-		CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -30,9 +24,6 @@
 		CF033A6B18059C100088CAB4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
-		CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
-		CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
 		CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
 		CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.mm */; };
@@ -44,8 +35,6 @@
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
-		CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
-		CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
 		CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
 		CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
@@ -159,6 +148,70 @@
 		CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
 		CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
 		CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */; };
+		CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
+		CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
+		CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
+		CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */; };
+		CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */; };
+		CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
+		CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */; };
+		CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */; };
+		CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
+		CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
+		CF4E56781D50668E00452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
+		CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */; };
+		CF4E567E1D50669600452912 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */; };
+		CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
+		CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */; };
+		CF4E568A1D5066A400452912 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */; };
+		CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
+		CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
+		CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
+		CF4E56A11D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
+		CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
+		CF4E56A31D5068CD00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */; };
+		CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
+		CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
+		CF4E56A61D5068D300452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
+		CF4E56A71D5068D600452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
+		CF4E56A81D5068D700452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
+		CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
+		CF4E56AA1D5068DC00452912 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
+		CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
+		CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
+		CF4E56AD1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
+		CF4E56AE1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
+		CF4E56AF1D5068E200452912 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */; };
+		CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */; };
+		CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */; };
+		CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */; };
+		CF4E56B31D5068EB00452912 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */; };
+		CF4E56B41D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */; };
+		CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */; };
+		CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */; };
+		CF4E56B81D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */; };
+		CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */; };
+		CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */; };
+		CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */; };
+		CF4E56BC1D5068F800452912 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */; };
+		CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
+		CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
+		CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
+		CF4E56C01D50691A00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
+		CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
+		CF4E56C21D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
+		CF4E56C31D50691E00452912 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */; };
+		CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */; };
+		CF4E56C51D50692000452912 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */; };
+		CF4E56C61D50692300452912 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */; };
+		CF4E56C71D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */; };
+		CF4E56C81D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */; };
+		CF4E56C91D50693B00452912 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */; };
+		CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */; };
+		CF4E56CB1D50693D00452912 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */; };
+		CF4E56CC1D50694000452912 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */; };
+		CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */; };
+		CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
 		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
@@ -356,13 +409,6 @@
 		CF6D9C5E196678010077B146 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
 		CF6D9C5F196678010077B146 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF6D9C60196678010077B146 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
-		CF6D9C61196678010077B146 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
-		CF6D9C62196678010077B146 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
-		CF6D9C63196678010077B146 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
-		CF6D9C64196678010077B146 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
-		CF6D9C65196678010077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
-		CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
-		CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5122716C4BD3D00D247EE /* AppDelegate.mm */; };
@@ -411,8 +457,6 @@
 		CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
 		CF6FAA211B82E1DD006E0742 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; };
 		CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
-		CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF73D1D61BE608BC0014C88F /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D11BE608BC0014C88F /* DisplayNamesCache.mm */; };
 		CF73D1D71BE608BC0014C88F /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D21BE608BC0014C88F /* VFSNativeFile.cpp */; };
@@ -532,7 +576,6 @@
 		CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
-		CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CFA5395D1D433E2A00C562A7 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
 		CFA5395E1D433E2A00C562A7 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */; };
 		CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
@@ -598,7 +641,6 @@
 		CFA5399B1D433E2A00C562A7 /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A3F1C50EA0100BFCB5C /* BigFileViewText.mm */; };
 		CFA5399C1D433E2A00C562A7 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CFA5399D1D433E2A00C562A7 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
-		CFA5399E1D433E2A00C562A7 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CFA5399F1D433E2A00C562A7 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CFA539A01D433E2A00C562A7 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFA539A11D433E2A00C562A7 /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9151BEC4FEA00A1B046 /* VFSHost.cpp */; };
@@ -623,7 +665,6 @@
 		CFA539B41D433E2A00C562A7 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFA539B51D433E2A00C562A7 /* VFSNetFTPCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DA1BE6155E0014C88F /* VFSNetFTPCache.mm */; };
 		CFA539B61D433E2A00C562A7 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
-		CFA539B71D433E2A00C562A7 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFA539B81D433E2A00C562A7 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */; };
 		CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CFA539BA1D433E2A00C562A7 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
@@ -636,7 +677,6 @@
 		CFA539C11D433E2A00C562A7 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFA539C21D433E2A00C562A7 /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A381C50EA0100BFCB5C /* BigFileViewHex.mm */; };
 		CFA539C31D433E2A00C562A7 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
-		CFA539C41D433E2A00C562A7 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CFA539C51D433E2A00C562A7 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
 		CFA539C61D433E2A00C562A7 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1DC1BE6155E0014C88F /* VFSNetFTPFile.mm */; };
 		CFA539C71D433E2A00C562A7 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
@@ -689,24 +729,20 @@
 		CFA539F61D433E2A00C562A7 /* VFSConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */; };
 		CFA539F71D433E2A00C562A7 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
-		CFA539F91D433E2A00C562A7 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
 		CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFA539FB1D433E2A00C562A7 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF46D8E81C853C2C009E28B9 /* rapidjson.cpp */; };
 		CFA539FC1D433E2A00C562A7 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
 		CFA539FD1D433E2A00C562A7 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */; };
 		CFA539FE1D433E2A00C562A7 /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1FF1BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp */; };
 		CFA539FF1D433E2A00C562A7 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
-		CFA53A001D433E2A00C562A7 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
 		CFA53A011D433E2A00C562A7 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CFA53A021D433E2A00C562A7 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFA53A031D433E2A00C562A7 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFA53A041D433E2A00C562A7 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
 		CFA53A051D433E2A00C562A7 /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1F31BE619B20014C88F /* VFSArchiveFile.cpp */; };
-		CFA53A061D433E2A00C562A7 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
 		CFA53A071D433E2A00C562A7 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
 		CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
-		CFA53A0A1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CFA53A0B1D433E2A00C562A7 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
@@ -715,7 +751,6 @@
 		CFA53A101D433E2A00C562A7 /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A341C50EA0100BFCB5C /* BigFileView.mm */; };
 		CFA53A111D433E2A00C562A7 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */; };
 		CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
-		CFA53A131D433E2A00C562A7 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CFA53A141D433E2A00C562A7 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
 		CFA53A151D433E2A00C562A7 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFA53A161D433E2A00C562A7 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
@@ -759,14 +794,12 @@
 		CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
 		CFA53A3F1D433E2A00C562A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
-		CFA53A411D433E2A00C562A7 /* PreferencesWindowGeneralTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */; };
 		CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CFA53A441D433E2A00C562A7 /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CFA53A451D433E2A00C562A7 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
 		CFA53A461D433E2A00C562A7 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC11A5D71F700313845 /* FindFilesSheetController.xib */; };
 		CFA53A471D433E2A00C562A7 /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD51A5E467E00313845 /* BigFileViewSheet.xib */; };
-		CFA53A481D433E2A00C562A7 /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
 		CFA53A491D433E2A00C562A7 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
@@ -775,19 +808,13 @@
 		CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFA53A4F1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
-		CFA53A511D433E2A00C562A7 /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
 		CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
-		CFA53A531D433E2A00C562A7 /* PreferencesWindowPanelsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */; };
-		CFA53A541D433E2A00C562A7 /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
 		CFA53A551D433E2A00C562A7 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
 		CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */; };
 		CFA53A571D433E2A00C562A7 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
-		CFA53A581D433E2A00C562A7 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
 		CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CFA53A5A1D433E2A00C562A7 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFA53A5B1D433E2A00C562A7 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
-		CFA53A5C1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
-		CFA53A5D1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */; };
 		CFA53A5E1D433E2A00C562A7 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */; };
 		CFA53A5F1D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CFA53A601D433E2A00C562A7 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
@@ -834,18 +861,6 @@
 		CFC5123916C5287B00D247EE /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5123816C5287B00D247EE /* PanelView.mm */; };
 		CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
-		CFCABCC71A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */; };
-		CFCABCC81A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */; };
-		CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */; };
-		CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
-		CFCABCCF1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
-		CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */; };
-		CFCABCD51A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
-		CFCABCD61A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
-		CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */; };
-		CFCABCDC1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
-		CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
-		CFCABCDE1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
@@ -919,12 +934,6 @@
 		CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
-		CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
-		CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
-		CFD83ADB1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */; };
-		CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
-		CFD83AE11A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
-		CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -942,7 +951,6 @@
 		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
-		CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFE1A4F416C632F700EFBA3C /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */; };
 		CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFE38BAA18FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
@@ -1003,7 +1011,6 @@
 		CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
 		CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
-		CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */; };
 		CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
@@ -1011,13 +1018,11 @@
 		CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
-		CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */; };
 		CFF6F2CE1A13567C00011177 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CFF6F2D41A13567C00011177 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
-		CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */; };
 		CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CFF6F2E31A13567C00011177 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFF6F2E51A13567C00011177 /* PanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */; };
@@ -1036,16 +1041,11 @@
 		CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */; };
 		CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
-		CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */; };
-		CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */; };
 		CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */; };
 		CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAADAB11930E02200D30699 /* PanelController+Menu.mm */; };
 		CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B7A18AB64C600028B41 /* FindFilesSheetController.mm */; };
-		CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */; };
 		CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
-		CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CFF6F3401A13567C00011177 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4C5A5B17A7B48E00B1B061 /* FileMask.mm */; };
-		CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6B18A9DC7300028B41 /* FileSearch.mm */; };
 		CFF6F3501A13567C00011177 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
@@ -1211,9 +1211,6 @@
 		B5A23001171E81EC00D9C1A6 /* ButtonWithOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonWithOptions.h; sourceTree = "<group>"; };
 		B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ButtonWithOptions.m; sourceTree = "<group>"; };
 		B5A89D481746537C00EAB999 /* ApplicationSkins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationSkins.h; sourceTree = "<group>"; };
-		CF007C4F1A6BC7CB00CB0E48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowGeneralTab.xib; sourceTree = "<group>"; };
-		CF007C521A6BCA4F00CB0E48 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowGeneralTab.strings; sourceTree = "<group>"; };
-		CF007C561A6BCB8700CB0E48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTab.xib; sourceTree = "<group>"; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -1221,12 +1218,6 @@
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = "<group>"; };
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = "<group>"; };
 		CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHPreferencesWindowController.m; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindowController.m; sourceTree = "<group>"; };
-		CF039EA81791166000DC85D6 /* PreferencesWindowGeneralTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowGeneralTab.h; sourceTree = "<group>"; };
-		CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowGeneralTab.mm; sourceTree = "<group>"; };
-		CF039EAD17911FF900DC85D6 /* PreferencesWindowPanelsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowPanelsTab.h; sourceTree = "<group>"; };
-		CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowPanelsTab.mm; sourceTree = "<group>"; };
-		CF039EB21791204600DC85D6 /* PreferencesWindowViewerTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowViewerTab.h; sourceTree = "<group>"; };
-		CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowViewerTab.mm; sourceTree = "<group>"; };
 		CF0519DA17E9C98A00590C74 /* PanelAux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelAux.h; sourceTree = "<group>"; };
 		CF0519DB17E9C98A00590C74 /* PanelAux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelAux.mm; sourceTree = "<group>"; };
 		CF07DE36175D971E00757DE1 /* MainWindowStateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainWindowStateProtocol.h; sourceTree = "<group>"; };
@@ -1245,10 +1236,6 @@
 		CF0939471D1510DF00D67AC6 /* ToolsMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToolsMenuDelegate.mm; path = NimbleCommander/States/FilePanels/ToolsMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTab.h; sourceTree = "<group>"; };
-		CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTab.mm; sourceTree = "<group>"; };
-		CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = "<group>"; };
-		CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowExternalEditorsTabNewEditorSheet.mm; sourceTree = "<group>"; };
 		CF0A400D1B57E28C002A092B /* FilePanelOverlappedTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelOverlappedTerminal.h; sourceTree = "<group>"; };
 		CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FilePanelOverlappedTerminal.mm; sourceTree = "<group>"; };
 		CF0A40121B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+OverlappedTerminalSupport.h"; sourceTree = "<group>"; };
@@ -1316,6 +1303,39 @@
 		CF4E33DC1B79AF87005B5292 /* VFSConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSConfiguration.cpp; path = vfs/VFSConfiguration.cpp; sourceTree = "<group>"; };
 		CF4E33E01B79B53E005B5292 /* VFSFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFactory.cpp; path = vfs/VFSFactory.cpp; sourceTree = "<group>"; };
 		CF4E33E11B79B53E005B5292 /* VFSFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFactory.h; path = vfs/VFSFactory.h; sourceTree = "<group>"; };
+		CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTab.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowExternalEditorsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56301D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTabNewEditorSheet.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = SOURCE_ROOT; };
+		CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowExternalEditorsTabNewEditorSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTabNewEditorSheet.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56321D5064FE00452912 /* PreferencesWindowGeneralTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowGeneralTab.h; path = NimbleCommander/Preferences/PreferencesWindowGeneralTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowGeneralTab.mm; path = NimbleCommander/Preferences/PreferencesWindowGeneralTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56341D5064FE00452912 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowHotkeysTab.h; path = NimbleCommander/Preferences/PreferencesWindowHotkeysTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowHotkeysTab.mm; path = NimbleCommander/Preferences/PreferencesWindowHotkeysTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56361D5064FE00452912 /* PreferencesWindowPanelsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowPanelsTab.h; path = NimbleCommander/Preferences/PreferencesWindowPanelsTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowPanelsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowPanelsTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56381D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowPanelsTabColoringFilterSheet.h; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabColoringFilterSheet.h; sourceTree = SOURCE_ROOT; };
+		CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowPanelsTabColoringFilterSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabColoringFilterSheet.mm; sourceTree = SOURCE_ROOT; };
+		CF4E563A1D5064FE00452912 /* PreferencesWindowTerminalTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowTerminalTab.h; path = NimbleCommander/Preferences/PreferencesWindowTerminalTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowTerminalTab.mm; path = NimbleCommander/Preferences/PreferencesWindowTerminalTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E563C1D5064FE00452912 /* PreferencesWindowViewerTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowViewerTab.h; path = NimbleCommander/Preferences/PreferencesWindowViewerTab.h; sourceTree = SOURCE_ROOT; };
+		CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowViewerTab.mm; path = NimbleCommander/Preferences/PreferencesWindowViewerTab.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56711D50667300452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowExternalEditorsTab.xib; sourceTree = "<group>"; };
+		CF4E56741D50667A00452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowExternalEditorsTab.strings; sourceTree = "<group>"; };
+		CF4E56761D50668A00452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowExternalEditorsTabNewEditorSheet.xib; sourceTree = "<group>"; };
+		CF4E56791D50668E00452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowGeneralTab.xib; sourceTree = "<group>"; };
+		CF4E567C1D50669100452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowHotkeysTab.xib; sourceTree = "<group>"; };
+		CF4E567F1D50669600452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTab.xib; sourceTree = "<group>"; };
+		CF4E56821D50669900452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTabColoringFilterSheet.xib; sourceTree = "<group>"; };
+		CF4E56851D50669C00452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowTerminalTab.xib; sourceTree = "<group>"; };
+		CF4E568B1D5066A400452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowViewerTab.xib; sourceTree = "<group>"; };
+		CF4E568E1D5066B100452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowExternalEditorsTabNewEditorSheet.strings; sourceTree = "<group>"; };
+		CF4E56901D5066B400452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowGeneralTab.strings; sourceTree = "<group>"; };
+		CF4E56921D5066B700452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowHotkeysTab.strings; sourceTree = "<group>"; };
+		CF4E56941D5066BC00452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTab.strings; sourceTree = "<group>"; };
+		CF4E56961D5066BF00452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTabColoringFilterSheet.strings; sourceTree = "<group>"; };
+		CF4E56981D5066C200452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowTerminalTab.strings; sourceTree = "<group>"; };
+		CF4E569C1D5066C800452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowViewerTab.strings; sourceTree = "<group>"; };
+		CF4E569D1D50687A00452912 /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Preferences.h; path = NimbleCommander/Preferences/Preferences.h; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF50B6B71A15164100E3D96D /* VFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFS.h; path = vfs/VFS.h; sourceTree = "<group>"; };
@@ -1374,8 +1394,6 @@
 		CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreHelper.mm; sourceTree = "<group>"; };
 		CF6E44871CCE390A009F45B0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CF6FAA201B82E1DD006E0742 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_party/Sparkle.framework; sourceTree = "<group>"; };
-		CF7249A41990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowPanelsTabColoringFilterSheet.h; sourceTree = "<group>"; };
-		CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowPanelsTabColoringFilterSheet.mm; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		CF73A6221816B3C200F59016 /* libquarantine.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libquarantine.dylib; path = usr/lib/system/libquarantine.dylib; sourceTree = SDKROOT; };
 		CF73D1D01BE608BC0014C88F /* DisplayNamesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayNamesCache.h; path = vfs/Native/DisplayNamesCache.h; sourceTree = "<group>"; };
@@ -1557,8 +1575,6 @@
 		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = 3rd_party/gtm/GTMHotKeyTextField.h; sourceTree = "<group>"; };
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowHotkeysTab.h; sourceTree = "<group>"; };
-		CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowHotkeysTab.mm; sourceTree = "<group>"; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFA5C3CD175799CF00DFE2E4 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockAnalysis.h; sourceTree = "<group>"; };
@@ -1604,14 +1620,6 @@
 		CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculateChecksumSheetController.h; sourceTree = "<group>"; };
 		CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CalculateChecksumSheetController.mm; sourceTree = "<group>"; };
 		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
-		CFCABCCA1A6F9D05008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowExternalEditorsTab.xib; sourceTree = "<group>"; };
-		CFCABCCD1A6F9D37008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowExternalEditorsTab.strings; sourceTree = "<group>"; };
-		CFCABCD11A6FA3D3008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowExternalEditorsTabNewEditorSheet.xib; sourceTree = "<group>"; };
-		CFCABCD41A6FB6F0008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowExternalEditorsTabNewEditorSheet.strings; sourceTree = "<group>"; };
-		CFCABCD81A6FC008008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowTerminalTab.xib; sourceTree = "<group>"; };
-		CFCABCDB1A6FC074008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowTerminalTab.strings; sourceTree = "<group>"; };
-		CFCABCDF1A6FC4AF008C222E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowHotkeysTab.xib; sourceTree = "<group>"; };
-		CFCABCE21A6FC4D5008C222E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowHotkeysTab.strings; sourceTree = "<group>"; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
@@ -1688,12 +1696,7 @@
 		CFD712D517EED43800DA15EF /* PanelController+DataAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DataAccess.mm"; sourceTree = "<group>"; };
 		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
-		CFD83AD21A6D5638002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTab.strings; sourceTree = "<group>"; };
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
-		CFD83ADC1A6D6736002EE49B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowPanelsTabColoringFilterSheet.xib; sourceTree = "<group>"; };
-		CFD83ADF1A6D682F002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTabColoringFilterSheet.strings; sourceTree = "<group>"; };
-		CFD83AE31A6D6E51002EE49B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowViewerTab.xib; sourceTree = "<group>"; };
-		CFD83AE61A6D78C4002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowViewerTab.strings; sourceTree = "<group>"; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDA4CCB182A17C7006EC35C /* LSUrls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSUrls.h; sourceTree = "<group>"; };
@@ -1705,8 +1708,6 @@
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CFDB40DD171181B3005AA897 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrthodoxMonospace.h; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
-		CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowTerminalTab.h; sourceTree = "<group>"; };
-		CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferencesWindowTerminalTab.mm; sourceTree = "<group>"; };
 		CFE1A4F216C632F700EFBA3C /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		CFE1A4F316C632F700EFBA3C /* MainWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindowController.mm; sourceTree = "<group>"; };
 		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
@@ -2003,33 +2004,34 @@
 		B52EB78B172277C5004ABC2E /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				CF039EA81791166000DC85D6 /* PreferencesWindowGeneralTab.h */,
-				CF039EA91791166000DC85D6 /* PreferencesWindowGeneralTab.mm */,
-				CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */,
-				CF039EAD17911FF900DC85D6 /* PreferencesWindowPanelsTab.h */,
-				CF039EAE17911FF900DC85D6 /* PreferencesWindowPanelsTab.mm */,
-				CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */,
-				CF7249A41990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.h */,
-				CF7249A51990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */,
-				CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */,
-				CF039EB21791204600DC85D6 /* PreferencesWindowViewerTab.h */,
-				CF039EB31791204600DC85D6 /* PreferencesWindowViewerTab.mm */,
-				CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */,
-				CF09857618F2E922006E6410 /* PreferencesWindowExternalEditorsTab.h */,
-				CF09857718F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm */,
-				CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */,
-				CF09857D18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */,
-				CF09857E18F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */,
-				CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */,
-				CFE1088A1946CBAF00DABC5C /* PreferencesWindowTerminalTab.h */,
-				CFE1088B1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm */,
-				CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */,
-				CFA3D7CA196286CD006A30A1 /* PreferencesWindowHotkeysTab.h */,
-				CFA3D7CB196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm */,
-				CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */,
+				CF4E569D1D50687A00452912 /* Preferences.h */,
+				CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */,
+				CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */,
+				CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */,
+				CF4E56301D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */,
+				CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */,
+				CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */,
+				CF4E56321D5064FE00452912 /* PreferencesWindowGeneralTab.h */,
+				CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */,
+				CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */,
+				CF4E56341D5064FE00452912 /* PreferencesWindowHotkeysTab.h */,
+				CF4E56351D5064FE00452912 /* PreferencesWindowHotkeysTab.mm */,
+				CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */,
+				CF4E56361D5064FE00452912 /* PreferencesWindowPanelsTab.h */,
+				CF4E56371D5064FE00452912 /* PreferencesWindowPanelsTab.mm */,
+				CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */,
+				CF4E56381D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.h */,
+				CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */,
+				CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */,
+				CF4E563A1D5064FE00452912 /* PreferencesWindowTerminalTab.h */,
+				CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */,
+				CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */,
 				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
 				CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */,
 				CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */,
+				CF4E563C1D5064FE00452912 /* PreferencesWindowViewerTab.h */,
+				CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */,
+				CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -3202,11 +3204,16 @@
 			files = (
 				CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
+				CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
+				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
 				CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
+				CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
+				CF4E56C71D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CF4E56B41D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
@@ -3217,11 +3224,11 @@
 				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF007C4D1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBD21A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
+				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
@@ -3231,20 +3238,15 @@
 				CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBBE1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBB91A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
-				CF007C541A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFD83AE11A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
-				CFCABCC81A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
-				CFCABCCF1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFCABCD61A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
-				CFCABCDD1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
+				CF4E56AE1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
+				CF4E56A81D5068D700452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CFC044E81B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
-				CFD83ADA1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */,
 				CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
@@ -3262,20 +3264,22 @@
 				CFA53A381D433E2A00C562A7 /* Credits.rtf in Resources */,
 				CFA53A391D433E2A00C562A7 /* BatchRenameSheetController.xib in Resources */,
 				CFA53A3A1D433E2A00C562A7 /* SpotlightSearchPopupViewController.xib in Resources */,
+				CF4E56BC1D5068F800452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFA53A3B1D433E2A00C562A7 /* Help.pdf in Resources */,
 				CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */,
 				CFA53A3D1D433E2A00C562A7 /* MassCopySheetController.xib in Resources */,
 				CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */,
+				CF4E56C81D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFA53A3F1D433E2A00C562A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */,
-				CFA53A411D433E2A00C562A7 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */,
 				CFA53A441D433E2A00C562A7 /* main_icon.icns in Resources */,
+				CF4E56C21D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFA53A451D433E2A00C562A7 /* FileSysEntryAttrSheetController.xib in Resources */,
+				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFA53A461D433E2A00C562A7 /* FindFilesSheetController.xib in Resources */,
 				CFA53A471D433E2A00C562A7 /* BigFileViewSheet.xib in Resources */,
-				CFA53A481D433E2A00C562A7 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFA53A491D433E2A00C562A7 /* FileDeletionSheetController.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
 				CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -3283,20 +3287,18 @@
 				CFA53A4D1D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */,
 				CFA53A4F1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.xib in Resources */,
+				CF4E56A31D5068CD00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */,
-				CFA53A511D433E2A00C562A7 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CFA53A531D433E2A00C562A7 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFA53A541D433E2A00C562A7 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFA53A551D433E2A00C562A7 /* OperationsSummaryViewController.xib in Resources */,
 				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
 				CFA53A571D433E2A00C562A7 /* Operations.strings in Resources */,
-				CFA53A581D433E2A00C562A7 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
 				CFA53A5A1D433E2A00C562A7 /* State.json in Resources */,
+				CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CF4E56AF1D5068E200452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFA53A5B1D433E2A00C562A7 /* AskForPasswordWindowController.xib in Resources */,
-				CFA53A5C1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFA53A5D1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFA53A5E1D433E2A00C562A7 /* ProcessSheetController.xib in Resources */,
 				CFA53A5F1D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFA53A601D433E2A00C562A7 /* SFTPConnectionSheetController.xib in Resources */,
@@ -3315,24 +3317,29 @@
 				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */,
 				CF7B20701A277A27008F1492 /* TrialWindowController.xib in Resources */,
+				CF4E56781D50668E00452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */,
 				CFC044E71B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
 				CFFED08F1CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
+				CF4E568A1D5066A400452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
+				CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF54101F1A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
-				CF007C4C1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
+				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
+				CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF306F931CE9E54C002326FA /* main_icon.icns in Resources */,
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CFCCFBBD1A5D71F700313845 /* FindFilesSheetController.xib in Resources */,
 				CFCCFBD11A5E467D00313845 /* BigFileViewSheet.xib in Resources */,
-				CFCABCD51A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
+				CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
+				CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */,
@@ -3340,25 +3347,20 @@
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
-				CFCABCDC1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF007C531A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFD83AE01A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
 				CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */,
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
 				CFFFBABB1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist in Resources */,
-				CFD83AD91A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
-				CFCABCCE1A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFCABCC71A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,
+				CF4E567E1D50669600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 			);
@@ -3370,11 +3372,16 @@
 			files = (
 				CF50C42E1C0ADEAD009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
 				CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
+				CF4E56CC1D50694000452912 /* PreferencesWindowViewerTab.xib in Resources */,
+				CF4E56C01D50691A00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
+				CF4E56A11D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */,
 				CFF6F3711A13567C00011177 /* Help.pdf in Resources */,
+				CF4E56C61D50692300452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
+				CF4E56B31D5068EB00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
 				CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
@@ -3386,11 +3393,10 @@
 				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
 				CFCCFBD31A5E467E00313845 /* BigFileViewSheet.xib in Resources */,
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
-				CFCABCD71A6FC008008C222E /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
-				CF007C4E1A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
+				CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
@@ -3400,17 +3406,13 @@
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFA7FA741C1D6E06000D039F /* Config.json in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
-				CFCABCDE1A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CF007C551A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CFD83AE21A6D6E51002EE49B /* PreferencesWindowViewerTab.xib in Resources */,
-				CFD83ADB1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
-				CFCABCD01A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFCABCC91A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
+				CF4E56AD1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
+				CF4E56A71D5068D600452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFC044E91B2F325A00969A5E /* BatchRenameSheetController.xib in Resources */,
@@ -3514,6 +3516,7 @@
 				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
 				CF50C43D1C0ADEDD009DF611 /* VFSArchiveInternal.mm in Sources */,
 				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
+				CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
 				CF46DB7F1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
@@ -3526,7 +3529,6 @@
 				CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */,
 				CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
-				CF7249A81990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */,
@@ -3543,6 +3545,8 @@
 				CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF50C4561C0ADF12009DF611 /* VFSNetSFTPFile.cpp in Sources */,
 				CF50C4381C0ADED4009DF611 /* VFSArchiveFile.cpp in Sources */,
+				CF4E56A61D5068D300452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
@@ -3557,6 +3561,7 @@
 				CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CF6D9BE6196678000077B146 /* FileMask.mm in Sources */,
 				CF6D9BE7196678000077B146 /* FileSearch.mm in Sources */,
+				CF4E56B81D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF6D9BE8196678000077B146 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF6D9BEA196678000077B146 /* LSUrls.mm in Sources */,
@@ -3599,11 +3604,13 @@
 				CF4E33D81B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF50B74A1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
+				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFDEB8251D2BB7D8009BCCBD /* ToolsMenuDelegate.mm in Sources */,
 				CF50C4441C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,
 				CF46DB891C856F65009E28B9 /* BigFileViewHistory.mm in Sources */,
 				CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF50C44E1C0ADF02009DF611 /* VFSNetFTPCache.mm in Sources */,
+				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFA7FA731C1D6DAF000D039F /* Config.mm in Sources */,
 				CF50C43A1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */,
 				CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
@@ -3621,6 +3628,7 @@
 				CF6D9C48196678010077B146 /* PanelAux.mm in Sources */,
 				CF6D9C49196678010077B146 /* MainWindowFilePanelState.mm in Sources */,
 				CF46DB7B1C856F33009E28B9 /* TermScreen.cpp in Sources */,
+				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
@@ -3666,16 +3674,9 @@
 				CF46DBA11C856FED009E28B9 /* rapidjson.cpp in Sources */,
 				CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CF6D9C60196678010077B146 /* MainWindowController.mm in Sources */,
-				CF6D9C61196678010077B146 /* PreferencesWindowGeneralTab.mm in Sources */,
-				CF6D9C62196678010077B146 /* PreferencesWindowPanelsTab.mm in Sources */,
-				CF6D9C63196678010077B146 /* PreferencesWindowViewerTab.mm in Sources */,
-				CF6D9C64196678010077B146 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
-				CF6D9C65196678010077B146 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF46DB8B1C856F69009E28B9 /* BigFileViewHex.mm in Sources */,
-				CF6D9C66196678010077B146 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF46DB971C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
-				CF6D9C67196678010077B146 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -3685,6 +3686,7 @@
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CF50C43F1C0ADEE2009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF46DB851C856F48009E28B9 /* TermTask.cpp in Sources */,
+				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF6D9C6C196678010077B146 /* AppDelegate.mm in Sources */,
 				CFFE09C91B200CE40091ED4F /* Application.mm in Sources */,
 				CF4E33E31B79B53E005B5292 /* VFSFactory.cpp in Sources */,
@@ -3729,6 +3731,7 @@
 				CFA539741D433E2A00C562A7 /* VFSFactory.cpp in Sources */,
 				CFA539751D433E2A00C562A7 /* PanelController+NavigationMenu.mm in Sources */,
 				CFA539761D433E2A00C562A7 /* Job.cpp in Sources */,
+				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFA539771D433E2A00C562A7 /* TermScreenBuffer.cpp in Sources */,
 				CFA539781D433E2A00C562A7 /* VFSNetFTPInternals.mm in Sources */,
 				CFA539791D433E2A00C562A7 /* MainWndGoToButton.mm in Sources */,
@@ -3747,10 +3750,12 @@
 				CFA539861D433E2A00C562A7 /* QLThumbnailsCache.mm in Sources */,
 				CFA539871D433E2A00C562A7 /* JobTrash.mm in Sources */,
 				CFA539881D433E2A00C562A7 /* BigFileViewSheet.mm in Sources */,
+				CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFA5398A1D433E2A00C562A7 /* BriefSystemOverview.mm in Sources */,
 				CFA5398B1D433E2A00C562A7 /* TermScrollView.mm in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
+				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
 				CFA5398E1D433E2A00C562A7 /* VFSError.mm in Sources */,
 				CFA5398F1D433E2A00C562A7 /* VFSArchiveHost.mm in Sources */,
@@ -3768,13 +3773,13 @@
 				CFA5399B1D433E2A00C562A7 /* BigFileViewText.mm in Sources */,
 				CFA5399C1D433E2A00C562A7 /* WorkspaceIconsCache.mm in Sources */,
 				CFA5399D1D433E2A00C562A7 /* ConnectionsMenuDelegate.mm in Sources */,
-				CFA5399E1D433E2A00C562A7 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFA5399F1D433E2A00C562A7 /* MainWindow.mm in Sources */,
 				CFA539A01D433E2A00C562A7 /* LSUrls.mm in Sources */,
 				CFA539A11D433E2A00C562A7 /* VFSHost.cpp in Sources */,
 				CFA539A21D433E2A00C562A7 /* Config.cpp in Sources */,
 				CFA539A31D433E2A00C562A7 /* PanelDataPersistency.cpp in Sources */,
 				CFA539A41D433E2A00C562A7 /* VFSPSFile.cpp in Sources */,
+				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFA539A51D433E2A00C562A7 /* MainWindowBigFileViewState.mm in Sources */,
 				CFA539A61D433E2A00C562A7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFA539A71D433E2A00C562A7 /* VFSArchiveUnRARHost.cpp in Sources */,
@@ -3787,13 +3792,13 @@
 				CFA539AE1D433E2A00C562A7 /* PanelController+DragAndDrop.mm in Sources */,
 				CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */,
 				CFA539B01D433E2A00C562A7 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFA539B11D433E2A00C562A7 /* AppStoreRatings.mm in Sources */,
 				CFA539B21D433E2A00C562A7 /* VFSEasyOps.mm in Sources */,
 				CFA539B31D433E2A00C562A7 /* ButtonWithOptions.m in Sources */,
 				CFA539B41D433E2A00C562A7 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFA539B51D433E2A00C562A7 /* VFSNetFTPCache.mm in Sources */,
 				CFA539B61D433E2A00C562A7 /* PanelController+Navigation.mm in Sources */,
-				CFA539B71D433E2A00C562A7 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CFA539B81D433E2A00C562A7 /* ToolsMenuDelegate.mm in Sources */,
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
 				CFA539BA1D433E2A00C562A7 /* FilePanelMainSplitView.mm in Sources */,
@@ -3806,13 +3811,13 @@
 				CFA539C11D433E2A00C562A7 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFA539C21D433E2A00C562A7 /* BigFileViewHex.mm in Sources */,
 				CFA539C31D433E2A00C562A7 /* QuickPreview.mm in Sources */,
-				CFA539C41D433E2A00C562A7 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFA539C51D433E2A00C562A7 /* QLVFSThumbnailsCache.mm in Sources */,
 				CFA539C61D433E2A00C562A7 /* VFSNetFTPFile.mm in Sources */,
 				CFA539C71D433E2A00C562A7 /* MMTabBarStyle.mm in Sources */,
 				CFA539C81D433E2A00C562A7 /* xattr.cpp in Sources */,
 				CFA539C91D433E2A00C562A7 /* Common.mm in Sources */,
 				CFA539CA1D433E2A00C562A7 /* CreateDirectoryOperationJob.mm in Sources */,
+				CF4E56C51D50692000452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CFA539CB1D433E2A00C562A7 /* VFSListing.cpp in Sources */,
 				CFA539CC1D433E2A00C562A7 /* PanelViewPresentation.mm in Sources */,
 				CFA539CD1D433E2A00C562A7 /* ProcessSheetController.mm in Sources */,
@@ -3858,25 +3863,23 @@
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
 				CFA539F61D433E2A00C562A7 /* VFSConfiguration.cpp in Sources */,
 				CFA539F71D433E2A00C562A7 /* AppleDoubleEA.cpp in Sources */,
+				CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */,
-				CFA539F91D433E2A00C562A7 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFA539FB1D433E2A00C562A7 /* rapidjson.cpp in Sources */,
 				CFA539FC1D433E2A00C562A7 /* BatchRenameOperationJob.mm in Sources */,
 				CFA539FD1D433E2A00C562A7 /* MASAppInstalledChecker.cpp in Sources */,
 				CFA539FE1D433E2A00C562A7 /* VFSArchiveUnRARFile.cpp in Sources */,
+				CF4E56CB1D50693D00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFA539FF1D433E2A00C562A7 /* FileSysAttrChangeOperation.mm in Sources */,
-				CFA53A001D433E2A00C562A7 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFA53A011D433E2A00C562A7 /* BatchRenameSheetController.mm in Sources */,
 				CFA53A021D433E2A00C562A7 /* PanelController+DataAccess.mm in Sources */,
 				CFA53A031D433E2A00C562A7 /* PanelController+Menu.mm in Sources */,
 				CFA53A041D433E2A00C562A7 /* FindFilesSheetController.mm in Sources */,
 				CFA53A051D433E2A00C562A7 /* VFSArchiveFile.cpp in Sources */,
-				CFA53A061D433E2A00C562A7 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFA53A071D433E2A00C562A7 /* OperationJob.cpp in Sources */,
 				CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */,
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
-				CFA53A0A1D433E2A00C562A7 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFA53A0B1D433E2A00C562A7 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */,
 				CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */,
@@ -3885,7 +3888,6 @@
 				CFA53A101D433E2A00C562A7 /* BigFileView.mm in Sources */,
 				CFA53A111D433E2A00C562A7 /* TermTask.cpp in Sources */,
 				CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */,
-				CFA53A131D433E2A00C562A7 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFA53A141D433E2A00C562A7 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFA53A151D433E2A00C562A7 /* PanelController+QuickSearch.mm in Sources */,
 				CFA53A161D433E2A00C562A7 /* FileSearch.mm in Sources */,
@@ -3923,6 +3925,7 @@
 				CF4E33E21B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF4E33D71B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */,
+				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFED5A1B1C4F8D3200BFCB5C /* TermScreenBuffer.cpp in Sources */,
 				CF73D1E51BE6155E0014C88F /* VFSNetFTPInternals.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
@@ -3941,10 +3944,12 @@
 				CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */,
 				CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */,
 				CFED5A461C50EA0100BFCB5C /* BigFileViewSheet.mm in Sources */,
+				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CFED5A1C1C4F8D3200BFCB5C /* TermScrollView.mm in Sources */,
 				CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */,
+				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
 				CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */,
 				CF73D1FC1BE619B20014C88F /* VFSArchiveHost.mm in Sources */,
@@ -3962,13 +3967,13 @@
 				CFED5A471C50EA0100BFCB5C /* BigFileViewText.mm in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
 				CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
-				CF7249A71990AB0E00583BC5 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFD6F9191BEC4FEA00A1B046 /* VFSHost.cpp in Sources */,
 				CF754D4C1C8F11F800381260 /* Config.cpp in Sources */,
 				CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */,
 				CF73D1F11BE6179A0014C88F /* VFSPSFile.cpp in Sources */,
+				CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFED5A481C50EA0100BFCB5C /* MainWindowBigFileViewState.mm in Sources */,
 				CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CF73D2061BE61AAC0014C88F /* VFSArchiveUnRARHost.cpp in Sources */,
@@ -3981,13 +3986,13 @@
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF73D1E21BE6155E0014C88F /* VFSNetFTPCache.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
-				CFE1088D1946CBAF00DABC5C /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
@@ -4000,13 +4005,13 @@
 				CF0A40141B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFED5A441C50EA0100BFCB5C /* BigFileViewHex.mm in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
-				CFA3D7CD196286CD006A30A1 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
 				CF73D1E31BE6155E0014C88F /* VFSNetFTPFile.mm in Sources */,
 				CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CFA7751E1BD08D630045072A /* xattr.cpp in Sources */,
 				CFB060DD172E6AC4001F6949 /* Common.mm in Sources */,
 				CF7D135B1BF1B964001F53FD /* CreateDirectoryOperationJob.mm in Sources */,
+				CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CFD6F91A1BEC4FEA00A1B046 /* VFSListing.cpp in Sources */,
 				B52D9A7D1736D7DE00EC7154 /* PanelViewPresentation.mm in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
@@ -4052,25 +4057,23 @@
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF4E33DD1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */,
+				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF7D138E1BF5E38B001F53FD /* OperationsController.mm in Sources */,
-				CF039EAB1791166000DC85D6 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF46D8EA1C853C2C009E28B9 /* rapidjson.cpp in Sources */,
 				CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */,
 				CF7B20651A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
 				CF73D2051BE61AAC0014C88F /* VFSArchiveUnRARFile.cpp in Sources */,
+				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */,
-				CF039EB017911FFA00DC85D6 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF7D13411BF1B091001F53FD /* BatchRenameSheetController.mm in Sources */,
 				CFD712D617EED43800DA15EF /* PanelController+DataAccess.mm in Sources */,
 				CFAADAB21930E02200D30699 /* PanelController+Menu.mm in Sources */,
 				CFCD3B7C18AB64C600028B41 /* FindFilesSheetController.mm in Sources */,
 				CF73D1FB1BE619B20014C88F /* VFSArchiveFile.cpp in Sources */,
-				CF039EB51791204600DC85D6 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF7D138D1BF5E38B001F53FD /* OperationJob.cpp in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
 				CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
-				CF09857918F2E922006E6410 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */,
@@ -4079,7 +4082,6 @@
 				CFED5A421C50EA0100BFCB5C /* BigFileView.mm in Sources */,
 				CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */,
 				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
-				CF09858018F2FAA0006E6410 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CFCD3B6D18A9DC7300028B41 /* FileSearch.mm in Sources */,
@@ -4125,6 +4127,7 @@
 				CFF6F25A1A13567C00011177 /* SandboxManager.mm in Sources */,
 				CF46DB821C856F44009E28B9 /* TermSingleTask.mm in Sources */,
 				CF46DB8E1C856F71009E28B9 /* BigFileView.mm in Sources */,
+				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */,
@@ -4143,10 +4146,12 @@
 				CF46DB921C856F7D009E28B9 /* BigFileViewText.mm in Sources */,
 				CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */,
 				CF46DB801C856F40009E28B9 /* TermShellTask.cpp in Sources */,
+				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF50C4511C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */,
 				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFF6F27A1A13567C00011177 /* BriefSystemOverview.mm in Sources */,
+				CF4E56AA1D5068DC00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
@@ -4169,8 +4174,8 @@
 				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
-				CFF6F2901A13567C00011177 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF46DB8C1C856F6D009E28B9 /* BigFileViewDataBackend.mm in Sources */,
+				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF0A401C1B60BA00002A092B /* BlinkingCaret.mm in Sources */,
 				CFF6F2931A13567C00011177 /* MainWindow.mm in Sources */,
 				CF46DB9E1C856FE7009E28B9 /* PanelDataPersistency.cpp in Sources */,
@@ -4183,6 +4188,7 @@
 				CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */,
 				CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
+				CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CFF6F2B81A13567C00011177 /* PanelController+DragAndDrop.mm in Sources */,
 				CF50B7481A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
@@ -4191,7 +4197,6 @@
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
-				CFF6F2CD1A13567C00011177 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CF50C4451C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,
@@ -4207,8 +4212,8 @@
 				CF50C43B1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */,
 				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
-				CFF6F2DE1A13567C00011177 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50B75F1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
+				CF4E56C31D50691E00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C3FC1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
 				CFF6F2E21A13567C00011177 /* MMTabBarStyle.mm in Sources */,
 				CFF6F2E31A13567C00011177 /* Common.mm in Sources */,
@@ -4253,23 +4258,21 @@
 				CFF6F3211A13567C00011177 /* AppleDoubleEA.cpp in Sources */,
 				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
-				CFF6F3231A13567C00011177 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF50C4461C0ADEEF009DF611 /* VFSNativeFile.cpp in Sources */,
+				CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF46DBA01C856FEC009E28B9 /* rapidjson.cpp in Sources */,
 				CF7B20671A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
-				CFF6F3261A13567C00011177 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFF6F3271A13567C00011177 /* PanelController+DataAccess.mm in Sources */,
 				CFF6F32C1A13567C00011177 /* PanelController+Menu.mm in Sources */,
 				CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CFF6F32E1A13567C00011177 /* FindFilesSheetController.mm in Sources */,
-				CFF6F3311A13567C00011177 /* PreferencesWindowViewerTab.mm in Sources */,
+				CF4E56C91D50693B00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF46DB8A1C856F69009E28B9 /* BigFileViewHex.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CF46DB961C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
 				CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
-				CFF6F3381A13567C00011177 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CF50C43E1C0ADEE1009DF611 /* VFSArchiveUnRARFile.cpp in Sources */,
@@ -4279,7 +4282,6 @@
 				CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */,
 				CF4E33E41B79B53E005B5292 /* VFSFactory.cpp in Sources */,
 				CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */,
-				CFF6F3431A13567C00011177 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF6A428B1CD7B9C00085CAF9 /* shared_mutex.cpp in Sources */,
 				CFF6F3461A13567C00011177 /* PanelController+QuickSearch.mm in Sources */,
 				CFF6F3491A13567C00011177 /* FileSearch.mm in Sources */,
@@ -4310,24 +4312,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CF007C501A6BC7CB00CB0E48 /* PreferencesWindowGeneralTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF007C4F1A6BC7CB00CB0E48 /* Base */,
-				CF007C521A6BCA4F00CB0E48 /* ru */,
-			);
-			name = PreferencesWindowGeneralTab.xib;
-			sourceTree = "<group>";
-		};
-		CF007C571A6BCB8700CB0E48 /* PreferencesWindowPanelsTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF007C561A6BCB8700CB0E48 /* Base */,
-				CFD83AD21A6D5638002EE49B /* ru */,
-			);
-			name = PreferencesWindowPanelsTab.xib;
-			sourceTree = "<group>";
-		};
 		CF3120C81A510F640062185A /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4355,6 +4339,86 @@
 			);
 			name = ExternalToolParameterValueSheetController.xib;
 			path = NimbleCommander/States/FilePanels;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E56711D50667300452912 /* Base */,
+				CF4E56741D50667A00452912 /* ru */,
+			);
+			name = PreferencesWindowExternalEditorsTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E56771D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E56761D50668A00452912 /* Base */,
+				CF4E568E1D5066B100452912 /* ru */,
+			);
+			name = PreferencesWindowExternalEditorsTabNewEditorSheet.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E567A1D50668E00452912 /* PreferencesWindowGeneralTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E56791D50668E00452912 /* Base */,
+				CF4E56901D5066B400452912 /* ru */,
+			);
+			name = PreferencesWindowGeneralTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E567D1D50669100452912 /* PreferencesWindowHotkeysTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E567C1D50669100452912 /* Base */,
+				CF4E56921D5066B700452912 /* ru */,
+			);
+			name = PreferencesWindowHotkeysTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E56801D50669600452912 /* PreferencesWindowPanelsTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E567F1D50669600452912 /* Base */,
+				CF4E56941D5066BC00452912 /* ru */,
+			);
+			name = PreferencesWindowPanelsTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E56821D50669900452912 /* Base */,
+				CF4E56961D5066BF00452912 /* ru */,
+			);
+			name = PreferencesWindowPanelsTabColoringFilterSheet.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E56851D50669C00452912 /* Base */,
+				CF4E56981D5066C200452912 /* ru */,
+			);
+			name = PreferencesWindowTerminalTab.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
+		};
+		CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4E568B1D5066A400452912 /* Base */,
+				CF4E569C1D5066C800452912 /* ru */,
+			);
+			name = PreferencesWindowViewerTab.xib;
+			path = NimbleCommander/Preferences;
 			sourceTree = SOURCE_ROOT;
 		};
 		CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */ = {
@@ -4435,42 +4499,6 @@
 				CFCCFC161A5E891600313845 /* ru */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		CFCABCCB1A6F9D05008C222E /* PreferencesWindowExternalEditorsTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCABCCA1A6F9D05008C222E /* Base */,
-				CFCABCCD1A6F9D37008C222E /* ru */,
-			);
-			name = PreferencesWindowExternalEditorsTab.xib;
-			sourceTree = "<group>";
-		};
-		CFCABCD21A6FA3D3008C222E /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCABCD11A6FA3D3008C222E /* Base */,
-				CFCABCD41A6FB6F0008C222E /* ru */,
-			);
-			name = PreferencesWindowExternalEditorsTabNewEditorSheet.xib;
-			sourceTree = "<group>";
-		};
-		CFCABCD91A6FC008008C222E /* PreferencesWindowTerminalTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCABCD81A6FC008008C222E /* Base */,
-				CFCABCDB1A6FC074008C222E /* ru */,
-			);
-			name = PreferencesWindowTerminalTab.xib;
-			sourceTree = "<group>";
-		};
-		CFCABCE01A6FC4AF008C222E /* PreferencesWindowHotkeysTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCABCDF1A6FC4AF008C222E /* Base */,
-				CFCABCE21A6FC4D5008C222E /* ru */,
-			);
-			name = PreferencesWindowHotkeysTab.xib;
 			sourceTree = "<group>";
 		};
 		CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */ = {
@@ -4633,24 +4661,6 @@
 				CFCCFC631A5FBD9600313845 /* ru */,
 			);
 			name = FilePanelsQuickSearch.strings;
-			sourceTree = "<group>";
-		};
-		CFD83ADD1A6D6736002EE49B /* PreferencesWindowPanelsTabColoringFilterSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFD83ADC1A6D6736002EE49B /* Base */,
-				CFD83ADF1A6D682F002EE49B /* ru */,
-			);
-			name = PreferencesWindowPanelsTabColoringFilterSheet.xib;
-			sourceTree = "<group>";
-		};
-		CFD83AE41A6D6E51002EE49B /* PreferencesWindowViewerTab.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFD83AE31A6D6E51002EE49B /* Base */,
-				CFD83AE61A6D78C4002EE49B /* ru */,
-			);
-			name = PreferencesWindowViewerTab.xib;
 			sourceTree = "<group>";
 		};
 		CFD9F94D1A623E4E001B3F33 /* Operations.strings */ = {

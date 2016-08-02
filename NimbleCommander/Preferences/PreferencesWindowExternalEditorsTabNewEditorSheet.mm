@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../Files/FileMask.h"
+#include "../../Files/ActivationManager.h"
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
-#include "FileMask.h"
-#include "ActivationManager.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
 @end

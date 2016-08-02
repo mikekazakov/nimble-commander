@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "ExternalEditorInfo.h"
+#include "../../Files/ExternalEditorInfo.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 

@@ -6,13 +6,13 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "3rd_party/gtm/GTMHotKeyTextField.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
-#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
+#import "../../Files/3rd_party/gtm/GTMHotKeyTextField.h"
+#include "../../Files/ActionsShortcutsManager.h"
+#include "../States/FilePanels/ExternalToolsSupport.h"
+#include "../../Files/ActivationManager.h"
 #include "PreferencesWindowHotkeysTab.h"
-#include "ActionsShortcutsManager.h"
-#include "ActivationManager.h"
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 {

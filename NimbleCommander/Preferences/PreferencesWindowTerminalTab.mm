@@ -7,8 +7,8 @@
 //
 
 #include <Utility/FontExtras.h>
+#include "../../Files/Config.h"
 #include "PreferencesWindowTerminalTab.h"
-#include "Config.h"
 
 static const auto g_ConfigFont = "terminal.font";
 

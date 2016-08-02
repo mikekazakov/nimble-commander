@@ -1,0 +1,96 @@
+/* Class = "NSTextFieldCell"; title = "ANSI Colors"; ObjectID = "2Kw-RY-4u0"; */
+"2Kw-RY-4u0.title" = "Цвета ANSI";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright White (15)"; ObjectID = "4OJ-NR-85t"; */
+"4OJ-NR-85t.ibShadowedToolTip" = "Ярко-белый (15)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "White (7)"; ObjectID = "6CK-Is-VQh"; */
+"6CK-Is-VQh.ibShadowedToolTip" = "Белый (7)";
+
+/* Class = "NSTextFieldCell"; title = "Font"; ObjectID = "9LW-aK-nMs"; */
+"9LW-aK-nMs.title" = "Шрифт";
+
+/* Class = "NSButtonCell"; title = "Change..."; ObjectID = "10R-Vq-CP2"; */
+"10R-Vq-CP2.title" = "Изменить...";
+
+/* Class = "NSTextFieldCell"; title = "Bright"; ObjectID = "AD2-zv-RsG"; */
+"AD2-zv-RsG.title" = "Яркие";
+
+/* Class = "NSTextFieldCell"; title = "Normal"; ObjectID = "B4C-wO-uIY"; */
+"B4C-wO-uIY.title" = "Обычные";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Magenta (5)"; ObjectID = "BoS-nR-L8j"; */
+"BoS-nR-L8j.ibShadowedToolTip" = "Фиолетовый (5)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Green (2)"; ObjectID = "E42-cg-CNl"; */
+"E42-cg-CNl.ibShadowedToolTip" = "Зеленый (2)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Magenta (13)"; ObjectID = "FNv-mM-sTP"; */
+"FNv-mM-sTP.ibShadowedToolTip" = "Ярко-фиолетовый (13)";
+
+/* Class = "NSButtonCell"; title = "▁ Underline"; ObjectID = "Hi6-HH-WxJ"; */
+"Hi6-HH-WxJ.title" = "▁ Подчеркивание";
+
+/* Class = "NSTextFieldCell"; title = "Cursor"; ObjectID = "IGT-Dv-Ld8"; */
+"IGT-Dv-Ld8.title" = "Курсор";
+
+/* Class = "NSButtonCell"; title = " ▏Vertical Bar"; ObjectID = "OJo-EQ-cnc"; */
+"OJo-EQ-cnc.title" = " ▏Вертикальная полоса";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Blue (12)"; ObjectID = "UBU-ZG-6gR"; */
+"UBU-ZG-6gR.ibShadowedToolTip" = "Ярко-синий (12)";
+
+/* Class = "NSTextFieldCell"; title = "Basic Colors"; ObjectID = "WRM-bF-61O"; */
+"WRM-bF-61O.title" = "Основные цвета";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Yellow (3)"; ObjectID = "XGW-r6-zbG"; */
+"XGW-r6-zbG.ibShadowedToolTip" = "Желтый (3)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Black (8)"; ObjectID = "XtX-go-ptl"; */
+"XtX-go-ptl.ibShadowedToolTip" = "Ярко-черный (8)";
+
+/* Class = "NSTextFieldCell"; title = "Bold Text"; ObjectID = "Yfm-Nn-AuD"; */
+"Yfm-Nn-AuD.title" = "Жирный текст";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Red (9)"; ObjectID = "Yzb-fh-eM5"; */
+"Yzb-fh-eM5.ibShadowedToolTip" = "Ярко-красный (9)";
+
+/* Class = "NSTextFieldCell"; title = "Background"; ObjectID = "cwt-bk-IjR"; */
+"cwt-bk-IjR.title" = "Фон";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Green (10)"; ObjectID = "dHi-nX-Gs9"; */
+"dHi-nX-Gs9.ibShadowedToolTip" = "Ярко-зеленый (10)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Black (0)"; ObjectID = "dZp-nY-uvb"; */
+"dZp-nY-uvb.ibShadowedToolTip" = "Черный (0)";
+
+/* Class = "NSTextFieldCell"; title = "Selection"; ObjectID = "ezd-9K-uv3"; */
+"ezd-9K-uv3.title" = "Выделение";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Cyan (14)"; ObjectID = "jPa-lB-CwM"; */
+"jPa-lB-CwM.ibShadowedToolTip" = "Ярко-голубой (14)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Cyan (6)"; ObjectID = "lYJ-Wx-Aeh"; */
+"lYJ-Wx-Aeh.ibShadowedToolTip" = "Голубой (6)";
+
+/* Class = "NSButtonCell"; title = "█ Block"; ObjectID = "lmd-o1-1kc"; */
+"lmd-o1-1kc.title" = "█ Блок";
+
+/* Class = "NSTextFieldCell"; title = "Cursor"; ObjectID = "nU3-et-JNg"; */
+"nU3-et-JNg.title" = "Курсор";
+
+/* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "p0R-sF-276"; */
+"p0R-sF-276.title" = "Текст";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Red (1)"; ObjectID = "rh6-5H-Jyw"; */
+"rh6-5H-Jyw.ibShadowedToolTip" = "Красный (1)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Bright Yellow (11)"; ObjectID = "tDc-fO-mgO"; */
+"tDc-fO-mgO.ibShadowedToolTip" = "Ярко-желтый (11)";
+
+/* Class = "NSColorWell"; ibShadowedToolTip = "Blue (4)"; ObjectID = "zOX-2h-pbe"; */
+"zOX-2h-pbe.ibShadowedToolTip" = "Синий (4)";
+
+/* Class = "NSButtonCell"; title = "Hide scrollbar"; ObjectID = "zcL-oM-aS5"; */
+"zcL-oM-aS5.title" = "Скрыть полосу прокрутки";
+

@@ -1,0 +1,27 @@
+/* Class = "NSButtonCell"; title = "Symbolic link"; ObjectID = "BgY-7f-vUa"; */
+"BgY-7f-vUa.title" = "Символическая ссылка";
+
+/* Class = "NSButtonCell"; title = "Hidden"; ObjectID = "MwK-gY-7TL"; */
+"MwK-gY-7TL.title" = "Скрытый";
+
+/* Class = "NSTextFieldCell"; title = "Filename mask:"; ObjectID = "Phl-ru-7YI"; */
+"Phl-ru-7YI.title" = "Маска имени файла:";
+
+/* Class = "NSButtonCell"; title = "Selected"; ObjectID = "Uaf-z8-1YE"; */
+"Uaf-z8-1YE.title" = "Выделенный";
+
+/* Class = "NSButtonCell"; title = "Directory"; ObjectID = "XPG-7b-9P8"; */
+"XPG-7b-9P8.title" = "Папка";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "gIg-Vl-0HW"; */
+"gIg-Vl-0HW.title" = "ОК";
+
+/* Class = "NSButtonCell"; title = "Regular file"; ObjectID = "oDn-pT-U2H"; */
+"oDn-pT-U2H.title" = "Обычный файл";
+
+/* Class = "NSButtonCell"; title = "Executable"; ObjectID = "rmY-Vd-0Fr"; */
+"rmY-Vd-0Fr.title" = "Исполняемый";
+
+/* Class = "NSTextFieldCell"; title = "Flags:"; ObjectID = "yJQ-ob-3Ua"; */
+"yJQ-ob-3Ua.title" = "Флаги:";
+

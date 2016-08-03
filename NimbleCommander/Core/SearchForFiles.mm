@@ -63,6 +63,9 @@ void SearchForFiles::SetFilterSize(const FilterSize &_filter)
 {
     if( IsRunning() )
         throw logic_error("Filters can't be changed during background search process");
+    if( _filter.min == 0 &&
+        _filter.max == numeric_limits<uint64_t>::max())
+        return;
     m_FilterSize = _filter;
 }
 

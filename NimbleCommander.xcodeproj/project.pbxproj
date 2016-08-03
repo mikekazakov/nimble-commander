@@ -2176,9 +2176,6 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CF4E56CF1D506B9200452912 /* FindFilesSheetController.h */,
-				CF4E56D01D506B9200452912 /* FindFilesSheetController.mm */,
-				CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
 				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
@@ -2193,6 +2190,9 @@
 				CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */,
 				CFE3E84A19FFC0C9009ADE5E /* FilePanelsTabbedHolder.h */,
 				CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */,
+				CF4E56CF1D506B9200452912 /* FindFilesSheetController.h */,
+				CF4E56D01D506B9200452912 /* FindFilesSheetController.mm */,
+				CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */,
 				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
 				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
 				CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */,

@@ -24,6 +24,31 @@ static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
 
+static string ensure_tr_slash( string _str )
+{
+    if(_str.empty() || _str.back() != '/')
+        _str += '/';
+    return _str;
+}
+
+static string ensure_no_tr_slash( string _str )
+{
+    if( _str.empty() || _str == "/" )
+        return _str;
+    
+    if( _str.back() == '/' )
+        _str.pop_back();
+    
+    return _str;
+}
+
+static string to_relative_path( string _path, const string& _base_path )
+{
+    if( _base_path.length() > 1 && _path.find(_base_path) == 0)
+        _path.replace(0, _base_path.length(), "./");
+    return _path;
+}
+
 class FindFilesSheetComboHistory : public vector<string>
 {
 public:
@@ -346,8 +371,9 @@ private:
     [self endSheet:NSModalResponseOK];
 }
 
-- (void) OnFinishedSearch
+- (void)onSearchFinished
 {
+    dispatch_assert_background_queue();
     m_StatGroup.Wait();
 
     [self UpdateByTimer:m_BatchDrainTimer];
@@ -362,14 +388,47 @@ private:
         m_LookingInPathUpdateTimer = nil;
         self.LookingIn.stringValue = @"";
         
-        if( [self.ArrayController.arrangedObjects count] > 0 )
+        if( m_FoundItems.count > 0 ) {
             [self.window makeFirstResponder:self.TableView];
+            [self.TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:false];
+        }
+        
+        [self setupReturnKey];
     });
+}
+
+- (int) searchOptionsFromUI
+{
+    int search_options = 0;
+    if(self.SearchInSubDirsButton.intValue)
+        search_options |= SearchForFiles::Options::GoIntoSubDirs;
+    if(self.SearchForDirsButton.intValue)
+        search_options |= SearchForFiles::Options::SearchForDirs;
+    return search_options;
+}
+
+- (SearchForFiles::FilterSize) searchFilterSizeFromUI
+{
+    uint64_t value = self.SizeTextField.integerValue;
+    switch( self.SizeMetricPopUp.selectedTag ) {
+        case 1: value *= 1024; break;
+        case 2: value *= 1024*1024; break;
+        case 3: value *= 1024*1024*1024; break;
+        default: break;
+    }
+    SearchForFiles::FilterSize filter_size;
+    if(self.SizeRelationPopUp.selectedTag == 0) // "≥"
+        filter_size.min = value;
+    else if(self.SizeRelationPopUp.selectedTag == 2) // "≤"
+        filter_size.max = value;
+    else if(self.SizeRelationPopUp.selectedTag == 1) // "="
+        filter_size.min = filter_size.max = value;
+    return filter_size;
 }
 
 - (IBAction)OnSearch:(id)sender
 {
-    if(m_FileSearch->IsRunning()) {
+    if( m_FileSearch->IsRunning() ) {
         m_FileSearch->Stop();
         return;
     }
@@ -402,77 +461,43 @@ private:
     }
     m_TextHistory->insert_unique( cont_text ? cont_text.UTF8String : "" );
     
-    if([self.SizeTextField.stringValue isEqualToString:@""] == false)
-    {
-        uint64_t value = self.SizeTextField.integerValue;
-        switch (self.SizeMetricPopUp.selectedTag) {
-            case 1: value *= 1024; break;
-            case 2: value *= 1024*1024; break;
-            case 3: value *= 1024*1024*1024; break;
-            default: break;
-        }
-        SearchForFiles::FilterSize filter_size;
-        if(self.SizeRelationPopUp.selectedTag == 0) // "≥"
-            filter_size.min = value;
-        else if(self.SizeRelationPopUp.selectedTag == 2) // "≤"
-            filter_size.max = value;
-        else if(self.SizeRelationPopUp.selectedTag == 1) // "="
-            filter_size.min = filter_size.max = value;
-        
-        m_FileSearch->SetFilterSize(filter_size);
-    }
-        
-    int search_options = 0;
-    if(self.SearchInSubDirsButton.intValue)
-        search_options |= SearchForFiles::Options::GoIntoSubDirs;
-    if(self.SearchForDirsButton.intValue)
-        search_options |= SearchForFiles::Options::SearchForDirs;
+    m_FileSearch->SetFilterSize( self.searchFilterSizeFromUI );
     
-    bool r = m_FileSearch->Go(m_Path,
-                              m_Host,
-                              search_options,
-                              [=](const char *_filename, const char *_in_path, CFRange _cont_pos){
-                                  FindFilesSheetControllerFoundItem it;
-                                  it.filename = _filename;
-                                  it.dir_path = _in_path;
-                                  
-                                  it.full_filename = it.dir_path;
-                                  if(it.full_filename.back() != '/') it.full_filename += '/';
-                                  it.full_filename += it.filename;
-                                  if(it.dir_path != "/" && it.dir_path.back() == '/') it.dir_path.pop_back();
-                                  
-                                  it.content_pos = _cont_pos;
-                                  
-                                  it.rel_path = it.dir_path;
-                                  if(it.rel_path.back() != '/') it.rel_path.push_back('/');
-                                  if(m_Path.length() > 1 && it.rel_path.find(m_Path) == 0)
-                                      it.rel_path.replace(0, m_Path.length(), "./");
-                                  
-                                  m_StatGroup.Run([=, it=move(it)]()mutable{
-                                      // doing stat()'ing item in async background thread
-                                      m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
-                                      
-                                      FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
-                                      m_BatchQueue->Run([self, item]{
-                                          // dumping result entry into batch array in BatchQueue
-                                          [m_FoundItemsBatch addObject:item];
-                                      });
-                                  });
-                                  
-                                  if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
-                                      m_FileSearch->Stop(); // gorshochek, ne vari!!!
-                              },
-                              [=]{
-                                  [self OnFinishedSearch];
-                              },
-                              [=](const char *_path) {
-                                  LOCK_GUARD(m_LookingInPathGuard)
-                                    m_LookingInPath = _path;
-                              }
-                              );
-    if(r) {
+    const bool started = m_FileSearch->Go(m_Path,
+                                          m_Host,
+                                          self.searchOptionsFromUI,
+                                          [=](const char *_filename, const char *_in_path, CFRange _cont_pos){
+                                              FindFilesSheetControllerFoundItem it;
+                                              it.filename = _filename;
+                                              it.dir_path = ensure_no_tr_slash(_in_path);
+                                              it.full_filename = ensure_tr_slash(_in_path) + it.filename;
+                                              it.content_pos = _cont_pos;
+                                              it.rel_path = to_relative_path(ensure_tr_slash(_in_path), m_Path);
+                                              m_StatGroup.Run([=, it=move(it)]()mutable{
+                                                  // doing stat()'ing item in async background thread
+                                                  m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+                                                  
+                                                  FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
+                                                  m_BatchQueue->Run([self, item]{
+                                                      // dumping result entry into batch array in BatchQueue
+                                                      [m_FoundItemsBatch addObject:item];
+                                                  });
+                                              });
+                                              
+                                              if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
+                                                  m_FileSearch->Stop(); // gorshochek, ne vari!!!
+                                          },
+                                          [=]{
+                                              [self onSearchFinished];
+                                          },
+                                          [=](const char *_path) {
+                                              LOCK_GUARD(m_LookingInPathGuard)
+                                                m_LookingInPath = _path;
+                                          }
+                                          );
+    self.searchingNow = started;
+    if(started) {
         self.didAnySearchStarted = true;
-        self.searchingNow = true;
         m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 // 0.5 sec update
                                                              target:self
                                                            selector:@selector(UpdateByTimer:)
@@ -486,9 +511,6 @@ private:
                                                            userInfo:nil
                                                             repeats:YES];
         [m_LookingInPathUpdateTimer setDefaultTolerance];
-    }
-    else {
-        self.searchingNow = false;
     }
 }
 
@@ -575,13 +597,13 @@ private:
 // Workaround about combox' menu forcing Search by selecting item from list with Return key
 - (void)comboBoxWillPopUp:(NSNotification *)notification
 {
-    self.SearchButton.keyEquivalent = @"";
+    [self clearReturnKey];
 }
 
 - (void)comboBoxWillDismiss:(NSNotification *)notification
 {
     dispatch_to_main_queue_after(10ms, [=]{
-        self.SearchButton.keyEquivalent = @"\r";
+        [self setupReturnKey];
     });
 }
 
@@ -600,6 +622,28 @@ private:
         m_OnPanelize( results );
     
     [self OnClose:self];
+}
+
+- (void) setupReturnKey
+{
+    dispatch_assert_main_queue();
+    
+    [self clearReturnKey];
+    
+    if( m_FoundItems.count > 0 ) {
+        self.GoToButton.keyEquivalent = @"\r";
+    }
+    else {
+        // either never searched or didn't find anything
+        self.SearchButton.keyEquivalent = @"\r";
+    }
+}
+
+- (void) clearReturnKey
+{
+    dispatch_assert_main_queue();
+    self.SearchButton.keyEquivalent = @"";
+    self.GoToButton.keyEquivalent = @"";
 }
 
 @end

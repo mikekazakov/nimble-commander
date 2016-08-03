@@ -59,6 +59,7 @@ public:
 
     /**
      * Sets file size filtering. Should not be called with background search going on.
+     * Will ignore default filter.
      */
     void SetFilterSize(const FilterSize &_filter);
     

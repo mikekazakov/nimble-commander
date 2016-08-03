@@ -10,7 +10,8 @@
 // synopsis
 
 /** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
-bool dispatch_is_main_queue() noexcept;
+#define dispatch_is_main_queue() \
+    (pthread_main_np() != 0)
 
 /** effectively assert( dispatch_is_main_queue() ) */
 #define dispatch_assert_main_queue() \

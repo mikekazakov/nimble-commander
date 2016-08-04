@@ -11,8 +11,11 @@
 
 #include "BigFileViewSheet.h"
 
+#include "InternalViewerController.h"
+
+
 // REMOVE THIS DEPENDENCY!!!!!
-#include "../../Files/States/Viewer/MainWindowBigFileViewState.h"
+//#include "../../Files/States/Viewer/MainWindowBigFileViewState.h"
 // REMOVE THIS DEPENDENCY!!!!!
 //#include "MainWindowBigFileViewState.h"
 
@@ -22,6 +25,9 @@
     string                  m_Path;
     unique_ptr<FileWindow>  m_FileWindow;
     CFRange                 m_InitialSelection;
+    
+    
+    InternalViewerController *m_Controller;
 }
 
 - (id) initWithFilepath:(string)path
@@ -35,6 +41,10 @@
         m_InitialSelection = CFRangeMake(-1, 0);
         m_VFS = vfs;
         m_Path = path;
+        
+        m_Controller = [[InternalViewerController alloc] init];
+        [m_Controller setFile:path at:vfs];
+        
     }
     return self;
 }
@@ -43,48 +53,58 @@
 {
     assert( !dispatch_is_main_queue() );
     
-    VFSFilePtr origfile;
-    if(m_VFS->CreateFile(m_Path.c_str(), origfile, 0) < 0)
-        return false;
-    
-    VFSFilePtr vfsfile;
-    if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random) {
-        // we need to read a file into temporary mem/file storage to access it randomly
-        ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
-        [proc Show];
-                
-        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
-        int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
-                                [=]{ return proc.userCancelled; },
-                                [=](uint64_t _bytes, uint64_t _total) {
-                                    proc.Progress.doubleValue = double(_bytes) / double(_total);
-                                });
-        [proc Close];
-        if(res != 0)
-            return false;
-        
-        vfsfile = wrapper;
-    }
-    else { // just open input file
-        if(origfile->Open(VFSFlags::OF_Read) < 0)
-            return false;
-        vfsfile = origfile;
-    }
-    
-    m_FileWindow = make_unique<FileWindow>();
-    if(m_FileWindow->OpenFile(vfsfile, MainWindowBigFileViewState.fileWindowSize) != 0)
-        return false;
-    
-    return true;
+//    VFSFilePtr origfile;
+//    if(m_VFS->CreateFile(m_Path.c_str(), origfile, 0) < 0)
+//        return false;
+//    
+//    VFSFilePtr vfsfile;
+//    if(origfile->GetReadParadigm() < VFSFile::ReadParadigm::Random) {
+//        // we need to read a file into temporary mem/file storage to access it randomly
+//        ProcessSheetController *proc = [ProcessSheetController new];
+//        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
+//        [proc Show];
+//                
+//        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origfile);
+//        int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
+//                                [=]{ return proc.userCancelled; },
+//                                [=](uint64_t _bytes, uint64_t _total) {
+//                                    proc.Progress.doubleValue = double(_bytes) / double(_total);
+//                                });
+//        [proc Close];
+//        if(res != 0)
+//            return false;
+//        
+//        vfsfile = wrapper;
+//    }
+//    else { // just open input file
+//        if(origfile->Open(VFSFlags::OF_Read) < 0)
+//            return false;
+//        vfsfile = origfile;
+//    }
+//    
+//    m_FileWindow = make_unique<FileWindow>();
+//    if(m_FileWindow->OpenFile(vfsfile, MainWindowBigFileViewState.fileWindowSize) != 0)
+//        return false;
+//    
+//    return true;
+
+    return [m_Controller performBackgroundOpening];
 }
 
 - (void)windowDidLoad
 {
     self.view.hasBorder = true;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
-    [self.view SetFile:m_FileWindow.get()];
-    if( m_InitialSelection.location >= 0 ) {
+
+    m_Controller.view = self.view;
+    
+//    [self.view SetFile:m_FileWindow.get()];
+  
+    [m_Controller show];
+    
+    
+    if( m_InitialSelection.location >= 0 )
+    {
         self.view.selectionInFile = m_InitialSelection;
         [self.view ScrollToSelection];
     }

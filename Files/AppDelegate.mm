@@ -161,7 +161,8 @@ static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
 {
-    vector<MainWindowController *> m_MainWindows;
+    vector<MainWindowController *>              m_MainWindows;
+    vector<InternalViewerWindowController*>     m_ViewerWindows;
     RHPreferencesWindowController *m_PreferencesController;
     ApplicationSkin     m_Skin;
     NSProgressIndicator *m_ProgressIndicator;
@@ -725,6 +726,18 @@ static AppDelegate *g_Me = nil;
 - (bool) askToResetDefaults
 {
     return AskUserToResetDefaults();
+}
+
+- (void) addInternalViewerWindow:(InternalViewerWindowController*)_wnd
+{
+    m_ViewerWindows.emplace_back(_wnd);
+}
+
+- (void) removeInternalViewerWindow:(InternalViewerWindowController*)_wnd
+{
+    auto i = find(begin(m_ViewerWindows), end(m_ViewerWindows), _wnd);
+    if( i != end(m_ViewerWindows) )
+        m_ViewerWindows.erase(i);
 }
 
 @end

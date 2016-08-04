@@ -65,48 +65,58 @@ const static double g_BorderWidth = 1.0;
 - (id)initWithFrame:(NSRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.hasBorder = false;
-        m_WrapWords = true;
-        m_SelectionInFile = CFRangeMake(-1, 0);
-        m_SelectionInWindow = CFRangeMake(-1, 0);
-        m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-        m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
-        
-        [self reloadAppearance];
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];
-        
-        m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        m_VerticalScroller.enabled = true;
-        m_VerticalScroller.target = self;
-        m_VerticalScroller.action = @selector(VerticalScroll:);
-        m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
-        [self addSubview:m_VerticalScroller];
-        [self layoutVerticalScroll];
-        [self frameDidChange];
-        
-        __weak BigFileView* weak_self = self;
-        GlobalConfig().ObserveMany(m_ConfigObservations,
-                                   [=]{ [(BigFileView*)weak_self reloadAppearance]; },
-                                   initializer_list<const char *>{  g_ConfigClassicFont,
-                                                                    g_ConfigClassicShouldAntialias,
-                                                                    g_ConfigClassicShouldSmooth,
-                                                                    g_ConfigClassicTextColor,
-                                                                    g_ConfigClassicSelectionColor,
-                                                                    g_ConfigClassicBackgroundColor,
-                                                                    g_ConfigModernFont,
-                                                                    g_ConfigModernShouldAntialias,
-                                                                    g_ConfigModernShouldSmooth,
-                                                                    g_ConfigModernTextColor,
-                                                                    g_ConfigModernSelectionColor,
-                                                                    g_ConfigModernBackgroundColor   }
-                                   );
+        [self commonInit];
     }
     
     return self;
+}
+
+- (void) awakeFromNib
+{
+    [self commonInit];
+}
+
+- (void) commonInit
+{
+    self.hasBorder = false;
+    m_WrapWords = true;
+    m_SelectionInFile = CFRangeMake(-1, 0);
+    m_SelectionInWindow = CFRangeMake(-1, 0);
+    m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
+    m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
+    
+    [self reloadAppearance];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(frameDidChange)
+                                               name:NSViewFrameDidChangeNotification
+                                             object:self];
+    
+    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    m_VerticalScroller.enabled = true;
+    m_VerticalScroller.target = self;
+    m_VerticalScroller.action = @selector(VerticalScroll:);
+    m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
+    [self addSubview:m_VerticalScroller];
+    [self layoutVerticalScroll];
+    [self frameDidChange];
+    
+    __weak BigFileView* weak_self = self;
+    GlobalConfig().ObserveMany(m_ConfigObservations,
+                               [=]{ [(BigFileView*)weak_self reloadAppearance]; },
+                               initializer_list<const char *>{  g_ConfigClassicFont,
+                                   g_ConfigClassicShouldAntialias,
+                                   g_ConfigClassicShouldSmooth,
+                                   g_ConfigClassicTextColor,
+                                   g_ConfigClassicSelectionColor,
+                                   g_ConfigClassicBackgroundColor,
+                                   g_ConfigModernFont,
+                                   g_ConfigModernShouldAntialias,
+                                   g_ConfigModernShouldSmooth,
+                                   g_ConfigModernTextColor,
+                                   g_ConfigModernSelectionColor,
+                                   g_ConfigModernBackgroundColor   }
+                               );
 }
 
 - (void) dealloc

@@ -11,6 +11,7 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include "../../Viewer/BigFileViewSheet.h"
+#include "../../Viewer/InternalViewerWindowController.h"
 #include "../../Core/SearchForFiles.h"
 #include "../../Files/ByteCountFormatter.h"
 #include "../../Files/Config.h"
@@ -488,6 +489,9 @@ private:
                                               it.full_filename = ensure_tr_slash(_in_path) + it.filename;
                                               it.content_pos = _cont_pos;
                                               it.rel_path = to_relative_path(ensure_tr_slash(_in_path), m_Path);
+                                              
+                                              // NEED TO LIMIT MAXIMUM CONCURRENT BLOCKS!!!!
+                                              
                                               m_StatGroup.Run([=, it=move(it)]()mutable{
                                                   // doing stat()'ing item in async background thread
                                                   m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
@@ -608,13 +612,23 @@ private:
     VFSHostPtr vfs = self.host;
     CFRange cont = data->content_pos;
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
-        if([sheet open]) {
-            if(cont.location >= 0)
-                [sheet selectBlockAt:cont.location length:cont.length];
-            [sheet beginSheetForWindow:self.window
-                     completionHandler:^(NSModalResponse returnCode) {}];
+//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
+//        if([sheet open]) {
+//            if(cont.location >= 0)
+//                [sheet selectBlockAt:cont.location length:cont.length];
+//            [sheet beginSheetForWindow:self.window
+//                     completionHandler:^(NSModalResponse returnCode) {}];
+//        }
+//    });
+
+    
+    InternalViewerWindowController *window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
+    dispatch_to_background([=]{
+        if( [window performBackgrounOpening] ) {
+            dispatch_to_main_queue([=]{
+                [window show];
+            });
         }
     });
 }

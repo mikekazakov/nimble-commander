@@ -11,6 +11,7 @@
 #include "ApplicationSkins.h"
 
 @class MainWindowController;
+@class InternalViewerWindowController;
 @class GenericConfigObjC;
 class ExternalToolsStorage;
 
@@ -19,6 +20,9 @@ class ExternalToolsStorage;
 - (IBAction)NewWindow:(id)sender;
 - (MainWindowController*) AllocateNewMainWindow;
 - (void) RemoveMainWindow:(MainWindowController*) _wnd;
+
+- (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
+- (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.

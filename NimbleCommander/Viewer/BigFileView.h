@@ -9,8 +9,8 @@
 #pragma once
 
 #include <Utility/Encodings.h>
-#include "../../FileWindow.h"
-#include "../../OrthodoxMonospace.h"
+#include "../../Files/FileWindow.h"
+#include "../../Files/OrthodoxMonospace.h"
 
 enum class BigFileViewModes
 { // changing this values may cause stored history corruption

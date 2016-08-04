@@ -10,7 +10,7 @@
 
 #include "../../vfs/VFS.h"
 #include "../../MainWindowStateProtocol.h"
-#include "BigFileView.h"
+#include "../../../NimbleCommander/Viewer/BigFileView.h"
 
 @interface MainWindowBigFileViewState : NSView<MainWindowStateProtocol, BigFileViewDelegateProtocol, NSTextFieldDelegate, NSToolbarDelegate, NSSearchFieldDelegate>
 

@@ -16,8 +16,7 @@
 #include "../../Config.h"
 #include "../../GoogleAnalytics.h"
 #include "MainWindowBigFileViewState.h"
-#include "BigFileView.h"
-#include "BigFileViewHistory.h"
+#include "../../../NimbleCommander/Viewer/BigFileViewHistory.h"
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";

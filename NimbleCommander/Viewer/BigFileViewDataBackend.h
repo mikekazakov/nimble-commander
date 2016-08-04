@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../FileWindow.h"
+#include "../../Files/FileWindow.h"
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

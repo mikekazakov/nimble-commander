@@ -10,7 +10,7 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
-#include "../../Files/States/Viewer/BigFileViewSheet.h"
+#include "../../Viewer/BigFileViewSheet.h"
 #include "../../Core/SearchForFiles.h"
 #include "../../Files/ByteCountFormatter.h"
 #include "../../Files/Config.h"
@@ -338,6 +338,21 @@ private:
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    try {
+        if( item.action == @selector(OnFileInternalBigViewCommand:) )
+            return [self Predicate_OnFileInternalBigViewCommand];
+    }
+    catch(exception &e) {
+        cout << "Exception caught: " << e.what() << endl;
+    }
+    catch(...) {
+        cout << "Caught an unhandled exception!" << endl;
+    }
+    return true;
+}
+
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox;
 {
     if(aComboBox == self.MaskComboBox)
@@ -571,6 +586,16 @@ private:
         m_DoubleClickedItem = self.focusedItem;
         [self OnClose:self];
     }
+}
+
+- (bool)Predicate_OnFileInternalBigViewCommand
+{
+    return self.ViewButton.enabled;
+}
+
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
+{
+    [self OnFileView:sender];
 }
 
 - (IBAction)OnFileView:(id)sender

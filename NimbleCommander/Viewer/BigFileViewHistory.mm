@@ -8,8 +8,8 @@
 
 #include <Habanero/DispatchQueue.h>
 #include <Utility/Encodings.h>
-#import "../../3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Config.h"
+#import "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../Files/Config.h"
 #include "BigFileViewHistory.h"
 
 static NSString *g_FileName = @"/bigfileviewhistory.bplist"; // bplist file name

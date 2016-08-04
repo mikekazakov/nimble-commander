@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "../../vfs/VFS.h"
+#include "../../Files/vfs/VFS.h"
 #include "BigFileView.h"
 
 @interface BigFileViewSheet : SheetController

@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontExtras.h>
-#include "../../Files/States/Viewer/BigFileViewHistory.h"
+#include "../Viewer/BigFileViewHistory.h"
 #include "Utility/Encodings.h"
 #include "PreferencesWindowViewerTab.h"
 #include "../../Files/Config.h"

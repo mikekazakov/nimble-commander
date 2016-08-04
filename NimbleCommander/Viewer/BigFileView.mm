@@ -8,9 +8,9 @@
 
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
-#include "../../DataBlockAnalysis.h"
-#include "../../AppDelegate.h"
-#include "../../Config.h"
+#include "../../Files/DataBlockAnalysis.h"
+#include "../../Files/AppDelegate.h"
+#include "../../Files/Config.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"

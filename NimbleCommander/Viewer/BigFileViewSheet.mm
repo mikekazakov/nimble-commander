@@ -6,10 +6,15 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../ProcessSheetController.h"
-#include "../../GoogleAnalytics.h"
-#include "MainWindowBigFileViewState.h"
+#include "../../Files/ProcessSheetController.h"
+#include "../../Files/GoogleAnalytics.h"
+
 #include "BigFileViewSheet.h"
+
+// REMOVE THIS DEPENDENCY!!!!!
+#include "../../Files/States/Viewer/MainWindowBigFileViewState.h"
+// REMOVE THIS DEPENDENCY!!!!!
+//#include "MainWindowBigFileViewState.h"
 
 @implementation BigFileViewSheet
 {
@@ -22,6 +27,9 @@
 - (id) initWithFilepath:(string)path
                      at:(VFSHostPtr)vfs
 {
+    
+    
+    
     self = [super init];
     if(self) {
         m_InitialSelection = CFRangeMake(-1, 0);

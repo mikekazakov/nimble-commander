@@ -328,7 +328,12 @@ const static double g_BorderWidth = 1.0;
 
 - (void) setEncoding:(int)_encoding
 {
+    if( !m_Data || m_Data->Encoding() == _encoding )
+        return; // nothing to do
+
+    [self willChangeValueForKey:@"encoding"];
     m_Data->SetEncoding(_encoding);
+    [self didChangeValueForKey:@"encoding"];
 }
 
 - (void)frameDidChange
@@ -433,13 +438,17 @@ const static double g_BorderWidth = 1.0;
     else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
         return BigFileViewModes::Hex;
     else
-        assert(0);
+//        assert(0);
+        // in case of doubt - say we're in text mode (uninitialized really)
+        return BigFileViewModes::Text;
 }
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if(_mode == self.mode)
+    if( _mode == self.mode )
         return;
+    
+    [self willChangeValueForKey:@"mode"];
     
     uint32_t current_offset = m_ViewImpl->GetOffsetWithinWindow();
     
@@ -457,6 +466,8 @@ const static double g_BorderWidth = 1.0;
 
     m_ViewImpl->MoveOffsetWithinWindow(current_offset);
     [self setNeedsDisplay];
+    
+    [self didChangeValueForKey:@"mode"];
 }
 
 - (double) VerticalScrollPosition

@@ -12,7 +12,7 @@
 #include "../../Files/FileWindow.h"
 #include "../../Files/OrthodoxMonospace.h"
 
-enum class BigFileViewModes
+enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption
     Text = 0,
     Hex  = 1
@@ -56,6 +56,7 @@ enum class BigFileViewModes
 
 /**
  * Setting how data backend should translate raw bytes into UniChars characters.
+ * KVO-complaint.
  */
 @property (nonatomic) int encoding;
 
@@ -67,6 +68,7 @@ enum class BigFileViewModes
 
 /**
  * Visual presentation mode. Currently supports two: Text and Hex.
+ * KVO-complaint.
  */
 @property (nonatomic) BigFileViewModes mode;
 
@@ -82,7 +84,7 @@ enum class BigFileViewModes
  */
 @property (nonatomic) CFRange selectionInFile;
 
-- (double)      VerticalScrollPosition;
+- (double)      VerticalScrollPosition; // in percentage: [0..1]
 - (void)        ScrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window

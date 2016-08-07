@@ -627,7 +627,7 @@ private:
     dispatch_to_background([=]{
         if( [window performBackgrounOpening] ) {
             dispatch_to_main_queue([=]{
-                [window show];
+                [window showAsFloatingWindow];
             });
         }
     });

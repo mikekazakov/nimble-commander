@@ -6,6 +6,11 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="InternalViewerWindowController">
             <connections>
+                <outlet property="encodingsPopUp" destination="6E1-yW-Ao6" id="kbm-6E-rol"/>
+                <outlet property="modePopUp" destination="XQE-cd-TkQ" id="YyS-ah-Hol"/>
+                <outlet property="searchField" destination="ic1-oi-BKh" id="chr-Nz-AQK"/>
+                <outlet property="searchProgressIndicator" destination="bSl-b8-JJK" id="0RX-ph-bfp"/>
+                <outlet property="toolbar" destination="GfZ-m6-G24" id="3nI-oG-TT5"/>
                 <outlet property="viewerView" destination="S6g-eR-FJD" id="G3M-vg-kLs"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -22,14 +27,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="S6g-eR-FJD" customClass="BigFileView">
-                        <rect key="frame" x="20" y="20" width="440" height="230"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                     </customView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="S6g-eR-FJD" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="9WG-f6-FFd"/>
-                    <constraint firstItem="S6g-eR-FJD" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="pQI-cn-W4J"/>
-                    <constraint firstAttribute="trailing" secondItem="S6g-eR-FJD" secondAttribute="trailing" constant="20" symbolic="YES" id="vgK-vJ-s1R"/>
-                    <constraint firstAttribute="bottom" secondItem="S6g-eR-FJD" secondAttribute="bottom" constant="20" symbolic="YES" id="z1S-D3-gU8"/>
+                    <constraint firstItem="S6g-eR-FJD" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="9WG-f6-FFd"/>
+                    <constraint firstItem="S6g-eR-FJD" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="pQI-cn-W4J"/>
+                    <constraint firstAttribute="trailing" secondItem="S6g-eR-FJD" secondAttribute="trailing" id="vgK-vJ-s1R"/>
+                    <constraint firstAttribute="bottom" secondItem="S6g-eR-FJD" secondAttribute="bottom" id="z1S-D3-gU8"/>
                 </constraints>
             </view>
             <connections>
@@ -37,5 +42,69 @@
             </connections>
             <point key="canvasLocation" x="27" y="478"/>
         </window>
+        <toolbar implicitIdentifier="09D11707-F4A3-4FD5-970E-AC5832E91C2B" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="GfZ-m6-G24">
+            <allowedToolbarItems>
+                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="82M-Zc-fJg"/>
+                <toolbarItem implicitItemIdentifier="8954FAAA-ABEF-4615-832E-FB0BD89062B1" label="Search In File" paletteLabel="Search In File" id="LB4-9M-kxL">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="96" height="22"/>
+                    <size key="maxSize" width="96" height="22"/>
+                    <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="ic1-oi-BKh">
+                        <rect key="frame" x="0.0" y="14" width="96" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <searchFieldCell key="cell" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="U19-Sp-UlH">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </searchFieldCell>
+                    </searchField>
+                </toolbarItem>
+                <toolbarItem implicitItemIdentifier="4F2EC377-49E0-4826-B11C-1CA3EAFE7B9C" label="" paletteLabel="Search Indicator" tag="-1" id="MG6-W3-HQV">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="16" height="16"/>
+                    <size key="maxSize" width="16" height="16"/>
+                    <progressIndicator key="view" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="bSl-b8-JJK">
+                        <rect key="frame" x="39" y="14" width="16" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </progressIndicator>
+                </toolbarItem>
+                <toolbarItem implicitItemIdentifier="595BD924-6AA3-45F2-8D6D-9700E02708A9" label="Encodings" paletteLabel="Encodings" id="bZh-vJ-KZN">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="100" height="26"/>
+                    <size key="maxSize" width="100" height="26"/>
+                    <popUpButton key="view" verticalHuggingPriority="750" id="6E1-yW-Ao6">
+                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="30I-FW-HLg">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="u7D-Yv-Jg6"/>
+                        </popUpButtonCell>
+                    </popUpButton>
+                </toolbarItem>
+                <toolbarItem implicitItemIdentifier="BDC41D99-53CB-478C-891C-21E535E9F8C7" label="Mode" paletteLabel="Mode" id="vJ7-w1-crj">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="100" height="26"/>
+                    <size key="maxSize" width="100" height="26"/>
+                    <popUpButton key="view" verticalHuggingPriority="750" id="XQE-cd-TkQ">
+                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="els-ey-rJB">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="ItD-Jp-hum"/>
+                        </popUpButtonCell>
+                    </popUpButton>
+                </toolbarItem>
+            </allowedToolbarItems>
+            <defaultToolbarItems>
+                <toolbarItem reference="vJ7-w1-crj"/>
+                <toolbarItem reference="bZh-vJ-KZN"/>
+                <toolbarItem reference="82M-Zc-fJg"/>
+                <toolbarItem reference="MG6-W3-HQV"/>
+                <toolbarItem reference="LB4-9M-kxL"/>
+            </defaultToolbarItems>
+            <point key="canvasLocation" x="-95" y="834"/>
+        </toolbar>
     </objects>
 </document>

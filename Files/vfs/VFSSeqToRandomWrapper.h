@@ -43,3 +43,5 @@ private:
     unique_ptr<uint8_t[]>    m_DataBuf; // used only when filesize <= MaxCachedInMem
     bool                     m_Ready = false;
 };
+
+using VFSSeqToRandomROWrapperFilePtr = shared_ptr<VFSSeqToRandomROWrapperFile>;

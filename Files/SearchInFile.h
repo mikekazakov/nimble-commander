@@ -46,7 +46,7 @@ public:
         OptionFindWholePhrase   = 1 << 1
     };
     
-    typedef bool (^CancelChecker)(void);
+    typedef bool (^CancelChecker)(void); // TODO: change to std::function!!
     Result Search(uint64_t *_offset/*out*/,
                   uint64_t *_bytes_len/*out*/,
                   CancelChecker _checker); // checker can be nil

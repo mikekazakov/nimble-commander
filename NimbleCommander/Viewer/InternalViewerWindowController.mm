@@ -14,6 +14,11 @@
 @interface InternalViewerWindowController ()
 
 @property (strong) IBOutlet BigFileView *viewerView;
+@property (strong) IBOutlet NSToolbar *toolbar;
+@property (strong) IBOutlet NSSearchField *searchField;
+@property (strong) IBOutlet NSProgressIndicator *searchProgressIndicator;
+@property (strong) IBOutlet NSPopUpButton *encodingsPopUp;
+@property (strong) IBOutlet NSPopUpButton *modePopUp;
 
 @end
 
@@ -38,9 +43,14 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
     
+    self.window.toolbar = self.toolbar;
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     
     m_Controller.view = self.viewerView;
+    m_Controller.searchField = self.searchField;
+    m_Controller.searchProgressIndicator = self.searchProgressIndicator;
+    m_Controller.encodingsPopUp = self.encodingsPopUp;
+    m_Controller.modePopUp = self.modePopUp;
 }
 
 - (bool) performBackgrounOpening
@@ -50,20 +60,15 @@
 
 //[AppDelegate.me addInternalViewerWindow:window];
 
-- (void) show
+- (void)showAsFloatingWindow
 {
     // this should be called after sucessful finishing of performBackgrounOpening
-    
-    
-//    auto w = self.window;
-    [self showWindow:self];
-//    [self.window makeKeyAndOrderFront:self];
-//    [self.window makeMainWindow];
-    
-    
-    
+    [self window];
     [m_Controller show];
+    self.viewerView.focusRingType = NSFocusRingTypeNone;
     [AppDelegate.me addInternalViewerWindow:self];
+    
+    [self showWindow:self];
 }
 
 - (void)windowWillClose:(NSNotification *)notification

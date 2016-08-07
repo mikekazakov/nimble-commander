@@ -17,6 +17,7 @@
 
 - (bool) performBackgrounOpening; // call it from bg thread!
 
-- (void) show;
+- (void)showAsFloatingWindow;
+//- (void)showAsSheetForWindow:(NSWindow*)_window;
 
 @end

@@ -52,6 +52,9 @@ const static double g_BorderWidth = 1.0;
     __weak  id<BigFileViewDelegateProtocol> m_Delegate;
     
     NSScroller      *m_VerticalScroller;
+    
+    uint64_t        m_VerticalPositionInBytes;
+    
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
     CFRange         m_SelectionInWindow;         // in bytes, whithin current window positio
                                                  // updated when windows moves, regarding current selection in bytes
@@ -79,6 +82,7 @@ const static double g_BorderWidth = 1.0;
 - (void) commonInit
 {
     self.hasBorder = false;
+    m_VerticalPositionInBytes = 0;
     m_WrapWords = true;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
@@ -100,6 +104,7 @@ const static double g_BorderWidth = 1.0;
     [self addSubview:m_VerticalScroller];
     [self layoutVerticalScroll];
     [self frameDidChange];
+    [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];    
     
     __weak BigFileView* weak_self = self;
     GlobalConfig().ObserveMany(m_ConfigObservations,
@@ -121,6 +126,7 @@ const static double g_BorderWidth = 1.0;
 
 - (void) dealloc
 {
+    [self unbind:@"verticalPositionPercentage"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
     CFRelease(m_ForegroundColor);
     CFRelease(m_Font);
@@ -268,56 +274,63 @@ const static double g_BorderWidth = 1.0;
 - (void)keyDown:(NSEvent *)event
 {
     if([[event charactersIgnoringModifiers] length] != 1) return;
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     switch ([[event charactersIgnoringModifiers] characterAtIndex:0]) {
         case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
         case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
         default: [super keyDown:event]; return;
     }
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)moveUp:(id)sender{
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnUpArrow();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)moveDown:(id)sender {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnDownArrow();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)moveLeft:(id)sender {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnLeftArrow();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)moveRight:(id)sender {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnRightArrow();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)pageDown:(id)sender {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//  uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnPageDown();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void) pageUp:(id)sender {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnPageUp();
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (int) encoding
@@ -370,17 +383,20 @@ const static double g_BorderWidth = 1.0;
     m_Data->MoveWindowSync(_pos);
 }
 
-- (void) UpdateVerticalScroll: (double) _pos prop:(double)prop
+- (void) UpdateVerticalScroll: (double) _pos prop:(double)_prop
 {
-    m_VerticalScroller.knobProportion = prop;
-    m_VerticalScroller.doubleValue = _pos;
-
-    [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolled];
+//    if( _pos == m_VerticalScroller.doubleValue &&
+//        _prop == m_VerticalScroller.knobProportion )
+//        return;
+//    m_VerticalScroller.knobProportion = _prop;
+//    m_VerticalScroller.doubleValue = _pos;
+//
+//    [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolled];
 }
 
 - (void)VerticalScroll:(id)sender
 {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     switch (m_VerticalScroller.hitPart)
     {
         case NSScrollerIncrementLine:
@@ -405,16 +421,18 @@ const static double g_BorderWidth = 1.0;
         default:
             break;
     }
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-    uint64_t was_vert_pos = self.verticalPositionInBytes;
+//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnScrollWheel(theEvent);
-    if(was_vert_pos != self.verticalPositionInBytes)
-        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+//    if(was_vert_pos != self.verticalPositionInBytes)
+//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
+    [self syncVerticalPositionInBytes];
 }
 
 - (bool) wordWrap
@@ -468,6 +486,9 @@ const static double g_BorderWidth = 1.0;
     [self setNeedsDisplay];
     
     [self didChangeValueForKey:@"mode"];
+    
+    [self syncVerticalPositionInBytes];
+    [self syncVerticalScrollerState];    
 }
 
 - (double) VerticalScrollPosition
@@ -484,14 +505,50 @@ const static double g_BorderWidth = 1.0;
     }
 }
 
+- (void) syncVerticalScrollerState
+{
+    double scroll_pos = 0.0;
+    double scroll_prop = 1.0;
+    m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
+    m_VerticalScroller.doubleValue = scroll_pos;
+    m_VerticalScroller.knobProportion = scroll_prop;
+}
+
+- (void) syncVerticalPositionInBytes
+{
+//    dispatch_assert_main_queue();
+    uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
+    if( value == m_VerticalPositionInBytes )
+        return;
+    
+    [self willChangeValueForKey:@"verticalPositionInBytes"];
+    m_VerticalPositionInBytes = value;
+    [self didChangeValueForKey:@"verticalPositionInBytes"];
+
+    [self syncVerticalScrollerState];
+}
+
+//- (double) verticalPositionPercentage
+//{
+//    return m_VerticalScroller.doubleValue; // guaranteed to be in sync????
+//}
+
 - (uint64_t) verticalPositionInBytes
 {
-    return uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
+    // should always be = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos()
+    return m_VerticalPositionInBytes;
+    
+//    return uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
 }
 
 - (void) setVerticalPositionInBytes:(uint64_t) _pos
 {
+    if( _pos == m_VerticalPositionInBytes )
+        return;
+    
     m_ViewImpl->ScrollToByteOffset(_pos);
+//    m_VerticalPositionInBytes = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
+    [self syncVerticalPositionInBytes];
 }
 
 // searching for selected UniChars in file window if there's any overlapping of

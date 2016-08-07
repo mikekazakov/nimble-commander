@@ -19,6 +19,7 @@
 @property (strong) IBOutlet NSProgressIndicator *searchProgressIndicator;
 @property (strong) IBOutlet NSPopUpButton *encodingsPopUp;
 @property (strong) IBOutlet NSPopUpButton *modePopUp;
+@property (strong) IBOutlet NSButton *positionButton;
 
 @end
 
@@ -51,6 +52,7 @@
     m_Controller.searchProgressIndicator = self.searchProgressIndicator;
     m_Controller.encodingsPopUp = self.encodingsPopUp;
     m_Controller.modePopUp = self.modePopUp;
+    m_Controller.positionButton = self.positionButton;
 }
 
 - (bool) performBackgrounOpening

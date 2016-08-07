@@ -8,6 +8,19 @@ static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSens
 static const auto g_ConfigSearchForWholePhrase          = "viewer.searchForWholePhrase";
 static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize";
 
+@interface InternalViewerControllerVerticalPostionToStringTransformer : NSValueTransformer
+@end
+@implementation InternalViewerControllerVerticalPostionToStringTransformer
++ (Class)transformedValueClass
+{
+    return NSString.class;
+}
+- (id)transformedValue:(id)value
+{
+    return value ? [NSString stringWithFormat:@"%2.0f%%", 100.0 * objc_cast<NSNumber>(value).doubleValue] : @"";
+}
+@end
+
 @implementation InternalViewerController
 {
     string                          m_Path;
@@ -26,6 +39,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     NSProgressIndicator            *m_SearchProgressIndicator;
     NSPopUpButton                  *m_EncodingsPopUp;
     NSPopUpButton                  *m_ModePopUp;
+    NSButton                       *m_PositionButton;
 }
 
 @synthesize view = m_View;
@@ -33,6 +47,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 @synthesize searchProgressIndicator = m_SearchProgressIndicator;
 @synthesize encodingsPopUp = m_EncodingsPopUp;
 @synthesize modePopUp = m_ModePopUp;
+@synthesize positionButton = m_PositionButton;
 
 - (id) init
 {
@@ -318,8 +333,20 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 
 - (void)onModePopUpChanged:(id)sender
 {
-    dispatch_assert_main_queue();    
+    dispatch_assert_main_queue();
+}
+
+- (void)setPositionButton:(NSButton *)positionButton
+{
+    dispatch_assert_main_queue();
+    if( m_PositionButton == positionButton )
+        return;
     
+    m_PositionButton = positionButton;
+    [m_PositionButton bind:@"title"
+                  toObject:m_View
+               withKeyPath:@"verticalPositionPercentage"
+                   options:@{NSValueTransformerBindingOption:[InternalViewerControllerVerticalPostionToStringTransformer new]}];
 }
 
 @end

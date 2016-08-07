@@ -21,6 +21,8 @@ public:
     // information
     virtual uint32_t GetOffsetWithinWindow(){return 0;}; // offset of a first visible symbol (+/-)
     
+    virtual void CalculateScrollPosition( double &_position, double &_knob_proportion ){};
+    
     // event handling
     virtual void OnScrollWheel(NSEvent *theEvent){}
     virtual void OnBufferDecoded() {}

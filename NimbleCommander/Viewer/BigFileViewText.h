@@ -32,6 +32,7 @@ public:
     virtual void OnFontSettingsChanged() override;
     virtual void OnLeftArrow() override;
     virtual void OnRightArrow() override;
+    virtual void CalculateScrollPosition( double &_position, double &_knob_proportion ) override;
     
 private:
     void GrabFontGeometry();
@@ -47,7 +48,7 @@ private:
     int LineIndexFromYPos(double _y);
     inline int LineIndexFromPos(CGPoint _point) { return LineIndexFromYPos(_point.y); };
     int CharIndexFromPoint(CGPoint _point);
-    void UpdateVerticalScrollBar();
+//    void UpdateVerticalScrollBar();
     
     /**
      * move our file window to '_pos' global offset,

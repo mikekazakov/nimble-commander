@@ -56,7 +56,7 @@ enum class BigFileViewModes : int
 
 /**
  * Setting how data backend should translate raw bytes into UniChars characters.
- * KVO-complaint.
+ * KVO-compatible.
  */
 @property (nonatomic) int encoding;
 
@@ -68,14 +68,21 @@ enum class BigFileViewModes : int
 
 /**
  * Visual presentation mode. Currently supports two: Text and Hex.
- * KVO-complaint.
+ * KVO-compatible.
  */
 @property (nonatomic) BigFileViewModes mode;
 
 /**
  * Scroll position within whole file, now in a window
+ * KVO-compatible.
  */
 @property (nonatomic) uint64_t verticalPositionInBytes;
+
+/**
+ * Tried to verticalPositionInBytes.
+ * KVO-compatible, read-only.
+ */
+@property (nonatomic, readonly) double verticalPositionPercentage;
 
 /**
  * Selection in whole file, in raw bytes.

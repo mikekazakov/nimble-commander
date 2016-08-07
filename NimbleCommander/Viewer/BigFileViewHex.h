@@ -29,6 +29,7 @@ public:
     virtual void ScrollToByteOffset(uint64_t _offset) override;
     virtual void OnMouseDown(NSEvent *_event) override;
     virtual void OnScrollWheel(NSEvent *theEvent) override;
+    virtual void CalculateScrollPosition( double &_position, double &_knob_proportion ) override;    
 private:
         
     enum class HitPart

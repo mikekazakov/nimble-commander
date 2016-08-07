@@ -8,6 +8,7 @@
             <connections>
                 <outlet property="encodingsPopUp" destination="6E1-yW-Ao6" id="kbm-6E-rol"/>
                 <outlet property="modePopUp" destination="XQE-cd-TkQ" id="YyS-ah-Hol"/>
+                <outlet property="positionButton" destination="ruc-wU-iMZ" id="A04-6g-Zxf"/>
                 <outlet property="searchField" destination="ic1-oi-BKh" id="chr-Nz-AQK"/>
                 <outlet property="searchProgressIndicator" destination="bSl-b8-JJK" id="0RX-ph-bfp"/>
                 <outlet property="toolbar" destination="GfZ-m6-G24" id="3nI-oG-TT5"/>
@@ -96,10 +97,24 @@
                         </popUpButtonCell>
                     </popUpButton>
                 </toolbarItem>
+                <toolbarItem implicitItemIdentifier="0AE9D749-57E0-45C7-A994-F119862378A7" label="Position" paletteLabel="Position" id="gkR-X5-3Cv">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="70" height="21"/>
+                    <size key="maxSize" width="82" height="32"/>
+                    <button key="view" verticalHuggingPriority="750" id="ruc-wU-iMZ">
+                        <rect key="frame" x="0.0" y="14" width="70" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="bevel" title="Button" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="j5C-JW-T5I">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                </toolbarItem>
             </allowedToolbarItems>
             <defaultToolbarItems>
                 <toolbarItem reference="vJ7-w1-crj"/>
                 <toolbarItem reference="bZh-vJ-KZN"/>
+                <toolbarItem reference="gkR-X5-3Cv"/>
                 <toolbarItem reference="82M-Zc-fJg"/>
                 <toolbarItem reference="MG6-W3-HQV"/>
                 <toolbarItem reference="LB4-9M-kxL"/>

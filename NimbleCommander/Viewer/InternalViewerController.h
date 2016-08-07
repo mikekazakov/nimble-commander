@@ -10,6 +10,7 @@
 @property (nonatomic) NSProgressIndicator   *searchProgressIndicator;
 @property (nonatomic) NSPopUpButton         *encodingsPopUp;
 @property (nonatomic) NSPopUpButton         *modePopUp;
+@property (nonatomic) NSButton              *positionButton;
 
 - (void) setFile:(string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;

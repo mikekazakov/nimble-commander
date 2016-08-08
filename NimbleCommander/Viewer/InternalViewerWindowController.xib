@@ -7,6 +7,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="InternalViewerWindowController">
             <connections>
                 <outlet property="encodingsPopUp" destination="6E1-yW-Ao6" id="kbm-6E-rol"/>
+                <outlet property="fileSizeLabel" destination="krd-Vt-6ra" id="1al-bT-4Do"/>
                 <outlet property="modePopUp" destination="XQE-cd-TkQ" id="YyS-ah-Hol"/>
                 <outlet property="positionButton" destination="ruc-wU-iMZ" id="A04-6g-Zxf"/>
                 <outlet property="searchField" destination="ic1-oi-BKh" id="chr-Nz-AQK"/>
@@ -21,14 +22,15 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+            <rect key="contentRect" x="196" y="240" width="500" height="400"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <value key="minSize" type="size" width="500" height="400"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="S6g-eR-FJD" customClass="BigFileView">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
                     </customView>
                 </subviews>
                 <constraints>
@@ -99,27 +101,42 @@
                 </toolbarItem>
                 <toolbarItem implicitItemIdentifier="0AE9D749-57E0-45C7-A994-F119862378A7" label="Position" paletteLabel="Position" id="gkR-X5-3Cv">
                     <nil key="toolTip"/>
-                    <size key="minSize" width="70" height="21"/>
-                    <size key="maxSize" width="82" height="32"/>
-                    <button key="view" verticalHuggingPriority="750" id="ruc-wU-iMZ">
-                        <rect key="frame" x="0.0" y="14" width="70" height="21"/>
+                    <size key="minSize" width="36" height="21"/>
+                    <size key="maxSize" width="36" height="32"/>
+                    <button key="view" verticalHuggingPriority="750" id="ruc-wU-iMZ" customClass="ButtonWithTextColor">
+                        <rect key="frame" x="7" y="14" width="36" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="bevel" title="Button" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="j5C-JW-T5I">
+                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" inset="2" id="j5C-JW-T5I">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                     </button>
                 </toolbarItem>
+                <toolbarItem implicitItemIdentifier="BBF44DB3-33A9-4DA9-BCFC-C512780EAFC2" label="File Size" paletteLabel="File Size" id="hNv-Io-6nI" customClass="InternalViewerWindowController_DynamicSizeToolbarLabelItem">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="30" height="17"/>
+                    <size key="maxSize" width="60" height="17"/>
+                    <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="krd-Vt-6ra">
+                        <rect key="frame" x="7" y="14" width="38" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="1tN-4f-CTs">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </toolbarItem>
             </allowedToolbarItems>
             <defaultToolbarItems>
                 <toolbarItem reference="vJ7-w1-crj"/>
                 <toolbarItem reference="bZh-vJ-KZN"/>
+                <toolbarItem reference="hNv-Io-6nI"/>
                 <toolbarItem reference="gkR-X5-3Cv"/>
                 <toolbarItem reference="82M-Zc-fJg"/>
                 <toolbarItem reference="MG6-W3-HQV"/>
                 <toolbarItem reference="LB4-9M-kxL"/>
             </defaultToolbarItems>
-            <point key="canvasLocation" x="-95" y="834"/>
+            <point key="canvasLocation" x="-239" y="931"/>
         </toolbar>
     </objects>
 </document>

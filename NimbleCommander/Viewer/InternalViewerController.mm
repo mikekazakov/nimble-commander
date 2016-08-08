@@ -2,6 +2,7 @@
 #include "../../Files/ProcessSheetController.h"
 #include "../../Files/Config.h"
 #include "../../Files/SearchInFile.h"
+#include "../../Files/ByteCountFormatter.h"
 #include "InternalViewerController.h"
 
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
@@ -40,6 +41,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     NSPopUpButton                  *m_EncodingsPopUp;
     NSPopUpButton                  *m_ModePopUp;
     NSButton                       *m_PositionButton;
+    NSTextField                    *m_FileSizeLabel;
 }
 
 @synthesize view = m_View;
@@ -48,6 +50,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 @synthesize encodingsPopUp = m_EncodingsPopUp;
 @synthesize modePopUp = m_ModePopUp;
 @synthesize positionButton = m_PositionButton;
+@synthesize fileSizeLabel = m_FileSizeLabel;
 
 - (id) init
 {
@@ -135,6 +138,8 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     assert(self.view != nil );
     
     [self.view SetFile:m_ViewerFileWindow.get()];
+    
+    m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
 }
 
 + (unsigned) fileWindowSize
@@ -347,6 +352,14 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
                   toObject:m_View
                withKeyPath:@"verticalPositionPercentage"
                    options:@{NSValueTransformerBindingOption:[InternalViewerControllerVerticalPostionToStringTransformer new]}];
+}
+
+- (void)setFileSizeLabel:(NSTextField *)fileSizeLabel
+{
+    dispatch_assert_main_queue();
+    if( m_FileSizeLabel == fileSizeLabel )
+        return;
+    m_FileSizeLabel = fileSizeLabel;
 }
 
 @end

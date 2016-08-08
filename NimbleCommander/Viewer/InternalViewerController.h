@@ -11,6 +11,7 @@
 @property (nonatomic) NSPopUpButton         *encodingsPopUp;
 @property (nonatomic) NSPopUpButton         *modePopUp;
 @property (nonatomic) NSButton              *positionButton;
+@property (nonatomic) NSTextField           *fileSizeLabel;
 
 - (void) setFile:(string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;

@@ -17,6 +17,7 @@
 #include "../../Files/Config.h"
 #include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
+#include "../../Files/AppDelegate.h"
 #include "FindFilesSheetController.h"
 
 static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
@@ -604,6 +605,7 @@ private:
 
 - (IBAction)OnFileView:(id)sender
 {
+    dispatch_assert_main_queue();
     NSInteger row = [self.TableView selectedRow];
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     FindFilesSheetControllerFoundItem *data = item.data;
@@ -611,6 +613,7 @@ private:
     string p = data->full_filename;
     VFSHostPtr vfs = self.host;
     CFRange cont = data->content_pos;
+    NSString *search_req = self.TextComboBox.stringValue;
     
 //    dispatch_async(dispatch_get_global_queue(0, 0), ^{
 //        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
@@ -621,16 +624,25 @@ private:
 //                     completionHandler:^(NSModalResponse returnCode) {}];
 //        }
 //    });
-
     
-    InternalViewerWindowController *window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
-    dispatch_to_background([=]{
-        if( [window performBackgrounOpening] ) {
-            dispatch_to_main_queue([=]{
-                [window showAsFloatingWindow];
-            });
-        }
-    });
+    if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
+        [window showWindow:self];
+
+        if(cont.location >= 0)
+            [window markInitialSelection:cont searchTerm:search_req.UTF8String];
+    }
+    else {
+        window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
+        dispatch_to_background([=]{
+            if( [window performBackgrounOpening] ) {
+                dispatch_to_main_queue([=]{
+                    [window showAsFloatingWindow];
+                    if(cont.location >= 0)
+                        [window markInitialSelection:cont searchTerm:search_req.UTF8String];
+                });
+            }
+        });
+    }
 }
 
 // Workaround about combox' menu forcing Search by selecting item from list with Return key

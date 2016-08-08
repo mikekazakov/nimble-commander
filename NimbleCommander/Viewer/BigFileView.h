@@ -63,6 +63,7 @@ enum class BigFileViewModes : int
 /**
  * Set if text presentation should fit lines into a view width to disable horiziontal scrolling.
  * That is done by breaking sentences by words wrapping.
+ * KVO-compatible.
  */
 @property (nonatomic) bool wordWrap;
 

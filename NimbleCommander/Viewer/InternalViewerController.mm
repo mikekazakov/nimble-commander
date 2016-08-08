@@ -9,6 +9,11 @@ static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSens
 static const auto g_ConfigSearchForWholePhrase          = "viewer.searchForWholePhrase";
 static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize";
 
+static int InvertBitFlag( int _value, int _flag )
+{
+    return (_value & ~_flag) | (~_value & _flag);
+}
+
 @interface InternalViewerControllerVerticalPostionToStringTransformer : NSValueTransformer
 @end
 @implementation InternalViewerControllerVerticalPostionToStringTransformer
@@ -25,6 +30,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 @implementation InternalViewerController
 {
     string                          m_Path;
+    string                          m_GlobalFilePath;    
     VFSHostPtr                      m_VFS;
     VFSFilePtr                      m_OriginalFile; // may be not opened if SeqWrapper is used
     VFSSeqToRandomROWrapperFilePtr  m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
@@ -42,6 +48,8 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     NSPopUpButton                  *m_ModePopUp;
     NSButton                       *m_PositionButton;
     NSTextField                    *m_FileSizeLabel;
+    NSString                       *m_VerboseTitle;
+    NSButton                       *m_WordWrappingCheckBox;
 }
 
 @synthesize view = m_View;
@@ -51,6 +59,10 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 @synthesize modePopUp = m_ModePopUp;
 @synthesize positionButton = m_PositionButton;
 @synthesize fileSizeLabel = m_FileSizeLabel;
+@synthesize verboseTitle = m_VerboseTitle;
+@synthesize filePath = m_Path;
+@synthesize fileVFS = m_VFS;
+@synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
 
 - (id) init
 {
@@ -111,7 +123,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     }
     m_OriginalFile = origin_file;
     m_WorkFile = work_file;
-    
+    m_GlobalFilePath = work_file->ComposeVerbosePath();
     
     auto window = make_unique<FileWindow>();
     if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
@@ -127,6 +139,7 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
                                      (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
     
+    [self buildTitle];
     
     return true;
     
@@ -165,6 +178,15 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     ((NSSearchFieldCell*)m_SearchField.cell).recentsAutosaveName = @"BigFileViewRecentSearches";
     ((NSSearchFieldCell*)m_SearchField.cell).maximumRecents = 20;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = self.searchFieldMenu;
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
+        [m_View.window makeFirstResponder:m_View];
+        return true;
+    }
+    return false;
 }
 
 - (NSMenu*) searchFieldMenu
@@ -275,13 +297,24 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
 
 - (void)onSearchFieldMenuCaseSensitiveAction:(id)sender
 {
+    const auto options = InvertBitFlag( m_SearchInFile->SearchOptions(), SearchInFile::OptionCaseSensitive );
+    m_SearchInFile->SetSearchOptions(options);
     
+    NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
+    [menu itemAtIndex:0].state = (options & SearchInFile::OptionCaseSensitive) != 0;
+    ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
+    GlobalConfig().Set( g_ConfigSearchCaseSensitive, bool(options & SearchInFile::OptionCaseSensitive) );
 }
 
 - (void)onSearchFiledMenuWholePhraseSearch:(id)sender
 {
+    const auto options = InvertBitFlag( m_SearchInFile->SearchOptions(), SearchInFile::OptionFindWholePhrase );
+    m_SearchInFile->SetSearchOptions(options);
     
-    
+    NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
+    [menu itemAtIndex:1].state = (options & SearchInFile::OptionFindWholePhrase) != 0;
+    ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
+    GlobalConfig().Set( g_ConfigSearchForWholePhrase, bool(options & SearchInFile::OptionFindWholePhrase) );
 }
 
 - (void)setSearchProgressIndicator:(NSProgressIndicator *)searchProgressIndicator
@@ -360,6 +393,46 @@ static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize
     if( m_FileSizeLabel == fileSizeLabel )
         return;
     m_FileSizeLabel = fileSizeLabel;
+}
+
+- (void) buildTitle
+{
+    NSString *path = [NSString stringWithUTF8StdString:m_GlobalFilePath];
+    if( path == nil )
+        path = @"...";
+    NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File View - %@", "Window title for internal file viewer"), path];
+    
+    [self willChangeValueForKey:@"verboseTitle"];
+    m_VerboseTitle = title;
+    [self didChangeValueForKey:@"verboseTitle"];
+}
+
+- (void)markSelection:(CFRange)_selection forSearchTerm:(string)_request
+{
+    dispatch_assert_main_queue();
+    
+    m_SearchInFileQueue->Stop(); // we should stop current search if any
+    
+    self.view.selectionInFile = _selection;
+    [self.view ScrollToSelection];
+    
+    NSString *search_request = [NSString stringWithUTF8StdString:_request];
+    m_SearchField.stringValue = search_request;
+    
+    if( _selection.location + _selection.length < m_SearchFileWindow->FileSize() )
+        m_SearchInFile->MoveCurrentPosition( _selection.location + _selection.length );
+    else
+        m_SearchInFile->MoveCurrentPosition( 0 );
+    m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)search_request, m_View.encoding);
+}
+
+- (void)setWordWrappingCheckBox:(NSButton *)wordWrappingCheckBox
+{
+    dispatch_assert_main_queue();
+    if( m_WordWrappingCheckBox == wordWrappingCheckBox )
+        return;
+    m_WordWrappingCheckBox = wordWrappingCheckBox;
+    [m_WordWrappingCheckBox bind:@"value" toObject:m_View withKeyPath:@"wordWrap" options:nil];
 }
 
 @end

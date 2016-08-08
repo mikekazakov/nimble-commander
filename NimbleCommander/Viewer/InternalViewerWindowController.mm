@@ -59,15 +59,17 @@
 @property (strong) IBOutlet NSPopUpButton *modePopUp;
 @property (strong) IBOutlet ButtonWithTextColor *positionButton;
 @property (strong) IBOutlet NSTextField *fileSizeLabel;
+@property (strong) IBOutlet NSPopover *popover;
+@property (strong) IBOutlet NSButton *wordWrapCheckBox;
 
 @end
 
 @implementation InternalViewerWindowController
 {
     InternalViewerController *m_Controller;
-    
-    
 }
+
+@synthesize internalViewerController = m_Controller;
 
 - (id) initWithFilepath:(string)path
                      at:(VFSHostPtr)vfs
@@ -87,7 +89,6 @@
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     self.positionButton.textColor = NSColor.labelColor;
     
-    
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.searchField;
     m_Controller.searchProgressIndicator = self.searchProgressIndicator;
@@ -95,14 +96,15 @@
     m_Controller.modePopUp = self.modePopUp;
     m_Controller.positionButton = self.positionButton;
     m_Controller.fileSizeLabel = self.fileSizeLabel;
+    m_Controller.wordWrappingCheckBox = self.wordWrapCheckBox;
+    
+    [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
 }
 
 - (bool) performBackgrounOpening
 {
     return [m_Controller performBackgroundOpening];
 }
-
-//[AppDelegate.me addInternalViewerWindow:window];
 
 - (void)showAsFloatingWindow
 {
@@ -121,6 +123,23 @@
     dispatch_to_main_queue_after(10ms, [=]{
         [AppDelegate.me removeInternalViewerWindow:self];
     });
+}
+
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request
+{
+    [m_Controller markSelection:_selection forSearchTerm:_request];
+}
+
+- (IBAction)performFindPanelAction:(id)sender
+{
+    [self.window makeFirstResponder:self.searchField];
+}
+
+- (IBAction)onViewerSettings:(id)sender
+{
+    [self.popover showRelativeToRect:objc_cast<NSButton>(sender).bounds
+                              ofView:objc_cast<NSButton>(sender)
+                       preferredEdge:NSMaxYEdge];
 }
 
 @end

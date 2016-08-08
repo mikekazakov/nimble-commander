@@ -10,6 +10,8 @@
 
 #include "../../Files/vfs/VFS.h"
 
+@class InternalViewerController;
+
 @interface InternalViewerWindowController : NSWindowController
 
 - (id) initWithFilepath:(string)path
@@ -18,6 +20,9 @@
 - (bool) performBackgrounOpening; // call it from bg thread!
 
 - (void)showAsFloatingWindow;
-//- (void)showAsSheetForWindow:(NSWindow*)_window;
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request;
+
+
+@property (nonatomic, readonly) InternalViewerController *internalViewerController;
 
 @end

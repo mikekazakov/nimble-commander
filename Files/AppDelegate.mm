@@ -41,6 +41,8 @@
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
+#include "../NimbleCommander/Viewer/InternalViewerController.h"
+#include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
 
 #include "AppStoreHelper.h"
 
@@ -738,6 +740,15 @@ static AppDelegate *g_Me = nil;
     auto i = find(begin(m_ViewerWindows), end(m_ViewerWindows), _wnd);
     if( i != end(m_ViewerWindows) )
         m_ViewerWindows.erase(i);
+}
+
+- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path onVFS:(const VFSHostPtr&)_vfs
+{
+    auto i = find_if(begin(m_ViewerWindows), end(m_ViewerWindows), [&](auto v){
+       return v.internalViewerController.filePath == _path &&
+              v.internalViewerController.fileVFS == _vfs;
+    });
+    return i != end(m_ViewerWindows) ? *i : nil;
 }
 
 @end

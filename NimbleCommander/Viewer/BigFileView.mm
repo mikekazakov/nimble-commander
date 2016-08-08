@@ -435,18 +435,20 @@ const static double g_BorderWidth = 1.0;
     [self syncVerticalPositionInBytes];
 }
 
-- (bool) wordWrap
+- (bool)wordWrap
 {
     return m_WrapWords;
 }
 
 - (void)setWordWrap:(bool)_wrapping
 {
-    if(m_WrapWords != _wrapping)
-    {
-        m_WrapWords = _wrapping;
-        m_ViewImpl->OnWordWrappingChanged();
-    }
+    if( m_WrapWords == _wrapping )
+        return;
+    
+    [self willChangeValueForKey:@"wordWrap"];
+    m_WrapWords = _wrapping;
+    m_ViewImpl->OnWordWrappingChanged();
+    [self didChangeValueForKey:@"wordWrap"];
 }
 
 - (BigFileViewModes) mode

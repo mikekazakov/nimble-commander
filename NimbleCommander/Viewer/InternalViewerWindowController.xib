@@ -6,31 +6,32 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="InternalViewerWindowController">
             <connections>
-                <outlet property="encodingsPopUp" destination="6E1-yW-Ao6" id="kbm-6E-rol"/>
+                <outlet property="encodingsPopUp" destination="C4h-aE-6rP" id="aoq-eM-Veh"/>
                 <outlet property="fileSizeLabel" destination="krd-Vt-6ra" id="1al-bT-4Do"/>
                 <outlet property="modePopUp" destination="XQE-cd-TkQ" id="YyS-ah-Hol"/>
+                <outlet property="popover" destination="Wi5-aV-Df4" id="BOh-xN-5Up"/>
                 <outlet property="positionButton" destination="ruc-wU-iMZ" id="A04-6g-Zxf"/>
                 <outlet property="searchField" destination="ic1-oi-BKh" id="chr-Nz-AQK"/>
                 <outlet property="searchProgressIndicator" destination="bSl-b8-JJK" id="0RX-ph-bfp"/>
                 <outlet property="toolbar" destination="GfZ-m6-G24" id="3nI-oG-TT5"/>
                 <outlet property="viewerView" destination="S6g-eR-FJD" id="G3M-vg-kLs"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+                <outlet property="wordWrapCheckBox" destination="MVp-It-ftu" id="xoe-aN-CNY"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="InternalViewerFloatingWindow" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="500" height="400"/>
+            <rect key="contentRect" x="542" y="386" width="520" height="400"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <value key="minSize" type="size" width="500" height="400"/>
+            <value key="minSize" type="size" width="520" height="400"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
+                <rect key="frame" x="0.0" y="0.0" width="520" height="400"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="S6g-eR-FJD" customClass="BigFileView">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="520" height="400"/>
                     </customView>
                 </subviews>
                 <constraints>
@@ -50,10 +51,10 @@
                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="82M-Zc-fJg"/>
                 <toolbarItem implicitItemIdentifier="8954FAAA-ABEF-4615-832E-FB0BD89062B1" label="Search In File" paletteLabel="Search In File" id="LB4-9M-kxL">
                     <nil key="toolTip"/>
-                    <size key="minSize" width="96" height="22"/>
-                    <size key="maxSize" width="96" height="22"/>
+                    <size key="minSize" width="100" height="22"/>
+                    <size key="maxSize" width="200" height="22"/>
                     <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="ic1-oi-BKh">
-                        <rect key="frame" x="0.0" y="14" width="96" height="22"/>
+                        <rect key="frame" x="0.0" y="14" width="200" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <searchFieldCell key="cell" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="U19-Sp-UlH">
                             <font key="font" metaFont="system"/>
@@ -71,26 +72,12 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </progressIndicator>
                 </toolbarItem>
-                <toolbarItem implicitItemIdentifier="595BD924-6AA3-45F2-8D6D-9700E02708A9" label="Encodings" paletteLabel="Encodings" id="bZh-vJ-KZN">
-                    <nil key="toolTip"/>
-                    <size key="minSize" width="100" height="26"/>
-                    <size key="maxSize" width="100" height="26"/>
-                    <popUpButton key="view" verticalHuggingPriority="750" id="6E1-yW-Ao6">
-                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="30I-FW-HLg">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
-                            <menu key="menu" id="u7D-Yv-Jg6"/>
-                        </popUpButtonCell>
-                    </popUpButton>
-                </toolbarItem>
                 <toolbarItem implicitItemIdentifier="BDC41D99-53CB-478C-891C-21E535E9F8C7" label="Mode" paletteLabel="Mode" id="vJ7-w1-crj">
                     <nil key="toolTip"/>
-                    <size key="minSize" width="100" height="26"/>
-                    <size key="maxSize" width="100" height="26"/>
+                    <size key="minSize" width="80" height="26"/>
+                    <size key="maxSize" width="80" height="26"/>
                     <popUpButton key="view" verticalHuggingPriority="750" id="XQE-cd-TkQ">
-                        <rect key="frame" x="0.0" y="14" width="100" height="26"/>
+                        <rect key="frame" x="0.0" y="14" width="80" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="els-ey-rJB">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -126,17 +113,94 @@
                         </textFieldCell>
                     </textField>
                 </toolbarItem>
+                <toolbarItem implicitItemIdentifier="FAB7FB34-6EF5-4AE7-83FC-AF80E078072F" label="Settings" paletteLabel="Settings" image="NSActionTemplate" id="fju-hg-2nq">
+                    <nil key="toolTip"/>
+                    <size key="minSize" width="21" height="21"/>
+                    <size key="maxSize" width="21" height="21"/>
+                    <button key="view" verticalHuggingPriority="750" id="xPg-eG-Lnt">
+                        <rect key="frame" x="15" y="14" width="21" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSActionTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="dE8-rI-J1g">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onViewerSettings:" target="-2" id="LIy-V7-mqK"/>
+                        </connections>
+                    </button>
+                </toolbarItem>
             </allowedToolbarItems>
             <defaultToolbarItems>
                 <toolbarItem reference="vJ7-w1-crj"/>
-                <toolbarItem reference="bZh-vJ-KZN"/>
+                <toolbarItem reference="fju-hg-2nq"/>
                 <toolbarItem reference="hNv-Io-6nI"/>
                 <toolbarItem reference="gkR-X5-3Cv"/>
                 <toolbarItem reference="82M-Zc-fJg"/>
                 <toolbarItem reference="MG6-W3-HQV"/>
                 <toolbarItem reference="LB4-9M-kxL"/>
             </defaultToolbarItems>
-            <point key="canvasLocation" x="-239" y="931"/>
+            <point key="canvasLocation" x="152.5" y="928"/>
         </toolbar>
+        <customView id="jB3-oh-nsS" userLabel="Popover View">
+            <rect key="frame" x="0.0" y="0.0" width="398" height="79"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6PB-j8-LlL">
+                    <rect key="frame" x="18" y="42" width="65" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Encoding:" id="aiY-VN-IMj">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C4h-aE-6rP">
+                    <rect key="frame" x="87" y="36" width="294" height="26"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="NqU-g9-WLF"/>
+                    </constraints>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="0uM-Gh-apL" id="vh5-cI-fMH">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="ujY-no-cBM">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="0uM-Gh-apL"/>
+                                <menuItem title="Item 2" id="sKa-Yr-iDg"/>
+                                <menuItem title="Item 3" id="hkE-GR-XGY"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="MVp-It-ftu">
+                    <rect key="frame" x="18" y="18" width="90" height="18"/>
+                    <buttonCell key="cell" type="check" title="Word Wrap" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="pGb-dX-xEu">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="MVp-It-ftu" firstAttribute="top" secondItem="6PB-j8-LlL" secondAttribute="bottom" constant="8" symbolic="YES" id="2J6-ba-UYC"/>
+                <constraint firstItem="C4h-aE-6rP" firstAttribute="leading" secondItem="6PB-j8-LlL" secondAttribute="trailing" constant="8" symbolic="YES" id="7Vz-5Z-9mX"/>
+                <constraint firstItem="C4h-aE-6rP" firstAttribute="baseline" secondItem="6PB-j8-LlL" secondAttribute="baseline" id="Bwh-k0-fUr"/>
+                <constraint firstItem="6PB-j8-LlL" firstAttribute="leading" secondItem="jB3-oh-nsS" secondAttribute="leading" constant="20" symbolic="YES" id="JCQ-t4-lf3"/>
+                <constraint firstItem="6PB-j8-LlL" firstAttribute="top" secondItem="jB3-oh-nsS" secondAttribute="top" constant="20" symbolic="YES" id="NHb-2f-3Ka"/>
+                <constraint firstAttribute="trailing" secondItem="C4h-aE-6rP" secondAttribute="trailing" constant="20" symbolic="YES" id="Ocm-F2-XkC"/>
+                <constraint firstItem="MVp-It-ftu" firstAttribute="leading" secondItem="jB3-oh-nsS" secondAttribute="leading" constant="20" symbolic="YES" id="frQ-No-K9y"/>
+            </constraints>
+            <point key="canvasLocation" x="55" y="1201.5"/>
+        </customView>
+        <viewController id="O3a-fS-9sF" userLabel="Popover View Controller">
+            <connections>
+                <outlet property="view" destination="jB3-oh-nsS" id="lQJ-9d-qXL"/>
+            </connections>
+        </viewController>
+        <popover animates="NO" behavior="t" id="Wi5-aV-Df4">
+            <connections>
+                <outlet property="contentViewController" destination="O3a-fS-9sF" id="HIG-HT-0gz"/>
+            </connections>
+        </popover>
     </objects>
+    <resources>
+        <image name="NSActionTemplate" width="14" height="14"/>
+    </resources>
 </document>

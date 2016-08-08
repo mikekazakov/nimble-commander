@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ApplicationSkins.h"
+#include "vfs/VFS.h"
 
 @class MainWindowController;
 @class InternalViewerWindowController;
@@ -23,6 +24,7 @@ class ExternalToolsStorage;
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
+- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path onVFS:(const VFSHostPtr&)_vfs;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.

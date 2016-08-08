@@ -3,11 +3,23 @@
 #include "../../Files/Config.h"
 #include "../../Files/SearchInFile.h"
 #include "../../Files/ByteCountFormatter.h"
+#include "BigFileViewHistory.h"
 #include "InternalViewerController.h"
 
+static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
 static const auto g_ConfigSearchForWholePhrase          = "viewer.searchForWholePhrase";
 static const auto g_ConfigWindowSize                    = "viewer.fileWindowSize";
+
+static int EncodingFromXAttr(const VFSFilePtr &_f)
+{
+    char buf[128];
+    ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
+    if(r < 0 || r >= sizeof(buf))
+        return encodings::ENCODING_INVALID;
+    buf[r] = 0;
+    return encodings::FromComAppleTextEncodingXAttr(buf);
+}
 
 static int InvertBitFlag( int _value, int _flag )
 {
@@ -73,6 +85,12 @@ static int InvertBitFlag( int _value, int _flag )
         m_SearchInFileQueue->OnChange([=]{ [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged]; });
     }
     return self;
+}
+
+- (void) dealloc
+{
+    m_SearchInFileQueue->Stop();
+    m_SearchInFileQueue->Wait();
 }
 
 - (void) setFile:(string)path at:(VFSHostPtr)vfs
@@ -150,9 +168,51 @@ static int InvertBitFlag( int _value, int _flag )
     dispatch_assert_main_queue();
     assert(self.view != nil );
     
-    [self.view SetFile:m_ViewerFileWindow.get()];
+    
+    // try to load a saved info if any
+    if(BigFileViewHistoryEntry *info =
+       [BigFileViewHistory.sharedHistory FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]]) {
+        BigFileViewHistoryOptions options = BigFileViewHistory.HistoryOptions;
+        if(options.encoding && options.mode)
+            [m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode];
+        else {
+            [m_View SetFile:m_ViewerFileWindow.get()];
+            if(options.encoding)    m_View.encoding = info->encoding;
+            if(options.mode)        m_View.mode = info->view_mode;
+        }
+        // a bit suboptimal no - may re-layout after first one
+        if(options.wrapping) m_View.wordWrap = info->wrapping;
+        if(options.position) m_View.verticalPositionInBytes = info->position;
+        if(options.selection) m_View.selectionInFile = info->selection;
+    }
+    else {
+        [m_View SetFile:m_ViewerFileWindow.get()];
+        int encoding = 0;
+        if( GlobalConfig().GetBool(g_ConfigRespectComAppleTextEncoding) &&
+           (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
+            m_View.encoding = encoding;
+    }
     
     m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
+}
+
+- (void) saveFileState
+{
+    if(![BigFileViewHistory HistoryEnabled])
+        return;
+    
+    // do our state persistance stuff
+    BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
+    info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
+    if(info->path == nil)
+        return; // guard against malformed filenames, like an archives with invalid encoding
+    info->last_viewed = NSDate.date;
+    info->position = m_View.verticalPositionInBytes;
+    info->wrapping = m_View.wordWrap;
+    info->view_mode = m_View.mode;
+    info->encoding = m_View.encoding;
+    info->selection = m_View.selectionInFile;
+    [BigFileViewHistory.sharedHistory InsertEntry:info];
 }
 
 + (unsigned) fileWindowSize

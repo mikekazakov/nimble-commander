@@ -6,7 +6,6 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Utility/ButtonWithTextColor.h>
 #include "../../Files/AppDelegate.h"
 #include "BigFileView.h"
 #include "InternalViewerController.h"
@@ -52,12 +51,11 @@
 @interface InternalViewerWindowController ()
 
 @property (strong) IBOutlet BigFileView *viewerView;
-@property (strong) IBOutlet NSToolbar *toolbar;
 @property (strong) IBOutlet NSSearchField *searchField;
 @property (strong) IBOutlet NSProgressIndicator *searchProgressIndicator;
 @property (strong) IBOutlet NSPopUpButton *encodingsPopUp;
 @property (strong) IBOutlet NSPopUpButton *modePopUp;
-@property (strong) IBOutlet ButtonWithTextColor *positionButton;
+@property (strong) IBOutlet NSButton *positionButton;
 @property (strong) IBOutlet NSTextField *fileSizeLabel;
 @property (strong) IBOutlet NSPopover *popover;
 @property (strong) IBOutlet NSButton *wordWrapCheckBox;
@@ -82,12 +80,9 @@
     return self;
 }
 
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
-    
-    self.window.toolbar = self.toolbar;
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    self.positionButton.textColor = NSColor.labelColor;
     
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.searchField;
@@ -119,6 +114,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [m_Controller saveFileState];
     self.window.delegate = nil;
     dispatch_to_main_queue_after(10ms, [=]{
         [AppDelegate.me removeInternalViewerWindow:self];

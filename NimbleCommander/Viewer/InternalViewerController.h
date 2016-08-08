@@ -22,6 +22,7 @@
 - (void) setFile:(string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;
 - (void) show;
+- (void) saveFileState;
 
 - (void)markSelection:(CFRange)_selection forSearchTerm:(string)_request;
 

@@ -265,10 +265,15 @@ const static double g_BorderWidth = 1.0;
 //    m_ViewImpl = _mode == BigFileViewModes::Hex ?
 //        make_unique<BigFileViewHex>(m_Data.get(), self) :
 //        make_unique<BigFileViewText>(m_Data.get(), self);
+    
+    [self willChangeValueForKey:@"mode"];
+    
     if(_mode == BigFileViewModes::Hex)
         m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
     else if(_mode == BigFileViewModes::Text)
         m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
+    
+    [self didChangeValueForKey:@"mode"];
 }
 
 - (void)keyDown:(NSEvent *)event

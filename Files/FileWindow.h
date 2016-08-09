@@ -49,6 +49,11 @@ public:
      */
     int MoveWindow(size_t _offset);
     
+    /**
+     * Returns underlying VFS file.
+     */
+    const VFSFilePtr& File() const;
+    
 private:
     int ReadFileWindowRandomPart(size_t _offset, size_t _len);
     int ReadFileWindowSeqPart(size_t _offset, size_t _len);

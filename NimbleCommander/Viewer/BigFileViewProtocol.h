@@ -21,8 +21,7 @@ public:
     // information
     virtual uint32_t GetOffsetWithinWindow(){return 0;}; // offset of a first visible symbol (+/-)
     
-    virtual void CalculateScrollPosition( double &_position, double &_knob_proportion ){};
-    
+    virtual void CalculateScrollPosition( double &_position, double &_knob_proportion ){_position = 0; _knob_proportion = 1;};
     // event handling
     virtual void OnScrollWheel(NSEvent *theEvent){}
     virtual void OnBufferDecoded() {}
@@ -39,6 +38,8 @@ public:
     
     
     virtual void HandleVerticalScroll(double _pos){} // move file window if needed
+    
+    virtual bool NeedsVerticalScroller(){ return true;};
     
     // drawing
     virtual void DoDraw(CGContextRef _context, NSRect _dirty_rect){}

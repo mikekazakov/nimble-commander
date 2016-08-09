@@ -202,3 +202,8 @@ int FileWindow::MoveWindow(size_t _offset)
     
     return VFSError::InvalidCall;
 }
+
+const VFSFilePtr& FileWindow::File() const
+{
+    return m_File;
+}

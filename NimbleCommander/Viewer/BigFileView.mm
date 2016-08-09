@@ -11,9 +11,11 @@
 #include "../../Files/DataBlockAnalysis.h"
 #include "../../Files/AppDelegate.h"
 #include "../../Files/Config.h"
+#include "../../Files/TemporaryNativeFileStorage.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
+#include "InternalViewerViewPreviewMode.h"
 #include "BigFileViewDataBackend.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
@@ -38,6 +40,8 @@ const static double g_BorderWidth = 1.0;
     FileWindow     *m_File;
     unique_ptr<BigFileViewDataBackend> m_Data;
 
+    optional<string> m_NativeStoredFile;
+    
     CTFontRef       m_Font;
     CGColorRef      m_ForegroundColor;
     DoubleColor     m_SelectionBkFillColor;
@@ -260,81 +264,54 @@ const static double g_BorderWidth = 1.0;
         }
     });
     
-//    m_ViewImpl = _mode == BigFileViewModes::Hex ? [BigFileViewHex alloc] : [BigFileViewText alloc];
-//    [m_ViewImpl InitWithData:m_Data.get() parent:self];
-//    m_ViewImpl = _mode == BigFileViewModes::Hex ?
-//        make_unique<BigFileViewHex>(m_Data.get(), self) :
-//        make_unique<BigFileViewText>(m_Data.get(), self);
-    
-    [self willChangeValueForKey:@"mode"];
-    
-    if(_mode == BigFileViewModes::Hex)
-        m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
-    else if(_mode == BigFileViewModes::Text)
-        m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
-    
-    [self didChangeValueForKey:@"mode"];
+    self.mode = _mode;
 }
 
 - (void)keyDown:(NSEvent *)event
 {
-    if([[event charactersIgnoringModifiers] length] != 1) return;
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
-    switch ([[event charactersIgnoringModifiers] characterAtIndex:0]) {
+    if( event.charactersIgnoringModifiers.length != 1 )
+        return;
+    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
         case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
         case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
         default: [super keyDown:event]; return;
     }
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void)moveUp:(id)sender{
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void)moveUp:(id)sender
+{
     m_ViewImpl->OnUpArrow();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void)moveDown:(id)sender {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void)moveDown:(id)sender
+{
     m_ViewImpl->OnDownArrow();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void)moveLeft:(id)sender {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void)moveLeft:(id)sender
+{
     m_ViewImpl->OnLeftArrow();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void)moveRight:(id)sender {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void)moveRight:(id)sender
+{
     m_ViewImpl->OnRightArrow();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void)pageDown:(id)sender {
-//  uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void)pageDown:(id)sender
+{
     m_ViewImpl->OnPageDown();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
-- (void) pageUp:(id)sender {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
+- (void) pageUp:(id)sender
+{
     m_ViewImpl->OnPageUp();
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
@@ -401,8 +378,7 @@ const static double g_BorderWidth = 1.0;
 
 - (void)VerticalScroll:(id)sender
 {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
-    switch (m_VerticalScroller.hitPart)
+    switch( m_VerticalScroller.hitPart )
     {
         case NSScrollerIncrementLine:
             m_ViewImpl->OnDownArrow();
@@ -426,17 +402,12 @@ const static double g_BorderWidth = 1.0;
         default:
             break;
     }
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-//    uint64_t was_vert_pos = self.verticalPositionInBytes;
     m_ViewImpl->OnScrollWheel(theEvent);
-//    if(was_vert_pos != self.verticalPositionInBytes)
-//        [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolledByUser];
     [self syncVerticalPositionInBytes];
 }
 
@@ -462,20 +433,30 @@ const static double g_BorderWidth = 1.0;
         return BigFileViewModes::Text;
     else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
         return BigFileViewModes::Hex;
+    else if(dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
+        return BigFileViewModes::Preview;
     else
 //        assert(0);
         // in case of doubt - say we're in text mode (uninitialized really)
         return BigFileViewModes::Text;
+    // TODO: make Text move be default
 }
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if( _mode == self.mode )
+    if( _mode == BigFileViewModes::Text    && dynamic_cast<BigFileViewText*>(m_ViewImpl.get()))
+        return;
+    if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
+        return;
+    if( _mode == BigFileViewModes::Preview && dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
         return;
     
+//    if( _mode == self.mode )
+//        return;
+//    
     [self willChangeValueForKey:@"mode"];
     
-    uint32_t current_offset = m_ViewImpl->GetOffsetWithinWindow();
+    uint32_t current_offset = m_ViewImpl ? m_ViewImpl->GetOffsetWithinWindow() : 0;
     
     switch (_mode)
     {
@@ -485,11 +466,26 @@ const static double g_BorderWidth = 1.0;
         case BigFileViewModes::Hex:
             m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
             break;
+        case BigFileViewModes::Preview:
+        {
+            string path;
+            if( m_File->File()->Host()->IsNativeFS() )
+                path = m_File->File()->RelativePath();
+            else {
+                if( !m_NativeStoredFile )
+                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->RelativePath(), m_File->File()->Host());
+                if( m_NativeStoredFile )
+                    path = *m_NativeStoredFile;
+            }
+            m_ViewImpl = make_unique<InternalViewerViewPreviewMode>(path, self);
+            break;
+        }
         default:
             assert(0);
     }
-
+    
     m_ViewImpl->MoveOffsetWithinWindow(current_offset);
+    m_VerticalScroller.hidden = !m_ViewImpl->NeedsVerticalScroller();
     [self setNeedsDisplay];
     
     [self didChangeValueForKey:@"mode"];

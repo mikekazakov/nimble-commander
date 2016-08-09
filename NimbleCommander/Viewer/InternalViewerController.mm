@@ -426,6 +426,8 @@ static int InvertBitFlag( int _value, int _flag )
     m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Text;
     [m_ModePopUp addItemWithTitle:@"Hex"];
     m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Hex;
+    [m_ModePopUp addItemWithTitle:@"Preview"];
+    m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Preview;
     [m_ModePopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"mode" options:nil];
 }
 

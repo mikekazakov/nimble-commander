@@ -97,7 +97,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="30" height="17"/>
                         <size key="maxSize" width="60" height="17"/>
-                        <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="krd-Vt-6ra">
+                        <textField key="view" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" id="krd-Vt-6ra">
                             <rect key="frame" x="7" y="14" width="38" height="17"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="1tN-4f-CTs">
@@ -143,9 +143,9 @@
             <rect key="frame" x="0.0" y="0.0" width="398" height="79"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6PB-j8-LlL">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6PB-j8-LlL">
                     <rect key="frame" x="18" y="42" width="65" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Encoding:" id="aiY-VN-IMj">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Encoding:" id="aiY-VN-IMj">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

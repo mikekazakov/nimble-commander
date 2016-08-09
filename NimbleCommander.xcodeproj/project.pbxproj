@@ -49,6 +49,10 @@
 		CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
 		CF17D1F31A049E1700B523C9 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF17D1F11A049E1700B523C9 /* MainWindow.mm */; };
+		CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
+		CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
+		CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
+		CF1E3D151D59A4A600609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
 		CF1E96981C96F97A0041C4FA /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF754D4B1C8F11F800381260 /* Config.cpp */; };
 		CF1E969E1C96F97B0041C4FA /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF754D4B1C8F11F800381260 /* Config.cpp */; };
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
@@ -1261,6 +1265,8 @@
 		CF17D1F01A049E1700B523C9 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindow.h; sourceTree = "<group>"; };
 		CF17D1F11A049E1700B523C9 /* MainWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainWindow.mm; sourceTree = "<group>"; };
 		CF1D0E691C5B91D300438108 /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = vfs/VFSArchiveProxy.h; sourceTree = "<group>"; };
+		CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.h; sourceTree = SOURCE_ROOT; };
+		CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.mm; sourceTree = SOURCE_ROOT; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
 		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
@@ -2430,6 +2436,8 @@
 				CF876D241D51E04A009C0CCE /* BigFileViewText.mm */,
 				CF876D4A1D530F46009C0CCE /* InternalViewerController.h */,
 				CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */,
+				CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */,
+				CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */,
 				CF876D4D1D53296C009C0CCE /* InternalViewerWindowController.h */,
 				CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */,
 				CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */,
@@ -3627,6 +3635,7 @@
 				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
+				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CF46DB9F1C856FE7009E28B9 /* PanelDataPersistency.cpp in Sources */,
 				CF1E969E1C96F97B0041C4FA /* Config.cpp in Sources */,
 				CF46DB791C856F2F009E28B9 /* TermParser.mm in Sources */,
@@ -3852,6 +3861,7 @@
 				CFA539B61D433E2A00C562A7 /* PanelController+Navigation.mm in Sources */,
 				CFA539B81D433E2A00C562A7 /* ToolsMenuDelegate.mm in Sources */,
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
+				CF1E3D151D59A4A600609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFA539BA1D433E2A00C562A7 /* FilePanelMainSplitView.mm in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
 				CFA539BC1D433E2A00C562A7 /* ActivationManager.cpp in Sources */,
@@ -4018,6 +4028,7 @@
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFD6F9191BEC4FEA00A1B046 /* VFSHost.cpp in Sources */,
+				CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CF754D4C1C8F11F800381260 /* Config.cpp in Sources */,
 				CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF81AA131C3F8B3D00C5E531 /* PanelDataPersistency.cpp in Sources */,
@@ -4251,6 +4262,7 @@
 				CFF6F2C51A13567C00011177 /* ButtonWithOptions.m in Sources */,
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
+				CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CF50C4451C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,

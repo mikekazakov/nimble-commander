@@ -45,9 +45,8 @@
         m_Controller = [[InternalViewerController alloc] init];
         [m_Controller setFile:path at:vfs];
         
-        NSNib *nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
-        NSArray *topLevelObjects;
-        [nib instantiateWithOwner:self topLevelObjects:&topLevelObjects];
+        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
+        [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
     }
     return self;
 }

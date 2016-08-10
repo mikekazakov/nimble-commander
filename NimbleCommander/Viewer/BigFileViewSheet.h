@@ -19,12 +19,5 @@
 
 - (bool) open; // call it from bg thread!
 - (void) selectBlockAt:(uint64_t)off length:(uint64_t)len; // should be called upon init
-- (IBAction)OnClose:(id)sender;
-- (IBAction)OnMode:(id)sender;
-- (IBAction)OnEncoding:(id)sender;
-
-@property (strong) IBOutlet BigFileView *view;
-@property (strong) IBOutlet NSSegmentedControl *mode;
-@property (strong) IBOutlet NSPopUpButton *encoding;
 
 @end

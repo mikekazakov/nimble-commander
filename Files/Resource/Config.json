@@ -326,6 +326,11 @@
     "viewer": {
 
         /**
+         * Should viewer be presented in modal mode or as a separate window.
+         */
+        "modalMode": true,
+        
+        /**
          * Size of a window thru which viewer should show contents of a file, integer enumeration:
          * 0 - 32Kb
          * 1 - 64Kb

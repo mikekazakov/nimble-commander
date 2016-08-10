@@ -26,6 +26,8 @@ static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
 
+static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
+
 static string ensure_tr_slash( string _str )
 {
     if(_str.empty() || _str.back() != '/')
@@ -615,33 +617,40 @@ private:
     CFRange cont = data->content_pos;
     NSString *search_req = self.TextComboBox.stringValue;
     
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
-//        if([sheet open]) {
-//            if(cont.location >= 0)
-//                [sheet selectBlockAt:cont.location length:cont.length];
-//            [sheet beginSheetForWindow:self.window
-//                     completionHandler:^(NSModalResponse returnCode) {}];
-//        }
-//    });
-    
-    if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
-        [window showWindow:self];
-
-        if(cont.location >= 0)
-            [window markInitialSelection:cont searchTerm:search_req.UTF8String];
-    }
-    else {
-        window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
-        dispatch_to_background([=]{
-            if( [window performBackgrounOpening] ) {
-                dispatch_to_main_queue([=]{
-                    [window showAsFloatingWindow];
-                    if(cont.location >= 0)
-                        [window markInitialSelection:cont searchTerm:search_req.UTF8String];
-                });
+    if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) {
+        // as a sheet
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
+            if([sheet open]) {
+                if(cont.location >= 0)
+                    [sheet selectBlockAt:cont.location length:cont.length];
+                [sheet beginSheetForWindow:self.window
+                         completionHandler:^(NSModalResponse returnCode) {}];
             }
         });
+    }
+    else {
+        // as a window
+        if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
+            // already has this one
+            [window showWindow:self];
+            
+            if(cont.location >= 0)
+                [window markInitialSelection:cont searchTerm:search_req.UTF8String];
+        }
+        else {
+            // need to create a new one
+            window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
+            dispatch_to_background([=]{
+                if( [window performBackgrounOpening] ) {
+                    dispatch_to_main_queue([=]{
+                        [window showAsFloatingWindow];
+                        if(cont.location >= 0)
+                            [window markInitialSelection:cont searchTerm:search_req.UTF8String];
+                    });
+                }
+            });
+        }
     }
 }
 

@@ -15,7 +15,6 @@
 #include "States/Terminal/MainWindowTerminalState.h"
 #include "States/Terminal/TermShellTask.h"
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"
-#include "States/Viewer/MainWindowBigFileViewState.h"
 #include "../NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h"
 #include "Utility/SystemInformation.h"
 #include <Utility/NativeFSManager.h>

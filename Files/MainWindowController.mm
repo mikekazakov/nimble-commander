@@ -16,6 +16,7 @@
 #include "States/Terminal/TermShellTask.h"
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"
 #include "States/Viewer/MainWindowBigFileViewState.h"
+#include "../NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h"
 #include "Utility/SystemInformation.h"
 #include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
@@ -358,15 +359,27 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if(!m_BigFileViewLoadingQ->Empty())
         return;
     
+//    m_BigFileViewLoadingQ->Run([=]{
+//        auto frame = [self.window.contentView frame];
+//        MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:frame];
+//        
+//        if([state OpenFile:_filepath.c_str() with_fs:_host])
+//            dispatch_to_main_queue([=]{
+//                [self PushNewWindowState:state];
+//            });
+//    });
+
     m_BigFileViewLoadingQ->Run([=]{
-        auto frame = [self.window.contentView frame];
-        MainWindowBigFileViewState *state = [[MainWindowBigFileViewState alloc] initWithFrame:frame];
-        
-        if([state OpenFile:_filepath.c_str() with_fs:_host])
+        MainWindowInternalViewerState *state;
+        dispatch_sync(dispatch_get_main_queue(),[&]{
+            state = [[MainWindowInternalViewerState alloc] init];
+        });
+        if( [state openFile:_filepath atVFS:_host] )
             dispatch_to_main_queue([=]{
                 [self PushNewWindowState:state];
             });
     });
+
 }
 
 - (void)RequestTerminal:(const string&)_cwd;

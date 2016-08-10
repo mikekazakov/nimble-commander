@@ -1,22 +1,18 @@
 //
-//  InternalViewerWindowController.m
+//  MainWindowInternalViewerState.m
 //  NimbleCommander
 //
-//  Created by Michael G. Kazakov on 8/4/16.
+//  Created by Michael G. Kazakov on 8/10/16.
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/AppDelegate.h"
-#include "BigFileView.h"
-#include "InternalViewerController.h"
-#include "InternalViewerWindowController.h"
+#include "../../Files/MainWindowController.h"
+#include "../../Viewer/InternalViewerController.h"
+#include "../../Files/GoogleAnalytics.h"
+#include "../../Files/ActionsShortcutsManager.h"
+#include "MainWindowInternalViewerState.h"
 
-
-
-
-@interface InternalViewerWindowController ()
-
-@property (strong) IBOutlet BigFileView *viewerView;
+@interface MainWindowInternalViewerState ()
 
 @property (strong) IBOutlet NSToolbar *internalViewerToolbar;
 @property (strong) IBOutlet NSSearchField *internalViewerToolbarSearchField;
@@ -30,33 +26,34 @@
 
 @end
 
-@implementation InternalViewerWindowController
-{
+@implementation MainWindowInternalViewerState
+{    
     InternalViewerController *m_Controller;
 }
 
-@synthesize internalViewerController = m_Controller;
-
-- (id) initWithFilepath:(string)path
-                     at:(VFSHostPtr)vfs
+- (id) init
 {
-    self = [super initWithWindowNibName:NSStringFromClass(self.class)];
+//    self = [super init];
+    self = [super initWithNibName:nil bundle:nil];
     if( self ) {
         m_Controller = [[InternalViewerController alloc] init];
-        [m_Controller setFile:path at:vfs];
         
         NSNib *nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
         NSArray *topLevelObjects;
         [nib instantiateWithOwner:self topLevelObjects:&topLevelObjects];
+
+        
     }
     return self;
 }
 
-- (void)windowDidLoad
+- (void)viewDidLoad
 {
-    [super windowDidLoad];
-    self.window.toolbar = self.internalViewerToolbar;
-    m_Controller.view = self.viewerView;
+    [super viewDidLoad];
+    // Do view setup here.
+    self.view.focusRingType = NSFocusRingTypeNone;
+    m_Controller.view = objc_cast<BigFileView>(self.view);
+ 
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
     m_Controller.encodingsPopUp = self.internalViewerToolbarEncodingsPopUp;
@@ -65,42 +62,61 @@
     m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
     
-    [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
 }
 
-- (bool) performBackgrounOpening
+- (NSView*) windowContentView
 {
+    return self.view;
+}
+
+- (NSToolbar*) toolbar
+{
+    return self.internalViewerToolbar;
+}
+
+- (bool) needsWindowTitle
+{
+    return true;
+}
+
+- (bool)openFile:(const string&)_path atVFS:(const VFSHostPtr&)_host;
+{
+    [m_Controller setFile:_path at:_host];
     return [m_Controller performBackgroundOpening];
 }
 
-- (void)showAsFloatingWindow
+- (void) Assigned
 {
-    // this should be called after sucessful finishing of performBackgrounOpening
-    [self window];
     [m_Controller show];
-    self.viewerView.focusRingType = NSFocusRingTypeNone;
-    [AppDelegate.me addInternalViewerWindow:self];
-    
-    [self showWindow:self];
+    self.view.window.title = m_Controller.verboseTitle;
+//    [self.window makeFirstResponder:m_View];
+//    [self UpdateTitle];
+    GoogleAnalytics::Instance().PostScreenView("File Viewer State");
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void) Resigned
 {
     [m_Controller saveFileState];
-    self.window.delegate = nil;
-    dispatch_to_main_queue_after(10ms, [=]{
-        [AppDelegate.me removeInternalViewerWindow:self];
-    });
 }
 
-- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request
+- (void)cancelOperation:(id)sender
 {
-    [m_Controller markSelection:_selection forSearchTerm:_request];
+    [(MainWindowController*)self.view.window.delegate ResignAsWindowState:self];
 }
 
-- (IBAction)performFindPanelAction:(id)sender
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
 {
-    [self.window makeFirstResponder:self.internalViewerToolbarSearchField];
+    [self cancelOperation:sender];
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    auto tag = item.tag;
+    IF_MENU_TAG("menu.file.close") {
+        item.title = NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
+        return true;
+    }
+    return true;
 }
 
 - (IBAction)onInternalViewerToolbarSettings:(id)sender
@@ -108,6 +124,11 @@
     [self.internalViewerToolbarPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
                                                    ofView:objc_cast<NSButton>(sender)
                                             preferredEdge:NSMaxYEdge];
+}
+
+- (IBAction)performFindPanelAction:(id)sender
+{
+    [self.view.window makeFirstResponder:self.internalViewerToolbarSearchField];
 }
 
 @end

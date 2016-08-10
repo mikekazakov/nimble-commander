@@ -62,6 +62,8 @@ static NSString* StorageFileName()
             int mode = [decoder decodeIntForKey:g_ViewModeArchiveKey];
             if(mode == static_cast<int>(BigFileViewModes::Text))
                 view_mode = BigFileViewModes::Text;
+            else if(mode == static_cast<int>(BigFileViewModes::Preview))
+                view_mode = BigFileViewModes::Preview;
             else
                 view_mode = BigFileViewModes::Hex;
         }

@@ -129,6 +129,7 @@ Gw
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+                <outlet property="initialFirstResponder" destination="agn-et-TU9" id="RdK-xo-weA"/>
             </connections>
             <point key="canvasLocation" x="72.5" y="284.5"/>
         </window>

@@ -56,7 +56,7 @@ Gw
                             <outlet property="nextKeyView" destination="4kJ-ln-DDa" id="qkn-xM-CkX"/>
                         </connections>
                     </button>
-                    <button toolTip="↩" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="40b-pd-d3f">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="40b-pd-d3f">
                         <rect key="frame" x="424" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="sIp-wL-3ye"/>
@@ -268,6 +268,7 @@ DQ
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="ytZ-1J-Mou"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="BYC-sX-ayI">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -283,6 +284,7 @@ DQ
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="8VW-ic-IuT"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="xFh-sa-bn3">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -314,6 +316,7 @@ DQ
                                         </menu>
                                     </popUpButtonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="oDh-rd-Ygp"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="WBL-Lf-z0s">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -345,6 +348,7 @@ DQ
                                         </menu>
                                     </popUpButtonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="8Qw-lG-3Q5"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="yNV-ER-J5z">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -368,6 +372,7 @@ DQ
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="NXo-Na-pRD"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="FAY-ZU-Jg5">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -383,6 +388,7 @@ DQ
                                         <font key="font" metaFont="smallSystem"/>
                                     </buttonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="1lZ-oH-tIp"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="gqD-Cc-PzX">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -402,6 +408,7 @@ DQ
                                         <menu key="menu" title="OtherViews" id="EnK-Kt-A7e"/>
                                     </popUpButtonCell>
                                     <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="kmK-Dp-x8i"/>
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="hA2-IE-1EZ">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -471,6 +478,7 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
+                                        <outlet property="delegate" destination="-2" id="UOB-M8-x8c"/>
                                         <outlet property="nextKeyView" destination="WTz-uI-fN2" id="y8q-dK-gML"/>
                                     </connections>
                                 </textField>

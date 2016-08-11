@@ -225,6 +225,7 @@ private:
     unique_ptr<SearchForFiles>  m_FileSearch;
     NSDateFormatter            *m_DateFormatter;
     
+    bool                        m_UIChanged;
     NSMutableArray             *m_FoundItems; // is controlled by ArrayController
     unique_ptr<FindFilesSheetComboHistory>  m_MaskHistory;
     unique_ptr<FindFilesSheetComboHistory>  m_TextHistory;
@@ -263,6 +264,7 @@ private:
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
+        m_UIChanged = false;
     }
     return self;
 }
@@ -496,6 +498,7 @@ private:
     self.searchingNow = started;
     if(started) {
         self.didAnySearchStarted = true;
+        m_UIChanged = false;
         m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 // 0.5 sec update
                                                              target:self
                                                            selector:@selector(UpdateByTimer:)
@@ -584,7 +587,7 @@ private:
 - (IBAction)OnFileView:(id)sender
 {
     dispatch_assert_main_queue();
-    NSInteger row = [self.TableView selectedRow];
+    NSInteger row = self.TableView.selectedRow;
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     FindFilesSheetControllerFoundItem *data = item.data;
     
@@ -642,6 +645,17 @@ private:
     });
 }
 
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [self onSearchSettingsUIChanged:obj.object];
+}
+
+- (IBAction)onSearchSettingsUIChanged:(id)sender
+{
+    m_UIChanged = true;
+    [self setupReturnKey];
+}
+
 - (IBAction)OnPanelize:(id)sender
 {
     map<string, vector<string>> results; // directory->filenames
@@ -665,7 +679,7 @@ private:
     
     [self clearReturnKey];
     
-    if( m_FoundItems.count > 0 ) {
+    if( m_FoundItems.count > 0 && !m_UIChanged ) {
         self.GoToButton.keyEquivalent = @"\r";
     }
     else {

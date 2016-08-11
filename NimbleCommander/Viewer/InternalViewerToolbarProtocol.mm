@@ -25,7 +25,7 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    static const auto magic_padding_number = 4;
+    static const auto magic_padding_number = 6;
     if( object == self.view )
         if( auto tf = objc_cast<NSTextField>(self.view) ) {
             NSSize sz = [tf.attributedStringValue size];

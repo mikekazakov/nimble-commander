@@ -119,7 +119,7 @@
                 <outlet property="view" destination="hug-Jo-xKn" id="E1D-Ep-NZO"/>
             </connections>
         </viewController>
-        <popover animates="NO" behavior="t" id="aZY-jm-b2A">
+        <popover behavior="t" id="aZY-jm-b2A">
             <connections>
                 <outlet property="contentViewController" destination="82s-pl-wCG" id="ehk-6G-NL8"/>
             </connections>
@@ -170,7 +170,7 @@
                 <constraint firstItem="7ge-wa-wdj" firstAttribute="leading" secondItem="hug-Jo-xKn" secondAttribute="leading" constant="20" symbolic="YES" id="pXU-w3-YRu"/>
                 <constraint firstAttribute="trailing" secondItem="umV-dK-5mB" secondAttribute="trailing" constant="20" symbolic="YES" id="xKL-Sh-hTS"/>
             </constraints>
-            <point key="canvasLocation" x="-68" y="777.5"/>
+            <point key="canvasLocation" x="235" y="692.5"/>
         </customView>
     </objects>
     <resources>

@@ -189,7 +189,7 @@ Gw
                 <constraint firstItem="eTM-MZ-q2F" firstAttribute="leading" secondItem="2xf-3L-wFH" secondAttribute="leading" constant="20" symbolic="YES" id="p6c-TQ-aaI"/>
                 <constraint firstItem="OSU-cn-jZr" firstAttribute="leading" secondItem="2xf-3L-wFH" secondAttribute="leading" constant="20" symbolic="YES" id="rkg-ye-sF7"/>
             </constraints>
-            <point key="canvasLocation" x="-68" y="777.5"/>
+            <point key="canvasLocation" x="81" y="682.5"/>
         </customView>
     </objects>
     <resources>

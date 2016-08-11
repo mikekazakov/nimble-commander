@@ -93,6 +93,7 @@ enum class BigFileViewModes : int
  */
 @property (nonatomic) CFRange selectionInFile;
 
+- (void)        scrollToVerticalPosition:(double)_p; // [0..1]
 - (double)      VerticalScrollPosition; // in percentage: [0..1]
 - (void)        ScrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window

@@ -555,6 +555,12 @@ const static double g_BorderWidth = 1.0;
     [self syncVerticalPositionInBytes];
 }
 
+- (void)scrollToVerticalPosition:(double)_p
+{
+    m_ViewImpl->HandleVerticalScroll(_p);
+    [self syncVerticalPositionInBytes];
+}
+
 // searching for selected UniChars in file window if there's any overlapping of
 // selected bytes in file on current window position
 // this method should be called on any file window movement

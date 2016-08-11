@@ -39,6 +39,13 @@ static int InvertBitFlag( int _value, int _flag )
 }
 @end
 
+@interface InternalViewerController()
+
+@property (strong) IBOutlet NSPopover *goToPositionPopover;
+@property (strong) IBOutlet NSTextField *goToPositionValueTextField;
+
+@end
+
 @implementation InternalViewerController
 {
     string                          m_Path;
@@ -83,6 +90,9 @@ static int InvertBitFlag( int _value, int _flag )
         m_SearchInFileQueue = make_shared<SerialQueueT>();
         __weak InternalViewerController* weak_self = self;
         m_SearchInFileQueue->OnChange([=]{ [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged]; });
+        
+        NSNib *mynib = [[NSNib alloc] initWithNibNamed:@"InternalViewerController" bundle:nil];
+        [mynib instantiateWithOwner:self topLevelObjects:nil];
     }
     return self;
 }
@@ -439,10 +449,28 @@ static int InvertBitFlag( int _value, int _flag )
         return;
     
     m_PositionButton = positionButton;
+    m_PositionButton.target = self;
+    m_PositionButton.action = @selector(onPositionButtonClicked:);
     [m_PositionButton bind:@"title"
                   toObject:m_View
                withKeyPath:@"verticalPositionPercentage"
                    options:@{NSValueTransformerBindingOption:[InternalViewerControllerVerticalPostionToStringTransformer new]}];
+}
+
+- (void)onPositionButtonClicked:(id)sender
+{
+    [self.goToPositionPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
+                                          ofView:objc_cast<NSButton>(sender)
+                                   preferredEdge:NSMaxYEdge];
+}
+
+- (IBAction)onGoToPositionActionClicked:(id)sender
+{
+    [self.goToPositionPopover close];
+    
+    double pos = self.goToPositionValueTextField.stringValue.doubleValue / 100.;
+    pos = min( max(pos, 0.), 1. );
+    [m_View scrollToVerticalPosition:pos];
 }
 
 - (void)setFileSizeLabel:(NSTextField *)fileSizeLabel

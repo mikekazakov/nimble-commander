@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#if 0
 #pragma once
 
 #include "../../vfs/VFS.h"
@@ -19,3 +20,5 @@
 + (int) fileWindowSize;
 
 @end
+
+#endif

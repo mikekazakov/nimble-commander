@@ -334,6 +334,7 @@ const static double g_BorderWidth = 1.0;
 - (void)frameDidChange
 {
     m_ViewImpl->OnFrameChanged();
+    [self syncVerticalScrollerState];
 }
 
 - (CTFontRef) TextFont{
@@ -501,10 +502,10 @@ const static double g_BorderWidth = 1.0;
 
 - (void) ScrollToSelection
 {
-    if(m_SelectionInFile.location >= 0)
-    {
+    if( m_SelectionInFile.location >= 0 ) {
         m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
         [self UpdateSelectionRange];
+        [self syncVerticalScrollerState];
     }
 }
 

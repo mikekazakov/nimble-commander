@@ -3,7 +3,7 @@
 #include "../../Files/Config.h"
 #include "../../Files/SearchInFile.h"
 #include "../../Files/ByteCountFormatter.h"
-#include "BigFileViewHistory.h"
+#include "InternalViewerHistory.h"
 #include "InternalViewerController.h"
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
@@ -170,20 +170,19 @@ static int InvertBitFlag( int _value, int _flag )
     
     
     // try to load a saved info if any
-    if(BigFileViewHistoryEntry *info =
-       [BigFileViewHistory.sharedHistory FindEntryByPath:[NSString stringWithUTF8String:m_GlobalFilePath.c_str()]]) {
-        BigFileViewHistoryOptions options = BigFileViewHistory.HistoryOptions;
-        if(options.encoding && options.mode)
+    if( auto info = InternalViewerHistory::Instance().EntryByPath(m_GlobalFilePath) ) {
+        auto options = InternalViewerHistory::Instance().Options();
+        if( options.encoding && options.mode )
             [m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode];
         else {
             [m_View SetFile:m_ViewerFileWindow.get()];
-            if(options.encoding)    m_View.encoding = info->encoding;
-            if(options.mode)        m_View.mode = info->view_mode;
+            if( options.encoding )  m_View.encoding = info->encoding;
+            if( options.mode )      m_View.mode = info->view_mode;
         }
         // a bit suboptimal no - may re-layout after first one
-        if(options.wrapping) m_View.wordWrap = info->wrapping;
-        if(options.position) m_View.verticalPositionInBytes = info->position;
-        if(options.selection) m_View.selectionInFile = info->selection;
+        if( options.wrapping )      m_View.wordWrap = info->wrapping;
+        if( options.position )      m_View.verticalPositionInBytes = info->position;
+        if( options.selection )     m_View.selectionInFile = info->selection;
     }
     else {
         [m_View SetFile:m_ViewerFileWindow.get()];
@@ -198,21 +197,18 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void) saveFileState
 {
-    if(![BigFileViewHistory HistoryEnabled])
+    if( !InternalViewerHistory::Instance().Enabled() )
         return;
     
     // do our state persistance stuff
-    BigFileViewHistoryEntry *info = [BigFileViewHistoryEntry new];
-    info->path = [NSString stringWithUTF8String:m_GlobalFilePath.c_str()];
-    if(info->path == nil)
-        return; // guard against malformed filenames, like an archives with invalid encoding
-    info->last_viewed = NSDate.date;
-    info->position = m_View.verticalPositionInBytes;
-    info->wrapping = m_View.wordWrap;
-    info->view_mode = m_View.mode;
-    info->encoding = m_View.encoding;
-    info->selection = m_View.selectionInFile;
-    [BigFileViewHistory.sharedHistory InsertEntry:info];
+    InternalViewerHistory::Entry info;
+    info.path = m_GlobalFilePath;
+    info.position = m_View.verticalPositionInBytes;
+    info.wrapping = m_View.wordWrap;
+    info.view_mode = m_View.mode;
+    info.encoding = m_View.encoding;
+    info.selection = m_View.selectionInFile;
+    InternalViewerHistory::Instance().AddEntry( move(info) );
 }
 
 + (unsigned) fileWindowSize

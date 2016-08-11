@@ -18,6 +18,6 @@
                      at:(VFSHostPtr)vfs;
 
 - (bool) open; // call it from bg thread!
-- (void) selectBlockAt:(uint64_t)off length:(uint64_t)len; // should be called upon init
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request;
 
 @end

@@ -272,9 +272,6 @@ private:
     [super windowDidLoad];
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
-    self.TableView.delegate = self;
-    self.TableView.target = self;
-    self.TableView.doubleAction = @selector(doubleClick:);
     
     self.ArrayController.sortDescriptors = @[
                                              [NSSortDescriptor sortDescriptorWithKey:@"location" ascending:YES],
@@ -291,29 +288,8 @@ private:
     }
     [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
     
-    self.MaskComboBox.usesDataSource = true;
-    self.MaskComboBox.dataSource = self;
     self.MaskComboBox.stringValue = m_MaskHistory->empty() ? @"*" : [NSString stringWithUTF8StdString:m_MaskHistory->front()];
-    self.TextComboBox.usesDataSource = true;
-    self.TextComboBox.dataSource = self;
     self.TextComboBox.stringValue = @"";
-  
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(comboBoxWillPopUp:)
-                                               name:@"NSComboBoxWillPopUpNotification"
-                                             object:self.MaskComboBox];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(comboBoxWillDismiss:)
-                                               name:@"NSComboBoxWillDismissNotification"
-                                             object:self.MaskComboBox];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(comboBoxWillPopUp:)
-                                               name:@"NSComboBoxWillPopUpNotification"
-                                             object:self.TextComboBox];
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(comboBoxWillDismiss:)
-                                               name:@"NSComboBoxWillDismissNotification"
-                                             object:self.TextComboBox];
     
     // wire up hotkeys
     SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
@@ -568,7 +544,7 @@ private:
     return m_DoubleClickedItem.data;
 }
 
-- (void)doubleClick:(id)table
+- (IBAction)doubleClick:(id)table
 {
     NSInteger row = [self.TableView clickedRow];
     if(row < 0 || row >= self.TableView.numberOfRows)
@@ -617,20 +593,19 @@ private:
     CFRange cont = data->content_pos;
     NSString *search_req = self.TextComboBox.stringValue;
     
-    if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) {
-        // as a sheet
+    if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
+        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
             if([sheet open]) {
-                if(cont.location >= 0)
-                    [sheet selectBlockAt:cont.location length:cont.length];
-                [sheet beginSheetForWindow:self.window
-                         completionHandler:^(NSModalResponse returnCode) {}];
+                dispatch_to_main_queue([=]{
+                    [sheet beginSheetForWindow:self.window];
+                    if(cont.location >= 0)
+                        [sheet markInitialSelection:cont searchTerm:search_req.UTF8String];
+                });
             }
         });
     }
-    else {
-        // as a window
+    else { // as a window
         if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
             // already has this one
             [window showWindow:self];

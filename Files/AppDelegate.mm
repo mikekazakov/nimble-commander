@@ -165,6 +165,7 @@ static AppDelegate *g_Me = nil;
 {
     vector<MainWindowController *>              m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
+    spinlock                                    m_ViewerWindowsLock;
     RHPreferencesWindowController *m_PreferencesController;
     ApplicationSkin     m_Skin;
     NSProgressIndicator *m_ProgressIndicator;
@@ -732,23 +733,30 @@ static AppDelegate *g_Me = nil;
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*)_wnd
 {
-    m_ViewerWindows.emplace_back(_wnd);
+    LOCK_GUARD(m_ViewerWindowsLock) {
+        m_ViewerWindows.emplace_back(_wnd);
+    }
 }
 
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*)_wnd
 {
-    auto i = find(begin(m_ViewerWindows), end(m_ViewerWindows), _wnd);
-    if( i != end(m_ViewerWindows) )
-        m_ViewerWindows.erase(i);
+    LOCK_GUARD(m_ViewerWindowsLock) {
+        auto i = find(begin(m_ViewerWindows), end(m_ViewerWindows), _wnd);
+        if( i != end(m_ViewerWindows) )
+            m_ViewerWindows.erase(i);
+    }
 }
 
 - (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path onVFS:(const VFSHostPtr&)_vfs
 {
-    auto i = find_if(begin(m_ViewerWindows), end(m_ViewerWindows), [&](auto v){
-       return v.internalViewerController.filePath == _path &&
-              v.internalViewerController.fileVFS == _vfs;
-    });
-    return i != end(m_ViewerWindows) ? *i : nil;
+    LOCK_GUARD(m_ViewerWindowsLock) {
+        auto i = find_if(begin(m_ViewerWindows), end(m_ViewerWindows), [&](auto v){
+            return v.internalViewerController.filePath == _path &&
+            v.internalViewerController.fileVFS == _vfs;
+        });
+        return i != end(m_ViewerWindows) ? *i : nil;
+    }
+    return nil;
 }
 
 @end

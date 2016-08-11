@@ -162,6 +162,8 @@ DQ
                                         </tableColumn>
                                     </tableColumns>
                                     <connections>
+                                        <action trigger="doubleAction" selector="doubleClick:" target="-2" id="1IO-R8-OSc"/>
+                                        <outlet property="delegate" destination="-2" id="bf8-GP-aZf"/>
                                         <outlet property="nextKeyView" destination="XFM-mL-fme" id="exF-7U-2Fm"/>
                                     </connections>
                                 </tableView>
@@ -419,7 +421,7 @@ DQ
                                     <constraints>
                                         <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
                                     </constraints>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" numberOfVisibleItems="10" id="QoT-rJ-7t8">
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="10" id="QoT-rJ-7t8">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -430,12 +432,14 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
+                                        <outlet property="dataSource" destination="-2" id="BBQ-Qd-bAM"/>
+                                        <outlet property="delegate" destination="-2" id="QzV-2F-h63"/>
                                         <outlet property="nextKeyView" destination="JW2-j0-Voo" id="tzM-ap-eJd"/>
                                     </connections>
                                 </comboBox>
                                 <comboBox toolTip="^T" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CJi-sh-esy">
                                     <rect key="frame" x="253" y="84" width="245" height="26"/>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="17I-3a-9vx">
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="17I-3a-9vx">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -446,6 +450,8 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
+                                        <outlet property="dataSource" destination="-2" id="KFh-7g-crI"/>
+                                        <outlet property="delegate" destination="-2" id="y4Y-2j-gAu"/>
                                         <outlet property="nextKeyView" destination="ddq-vO-Myl" id="20L-b2-cnb"/>
                                     </connections>
                                 </comboBox>

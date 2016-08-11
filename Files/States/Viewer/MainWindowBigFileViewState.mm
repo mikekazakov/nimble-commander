@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#if 0
+
 #include <Habanero/DispatchQueue.h>
 #include "../../FileWindow.h"
 #include "../../MainWindowController.h"
@@ -559,3 +561,5 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 }
 
 @end
+
+#endif

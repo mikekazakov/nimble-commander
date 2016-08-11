@@ -26,6 +26,11 @@ using namespace std::chrono;
 }
 
 - (void) beginSheetForWindow:(NSWindow*)_wnd
+{
+    [self beginSheetForWindow:_wnd completionHandler:^(NSModalResponse returnCode) {}];
+}
+
+- (void) beginSheetForWindow:(NSWindow*)_wnd
            completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
     if(!dispatch_is_main_queue()) {

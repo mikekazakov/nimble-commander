@@ -21,7 +21,7 @@ struct FindFilesSheetControllerFoundItem
     CFRange content_pos;
 };
 
-@interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate, NSComboBoxDataSource>
+@interface FindFilesSheetController : SheetController<NSTableViewDataSource, NSTableViewDelegate, NSComboBoxDataSource, NSComboBoxDelegate>
 
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;

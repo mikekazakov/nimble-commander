@@ -4,5 +4,7 @@
         "findFilesSheet": {},
         "findWithSpotlightPopup": {},
         "selectWithMaskPopup": {}
+    },
+    "viewer": {
     }
 }

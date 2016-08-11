@@ -7,12 +7,10 @@
 //
 
 #include "../../Files/AppDelegate.h"
+#include "../../Files/GoogleAnalytics.h"
 #include "BigFileView.h"
 #include "InternalViewerController.h"
 #include "InternalViewerWindowController.h"
-
-
-
 
 @interface InternalViewerWindowController ()
 
@@ -65,6 +63,7 @@
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
     
     [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
+    GoogleAnalytics::Instance().PostScreenView("File Viewer Window");    
 }
 
 - (bool) performBackgrounOpening
@@ -107,6 +106,11 @@
     [self.internalViewerToolbarPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
                                                    ofView:objc_cast<NSButton>(sender)
                                             preferredEdge:NSMaxYEdge];
+}
+
+- (IBAction)OnFileInternalBigViewCommand:(id)sender
+{
+    [self close];
 }
 
 @end

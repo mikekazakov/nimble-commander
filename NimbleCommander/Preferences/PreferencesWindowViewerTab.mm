@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontExtras.h>
-#include "../Viewer/BigFileViewHistory.h"
+#include "../Viewer/InternalViewerHistory.h"
 #include "Utility/Encodings.h"
 #include "PreferencesWindowViewerTab.h"
 #include "../../Files/Config.h"
@@ -133,7 +133,7 @@ static const auto g_ConfigClassicFont     = "viewer.classic.font";
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn)
-        [BigFileViewHistory DeleteHistory];
+        InternalViewerHistory::Instance().ClearHistory();
 }
 
 @end

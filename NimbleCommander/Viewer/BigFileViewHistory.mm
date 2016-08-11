@@ -11,6 +11,7 @@
 #import "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include "../../Files/Config.h"
 #include "BigFileViewHistory.h"
+#include "InternalViewerHistory.h"
 
 static NSString *g_FileName = @"/bigfileviewhistory.bplist"; // bplist file name
 static NSString *g_PathArchiveKey = @"path";
@@ -29,6 +30,27 @@ static const auto g_ConfigSaveFilePosition  = "viewer.saveFilePosition";
 static const auto g_ConfigSaveFileWrapping  = "viewer.saveFileWrapping";
 static const auto g_ConfigSaveFileSelection = "viewer.saveFileSelection";
 static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
+
+@interface BigFileViewHistoryEntry : NSObject<NSCoding> {
+@public
+    NSString *path;
+    NSDate   *last_viewed;
+    uint64_t position;
+    bool    wrapping;
+    BigFileViewModes view_mode;
+    int encoding;
+    CFRange selection;
+}
+@end
+
+struct BigFileViewHistoryOptions
+{
+    bool encoding;
+    bool mode;
+    bool position;
+    bool wrapping;
+    bool selection;
+};
 
 static NSString* StorageFileName()
 {
@@ -216,6 +238,27 @@ static NSString* StorageFileName()
     
     bool result = [[NSFileManager defaultManager] removeItemAtPath:StorageFileName() error:nil];;
     return result;
+}
+
++ (void) moveToNewHistory
+{
+    if( NSArray *history = [NSKeyedUnarchiver unarchiveObjectWithFile:StorageFileName()] ) {
+        for( BigFileViewHistoryEntry *e in history ) {
+        
+            InternalViewerHistory::Entry info;
+            info.path = e->path.fileSystemRepresentationSafe;
+            info.position = e->position;
+            info.wrapping = e->wrapping;
+            info.view_mode = e->view_mode;
+            info.encoding = e->encoding;
+            info.selection = e->selection;
+            InternalViewerHistory::Instance().AddEntry( move(info) );
+        }
+        
+        [NSFileManager.defaultManager trashItemAtURL:[[NSURL alloc] initFileURLWithPath:StorageFileName()]
+                                    resultingItemURL:nil
+                                               error:nil];
+    }
 }
 
 @end

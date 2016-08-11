@@ -4,6 +4,6 @@
 
 @interface AppDelegate(Migration)
 
-- (void) migrateAppSupport_1_1_1_to_1_1_2;
+- (void) migrateViewerHistory_1_1_3_to_1_1_5;
 
 @end

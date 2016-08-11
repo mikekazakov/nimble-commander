@@ -38,6 +38,11 @@ public:
      * Thread-safe.
      */
     optional<Entry> EntryByPath( const string &_path ) const;
+
+    /**
+     * Thread-safe.
+     */
+    void ClearHistory();
     
     /**
      * Thread-safe.
@@ -53,6 +58,8 @@ public:
     
 private:
     void LoadSaveOptions();
+    void LoadFromStateConfig();
+    void SaveToStateConfig() const;
     
     deque<Entry>                                m_History;
     mutable spinlock                            m_HistoryLock;

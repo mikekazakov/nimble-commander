@@ -205,8 +205,6 @@ static AppDelegate *g_Me = nil;
             exit(173);
         }
         
-        [self migrateAppSupport_1_1_1_to_1_1_2];
-        
         const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
         if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
             if( AskUserToResetDefaults() )
@@ -218,6 +216,8 @@ static AppDelegate *g_Me = nil;
         
         [self reloadSkinSetting];
         m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
+        
+        [self migrateViewerHistory_1_1_3_to_1_1_5];        
     }
     return self;
 }

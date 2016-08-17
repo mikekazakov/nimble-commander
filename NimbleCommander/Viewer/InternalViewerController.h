@@ -21,6 +21,9 @@
 
 - (void) setFile:(string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;
+
+- (bool) performSyncOpening;
+
 - (void) show;
 - (void) saveFileState;
 

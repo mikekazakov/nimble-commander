@@ -164,9 +164,6 @@
 			isa = PBXGroup;
 			children = (
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
-				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
-				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
-				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
@@ -174,6 +171,7 @@
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
 				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
 				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
+				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
@@ -182,6 +180,8 @@
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.c */,
+				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
+				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,

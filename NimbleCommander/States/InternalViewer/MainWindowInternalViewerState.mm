@@ -33,7 +33,7 @@
 
 - (id) init
 {
-//    self = [super init];
+    dispatch_assert_main_queue();
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
         m_Controller = [[InternalViewerController alloc] init];
@@ -46,6 +46,7 @@
 
 - (void)viewDidLoad
 {
+    dispatch_assert_main_queue();    
     [super viewDidLoad];
     // Do view setup here.
     self.view.focusRingType = NSFocusRingTypeNone;
@@ -80,10 +81,12 @@
 {
     [m_Controller setFile:_path at:_host];
     return [m_Controller performBackgroundOpening];
+//    return [m_Controller performSyncOpening];
 }
 
 - (void) Assigned
 {
+    [self view];
     [m_Controller show];
     self.view.window.title = m_Controller.verboseTitle;
 //    [self.window makeFirstResponder:m_View];

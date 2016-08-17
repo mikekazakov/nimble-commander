@@ -173,6 +173,62 @@ static int InvertBitFlag( int _value, int _flag )
     
 }
 
+- (bool) performSyncOpening
+{
+    dispatch_assert_main_queue();
+    VFSFilePtr origin_file;
+    if( m_VFS->CreateFile(m_Path.c_str(), origin_file, 0) < 0 )
+        return false;
+    
+    VFSFilePtr work_file;
+    if( origin_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
+        // we need to read a file into temporary mem/file storage to access it randomly
+        ProcessSheetController *proc = [ProcessSheetController new];
+        proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
+        [proc Show];
+        
+        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
+        int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
+                                [=]{ return proc.userCancelled; },
+                                [=](uint64_t _bytes, uint64_t _total) {
+                                    proc.Progress.doubleValue = double(_bytes) / double(_total);
+                                });
+        [proc Close];
+        if(res != 0)
+            return false;
+        
+        m_SeqWrapper = wrapper;
+        work_file = wrapper;
+    }
+    else { // just open input file
+        if( origin_file->Open(VFSFlags::OF_Read) < 0 )
+            return false;
+        work_file = origin_file;
+    }
+    m_OriginalFile = origin_file;
+    m_WorkFile = work_file;
+    m_GlobalFilePath = work_file->ComposeVerbosePath();
+    
+    auto window = make_unique<FileWindow>();
+    if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
+        return false;
+    m_ViewerFileWindow = move(window);
+    
+    window = make_unique<FileWindow>();
+    if( window->OpenFile(work_file) != 0 )
+        return false;
+    m_SearchFileWindow = move(window);
+    
+    m_SearchInFile = make_unique<SearchInFile>(*m_SearchFileWindow);
+    m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
+                                     (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
+    
+    [self buildTitle];
+    
+    return true;
+    
+}
+
 - (void) show
 {
     dispatch_assert_main_queue();

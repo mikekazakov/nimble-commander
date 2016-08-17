@@ -167,11 +167,10 @@ template <class T>
 inline void dispatch_sync( dispatch_queue_t queue, T f )
 {
     dispatch_sync_f(queue,
-                    new T( std::move(f) ),
+                    &f,
                     [](void* _p) {
                         auto f = static_cast<T*>(_p);
                         (*f)();
-                        delete f;
                     });
 }
 

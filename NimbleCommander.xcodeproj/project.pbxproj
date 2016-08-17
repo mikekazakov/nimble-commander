@@ -2278,7 +2278,7 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */ = {
+		CF396AEB173FA89A00A20C42 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
 				CFED5A401C50EA0100BFCB5C /* MainWindowBigFileViewState.h */,
@@ -2287,7 +2287,7 @@
 				CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */,
 				CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */,
 			);
-			name = BigFileViewMainWindowState;
+			name = Viewer;
 			sourceTree = "<group>";
 		};
 		CF47A983186C607C00745C4C /* Files Tests */ = {
@@ -2515,7 +2515,7 @@
 		CF876D171D51E00B009C0CCE /* States */ = {
 			isa = PBXGroup;
 			children = (
-				CF396AEB173FA89A00A20C42 /* BigFileViewMainWindowState */,
+				CF396AEB173FA89A00A20C42 /* Viewer */,
 				CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */,
 				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
 				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,

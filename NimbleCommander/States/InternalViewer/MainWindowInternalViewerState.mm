@@ -96,11 +96,13 @@
 
 - (void) Resigned
 {
-    [m_Controller saveFileState];
 }
 
 - (void)cancelOperation:(id)sender
 {
+    dispatch_assert_main_queue();
+    [m_Controller saveFileState];
+    [m_Controller clear];
     [(MainWindowController*)self.view.window.delegate ResignAsWindowState:self];
 }
 

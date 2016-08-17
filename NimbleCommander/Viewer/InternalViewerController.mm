@@ -99,8 +99,26 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void) dealloc
 {
+    dispatch_assert_main_queue();
+    [self clear];
+}
+
+- (void) clear
+{
+    dispatch_assert_main_queue();
     m_SearchInFileQueue->Stop();
     m_SearchInFileQueue->Wait();
+    
+    [m_View detachFromFile];
+    m_SearchInFile.reset();
+    m_ViewerFileWindow.reset();
+    m_SearchFileWindow.reset();
+    m_WorkFile.reset();
+    m_SeqWrapper.reset();
+    m_OriginalFile.reset();
+    m_VFS.reset();
+    m_Path.clear();
+    m_GlobalFilePath.clear();
 }
 
 - (void) setFile:(string)path at:(VFSHostPtr)vfs
@@ -264,6 +282,9 @@ static int InvertBitFlag( int _value, int _flag )
 - (void) saveFileState
 {
     if( !InternalViewerHistory::Instance().Enabled() )
+        return;
+    
+    if( m_GlobalFilePath.empty() ) // are we actually loaded?
         return;
     
     // do our state persistance stuff

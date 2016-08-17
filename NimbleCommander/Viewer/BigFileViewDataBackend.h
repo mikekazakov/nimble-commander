@@ -17,7 +17,7 @@
 class BigFileViewDataBackend
 {
 public:
-    BigFileViewDataBackend(FileWindow *_fw, int _encoding);
+    BigFileViewDataBackend(FileWindow &_fw, int _encoding);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // settings
@@ -64,7 +64,7 @@ public:
 private:
     void DecodeBuffer(); // called by internal update logic
     
-    FileWindow *m_FileWindow;
+    FileWindow &m_FileWindow;
     int         m_Encoding;
     void        (^m_OnDecoded)() = nullptr;
 
@@ -81,22 +81,22 @@ private:
 
 inline uint64_t BigFileViewDataBackend::FileSize() const
 {
-    return m_FileWindow->FileSize();
+    return m_FileWindow.FileSize();
 }
 
 inline uint64_t BigFileViewDataBackend::FilePos() const
 {
-    return m_FileWindow->WindowPos();
+    return m_FileWindow.WindowPos();
 }
 
 inline const void *BigFileViewDataBackend::Raw() const
 {
-    return m_FileWindow->Window();
+    return m_FileWindow.Window();
 }
 
 inline uint64_t BigFileViewDataBackend::RawSize() const
 {
-    return m_FileWindow->WindowSize();
+    return m_FileWindow.WindowSize();
 }
 
 inline const UniChar *BigFileViewDataBackend::UniChars() const
@@ -116,5 +116,5 @@ inline uint32_t BigFileViewDataBackend::UniCharsSize() const
 
 inline bool BigFileViewDataBackend::IsFullCoverage() const
 {
-    return m_FileWindow->FileSize() == m_FileWindow->WindowSize();
+    return m_FileWindow.FileSize() == m_FileWindow.WindowSize();
 }

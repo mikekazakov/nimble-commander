@@ -48,7 +48,6 @@ private:
     int LineIndexFromYPos(double _y);
     inline int LineIndexFromPos(CGPoint _point) { return LineIndexFromYPos(_point.y); };
     int CharIndexFromPoint(CGPoint _point);
-//    void UpdateVerticalScrollBar();
     
     /**
      * move our file window to '_pos' global offset,

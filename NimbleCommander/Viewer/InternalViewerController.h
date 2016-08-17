@@ -2,7 +2,7 @@
 
 #include "BigFileView.h"
 
-@interface InternalViewerController : NSObject<BigFileViewDelegateProtocol, NSSearchFieldDelegate>
+@interface InternalViewerController : NSObject<NSSearchFieldDelegate>
 
 // UI wiring
 @property (nonatomic) BigFileView           *view;
@@ -25,6 +25,7 @@
 - (bool) performSyncOpening;
 
 - (void) show;
+- (void) clear;
 - (void) saveFileState;
 
 - (void)markSelection:(CFRange)_selection forSearchTerm:(string)_request;

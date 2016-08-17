@@ -410,17 +410,6 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
         if(text_pos.y < 0 - m_FontInfo.LineHeight())
             break;
     }
-    
-//    // update scroller also
-//    double pos;
-//    if( m_Data->FileSize() > g_BytesPerHexLine * m_FrameLines)
-//        pos = (double(m_Data->FilePos()) + double(m_RowsOffset*g_BytesPerHexLine) ) /
-//            double(m_Data->FileSize() - g_BytesPerHexLine * m_FrameLines);
-//    else
-//        pos = 0;
-//        
-//    double prop = ( double(g_BytesPerHexLine) * double(m_FrameLines) ) / double(m_Data->FileSize());
-//    [m_View UpdateVerticalScroll:pos prop:prop];
 }
 
 void BigFileViewHex::CalculateScrollPosition( double &_position, double &_knob_proportion )
@@ -434,7 +423,6 @@ void BigFileViewHex::CalculateScrollPosition( double &_position, double &_knob_p
         pos = 0;
     
     double prop = ( double(g_BytesPerHexLine) * double(m_FrameLines) ) / double(m_Data->FileSize());
-//    [m_View UpdateVerticalScroll:pos prop:prop];
     _position = pos;
     _knob_proportion = prop;
 }

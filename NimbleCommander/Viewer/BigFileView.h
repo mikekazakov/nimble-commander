@@ -19,20 +19,17 @@ enum class BigFileViewModes : int
     Preview = 2
 };
 
-@protocol BigFileViewDelegateProtocol <NSObject>
-@optional
-- (void) BigFileViewScrolled;       // signal any movements of scroll bar - regardless of reason
-                                    // should be used for UI updates only
-- (void) BigFileViewScrolledByUser; // signal that position was changed with request of user
-@end
-
 @interface BigFileView : NSView
 
 - (void) SetFile:(FileWindow*) _file;
 - (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode;
 
+/**
+ * This will reset the current viewer state.
+ */
+- (void) detachFromFile;
+
 - (void) RequestWindowMovementAt: (uint64_t) _pos;
-- (void) UpdateVerticalScroll: (double) _pos prop:(double)prop;
 
 // appearance section
 - (CTFontRef)   TextFont;
@@ -69,7 +66,7 @@ enum class BigFileViewModes : int
 @property (nonatomic) bool wordWrap;
 
 /**
- * Visual presentation mode. Currently supports two: Text and Hex.
+ * Visual presentation mode. Currently supports three: Text, Hex and Preview.
  * KVO-compatible.
  */
 @property (nonatomic) BigFileViewModes mode;
@@ -99,5 +96,4 @@ enum class BigFileViewModes : int
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
 
-@property (nonatomic, weak) id<BigFileViewDelegateProtocol> delegate;
 @end

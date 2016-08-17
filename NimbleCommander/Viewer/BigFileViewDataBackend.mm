@@ -9,11 +9,11 @@
 #include <Utility/Encodings.h>
 #include "BigFileViewDataBackend.h"
 
-BigFileViewDataBackend::BigFileViewDataBackend(FileWindow *_fw, int _encoding):
+BigFileViewDataBackend::BigFileViewDataBackend(FileWindow &_fw, int _encoding):
     m_FileWindow(_fw),
     m_Encoding(_encoding),
-    m_DecodeBuffer(make_unique<UniChar[]>(m_FileWindow->WindowSize())),
-    m_DecodeBufferIndx(make_unique<uint32_t[]>(m_FileWindow->WindowSize()))
+    m_DecodeBuffer(make_unique<UniChar[]>(m_FileWindow.WindowSize())),
+    m_DecodeBufferIndx(make_unique<uint32_t[]>(m_FileWindow.WindowSize()))
 {
     assert(encodings::IsValidEncoding(_encoding));
     DecodeBuffer();
@@ -22,10 +22,10 @@ BigFileViewDataBackend::BigFileViewDataBackend(FileWindow *_fw, int _encoding):
 void BigFileViewDataBackend::DecodeBuffer()
 {
     assert(encodings::BytesForCodeUnit(m_Encoding) <= 2); // TODO: support for UTF-32 in the future
-    bool odd = (encodings::BytesForCodeUnit(m_Encoding) == 2) && ((m_FileWindow->WindowPos() & 1) == 1);
+    bool odd = (encodings::BytesForCodeUnit(m_Encoding) == 2) && ((m_FileWindow.WindowPos() & 1) == 1);
     encodings::InterpretAsUnichar(m_Encoding,
-                                  (unsigned char*)m_FileWindow->Window() + (odd ? 1 : 0),
-                                  m_FileWindow->WindowSize() - (odd ? 1 : 0),
+                                  (unsigned char*)m_FileWindow.Window() + (odd ? 1 : 0),
+                                  m_FileWindow.WindowSize() - (odd ? 1 : 0),
                                   m_DecodeBuffer.get(),
                                   m_DecodeBufferIndx.get(),
                                   &m_DecodedBufferSize);
@@ -55,10 +55,10 @@ void BigFileViewDataBackend::SetEncoding(int _encoding)
 
 int BigFileViewDataBackend::MoveWindowSync(uint64_t _pos)
 {
-    if(_pos == m_FileWindow->WindowPos())
+    if(_pos == m_FileWindow.WindowPos())
         return 0; // nothing to do
     
-    int ret = m_FileWindow->MoveWindow(_pos);
+    int ret = m_FileWindow.MoveWindow(_pos);
     if(ret < 0)
         return ret;
     

@@ -414,8 +414,6 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
          CGContextSetTextPosition(_context, pos.x, pos.y);
          CTLineDraw(line.line, _context);
      }
-
-//    UpdateVerticalScrollBar();
 }
 
 void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_proportion )
@@ -435,8 +433,6 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
             + m_Data->FilePos();;
             uint64_t byte_scroll_size = m_Data->FileSize() - (last_visible_byte_pos - byte_pos);
             double prop = double(last_visible_byte_pos - byte_pos) / double(m_Data->FileSize());
-//            [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
-//                                    prop:prop];
             _position = double(byte_pos) / double(byte_scroll_size);
             _knob_proportion = prop;
         }
@@ -449,41 +445,11 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
         double prop = 1.;
         if(m_Lines.size() > m_FrameLines)
             prop = double(m_FrameLines) / double(m_Lines.size());
-//        [m_View UpdateVerticalScroll:pos prop:prop];
         _position = pos;
         _knob_proportion = prop;
     }
 }
 
-//void BigFileViewText::UpdateVerticalScrollBar()
-//{
-//    if(!m_SmoothScroll)
-//    {
-//        if(m_VerticalOffset < m_Lines.size())
-//        {
-//            uint64_t byte_pos = m_Lines[m_VerticalOffset].byte_no + m_Data->FilePos();
-//            uint64_t last_visible_byte_pos =
-//                ((m_VerticalOffset + m_FrameLines < m_Lines.size()) ?
-//                    m_Lines[m_VerticalOffset + m_FrameLines].byte_no :
-//                    m_Lines.back().byte_no )
-//                + m_Data->FilePos();;
-//            uint64_t byte_scroll_size = m_Data->FileSize() - (last_visible_byte_pos - byte_pos);
-//            double prop = double(last_visible_byte_pos - byte_pos) / double(m_Data->FileSize());
-//            [m_View UpdateVerticalScroll:double(byte_pos) / double(byte_scroll_size)
-//                                    prop:prop];
-//        }
-//    }
-//    else
-//    {
-//        double pos = 0.;
-//        if(m_Lines.size() > m_FrameLines)
-//            pos = double(m_VerticalOffset) / double(m_Lines.size() - m_FrameLines);
-//        double prop = 1.;
-//        if(m_Lines.size() > m_FrameLines)
-//            prop = double(m_FrameLines) / double(m_Lines.size());
-//        [m_View UpdateVerticalScroll:pos prop:prop];
-//    }
-//}
 
 void BigFileViewText::MoveLinesDelta(int _delta)
 {

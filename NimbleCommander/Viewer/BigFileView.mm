@@ -37,8 +37,8 @@ const static double g_BorderWidth = 1.0;
 
 @implementation BigFileView
 {
-    FileWindow     *m_File;
-    unique_ptr<BigFileViewDataBackend> m_Data;
+    FileWindow     *m_File; // may be nullptr
+    unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
 
     optional<string> m_NativeStoredFile;
     
@@ -52,8 +52,7 @@ const static double g_BorderWidth = 1.0;
     // layout
     bool            m_WrapWords;
     
-    unique_ptr<BigFileViewImpl> m_ViewImpl;
-    __weak  id<BigFileViewDelegateProtocol> m_Delegate;
+    unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
     
     NSScroller      *m_VerticalScroller;
     
@@ -66,8 +65,6 @@ const static double g_BorderWidth = 1.0;
                                                  // updated when windows moves, regarding current selection in bytes
     vector<GenericConfig::ObservationTicket> m_ConfigObservations;
 }
-
-@synthesize delegate = m_Delegate;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -196,6 +193,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+    if( !m_ViewImpl )
+        return;
+    
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     CGContextSaveGState(context);
     if(self.hasBorder)
@@ -255,7 +255,7 @@ const static double g_BorderWidth = 1.0;
     assert(_encoding != encodings::ENCODING_INVALID);
     
     m_File = _file;
-    m_Data = make_unique<BigFileViewDataBackend>(m_File, _encoding);
+    m_Data = make_unique<BigFileViewDataBackend>(*m_File, _encoding);
     BigFileView* __weak weak_self = self;
     m_Data->SetOnDecoded(^{
         if(BigFileView *sself = weak_self) {
@@ -267,8 +267,20 @@ const static double g_BorderWidth = 1.0;
     self.mode = _mode;
 }
 
+- (void) detachFromFile
+{
+    dispatch_assert_main_queue();
+    
+    m_ViewImpl.reset();
+    m_Data.reset();
+    m_File = nullptr;
+}
+
 - (void)keyDown:(NSEvent *)event
 {
+    if( !m_ViewImpl )
+        return;
+    
     if( event.charactersIgnoringModifiers.length != 1 )
         return;
     switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
@@ -281,36 +293,54 @@ const static double g_BorderWidth = 1.0;
 
 - (void)moveUp:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnUpArrow();
     [self syncVerticalPositionInBytes];
 }
 
 - (void)moveDown:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnDownArrow();
     [self syncVerticalPositionInBytes];
 }
 
 - (void)moveLeft:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnLeftArrow();
     [self syncVerticalPositionInBytes];
 }
 
 - (void)moveRight:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnRightArrow();
     [self syncVerticalPositionInBytes];
 }
 
 - (void)pageDown:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnPageDown();
     [self syncVerticalPositionInBytes];
 }
 
 - (void) pageUp:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+
     m_ViewImpl->OnPageUp();
     [self syncVerticalPositionInBytes];
 }
@@ -333,6 +363,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void)frameDidChange
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnFrameChanged();
     [self syncVerticalScrollerState];
 }
@@ -366,19 +399,11 @@ const static double g_BorderWidth = 1.0;
     m_Data->MoveWindowSync(_pos);
 }
 
-- (void) UpdateVerticalScroll: (double) _pos prop:(double)_prop
-{
-//    if( _pos == m_VerticalScroller.doubleValue &&
-//        _prop == m_VerticalScroller.knobProportion )
-//        return;
-//    m_VerticalScroller.knobProportion = _prop;
-//    m_VerticalScroller.doubleValue = _pos;
-//
-//    [(id<BigFileViewDelegateProtocol>)m_Delegate BigFileViewScrolled];
-}
-
 - (void)VerticalScroll:(id)sender
 {
+    if( !m_ViewImpl )
+        return;
+    
     switch( m_VerticalScroller.hitPart )
     {
         case NSScrollerIncrementLine:
@@ -408,6 +433,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->OnScrollWheel(theEvent);
     [self syncVerticalPositionInBytes];
 }
@@ -502,6 +530,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void) ScrollToSelection
 {
+    if( !m_ViewImpl )
+        return;
+    
     if( m_SelectionInFile.location >= 0 ) {
         m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
         [self UpdateSelectionRange];
@@ -511,6 +542,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void) syncVerticalScrollerState
 {
+    if( !m_ViewImpl )
+        return;
+    
     double scroll_pos = 0.0;
     double scroll_prop = 1.0;
     m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
@@ -520,6 +554,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void) syncVerticalPositionInBytes
 {
+    if( !m_ViewImpl )
+        return;
+    
 //    dispatch_assert_main_queue();
     uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
     if( value == m_VerticalPositionInBytes )
@@ -557,6 +594,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void)scrollToVerticalPosition:(double)_p
 {
+    if( !m_ViewImpl )
+        return;
+    
     m_ViewImpl->HandleVerticalScroll(_p);
     [self syncVerticalPositionInBytes];
 }
@@ -566,6 +606,9 @@ const static double g_BorderWidth = 1.0;
 // this method should be called on any file window movement
 - (void) UpdateSelectionRange
 {
+    if( !m_Data )
+        return;
+    
     if(m_SelectionInFile.location < 0 || m_SelectionInFile.length < 1)
     {
         m_SelectionInWindow = CFRangeMake(-1, 0);        
@@ -629,6 +672,9 @@ const static double g_BorderWidth = 1.0;
 
 - (void) setSelectionInFile:(CFRange) _selection
 {
+    if( !m_Data )
+        return;
+    
     if(_selection.location == m_SelectionInFile.location &&
        _selection.length   == m_SelectionInFile.length)
         return;
@@ -661,24 +707,32 @@ const static double g_BorderWidth = 1.0;
 
 - (void) mouseDown:(NSEvent *)_event
 {
+    if( !m_ViewImpl )
+        return;
+
     m_ViewImpl->OnMouseDown(_event);
 }
 
  - (void)copy:(id)sender
 {
-    if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0)
-    {
+    if( !m_Data )
+        return;
+    
+    if(m_SelectionInWindow.location >= 0 && m_SelectionInWindow.length > 0) {
         NSString *str = [[NSString alloc] initWithCharacters:m_Data->UniChars() + m_SelectionInWindowUnichars.location
                                                       length:m_SelectionInWindowUnichars.length];
-        NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+        NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
         [pasteBoard clearContents];
-        [pasteBoard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+        [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
         [pasteBoard setString:str forType:NSStringPboardType];
     }
 }
 
 - (void)selectAll:(id)sender
 {
+    if( !m_Data )
+        return;
+
     self.selectionInFile = CFRangeMake(0, m_File->FileSize());
 }
 

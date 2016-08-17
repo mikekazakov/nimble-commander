@@ -40,6 +40,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
     MainWindowTerminalState     *m_Terminal;
+    MainWindowInternalViewerState *m_Viewer;
+    
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTicktets;
@@ -302,6 +304,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void) ResignAsWindowState:(id)_state
 {
+    dispatch_assert_main_queue();    
     assert(_state != m_PanelState);
     assert(m_WindowState.size() > 1);
     assert(self.topmostState == _state);
@@ -338,6 +341,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
 {
+    dispatch_assert_main_queue();
     m_WindowState.push_back(_state);
     
     [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
@@ -358,19 +362,20 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
+    dispatch_assert_main_queue();
     if(!m_BigFileViewLoadingQ->Empty())
         return;
     
     m_BigFileViewLoadingQ->Run([=]{
         
         if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a state
-            MainWindowInternalViewerState *state;
+            if( !m_Viewer )
             dispatch_sync(dispatch_get_main_queue(),[&]{
-                state = [[MainWindowInternalViewerState alloc] init];
+                m_Viewer = [[MainWindowInternalViewerState alloc] init];
             });
-            if( [state openFile:_filepath atVFS:_host] )
+            if( [m_Viewer openFile:_filepath atVFS:_host] )
                 dispatch_to_main_queue([=]{
-                    [self PushNewWindowState:state];
+                    [self PushNewWindowState:m_Viewer];
                 });
         }
         else { // as a window

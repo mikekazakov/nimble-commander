@@ -143,6 +143,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc;
 - (void)addNewControllerOnRightPane:(PanelController*)_pc;
 
+
+@property (strong) IBOutlet NSToolbar *filePanelsToolsbar;
+
 @end
 
 

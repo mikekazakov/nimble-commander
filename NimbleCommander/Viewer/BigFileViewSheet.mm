@@ -74,6 +74,8 @@
     m_Controller.wordWrappingCheckBox = self.wordWrap;
     
     [m_Controller show];
+    m_Controller.nextResponder = self.window.nextResponder;
+    self.window.nextResponder = m_Controller;
 
     GoogleAnalytics::Instance().PostScreenView("File Viewer Sheet");
 }
@@ -99,11 +101,6 @@
     [self.settingsPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
                                       ofView:objc_cast<NSButton>(sender)
                                preferredEdge:NSMaxYEdge];
-}
-
-- (IBAction)performFindPanelAction:(id)sender
-{
-    [self.window makeFirstResponder:self.searchField];
 }
 
 @end

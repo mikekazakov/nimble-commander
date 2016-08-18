@@ -307,6 +307,14 @@ static int InvertBitFlag( int _value, int _flag )
     return file_window_size;
 }
 
+- (void) setView:(BigFileView *)view
+{
+    if( m_View == view )
+        return;
+    
+    m_View = view;
+}
+
 - (void) setSearchField:(NSSearchField *)searchField
 {
     if( m_SearchField == searchField )
@@ -374,6 +382,16 @@ static int InvertBitFlag( int _value, int _flag )
     [menu insertItem:item atIndex:5];
     
     return menu;
+}
+
+- (IBAction)onMainMenuPerformFindAction:(id)sender
+{
+    [self.view.window makeFirstResponder:m_SearchField];
+}
+
+- (IBAction)onMainMenuPerformFindNextAction:(id)sender
+{
+    [self onSearchFieldAction:self];
 }
 
 - (void)onSearchFieldAction:(id)sender

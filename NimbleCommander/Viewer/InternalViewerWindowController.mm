@@ -62,6 +62,9 @@
     m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
     
+    m_Controller.nextResponder = self.window.nextResponder;
+    self.window.nextResponder = m_Controller;
+        
     [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
     GoogleAnalytics::Instance().PostScreenView("File Viewer Window");    
 }
@@ -94,11 +97,6 @@
 - (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request
 {
     [m_Controller markSelection:_selection forSearchTerm:_request];
-}
-
-- (IBAction)performFindPanelAction:(id)sender
-{
-    [self.window makeFirstResponder:self.internalViewerToolbarSearchField];
 }
 
 - (IBAction)onInternalViewerToolbarSettings:(id)sender

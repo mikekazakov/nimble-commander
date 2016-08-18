@@ -435,7 +435,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
         [m_SearchIndicator stopAnimation:self];
 }
 
-- (IBAction)performFindPanelAction:(id)sender
+- (IBAction)onMainMenuPerformFindAction:(id)sender
 {
     if(!m_Toolbar.visible)
         [((MainWindowController*)self.window.delegate) OnShowToolbar:self];

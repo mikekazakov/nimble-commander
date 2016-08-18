@@ -691,7 +691,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [[DetailedVolumeInformationSheetController new] showSheetForWindow:self.window withPath:path];
 }
 
-- (IBAction)performFindPanelAction:(id)sender {
+- (IBAction)onMainMenuPerformFindAction:(id)sender {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;

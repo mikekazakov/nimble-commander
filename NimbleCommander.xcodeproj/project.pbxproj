@@ -2495,8 +2495,6 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
-				CFC5122016C4BD3D00D247EE /* main.m */,
-				CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */,
 				CFC5122616C4BD3D00D247EE /* AppDelegate.h */,
 				CFC5122716C4BD3D00D247EE /* AppDelegate.mm */,
 				CFA2C0C01C2C2AFC00E5B9B5 /* AppDelegate+Migration.h */,
@@ -2508,6 +2506,9 @@
 				B5A89D481746537C00EAB999 /* ApplicationSkins.h */,
 				CF6E44771CCCCDE9009F45B0 /* AppStoreHelper.h */,
 				CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */,
+				CFC5122016C4BD3D00D247EE /* main.m */,
+				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
+				CFC5122216C4BD3D00D247EE /* NimbleCommander-Prefix.pch */,
 			);
 			name = Bootstrap;
 			sourceTree = "<group>";
@@ -2963,7 +2964,6 @@
 				CF876D161D51DFD0009C0CCE /* Bootstrap */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
-				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
 				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B528011916FCF347004E260D /* Operations */,
 				B52EB78B172277C5004ABC2E /* Preferences */,

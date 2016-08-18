@@ -87,6 +87,10 @@
 - (void) Assigned
 {
     [self view];
+    
+    m_Controller.nextResponder = self.view.window.nextResponder;
+    self.view.window.nextResponder = m_Controller;
+    
     [m_Controller show];
     self.view.window.title = m_Controller.verboseTitle;
 //    [self.window makeFirstResponder:m_View];
@@ -96,6 +100,8 @@
 
 - (void) Resigned
 {
+    self.view.window.nextResponder = m_Controller.nextResponder;
+    m_Controller.nextResponder = nil;
 }
 
 - (void)cancelOperation:(id)sender
@@ -126,11 +132,6 @@
     [self.internalViewerToolbarPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
                                                    ofView:objc_cast<NSButton>(sender)
                                             preferredEdge:NSMaxYEdge];
-}
-
-- (IBAction)performFindPanelAction:(id)sender
-{
-    [self.view.window makeFirstResponder:self.internalViewerToolbarSearchField];
 }
 
 @end

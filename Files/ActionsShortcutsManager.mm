@@ -41,6 +41,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.file.close_window",                  u8"⇧⌘w"     },  // shift+cmd+w
         {"menu.file.close",                         u8"⌘w"      },  // cmd+w
         {"menu.file.find",                          u8"⌘f"      },  // cmd+f
+        {"menu.file.find_next",                     u8"⌘g"      },  // cmd+g
         {"menu.file.find_with_spotlight",           u8"⌥⌘f"     },  // alt+cmd+f
         {"menu.file.page_setup",                    u8"⇧⌘p"     },  // shift+cmd+p
         {"menu.file.print",                         u8"⌘p"      },  // cmd+p

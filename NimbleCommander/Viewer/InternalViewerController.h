@@ -2,7 +2,7 @@
 
 #include "BigFileView.h"
 
-@interface InternalViewerController : NSObject<NSSearchFieldDelegate>
+@interface InternalViewerController : NSResponder<NSSearchFieldDelegate>
 
 // UI wiring
 @property (nonatomic) BigFileView           *view;

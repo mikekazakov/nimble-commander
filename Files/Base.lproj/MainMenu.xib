@@ -222,7 +222,13 @@ DQ
                             </menuItem>
                             <menuItem title="Find..." tag="11050" keyEquivalent="f" id="i2G-EV-iTc">
                                 <connections>
-                                    <action selector="performFindPanelAction:" target="-1" id="d55-DV-a4f"/>
+                                    <action selector="onMainMenuPerformFindAction:" target="-1" id="d55-DV-a4f"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Find Next" tag="11051" id="ZYO-Aa-rPi">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onMainMenuPerformFindNextAction:" target="-1" id="xiX-wA-0Lf"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Find with Spotlight..." tag="11130" id="jg2-rC-cAS">

@@ -16,6 +16,35 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigModernFont      = "viewer.modern.font";
 static const auto g_ConfigClassicFont     = "viewer.classic.font";
 
+
+@interface PreferencesBoolToNumberValueTransformer : NSValueTransformer
+@end
+
+@implementation PreferencesBoolToNumberValueTransformer
++(Class)transformedValueClass
+{
+    return NSNumber.class;
+}
++ (BOOL)allowsReverseTransformation
+{
+    return true;
+}
+
+- (id)transformedValue:(id)value
+{
+    if( auto n = objc_cast<NSNumber>(value) )
+        return [NSNumber numberWithInt:n.boolValue ? 1 : 0];
+    return nil;
+}
+
+- (id)reverseTransformedValue:(id)value
+{
+    if( auto n = objc_cast<NSNumber>(value) )
+        return [NSNumber numberWithBool:n.intValue == 0 ? false : true];
+    return nil;
+}
+@end
+
 @interface PreferencesWindowViewerTab()
 
 @property (strong) IBOutlet NSPopUpButton *DefaultEncoding;

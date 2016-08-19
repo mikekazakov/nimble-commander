@@ -389,22 +389,21 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     // draw backgrounds
     DoubleColor curr_c = {-1, -1, -1, -1};
     int x = 0;
-//    for(TermScreen::Space char_space: _line.chars)
-    for(auto char_space: _line)
-    {
-        int bg_no = char_space.reverse ? char_space.foreground : char_space.background;
-        if(bg_no != TermScreenColors::Default) {
-            const DoubleColor &c = m_AnsiColors[bg_no];
-            if(c != m_BackgroundColor) {
-                if(c != curr_c)
-                    oms::SetFillColor(_context, curr_c = c);
+
+    for( auto char_space: _line ) {
+        const DoubleColor fg_fill_color = char_space.reverse ?
+            ( char_space.foreground != TermScreenColors::Default ? m_AnsiColors[char_space.foreground] : m_ForegroundColor ):
+            ( char_space.background != TermScreenColors::Default ? m_AnsiColors[char_space.background] : m_BackgroundColor );
         
-                CGContextFillRect(_context,
-                                  CGRectMake(x * m_FontCache->Width(),
-                                             _y * m_FontCache->Height(),
-                                             m_FontCache->Width(),
-                                             m_FontCache->Height()));
-            }
+        if( fg_fill_color != m_BackgroundColor ) {
+            if( fg_fill_color != curr_c )
+                oms::SetFillColor(_context, curr_c = fg_fill_color);
+            
+            CGContextFillRect(_context,
+                              CGRectMake(x * m_FontCache->Width(),
+                                         _y * m_FontCache->Height(),
+                                         m_FontCache->Width(),
+                                         m_FontCache->Height()));
         }
         ++x;
     }

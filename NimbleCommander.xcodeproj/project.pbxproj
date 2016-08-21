@@ -391,6 +391,10 @@
 		CF56BF431D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
 		CF56BF441D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
 		CF56BF451D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
+		CF56BF541D68061600A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
+		CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
+		CF56BF561D68129800A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
+		CF56BF571D68129800A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
 		CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
@@ -1423,6 +1427,8 @@
 		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
 		CF56BEFF1D5C85C800A08D2B /* InternalViewerController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerController.xib; path = NimbleCommander/Viewer/InternalViewerController.xib; sourceTree = SOURCE_ROOT; };
 		CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowFilePanelState.xib; sourceTree = "<group>"; };
+		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
+		CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
 		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
@@ -2208,7 +2214,6 @@
 				B52D9A82173D329F00EC7154 /* PanelViewTypes.h */,
 				CF27414717FF04EF006D6687 /* SharingService.h */,
 				CF27414817FF04EF006D6687 /* SharingService.mm */,
-				CF27414D1803E60D006D6687 /* Views */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -2331,6 +2336,7 @@
 			children = (
 				CF11762818F5124D0069C59D /* Core */,
 				B52D9A81173D324600EC7154 /* Presentation */,
+				CF27414D1803E60D006D6687 /* Views */,
 				CF9DBE171A48836A00FF735B /* Helpers */,
 			);
 			name = PanelMainWindowState;
@@ -2694,6 +2700,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
+				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
 				CF4E56E91D50712C00452912 /* FileMask.mm */,
@@ -3666,6 +3674,7 @@
 				CF50C4561C0ADF12009DF611 /* VFSNetSFTPFile.cpp in Sources */,
 				CF50C4381C0ADED4009DF611 /* VFSArchiveFile.cpp in Sources */,
 				CF4E56A61D5068D300452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CF56BF561D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
@@ -3965,6 +3974,7 @@
 				CFA539DD1D433E2A00C562A7 /* VFSPSHost.mm in Sources */,
 				CFA539DE1D433E2A00C562A7 /* Application.mm in Sources */,
 				CFA539DF1D433E2A00C562A7 /* AppDelegate+Migration.mm in Sources */,
+				CF56BF571D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CFA539E01D433E2A00C562A7 /* ByteCountFormatter.mm in Sources */,
 				CFA539E11D433E2A00C562A7 /* FileWindow.cpp in Sources */,
 				CFA539E21D433E2A00C562A7 /* OperationStats.mm in Sources */,
@@ -4164,6 +4174,7 @@
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CF73D1EA1BE616320014C88F /* VFSNetSFTPFile.cpp in Sources */,
 				CF73D1F21BE6179A0014C88F /* VFSPSHost.mm in Sources */,
+				CF56BF541D68061600A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CFFE09C81B200CE40091ED4F /* Application.mm in Sources */,
 				CFA2C0C21C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm in Sources */,
 				CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
@@ -4371,6 +4382,7 @@
 				CFDEB8261D2BB7DE009BCCBD /* ActionShortcut.mm in Sources */,
 				CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CF50C4421C0ADEE7009DF611 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF50B6C81A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF46DB9A1C856FBB009E28B9 /* MainWindowExternalTerminalEditorState.mm in Sources */,

@@ -20,9 +20,7 @@
 #include "../../Files/AppDelegate.h"
 #include "FindFilesSheetController.h"
 
-static NSString *g_MaskHistoryKey = @"FilePanelsSearchMaskHistory";
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
-static NSString *g_TextHistoryKey = @"FilePanelsSearchTextHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
 
@@ -56,25 +54,15 @@ static string to_relative_path( string _path, const string& _base_path )
 class FindFilesSheetComboHistory : public vector<string>
 {
 public:
-    FindFilesSheetComboHistory( int _max, const char *_config_path, NSString *_defaults_migration_path ):
+    FindFilesSheetComboHistory(int _max, const char *_config_path):
         m_Path(_config_path),
         m_Max(_max)
     {
-
-        if( auto history = [NSUserDefaults.standardUserDefaults arrayForKey:_defaults_migration_path] ) {
-            // load history from previous defaults and remove that key
-            for( NSObject *e in history )
-                if( auto s = objc_cast<NSString>(e) )
-                    emplace_back( s.UTF8String );
-            [NSUserDefaults.standardUserDefaults removeObjectForKey:_defaults_migration_path];
-        }
-        else {
-            auto arr = StateConfig().Get(m_Path);
-            if( arr.GetType() == rapidjson::kArrayType )
-                for( auto i = arr.Begin(), e = arr.End(); i != e; ++i )
-                    if( i->GetType() == rapidjson::kStringType )
-                        emplace_back( i->GetString() );
-        }
+        auto arr = StateConfig().Get(m_Path);
+        if( arr.GetType() == rapidjson::kArrayType )
+            for( auto i = arr.Begin(), e = arr.End(); i != e; ++i )
+                if( i->GetType() == rapidjson::kStringType )
+                    emplace_back( i->GetString() );
     }
     
     ~FindFilesSheetComboHistory()
@@ -143,14 +131,9 @@ private:
 @interface FindFilesSheetSizeToStringTransformer : NSValueTransformer
 @end
 @implementation FindFilesSheetSizeToStringTransformer
-+ (void) initialize
-{
-    [NSValueTransformer setValueTransformer:[[self alloc] init]
-                                    forName:NSStringFromClass(self.class)];
-}
 + (Class)transformedValueClass
 {
-	return [NSString class];
+	return NSString.class;
 }
 - (id)transformedValue:(id)value
 {
@@ -161,14 +144,9 @@ private:
 @interface FindFilesSheetTimeToStringTransformer : NSValueTransformer
 @end
 @implementation FindFilesSheetTimeToStringTransformer
-+ (void) initialize
-{
-    [NSValueTransformer setValueTransformer:[[self alloc] init]
-                                    forName:NSStringFromClass(self.class)];
-}
 + (Class)transformedValueClass
 {
-	return [NSString class];
+	return NSString.class;
 }
 - (id)transformedValue:(id)value
 {
@@ -176,8 +154,8 @@ private:
     static once_flag once;
     call_once(once, []{
         formatter = [NSDateFormatter new];
-        [formatter setLocale:[NSLocale currentLocale]];
-        [formatter setDateStyle:NSDateFormatterShortStyle];	// short date
+        formatter.locale = NSLocale.currentLocale;
+        formatter.dateStyle = NSDateFormatterShortStyle;
     });
     
     if(value == nil)
@@ -257,14 +235,14 @@ private:
         m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
 
-        m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory, g_MaskHistoryKey);
-        m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory, g_TextHistoryKey);
+        m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory);
+        m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         
         m_BatchQueue = SerialQueueT::Make();
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
-        m_UIChanged = false;
+        m_UIChanged = true;
     }
     return self;
 }

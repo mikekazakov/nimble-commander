@@ -71,6 +71,12 @@ public:
     const VFSHostPtr& Parent() const noexcept;
     
     
+    /**
+     * _callback will be exectuded in VFSHost dectructor, just before this instance will die.
+     * Do not access VFSHost via pointer parameter, it should be used only for identification.
+     */
+    void SetDesctructCallback( function<void(const VFSHost*)> _callback );
+    
     virtual int StatFS(const char *_path, // path may be a file path, or directory path
                        VFSStatFS &_stat,
                        VFSCancelChecker _cancel_checker);
@@ -217,9 +223,10 @@ public:
     shared_ptr<_cl> SharedPtr() {return static_pointer_cast<_cl>(VFSHost::SharedPtr());}
 
 private:
-    const string                m_JunctionPath;         // path in Parent VFS, relative to it's root
-    const shared_ptr<VFSHost>   m_Parent;
-    const char*                 m_Tag;
+    const string                    m_JunctionPath;         // path in Parent VFS, relative to it's root
+    const shared_ptr<VFSHost>       m_Parent;
+    const char*                     m_Tag;
+    function<void(const VFSHost*)>  m_OnDesctruct;
     
     // forbid copying
     VFSHost(const VFSHost& _r) = delete;

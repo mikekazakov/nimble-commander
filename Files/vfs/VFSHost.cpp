@@ -173,6 +173,8 @@ VFSHost::VFSHost(const char *_junction_path,
 
 VFSHost::~VFSHost()
 {
+    if( m_OnDesctruct )
+        m_OnDesctruct( this );
 }
 
 shared_ptr<VFSHost> VFSHost::SharedPtr()
@@ -458,4 +460,9 @@ int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                 _result.emplace_back( listing->Item(i) );
     
     return 0;
+}
+
+void VFSHost::SetDesctructCallback( function<void(const VFSHost*)> _callback )
+{
+    m_OnDesctruct = _callback;
 }

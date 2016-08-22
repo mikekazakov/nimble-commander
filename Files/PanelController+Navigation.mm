@@ -12,69 +12,25 @@
 
 @implementation PanelController (Navigation)
 
-- (void) GoToVFSPathStack:(const VFSPathStack&)_stack
+- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
 {
-    // TODO: make this async and run in appropriate queue
-    
-    // 1st - build current hosts stack
-    vector<VFSHostPtr> curr_stack;
-    if( self.isUniform ) {
-        VFSHostPtr cur = self.vfs;
-        while( cur ) {
-            curr_stack.emplace_back(cur);
-            cur = cur->Parent();
-        }
-        reverse(begin(curr_stack), end(curr_stack));
-    }
-    
-    // 2nd - compare with required stack and left only what matches
-    vector<VFSHostPtr> res_stack;
-    for(size_t i = 0; i < _stack.size(); ++i)
-    {
-        if(i >= curr_stack.size())
-            break;
-        if(!_stack[i].host.owner_before(curr_stack[i]) && !curr_stack[i].owner_before(_stack[i].host))
-        {
-            // exact match of an alive host, just use it and go on
-            res_stack.emplace_back(curr_stack[i]);
-            continue;
-        }
-        
-        if(_stack[i].fs_tag != curr_stack[i]->FSTag()) break;
-        if(_stack[i].junction != curr_stack[i]->JunctionPath()) break;
-        if( curr_stack[i]->Configuration() != _stack[i].configuration ) break;
-
-        // this is not the object which was used before, but it matches and seems that can be used
-        res_stack.emplace_back(curr_stack[i]);
-    }
-    
-    // 3rd - build what's absent
-    for(size_t i = res_stack.size(); i < _stack.size(); ++i)
-    {
-        // refactor this in separate functions
-        const auto &part = _stack[i];
-        auto meta = VFSFactory::Instance().Find(part.fs_tag);
-        if( !meta )
-            break;
-        
+    m_DirectoryLoadingQ->Run([=]{
+        VFSHostPtr host;
         try {
-            auto host = meta->SpawnWithConfig(res_stack.empty() ? nullptr : res_stack.back(),
-                                              part.configuration);
-            res_stack.emplace_back(host);
+            host = VFSInstanceManager::Instance().RetrieveVFS(_promise);
         } catch (VFSErrorException &e) {
-            // TODO: something
-            break;
+            return; // TODO: something
         }
-    }
-    
-    // TODO: need an ability to show errors at least
-    
-    if(res_stack.size() == _stack.size())
-        [self GoToDir:_stack.path()
-                  vfs:res_stack.back()
-         select_entry:""
-    loadPreviousState:true
-                async:true];
+        
+        // TODO: need an ability to show errors at least
+        dispatch_to_main_queue([=]{
+            [self GoToDir:_directory
+                      vfs:host
+             select_entry:""
+        loadPreviousState:true
+                    async:true];
+        });
+    });
 }
 
 - (int) GoToDir:(const string&)_dir

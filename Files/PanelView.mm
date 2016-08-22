@@ -32,6 +32,20 @@ struct PanelViewStateStorage
     string focused_item;
 };
 
+static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
+{
+    string full;
+    auto c = _at_vfs;
+    while( c ) {
+        // we need to incorporate options somehow here. or not?
+        string part = string(c->Tag) + string(c->JunctionPath()) + "|";
+        full.insert(0, part);
+        c = c->Parent();
+    }
+    full += _path;
+    return hash<string>()(full);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 @implementation PanelView
@@ -41,7 +55,7 @@ struct PanelViewStateStorage
     unique_ptr<PanelViewPresentation> m_Presentation;
     PanelViewState              m_State;
     
-    unordered_map<hash<VFSPathStack>::value_type, PanelViewStateStorage> m_States;
+    unordered_map<size_t, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
@@ -682,8 +696,7 @@ struct PanelViewStateStorage
     if( !item )
         return;
     
-    auto path = VFSPathStack( listing.Host(), listing.Directory() );
-    auto &storage = m_States[hash<VFSPathStack>()(path)];
+    auto &storage = m_States[ HashForPath(listing.Host(), listing.Directory()) ];
     
     storage.focused_item = item.Name();
     storage.dispay_offset = m_State.ItemsDisplayOffset;
@@ -697,8 +710,7 @@ struct PanelViewStateStorage
     
     auto &listing = m_State.Data->Listing();
     
-    auto path = VFSPathStack( listing.Host(), listing.Directory() );
-    auto it = m_States.find(hash<VFSPathStack>()(path));
+    auto it = m_States.find(HashForPath(listing.Host(), listing.Directory()));
     if(it == end(m_States))
         return;
     

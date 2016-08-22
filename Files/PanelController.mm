@@ -666,7 +666,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     [self UpdateBriefSystemOverview];
 
     if( self.isUniform  ) {
-        m_History.Put( VFSPathStack(self.vfs, self.currentDirectoryPath) );
+        m_History.Put( VFSInstanceManager::Instance().TameVFS(self.vfs), self.currentDirectoryPath );
         if( self.vfs->IsNativeFS() )
             m_LastNativeDirectory = self.currentDirectoryPath;
     }

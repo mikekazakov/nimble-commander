@@ -8,6 +8,16 @@
 
 #include "PanelHistory.h"
 
+bool PanelHistory::Path::operator==(const Path&_rhs) const noexcept
+{
+    return vfs == _rhs.vfs && path == _rhs.path;
+}
+
+bool PanelHistory::Path::operator!=(const Path&_rhs) const noexcept
+{
+    return !(*this == _rhs);
+}
+
 bool PanelHistory::IsRecording() const noexcept
 {
     return m_IsRecording;
@@ -56,21 +66,23 @@ void PanelHistory::MoveBack()
     }
 }
 
-const VFSPathStack* PanelHistory::Current() const
+const PanelHistory::Path* PanelHistory::Current() const
 {
     if( m_IsRecording )
         return nullptr;
     return &*next(begin(m_History), m_PlayingPosition);
 }
 
-void PanelHistory::Put(VFSPathStack&& _path)
+void PanelHistory::Put(VFSInstanceManager::Promise _vfs_promise, string _directory_path)
 {
+    Path new_path;
+    new_path.vfs = move(_vfs_promise);
+    new_path.path = move(_directory_path);
+    
     if( m_IsRecording ) {
-        if( !m_History.empty() && m_History.back() == _path )
+        if( !m_History.empty() && m_History.back() == new_path )
             return;
-        if( !m_History.empty() && m_History.back().weak_equal(_path) )
-            m_History.pop_back();
-        m_History.emplace_back(move(_path));
+        m_History.emplace_back( move(new_path) );
         if( m_History.size() > m_HistoryLength )
             m_History.pop_front();
     }
@@ -78,15 +90,10 @@ void PanelHistory::Put(VFSPathStack&& _path)
         assert(m_PlayingPosition < m_History.size());
         auto i = begin(m_History);
         advance(i, m_PlayingPosition);
-        if( *i != _path ) {
-            if(i->weak_equal(_path)) {
-                m_History.insert(m_History.erase(i), move(_path));
-            }
-            else {
-                m_IsRecording = true;
-                m_History.resize(m_PlayingPosition + 1);
-                m_History.emplace_back(move(_path));
-            }
+        if( *i != new_path ) {
+            m_IsRecording = true;
+            m_History.resize(m_PlayingPosition + 1);
+            m_History.emplace_back( move(new_path) );
         }
     }
 }
@@ -101,15 +108,15 @@ bool PanelHistory::Empty() const noexcept
     return m_History.empty();
 }
     
-vector<reference_wrapper<const VFSPathStack>> PanelHistory::All() const
+vector<reference_wrapper<const PanelHistory::Path>> PanelHistory::All() const
 {
-    vector<reference_wrapper<const VFSPathStack>> res;
+    vector<reference_wrapper<const Path>> res;
     for( auto &i:m_History )
         res.emplace_back( cref(i) );
     return res;
 }
 
-const VFSPathStack* PanelHistory::RewindAt(size_t _indx)
+const PanelHistory::Path* PanelHistory::RewindAt(size_t _indx)
 {
     if(_indx >= m_History.size())
         return nullptr;

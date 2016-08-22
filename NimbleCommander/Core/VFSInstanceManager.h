@@ -11,26 +11,14 @@
 class VFSInstanceManager
 {
 public:
-    struct Promise
-    {
-        Promise();
-        Promise(Promise &&_rhs);
-        Promise(const Promise &_rhs);
-        ~Promise();
-        const Promise& operator=(const Promise &_rhs);
-        const Promise& operator=(Promise &&_rhs);
-        operator bool() const noexcept;
-        bool operator ==(const Promise &_rhs) const noexcept;
-        bool operator !=(const Promise &_rhs) const noexcept;
-    private:
-        Promise(uint64_t _inst_id, VFSInstanceManager &_manager);
-        uint64_t            inst_id;
-        VFSInstanceManager *manager;
-        friend class VFSInstanceManager;
-    };
+    struct Promise;
 
     static VFSInstanceManager& Instance();
     
+    /**
+     * Will register information about the instance if not yet.
+     * Returned promise may be used for later vfs restoration.
+     */
     Promise TameVFS( const VFSHostPtr& _instance );
     
     /**
@@ -40,10 +28,17 @@ public:
      */
     VFSHostPtr RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker = nullptr );
     
+    /**
+     * Will find an info for promise and return a corresponding vfs tag.
+     */
+    const char *GetTag( const Promise &_promise );
+
+    /**
+     * Will return empty string on any errors.
+     */
+    string GetVerboseVFSTitle( const Promise &_promise );
     
     // get alive vfs list
-
-
     
 private:
    
@@ -54,10 +49,10 @@ private:
              uint64_t _parent_id,
              VFSConfiguration _config
              );
-        weak_ptr<VFSHost>   m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed
         uint64_t            m_ID;
-        uint32_t            m_PromisesCount; // combined from Promise instances and links via .m_ParentVFSID
+        uint64_t            m_PromisesCount; // combined from Promise instances and links via .m_ParentVFSID
         uint64_t            m_ParentVFSID; // zero means no parent vfs info
+        weak_ptr<VFSHost>   m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed        
         VFSConfiguration    m_Configuration;
     };
     
@@ -104,4 +99,24 @@ private:
     
     
     friend struct Promise;
+};
+
+struct VFSInstanceManager::Promise
+{
+    Promise();
+    Promise(Promise &&_rhs);
+    Promise(const Promise &_rhs);
+    ~Promise();
+    const Promise& operator=(const Promise &_rhs);
+    const Promise& operator=(Promise &&_rhs);
+    operator bool() const noexcept;
+    bool operator ==(const Promise &_rhs) const noexcept;
+    bool operator !=(const Promise &_rhs) const noexcept;
+    const char *tag() const; // may return nullptr
+    string verbose_title() const; // may return ""
+private:
+    Promise(uint64_t _inst_id, VFSInstanceManager &_manager);
+    uint64_t            inst_id;
+    VFSInstanceManager *manager;
+    friend class VFSInstanceManager;
 };

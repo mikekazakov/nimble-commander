@@ -339,14 +339,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
             return;
         m_History.RewindAt( m_History.Length()-1 );
     }
-    [self GoToVFSPathStack:*m_History.Current()];
+    [self GoToVFSPromise:m_History.Current()->vfs
+                  onPath:m_History.Current()->path];
 }
 
 - (IBAction)OnGoForward:(id)sender {
     if(!m_History.CanMoveForth())
         return;
     m_History.MoveForth();
-    [self GoToVFSPathStack:*m_History.Current()];
+    [self GoToVFSPromise:m_History.Current()->vfs
+                  onPath:m_History.Current()->path];
 }
 
 - (IBAction)OnGoToHome:(id)sender {

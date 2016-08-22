@@ -8,10 +8,23 @@
 
 #pragma once
 #include "vfs/VFS.h"
+#include "../NimbleCommander/Core/VFSInstanceManager.h"
 
+/**
+ * This class is not thread-safe.
+ */
 class PanelHistory
 {
 public:
+    // currenly we store only vfs info and directory inside it
+    struct Path
+    {
+        bool operator==(const Path&_rhs) const noexcept;
+        bool operator!=(const Path&_rhs) const noexcept;
+        VFSInstanceManager::Promise     vfs;
+        string                          path;
+    };
+    
     bool IsRecording() const noexcept;
     unsigned Length() const noexcept;
     bool Empty() const noexcept;
@@ -34,22 +47,22 @@ public:
      * Will turn History into "recording" state.
      * History was in playing state - will discard anything in front of current position.
      */
-    void Put(VFSPathStack&& _path);
+    void Put(VFSInstanceManager::Promise _vfs_promise, string _directory_path);
     
     /**
      * Will return nullptr if history is in "recording" state.
      */
-    const VFSPathStack* Current() const;
+    const Path* Current() const;
 
     /**
      * Will put History in "playing" state and adjust playing position accordingly,
      * and return current history element
      */
-    const VFSPathStack* RewindAt(size_t _indx);
+    const Path* RewindAt(size_t _indx);
     
-    vector<reference_wrapper<const VFSPathStack>> All() const;
+    vector<reference_wrapper<const Path>> All() const;
 private:
-    deque<VFSPathStack>  m_History;
+    deque<Path>         m_History;
      // lesser the index - farther the history entry
      // most recent entry is at .size()-1
     unsigned            m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false

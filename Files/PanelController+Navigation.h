@@ -7,6 +7,7 @@
 //
 
 #import "PanelController.h"
+#include "../NimbleCommander/Core/VFSInstanceManager.h"
 
 class PanelControllerGoToDirContext
 {
@@ -56,7 +57,7 @@ loadPreviousState:(bool)_load_state
 - (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing;
 
 // will load previous view state if any
-- (void) GoToVFSPathStack:(const VFSPathStack&)_stack;
+- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory;
 // some params later
 
 - (void) RecoverFromInvalidDirectory;

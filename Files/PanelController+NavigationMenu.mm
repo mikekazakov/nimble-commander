@@ -10,16 +10,17 @@
 #include "vfs/vfs_native.h"
 #include "PanelController+NavigationMenu.h"
 #include "MainWndGoToButton.h"
+#include "../NimbleCommander/Core/VFSInstanceManager.h"
 
 static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
 //static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
 
-static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing &_listing  )
+static vector<pair<VFSInstanceManager::Promise, string>> ProduceLocationsForParentDirectories( const VFSListing &_listing  )
 {
     if( !_listing.IsUniform() )
-        throw invalid_argument("ProduceStacksForParentDirectories: _listing should be uniform");
-        
-    vector<VFSPathStack> result;
+        throw invalid_argument("ProduceLocationsForParentDirectories: _listing should be uniform");
+    
+    vector<pair<VFSInstanceManager::Promise, string>> result;
     
     auto host = _listing.Host();
     path dir = _listing.Directory();
@@ -32,7 +33,8 @@ static vector<VFSPathStack> ProduceStacksForParentDirectories( const VFSListing 
             if( dir == "/" )
                 brk = true;
             
-            result.emplace_back( VFSPathStack(host, dir == "/" ? dir.native() : dir.native() + "/") );
+            result.emplace_back(VFSInstanceManager::Instance().TameVFS(host),
+                                dir == "/" ? dir.native() : dir.native() + "/");
             
             dir = dir.parent_path();
         } while( !brk );
@@ -69,10 +71,10 @@ static NSString *KeyEquivalent(int _ind)
     }
 }
 
-static NSImage *ImageForPathStack( const VFSPathStack &_stack )
+static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_promise, const string& _path )
 {
-    if( _stack.back().fs_tag == VFSNativeHost::Tag )
-        if(auto image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:_stack.path()]]) {
+    if( _promise.tag() == VFSNativeHost::Tag )
+        if(auto image = [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:_path]]) {
             image.size = g_IconSize;
             return image;
         }
@@ -82,21 +84,26 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     return image;
 }
 
-@interface PanelControllerQuickListMenuItemPathStackHolder : NSObject
-- (instancetype) initWithObject:(const VFSPathStack&)_obj;
-@property (readonly, nonatomic) const VFSPathStack& object;
+@interface PanelControllerQuickListMenuItemVFSPromiseHolder : NSObject
+- (instancetype) initWithPromise:(const VFSInstanceManager::Promise&)_promise andPath:(const string&)_path;
+@property (readonly, nonatomic) const VFSInstanceManager::Promise& promise;
+@property (readonly, nonatomic) const string& path;
 @end
 
-@implementation PanelControllerQuickListMenuItemPathStackHolder
+@implementation PanelControllerQuickListMenuItemVFSPromiseHolder
 {
-    VFSPathStack m_Obj;
+    VFSInstanceManager::Promise m_Promise;
+    string m_Path;
 }
-@synthesize object = m_Obj;
-- (instancetype) initWithObject:(const VFSPathStack&)_obj
+@synthesize promise = m_Promise;
+@synthesize path = m_Path;
+- (instancetype) initWithPromise:(const VFSInstanceManager::Promise&)_promise andPath:(const string&)_path
 {
     self = [super init];
-    if( self )
-        m_Obj = _obj;
+    if( self ) {
+        m_Promise = _promise;
+        m_Path = _path;
+    }
     return self;
 }
 @end
@@ -158,16 +165,16 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     for( auto i = rbegin(hist_items), e = rend(hist_items); i != e; ++i, ++indx ) {
         auto &item = *i;
         
-        NSString *title = [NSString stringWithUTF8StdString:item.get().verbose_string()];
+        NSString *title = [NSString stringWithUTF8StdString:item.get().vfs.verbose_title() + item.get().path];
         
         if( ![menu itemWithTitle:title] ) {
             NSMenuItem *it = [[NSMenuItem alloc] init];
             
             it.title = title;
-            it.image = ImageForPathStack( item );
-            it.tag = hist_items.size() - indx - 1;
+            it.image = ImageForPromiseAndPath(item.get().vfs, item.get().path);
             it.target = self;
-            it.action = @selector(doCalloutByHistoryPopupMenuItem:);
+            it.action = @selector(doCalloutWithVFSPromiseHolder:);
+            it.representedObject = [[PanelControllerQuickListMenuItemVFSPromiseHolder alloc] initWithPromise:item.get().vfs andPath:item.get().path];
             [menu addItem:it];
         }
     }
@@ -180,43 +187,36 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     [self popUpQuickListMenu:menu];
 }
 
-- (void)doCalloutByHistoryPopupMenuItem:(id)sender
-{
-    if( auto item = objc_cast<NSMenuItem>(sender) )
-        if( auto hist = m_History.RewindAt(item.tag) )
-            [self GoToVFSPathStack:*hist];
-}
-
 - (void) popUpQuickListWithParentFolders
 {
     if( !self.isUniform )
         return;
     
-    auto stacks = ProduceStacksForParentDirectories( self.data.Listing() );
+    auto stack = ProduceLocationsForParentDirectories( self.data.Listing() );
     
     NSMenu *menu = [[NSMenu alloc] init];
     [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]];
     
-    for( auto &i: stacks) {
-        NSString *title = [NSString stringWithUTF8StdString:i.verbose_string()];
+    for( auto &i: stack) {
+        NSString *title = [NSString stringWithUTF8StdString:i.first.verbose_title() + i.second];
         
         NSMenuItem *it = [[NSMenuItem alloc] init];
         it.title = title;
-        it.image = ImageForPathStack( i );
+        it.image = ImageForPromiseAndPath(i.first, i.second);
         it.target = self;
-        it.action = @selector(doCalloutWithPathStackHolder:);
-        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:i];
+        it.action = @selector(doCalloutWithVFSPromiseHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemVFSPromiseHolder alloc] initWithPromise:i.first andPath:i.second];
         [menu addItem:it];
     }
     
     [self popUpQuickListMenu:menu];
 }
 
-- (void)doCalloutWithPathStackHolder:(id)sender
+- (void)doCalloutWithVFSPromiseHolder:(id)sender
 {
     if( auto item = objc_cast<NSMenuItem>(sender) )
-        if( auto holder = objc_cast<PanelControllerQuickListMenuItemPathStackHolder>(item.representedObject) )
-            [self GoToVFSPathStack:holder.object];
+        if( auto holder = objc_cast<PanelControllerQuickListMenuItemVFSPromiseHolder>(item.representedObject) )
+            [self GoToVFSPromise:holder.promise onPath:holder.path];
 }
 
 - (void) popUpQuickListWithVolumes
@@ -224,12 +224,12 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     NSMenu *menu = [[NSMenu alloc] init];
     [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels") action:nullptr keyEquivalent:@""]];
     
+    auto vfs_promise = VFSInstanceManager::Instance().TameVFS(VFSNativeHost::SharedHost());
+    
     for( auto &volume: NativeFSManager::Instance().Volumes() ) {
         if( volume->mount_flags.dont_browse )
             continue;
 
-        auto path = VFSPathStack( VFSNativeHost::SharedHost(), volume->mounted_at_path );
-        
         NSMenuItem *it = [[NSMenuItem alloc] init];
         if(volume->verbose.icon != nil) {
             NSImage *img = volume->verbose.icon.copy;
@@ -238,8 +238,9 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
         }
         it.title = volume->verbose.localized_name;
         it.target = self;
-        it.action = @selector(doCalloutWithPathStackHolder:);
-        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
+        it.action = @selector(doCalloutWithVFSPromiseHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemVFSPromiseHolder alloc] initWithPromise:vfs_promise
+                                                                                                 andPath:volume->mounted_at_path];
         [menu addItem:it];
     }
     
@@ -252,9 +253,10 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
     
     NSMenu *menu = [[NSMenu alloc] init];
     [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Favorites", "Favorites popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+
+    auto vfs_promise = VFSInstanceManager::Instance().TameVFS(VFSNativeHost::SharedHost());
     
     for( auto f: favourites ) {
-        auto path = VFSPathStack( VFSNativeHost::SharedHost(),  f.path.fileSystemRepresentationSafe );
 
         NSString *title;
         [f getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
@@ -268,8 +270,9 @@ static NSImage *ImageForPathStack( const VFSPathStack &_stack )
         }
         it.title = title;
         it.target = self;
-        it.action = @selector(doCalloutWithPathStackHolder:);
-        it.representedObject = [[PanelControllerQuickListMenuItemPathStackHolder alloc] initWithObject:path];
+        it.action = @selector(doCalloutWithVFSPromiseHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemVFSPromiseHolder alloc] initWithPromise:vfs_promise
+                                                                                            andPath:f.path.fileSystemRepresentationSafe];
         [menu addItem:it];
         
     }

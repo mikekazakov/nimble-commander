@@ -26,6 +26,7 @@ SearchForFiles::SearchForFiles()
     m_Queue->OnDry([=]{
         m_Callback = nullptr;
         m_LookingInCallback = nullptr;
+        m_SpawnArchiveCallback = nullptr;
         m_SearchOptions = 0;
         if( m_FinishCallback ) {
             m_FinishCallback();
@@ -82,9 +83,10 @@ void SearchForFiles::ClearFilters()
 bool SearchForFiles::Go(const string &_from_path,
                     const VFSHostPtr &_in_host,
                     int _options,
-                    FoundCallBack _found_callback,
+                    FoundCallback _found_callback,
                     function<void()> _finish_callback,
-                    function<void(const char*)> _looking_in_callback
+                    function<void(const char*)> _looking_in_callback,
+                    SpawnArchiveCallback _spawn_archive_callback
                     )
 {
     if( IsRunning() )
@@ -94,6 +96,7 @@ bool SearchForFiles::Go(const string &_from_path,
     
     m_Callback = move(_found_callback);
     m_FinishCallback = move(_finish_callback);
+    m_SpawnArchiveCallback = move(_spawn_archive_callback);
     m_LookingInCallback = move(_looking_in_callback);
     m_SearchOptions = _options;
     m_DirsFIFO = {};
@@ -123,31 +126,31 @@ void SearchForFiles::NotifyLookingIn(const char* _path) const
 
 void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 {
-    m_DirsFIFO.emplace(_from_path);
+    m_DirsFIFO.emplace(_in_host.SharedPtr(), _from_path);
     
     while( !m_DirsFIFO.empty() ) {
         if( m_Queue->IsStopped() )
             break;
         
-        string path = move( m_DirsFIFO.front() );
+        auto path = move( m_DirsFIFO.front() );
         m_DirsFIFO.pop();
         
-        NotifyLookingIn( path.c_str() );
+        NotifyLookingIn( path.Path().c_str() );
         
-        _in_host.IterateDirectoryListing(path.c_str(),
+        path.Host()->IterateDirectoryListing(path.Path().c_str(),
                                       [&](const VFSDirEnt &_dirent)
                                       {
                                           if(m_Queue->IsStopped())
                                               return false;
                                           
-                                          string full_path = path;
+                                          string full_path = path.Path();
                                           if(full_path.back() != '/') full_path += '/';
                                           full_path += _dirent.name;
                                           
                                           ProcessDirent(full_path.c_str(),
-                                                        path.c_str(),
+                                                        path.Path().c_str(),
                                                         _dirent,
-                                                        _in_host);
+                                                        *path.Host());
                                           
                                           return true;
                                       });
@@ -155,10 +158,10 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
 }
 
 void SearchForFiles::ProcessDirent(const char* _full_path,
-                               const char* _dir_path,
-                               const VFSDirEnt &_dirent,
-                               VFSHost &_in_host
-                               )
+                                   const char* _dir_path,
+                                   const VFSDirEnt &_dirent,
+                                   VFSHost &_in_host
+                                   )
 {
     bool failed_filtering = false;
     
@@ -204,7 +207,12 @@ void SearchForFiles::ProcessDirent(const char* _full_path,
     
     if( m_SearchOptions & Options::GoIntoSubDirs )
         if( _dirent.type == VFSDirEnt::Dir )
-            m_DirsFIFO.emplace(_full_path);
+            m_DirsFIFO.emplace(_in_host.SharedPtr(), _full_path);
+    
+    if( m_SearchOptions & Options::LookInArchives )
+        if( _dirent.type == VFSDirEnt::Reg && m_SpawnArchiveCallback )
+            if( auto archive_host = m_SpawnArchiveCallback(_full_path, _in_host) )
+                m_DirsFIFO.emplace(archive_host, "/");
 }
 
 bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
@@ -265,7 +273,7 @@ void SearchForFiles::ProcessValidEntry(const char* _full_path,
                        CFRange _cont_range)
 {
     if(m_Callback)
-        m_Callback(_dirent.name, _dir_path, _cont_range);
+        m_Callback(_dirent.name, _dir_path, _in_host, _cont_range);
 }
 
 bool SearchForFiles::IsRunning() const noexcept

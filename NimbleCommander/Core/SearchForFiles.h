@@ -18,8 +18,9 @@ class SearchForFiles
 public:
     struct Options {
         enum {
-            GoIntoSubDirs = 0x0001,
-            SearchForDirs = 0x0002  
+            GoIntoSubDirs   = 0x0001,
+            SearchForDirs   = 0x0002,
+            LookInArchives  = 0x0004,
         };
     };
     
@@ -40,9 +41,12 @@ public:
     };
 
     // _content_found used to pass info where requested content was found, or {-1,0} if not used
-    using FoundCallBack = function<void(const char *_filename,
+    using FoundCallback = function<void(const char *_filename,
                                         const char *_in_path,
+                                        VFSHost &_in_host,
                                         CFRange _content_found)>;
+    
+    using SpawnArchiveCallback = function<VFSHostPtr(const char*_for_path, VFSHost& _in_host)>;
     
     SearchForFiles();
     ~SearchForFiles();
@@ -75,9 +79,10 @@ public:
     bool Go(const string &_from_path,
             const VFSHostPtr &_in_host,
             int _options,
-            FoundCallBack _found_callback,
+            FoundCallback _found_callback,
             function<void()> _finish_callback,
-            function<void(const char*)> _looking_in_callback = nullptr
+            function<void(const char*)> _looking_in_callback = nullptr,
+            SpawnArchiveCallback _spawn_archive_callback = nullptr
             );
     
     /**
@@ -118,9 +123,10 @@ private:
     optional<FilterContent>     m_FilterContent;
     optional<FilterSize>        m_FilterSize;
     
-    FoundCallBack               m_Callback;
+    FoundCallback               m_Callback;
+    SpawnArchiveCallback        m_SpawnArchiveCallback;
     function<void()>            m_FinishCallback;
     function<void(const char*)> m_LookingInCallback;
     int                         m_SearchOptions;
-    queue<string>               m_DirsFIFO;
+    queue<VFSPath>              m_DirsFIFO;
 };

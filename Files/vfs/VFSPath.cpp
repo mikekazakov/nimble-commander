@@ -38,6 +38,23 @@ void VFSPath::Reset()
     m_Path.clear();
 }
 
+bool operator <(const VFSPath& _lhs, const VFSPath& _rhs) noexcept
+{
+    return _lhs.Host() != _rhs.Host() ?
+        _lhs.Host() < _rhs.Host():
+        _lhs.Path() < _rhs.Path();
+}
+
+bool operator ==(const VFSPath& _lhs, const VFSPath& _rhs) noexcept
+{
+    return _lhs.Host() == _rhs.Host() && _lhs.Path() == _rhs.Path();
+}
+
+bool operator !=(const VFSPath& _lhs, const VFSPath& _rhs) noexcept
+{
+    return !( _lhs == _rhs );
+}
+
 VFSPathStack::Part::Part(VFSHost &_host):
     fs_tag(_host.FSTag()),
     junction(_host.JunctionPath()),

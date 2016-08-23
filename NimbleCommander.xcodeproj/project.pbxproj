@@ -2700,13 +2700,6 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
-				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
-				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
-				CF4E56E81D50712C00452912 /* FileMask.h */,
-				CF4E56E91D50712C00452912 /* FileMask.mm */,
-				CF4E56E51D506EB100452912 /* SearchForFiles.h */,
-				CF4E56E61D506EB100452912 /* SearchForFiles.mm */,
 				CF0939401D12B14700D67AC6 /* ActionShortcut.h */,
 				CF0939411D12B14700D67AC6 /* ActionShortcut.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
@@ -2732,6 +2725,9 @@
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
+				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
+				CF4E56E81D50712C00452912 /* FileMask.h */,
+				CF4E56E91D50712C00452912 /* FileMask.mm */,
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
 				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
@@ -2747,12 +2743,16 @@
 				CFD54FD21A2A01B30098A4A9 /* RoutedIOInterfaces.h */,
 				CF6D9D361966BE840077B146 /* SandboxManager.h */,
 				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
+				CF4E56E51D506EB100452912 /* SearchForFiles.h */,
+				CF4E56E61D506EB100452912 /* SearchForFiles.mm */,
 				CF07DE3E1769754400757DE1 /* SearchInFile.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
 				CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */,
 				CF9A9F191CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.h */,
 				CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */,
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
+				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
+				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";

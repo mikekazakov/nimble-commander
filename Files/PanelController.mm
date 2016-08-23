@@ -25,7 +25,6 @@
 #include "AskForPasswordWindowController.h"
 #include "ActivationManager.h"
 
-static const auto g_ConfigArchivesExtensionsWhieList            = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
@@ -117,30 +116,13 @@ void panel::ActivityTicket::Reset()
 
 static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
-    static const vector<string> archive_extensions = []{
-        vector<string> v;
-        if( auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList) ) {
-            // load extensions list from defaults
-            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
-                for( NSString *s: extensions_array )
-                    if( s != nil && s.length > 0 )
-                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
-                            if( auto utf8 = trimmed.UTF8String)
-                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
-        }
-        else // hardcoded fallback data
-            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
-        return v;
-    }();
-    
     if( _item.IsDir() )
         return false;
 
     if( !_item.HasExtension() )
         return false;
     
-    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _item.Extension() );
-    return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) { return extension == _; } );
+    return panel::IsExtensionInArchivesWhitelist(_item.Extension());
 }
 
 @implementation PanelController

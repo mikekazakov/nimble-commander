@@ -15,6 +15,8 @@ class VFSPath
 public:
     VFSPath();
     VFSPath(const VFSHostPtr &_host, string _path);
+    VFSPath(const VFSPath &_rhs) = default;
+    VFSPath(VFSPath &&_rhs) = default;
     
     const VFSHostPtr& Host() const noexcept;
     const string&     Path() const noexcept;
@@ -25,6 +27,10 @@ private:
     VFSHostPtr m_Host;
     string     m_Path;
 };
+
+bool operator  <(const VFSPath& _lhs, const VFSPath& _rhs) noexcept;
+bool operator ==(const VFSPath& _lhs, const VFSPath& _rhs) noexcept;
+bool operator !=(const VFSPath& _lhs, const VFSPath& _rhs) noexcept;
 
 class VFSPathStack
 {

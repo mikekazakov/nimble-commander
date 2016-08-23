@@ -22,6 +22,7 @@
 #include "ActivationManager.h"
 #include "ExternalEditorInfo.h"
 
+static const auto g_ConfigArchivesExtensionsWhieList    = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
@@ -317,4 +318,28 @@ FileCopyOperationOptions panel::MakeDefaultFileMoveOptions()
     options.verification = DefaultChecksumVerificationSetting();
 
     return options;
+}
+
+bool panel::IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
+{
+    if( !_ext )
+        return false;
+    static const vector<string> archive_extensions = []{
+        vector<string> v;
+        if( auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList) ) {
+            // load extensions list from defaults
+            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
+                for( NSString *s: extensions_array )
+                    if( s != nil && s.length > 0 )
+                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                            if( auto utf8 = trimmed.UTF8String)
+                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
+        }
+        else // hardcoded fallback data
+            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
+        return v;
+    }();
+    
+    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _ext );
+    return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) { return extension == _; } );
 }

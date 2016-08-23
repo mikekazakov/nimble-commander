@@ -48,4 +48,5 @@ namespace panel
     bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
     FileCopyOperationOptions MakeDefaultFileCopyOptions();
     FileCopyOperationOptions MakeDefaultFileMoveOptions();
+    bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept;
 }

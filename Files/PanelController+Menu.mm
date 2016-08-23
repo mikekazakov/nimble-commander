@@ -49,18 +49,20 @@
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
 
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vector<string>> &_dir_to_filenames, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
+static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<VFSPath, vector<string>> &_dir_to_filenames, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
     vector<shared_ptr<VFSListing>> listings;
     vector<vector<unsigned>> indeces;
     
-    for(auto &directory: _dir_to_filenames) {
+    for(auto &i: _dir_to_filenames) {
         shared_ptr<VFSListing> listing;
         
         if( _cancel_checker && _cancel_checker() )
             return nullptr;
         
-        if( _vfs->FetchFlexibleListing(directory.first.c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
+        auto &vfs_path = i.first;
+        
+        if( vfs_path.Host()->FetchFlexibleListing(vfs_path.Path().c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
             listings.emplace_back(listing);
             indeces.emplace_back();
             auto &ind = indeces.back();
@@ -69,7 +71,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
             for(unsigned i = 0, e = listing->Count(); i != e; ++i)
                 listing_fn_ind[ listing->Filename(i) ] = i;
                 
-                for( auto &filename: directory.second ) {
+                for( auto &filename: i.second ) {
                     auto it = listing_fn_ind.find(filename);
                     if( it != end(listing_fn_ind) )
                         ind.emplace_back( it->second );
@@ -85,16 +87,16 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<string, vect
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
-    map<string, vector<string>> dir_to_filenames;
+    map<VFSPath, vector<string>> dir_to_filenames;
     
     for( auto &i: _file_paths ) {
         path p(i);
         auto dir = p.parent_path();
         auto filename = p.filename();
-        dir_to_filenames[ dir.native() ].emplace_back( filename.native() );
+        dir_to_filenames[ VFSPath{_vfs, dir.native()} ].emplace_back( filename.native() );
     }
     
-    return FetchSearchResultsAsListing(dir_to_filenames, _vfs, _fetch_flags, _cancel_checker);
+    return FetchSearchResultsAsListing(dir_to_filenames, _fetch_flags, _cancel_checker);
 }
 
 static string CookSpotlightSearchQuery( const string& _format, const string &_input )
@@ -697,11 +699,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
-    sheet.onPanelize = [=](const map<string, vector<string>> &_dir_to_filenames) {
+    sheet.onPanelize = [=](const map<VFSPath, vector<string>> &_dir_to_filenames) {
         auto host = sheet.host;
         m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
             auto l = FetchSearchResultsAsListing(_dir_to_filenames,
-                                                 host,
                                                  m_VFSFetchingFlags,
                                                  [=]{ return  _queue->IsStopped(); }
                                                  );
@@ -714,7 +715,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(auto item = sheet.selectedItem)
-            [self GoToDir:item->dir_path vfs:self.vfs select_entry:item->filename async:true];
+            [self GoToDir:item->dir_path vfs:item->host select_entry:item->filename async:true];
     }];
 }
 

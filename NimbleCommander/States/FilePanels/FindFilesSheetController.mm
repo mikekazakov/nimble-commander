@@ -10,10 +10,12 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
+#include <Utility/PathManip.h>
 #include "../../Viewer/BigFileViewSheet.h"
 #include "../../Viewer/InternalViewerWindowController.h"
 #include "../../Core/SearchForFiles.h"
 #include "../../Files/ByteCountFormatter.h"
+#include "../../Files/PanelAux.h"
 #include "../../Files/Config.h"
 #include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
@@ -44,8 +46,14 @@ static string ensure_no_tr_slash( string _str )
     return _str;
 }
 
-static string to_relative_path( string _path, const string& _base_path )
+static string to_relative_path( const VFSHostPtr &_in_host, string _path, const string& _base_path )
 {
+    VFSHostPtr a = _in_host;
+    while( a ) {
+        _path.insert(0, a->JunctionPath());
+        a = a->Parent();
+    }
+    
     if( _base_path.length() > 1 && _path.find(_base_path) == 0)
         _path.replace(0, _base_path.length(), "./");
     return _path;
@@ -218,8 +226,7 @@ private:
     NSTimer                    *m_LookingInPathUpdateTimer;
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
-    void                        (^m_Handler)();
-    function<void(const map<string, vector<string>>&_dir_to_filenames)> m_OnPanelize;
+    function<void(const map<VFSPath, vector<string>>&_dir_to_filenames)> m_OnPanelize;
 }
 
 @synthesize FoundItems = m_FoundItems;
@@ -379,7 +386,7 @@ private:
         search_options |= SearchForFiles::Options::GoIntoSubDirs;
     if(self.SearchForDirsButton.intValue)
         search_options |= SearchForFiles::Options::SearchForDirs;
-    return search_options;
+    return search_options | SearchForFiles::Options::LookInArchives;
 }
 
 - (SearchForFiles::FilterSize) searchFilterSizeFromUI
@@ -441,19 +448,20 @@ private:
     const bool started = m_FileSearch->Go(m_Path,
                                           m_Host,
                                           self.searchOptionsFromUI,
-                                          [=](const char *_filename, const char *_in_path, CFRange _cont_pos){
+                                          [=](const char *_filename, const char *_in_path, VFSHost& _in_host, CFRange _cont_pos){
                                               FindFilesSheetControllerFoundItem it;
+                                              it.host = _in_host.SharedPtr();
                                               it.filename = _filename;
                                               it.dir_path = ensure_no_tr_slash(_in_path);
                                               it.full_filename = ensure_tr_slash(_in_path) + it.filename;
                                               it.content_pos = _cont_pos;
-                                              it.rel_path = to_relative_path(ensure_tr_slash(_in_path), m_Path);
+                                              it.rel_path = to_relative_path(it.host, ensure_tr_slash(_in_path), m_Path);
                                               
                                               // NEED TO LIMIT MAXIMUM CONCURRENT BLOCKS!!!!
                                               
                                               m_StatGroup.Run([=, it=move(it)]()mutable{
                                                   // doing stat()'ing item in async background thread
-                                                  m_Host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+                                                  it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
                                                   
                                                   FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
                                                   m_BatchQueue->Run([self, item]{
@@ -471,6 +479,9 @@ private:
                                           [=](const char *_path) {
                                               LOCK_GUARD(m_LookingInPathGuard)
                                                 m_LookingInPath = _path;
+                                          },
+                                          [=](const char*_for_path, VFSHost& _in_host)->VFSHostPtr{
+                                              return [self spawnArchiveFromPath:_for_path inVFS:_in_host.SharedPtr()];
                                           }
                                           );
     self.searchingNow = started;
@@ -491,6 +502,21 @@ private:
                                                             repeats:YES];
         [m_LookingInPathUpdateTimer setDefaultTolerance];
     }
+}
+
+- (VFSHostPtr)spawnArchiveFromPath:(const char*)_path inVFS:(const VFSHostPtr&)_host
+{
+    if( !ActivationManager::Instance().HasArchivesBrowsing() )
+        return nullptr;
+    
+    char extension[MAXPATHLEN];
+    if(!GetExtensionFromPath(_path, extension))
+        return nullptr;
+    
+    if( !panel::IsExtensionInArchivesWhitelist(extension) )
+        return nullptr;
+        
+    return VFSArchiveProxy::OpenFileAsArchive(_path, _host);
 }
 
 - (void)updateLookingInByTimer:(NSTimer*)theTimer
@@ -570,7 +596,7 @@ private:
     FindFilesSheetControllerFoundItem *data = item.data;
     
     string p = data->full_filename;
-    VFSHostPtr vfs = self.host;
+    VFSHostPtr vfs = data->host;
     CFRange cont = data->content_pos;
     NSString *search_req = self.TextComboBox.stringValue;
     
@@ -636,10 +662,10 @@ private:
 
 - (IBAction)OnPanelize:(id)sender
 {
-    map<string, vector<string>> results; // directory->filenames
+    map<VFSPath, vector<string>> results; // vfs dir path->filenames
     for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
         auto d = item.data;
-        results[d->dir_path].emplace_back( d->filename );
+        results[VFSPath{d->host,d->dir_path}].emplace_back( d->filename );
     }
 
     if( results.empty() )

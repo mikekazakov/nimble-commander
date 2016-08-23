@@ -1,3 +1,4 @@
+#include <Habanero/algo.h>
 #include "VFSInstanceManager.h"
 
 /////////////////////////////////////////////////////////
@@ -73,7 +74,7 @@ bool VFSInstanceManager::Promise::operator !=(const Promise &_rhs) const noexcep
 
 const char *VFSInstanceManager::Promise::tag() const
 {
-    return manager ? manager->GetTag(*this) : nullptr;
+    return manager ? manager->GetTag(*this) : "";
 }
 
 string VFSInstanceManager::Promise::verbose_title() const
@@ -171,6 +172,7 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
     
     EnrollAliveHost(instance);
     
+    Promise result;
     LOCK_GUARD(m_MemoryLock) {
         // create new VFS info
         
@@ -194,9 +196,26 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
             SweepDeadMemory();
         });
         
-        return Promise(info.m_ID, *this);
+        result = Promise(info.m_ID, *this);
     }
-    return {}; // not reaching here.
+
+    FireObservers( KnownVFSListObservation );
+    
+    return result;
+}
+
+VFSInstanceManager::Promise VFSInstanceManager::PreserveVFS( const weak_ptr<VFSHost>& _instance )
+{
+    LOCK_GUARD(m_MemoryLock) {
+        // check if we have a weak_ptr to this instance
+        // most of calls should end on this check:
+        if( auto info = InfoFromVFSWeakPtr_Unlocked(_instance) ) {
+            // we already have this VFS, need to simply increase refcount and return a promise
+            info->m_PromisesCount++;
+            return Promise(info->m_ID, *this);
+        }
+    }
+    return {};
 }
 
 void VFSInstanceManager::IncPromiseCount(uint64_t _inst_id)
@@ -214,6 +233,8 @@ void VFSInstanceManager::DecPromiseCount(uint64_t _inst_id)
     if( _inst_id == 0 )
         return;
 
+    bool fire_observers = false;
+    
     LOCK_GUARD(m_MemoryLock)
         if( auto info = InfoFromID_Unlocked(_inst_id) ) {
             assert( info->m_PromisesCount > 0 );
@@ -231,10 +252,22 @@ void VFSInstanceManager::DecPromiseCount(uint64_t _inst_id)
                         });
                     }
                     
-                    m_Memory.erase( next(begin(m_Memory), info - m_Memory.data()) );  
+                    m_Memory.erase( next(begin(m_Memory), info - m_Memory.data()) );
+                    fire_observers = true;
                 }
             }
         }
+
+    if( fire_observers )
+        FireObservers( KnownVFSListObservation );
+}
+
+VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr)
+{
+    for( auto &i: m_Memory )
+        if( !i.m_WeakHost.owner_before(_ptr) && !_ptr.owner_before(i.m_WeakHost) )
+            return &i;
+    return nullptr;
 }
 
 VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr)
@@ -261,6 +294,7 @@ VFSInstanceManager::Info *VFSInstanceManager::InfoFromID_Unlocked(uint64_t _inst
 void VFSInstanceManager::SweepDeadMemory()
 {
     LOCK_GUARD(m_MemoryLock) {
+        auto old_size = m_Memory.size();
         m_Memory.erase(
                        remove_if(begin(m_Memory),
                                  end(m_Memory),
@@ -270,7 +304,12 @@ void VFSInstanceManager::SweepDeadMemory()
         for( auto &i: m_Memory )
             if( i.m_WeakHost.expired() )
                 i.m_WeakHost.reset();
+        
+        if( old_size == m_Memory.size() )
+            return; // no changes
     }
+    
+    FireObservers( KnownVFSListObservation );
 }
 
 void VFSInstanceManager::EnrollAliveHost( const VFSHostPtr& _inst )
@@ -286,17 +325,22 @@ void VFSInstanceManager::EnrollAliveHost( const VFSHostPtr& _inst )
         
         m_AliveHosts.emplace_back( _inst );
     }
+    FireObservers( AliveVFSListObservation ); // tell that we have added a vfs to alive list
 }
 
 void VFSInstanceManager::SweepDeadReferences()
 {
     LOCK_GUARD(m_AliveHostsLock) {
+        auto old_size = m_AliveHosts.size();
         m_AliveHosts.erase(
                            remove_if(begin(m_AliveHosts),
                                      end(m_AliveHosts),
                                      [](auto &i){ return i.expired(); }),
                            end(m_AliveHosts));
+        if( old_size == m_AliveHosts.size() )
+            return; // no changes
     }
+    FireObservers( AliveVFSListObservation ); // tell that we have removed some vfs from alive list
 }
 
 VFSHostPtr VFSInstanceManager::RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker )
@@ -313,6 +357,26 @@ VFSHostPtr VFSInstanceManager::RetrieveVFS( const Promise &_promise, function<bo
         return GetOrRestoreVFS_Unlocked(info);
     }
     return nullptr;
+}
+
+unsigned VFSInstanceManager::KnownVFSCount()
+{
+    LOCK_GUARD(m_MemoryLock) {
+        return (unsigned)m_Memory.size();
+    }
+    return 0;
+}
+
+VFSInstanceManager::Promise VFSInstanceManager::GetVFSPromiseByPosition( unsigned _at )
+{
+    LOCK_GUARD(m_MemoryLock) {
+        if( _at < m_Memory.size()  ) {
+            auto &info = m_Memory[_at];
+            info.m_PromisesCount++;
+            return Promise(info.m_ID, *this);
+        }
+    }
+    return {};
 }
 
 const char *VFSInstanceManager::GetTag( const Promise &_promise )
@@ -373,7 +437,7 @@ string VFSInstanceManager::GetVerboseVFSTitle( const Promise &_promise )
         string title;
         uint64_t next = _promise.inst_id;
         while( next > 0 ) {
-            auto info = InfoFromID_Unlocked( _promise.inst_id );
+            auto info = InfoFromID_Unlocked( next );
             if( !info )
                 return ""; // this should never happen!
             
@@ -384,4 +448,23 @@ string VFSInstanceManager::GetVerboseVFSTitle( const Promise &_promise )
         return title;
     }
     return "'";
+}
+
+VFSInstanceManager::ObservationTicket VFSInstanceManager::ObserveAliveVFSListChanged( function<void()> _callback )
+{
+    return AddObserver(move(_callback), AliveVFSListObservation);
+}
+
+VFSInstanceManager::ObservationTicket VFSInstanceManager::ObserveKnownVFSListChanged( function<void()> _callback )
+{
+    return AddObserver(move(_callback), KnownVFSListObservation);
+}
+
+vector<weak_ptr<VFSHost>> VFSInstanceManager::AliveHosts()
+{
+    vector<weak_ptr<VFSHost>> list;
+    LOCK_GUARD(m_AliveHostsLock) {
+        list = m_AliveHosts;
+    }
+    return list;
 }

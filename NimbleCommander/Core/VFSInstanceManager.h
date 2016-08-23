@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <Habanero/Observable.h>
 #include "../../Files/VFS/vfs.h"
 
 /**
@@ -8,9 +8,10 @@
  * Can give promise to return an alive VFS or try to rebuilt an alive instance from saved VFSConfiguration.
  * All public API is thread-safe.
  */
-class VFSInstanceManager
+class VFSInstanceManager : public ObservableBase
 {
 public:
+    using ObservationTicket = ObservableBase::ObservationTicket;
     struct Promise;
 
     static VFSInstanceManager& Instance();
@@ -20,6 +21,8 @@ public:
      * Returned promise may be used for later vfs restoration.
      */
     Promise TameVFS( const VFSHostPtr& _instance );
+    
+    Promise PreserveVFS( const weak_ptr<VFSHost>& _instance );
     
     /**
      * Will return and alive instance if it's alive, will try to recreate it (will all upchain) if otherwise.
@@ -38,9 +41,19 @@ public:
      */
     string GetVerboseVFSTitle( const Promise &_promise );
     
-    // get alive vfs list
+    vector<weak_ptr<VFSHost>> AliveHosts();
+    
+    unsigned KnownVFSCount();
+    Promise GetVFSPromiseByPosition( unsigned _at);
+    
+    ObservationTicket ObserveAliveVFSListChanged( function<void()> _callback );
+    ObservationTicket ObserveKnownVFSListChanged( function<void()> _callback );
     
 private:
+    enum : uint64_t {
+        AliveVFSListObservation = 0x0001,
+        KnownVFSListObservation = 0x0002,
+    };
    
     struct Info
     {
@@ -82,7 +95,7 @@ private:
      */
     void SweepDeadMemory();
     
-    
+    Info *InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr);
     Info *InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
@@ -112,7 +125,7 @@ struct VFSInstanceManager::Promise
     operator bool() const noexcept;
     bool operator ==(const Promise &_rhs) const noexcept;
     bool operator !=(const Promise &_rhs) const noexcept;
-    const char *tag() const; // may return nullptr
+    const char *tag() const; // may return ""
     string verbose_title() const; // may return ""
 private:
     Promise(uint64_t _inst_id, VFSInstanceManager &_manager);

@@ -36,6 +36,8 @@
 		CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
 		CFD62BC51C9A62320021EE7F /* DispatchQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BC41C9A62320021EE7F /* DispatchQueue.h */; };
 		CFD62BC71C9A623B0021EE7F /* DispatchQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */; };
+		CFD6DD201D6C44B8006B94C2 /* Observable.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD6DD1F1D6C44B8006B94C2 /* Observable.h */; };
+		CFD6DD221D6C44C1006B94C2 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
 		CFD930011D2E3ACE00EE77C4 /* CFStackAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +72,8 @@
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
 		CFD62BC41C9A62320021EE7F /* DispatchQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchQueue.h; path = include/Habanero/DispatchQueue.h; sourceTree = "<group>"; };
 		CFD62BC61C9A623B0021EE7F /* DispatchQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchQueue.cpp; path = source/DispatchQueue.cpp; sourceTree = "<group>"; };
+		CFD6DD1F1D6C44B8006B94C2 /* Observable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observable.h; path = include/Habanero/Observable.h; sourceTree = "<group>"; };
+		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
 		CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFStackAllocator.h; path = include/Habanero/CFStackAllocator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,6 +108,7 @@
 		CFD62B841C99C2510021EE7F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD6DD1F1D6C44B8006B94C2 /* Observable.h */,
 				CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */,
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
@@ -127,6 +132,7 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD6DD211D6C44C1006B94C2 /* Observable.cpp */,
 				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
 				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
@@ -162,6 +168,7 @@
 				CFD62B971C99C2A60021EE7F /* dispatch_cpp.h in Headers */,
 				CFD930011D2E3ACE00EE77C4 /* CFStackAllocator.h in Headers */,
 				CFD62B951C99C2A60021EE7F /* CommonPaths.h in Headers */,
+				CFD6DD201D6C44B8006B94C2 /* Observable.h in Headers */,
 				CFD62B9A1C99C2A60021EE7F /* IdleSleepPreventer.h in Headers */,
 				CFD62B9F1C99C2A60021EE7F /* variable_container.h in Headers */,
 				CFD62BBC1C99C73E0021EE7F /* chained_strings.h in Headers */,
@@ -237,6 +244,7 @@
 				CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */,
 				CFD62BB81C99C2AE0021EE7F /* tiny_string.cpp in Sources */,
 				CFD62BAF1C99C2AE0021EE7F /* CommonPaths.mm in Sources */,
+				CFD6DD221D6C44C1006B94C2 /* Observable.cpp in Sources */,
 				CFD62BB41C99C2AE0021EE7F /* Hash.cpp in Sources */,
 				CFD62BB51C99C2AE0021EE7F /* IdleSleepPreventer.cpp in Sources */,
 				CFD62BAE1C99C2AE0021EE7F /* CommonPaths.cpp in Sources */,

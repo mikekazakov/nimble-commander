@@ -198,6 +198,7 @@ private:
         {"menu.window.zoom",                    16020},
         {"menu.window.show_previous_tab",       16040},
         {"menu.window.show_next_tab",           16050},
+        {"menu.window.show_vfs_list",           16060},            
         {"menu.window.bring_all_to_front",      16030},
 
         {"panel.move_up",                      100000},

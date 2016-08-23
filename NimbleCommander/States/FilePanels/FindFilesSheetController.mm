@@ -20,6 +20,7 @@
 #include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "../../Files/AppDelegate.h"
+#include "../../Core/VFSInstanceManager.h"
 #include "FindFilesSheetController.h"
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
@@ -515,8 +516,12 @@ private:
     
     if( !panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
-        
-    return VFSArchiveProxy::OpenFileAsArchive(_path, _host);
+    
+    auto host = VFSArchiveProxy::OpenFileAsArchive(_path, _host);
+    if( host )
+        VFSInstanceManager::Instance().TameVFS(host);
+    
+    return host;
 }
 
 - (void)updateLookingInByTimer:(NSTimer*)theTimer

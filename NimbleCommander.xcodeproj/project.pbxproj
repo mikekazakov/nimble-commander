@@ -980,6 +980,14 @@
 		CFD629641C2CE7040050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
 		CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
+		CFD6DD171D6C229F006B94C2 /* VFSListWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */; };
+		CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */; };
+		CFD6DD191D6C229F006B94C2 /* VFSListWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */; };
+		CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */; };
+		CFD6DD1B1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
+		CFD6DD1C1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
+		CFD6DD1D1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
+		CFD6DD1E1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
 		CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
 		CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
@@ -1756,6 +1764,9 @@
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = Resource/State.json; sourceTree = "<group>"; };
 		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
 		CFD62D9B1C9BC7540021EE7F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = 3rd_Party/libarchive/built/libarchive.a; sourceTree = SOURCE_ROOT; };
+		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
+		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
+		CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VFSListWindowController.xib; path = NimbleCommander/GeneralUI/VFSListWindowController.xib; sourceTree = SOURCE_ROOT; };
 		CFD6F9041BEB02CC00A1B046 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = vfs/VFSListingInput.h; sourceTree = "<group>"; };
 		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = Operations/Delete/FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = Operations/Delete/FileDeletionOperation.mm; sourceTree = "<group>"; };
@@ -2753,6 +2764,9 @@
 				CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */,
 				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
 				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
+				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,
+				CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */,
+				CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3309,6 +3323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
+				CFD6DD1D1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
@@ -3410,6 +3425,7 @@
 				CF56BF011D5C85C800A08D2B /* InternalViewerController.xib in Resources */,
 				CFA53A571D433E2A00C562A7 /* Operations.strings in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
+				CFD6DD1C1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF1E3D201D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFA53A5A1D433E2A00C562A7 /* State.json in Resources */,
 				CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
@@ -3448,6 +3464,7 @@
 				CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CF54101F1A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
+				CFD6DD1B1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF876D541D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
@@ -3492,6 +3509,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF50C42E1C0ADEAD009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */,
+				CFD6DD1E1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CF4E56CC1D50694000452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CF4E56C01D50691A00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
@@ -3684,6 +3702,7 @@
 				CF46DB871C856F4C009E28B9 /* TermView.mm in Sources */,
 				CF6D9BE4196678000077B146 /* SearchInFile.mm in Sources */,
 				CF46DB811C856F41009E28B9 /* TermShellTask.cpp in Sources */,
+				CFD6DD191D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFDEB8271D2BB7DF009BCCBD /* ActionShortcut.mm in Sources */,
 				CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */,
 				CF50C4521C0ADF09009DF611 /* VFSNetFTPHost.mm in Sources */,
@@ -3906,6 +3925,7 @@
 				CFA5399C1D433E2A00C562A7 /* WorkspaceIconsCache.mm in Sources */,
 				CFA5399D1D433E2A00C562A7 /* ConnectionsMenuDelegate.mm in Sources */,
 				CFA5399F1D433E2A00C562A7 /* MainWindow.mm in Sources */,
+				CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFA539A01D433E2A00C562A7 /* LSUrls.mm in Sources */,
 				CFA539A11D433E2A00C562A7 /* VFSHost.cpp in Sources */,
 				CFA539A21D433E2A00C562A7 /* Config.cpp in Sources */,
@@ -4106,6 +4126,7 @@
 				CFED5A1E1C4F8D3200BFCB5C /* TermSingleTask.mm in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
 				CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
+				CFD6DD171D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CF17D1F21A049E1700B523C9 /* MainWindow.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CFD6F9191BEC4FEA00A1B046 /* VFSHost.cpp in Sources */,
@@ -4314,6 +4335,7 @@
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
+				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,

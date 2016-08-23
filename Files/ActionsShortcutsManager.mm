@@ -139,6 +139,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.window.zoom",                        u8""        },
         {"menu.window.show_previous_tab",           u8"⇧^\t"    }, // shift+ctrl+tab
         {"menu.window.show_next_tab",               u8"^\t"     }, // ctrl+tab
+        {"menu.window.show_vfs_list",               u8""        },
         {"menu.window.bring_all_to_front",          u8""        },
 
         {"panel.move_up",                           u8"\uF700"  }, // up

@@ -43,6 +43,7 @@
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
 #include "../NimbleCommander/Viewer/InternalViewerController.h"
 #include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
+#include "../NimbleCommander/GeneralUI/VFSListWindowController.h"
 
 #include "AppStoreHelper.h"
 
@@ -757,6 +758,12 @@ static AppDelegate *g_Me = nil;
         return i != end(m_ViewerWindows) ? *i : nil;
     }
     return nil;
+}
+
+- (IBAction)onMainMenuPerformShowVFSListAction:(id)sender
+{
+    VFSListWindowController *window = [[VFSListWindowController alloc] init];
+    [window show];
 }
 
 @end

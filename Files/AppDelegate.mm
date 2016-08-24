@@ -762,8 +762,14 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)onMainMenuPerformShowVFSListAction:(id)sender
 {
-    VFSListWindowController *window = [[VFSListWindowController alloc] init];
-    [window show];
+    static __weak VFSListWindowController *existing_window = nil;
+    if( auto w = (VFSListWindowController*)existing_window  )
+        [w show];
+    else {
+        VFSListWindowController *window = [[VFSListWindowController alloc] init];
+        [window show];
+        existing_window = window;
+    }
 }
 
 @end

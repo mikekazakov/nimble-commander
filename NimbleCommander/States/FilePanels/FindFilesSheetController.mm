@@ -511,7 +511,7 @@ private:
         return nullptr;
     
     char extension[MAXPATHLEN];
-    if(!GetExtensionFromPath(_path, extension))
+    if( !GetExtensionFromPath(_path, extension) )
         return nullptr;
     
     if( !panel::IsExtensionInArchivesWhitelist(extension) )

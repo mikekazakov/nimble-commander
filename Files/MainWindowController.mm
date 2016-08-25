@@ -395,6 +395,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                         [window showAsFloatingWindow];
                     });
                 }
+                else
+                    dispatch_to_main_queue([=] () mutable {
+                        window = nil; // release this object in main thread
+                    });
             }
         }
     });

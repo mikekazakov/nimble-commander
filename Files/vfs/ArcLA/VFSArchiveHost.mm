@@ -114,22 +114,34 @@ int VFSArchiveHost::DoInit()
 {
     assert(m_Arc == 0);
 
-    int res = Parent()->CreateFile(JunctionPath(), m_ArFile, nil);
+    VFSFilePtr source_file;
+    
+    int res = Parent()->CreateFile(JunctionPath(), source_file, nil);
     if(res < 0)
         return res;
     
-    if(m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Seek)
-    {
+    res = source_file->Open(VFSFlags::OF_Read);
+    if(res < 0)
+        return res;
+    
+    if(source_file->Size() <= 0)
+        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but I don't think so.
+    
+    if( Parent()->IsNativeFS() ) {
+        m_ArFile = source_file;
+    }
+    else {
+        auto wrapping = make_shared<VFSSeqToRandomROWrapperFile>(source_file);
+        res = wrapping->Open(VFSFlags::OF_Read, nullptr);
+        if( res != VFSError::Ok )
+            return res;
+        m_ArFile = wrapping;
+    }
+    
+    if( m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
         m_ArFile.reset();
         return VFSError::InvalidCall;
     }
-    
-    res = m_ArFile->Open(VFSFlags::OF_Read);
-    if(res < 0)
-        return res;
-    
-    if(m_ArFile->Size() <= 0)
-        return VFSError::ArclibFileFormat; // libarchive thinks that zero-bytes archives are OK, but I don't think so.
     
     m_Mediator = make_shared<VFSArchiveMediator>();
     m_Mediator->file = m_ArFile;
@@ -670,11 +682,20 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
     auto state = ClosestState(requested_item);
     
     if(!state) {
-        auto file = m_ArFile->Clone();
+        VFSFilePtr file;
+        
+        // bad-bad design decision, need to refactor this later
+        if( auto wrapping = dynamic_pointer_cast<VFSSeqToRandomROWrapperFile>(m_ArFile) )
+            file = wrapping->Share();
+        else
+            file = m_ArFile->Clone();
+
         if(!file)
             return VFSError::NotSupported;
         
-        int res = file->Open(VFSFlags::OF_Read);
+        int res = file->IsOpened() ?
+            VFSError::Ok :
+            file->Open(VFSFlags::OF_Read);
         if(res < 0)
             return res;
         

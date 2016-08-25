@@ -158,6 +158,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
 @property(weak)         PanelController    *controller;
 @property(nonatomic)    bool                areAllHostsWriteable;
 @property(nonatomic)    bool                areAllHostsNative;
+@property(nonatomic)    VFSHostPtr          commonHost; // will return nullptr if there's no common value
 @property(readonly, nonatomic)    unsigned            count;
 @property(nonatomic)    vector<PanelDraggingItem*>& items;
 @end
@@ -168,6 +169,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     vector<PanelDraggingItem*>  m_Items;
     optional<bool>              m_AreAllHostsWriteable;
     optional<bool>              m_AreAllHostsNative;
+    optional<VFSHostPtr>        m_CommonHost;
     bool                        m_FilenamesPasteboardDone;
     bool                        m_FilenamesPasteboardEnabled;
 }
@@ -214,6 +216,20 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
             break;
         }
     return *m_AreAllHostsNative;
+}
+
+- (VFSHostPtr) commonHost
+{
+    if( m_CommonHost )
+        return *m_CommonHost;
+    
+    VFSHostPtr common = !m_Items.empty() ? m_Items.front().item.Host() : nullptr;
+    if( all_of( begin(m_Items), end(m_Items), [&](auto &_i){ return _i.item.Host() == common; }) )
+        m_CommonHost = common;
+    else
+        m_CommonHost = VFSHostPtr();
+    
+    return *m_CommonHost;
 }
 
 - (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
@@ -330,10 +346,19 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
         }
     }
     else { // if src or dst is on VFS
-        if( kbd & NSCommandKeyMask )
-            return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
-        else
-            return NSDragOperationCopy;
+        if( _source.commonHost == _destination.Host() ) {
+            if( kbd & NSAlternateKeyMask )
+                return NSDragOperationCopy;
+            else
+                return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
+        }
+        else {
+            if( kbd & NSCommandKeyMask )
+                return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
+            else
+                return NSDragOperationCopy;
+            
+        }
     }
     return NSDragOperationNone;
 }

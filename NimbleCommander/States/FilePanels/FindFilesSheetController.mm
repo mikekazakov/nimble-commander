@@ -199,6 +199,7 @@ private:
 @property (strong) IBOutlet NSPopUpButton       *SizeMetricPopUp;
 @property (strong) IBOutlet NSButton            *SearchForDirsButton;
 @property (strong) IBOutlet NSButton            *SearchInSubDirsButton;
+@property (strong) IBOutlet NSButton            *SearchInArchivesButton;
 @property (strong) IBOutlet NSPopUpButton       *EncodingsPopUp;
 @property NSMutableArray            *FoundItems;
 @property FindFilesSheetFoundItem   *focusedItem; // may be nullptr
@@ -297,6 +298,10 @@ private:
         [self.ViewButton unbind:@"enabled"];
         self.ViewButton.enabled = false;
     }
+    if( !ActivationManager::Instance().HasArchivesBrowsing() ) {
+        [self.SearchInArchivesButton  unbind:@"enabled"];
+        self.SearchInArchivesButton.enabled = false;
+    }
     
     GoogleAnalytics::Instance().PostScreenView("Find Files");
 }
@@ -383,11 +388,13 @@ private:
 - (int) searchOptionsFromUI
 {
     int search_options = 0;
-    if(self.SearchInSubDirsButton.intValue)
+    if( self.SearchInSubDirsButton.intValue )
         search_options |= SearchForFiles::Options::GoIntoSubDirs;
-    if(self.SearchForDirsButton.intValue)
+    if( self.SearchForDirsButton.intValue )
         search_options |= SearchForFiles::Options::SearchForDirs;
-    return search_options | SearchForFiles::Options::LookInArchives;
+    if( self.SearchInArchivesButton.intValue )
+        search_options |= SearchForFiles::Options::LookInArchives;
+    return search_options;
 }
 
 - (SearchForFiles::FilterSize) searchFilterSizeFromUI
@@ -456,7 +463,9 @@ private:
                                               it.dir_path = ensure_no_tr_slash(_in_path);
                                               it.full_filename = ensure_tr_slash(_in_path) + it.filename;
                                               it.content_pos = _cont_pos;
-                                              it.rel_path = to_relative_path(it.host, ensure_tr_slash(_in_path), m_Path);
+                                              it.rel_path = to_relative_path(it.host,
+                                                                             ensure_tr_slash(_in_path),
+                                                                             string(m_Host->JunctionPath()) + m_Path);
                                               
                                               // NEED TO LIMIT MAXIMUM CONCURRENT BLOCKS!!!!
                                               

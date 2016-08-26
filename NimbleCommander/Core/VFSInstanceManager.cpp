@@ -134,13 +134,17 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
             // find an info with matching configuration and requestd id
             for( auto &i: m_Memory )
                 if( i.m_Configuration == instance_config &&
-                   (info_id_request == 0 ? true : (i.m_ID == info_id_request))) {
+                   (info_id_request == 0 ?
+                        i.m_WeakHost.expired() : // for frontmost vfs we should check that this filesystem was destroyed
+                        i.m_ID == info_id_request)
+                   ) {
                     // need to check if there's an uplink to parent if needed, and only if needed
                     if( (i.m_ParentVFSID == 0 && !instance_recursive->Parent()) ||
                         (i.m_ParentVFSID != 0 &&  instance_recursive->Parent()) ) {
                         info_id_request = i.m_ParentVFSID; // may be zero here, intended
                         existing_match.emplace_back( &i );
                         has_exising_match = true;
+                        break;
                     }
                 }
             
@@ -153,8 +157,10 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
             // we have found a matching existing information chain, need to refresh hosts pointers
             VFSHostPtr instance_recursive = _instance;
             for( auto &i: existing_match ) {
-                if( i->m_WeakHost.expired() )
+                if( i->m_WeakHost.expired() ) {
                     i->m_WeakHost = instance_recursive;
+                    EnrollAliveHost(instance_recursive);
+                }
                 instance_recursive = _instance->Parent();
             }
             assert( instance_recursive == nullptr ); // logic check

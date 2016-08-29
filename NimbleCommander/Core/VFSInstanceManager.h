@@ -35,6 +35,11 @@ public:
      * Will find an info for promise and return a corresponding vfs tag.
      */
     const char *GetTag( const Promise &_promise );
+    
+    /**
+     * Will return empty promise if there's no parent vfs, or it was somehow not registered
+     */
+    Promise GetParentPromise( const Promise &_promise );
 
     /**
      * Will return empty string on any errors.
@@ -95,16 +100,16 @@ private:
      */
     void SweepDeadMemory();
     
+    Promise SpawnPromiseFromInfo_Unlocked( Info &_info );
     Info *InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr);
     Info *InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
     VFSHostPtr GetOrRestoreVFS_Unlocked( Info *_info );
     
-    atomic_ulong    m_NextID{1};
-    
     
     vector<Info>                m_Memory;
+    uint64_t                    m_MemoryNextID = 1;
     spinlock                    m_MemoryLock;
     
     vector<weak_ptr<VFSHost>>   m_AliveHosts;
@@ -127,6 +132,7 @@ struct VFSInstanceManager::Promise
     bool operator !=(const Promise &_rhs) const noexcept;
     const char *tag() const; // may return ""
     string verbose_title() const; // may return ""
+    uint64_t id() const;
 private:
     Promise(uint64_t _inst_id, VFSInstanceManager &_manager);
     uint64_t            inst_id;

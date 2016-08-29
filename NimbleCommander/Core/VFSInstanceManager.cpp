@@ -77,6 +77,11 @@ const char *VFSInstanceManager::Promise::tag() const
     return manager ? manager->GetTag(*this) : "";
 }
 
+uint64_t VFSInstanceManager::Promise::id() const
+{
+    return inst_id;
+}
+
 string VFSInstanceManager::Promise::verbose_title() const
 {
     return manager ? manager->GetVerboseVFSTitle(*this) : "";
@@ -117,11 +122,8 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
     LOCK_GUARD(m_MemoryLock) {
         // check if we have a weak_ptr to this instance
         // most of calls should end on this check:
-        if( auto info = InfoFromVFSPtr_Unlocked(_instance) ) {
-            // we already have this VFS, need to simply increase refcount and return a promise
-            info->m_PromisesCount++;
-            return Promise(info->m_ID, *this);
-        }
+        if( auto info = InfoFromVFSPtr_Unlocked(_instance) )
+            return SpawnPromiseFromInfo_Unlocked( *info ); // we already have this VFS, need to simply increase refcount and return a promise
       
         // check if we have this vfs before, but it was destroyed.
         // in this case we can just update an existing information, so all previous promises will point at a new _instance
@@ -130,7 +132,7 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
         VFSHostPtr instance_recursive = _instance;
         while( instance_recursive  ) {
             bool has_exising_match = false;
-            auto instance_config = _instance->Configuration();
+            auto instance_config = instance_recursive->Configuration();
             // find an info with matching configuration and requestd id
             for( auto &i: m_Memory )
                 if( i.m_Configuration == instance_config &&
@@ -141,6 +143,7 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
                     // need to check if there's an uplink to parent if needed, and only if needed
                     if( (i.m_ParentVFSID == 0 && !instance_recursive->Parent()) ||
                         (i.m_ParentVFSID != 0 &&  instance_recursive->Parent()) ) {
+                       
                         info_id_request = i.m_ParentVFSID; // may be zero here, intended
                         existing_match.emplace_back( &i );
                         has_exising_match = true;
@@ -161,12 +164,11 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
                     i->m_WeakHost = instance_recursive;
                     EnrollAliveHost(instance_recursive);
                 }
-                instance_recursive = _instance->Parent();
+                instance_recursive = instance_recursive->Parent();
             }
             assert( instance_recursive == nullptr ); // logic check
 
-            existing_match.front()->m_PromisesCount++;
-            return Promise(existing_match.front()->m_ID, *this);
+            return SpawnPromiseFromInfo_Unlocked( *existing_match.front() );
         }
     }
     
@@ -192,17 +194,8 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
                 assert(0); // logic error - should never happen
         }
         
-        Info info{ instance, m_NextID++, parent_id, instance->Configuration() };
-        info.m_PromisesCount = 1;
-    
-        m_Memory.emplace_back(info);
-    
-        instance->SetDesctructCallback([=](const VFSHost*){
-            SweepDeadReferences();
-            SweepDeadMemory();
-        });
-        
-        result = Promise(info.m_ID, *this);
+        m_Memory.emplace_back( instance, m_MemoryNextID++, parent_id, instance->Configuration() );
+        result = SpawnPromiseFromInfo_Unlocked( m_Memory.back() );
     }
 
     FireObservers( KnownVFSListObservation );
@@ -215,11 +208,8 @@ VFSInstanceManager::Promise VFSInstanceManager::PreserveVFS( const weak_ptr<VFSH
     LOCK_GUARD(m_MemoryLock) {
         // check if we have a weak_ptr to this instance
         // most of calls should end on this check:
-        if( auto info = InfoFromVFSWeakPtr_Unlocked(_instance) ) {
-            // we already have this VFS, need to simply increase refcount and return a promise
-            info->m_PromisesCount++;
-            return Promise(info->m_ID, *this);
-        }
+        if( auto info = InfoFromVFSWeakPtr_Unlocked(_instance) )
+            return SpawnPromiseFromInfo_Unlocked(*info); // we already have this VFS, need to simply increase refcount and return a promise
     }
     return {};
 }
@@ -330,6 +320,10 @@ void VFSInstanceManager::EnrollAliveHost( const VFSHostPtr& _inst )
            return;
         
         m_AliveHosts.emplace_back( _inst );
+        _inst->SetDesctructCallback([=](const VFSHost*){
+            SweepDeadReferences();
+            SweepDeadMemory();
+        });
     }
     FireObservers( AliveVFSListObservation ); // tell that we have added a vfs to alive list
 }
@@ -375,12 +369,26 @@ unsigned VFSInstanceManager::KnownVFSCount()
 
 VFSInstanceManager::Promise VFSInstanceManager::GetVFSPromiseByPosition( unsigned _at )
 {
+    LOCK_GUARD(m_MemoryLock)
+        if( _at < m_Memory.size() )
+            return SpawnPromiseFromInfo_Unlocked( m_Memory[_at] );
+    return {};
+}
+
+VFSInstanceManager::Promise VFSInstanceManager::GetParentPromise( const Promise &_promise )
+{
+    if( !_promise )
+        return {};
+    assert( _promise.manager == this );
+    
+    
     LOCK_GUARD(m_MemoryLock) {
-        if( _at < m_Memory.size()  ) {
-            auto &info = m_Memory[_at];
-            info.m_PromisesCount++;
-            return Promise(info.m_ID, *this);
-        }
+        auto info = InfoFromID_Unlocked( _promise.inst_id );
+        if( !info || info->m_ParentVFSID == 0 )
+            return {};
+        
+        if( auto parent_info = InfoFromID_Unlocked( info->m_ParentVFSID ) )
+            return SpawnPromiseFromInfo_Unlocked( *parent_info );
     }
     return {};
 }
@@ -473,4 +481,11 @@ vector<weak_ptr<VFSHost>> VFSInstanceManager::AliveHosts()
         list = m_AliveHosts;
     }
     return list;
+}
+
+// assumes that m_MemoryLock is aquired
+VFSInstanceManager::Promise VFSInstanceManager::SpawnPromiseFromInfo_Unlocked( Info &_info )
+{
+    _info.m_PromisesCount++;
+    return Promise{_info.m_ID, *this};
 }

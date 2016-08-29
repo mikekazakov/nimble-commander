@@ -80,7 +80,15 @@
     
     if( !info )
         return nil;
-    
+
+    if( [tableColumn.identifier isEqualToString:@"id"] ) {
+        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        tf.stringValue = [NSString stringWithFormat:@"%llu", info.id()];
+        tf.bordered = false;
+        tf.editable = false;
+        tf.drawsBackground = false;
+        return tf;
+    }
     if( [tableColumn.identifier isEqualToString:@"type"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         tf.stringValue = [NSString stringWithUTF8StdString:info.tag()];
@@ -89,6 +97,16 @@
         tf.drawsBackground = false;
         return tf;
     }
+    if( [tableColumn.identifier isEqualToString:@"pid"] ) {
+        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        if( auto parent_promise = VFSInstanceManager::Instance().GetParentPromise(info) )
+            tf.stringValue = [NSString stringWithFormat:@"%llu", parent_promise.id()];
+        tf.bordered = false;
+        tf.editable = false;
+        tf.drawsBackground = false;
+        return tf;
+    }
+    
     if( [tableColumn.identifier isEqualToString:@"junction"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         tf.stringValue = [NSString stringWithUTF8StdString:info.verbose_title()];

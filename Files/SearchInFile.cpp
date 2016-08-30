@@ -14,16 +14,18 @@ static const unsigned g_MaximumCodeUnit = 2;
 
 static bool IsWholePhrase(CFStringRef _string, CFRange _range)
 {
-    static NSCharacterSet *set = [NSCharacterSet alphanumericCharacterSet];
-    assert(_range.length > 0);
-    assert(_range.location >= 0);
+    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
+    assert( _range.length > 0 );
+    assert( _range.location >= 0 );
 
     if(_range.location > 0)
-        if( [set characterIsMember:CFStringGetCharacterAtIndex(_string, _range.location - 1)])
+        if( CFCharacterSetIsCharacterMember(set, CFStringGetCharacterAtIndex(_string, _range.location - 1)) )
             return false;
+
     if(_range.location + _range.length < CFStringGetLength(_string))
-        if( [set characterIsMember:CFStringGetCharacterAtIndex(_string, _range.location + _range.length)])
+        if( CFCharacterSetIsCharacterMember(set, CFStringGetCharacterAtIndex(_string, _range.location + _range.length)) )
             return false;
+
     return true;
 }
 

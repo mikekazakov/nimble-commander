@@ -25,11 +25,11 @@ public:
     };
     
     struct FilterName {
-        NSString *mask;
+        string mask;
     };
     
     struct FilterContent {
-        NSString *text;
+        string text; //utf8-encoded
         int encoding        = encodings::ENCODING_UTF8;
         bool whole_phrase   = false; // search for a phrase, not a part of something
         bool case_sensitive = false;

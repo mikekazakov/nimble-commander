@@ -224,15 +224,15 @@
 		CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
-		CF4E56E71D506EB100452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
+		CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */; };
 		CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
-		CF4E56F11D5072E900452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
-		CF4E56F21D5072E900452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
-		CF4E56F31D5072EA00452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
+		CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
+		CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
+		CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
 		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
@@ -1399,7 +1399,7 @@
 		CF4E56DE1D506BA100452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CF4E56E11D506BA700452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FindFilesSheetController.strings; sourceTree = "<group>"; };
 		CF4E56E51D506EB100452912 /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = NimbleCommander/Core/SearchForFiles.h; sourceTree = SOURCE_ROOT; };
-		CF4E56E61D506EB100452912 /* SearchForFiles.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SearchForFiles.mm; path = NimbleCommander/Core/SearchForFiles.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56E61D506EB100452912 /* SearchForFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchForFiles.cpp; path = NimbleCommander/Core/SearchForFiles.cpp; sourceTree = SOURCE_ROOT; };
 		CF4E56E81D50712C00452912 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = NimbleCommander/Core/FileMask.h; sourceTree = SOURCE_ROOT; };
 		CF4E56E91D50712C00452912 /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = NimbleCommander/Core/FileMask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -2755,7 +2755,7 @@
 				CF6D9D361966BE840077B146 /* SandboxManager.h */,
 				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
 				CF4E56E51D506EB100452912 /* SearchForFiles.h */,
-				CF4E56E61D506EB100452912 /* SearchForFiles.mm */,
+				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,
 				CF07DE3E1769754400757DE1 /* SearchInFile.h */,
 				CF07DE3D1769754400757DE1 /* SearchInFile.mm */,
 				CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */,
@@ -3680,7 +3680,7 @@
 				CF50B7441A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */,
-				CF4E56F21D5072E900452912 /* SearchForFiles.mm in Sources */,
+				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
 				CF46DB831C856F45009E28B9 /* TermSingleTask.mm in Sources */,
 				CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF50C4541C0ADF0D009DF611 /* VFSNetFTPInternals.mm in Sources */,
@@ -4006,7 +4006,7 @@
 				CFA539E81D433E2A00C562A7 /* DataBlockAnalysis.mm in Sources */,
 				CFA539E91D433E2A00C562A7 /* MainWindowFilePanelState.mm in Sources */,
 				CFA539EA1D433E2A00C562A7 /* TermShellTask.cpp in Sources */,
-				CF4E56F31D5072EA00452912 /* SearchForFiles.mm in Sources */,
+				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
 				CFA539EB1D433E2A00C562A7 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */,
 				CFA539ED1D433E2A00C562A7 /* SearchInFile.mm in Sources */,
@@ -4210,7 +4210,7 @@
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */,
 				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,
-				CF4E56E71D506EB100452912 /* SearchForFiles.mm in Sources */,
+				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.mm in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,
@@ -4418,7 +4418,7 @@
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */,
-				CF4E56F11D5072E900452912 /* SearchForFiles.mm in Sources */,
+				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,
 				CF50C45E1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFF6F3181A13567C00011177 /* ModernPanelViewPresentationItemsFooter.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,

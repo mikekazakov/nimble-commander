@@ -433,7 +433,7 @@ private:
        [mask isEqualToString:@""] == false &&
        [mask isEqualToString:@"*"] == false) {
         SearchForFiles::FilterName filter_name;
-        filter_name.mask = mask;
+        filter_name.mask = mask.UTF8String;
         m_FileSearch->SetFilterName(filter_name);
         m_MaskHistory->insert_unique( mask.UTF8String );
     }
@@ -443,7 +443,7 @@ private:
     NSString *cont_text = self.TextComboBox.stringValue;
     if([cont_text isEqualToString:@""] == false) {
         SearchForFiles::FilterContent filter_content;
-        filter_content.text = cont_text;
+        filter_content.text = cont_text.UTF8String;
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;

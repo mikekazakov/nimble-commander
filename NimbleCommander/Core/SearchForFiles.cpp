@@ -46,11 +46,10 @@ void SearchForFiles::SetFilterName(const FilterName &_filter)
         throw logic_error("Filters can't be changed during background search process");
     m_FilterName = _filter;
     // substitute simple requests, like "system" with "*system*":
-    if( !FileMask::IsWildCard(m_FilterName->mask.UTF8String) )
-        if( auto wild_card = [NSString stringWithUTF8StdString:FileMask::ToFilenameWildCard(m_FilterName->mask.UTF8String)] )
-            m_FilterName->mask = wild_card;
+    if( !FileMask::IsWildCard(m_FilterName->mask) )
+        m_FilterName->mask = FileMask::ToFilenameWildCard(m_FilterName->mask);
     
-    m_FilterNameMask = FileMask(m_FilterName->mask.UTF8String);
+    m_FilterNameMask = FileMask(m_FilterName->mask);
 }
 
 void SearchForFiles::SetFilterContent(const FilterContent &_filter)
@@ -236,7 +235,10 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
         encoding = xattr_enc;
     
     SearchInFile sif(fw);
-    sif.ToggleTextSearch((__bridge CFStringRef)m_FilterContent->text, encoding);
+    
+    CFStringRef request = CFStringCreateWithUTF8StdString(m_FilterContent->text);
+    sif.ToggleTextSearch(request, encoding);
+    CFRelease(request);
     sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
                          (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );
     
@@ -245,9 +247,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     uint64_t found_len;
     auto result = sif.Search(&found_pos,
                              &found_len,
-                             ^bool{
-                                 return m_Queue->IsStopped();
-                             }
+                             [=]{ return m_Queue->IsStopped(); }
                              );
     if(result == SearchInFile::Result::Found) {
         _r = CFRangeMake(found_pos, found_len);

@@ -46,11 +46,11 @@ void SearchForFiles::SetFilterName(const FilterName &_filter)
         throw logic_error("Filters can't be changed during background search process");
     m_FilterName = _filter;
     // substitute simple requests, like "system" with "*system*":
-    if( !FileMask::IsWildCard(m_FilterName->mask) )
-        if( auto wild_card = FileMask::ToFilenameWildCard(m_FilterName->mask) )
+    if( !FileMask::IsWildCard(m_FilterName->mask.UTF8String) )
+        if( auto wild_card = [NSString stringWithUTF8StdString:FileMask::ToFilenameWildCard(m_FilterName->mask.UTF8String)] )
             m_FilterName->mask = wild_card;
     
-    m_FilterNameMask = FileMask(m_FilterName->mask);
+    m_FilterNameMask = FileMask(m_FilterName->mask.UTF8String);
 }
 
 void SearchForFiles::SetFilterContent(const FilterContent &_filter)
@@ -258,12 +258,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
 
 bool SearchForFiles::FilterByFilename(const char* _filename)
 {
-    NSString *filename = [NSString stringWithUTF8StringNoCopy:_filename];
-    if(filename == nil ||
-       m_FilterNameMask->MatchName(filename) == false)
-        return false;
-    
-    return true;
+    return m_FilterNameMask->MatchName(_filename);
 }
 
 void SearchForFiles::ProcessValidEntry(const char* _full_path,

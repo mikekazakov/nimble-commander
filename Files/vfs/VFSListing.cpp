@@ -560,9 +560,8 @@ bool VFSListing::HasDisplayFilename(unsigned _ind) const
 
 const string& VFSListing::DisplayFilename(unsigned _ind) const
 {
-    static const string st = "";
     __CHECK_BOUNDS(_ind);
-    return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : st;
+    return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : Filename(_ind);
 }
 
 CFStringRef VFSListing::DisplayFilenameCF(unsigned _ind) const
@@ -690,6 +689,11 @@ CFStringRef VFSListingItem::CFName() const
 bool VFSListingItem::HasDisplayName() const
 {
     return L->HasDisplayFilename(I);
+}
+
+const string& VFSListingItem::DisplayName() const
+{
+    return L->DisplayFilename(I);
 }
 
 CFStringRef VFSListingItem::CFDisplayName() const

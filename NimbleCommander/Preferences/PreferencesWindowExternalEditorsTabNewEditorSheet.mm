@@ -45,8 +45,8 @@
 
 - (IBAction)OnOK:(id)sender
 {
-    if( !FileMask::IsWildCard(self.Info.mask) )
-        if(NSString *replace = FileMask::ToExtensionWildCard(self.Info.mask))
+    if( !FileMask::IsWildCard(self.Info.mask.UTF8String) )
+        if(NSString *replace =  [NSString stringWithUTF8StdString:FileMask::ToExtensionWildCard(self.Info.mask.UTF8String)])
             self.Info.mask = replace;
     
     [self endSheet:NSModalResponseOK];

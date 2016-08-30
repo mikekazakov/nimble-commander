@@ -58,7 +58,7 @@ bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
 bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const PanelData::PanelVolatileData &_item_vd) const
 {
     if( !mask.IsEmpty() &&
-        !mask.MatchName(_item.NSDisplayName()) )
+        !mask.MatchName(_item.DisplayName()) )
         return false;
     
     if( !indeterminate(executable) &&
@@ -88,23 +88,12 @@ bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _ite
     return true;
 }
 
-NSDictionary *PanelViewPresentationItemsColoringFilter::Archive() const
-{
-    return @{@"mask"        : (mask.Mask() ? mask.Mask() : @""),
-             @"executable"  : @(executable.value),
-             @"hidden"      : @(hidden.value),
-             @"directory"   : @(directory.value),
-             @"symlink"     : @(symlink.value),
-             @"reg"         : @(reg.value),
-             @"selected"    : @(selected.value)
-             };
-}
 
 GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() const
 {
     GenericConfig::ConfigValue v( rapidjson::kObjectType );
-    if( mask.Mask() && mask.Mask().length > 0 )
-        v.AddMember("mask", GenericConfig::ConfigValue( mask.Mask().UTF8String, GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+    if( !mask.Mask().empty() )
+        v.AddMember("mask", GenericConfig::ConfigValue( mask.Mask().c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
     if( !indeterminate(executable) )
         v.AddMember("executable", to_json(executable), GenericConfig::g_CrtAllocator);
     if( !indeterminate(hidden) )
@@ -120,44 +109,6 @@ GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() co
     return v;
 }
 
-PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilter::Unarchive(NSDictionary *_dict)
-{
-    PanelViewPresentationItemsColoringFilter f;
-
-    if(!_dict)
-        return f;
-    
-    if([_dict objectForKey:@"mask"] &&
-       [[_dict objectForKey:@"mask"] isKindOfClass:NSString.class])
-        f.mask = FileMask([_dict objectForKey:@"mask"]);
-    
-    if([_dict objectForKey:@"executable"] &&
-       [[_dict objectForKey:@"executable"] isKindOfClass:NSNumber.class])
-        f.executable = to_tribool([_dict objectForKey:@"executable"]);
-
-    if([_dict objectForKey:@"hidden"] &&
-       [[_dict objectForKey:@"hidden"] isKindOfClass:NSNumber.class])
-        f.hidden = to_tribool([_dict objectForKey:@"hidden"]);
-
-    if([_dict objectForKey:@"directory"] &&
-       [[_dict objectForKey:@"directory"] isKindOfClass:NSNumber.class])
-        f.directory = to_tribool([_dict objectForKey:@"directory"]);
-
-    if([_dict objectForKey:@"symlink"] &&
-       [[_dict objectForKey:@"symlink"] isKindOfClass:NSNumber.class])
-        f.symlink = to_tribool([_dict objectForKey:@"symlink"]);
-
-    if([_dict objectForKey:@"reg"] &&
-       [[_dict objectForKey:@"reg"] isKindOfClass:NSNumber.class])
-        f.reg = to_tribool([_dict objectForKey:@"reg"]);
-
-    if([_dict objectForKey:@"selected"] &&
-       [[_dict objectForKey:@"selected"] isKindOfClass:NSNumber.class])
-        f.selected = to_tribool([_dict objectForKey:@"selected"]);
-    
-    return f;
-}
-
 PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilter::FromJSON(const GenericConfig::ConfigValue& _v)
 {
     PanelViewPresentationItemsColoringFilter f;
@@ -168,7 +119,7 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
     if( _v.HasMember("mask") && _v["mask"].IsString() ) {
         auto &m = _v["mask"];
         if( m.IsString() )
-            f.mask = FileMask( [NSString stringWithUTF8String:m.GetString()] );
+            f.mask = FileMask( m.GetString() );
     }
     
     if( _v.HasMember("executable") )    f.executable    = to_tribool( _v["executable"] );

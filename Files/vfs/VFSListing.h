@@ -166,6 +166,7 @@ public:
 #endif
 
     bool            HasDisplayName()    const;
+    const string&   DisplayName()       const;
     CFStringRef     CFDisplayName()     const;
 #ifdef __OBJC__
     NSString*       NSDisplayName()     const { return L->DisplayFilenameNS(I);     }

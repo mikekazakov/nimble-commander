@@ -17,7 +17,7 @@ struct PanelViewPresentationItemsColoringFilter
 {
     // consider optimizing FileMask for trivial cases or write a different mech for extensions specifically,
     // since NSRegularExpression is too heavy mech for real-time(on draw) usage
-    FileMask mask      = nil;           // based on VFSListingItem.NSDisplayName
+    FileMask mask      = "";            // based on VFSListingItem.NSDisplayName
     tribool executable = indeterminate; // based on unix exec flag
     tribool hidden     = indeterminate; // based on VFSListingItem.IsHidden
     tribool directory  = indeterminate; // based on VFSListingItem.IsDir
@@ -40,18 +40,11 @@ struct PanelViewPresentationItemsColoringFilter
     /**
      * Persistance support - store values in a dictionary.
      */
-    NSDictionary *Archive() const;
-
-    /**
-     * Persistance support - store values in a dictionary.
-     */
     GenericConfig::ConfigValue ToJSON() const;
     
     /**
      * Persistance support - build filter from a dictionary.
      */
-    static PanelViewPresentationItemsColoringFilter Unarchive(NSDictionary *_dict);
-    
     static PanelViewPresentationItemsColoringFilter FromJSON(const GenericConfig::ConfigValue& _v);
 };
 

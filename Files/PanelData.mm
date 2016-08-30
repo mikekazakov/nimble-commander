@@ -972,7 +972,7 @@ unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _sele
     if( !_mask )
         return 0;
     
-    FileMask mask(_mask);
+    FileMask mask(_mask.UTF8String);
     unsigned counter = 0;
     
     for(auto i: m_EntriesByCustomSort) {
@@ -982,7 +982,7 @@ unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _sele
         if( m_Listing->IsDotDot(i) )
             continue;
         
-        if( mask.MatchName(m_Listing->DisplayFilenameNS(i)) ) {
+        if( mask.MatchName(m_Listing->DisplayFilename(i)) ) {
             CustomFlagsSelectRaw(i, _select);
             counter++;
         }

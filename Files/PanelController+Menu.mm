@@ -731,8 +731,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 {
     SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] initForWindow:self.state.window doesSelect:_select];
     view.handler = [=](NSString *mask) {
-        if( !FileMask::IsWildCard(mask) )
-            mask = FileMask::ToExtensionWildCard(mask);
+        if( !FileMask::IsWildCard(mask.UTF8String) )
+            mask = [NSString stringWithUTF8StdString:FileMask::ToExtensionWildCard(mask.UTF8String)];
         
         [self SelectEntriesByMask:mask select:_select];
     };

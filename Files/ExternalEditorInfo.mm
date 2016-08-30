@@ -115,7 +115,7 @@ static NSString* StorageFileName()
     if(m_FileMask == nullptr)
         return false;
     
-    if(m_FileMask->MatchName(_it.NSName()) == false)
+    if(m_FileMask->MatchName(_it.Filename()) == false)
         return false;
     
     if(m_OnlyFiles == true && _it.IsReg() == false)
@@ -141,7 +141,7 @@ static NSString* StorageFileName()
     if(m_Mask == nil || m_Mask.length == 0)
         m_FileMask.reset();
     else
-        m_FileMask = make_unique<FileMask>(m_Mask);
+        m_FileMask = make_unique<FileMask>(m_Mask.UTF8String);
 }
 
 - (string) substituteFileName:(const string &)_path

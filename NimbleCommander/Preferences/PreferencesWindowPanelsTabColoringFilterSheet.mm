@@ -52,7 +52,7 @@ static tribool state_to_tribool(NSCellStateValue _val)
     self.symlink.state = tribool_to_state(m_Filter.symlink);
     self.regular.state = tribool_to_state(m_Filter.reg);
     self.selected.state = tribool_to_state(m_Filter.selected);
-    self.mask.stringValue = m_Filter.mask.Mask() ? m_Filter.mask.Mask() : @"";
+    self.mask.stringValue = [NSString stringWithUTF8StdString:m_Filter.mask.Mask()];
 }
 
 - (void)cancelOperation:(id)sender
@@ -71,10 +71,10 @@ static tribool state_to_tribool(NSCellStateValue _val)
     NSString *mask = self.mask.stringValue;
     if(mask == nil)
         mask = @"";
-    else if( !FileMask::IsWildCard(mask) )
-        if(NSString *replace = FileMask::ToExtensionWildCard(mask))
+    else if( !FileMask::IsWildCard(mask.UTF8String) )
+        if(NSString *replace = [NSString stringWithUTF8StdString:FileMask::ToExtensionWildCard(mask.UTF8String)])
             mask = replace;
-    m_Filter.mask = mask;
+    m_Filter.mask = mask.UTF8String;
     [self endSheet:NSModalResponseOK];
 }
 

@@ -225,11 +225,11 @@
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56E71D506EB100452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
-		CF4E56EA1D50712C00452912 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.mm */; };
+		CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */; };
-		CF4E56EE1D5072E500452912 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.mm */; };
-		CF4E56EF1D5072E500452912 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.mm */; };
-		CF4E56F01D5072E600452912 /* FileMask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.mm */; };
+		CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
+		CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
+		CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56F11D5072E900452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
 		CF4E56F21D5072E900452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
 		CF4E56F31D5072EA00452912 /* SearchForFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.mm */; };
@@ -1401,7 +1401,7 @@
 		CF4E56E51D506EB100452912 /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = NimbleCommander/Core/SearchForFiles.h; sourceTree = SOURCE_ROOT; };
 		CF4E56E61D506EB100452912 /* SearchForFiles.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SearchForFiles.mm; path = NimbleCommander/Core/SearchForFiles.mm; sourceTree = SOURCE_ROOT; };
 		CF4E56E81D50712C00452912 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = NimbleCommander/Core/FileMask.h; sourceTree = SOURCE_ROOT; };
-		CF4E56E91D50712C00452912 /* FileMask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask.mm; path = NimbleCommander/Core/FileMask.mm; sourceTree = SOURCE_ROOT; };
+		CF4E56E91D50712C00452912 /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = NimbleCommander/Core/FileMask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
@@ -2738,7 +2738,7 @@
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
-				CF4E56E91D50712C00452912 /* FileMask.mm */,
+				CF4E56E91D50712C00452912 /* FileMask.cpp */,
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
 				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
@@ -3746,7 +3746,7 @@
 				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF50B7411A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
-				CF4E56EF1D5072E500452912 /* FileMask.mm in Sources */,
+				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF50B6C71A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6D01A15167800E3D96D /* VFSPath.cpp in Sources */,
@@ -3932,7 +3932,7 @@
 				CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CFA539A31D433E2A00C562A7 /* PanelDataPersistency.cpp in Sources */,
 				CFA539A41D433E2A00C562A7 /* VFSPSFile.cpp in Sources */,
-				CF4E56F01D5072E600452912 /* FileMask.mm in Sources */,
+				CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */,
 				CF876D471D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFA539A61D433E2A00C562A7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
@@ -4146,7 +4146,7 @@
 				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
-				CF4E56EA1D50712C00452912 /* FileMask.mm in Sources */,
+				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
@@ -4342,7 +4342,7 @@
 				CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF0A40111B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFF6F28F1A13567C00011177 /* WorkspaceIconsCache.mm in Sources */,
-				CF4E56EE1D5072E500452912 /* FileMask.mm in Sources */,
+				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF0A401C1B60BA00002A092B /* BlinkingCaret.mm in Sources */,

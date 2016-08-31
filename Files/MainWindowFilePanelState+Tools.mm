@@ -44,6 +44,10 @@ static vector<string> SplitByEscapedSpaces( const string &_str )
         }
         prev = c;
     }
+
+    if( !results.empty() && results.back().empty() )
+        results.pop_back();
+    
     return results;
 }
 

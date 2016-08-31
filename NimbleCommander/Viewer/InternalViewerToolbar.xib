@@ -19,7 +19,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <toolbar implicitIdentifier="5D77DB5D-8689-4B25-A01E-023E76236675" explicitIdentifier="InternalViewerToolbar" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="rLU-Qm-1gC">
+        <toolbar implicitIdentifier="5D77DB5D-8689-4B25-A01E-023E76236675" explicitIdentifier="InternalViewerToolbar" displayMode="iconOnly" sizeMode="regular" id="rLU-Qm-1gC">
             <allowedToolbarItems>
                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="zgw-kr-e3m"/>
                 <toolbarItem implicitItemIdentifier="8954FAAA-ABEF-4615-832E-FB0BD89062B1" label="Search In File" paletteLabel="Search In File" id="Qk3-zV-KEt">

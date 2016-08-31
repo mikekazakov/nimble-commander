@@ -441,8 +441,13 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path withParameters:(const char*)_params
 {
+    dispatch_assert_main_queue();
+    
     if(m_Terminal == nil) {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
+        if( PanelController *pc = m_PanelState.activePanelController )
+            if( pc.isUniform && pc.vfs->IsNativeFS() )
+                [state SetInitialWD:pc.currentDirectoryPath];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }

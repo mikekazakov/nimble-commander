@@ -300,7 +300,8 @@ bool ExternalTool::operator==(const ExternalTool &_rhs) const
         m_Title             == _rhs.m_Title &&
         m_ExecutablePath    == _rhs.m_ExecutablePath &&
         m_Parameters        == _rhs.m_Parameters &&
-        m_Shorcut           == _rhs.m_Shorcut;
+        m_Shorcut           == _rhs.m_Shorcut &&
+        m_StartupMode       == _rhs.m_StartupMode;
 }
 
 bool ExternalTool::operator!=(const ExternalTool &_rhs) const
@@ -312,6 +313,7 @@ static const auto g_TitleKey = "title";
 static const auto g_PathKey = "path";
 static const auto g_ParametersKey = "parameters";
 static const auto g_ShortcutKey = "shortcut";
+static const auto g_StartupKey = "startup";
 
 static GenericConfig::ConfigValue SaveTool( const ExternalTool& _et )
 {
@@ -322,6 +324,7 @@ static GenericConfig::ConfigValue SaveTool( const ExternalTool& _et )
     v.AddMember( MakeStandaloneString(g_PathKey), MakeStandaloneString(_et.m_ExecutablePath), g_CrtAllocator );
     v.AddMember( MakeStandaloneString(g_ParametersKey), MakeStandaloneString(_et.m_Parameters), g_CrtAllocator );
     v.AddMember( MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator );
+    v.AddMember( MakeStandaloneString(g_StartupKey), StandaloneValue((int)_et.m_StartupMode), g_CrtAllocator );
     
     return v;
 }
@@ -346,6 +349,9 @@ static optional<ExternalTool> LoadTool( const GenericConfig::ConfigValue& _from 
 
     if( _from.HasMember(g_ShortcutKey) && _from[g_ShortcutKey].IsString() )
         et.m_Shorcut = ActionShortcut( _from[g_ShortcutKey].GetString() );
+    
+    if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
+        et.m_StartupMode = (ExternalTool::StartupMode)_from[g_StartupKey].GetInt();
     
     return et;
 }

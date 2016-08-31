@@ -200,3 +200,42 @@ string TermTask::EscapeShellFeed(const string &_feed)
     }
     return result;
 }
+
+static const char *GetImgNameFromPath(const char *_path)
+{
+    if( !_path )
+        return "";
+    const char *img_name = strrchr(_path, '/');
+    if(img_name)
+        img_name++;
+    else
+        img_name = _path;
+    return img_name;
+}
+
+void TermTask::CloseAllFDAbove3()
+{
+    static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
+    for( int fd = 3; fd < max_fd; fd++ )
+        close(fd);
+}
+
+int TermTask::RunDetachedProcess(const string &_process_path, const vector<string> &_args)
+{
+    const int rc = fork();
+    if( rc == 0 ) {
+        char **argvs = (char**) malloc(sizeof(char*) * (_args.size() + 2));
+        argvs[0] = strdup( GetImgNameFromPath(_process_path.c_str()) );
+        for(int i = 0; i < _args.size(); ++i)
+            argvs[i+1] = strdup(_args[i].c_str());
+        argvs[_args.size()+1] = NULL;
+        
+        CloseAllFDAbove3();
+        
+        execvp(_process_path.c_str(), argvs);
+        
+        exit(1); // we never get here in normal condition
+    }
+
+    return rc;
+}

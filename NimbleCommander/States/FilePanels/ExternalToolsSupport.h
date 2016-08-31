@@ -112,10 +112,18 @@ private:
 class ExternalTool
 {
 public:
+    enum class StartupMode : int
+    {
+        Automatic       = 0,
+        RunInTerminal   = 1,
+        RunDeatached    = 2
+    };
+    
     string          m_Title;
     string          m_ExecutablePath; // app by bundle?
     string          m_Parameters;
     ActionShortcut  m_Shorcut;
+    StartupMode     m_StartupMode = StartupMode::Automatic;
     
     bool operator==(const ExternalTool &_rhs) const;
     bool operator!=(const ExternalTool &_rhs) const;

@@ -16,6 +16,7 @@
 @property (strong) IBOutlet NSTextField                            *toolTitle;
 @property (strong) IBOutlet NSTextField                            *toolPath;
 @property (strong) IBOutlet NSTextField                            *toolParameters;
+@property (strong) IBOutlet NSPopUpButton                          *toolStartupMode;
 @property (strong) IBOutlet NSSegmentedControl                     *toolsAddRemove;
 @property (strong) IBOutlet NSMenu                                 *parametersMenu;
 @property (strong) IBOutlet NSButton                               *addParameterButton;
@@ -135,6 +136,7 @@ static bool AskUserToDeleteTool()
     self.toolTitle.stringValue = [NSString stringWithUTF8StdString:t->m_Title];
     self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
     self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
+    [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
 }
 
 - (void) clearFields
@@ -142,6 +144,7 @@ static bool AskUserToDeleteTool()
     self.toolTitle.stringValue = @"";
     self.toolPath.stringValue = @"";
     self.toolParameters.stringValue = @"";
+    [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
 }
 
 - (shared_ptr<const ExternalTool>) selectedTool
@@ -237,6 +240,17 @@ static bool AskUserToDeleteTool()
     if( auto t = objc_cast<NSMenuItem>(sender) )
         if( auto s = objc_cast<NSString>(t.representedObject) )
             [self insertStringIntoParameters:s];
+}
+
+- (IBAction)onStartupModeChanged:(id)sender
+{
+    if( auto t = self.selectedTool ) {
+        if( t->m_StartupMode != (ExternalTool::StartupMode)self.toolStartupMode.selectedTag ) {
+            ExternalTool changed_tool = *t;
+            changed_tool.m_StartupMode = (ExternalTool::StartupMode)self.toolStartupMode.selectedTag;
+            [self commitToolChanges:changed_tool];
+        }
+    }
 }
 
 - (void)insertStringIntoParameters:(NSString*)_str

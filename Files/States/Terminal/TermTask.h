@@ -19,6 +19,11 @@ public:
     
     static string EscapeShellFeed(const string &_feed);
     
+    
+    // TODO: pwd
+    static int RunDetachedProcess(const string &_process_path,
+                                  const vector<string> &_args);
+    
 protected:
     void DoCalloutOnChildOutput( const void *_d, size_t _sz  );
     
@@ -36,6 +41,7 @@ protected:
     
     static const map<string, string> &BuildEnv();
     static void SetEnv(const map<string, string>& _env);
+    static void CloseAllFDAbove3();
     
     // assumes that some data is available already (call only after select()'ing)
     // will block for _usec_wait usecs

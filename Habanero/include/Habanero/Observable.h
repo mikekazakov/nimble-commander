@@ -14,6 +14,7 @@
 class ObservableBase
 {
 public:
+    ~ObservableBase();
     struct ObservationTicket;
     
 protected:

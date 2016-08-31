@@ -124,14 +124,9 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
 
         // put basic environment stuff
         SetEnv(env);
-        
-        // close all file descriptors except [0], [1], [2] and [g_PromptPipe]
-        // implicitly closing m_MasterFD and slave_fd
-        // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
-        // consider a better way here
-        int max_fd = (int)sysconf(_SC_OPEN_MAX);
-        for(int fd = 3; fd < max_fd; fd++)
-            close(fd);
+
+        // closing any used file descriptors
+        CloseAllFDAbove3();
         
         // split _params into an array of argv[1], argv[2] etc
         vector<string> args = SplitArgs(_params);

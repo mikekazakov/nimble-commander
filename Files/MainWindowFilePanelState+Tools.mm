@@ -9,6 +9,7 @@
 #include "AppDelegate.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h"
 #include "ActivationManager.h"
+#include "States/Terminal/TermTask.h"
 
 static string EscapeSpaces(string _str)
 {
@@ -85,13 +86,24 @@ static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l
     return result;
 }
 
-static bool ShouldStartToolInTerminal( const string& _path )
+static bool IsBundle( const string& _path )
 {
     NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]];
-    if( b != nil )
-        return false;
-    
-    return true;
+    return b != nil;
+}
+
+static string GetExecutablePathForBundle( const string& _path )
+{
+    NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]];
+    if( !b )
+        return "";
+    NSURL *u = b.executableURL;
+    if( !u )
+        return "";
+    const char *fsr = u.fileSystemRepresentation;
+    if( !fsr )
+        return "";
+    return fsr;
 }
 
 static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p)
@@ -122,30 +134,12 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
     if( !_tool )
         return;
     
-//    auto s = "\\";
-
-//    if( AppDelegate.me.externalTools.ToolsCount() == 0 )
-//        return;
     auto &et = *_tool;
     
     // do nothing for invalid tools
     if( et.m_ExecutablePath.empty() )
         return;
     
-//    ExternalTool et;
-////    et.m_ExecutablePath = "/Applications/TextEdit.app";
-//    et.m_ExecutablePath = "/bin/ls";
-//    
-/////Applications/TextEdit.app/Contents/MacOS/TextEdit -NSShowAllViews YES
-//    
-////    et.m_ExecutablePath = "/Applications/Sublime Text.app";
-////    et.m_Parameters = "abra cadabra\\ forever!!! %LP";
-////    et.m_Parameters = "-NSShowAllViews YES %5-LP";
-//    
-//    et.m_Parameters = "-alh %P";
-
-    //    -NSShowAllViews YES
-
     auto parameters = ExternalToolsParametersParser().Parse(et.m_Parameters);
     vector<string> enter_values_names = FindEnterValueParameters(parameters);
     
@@ -164,42 +158,79 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
     }
 }
 
+static bool IsRunnableExecutable( const string &_path )
+{
+    VFSStat st;
+    return VFSNativeHost::SharedHost()->Stat(_path.c_str(), st, 0, nullptr) == VFSError::Ok &&
+        st.mode_bits.reg  &&
+        st.mode_bits.rusr &&
+        st.mode_bits.xusr ;
+}
+
 - (void) runExtTool:(shared_ptr<const ExternalTool>)_tool withCookedParameters:(const string&)_cooked_params
 {
     dispatch_assert_main_queue();
     auto &et = *_tool;
-    bool in_terminal = ShouldStartToolInTerminal( et.m_ExecutablePath );
+    auto startup_mode = et.m_StartupMode;
+    const bool tool_is_bundle = IsBundle( et.m_ExecutablePath );
     
-    if( in_terminal ) {
+    if( startup_mode == ExternalTool::StartupMode::Automatic ) {
+        if( tool_is_bundle )
+            startup_mode = ExternalTool::StartupMode::RunDeatached;
+        else
+            startup_mode = ExternalTool::StartupMode::RunInTerminal;
+    }
+    
+    if( startup_mode == ExternalTool::StartupMode::RunInTerminal ) {
         if( !ActivationManager::Instance().HasTerminal() )
             return;
         
-        [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:et.m_ExecutablePath.c_str()
-                                                                           withParameters:_cooked_params.c_str()];
+        if( tool_is_bundle ) {
+            // bundled UI tool starting in terminal
+            string exec_path = et.m_ExecutablePath;
+            if( !IsRunnableExecutable(exec_path) )
+                exec_path = GetExecutablePathForBundle(et.m_ExecutablePath);
+
+            [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:exec_path.c_str()
+                                                                               withParameters:_cooked_params.c_str()];
+        }
+        else {
+            // console tool starting in terminal
+            [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:et.m_ExecutablePath.c_str()
+                                                                               withParameters:_cooked_params.c_str()];
+        }
     }
-    else { // !in_terminal
+    else if( startup_mode == ExternalTool::StartupMode::RunDeatached ) {
         auto pars = SplitByEscapedSpaces(_cooked_params);
         for(auto &s: pars)
             s = UnescapeSpaces(s);
         
-        NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:et.m_ExecutablePath]];
-        
-        NSMutableArray *params_url = [NSMutableArray new];
-        NSMutableArray *params_text = [NSMutableArray new];
-        for( auto &s: pars) {
-            if( !s.empty() &&
-               s.front() == '/' &&
-               VFSNativeHost::SharedHost()->Exists(s.c_str()) )
-                [params_url addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:s]]];
-            else
-                [params_text addObject:[NSString stringWithUTF8StdString:s]];
+        if( tool_is_bundle ) {
+            // regular UI start
+            
+            NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:et.m_ExecutablePath]];
+            
+            NSMutableArray *params_url = [NSMutableArray new];
+            NSMutableArray *params_text = [NSMutableArray new];
+            for( auto &s: pars) {
+                if( !s.empty() &&
+                   s.front() == '/' &&
+                   VFSNativeHost::SharedHost()->Exists(s.c_str()) )
+                    [params_url addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:s]]];
+                else
+                    [params_text addObject:[NSString stringWithUTF8StdString:s]];
+            }
+            
+            [NSWorkspace.sharedWorkspace openURLs:params_url
+                             withApplicationAtURL:app_url
+                                          options:0
+                                    configuration:@{NSWorkspaceLaunchConfigurationArguments: params_text}
+                                            error:nil];
         }
-        
-        [NSWorkspace.sharedWorkspace openURLs:params_url
-                         withApplicationAtURL:app_url
-                                      options:0
-                                configuration:@{NSWorkspaceLaunchConfigurationArguments: params_text}
-                                        error:nil];
+        else {
+            // need to start a console tool in background
+            TermTask::RunDetachedProcess(et.m_ExecutablePath, pars);
+        }
     }
 }
 

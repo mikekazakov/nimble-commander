@@ -10,6 +10,7 @@
                 <outlet property="parametersMenu" destination="KfV-1G-V4r" id="Gdu-uk-iRv"/>
                 <outlet property="toolParameters" destination="ikD-oi-3mc" id="pv8-yb-pHM"/>
                 <outlet property="toolPath" destination="tJK-iz-Vmx" id="6Fx-BB-HJI"/>
+                <outlet property="toolStartupMode" destination="Bm0-Is-ddH" id="MM4-yE-VbG"/>
                 <outlet property="toolTitle" destination="Erl-hM-Whw" id="qXe-LI-vlf"/>
                 <outlet property="toolsAddRemove" destination="5jx-iv-chy" id="0t1-rq-mCr"/>
                 <outlet property="toolsTable" destination="SOK-bw-rQX" id="LcP-Cb-itA"/>
@@ -218,10 +219,37 @@
                         <binding destination="-2" name="hidden" keyPath="self.haveCommandLineTools" id="mQQ-2k-w6P"/>
                     </connections>
                 </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qe2-8x-UrM">
+                    <rect key="frame" x="266" y="139" width="91" height="17"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Startup Mode:" id="iVQ-ca-93Q">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bm0-Is-ddH">
+                    <rect key="frame" x="361" y="133" width="130" height="26"/>
+                    <popUpButtonCell key="cell" type="push" title="Automatic" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="eeB-tN-Fpd" id="Mq6-Pg-YbF">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="YiN-9o-2JI">
+                            <items>
+                                <menuItem title="Automatic" state="on" id="eeB-tN-Fpd"/>
+                                <menuItem title="Run in Terminal" tag="1" id="1F7-OC-ESO"/>
+                                <menuItem title="Run Detached" tag="2" id="3Ja-QT-yqJ"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="onStartupModeChanged:" target="-2" id="PqE-h1-YwQ"/>
+                        <binding destination="-2" name="enabled" keyPath="self.anySelected" id="LYe-kQ-4Yg"/>
+                    </connections>
+                </popUpButton>
             </subviews>
             <constraints>
                 <constraint firstItem="tJK-iz-Vmx" firstAttribute="leading" secondItem="j8B-4J-nM4" secondAttribute="leading" id="7Ul-9E-gvH"/>
                 <constraint firstItem="5jx-iv-chy" firstAttribute="leading" secondItem="kwM-CZ-EP2" secondAttribute="leading" id="7z9-K6-MbN"/>
+                <constraint firstItem="qe2-8x-UrM" firstAttribute="leading" secondItem="ikD-oi-3mc" secondAttribute="leading" id="92s-i9-Z9q"/>
                 <constraint firstItem="j8B-4J-nM4" firstAttribute="top" secondItem="Erl-hM-Whw" secondAttribute="bottom" constant="8" symbolic="YES" id="AF3-0h-d0j"/>
                 <constraint firstItem="tJK-iz-Vmx" firstAttribute="top" secondItem="j8B-4J-nM4" secondAttribute="bottom" constant="8" symbolic="YES" id="CmG-kd-i3G"/>
                 <constraint firstItem="Mtl-Sr-Edq" firstAttribute="top" secondItem="ikD-oi-3mc" secondAttribute="top" id="DjL-UC-NL0"/>
@@ -240,14 +268,17 @@
                 <constraint firstItem="0qz-u9-ass" firstAttribute="leading" secondItem="5jx-iv-chy" secondAttribute="trailing" constant="-1" id="TtQ-AW-Qhq"/>
                 <constraint firstItem="GY2-2T-g6W" firstAttribute="leading" secondItem="0qz-u9-ass" secondAttribute="trailing" constant="8" symbolic="YES" id="X4i-vE-ly8"/>
                 <constraint firstAttribute="bottom" secondItem="0qz-u9-ass" secondAttribute="bottom" constant="20" symbolic="YES" id="aGH-Rg-Sac"/>
+                <constraint firstItem="Bm0-Is-ddH" firstAttribute="leading" secondItem="qe2-8x-UrM" secondAttribute="trailing" constant="8" symbolic="YES" id="e3N-5z-LfW"/>
                 <constraint firstItem="FFZ-gZ-3G4" firstAttribute="top" secondItem="tJK-iz-Vmx" secondAttribute="top" id="ejR-Og-oNH"/>
                 <constraint firstItem="HGo-IY-2d3" firstAttribute="top" secondItem="tJK-iz-Vmx" secondAttribute="bottom" constant="8" symbolic="YES" id="fUK-sb-AFH"/>
                 <constraint firstItem="Mtl-Sr-Edq" firstAttribute="leading" secondItem="ikD-oi-3mc" secondAttribute="trailing" constant="8" symbolic="YES" id="kOx-du-6Jj"/>
                 <constraint firstItem="FFZ-gZ-3G4" firstAttribute="leading" secondItem="tJK-iz-Vmx" secondAttribute="trailing" constant="8" symbolic="YES" id="l05-Mo-Uec"/>
+                <constraint firstItem="qe2-8x-UrM" firstAttribute="top" secondItem="ikD-oi-3mc" secondAttribute="bottom" constant="8" symbolic="YES" id="lh2-v6-hlk"/>
                 <constraint firstItem="HGo-IY-2d3" firstAttribute="leading" secondItem="j8B-4J-nM4" secondAttribute="leading" id="rua-NO-yzG"/>
                 <constraint firstItem="ikD-oi-3mc" firstAttribute="leading" secondItem="j8B-4J-nM4" secondAttribute="leading" id="vhQ-F7-bfh"/>
                 <constraint firstItem="5jx-iv-chy" firstAttribute="top" secondItem="kwM-CZ-EP2" secondAttribute="bottom" constant="-1" id="vpQ-ud-dq6"/>
                 <constraint firstAttribute="trailing" secondItem="Mtl-Sr-Edq" secondAttribute="trailing" constant="20" symbolic="YES" id="x0J-x0-ZvJ"/>
+                <constraint firstItem="Bm0-Is-ddH" firstAttribute="baseline" secondItem="qe2-8x-UrM" secondAttribute="baseline" id="zCn-KV-aE0"/>
                 <constraint firstAttribute="bottom" secondItem="GY2-2T-g6W" secondAttribute="bottom" constant="20" symbolic="YES" id="zFd-R6-kRA"/>
                 <constraint firstItem="j8B-4J-nM4" firstAttribute="leading" secondItem="Erl-hM-Whw" secondAttribute="leading" id="zzM-tr-mx2"/>
             </constraints>

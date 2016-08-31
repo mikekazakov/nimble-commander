@@ -45,11 +45,18 @@ ObservableBase::ObservationTicket::operator bool() const noexcept
     return instance != nullptr && ticket != 0;
 }
 
+ObservableBase::~ObservableBase()
+{
+    LOCK_GUARD(m_ObserversLock) {
+        if( m_Observers && !m_Observers->empty() )
+            printf("ObservableBase %p was destroyed with alive observers! This will lead to UB or crash.\n", this);
+    }
+}
+
 ObservableBase::ObservationTicket ObservableBase::AddObserver( function<void()> _callback, const uint64_t _mask )
 {
     if( !_callback || _mask == 0 )
         return {nullptr, 0};
-    
     
     auto ticket = m_ObservationTicket++;
     

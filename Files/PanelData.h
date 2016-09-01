@@ -199,6 +199,11 @@ public:
     string FullPathForEntry(int _raw_index) const;
     
     /**
+     * Return _item position in sorted array, -1 if not found.
+     */
+    int SortIndexForEntry(const VFSListingItem& _item) const noexcept;
+    
+    /**
      * Converts sorted index into raw index. Returns -1 on any errors.
      */
     int RawIndexForSortIndex(int _index) const noexcept;

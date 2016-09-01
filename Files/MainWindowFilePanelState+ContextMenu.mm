@@ -188,6 +188,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     return self;
 }
 
+- (void)menuDidClose:(NSMenu *)menu
+{
+    [m_CurrentController.view resetContextMenuHighlights];
+}
+
 - (void) doStuffing
 {
     bool cur_pnl_native = m_CommonHost && m_CommonHost->IsNativeFS();

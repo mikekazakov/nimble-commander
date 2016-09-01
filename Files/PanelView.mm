@@ -77,6 +77,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     int                         m_DraggingOverItemAtPosition;
     
     FPSLimitedDrawer           *m_FPSLimitedDrawer;
+    
+    vector<int>                 m_ContextMenuHighlights;
 }
 
 @synthesize fpsDrawer = m_FPSLimitedDrawer;
@@ -233,6 +235,16 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             [NSGraphicsContext saveGraphicsState];
             NSSetFocusRingStyle(NSFocusRingOnly);
             [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
+            [NSGraphicsContext restoreGraphicsState];
+        }
+    }
+  
+    for( auto n: m_ContextMenuHighlights ) {
+        if( m_Presentation->IsItemVisible(n) ) {
+            NSRect rc = m_Presentation->ItemRect(n);
+            [NSGraphicsContext saveGraphicsState];
+            NSSetFocusRingStyle(NSFocusRingOnly);
+            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
             [NSGraphicsContext restoreGraphicsState];
         }
     }
@@ -548,16 +560,28 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
     }
     
-    if(lb_pressed && self.active && !lb_cooldown) {
+    if( lb_pressed ) {
         m_ReadyToDrag = true;
         m_LButtonDownPos = local_point;
     }
 }
 
+- (void) setupContextMenuHighlights:(vector<int>)_positions
+{
+    dispatch_assert_main_queue();
+    m_ContextMenuHighlights = move(_positions);
+    [self setNeedsDisplay:true];
+}
+
+- (void) resetContextMenuHighlights
+{
+    dispatch_assert_main_queue();
+    m_ContextMenuHighlights.clear();
+    [self setNeedsDisplay:true];
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)_event
 {
-    [self mouseDown:_event]; // interpret right mouse downs or ctrl+left mouse downs as regular mouse down
-    
     NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
     int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
     if (cursor_pos >= 0) {

@@ -795,6 +795,18 @@ void PanelData::UpdateStatictics()
     }
 }
 
+int PanelData::SortIndexForEntry(const VFSListingItem& _item) const noexcept
+{
+    if( _item.Listing() != m_Listing )
+        return -1;
+
+    const auto it = find( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), _item.Index() );
+    if( it != end(m_EntriesByCustomSort) )
+        return (int)distance( begin(m_EntriesByCustomSort), it );
+    else
+        return -1;
+}
+
 int PanelData::RawIndexForSortIndex(int _index) const noexcept
 {
     if(_index < 0 || _index >= m_EntriesByCustomSort.size())

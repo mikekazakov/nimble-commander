@@ -19,8 +19,8 @@ struct VFSArchiveState;
 class VFSArchiveHost : public VFSHost
 {
 public:
-    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt); // flags will be added later
-    VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
+    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
+    VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
     ~VFSArchiveHost();
     
     static const char *Tag;
@@ -104,7 +104,7 @@ public:
     const Symlink *ResolvedSymlink(uint32_t _uid);
     
 private:
-    int DoInit();
+    int DoInit(VFSCancelChecker _cancel_checker);
     const class VFSArchiveHostConfiguration &Config() const;
     
     int ReadArchiveListing();

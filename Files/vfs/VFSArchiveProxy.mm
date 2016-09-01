@@ -25,7 +25,8 @@
 
 VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
                                               const VFSHostPtr &_parent,
-                                              function<string()> _passwd
+                                              function<string()> _passwd,
+                                              VFSCancelChecker _cancel_checker
                                               )
 {
     if(_parent->IsNativeFS() &&
@@ -40,7 +41,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
     }
     
     try {
-        auto archive = make_shared<VFSArchiveHost>(_path, _parent);
+        auto archive = make_shared<VFSArchiveHost>(_path, _parent, nullopt, _cancel_checker);
         return archive;
     } catch (VFSErrorException &e) {
         if( e.code() == VFSError::ArclibPasswordRequired && _passwd ) {
@@ -48,7 +49,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
             if( passwd.empty() )
                 return nullptr;
             try {
-                auto archive = make_shared<VFSArchiveHost>(_path, _parent, passwd);
+                auto archive = make_shared<VFSArchiveHost>(_path, _parent, passwd, _cancel_checker);
                 return archive;
             } catch (VFSErrorException &e) {
             }

@@ -108,7 +108,7 @@ VFSMeta VFSArchiveUnRARHost::Meta()
 {
     VFSMeta m;
     m.Tag = Tag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSArchiveUnRARHost>(_parent, _config);
     };
     return m;

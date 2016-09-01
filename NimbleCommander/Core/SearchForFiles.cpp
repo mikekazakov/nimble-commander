@@ -112,6 +112,11 @@ void SearchForFiles::Stop()
     m_Queue->Stop();
 }
 
+bool SearchForFiles::IsStopped()
+{
+    return m_Queue->IsStopped();
+}
+
 void SearchForFiles::Wait()
 {
     m_Queue->Wait();

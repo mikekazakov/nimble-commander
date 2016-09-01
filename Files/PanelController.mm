@@ -329,7 +329,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return false;
 }
 
-
 - (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only
 {
     const auto entry = m_View.item;
@@ -347,11 +346,25 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return [self GoToDir:entry.Path() vfs:entry.Host() select_entry:"" async:true] == 0;
     }
     // archive stuff here
+    // will actually go async for archives
     else if( ActivationManager::Instance().HasArchivesBrowsing() ) {
         if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) ) {
-            auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
-            if( auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(), entry.Host(), pwd_ask) )
-                return [self GoToDir:"/" vfs:arhost select_entry:"" async:true] == 0;
+            m_DirectoryLoadingQ->Run([=](const std::shared_ptr<SerialQueueT> &_q){
+                // background
+                auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
+                
+                auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(),
+                                                                 entry.Host(),
+                                                                 pwd_ask,
+                                                                 [=]{ return _q->IsStopped(); }
+                                                                 );
+                
+                if( arhost )
+                    dispatch_to_main_queue([=]{
+                        [self GoToDir:"/" vfs:arhost select_entry:"" async:true];
+                    });
+            });
+            return true;
         }
     }
     

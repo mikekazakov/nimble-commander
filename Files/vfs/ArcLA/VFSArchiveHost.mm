@@ -49,12 +49,12 @@ static VFSConfiguration ComposeConfiguration(const string &_path, optional<strin
     return VFSConfiguration( move(config) );
 }
 
-VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password):
+VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
     VFSHost(_path.c_str(), _parent, Tag),
     m_Configuration( ComposeConfiguration(_path, move(_password)) )
 {
     assert(_parent);
-    int rc = DoInit();
+    int rc = DoInit(_cancel_checker);
     if(rc < 0) {
         if(m_Arc != 0) { // TODO: ugly
             archive_read_free(m_Arc);
@@ -64,12 +64,12 @@ VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, o
     }
 }
 
-VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker):
     VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, Tag),
     m_Configuration(_config)
 {
     assert(_parent);
-    int rc = DoInit();
+    int rc = DoInit(_cancel_checker);
     if(rc < 0) {
         if(m_Arc != 0) { // TODO: ugly
             archive_read_free(m_Arc);
@@ -104,13 +104,13 @@ VFSMeta VFSArchiveHost::Meta()
 {
     VFSMeta m;
     m.Tag = Tag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
-        return make_shared<VFSArchiveHost>(_parent, _config);
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
+        return make_shared<VFSArchiveHost>(_parent, _config, _cancel_checker);
     };
     return m;
 }
 
-int VFSArchiveHost::DoInit()
+int VFSArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
     assert(m_Arc == 0);
 
@@ -132,7 +132,7 @@ int VFSArchiveHost::DoInit()
     }
     else {
         auto wrapping = make_shared<VFSSeqToRandomROWrapperFile>(source_file);
-        res = wrapping->Open(VFSFlags::OF_Read, nullptr);
+        res = wrapping->Open(VFSFlags::OF_Read, _cancel_checker);
         if( res != VFSError::Ok )
             return res;
         m_ArFile = wrapping;

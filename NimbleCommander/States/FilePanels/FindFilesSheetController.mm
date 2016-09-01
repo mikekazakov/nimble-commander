@@ -526,7 +526,10 @@ private:
     if( !panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
     
-    auto host = VFSArchiveProxy::OpenFileAsArchive(_path, _host);
+    auto host = VFSArchiveProxy::OpenFileAsArchive(_path,
+                                                   _host,
+                                                   nullptr,
+                                                   [&]{ return m_FileSearch->IsStopped(); } );
     if( host )
         VFSInstanceManager::Instance().TameVFS(host);
     

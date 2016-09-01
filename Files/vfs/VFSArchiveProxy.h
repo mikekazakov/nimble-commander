@@ -21,7 +21,8 @@ public:
 
     static VFSHostPtr OpenFileAsArchive(const string &_path,
                                         const VFSHostPtr &_parent,
-                                        function<string()> _passwd = nullptr
+                                        function<string()> _passwd = nullptr,
+                                        VFSCancelChecker _cancel_checker = nullptr
                                         );
 };
 

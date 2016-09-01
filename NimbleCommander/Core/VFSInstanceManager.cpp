@@ -432,7 +432,7 @@ VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info )
         return nullptr; // unregistered vfs???
     
     // try to recreate a vfs
-    auto host = vfs_meta->SpawnWithConfig( parent_host, _info->m_Configuration ); // may throw here
+    auto host = vfs_meta->SpawnWithConfig( parent_host, _info->m_Configuration, nullptr ); // may throw here
     if( host ) {
         _info->m_WeakHost = host;
         EnrollAliveHost(host);

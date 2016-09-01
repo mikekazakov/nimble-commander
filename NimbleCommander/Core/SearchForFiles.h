@@ -91,6 +91,11 @@ public:
     void Stop();
     
     /**
+     * Returns true if search is running but was signaled to be stopped.
+     */
+    bool IsStopped();
+    
+    /**
      * Synchronously wait until job finishes.
      */
     void Wait();

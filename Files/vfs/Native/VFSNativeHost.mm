@@ -50,7 +50,7 @@ VFSMeta VFSNativeHost::Meta()
 {
     VFSMeta m;
     m.Tag = Tag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config) {
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return SharedHost();
     };
     return m;

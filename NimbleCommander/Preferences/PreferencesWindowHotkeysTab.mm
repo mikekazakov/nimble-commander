@@ -76,7 +76,7 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
 {
     vector<pair<string,int>>                            m_Shortcuts;
     function<ExternalToolsStorage&()>                   m_ToolsStorage;
-    shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
+    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
     vector<shared_ptr<const ExternalTool>>              m_Tools;
 }
 

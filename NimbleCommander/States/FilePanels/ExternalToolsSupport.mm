@@ -399,26 +399,9 @@ vector<shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
     return m_Tools;
 }
 
-shared_ptr<ExternalToolsStorage::ChangesObserver> ExternalToolsStorage::ObserveChanges( function<void()> _callback )
+ExternalToolsStorage::ObservationTicket ExternalToolsStorage::ObserveChanges( function<void()> _callback )
 {
-    shared_ptr<ExternalToolsStorage::ChangesObserver> observer;
-    LOCK_GUARD(m_ObserversLock) {
-        auto o = make_shared<ExternalToolsStorage::ChangesObserver>();
-        o->callback = _callback;
-        m_Observers.emplace_back( o );
-        observer = o;
-    }
-    return observer;
-}
-
-void ExternalToolsStorage::FireObservers()
-{
-    LOCK_GUARD(m_ObserversLock) {
-        for( auto &w: m_Observers )
-            if( auto s = w.lock() )
-                if( s->enabled && s->callback )
-                    s->callback();
-    }
+    return AddObserver( move(_callback) );
 }
 
 void ExternalToolsStorage::WriteToolsToConfig() const

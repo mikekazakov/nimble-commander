@@ -45,7 +45,7 @@ static bool AskUserToDeleteTool()
 {
     function<ExternalToolsStorage&()>                   m_ToolsStorage;
     vector<shared_ptr<const ExternalTool>>              m_Tools;
-    shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
+    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
 }
 
 - (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage

@@ -17,6 +17,7 @@
 - limit maxium total amount of files output %2T, %15T
 **/
 
+#include <Habanero/Observable.h>
 #include "../../../Files/ActionShortcut.h"
 #include "../../../Files/Config.h"
 
@@ -134,7 +135,7 @@ public:
 };
 
 // supposed to be thread-safe
-class ExternalToolsStorage
+class ExternalToolsStorage : public ObservableBase
 {
 public:
     ExternalToolsStorage(const char*_config_path);
@@ -148,25 +149,17 @@ public:
     void                                    RemoveTool( size_t _at_index );
     void                                    MoveTool( size_t _at_index, size_t _to_index );
     
-    struct ChangesObserver
-    {
-        function<void()>    callback;
-        bool                enabled = true;
-    };
-    
-    shared_ptr<ChangesObserver>             ObserveChanges( function<void()> _callback );
+    using ObservationTicket = ObservableBase::ObservationTicket;
+    ObservationTicket ObserveChanges( function<void()> _callback );
     
 private:
     void LoadToolsFromConfig();
     void WriteToolsToConfig() const;
     void CommitChanges();
-    void FireObservers();
     
     mutable spinlock                                m_ToolsLock;
     vector<shared_ptr<const ExternalTool>>          m_Tools;
     const char*                                     m_ConfigPath;
     vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
-    mutable spinlock                                m_ObserversLock;
-    vector<weak_ptr<ChangesObserver>>               m_Observers;
 };
 

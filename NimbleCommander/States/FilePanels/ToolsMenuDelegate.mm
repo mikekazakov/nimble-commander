@@ -24,7 +24,7 @@
 @implementation ToolsMenuDelegate
 {
     vector<shared_ptr<const ExternalTool>>              m_Tools;
-    shared_ptr<ExternalToolsStorage::ChangesObserver>   m_ToolsObserver;
+    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
     __weak NSMenu                                      *m_MyMenu;
 }
 

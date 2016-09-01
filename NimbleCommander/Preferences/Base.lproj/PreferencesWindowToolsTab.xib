@@ -206,6 +206,7 @@
                     <connections>
                         <action selector="onAddParameter:" target="-2" id="abn-Pn-0fj"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="EmO-8g-3On"/>
+                        <outlet property="nextKeyView" destination="Bm0-Is-ddH" id="8OU-HT-kZf"/>
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GY2-2T-g6W">

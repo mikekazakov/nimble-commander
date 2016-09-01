@@ -37,6 +37,7 @@
                         </buttonCell>
                         <connections>
                             <action selector="OnSkip:" target="-2" id="141"/>
+                            <outlet property="nextKeyView" destination="MMA-jI-wCQ" id="Duf-cc-eoi"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="15">
@@ -51,6 +52,7 @@
                         <connections>
                             <action selector="OnAppend:" target="-2" id="142"/>
                             <binding destination="-2" name="enabled" keyPath="self.allowAppending" id="wUn-3N-3Rk"/>
+                            <outlet property="nextKeyView" destination="10" id="0Wj-RV-HYw"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
@@ -64,6 +66,7 @@
                         </buttonCell>
                         <connections>
                             <action selector="OnCancel:" target="-2" id="144"/>
+                            <outlet property="nextKeyView" destination="15" id="ABT-qm-wcf"/>
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="37">
@@ -74,6 +77,7 @@
                         </buttonCell>
                         <connections>
                             <binding destination="-2" name="hidden" keyPath="self.singleItem" id="xAw-MA-dvD"/>
+                            <outlet property="nextKeyView" destination="149" id="tUO-h5-w59"/>
                         </connections>
                     </button>
                     <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="49">
@@ -176,6 +180,7 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnHide:" target="-2" id="158"/>
+                            <outlet property="nextKeyView" destination="30" id="WFa-pg-25m"/>
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="112">
@@ -203,6 +208,7 @@ Gw
                         <connections>
                             <action selector="OnOverwrite:" target="-2" id="uu8-zS-4W4"/>
                             <outlet property="menu" destination="B4u-iS-9bR" id="Khj-AB-7j0"/>
+                            <outlet property="nextKeyView" destination="37" id="58f-lT-kVn"/>
                         </connections>
                     </segmentedControl>
                 </subviews>

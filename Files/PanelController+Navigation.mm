@@ -14,10 +14,12 @@
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
 {
-    m_DirectoryLoadingQ->Run([=]{
+    m_DirectoryLoadingQ->Run([=](const SerialQueue &_q){
         VFSHostPtr host;
         try {
-            host = VFSInstanceManager::Instance().RetrieveVFS(_promise);
+            host = VFSInstanceManager::Instance().RetrieveVFS(_promise,
+                                                              [&]{ return _q->IsStopped(); }
+                                                              );
         } catch (VFSErrorException &e) {
             return; // TODO: something
         }

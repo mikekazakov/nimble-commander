@@ -105,7 +105,7 @@ private:
     Info *InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
-    VFSHostPtr GetOrRestoreVFS_Unlocked( Info *_info );
+    VFSHostPtr GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker );
     
     
     vector<Info>                m_Memory;

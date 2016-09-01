@@ -354,7 +354,7 @@ VFSHostPtr VFSInstanceManager::RetrieveVFS( const Promise &_promise, function<bo
         if( !info )
             return nullptr; // this should never happen!
         
-        return GetOrRestoreVFS_Unlocked(info);
+        return GetOrRestoreVFS_Unlocked(info, _cancel_checker);
     }
     return nullptr;
 }
@@ -410,7 +410,7 @@ const char *VFSInstanceManager::GetTag( const Promise &_promise )
 }
 
 // assumes that m_MemoryLock is aquired
-VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info )
+VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker )
 {
     // check if host is alive - in this case we can return it immediately
     if( auto host = _info->m_WeakHost.lock() )
@@ -423,16 +423,16 @@ VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info )
         if( !parent_info )
             return nullptr; // this should never happen!
         
-        parent_host = GetOrRestoreVFS_Unlocked( parent_info ); // may throw here
+        parent_host = GetOrRestoreVFS_Unlocked( parent_info, _cancel_checker ); // may throw here
     }
     
-    // find meta information about vfs some we can recreate it
+    // find meta information about vfs so we can recreate it
     auto vfs_meta = VFSFactory::Instance().Find( _info->m_Configuration.Tag() );
     if( !vfs_meta )
         return nullptr; // unregistered vfs???
     
     // try to recreate a vfs
-    auto host = vfs_meta->SpawnWithConfig( parent_host, _info->m_Configuration, nullptr ); // may throw here
+    auto host = vfs_meta->SpawnWithConfig( parent_host, _info->m_Configuration, _cancel_checker ); // may throw here
     if( host ) {
         _info->m_WeakHost = host;
         EnrollAliveHost(host);

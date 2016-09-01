@@ -719,9 +719,23 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     [self OnCursorChanged];
 }
 
-- (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view
+- (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos
 {
-    return [self.state RequestContextMenuOn:self.selectedEntriesOrFocusedEntry caller:self];
+    dispatch_assert_main_queue();
+    
+    const auto clicked_item = m_Data.EntryAtSortPosition(_sort_pos);
+    if( !clicked_item || clicked_item.IsDotDot() )
+        return nil;
+    
+    const  auto clicked_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
+    
+    vector<VFSListingItem> vfs_items;
+    if( clicked_item_vd.is_selected() == false)
+        vfs_items.emplace_back(clicked_item); // only clicked item
+    else
+        vfs_items = m_Data.SelectedEntries(); // all selected items
+    
+    return [self.state RequestContextMenuOn:vfs_items caller:self];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

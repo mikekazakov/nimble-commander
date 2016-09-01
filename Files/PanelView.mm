@@ -496,41 +496,58 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [super flagsChanged:event];
 }
 
+- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
 - (void) mouseDown:(NSEvent *)_event
 {
     m_LastPotentialRenamingLBDown = -1;
     
-    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    const int current_cursor_pos = m_State.CursorPos;
+    const bool window_focused = self.window.isKeyWindow;
     
-    int old_cursor_pos = m_State.CursorPos;
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if (cursor_pos == -1)
+    const int clicked_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+    if( clicked_pos == -1 )
         return;
 
-    auto &click_entry_vd = m_State.Data->VolatileDataAtSortPosition(cursor_pos);
+    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(clicked_pos);
+    const bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+    const bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
     
-    NSUInteger modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-    bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-    bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
-    
-    // Select range of items with shift+click.
-    // If clicked item is selected, then deselect the range instead.
-    if(modifier_flags & NSShiftKeyMask)
-        [self SelectUnselectInRange:old_cursor_pos >= 0 ? old_cursor_pos : 0
-                      last_included:cursor_pos
-                             select:!click_entry_vd.is_selected()];
-    else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
-        [self SelectUnselectInRange:cursor_pos
-                      last_included:cursor_pos
-                             select:!click_entry_vd.is_selected()];
-    
-    m_Presentation->SetCursorPos(cursor_pos);
-    
-    if(old_cursor_pos != cursor_pos)
-        [self OnCursorPositionChanged];
-    else if(lb_pressed && !lb_cooldown)
-        m_LastPotentialRenamingLBDown = cursor_pos; // need more complex logic here (?)
+    // any cursor movements or selection changes should be performed only in active window
+    if( window_focused ) {
+        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+        
+        // Select range of items with shift+click.
+        // If clicked item is selected, then deselect the range instead.
+        if(modifier_flags & NSShiftKeyMask)
+            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
+                          last_included:clicked_pos
+                                 select:!click_entry_vd.is_selected()];
+        else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
+            [self SelectUnselectInRange:clicked_pos
+                          last_included:clicked_pos
+                                 select:!click_entry_vd.is_selected()];
+        
+        m_Presentation->SetCursorPos(clicked_pos);
+        
+        if( current_cursor_pos != clicked_pos )
+            [self OnCursorPositionChanged];
+        else if(lb_pressed && !lb_cooldown)
+            m_LastPotentialRenamingLBDown = clicked_pos; // need more complex logic here (?)
 
+    }
+    
     if(lb_pressed && self.active && !lb_cooldown) {
         m_ReadyToDrag = true;
         m_LButtonDownPos = local_point;
@@ -546,19 +563,23 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     if (cursor_pos >= 0) {
         self.needsDisplay = true; // force immediately redraw on any rbc since by default there's a delay by invalidate timer and
                                   // in this case it wont be fired before menu showed
-        return [self.delegate PanelViewRequestsContextMenu:self];
+        return [self.delegate panelView:self requestsContextMenuForItemNo:cursor_pos];
     }
     return nil;
 }
 
 - (void) mouseDragged:(NSEvent *)_event
 {
-    if(m_ReadyToDrag)
-    {
+    const auto max_drag_dist = 5.;
+    if( m_ReadyToDrag ) {
         NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
-        if(hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > 5)
-        {
-            [self.delegate PanelViewWantsDragAndDrop:self event:_event];
+        if( hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > max_drag_dist ) {
+            const int clicked_pos = m_Presentation->GetItemIndexByPointInView(m_LButtonDownPos, PanelViewHitTest::FullArea);
+            if( clicked_pos == -1 )
+                return;
+            
+            [self.delegate panelView:self wantsToDragItemNo:clicked_pos byEvent:_event];
+            
             m_ReadyToDrag = false;
             m_LastPotentialRenamingLBDown = -1;
         }

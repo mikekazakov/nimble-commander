@@ -21,9 +21,9 @@ struct PanelVolatileData;
 @optional
 - (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view;
 - (void) PanelViewCursorChanged:(PanelView*)_view;
-- (NSMenu*) PanelViewRequestsContextMenu:(PanelView*)_view;
+- (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
-- (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event;
+- (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event;
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;

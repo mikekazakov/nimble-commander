@@ -375,11 +375,13 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
     [m_View registerForDraggedTypes:@[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI]];
 }
 
-- (void) PanelViewWantsDragAndDrop:(PanelView*)_view event:(NSEvent *)_event
+- (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
 {
-    auto focus_item = m_View.item;
-    if( !focus_item || focus_item.IsDotDot() )
+    const auto dragged_item = m_Data.EntryAtSortPosition(_sort_pos);
+    if( !dragged_item || dragged_item.IsDotDot() )
         return;
+    
+    const auto dragged_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
     
     PanelControllerDragSourceBroker *broker = [PanelControllerDragSourceBroker new];
     broker.controller = self;
@@ -388,10 +390,10 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
     
     vector<VFSListingItem> vfs_items;
     
-    if( m_View.item_vd.is_selected() == false)
-        vfs_items.emplace_back(focus_item);
+    if( dragged_item_vd.is_selected() == false)
+        vfs_items.emplace_back(dragged_item); // drag only clicked item
     else
-        vfs_items = m_Data.SelectedEntries();
+        vfs_items = m_Data.SelectedEntries(); // drag all selected items
     
     const bool all_items_native = all_of(begin(vfs_items), end(vfs_items), [](auto &i){ return i.Host()->IsNativeFS(); });
     
@@ -428,8 +430,10 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
         broker.items.push_back(pbItem);
     }
     
-    if(drag_items.count > 0)
+    if(drag_items.count > 0) {
         [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
+        [NSApp preventWindowOrdering];
+    }
 }
 
 - (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender forType:(NSString *)type

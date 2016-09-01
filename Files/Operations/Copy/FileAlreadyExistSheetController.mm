@@ -169,4 +169,14 @@
     [super endSheet:OperationDialogResult::None];
 }
 
+- (void)moveRight:(id)sender
+{
+    [self.window selectNextKeyView:sender];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [self.window selectPreviousKeyView:sender];
+}
+
 @end

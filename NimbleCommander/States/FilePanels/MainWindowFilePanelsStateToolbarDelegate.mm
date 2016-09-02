@@ -3,6 +3,7 @@
 #include "../../../Files/MainWndGoToButton.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 
+// do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 
@@ -36,7 +37,7 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 @synthesize leftPanelSpinningIndicator = m_LeftPanelSpinningIndicator;
 @synthesize rightPanelGoToButton = m_RightPanelGoToButton;
 @synthesize rightPanelShareButton = m_RightPanelShareButton;
-@synthesize rightPanelSpinningIndicator = rightPanelSpinningIndicator;
+@synthesize rightPanelSpinningIndicator = m_RightPanelSpinningIndicator;
 
 - (instancetype) initWithFilePanelsState:(MainWindowFilePanelState*)_state
 {

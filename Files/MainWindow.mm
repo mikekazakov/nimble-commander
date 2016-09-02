@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "MainWindow.h"
-#import "ActionsShortcutsManager.h"
+#include "MainWindow.h"
+#include "ActionsShortcutsManager.h"
+#include "MainWindowController.h"
 
 @implementation MainWindow
 
@@ -28,5 +29,13 @@
 }
 
 - (IBAction)OnFileCloseWindow:(id)sender { /* dummy, never called */ }
+
+- (IBAction)toggleToolbarShown:(id)sender
+{
+    if( auto wc = objc_cast<MainWindowController>(self.windowController) )
+        [wc OnShowToolbar:sender];
+    else
+        [super toggleToolbarShown:sender];
+}
 
 @end

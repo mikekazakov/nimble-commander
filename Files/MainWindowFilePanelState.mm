@@ -94,10 +94,7 @@ void SetupUnregisteredLabel(NSView *_background_view)
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 {
-    if( self = [super initWithFrame:frameRect] ) {
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"MainWindowFilePanelState" bundle:nil];
-        [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
-        
+    if( self = [super initWithFrame:frameRect] ) {        
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );

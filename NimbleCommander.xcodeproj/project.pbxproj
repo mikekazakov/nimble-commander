@@ -387,10 +387,6 @@
 		CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
 		CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
 		CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
-		CF56BF421D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
-		CF56BF431D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
-		CF56BF441D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
-		CF56BF451D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */; };
 		CF56BF541D68061600A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
 		CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
 		CF56BF561D68129800A08D2B /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */; };
@@ -1438,7 +1434,6 @@
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
 		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
 		CF56BEFF1D5C85C800A08D2B /* InternalViewerController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerController.xib; path = NimbleCommander/Viewer/InternalViewerController.xib; sourceTree = SOURCE_ROOT; };
-		CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowFilePanelState.xib; sourceTree = "<group>"; };
 		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
 		CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
@@ -2193,7 +2188,6 @@
 				CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
-				CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */,
 				CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */,
 				CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */,
 				CF8432001862AB830062B318 /* MainWindowFilePanelState+Menu.h */,
@@ -3356,7 +3350,6 @@
 				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
-				CF56BF441D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */,
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
@@ -3426,7 +3419,6 @@
 				CF4E56A31D5068CD00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */,
 				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
-				CF56BF431D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */,
 				CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFA53A551D433E2A00C562A7 /* OperationsSummaryViewController.xib in Resources */,
 				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
@@ -3477,7 +3469,6 @@
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
-				CF56BF421D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */,
 				CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF876D301D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CF306F931CE9E54C002326FA /* main_icon.icns in Resources */,
@@ -3542,7 +3533,6 @@
 				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
-				CF56BF451D61A79B00A08D2B /* MainWindowFilePanelState.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,

@@ -15,6 +15,7 @@
 #include "rapidjson.h"
 
 class PanelData;
+class ExternalToolsStorage;
 @class Operation;
 @class PanelView;
 @class PanelController;
@@ -25,10 +26,11 @@ class PanelData;
 @class MainWndGoToButton;
 @class OperationsSummaryViewController;
 @class FilePanelOverlappedTerminal;
+@class MainWindowFilePanelsStateToolbarDelegate;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, NSToolbarDelegate, MMTabBarViewDelegate>
+@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, MMTabBarViewDelegate>
 {
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;
@@ -39,18 +41,11 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
     unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
     
-    MainWndGoToButton *m_LeftPanelGoToButton;
-    MainWndGoToButton *m_RightPanelGoToButton;
-    
-    NSProgressIndicator *m_LeftPanelSpinningIndicator;
-    NSProgressIndicator *m_RightPanelSpinningIndicator;
-    NSButton            *m_LeftPanelShareButton;
-    NSButton            *m_RightPanelShareButton;
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
     
     NSBox                *m_SeparatorLine;
-    NSToolbar            *m_Toolbar;
+    MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;
     NSResponder          *m_LastResponder;
     
     bool                m_ShowTabs;
@@ -59,8 +54,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
 }
 
-
-@property OperationsController *OperationsController;
+@property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
+@property (nonatomic, readonly) OperationsController *OperationsController;
+@property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
@@ -133,6 +129,11 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) bool isPanelsSplitViewHidden;
 
 - (void) HandleTabButton;
+
+// UI wiring
+- (IBAction)onLeftPanelGoToButtonAction:(id)sender;
+- (IBAction)onRightPanelGoToButtonAction:(id)sender;
+
 @end
 
 

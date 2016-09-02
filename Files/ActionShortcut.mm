@@ -1,5 +1,6 @@
 #include <locale>
 #include <codecvt>
+#include <Carbon/Carbon.h>
 #include "ActionShortcut.h"
 
 ActionShortcut::ActionShortcut():
@@ -90,6 +91,77 @@ NSString *ActionShortcut::Key() const
     if( NSString *key = [NSString stringWithCharacters:&unicode length:1] )
         return key;
     return @"";
+}
+
+static NSString *StringForModifierFlags(uint64_t flags)
+{
+    UniChar modChars[4];  // We only look for 4 flags
+    unsigned int charCount = 0;
+    // These are in the same order as the menu manager shows them
+    if( flags & NSControlKeyMask )   modChars[charCount++] = kControlUnicode;
+    if( flags & NSAlternateKeyMask ) modChars[charCount++] = kOptionUnicode;
+    if( flags & NSShiftKeyMask )     modChars[charCount++] = kShiftUnicode;
+    if( flags & NSCommandKeyMask )   modChars[charCount++] = kCommandUnicode;
+    if( charCount == 0 )
+        return @"";
+    
+    return [NSString stringWithCharacters:modChars length:charCount];
+}
+
+NSString *ActionShortcut::PrettyString() const
+{
+    static const vector< pair<uint16_t, NSString*> > unicode_to_nice_string = {
+            {NSLeftArrowFunctionKey,     @"←"},
+            {NSRightArrowFunctionKey,    @"→"},
+            {NSDownArrowFunctionKey,     @"↓"},
+            {NSUpArrowFunctionKey,       @"↑"},
+            {NSF1FunctionKey,            @"F1"},
+            {NSF2FunctionKey,            @"F2"},
+            {NSF3FunctionKey,            @"F3"},
+            {NSF4FunctionKey,            @"F4"},
+            {NSF5FunctionKey,            @"F5"},
+            {NSF6FunctionKey,            @"F6"},
+            {NSF7FunctionKey,            @"F7"},
+            {NSF8FunctionKey,            @"F8"},
+            {NSF9FunctionKey,            @"F9"},
+            {NSF10FunctionKey,           @"F10"},
+            {NSF11FunctionKey,           @"F11"},
+            {NSF12FunctionKey,           @"F12"},
+            {NSF13FunctionKey,           @"F13"},
+            {NSF14FunctionKey,           @"F14"},
+            {NSF15FunctionKey,           @"F15"},
+            {NSF16FunctionKey,           @"F16"},
+            {NSF17FunctionKey,           @"F17"},
+            {NSF18FunctionKey,           @"F18"},
+            {NSF19FunctionKey,           @"F19"},
+            {0x2326,                     @"⌦"},
+            {'\r',                       @"↩"},
+            {0x3,                        @"⌅"},
+            {0x9,                        @"⇥"},
+            {0x2423,                     @"Space"},
+            {0x0020,                     @"Space"},
+            {0x8,                        @"⌫"},
+            {NSClearDisplayFunctionKey,  @"Clear"},
+            {0x1B,                       @"⎋"},
+            {NSHomeFunctionKey,          @"↖"},
+            {NSPageUpFunctionKey,        @"⇞"},
+            {NSEndFunctionKey,           @"↘"},
+            {NSPageDownFunctionKey,      @"⇟"},
+            {NSHelpFunctionKey,          @"Help"}
+    };
+    if( !*this )
+        return @"";
+    
+    NSString *vis_key;
+    auto it = find_if( begin(unicode_to_nice_string), end(unicode_to_nice_string), [=](auto &_i){ return _i.first == unicode; });
+    if( it != end(unicode_to_nice_string) )
+        vis_key = it->second;
+    else
+        vis_key = Key().uppercaseString;
+    
+    return [NSString stringWithFormat:@"%@%@",
+            StringForModifierFlags(modifiers),
+            vis_key];
 }
 
 bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept

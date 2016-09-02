@@ -29,6 +29,7 @@
 #include "FilePanelOverlappedTerminal.h"
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
+#include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -89,6 +90,7 @@ void SetupUnregisteredLabel(NSView *_background_view)
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
+@synthesize operationsSummaryView = m_OpSummaryController;
 
 - (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
 {
@@ -114,9 +116,11 @@ void SetupUnregisteredLabel(NSView *_background_view)
         
         // panel creation and preparation
         m_LeftPanelControllers.front().state = self;
-        [m_LeftPanelControllers.front() AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
+                                                   share:m_ToolbarDelegate.leftPanelShareButton];
         m_RightPanelControllers.front().state = self;
-        [m_RightPanelControllers.front() AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
+                                                    share:m_ToolbarDelegate.rightPanelShareButton];
         
         [self loadInitialPanelData];
         [self updateTabBarsVisibility];
@@ -148,7 +152,7 @@ void SetupUnregisteredLabel(NSView *_background_view)
 }
 
 - (BOOL)acceptsFirstResponder { return true; }
-- (NSToolbar*)toolbar { return m_Toolbar; }
+- (NSToolbar*)toolbar { return m_ToolbarDelegate.toolbar; }
 - (NSView*) windowContentView { return self; }
 
 - (void) loadInitialPanelData
@@ -204,52 +208,12 @@ void SetupUnregisteredLabel(NSView *_background_view)
     m_MainSplitView.rightTabbedHolder.tabBar.delegate = self;
     [self addSubview:m_MainSplitView];
     
-    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-    m_LeftPanelGoToButton.target = self;
-    m_LeftPanelGoToButton.action = @selector(LeftPanelGoToButtonAction:);
-    m_LeftPanelGoToButton.owner = self;
-    m_LeftPanelGoToButton.isRight = false;
-    
-    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-    m_RightPanelGoToButton.target = self;
-    m_RightPanelGoToButton.action = @selector(RightPanelGoToButtonAction:);
-    m_RightPanelGoToButton.owner = self;
-    m_RightPanelGoToButton.isRight = true;
-    
-    m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-    m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-    m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-    [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
-    m_LeftPanelShareButton.refusesFirstResponder = true;
-    
-    m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
-    m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-    m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-    [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
-    m_RightPanelShareButton.refusesFirstResponder = true;
-    
-    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    m_LeftPanelSpinningIndicator.indeterminate = YES;
-    m_LeftPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
-    m_LeftPanelSpinningIndicator.controlSize = NSSmallControlSize;
-    m_LeftPanelSpinningIndicator.displayedWhenStopped = NO;
-    
-    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    m_RightPanelSpinningIndicator.indeterminate = YES;
-    m_RightPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
-    m_RightPanelSpinningIndicator.controlSize = NSSmallControlSize;
-    m_RightPanelSpinningIndicator.displayedWhenStopped = NO;
-    
     m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
     m_SeparatorLine.boxType = NSBoxSeparator;
     [self addSubview:m_SeparatorLine];
     
-    NSString *toolbar_id = [NSString stringWithFormat:@"filepanels_toolbar_%llu", (uint64_t)((__bridge void*)self)];
-    m_Toolbar = [[NSToolbar alloc] initWithIdentifier:toolbar_id];
-    m_Toolbar.delegate = self;
-    m_Toolbar.displayMode = NSToolbarDisplayModeIconOnly;
-    m_Toolbar.showsBaselineSeparator = false;
+    m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];
     
     NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
@@ -286,47 +250,6 @@ void SetupUnregisteredLabel(NSView *_background_view)
     }
 }
 
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
-     itemForItemIdentifier:(NSString *)itemIdentifier
- willBeInsertedIntoToolbar:(BOOL)flag
-{
-    auto f = [](NSString *_id, NSView *_v) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:_id];
-        item.view = _v;
-        return item;
-    };
-#define item(a, b) if([itemIdentifier isEqualToString:a]) return f(a, b)
-    item(@"filepanels_left_goto_button",        m_LeftPanelGoToButton);
-    item(@"filepanels_right_goto_button",       m_RightPanelGoToButton);
-    item(@"filepanels_left_share_button",       m_LeftPanelShareButton);
-    item(@"filepanels_right_share_button",      m_RightPanelShareButton);
-    item(@"filepanels_left_spinning_indicator", m_LeftPanelSpinningIndicator);
-    item(@"filepanels_right_spinning_indicator",m_RightPanelSpinningIndicator);
-    item(@"filepanels_operations_box",          m_OpSummaryController.view);
-#undef item
-    return nil;
-}
-
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
-{
-    return [self toolbarAllowedItemIdentifiers:toolbar];
-}
-
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
-{
-    static NSArray *allowed_items =
-               @[ @"filepanels_left_goto_button",
-                  @"filepanels_left_share_button",
-                  @"filepanels_left_spinning_indicator",
-                  NSToolbarFlexibleSpaceItemIdentifier,
-                  @"filepanels_operations_box",
-                  NSToolbarFlexibleSpaceItemIdentifier,
-                  @"filepanels_right_spinning_indicator",
-                  @"filepanels_right_share_button",
-                  @"filepanels_right_goto_button"];
-    return allowed_items;
-}
-
 - (void) Assigned
 {
     if( m_LastResponder ) {
@@ -359,9 +282,9 @@ void SetupUnregisteredLabel(NSView *_background_view)
     }
 }
 
-- (IBAction)LeftPanelGoToButtonAction:(id)sender
+- (IBAction)onLeftPanelGoToButtonAction:(id)sender
 {
-    auto *selection = m_LeftPanelGoToButton.selection;
+    auto *selection = m_ToolbarDelegate.leftPanelGoToButton.selection;
     if(!selection)
         return;
     if( m_MainSplitView.isLeftCollapsed )
@@ -387,9 +310,9 @@ void SetupUnregisteredLabel(NSView *_background_view)
     }
 }
 
-- (IBAction)RightPanelGoToButtonAction:(id)sender
+- (IBAction)onRightPanelGoToButtonAction:(id)sender
 {
-    auto *selection = m_RightPanelGoToButton.selection;
+    auto *selection = m_ToolbarDelegate.rightPanelGoToButton.selection;
     if(!selection)
         return;
     if( m_MainSplitView.isRightCollapsed )
@@ -416,11 +339,11 @@ void SetupUnregisteredLabel(NSView *_background_view)
 }
 
 - (IBAction)LeftPanelGoto:(id)sender {
-    [m_LeftPanelGoToButton popUp];
+    [m_ToolbarDelegate.leftPanelGoToButton popUp];
 }
 
 - (IBAction)RightPanelGoto:(id)sender {
-    [m_RightPanelGoToButton popUp];
+    [m_ToolbarDelegate.rightPanelGoToButton popUp];
 }
 
 - (bool) isPanelActive
@@ -817,6 +740,11 @@ void SetupUnregisteredLabel(NSView *_background_view)
 {
     m_RightPanelControllers.emplace_back(_pc);
     [m_MainSplitView.rightTabbedHolder addPanel:_pc.view];
+}
+
+- (ExternalToolsStorage&)externalToolsStorage
+{
+    return AppDelegate.me.externalTools;
 }
 
 @end

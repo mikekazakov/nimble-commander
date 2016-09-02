@@ -13,6 +13,7 @@ struct ActionShortcut
 
 #ifdef __OBJC__
     NSString   *Key() const;
+    NSString   *PrettyString() const;
 #endif
     string      ToPersString() const;
     bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;

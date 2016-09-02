@@ -988,6 +988,10 @@
 		CFD6DD1C1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
 		CFD6DD1D1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
 		CFD6DD1E1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */; };
+		CFD6DD251D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
+		CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
+		CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
+		CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
 		CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
 		CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
@@ -1767,6 +1771,8 @@
 		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VFSListWindowController.xib; path = NimbleCommander/GeneralUI/VFSListWindowController.xib; sourceTree = SOURCE_ROOT; };
+		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
+		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFD6F9041BEB02CC00A1B046 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = vfs/VFSListingInput.h; sourceTree = "<group>"; };
 		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = Operations/Delete/FileDeletionOperation.h; sourceTree = "<group>"; };
 		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = Operations/Delete/FileDeletionOperation.mm; sourceTree = "<group>"; };
@@ -2183,6 +2189,8 @@
 				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
 				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
+				CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */,
+				CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */,
 				CF07DE37175D981500757DE1 /* MainWindowFilePanelState.h */,
 				CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */,
 				CF56BF411D61A79B00A08D2B /* MainWindowFilePanelState.xib */,
@@ -3828,6 +3836,7 @@
 				CF6D9C60196678010077B146 /* MainWindowController.mm in Sources */,
 				CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF46DB971C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
+				CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -3885,6 +3894,7 @@
 				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFA539771D433E2A00C562A7 /* TermScreenBuffer.cpp in Sources */,
 				CFA539781D433E2A00C562A7 /* VFSNetFTPInternals.mm in Sources */,
+				CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFA539791D433E2A00C562A7 /* MainWndGoToButton.mm in Sources */,
 				CFA5397A1D433E2A00C562A7 /* VFSNativeHost.mm in Sources */,
 				CFA5397B1D433E2A00C562A7 /* SandboxManager.mm in Sources */,
@@ -4086,6 +4096,7 @@
 				CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */,
 				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFED5A1B1C4F8D3200BFCB5C /* TermScreenBuffer.cpp in Sources */,
+				CFD6DD251D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF73D1E51BE6155E0014C88F /* VFSNetFTPInternals.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CF73D1D81BE608BC0014C88F /* VFSNativeHost.mm in Sources */,
@@ -4295,6 +4306,7 @@
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
+				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,

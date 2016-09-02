@@ -1,5 +1,6 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
 #include <Habanero/CommonPaths.h>
+#include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 #include "vfs/vfs_native.h"
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include "PanelView.h"
@@ -35,9 +36,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
   
     PanelController *pc = (PanelController *)((PanelView*)tabViewItem.view).delegate;
     if(tabView == m_MainSplitView.leftTabbedHolder.tabView)
-        [pc AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
+        [pc AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
+                       share:m_ToolbarDelegate.leftPanelShareButton];
     if(tabView == m_MainSplitView.rightTabbedHolder.tabView)
-        [pc AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+        [pc AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
+                       share:m_ToolbarDelegate.rightPanelShareButton];
     
     m_MainSplitView.leftOverlay = nil;
     m_MainSplitView.rightOverlay = nil;

@@ -25,6 +25,7 @@
 #include "MainWindowController.h"
 #include "ActivationManager.h"
 #include "../NimbleCommander/States/FilePanels/ToolsMenuDelegate.h"
+#include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -124,8 +125,10 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     swap(m_LeftPanelControllers, m_RightPanelControllers);
     [m_MainSplitView swapViews];
     
-    [self.leftPanelController AttachToControls:m_LeftPanelSpinningIndicator share:m_LeftPanelShareButton];
-    [self.rightPanelController AttachToControls:m_RightPanelSpinningIndicator share:m_RightPanelShareButton];
+    [self.leftPanelController AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
+                                         share:m_ToolbarDelegate.leftPanelShareButton];
+    [self.rightPanelController AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
+                                          share:m_ToolbarDelegate.rightPanelShareButton];
     
     [self markRestorableStateAsInvalid];
 }

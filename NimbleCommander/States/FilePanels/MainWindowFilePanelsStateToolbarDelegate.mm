@@ -1,6 +1,7 @@
 #include "../../../Files/MainWindowFilePanelState.h"
 #include "../../../Files/Operations/OperationsSummaryViewController.h"
 #include "../../../Files/MainWndGoToButton.h"
+#include "../../../Files/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 
 // do not change these strings, they are used for persistency in NSUserDefaults
@@ -155,12 +156,14 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = @"Left GoTo";
+        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.left_panel_change_folder").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = @"Right GoTo";
+        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.right_panel_change_folder").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_left_share_button"] ) {

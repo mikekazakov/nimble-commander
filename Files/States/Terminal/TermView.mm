@@ -9,6 +9,7 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/NSView+Sugar.h>
+#include <Habanero/algo.h>
 #include "../../OrthodoxMonospace.h"
 #include "../../BlinkingCaret.h"
 #include "../../Config.h"
@@ -40,6 +41,8 @@ static const auto g_ConfigAnsi12 = "terminal.AnsiColor12";
 static const auto g_ConfigAnsi13 = "terminal.AnsiColor13";
 static const auto g_ConfigAnsi14 = "terminal.AnsiColor14";
 static const auto g_ConfigAnsi15 = "terminal.AnsiColor15";
+
+static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
 using SelPoint = TermScreenPoint;
 
@@ -245,7 +248,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return m_IntrinsicSize;
 }
 
-- (int)fullScreenHeight
+- (int)fullScreenLinesHeight
 {
     if( !m_ReportsSizeByOccupiedContent ) {
         return m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
@@ -260,21 +263,34 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
 }
 
++ (NSSize) insetSize:(NSSize)_sz
+{
+    _sz.width -= g_Insets.left + g_Insets.right;
+    if( _sz.width < 0 )
+        _sz.width = 0;
+    
+    _sz.height -= g_Insets.top + g_Insets.bottom;
+    if( _sz.height < 0 )
+        _sz.height = 0;
+    
+    return _sz;
+}
+
 - (void)adjustSizes:(bool)_mandatory
 {
 //    int full_height = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
-    int full_height = self.fullScreenHeight;
-    if(full_height == m_LastScreenFullHeight && _mandatory == false)
+    const int full_lines_height = self.fullScreenLinesHeight;
+    if( full_lines_height == m_LastScreenFullHeight && _mandatory == false )
         return;
     
-    m_LastScreenFullHeight = full_height;
+    m_LastScreenFullHeight = full_lines_height;
     
-    auto clipview = self.enclosingScrollView.contentView;
-    double sy = full_height * m_FontCache->Height();
-    double rest = clipview.frame.size.height -
-        floor(clipview.frame.size.height / m_FontCache->Height()) * m_FontCache->Height();
+    const auto clipview = self.enclosingScrollView.contentView;
+    const auto size_without_insets = [TermView insetSize:NSMakeSize(self.frame.size.width, clipview.frame.size.height)];
+    const auto full_lines_height_px = full_lines_height * m_FontCache->Height(); // full content height
+    const auto rest = size_without_insets.height - floor(size_without_insets.height / m_FontCache->Height()) * m_FontCache->Height();
 
-    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, sy + rest);
+    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px + rest + g_Insets.top + g_Insets.bottom);
 //    NSLog(@"height = %f, addition = %f", m_IntrinsicSize.height, rest);
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView layoutSubtreeIfNeeded];
@@ -306,7 +322,9 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 	[super drawRect:dirtyRect];
 	
     // Drawing code here.
-    CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextSaveGState(context);
+    auto restore_gstate = at_scope_end([=]{ CGContextRestoreGState(context); });
     oms::SetFillColor(context, m_BackgroundColor);
     CGContextFillRect(context, NSRectToCGRect(self.bounds));
     
@@ -319,17 +337,19 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     last_redraw = now;*/
     
 //    MachTimeBenchmark mtb;
+    
+    CGContextTranslateCTM(context, g_Insets.left, g_Insets.top);
 
     int line_start=0, line_end=0;
-    if( self.superview.isFlipped ) {
-        auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
-        line_start = floor(clipviewbounds.origin.y / m_FontCache->Height());
-        line_end   = line_start + ceil(clipviewbounds.size.height / m_FontCache->Height());
+    const auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
+    const auto effective_height = [TermView insetSize:NSMakeSize(0, clipviewbounds.size.height)].height;
+    if( self.superview.isFlipped ) { // regular terminal
+        line_start = floor( (clipviewbounds.origin.y + g_Insets.top ) / m_FontCache->Height());
+        line_end   = line_start + ceil(effective_height / m_FontCache->Height());
     }
-    else {
-        auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
+    else {  // overlapped terminal
         line_end = ceil( (self.bounds.size.height - clipviewbounds.origin.y) / m_FontCache->Height());
-        line_start = line_end - ceil(clipviewbounds.size.height / m_FontCache->Height());
+        line_start = line_end - ceil(effective_height / m_FontCache->Height());
     }
     
     
@@ -409,8 +429,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
     
     // draw selection if it's here
-    if(m_HasSelection)
-    {
+    if( m_HasSelection ) {
         CGRect rc = {{-1, -1}, {0, 0}};
         if(m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y)
             rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
@@ -559,7 +578,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
-    proposedVisibleRect.origin.y = (int)(proposedVisibleRect.origin.y/m_FontCache->Height() + 0.5) * m_FontCache->Height();
+    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y/m_FontCache->Height() + 0.5) * m_FontCache->Height();
     return proposedVisibleRect;
 }
 
@@ -572,8 +591,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
  */
 - (SelPoint)projectPoint:(NSPoint)_point
 {
-    int line_predict = floor(_point.y / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
-    int col_predict = floor(_point.x / m_FontCache->Width());
+    auto y_pos = _point.y - g_Insets.top;
+    if( y_pos < 0 )
+        y_pos = 0;
+    
+    int line_predict = floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
+    
+    auto x_pos = _point.x - g_Insets.left;
+    if( x_pos < 0 )
+        x_pos = 0;
+    int col_predict = floor(x_pos / m_FontCache->Width());
     return SelPoint{col_predict, line_predict};
 }
 

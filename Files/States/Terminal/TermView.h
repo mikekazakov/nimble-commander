@@ -39,4 +39,10 @@ enum class TermViewCursor
 - (void) scrollToBottom;
 
 - (NSColor*) ANSIColorForNo:(int)_number;
+
+/**
+ * Decrease _sz in dimensions of View insets.
+ */
++ (NSSize) insetSize:(NSSize)_sz;
+
 @end

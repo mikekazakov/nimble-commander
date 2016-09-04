@@ -166,10 +166,10 @@ ActivationManager::ActivationManager()
             if( m_TrialDaysLeft > 0 ) {
 //                m_IsActivated = true;
                 m_IsTrialPeriod = true;
-                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial valid");
+                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
             }
             else {
-                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial exceeded");
+                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial exceeded", -m_TrialDaysLeft);
                 m_IsTrialPeriod = false;
             }
         }

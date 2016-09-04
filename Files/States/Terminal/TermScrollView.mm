@@ -34,8 +34,11 @@ static const auto g_ConfigFont = "terminal.font";
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:view];
 
+//H:|-0-[m_ViewHolder(>=100)]-0-|"
+        
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|"
+//         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view(>=100)]-0-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(view)]];
@@ -52,6 +55,14 @@ static const auto g_ConfigFont = "terminal.font";
 - (BOOL) isFlipped
 {
     return m_Flipped;
+}
+
+- (NSRect)adjustScroll:(NSRect)proposedVisibleRect
+{
+    if( [self.subviews[0] respondsToSelector:@selector(adjustScroll:)] )
+        return [self.subviews[0] adjustScroll:proposedVisibleRect];
+        
+    return proposedVisibleRect;
 }
 
 @end
@@ -86,6 +97,29 @@ static const auto g_ConfigFont = "terminal.font";
         self.contentView.drawsBackground = true;
         self.contentView.backgroundColor = m_View.backgroundColor;
         
+        
+        self.verticalLineScroll = m_View.fontCache.Height();
+
+//        
+//        [myScrollView setVerticalLineScroll: 0.0];
+//        [myScrollView setVerticalPageScroll: 0.0];
+        
+//        NSEdgeInsets inset = {0,0,0,0};
+//        inset.left = 50;
+//        inset.top = 50;
+//        self.contentInsets = inset;
+
+        //NSEdgeInsetsZero
+        
+//#define NSEDGEINSETS_DEFINED 1
+//        typedef struct NSEdgeInsets {
+//            CGFloat top;
+//            CGFloat left;
+//            CGFloat bottom;
+//            CGFloat right;
+//        } NSEdgeInsets;
+        
+        
         m_Screen = make_unique<TermScreen>(floor(rc.size.width / m_View.fontCache.Width()),
                                            floor(rc.size.height / m_View.fontCache.Height()));
         
@@ -93,6 +127,7 @@ static const auto g_ConfigFont = "terminal.font";
         
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
+//         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-50-[m_ViewHolder(>=100)]-50-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
@@ -138,8 +173,10 @@ static const auto g_ConfigFont = "terminal.font";
 
 - (void)frameDidChange
 {
-    int sy = floor(self.contentView.frame.size.height / m_View.fontCache.Height());
-    int sx = floor(m_View.frame.size.width / m_View.fontCache.Width());
+    const auto sz = [TermView insetSize:NSMakeSize(m_View.frame.size.width, self.contentView.frame.size.height)];
+    
+    int sy = floor(sz.height / m_View.fontCache.Height());
+    int sx = floor(sz.width / m_View.fontCache.Width());
 
     if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
         auto lock = m_Screen->AcquireLock();
@@ -155,8 +192,10 @@ static const auto g_ConfigFont = "terminal.font";
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y += theEvent.deltaY *
+//    cout << theEvent.deltaY << endl;
+    scrollRect.origin.y +=  floor(theEvent.deltaY) *
                             self.verticalLineScroll *
+//                            m_View.fontCache.Height() *
                             (m_ViewHolder.isFlipped ? -1 : 1);
     [(NSView *)self.documentView scrollRectToVisible:scrollRect];
 }

@@ -47,13 +47,12 @@ TermShellTask::~TermShellTask()
     CleanUp();
 }
 
-void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
+void TermShellTask::Launch(const char *_work_dir)
 {
-    if(m_InputThread.joinable())
-        throw logic_error("TermShellTask::Launch called with joinable input thread");
+    static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
     
-    m_TermSX = _sx;
-    m_TermSY = _sy;
+    if( m_InputThread.joinable() )
+        throw logic_error("TermShellTask::Launch called with joinable input thread");
     
     // remember current locale and stuff
     auto env = BuildEnv();
@@ -71,8 +70,15 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
     assert(rc == 0);
     
     // Create the child process
-    if((rc = fork()))
-    { // master
+    if( (rc = fork()) != 0 ) {
+        if( rc < 0 )
+            cout << "fork() returned " << rc << "!" << endl;
+
+        // bad-bad-bad!
+        // fixing unknown process-interop race condition:
+        this_thread::sleep_for(10ms);        
+        
+        // master
         m_ShellPID = rc;
         close(slave_fd);
         close(m_CwdPipe[1]);
@@ -84,10 +90,10 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
             ReadChildOutput();
         });
     }
-    else
-    { // slave/child
+    else {
+        // slave/child
         SetupTermios(slave_fd);
-        SetTermWindow(slave_fd, _sx, _sy);
+        SetTermWindow(slave_fd, m_TermSX, m_TermSY);
         SetupHandlesAndSID(slave_fd);
         
         chdir(_work_dir);
@@ -112,7 +118,6 @@ void TermShellTask::Launch(const char *_work_dir, int _sx, int _sy)
         // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
         // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
         // consider a better way here
-        static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
         for(int fd = 3; fd < max_fd; fd++)
             if(fd != g_PromptPipe)
                 close(fd);
@@ -156,7 +161,7 @@ void TermShellTask::ReadChildOutput()
         if(FD_ISSET(m_MasterFD, &fd_in)) {
             // try to read a bit more - wait 1usec to see if any additional data will come in
             unsigned have_read = ReadInputAsMuchAsAvailable(m_MasterFD, input, input_sz);
-            if(!m_TemporarySuppressed)
+            if( !m_TemporarySuppressed )
                 DoCalloutOnChildOutput(input, have_read);
         }
         
@@ -467,13 +472,13 @@ string TermShellTask::CWD() const
 
 void TermShellTask::ResizeWindow(int _sx, int _sy)
 {
-    if(m_TermSX == _sx && m_TermSY == _sy)
+    if( m_TermSX == _sx && m_TermSY == _sy )
         return;
 
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    if(m_State != TaskState::Inactive && m_State != TaskState::Dead)
+    if( m_State != TaskState::Inactive && m_State != TaskState::Dead )
         TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
 }
 

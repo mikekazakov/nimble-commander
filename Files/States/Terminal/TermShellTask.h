@@ -37,7 +37,7 @@ public:
     void SetOnStateChange( function<void(TaskState _new_state)> _callback );
     
     // launches /bin/bash actually (hardcoded now)
-    void Launch(const char *_work_dir, int _sx, int _sy);
+    void Launch(const char *_work_dir);
     void Terminate();
     
     /**
@@ -61,6 +61,10 @@ public:
      */
     void ExecuteWithFullPath(const char *_path, const char *_parameters);
     
+    /**
+     * Can be used in any TermShellTask state.
+     * If shell is alive - will send actual resize signal, otherwise will only set internal width and height.
+     */
     void ResizeWindow(int _sx, int _sy);
     
     /**
@@ -112,7 +116,7 @@ private:
     spinlock     m_MasterWriteLock;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
-    volatile bool m_TemporarySuppressed = false; // will give no output until the next bash prompt will show m_RequestedCWD path
+    atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX = 0;
     int m_TermSY = 0;
     thread m_InputThread;

@@ -177,12 +177,12 @@ static const auto g_LongProcessDelay = 100ms;
     if( !_initial_wd.empty() )
         m_InitalWD = _initial_wd;
         
-    auto s = m_Task->State();
+    const auto s = m_Task->State();
     if( s == TermShellTask::TaskState::Inactive ||
-        s == TermShellTask::TaskState::Dead )
-        m_Task->Launch(m_InitalWD.c_str(),
-                       m_TermScrollView.screen.Width(),
-                       m_TermScrollView.screen.Height());
+        s == TermShellTask::TaskState::Dead ) {
+        m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
+        m_Task->Launch( m_InitalWD.c_str() );
+    }
 }
 
 - (void) changeWorkingDirectory:(const string&)_new_dir

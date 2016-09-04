@@ -78,8 +78,11 @@
 - (void) Assigned
 {
     // need right CWD here
-    if(m_Task->State() == TermShellTask::TaskState::Inactive)
-        m_Task->Launch(m_InitalWD.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
+    if( m_Task->State() == TermShellTask::TaskState::Inactive ||
+        m_Task->State() == TermShellTask::TaskState::Dead ) {
+        m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
+        m_Task->Launch( m_InitalWD.c_str() );
+    }
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"

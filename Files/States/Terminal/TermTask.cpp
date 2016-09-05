@@ -153,7 +153,7 @@ const map<string, string> &TermTask::BuildEnv()
         }
         
         env.emplace("TERM", "xterm-16color");
-        env.emplace("TERM_PROGRAM", "Nimble Commander.app");
+        env.emplace("TERM_PROGRAM", "Nimble_Commander");
     });
     
     return env;

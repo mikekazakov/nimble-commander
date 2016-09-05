@@ -33,12 +33,9 @@ static const auto g_ConfigFont = "terminal.font";
 
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:view];
-
-//H:|-0-[m_ViewHolder(>=100)]-0-|"
         
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|"
-//         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view(>=100)]-0-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(view)]];
@@ -59,7 +56,8 @@ static const auto g_ConfigFont = "terminal.font";
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
-    if( [self.subviews[0] respondsToSelector:@selector(adjustScroll:)] )
+    if( self.subviews.count > 0 &&
+        [self.subviews[0] respondsToSelector:@selector(adjustScroll:)] )
         return [self.subviews[0] adjustScroll:proposedVisibleRect];
         
     return proposedVisibleRect;

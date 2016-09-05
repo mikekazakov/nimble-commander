@@ -32,8 +32,13 @@ public:
         // shell died
         Dead            = 4
     };
+    
+    enum class ShellType {
+        Bash = 0,
+        ZSH = 1
+    };
 
-    void SetOnBashPrompt( function<void(const char *_cwd, bool _changed)> _callback );
+    void SetOnPwdPrompt( function<void(const char *_cwd, bool _changed)> _callback );
     void SetOnStateChange( function<void(TaskState _new_state)> _callback );
     
     // launches /bin/bash actually (hardcoded now)
@@ -109,7 +114,7 @@ private:
     void CleanUp();
     void ReadChildOutput();
 
-    function<void(const char *_cwd, bool _changed)> m_OnBashPrompt;
+    function<void(const char *_cwd, bool _changed)> m_OnPwdPrompt;
     function<void(TaskState _new_state)> m_OnStateChanged;
     volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
@@ -122,5 +127,6 @@ private:
     thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";
+    ShellType m_ShellType = ShellType::ZSH;
     volatile bool m_IsShuttingDown = false;
 };

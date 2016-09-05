@@ -22,10 +22,34 @@
 #include <Utility/PathManip.h>
 #include "TermShellTask.h"
 
-static const char *g_ShellProg     = "/bin/bash";
-static       char *g_ShellParam[2] = {(char*)"-L", 0};
 static const int   g_PromptPipe    = 20;
-static const char *g_PromptStringPID  = "if [ $$ -eq %d ]; then pwd>&20; fi";
+
+struct TermShellInfo
+{
+    const char *shell_prog;
+    char      **shell_params;
+};
+
+static TermShellInfo GetShellInfo( TermShellTask::ShellType _shell ) {
+    if( _shell == TermShellTask::ShellType::Bash ) {
+        
+        static char *p[2] = {(char*)"-L", 0};
+        TermShellInfo i;
+        i.shell_prog = "/bin/bash";
+        i.shell_params = p;
+        return i;
+    }
+    
+    if( _shell == TermShellTask::ShellType::ZSH ) {
+        static char *p[3] = {(char*)"-Z", (char*)"-g", 0};
+        TermShellInfo i;
+        i.shell_prog = "/bin/zsh";
+        i.shell_params = p;
+        return i;
+    }
+    
+    assert( 0 );
+}
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
@@ -65,7 +89,7 @@ void TermShellTask::Launch(const char *_work_dir)
     
     int slave_fd = open(ptsname(m_MasterFD), O_RDWR);
     
-    // init FIFO stuff for BASH' CWD
+    // init FIFO stuff for Shell's CWD
     int rc = pipe(m_CwdPipe);
     assert(rc == 0);
     
@@ -89,6 +113,18 @@ void TermShellTask::Launch(const char *_work_dir)
             pthread_setname_np( ("TermShellTask background input thread, PID="s + to_string(m_ShellPID)).c_str() );
             ReadChildOutput();
         });
+        
+        // setup pwd feedback
+        char prompt_setup[1024] = {0};
+        if( m_ShellType == ShellType::Bash )
+            sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; fi'\n", rc);
+        else if( m_ShellType == ShellType::ZSH )
+            sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", rc);
+  
+        m_TemporarySuppressed = true;
+        LOCK_GUARD(m_MasterWriteLock)
+            write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
+        
     }
     else {
         // slave/child
@@ -106,11 +142,6 @@ void TermShellTask::Launch(const char *_work_dir)
         rc = dup2(m_CwdPipe[1], g_PromptPipe);
         assert(rc == g_PromptPipe);
         
-        // set bash prompt so it will report only when executed by original fork (to exclude execution by it's later forks)
-        char bash_prompt[1024];
-        sprintf(bash_prompt, g_PromptStringPID, (int)getpid());
-        setenv("PROMPT_COMMAND", bash_prompt, 1);
-        
         // say BASH to not put into history any command starting with space character
         putenv((char *)"HISTCONTROL=ignorespace");
         
@@ -123,7 +154,8 @@ void TermShellTask::Launch(const char *_work_dir)
                 close(fd);
         
         // execution of the program
-        execv(g_ShellProg, g_ShellParam);
+        auto shell_info = GetShellInfo(m_ShellType);
+        execv(shell_info.shell_prog, shell_info.shell_params);
         
         // we never get here in normal condition
         printf("fin.\n");
@@ -217,15 +249,18 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
             SetState(TaskState::Shell);
         }
         
-        if(m_TemporarySuppressed && m_RequestedCWD == tmp) {
+        if( m_TemporarySuppressed &&
+           (m_RequestedCWD.empty() || m_RequestedCWD == tmp) ) {
             m_TemporarySuppressed = false;
-            m_RequestedCWD = "";
-            do_nr_hack = true;
+            if( !m_RequestedCWD.empty() ) {
+                m_RequestedCWD = "";
+                do_nr_hack = true;
+            }
         }
     }
     
-    if( m_OnBashPrompt && m_RequestedCWD.empty() )
-        m_OnBashPrompt(current_cwd.c_str(), current_wd_changed);
+    if( m_OnPwdPrompt && m_RequestedCWD.empty() )
+        m_OnPwdPrompt(current_cwd.c_str(), current_wd_changed);
     if(do_nr_hack)
         DoCalloutOnChildOutput("\n\r", 2);
 }
@@ -319,7 +354,7 @@ void TermShellTask::ChDir(const char *_new_cwd)
         return;
 
     LOCK_GUARD(m_Lock) {
-        m_TemporarySuppressed = true; // will show no output of bash when changing a directory
+        m_TemporarySuppressed = true; // will show no output of shell when changing a directory
         m_RequestedCWD = requested_cwd;
     }
     
@@ -487,9 +522,9 @@ void TermShellTask::Terminate()
     CleanUp();
 }
 
-void TermShellTask::SetOnBashPrompt(function<void(const char *_cwd, bool _changed)> _callback )
+void TermShellTask::SetOnPwdPrompt(function<void(const char *_cwd, bool _changed)> _callback )
 {
-    m_OnBashPrompt = move(_callback);
+    m_OnPwdPrompt = move(_callback);
 }
 
 void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )

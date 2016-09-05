@@ -70,7 +70,7 @@ static const auto g_LongProcessDelay = 100ms;
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
             [(FilePanelOverlappedTerminal*)weakself onChildOutput:_d size:_sz];
         });
-        m_Task->SetOnBashPrompt([=](const char *_cwd, bool _changed){
+        m_Task->SetOnPwdPrompt([=](const char *_cwd, bool _changed){
             [(FilePanelOverlappedTerminal*)weakself onBashPrompt:_cwd cwdChanged:_changed];
         });
         m_Task->SetOnStateChange([=](TermShellTask::TaskState _state){

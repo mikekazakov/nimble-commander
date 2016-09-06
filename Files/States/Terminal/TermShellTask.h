@@ -41,6 +41,11 @@ public:
     void SetOnPwdPrompt( function<void(const char *_cwd, bool _changed)> _callback );
     void SetOnStateChange( function<void(TaskState _new_state)> _callback );
     
+    /**
+     * Sets the desired type of a shell. Should be set before Launch() called.
+     */
+    void SetShellType(ShellType _type);
+    
     // launches /bin/bash actually (hardcoded now)
     void Launch(const char *_work_dir);
     void Terminate();
@@ -108,13 +113,16 @@ public:
 private:
     
     bool IsCurrentWD(const char *_what) const;
-    void ProcessBashPrompt(const void *_d, int _sz);
+    void ProcessPwdPrompt(const void *_d, int _sz);
     void SetState(TaskState _new_state);
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
+    
+    void DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const;
 
-    function<void(const char *_cwd, bool _changed)> m_OnPwdPrompt;
+    shared_ptr<function<void(const char *_cwd, bool _changed)>> m_OnPwdPrompt;
+    mutable spinlock                                            m_OnPwdPromptLock;
     function<void(TaskState _new_state)> m_OnStateChanged;
     volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
@@ -127,6 +135,6 @@ private:
     thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";
-    ShellType m_ShellType = ShellType::ZSH;
+    ShellType m_ShellType = ShellType::Bash;
     volatile bool m_IsShuttingDown = false;
 };

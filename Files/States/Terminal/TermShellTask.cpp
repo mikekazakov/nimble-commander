@@ -20,6 +20,7 @@
 #include <libproc.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/PathManip.h>
+#include <Habanero/algo.h>
 #include "TermShellTask.h"
 
 static const int   g_PromptPipe    = 20;
@@ -71,6 +72,11 @@ TermShellTask::~TermShellTask()
     CleanUp();
 }
 
+static bool fd_is_valid(int fd)
+{
+    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
+}
+
 void TermShellTask::Launch(const char *_work_dir)
 {
     static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
@@ -97,15 +103,12 @@ void TermShellTask::Launch(const char *_work_dir)
     if( (rc = fork()) != 0 ) {
         if( rc < 0 )
             cout << "fork() returned " << rc << "!" << endl;
-
-        // bad-bad-bad!
-        // fixing unknown process-interop race condition:
-        this_thread::sleep_for(10ms);        
         
         // master
         m_ShellPID = rc;
         close(slave_fd);
         close(m_CwdPipe[1]);
+        m_TemporarySuppressed = true;
         
         SetState(TaskState::Shell);
         
@@ -114,17 +117,25 @@ void TermShellTask::Launch(const char *_work_dir)
             ReadChildOutput();
         });
         
+        // give shell some time to init and background thead to read any ouput available
+        this_thread::sleep_for(50ms);
+        
         // setup pwd feedback
         char prompt_setup[1024] = {0};
         if( m_ShellType == ShellType::Bash )
             sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; fi'\n", rc);
         else if( m_ShellType == ShellType::ZSH )
             sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", rc);
-  
-        m_TemporarySuppressed = true;
-        LOCK_GUARD(m_MasterWriteLock)
-            write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
         
+        LOCK_GUARD(m_MasterWriteLock) {
+            ssize_t rc = write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
+            if( rc < 0 || rc != strlen(prompt_setup) ) {
+                cout << "write() returned " << rc << endl;
+            }
+        }
+        
+        // give shell some time to parse setup input
+        this_thread::sleep_for(50ms);
     }
     else {
         // slave/child
@@ -170,8 +181,7 @@ void TermShellTask::ReadChildOutput()
     static const int input_sz = 65536;
     char input[65536];
     
-    while (1)
-    {
+    while(1) {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
         FD_SET(m_MasterFD, &fd_in);
@@ -183,7 +193,11 @@ void TermShellTask::ReadChildOutput()
         int max_fd = max((int)m_MasterFD, m_CwdPipe[0]);
         
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        if(rc < 0 || m_ShellPID < 0) {
+        if( m_ShellPID < 0 )
+            goto end_of_all; // shell is dead
+        
+        if( rc < 0 ) {
+            cout << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned " << rc << endl;
             // error on select(), let's think that shell has died
             // mb call ShellDied() here?
             goto end_of_all;
@@ -201,11 +215,12 @@ void TermShellTask::ReadChildOutput()
         if (FD_ISSET(m_CwdPipe[0], &fd_in)) {
             rc = (int)read(m_CwdPipe[0], input, input_sz);
             if(rc > 0)
-                ProcessBashPrompt(input, rc);
+                ProcessPwdPrompt(input, rc);
         }
-                
+        
         // check if child process died
         if(FD_ISSET(m_MasterFD, &fd_err)) {
+            cout << "shell died: FD_ISSET(m_MasterFD, &fd_err)" << endl;
             if(!m_IsShuttingDown)
                 dispatch_to_main_queue([=]{
                     ShellDied();
@@ -217,15 +232,13 @@ end_of_all:
     ;
 }
 
-void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
+void TermShellTask::ProcessPwdPrompt(const void *_d, int _sz)
 {
     string current_cwd = m_CWD;
     bool do_nr_hack = false;
     bool current_wd_changed = false;
 
-    {
-        lock_guard<mutex> lock(m_Lock);
-        
+    LOCK_GUARD(m_Lock) {
         char tmp[1024];
         memcpy(tmp, _d, _sz);
         tmp[_sz] = 0;
@@ -259,10 +272,21 @@ void TermShellTask::ProcessBashPrompt(const void *_d, int _sz)
         }
     }
     
-    if( m_OnPwdPrompt && m_RequestedCWD.empty() )
-        m_OnPwdPrompt(current_cwd.c_str(), current_wd_changed);
-    if(do_nr_hack)
+    if( m_RequestedCWD.empty() )
+        DoOnPwdPromptCallout(current_cwd.c_str(), current_wd_changed);
+    if( do_nr_hack )
         DoCalloutOnChildOutput("\n\r", 2);
+}
+
+
+void TermShellTask::DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const
+{
+    m_OnPwdPromptLock.lock();
+    auto on_pwd = m_OnPwdPrompt;
+    m_OnPwdPromptLock.unlock();
+        
+    if( on_pwd && *on_pwd )
+        (*on_pwd)(_cwd, _changed);
 }
 
 void TermShellTask::WriteChildInput( string_view _data )
@@ -272,8 +296,11 @@ void TermShellTask::WriteChildInput( string_view _data )
     if( _data.empty() )
         return;
 
-    LOCK_GUARD(m_MasterWriteLock)
-        write( m_MasterFD, _data.data(), _data.size() );
+    LOCK_GUARD(m_MasterWriteLock) {
+        ssize_t rc = write( m_MasterFD, _data.data(), _data.size() );
+        if( rc < 0 || rc !=  _data.size() )
+            cout << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc << endl;
+    }
     
     if( (_data.back() == '\n' || _data.back() == '\r') && m_State == TaskState::Shell ) {
         LOCK_GUARD(m_Lock)
@@ -524,7 +551,8 @@ void TermShellTask::Terminate()
 
 void TermShellTask::SetOnPwdPrompt(function<void(const char *_cwd, bool _changed)> _callback )
 {
-    m_OnPwdPrompt = move(_callback);
+    LOCK_GUARD(m_OnPwdPromptLock)
+        m_OnPwdPrompt = to_shared_ptr( move(_callback) );
 }
 
 void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )
@@ -535,4 +563,9 @@ void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _call
 TermShellTask::TaskState TermShellTask::State() const
 {
     return m_State;
+}
+
+void TermShellTask::SetShellType(ShellType _type)
+{
+    m_ShellType = _type;
 }

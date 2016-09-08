@@ -20,9 +20,15 @@
     return nil;
 }
 
-- (nullable id)valueForKeyPath:(NSString *)keyPath
+- (id)valueForKeyPath:(NSString *)keyPath
 {
-    auto v = m_Config->Get( keyPath.UTF8String );
+    return [GenericConfigObjC valueForKeyPath:keyPath.UTF8String inConfig:m_Config];
+    
+}
+
++ (id)valueForKeyPath:(const char*)keyPath inConfig:(GenericConfig*)_config;
+{
+    auto v = _config->Get( keyPath );
     switch( v.GetType() ) {
         case rapidjson::kTrueType:      return [NSNumber numberWithBool:true];
         case rapidjson::kFalseType:     return [NSNumber numberWithBool:false];
@@ -62,6 +68,11 @@
 
 - (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath
 {
+    [GenericConfigObjC setValue:value forKeyPath:keyPath inConfig:m_Config];
+}
+
++ (void)setValue:(nullable id)value forKeyPath:(NSString *)keyPath inConfig:(GenericConfig*)_config
+{
     if( auto n = objc_cast<NSNumber>(value) ) {
         auto type = n.objCType;
         if( !type || type[0] == 0 || type[1] != 0 )
@@ -70,36 +81,36 @@
         switch( type[0] ) {
             case 'c': // @encode(BOOL);
             case 'B': // @encode(bool)
-                m_Config->Set( keyPath.UTF8String, (bool)n.boolValue );
+                _config->Set( keyPath.UTF8String, (bool)n.boolValue );
                 break;
             case 'i': // @encode(int);
-                m_Config->Set( keyPath.UTF8String, n.intValue );
+                _config->Set( keyPath.UTF8String, n.intValue );
                 break;
             case 's': // @encode(short);
-                m_Config->Set( keyPath.UTF8String, (int)n.shortValue );
+                _config->Set( keyPath.UTF8String, (int)n.shortValue );
                 break;
             case 'q': // @encode(long), @encode(long long)
-                m_Config->Set( keyPath.UTF8String, (int)n.longValue );
+                _config->Set( keyPath.UTF8String, (int)n.longValue );
                 break;
             case 'I': // @encode(unsigned int)
-                m_Config->Set( keyPath.UTF8String, n.unsignedIntValue );
+                _config->Set( keyPath.UTF8String, n.unsignedIntValue );
                 break;
             case 'S': // @encode(unsigned short)
-                m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedShortValue );
+                _config->Set( keyPath.UTF8String, (unsigned int)n.unsignedShortValue );
                 break;
             case 'Q': // @encode(unsigned long), @encode(unsigned long long)
-                m_Config->Set( keyPath.UTF8String, (unsigned int)n.unsignedLongValue );
+                _config->Set( keyPath.UTF8String, (unsigned int)n.unsignedLongValue );
                 break;
             case 'd': // @encode(double)
-                m_Config->Set( keyPath.UTF8String, n.doubleValue );
+                _config->Set( keyPath.UTF8String, n.doubleValue );
                 break;
             case 'f': // @encode(float)
-                m_Config->Set( keyPath.UTF8String, n.floatValue );
+                _config->Set( keyPath.UTF8String, n.floatValue );
                 break;
         }
     }
     else if( auto s = objc_cast<NSString>(value) )
-        m_Config->Set( keyPath.UTF8String, s.UTF8String );
+        _config->Set( keyPath.UTF8String, s.UTF8String );
 }
 
 @end

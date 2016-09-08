@@ -24,42 +24,13 @@
 #include <Habanero/CommonPaths.h>
 #include "TermShellTask.h"
 
-static const int   g_PromptPipe    = 20;
+static const int    g_PromptPipe    = 20;
+static const int    g_MaxFD         = (int)sysconf(_SC_OPEN_MAX);
 
-struct TermShellInfo
-{
-    const char *shell_prog;
-    char      **shell_params;
-};
-
-static TermShellInfo GetShellInfo( TermShellTask::ShellType _shell ) {
-    if( _shell == TermShellTask::ShellType::Bash ) {
-        
-        static char *p[2] = {(char*)"-L", 0};
-        TermShellInfo i;
-        i.shell_prog = "/bin/bash";
-        i.shell_params = p;
-        return i;
-    }
-    
-    if( _shell == TermShellTask::ShellType::ZSH ) {
-        static char *p[3] = {(char*)"-Z", (char*)"-g", 0};
-        TermShellInfo i;
-        i.shell_prog = "/bin/zsh";
-        i.shell_params = p;
-        return i;
-    }
-
-    if( _shell == TermShellTask::ShellType::TCSH ) {
-        static char *p[2] = {(char*)"tcsh", 0};
-        TermShellInfo i;
-        i.shell_prog = "/bin/tcsh";
-        i.shell_params = p;
-        return i;
-    }
-    
-    assert( 0 );
-}
+static char *g_BashParams[2]    = {(char*)"-L", 0};
+static char *g_ZSHParams[3]     = {(char*)"-Z", (char*)"-g", 0};
+static char *g_TCSH[2]          = {(char*)"tcsh", 0};
+static char **g_ShellParams[3]  = { g_BashParams, g_ZSHParams, g_TCSH };
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
@@ -75,6 +46,32 @@ static bool IsDirectoryAvailableForBrowsing(const string &_path)
     return IsDirectoryAvailableForBrowsing(_path.c_str());
 }
 
+static string GetDefaultShell()
+{
+    if( const char *shell = getenv("SHELL") )
+        return shell;
+    else // setup is very weird
+        return "/bin/bash";
+}
+
+static TermShellTask::ShellType DetectShellType( const string &_path )
+{
+    if( _path.find("/bash") != string::npos )
+        return TermShellTask::ShellType::Bash;
+    if( _path.find("/zsh") != string::npos )
+        return TermShellTask::ShellType::ZSH;
+    if( _path.find("/tcsh") != string::npos )
+        return TermShellTask::ShellType::TCSH;
+    if( _path.find("/csh") != string::npos )
+        return TermShellTask::ShellType::TCSH;
+    return TermShellTask::ShellType::Unknown;
+}
+
+TermShellTask::TermShellTask():
+    m_ShellPath( GetDefaultShell() )
+{
+}
+
 TermShellTask::~TermShellTask()
 {
     m_IsShuttingDown = true;
@@ -86,12 +83,14 @@ static bool fd_is_valid(int fd)
     return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
 }
 
-void TermShellTask::Launch(const char *_work_dir)
+bool TermShellTask::Launch(const char *_work_dir)
 {
-    static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
-    
     if( m_InputThread.joinable() )
         throw logic_error("TermShellTask::Launch called with joinable input thread");
+
+    m_ShellType = DetectShellType(m_ShellPath);
+    if( m_ShellType == ShellType::Unknown )
+        return false;
     
     // remember current locale and stuff
     auto env = BuildEnv();
@@ -191,17 +190,17 @@ void TermShellTask::Launch(const char *_work_dir)
         // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
         // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
         // consider a better way here
-        for(int fd = 3; fd < max_fd; fd++)
+        for(int fd = 3; fd < g_MaxFD; fd++)
             if(fd != g_PromptPipe)
                 close(fd);
         
         // execution of the program
-        auto shell_info = GetShellInfo(m_ShellType);
-        execv(shell_info.shell_prog, shell_info.shell_params);
+        execv( m_ShellPath.c_str(), g_ShellParams[(int)m_ShellType] );
         
         // we never get here in normal condition
         printf("fin.\n");
     }
+    return true;
 }
 
 void TermShellTask::ReadChildOutput()
@@ -601,7 +600,7 @@ TermShellTask::TaskState TermShellTask::State() const
     return m_State;
 }
 
-void TermShellTask::SetShellType(ShellType _type)
+void TermShellTask::SetShellPath(const string &_path)
 {
-    m_ShellType = _type;
+    m_ShellPath = _path;
 }

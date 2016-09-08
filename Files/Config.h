@@ -10,6 +10,8 @@ class GenericConfig;
 // GenericConfigObjC is not KVO-complaint, only KVC-complaint!
 @interface GenericConfigObjC : NSObject
 - (instancetype) initWithConfig:(GenericConfig*)_config;
++ (id)valueForKeyPath:(const char*)keyPath inConfig:(GenericConfig*)_config;
++ (void)setValue:(id)value forKeyPath:(NSString *)keyPath inConfig:(GenericConfig*)_config;
 @end
 #endif
 

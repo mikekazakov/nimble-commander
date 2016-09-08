@@ -13,8 +13,11 @@
 #include "States/Terminal/TermParser.h"
 #include "States/Terminal/TermView.h"
 #include "States/Terminal/TermScrollView.h"
+#include "Config.h"
 #include "FilePanelOverlappedTerminal.h"
 
+static const auto g_UseDefault = "terminal.useDefaultLoginShell";
+static const auto g_CustomPath = "terminal.customShellPath";
 static const auto g_BashPromptInputDelay = 10ms;
 static const auto g_TaskStartInputDelay = 50ms;
 static const auto g_LongProcessDelay = 100ms;
@@ -54,6 +57,10 @@ static const auto g_LongProcessDelay = 100ms;
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         
         m_Task = make_unique<TermShellTask>();
+        if( !GlobalConfig().GetBool(g_UseDefault) )
+            if( auto s = GlobalConfig().GetString(g_CustomPath) )
+                m_Task->SetShellPath(*s);
+        
         auto task_ptr = m_Task.get();
         m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){

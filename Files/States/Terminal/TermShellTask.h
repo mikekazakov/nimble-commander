@@ -13,6 +13,7 @@
 class TermShellTask : public TermTask
 {
 public:
+    TermShellTask();
     ~TermShellTask();
     
     enum class TaskState {
@@ -34,21 +35,24 @@ public:
     };
     
     enum class ShellType {
-        Bash = 0,
-        ZSH = 1,
-        TCSH = 2
+        Unknown     = -1,
+        Bash        =  0,
+        ZSH         =  1,
+        TCSH        =  2
     };
 
     void SetOnPwdPrompt( function<void(const char *_cwd, bool _changed)> _callback );
     void SetOnStateChange( function<void(TaskState _new_state)> _callback );
     
     /**
-     * Sets the desired type of a shell. Should be set before Launch() called.
+     * Sets the desired custom shell path.
+     * If none was specified - default login shell will be used.
+     * Should be called before Launch().
      */
-    void SetShellType(ShellType _type);
+    void SetShellPath(const string &_path);
     
     // launches /bin/bash actually (hardcoded now)
-    void Launch(const char *_work_dir);
+    bool Launch(const char *_work_dir);
     void Terminate();
     
     /**
@@ -137,6 +141,7 @@ private:
     thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";
-    ShellType m_ShellType = ShellType::Bash;
+    ShellType m_ShellType = ShellType::Unknown;
+    string m_ShellPath = "";
     volatile bool m_IsShuttingDown = false;
 };

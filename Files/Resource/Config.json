@@ -393,6 +393,16 @@
      */
     "terminal": {
         /**
+         * True if NC should ignore customShellPath and use a value from environment: $SHELL.
+         */
+        "useDefaultLoginShell": true,
+        
+        /**
+         * Which shell NC should use, if not the default one.
+         */
+        "customShellPath": "/bin/bash",
+        
+        /**
          * Limit maximum rate of view redrawing, zero is no limit
          */
         "maxFPS": 60,

@@ -12,23 +12,68 @@
 
 static const auto g_ConfigFont = "terminal.font";
 
+// this stuff currently works only in one direction:
+// config -> ObjectiveC property
+// need to make it work bothways and move it to Config.mm after some using
+class ConfigBinder
+{
+public:
+    ConfigBinder( GenericConfig &_config, const char *_config_path, id _object, NSString *_object_key ):
+        m_Config(_config),
+        m_Object(_object),
+        m_ConfigPath(_config_path),
+        m_ObjectKey(_object_key),
+        m_Ticket( _config.Observe(_config_path, [=]{ConfigChanged();}) )
+    {
+        ConfigChanged();
+    }
+    
+    ~ConfigBinder()
+    {
+    }
+    
+private:
+    void ConfigChanged()
+    {
+        if( id v = [GenericConfigObjC valueForKeyPath:m_ConfigPath inConfig:&m_Config] )
+            [m_Object setValue:v forKey:m_ObjectKey];
+    }
+
+    GenericConfig &m_Config;
+    const char *m_ConfigPath;
+    GenericConfig::ObservationTicket m_Ticket;
+    
+    __weak id m_Object;
+    NSString *m_ObjectKey;
+};
+
+
 @interface PreferencesWindowTerminalTab()
 
 @property (strong) IBOutlet NSTextField *fontVisibleName;
+
+@property bool usesDefaultLoginShell;
 
 @end
 
 @implementation PreferencesWindowTerminalTab
 {
     NSFont *m_Font;
+    unique_ptr<ConfigBinder> m_B1;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
+        m_B1 = make_unique<ConfigBinder>( GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell" );
     }
     return self;
+}
+
+- (void) dealloc
+{
+    m_B1.reset();
 }
 
 - (void)loadView

@@ -12,6 +12,15 @@
 #include "InternalViewerController.h"
 #include "InternalViewerWindowController.h"
 
+@interface InternalViewerWindow : NSWindow
+@end
+@implementation InternalViewerWindow
+- (void)cancelOperation:(id)sender
+{
+    [self close];
+}
+@end
+
 @interface InternalViewerWindowController ()
 
 @property (strong) IBOutlet BigFileView *viewerView;
@@ -110,5 +119,6 @@
 {
     [self close];
 }
+
 
 @end

@@ -50,7 +50,8 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
     string cwd = CommonPaths::Home();
-    shell.Launch(cwd.c_str(), 100, 100);
+    shell.ResizeWindow(100, 100);
+    shell.Launch(cwd.c_str());
     testSleep( 5s );
     
     // check cwd
@@ -101,7 +102,7 @@ static string ToRealPath(const string &_from)
     XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
     
     // check execution with short path in different directory
-    shell.Launch(CommonPaths::Home().c_str(), 100, 100);
+    shell.Launch(CommonPaths::Home().c_str());
     testSleep( 1s );
     shell.Execute("top", "/usr/bin/", nullptr);
     testSleep( 1s );
@@ -128,7 +129,8 @@ static string ToRealPath(const string &_from)
     });
     
     unlink((CommonPaths::Home() + ".vim_test.swp").c_str());
-    shell->Launch(CommonPaths::Home().c_str(), 40, 10);
+    shell->ResizeWindow(40, 10);
+    shell->Launch(CommonPaths::Home().c_str());
     testSleep( 5s );
 
     shell->WriteChildInput("vim vim_test\r");

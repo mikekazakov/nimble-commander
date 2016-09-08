@@ -136,8 +136,8 @@ private:
     int m_CwdPipe[2] = {-1, -1};
     string m_TCSH_FifoPath;
     atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
-    int m_TermSX = 0;
-    int m_TermSY = 0;
+    int m_TermSX = 80;
+    int m_TermSY = 25;
     thread m_InputThread;
     string m_RequestedCWD = "";
     string m_CWD = "";

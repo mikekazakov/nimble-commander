@@ -21,6 +21,7 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>
+#include <Habanero/CommonPaths.h>
 #include "TermShellTask.h"
 
 static const int   g_PromptPipe    = 20;
@@ -45,6 +46,14 @@ static TermShellInfo GetShellInfo( TermShellTask::ShellType _shell ) {
         static char *p[3] = {(char*)"-Z", (char*)"-g", 0};
         TermShellInfo i;
         i.shell_prog = "/bin/zsh";
+        i.shell_params = p;
+        return i;
+    }
+
+    if( _shell == TermShellTask::ShellType::TCSH ) {
+        static char *p[2] = {(char*)"tcsh", 0};
+        TermShellInfo i;
+        i.shell_prog = "/bin/tcsh";
         i.shell_params = p;
         return i;
     }
@@ -95,9 +104,24 @@ void TermShellTask::Launch(const char *_work_dir)
     
     int slave_fd = open(ptsname(m_MasterFD), O_RDWR);
     
+    int rc = 0;
     // init FIFO stuff for Shell's CWD
-    int rc = pipe(m_CwdPipe);
-    assert(rc == 0);
+    if( m_ShellType == ShellType::Bash ||
+        m_ShellType == ShellType::ZSH ) {
+        // for Bash or ZSH use regular pipe handle
+        rc = pipe( m_CwdPipe );
+        assert(rc == 0);
+    }
+    else if( m_ShellType == ShellType::TCSH ) {
+        // for TCSH use named fifo file
+        m_TCSH_FifoPath = CommonPaths::AppTemporaryDirectory() + "nimble_commander.tcsh.pipe." + to_string(getpid());
+        
+        rc = mkfifo(m_TCSH_FifoPath.c_str(), 0600);
+        assert( rc == 0 );
+        
+        rc = m_CwdPipe[0] = open(m_TCSH_FifoPath.c_str(), O_RDWR);
+        assert( rc != -1 );
+    }
     
     // Create the child process
     if( (rc = fork()) != 0 ) {
@@ -126,11 +150,16 @@ void TermShellTask::Launch(const char *_work_dir)
             sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; fi'\n", rc);
         else if( m_ShellType == ShellType::ZSH )
             sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", rc);
+        else if( m_ShellType == ShellType::TCSH )
+            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", rc, m_TCSH_FifoPath.c_str());
+        
+        if( !fd_is_valid(m_MasterFD) )
+            cout << "m_MasterFD is dead!" << endl;
         
         LOCK_GUARD(m_MasterWriteLock) {
             ssize_t rc = write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
-            if( rc < 0 || rc != strlen(prompt_setup) ) {
-                cout << "write() returned " << rc << endl;
+            if( rc == -1 ) {
+                cout << "write() error: " << errno << ", verbose: " << strerror(errno) << endl;
             }
         }
         
@@ -148,10 +177,12 @@ void TermShellTask::Launch(const char *_work_dir)
         // put basic environment stuff
         SetEnv(env);
         
-        // setup piping for CWD prompt
-        // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
-        rc = dup2(m_CwdPipe[1], g_PromptPipe);
-        assert(rc == g_PromptPipe);
+        if( m_ShellType != ShellType::TCSH ) {
+            // setup piping for CWD prompt
+            // using FD g_PromptPipe becuse bash is closing fds [3,20) upon opening in logon mode (our case)
+            rc = dup2(m_CwdPipe[1], g_PromptPipe);
+            assert(rc == g_PromptPipe);
+        }
         
         // say BASH to not put into history any command starting with space character
         putenv((char *)"HISTCONTROL=ignorespace");
@@ -181,7 +212,7 @@ void TermShellTask::ReadChildOutput()
     static const int input_sz = 65536;
     char input[65536];
     
-    while(1) {
+    while( true ) {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
         FD_SET(m_MasterFD, &fd_in);
@@ -203,24 +234,24 @@ void TermShellTask::ReadChildOutput()
             goto end_of_all;
         }
         
+        // check BASH_PROMPT output
+        if( FD_ISSET(m_CwdPipe[0], &fd_in) ) {
+            rc = (int)read(m_CwdPipe[0], input, input_sz);
+            if(rc > 0)
+                ProcessPwdPrompt(input, rc);
+        }
+        
         // If data on master side of PTY (some child's output)
-        if(FD_ISSET(m_MasterFD, &fd_in)) {
+        if( FD_ISSET(m_MasterFD, &fd_in) ) {
             // try to read a bit more - wait 1usec to see if any additional data will come in
             unsigned have_read = ReadInputAsMuchAsAvailable(m_MasterFD, input, input_sz);
             if( !m_TemporarySuppressed )
                 DoCalloutOnChildOutput(input, have_read);
         }
         
-        // check BASH_PROMPT output
-        if (FD_ISSET(m_CwdPipe[0], &fd_in)) {
-            rc = (int)read(m_CwdPipe[0], input, input_sz);
-            if(rc > 0)
-                ProcessPwdPrompt(input, rc);
-        }
-        
         // check if child process died
-        if(FD_ISSET(m_MasterFD, &fd_err)) {
-            cout << "shell died: FD_ISSET(m_MasterFD, &fd_err)" << endl;
+        if( FD_ISSET(m_MasterFD, &fd_err) ) {
+//            cout << "shell died: FD_ISSET(m_MasterFD, &fd_err)" << endl;
             if(!m_IsShuttingDown)
                 dispatch_to_main_queue([=]{
                     ShellDied();
@@ -310,41 +341,46 @@ void TermShellTask::WriteChildInput( string_view _data )
 
 void TermShellTask::CleanUp()
 {
-    lock_guard<mutex> lock(m_Lock);
-    
-    if(m_ShellPID > 0) {
-        int pid = m_ShellPID;
-        m_ShellPID = -1;
-        kill(pid, SIGKILL);
+    LOCK_GUARD(m_Lock) {
+        if(m_ShellPID > 0) {
+            int pid = m_ShellPID;
+            m_ShellPID = -1;
+            kill(pid, SIGKILL);
+            
+            // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
+            struct timespec tm, tm2;
+            tm.tv_sec  = 0;
+            tm.tv_nsec = 10000000L; // 10 ms
+            nanosleep(&tm, &tm2);
+            
+            int status;
+            waitpid(pid, &status, 0);
+        }
         
-        // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
-        struct timespec tm, tm2;
-        tm.tv_sec  = 0;
-        tm.tv_nsec = 10000000L; // 10 ms
-        nanosleep(&tm, &tm2);
+        if(m_MasterFD >= 0) {
+            close(m_MasterFD);
+            m_MasterFD = -1;
+        }
         
-        int status;
-        waitpid(pid, &status, 0);
+        if(m_CwdPipe[0] >= 0) {
+            close(m_CwdPipe[0]);
+            m_CwdPipe[0] = m_CwdPipe[1] = -1;
+        }
+        
+        if( !m_TCSH_FifoPath.empty() ) {
+            unlink( m_TCSH_FifoPath.c_str() );
+            m_TCSH_FifoPath.clear();
+        }
+        
+        if( m_InputThread.joinable() )
+            m_InputThread.join();
+        
+        m_TemporarySuppressed = false;
+        m_RequestedCWD = "";
+        m_CWD = "";
+        
+        SetState(TaskState::Inactive);
     }
-    
-    if(m_MasterFD >= 0) {
-        close(m_MasterFD);
-        m_MasterFD = -1;
-    }
-    
-    if(m_CwdPipe[0] >= 0) {
-        close(m_CwdPipe[0]);
-        m_CwdPipe[0] = m_CwdPipe[1] = -1;
-    }
-    
-    if( m_InputThread.joinable() )
-        m_InputThread.join();
-    
-    m_TemporarySuppressed = false;
-    m_RequestedCWD = "";
-    m_CWD = "";
-    
-    SetState(TaskState::Inactive);
 }
 
 void TermShellTask::ShellDied()

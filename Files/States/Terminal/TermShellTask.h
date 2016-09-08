@@ -35,7 +35,8 @@ public:
     
     enum class ShellType {
         Bash = 0,
-        ZSH = 1
+        ZSH = 1,
+        TCSH = 2
     };
 
     void SetOnPwdPrompt( function<void(const char *_cwd, bool _changed)> _callback );
@@ -129,6 +130,7 @@ private:
     spinlock     m_MasterWriteLock;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
+    string m_TCSH_FifoPath;
     atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX = 0;
     int m_TermSY = 0;

@@ -425,12 +425,15 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
 
 int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
 {
-    if(!_path) return VFSError::InvalidCall;
-    if(_path[0] != '/') return VFSError::NotFound;
+    if( !_path )
+        return VFSError::InvalidCall;
+    if( _path[0] != '/' )
+        return VFSError::NotFound;
     
-    if(strlen(_path) == 1) {
+    if( strlen(_path) == 1 ) {
         // we have no info about root dir - dummy here
         memset(&_st, 0, sizeof(_st));
+        _st.mode = S_IRUSR | S_IFDIR;
         return VFSError::Ok;
     }
     

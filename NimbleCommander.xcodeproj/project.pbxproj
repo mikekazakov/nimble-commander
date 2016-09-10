@@ -1125,6 +1125,7 @@
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F3AB1A135D4800011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
+		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */; };
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
@@ -1845,6 +1846,8 @@
 		CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Pro-Info.plist"; path = "Resource/NimbleCommander-Pro-Info.plist"; sourceTree = "<group>"; };
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
+		CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskingForRatingOverlayView.h; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h; sourceTree = SOURCE_ROOT; };
+		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AskingForRatingOverlayView.m; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.m; sourceTree = SOURCE_ROOT; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		CFFE09C71B200CE40091ED4F /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Application.mm; sourceTree = "<group>"; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
@@ -2252,6 +2255,8 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */,
+				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
 				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
@@ -4211,6 +4216,7 @@
 				CF50B6C61A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6CF1A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
+				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.m in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */,
 				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,

@@ -5,6 +5,40 @@
 using namespace std;
 using namespace std::experimental;
 
+optional<int> CFDefaultsGetOptionalInt(CFStringRef _key)
+{
+    int result = 0;
+    
+    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
+    if( !val )
+        return nullopt;
+    auto release_val = at_scope_end([=]{ CFRelease(val); });
+    
+    if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
+        CFNumberRef num = (CFNumberRef)val;
+        CFNumberGetValue(num, kCFNumberIntType, &result);
+    }
+    
+    return result;
+}
+
+optional<long> CFDefaultsGetOptionalLong(CFStringRef _key)
+{
+    long result = 0;
+    
+    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
+    if( !val )
+        return nullopt;
+    auto release_val = at_scope_end([=]{ CFRelease(val); });
+    
+    if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
+        CFNumberRef num = (CFNumberRef)val;
+        CFNumberGetValue(num, kCFNumberLongType, &result);
+    }
+    
+    return result;
+}
+
 bool CFDefaultsGetBool(CFStringRef _key)
 {
     return CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, nullptr);
@@ -44,6 +78,24 @@ double CFDefaultsGetDouble(CFStringRef _key)
 void CFDefaultsSetDouble(CFStringRef _key, double _value)
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
+    if( !num )
+        return;
+    auto release_val = at_scope_end([=]{ CFRelease(num); });
+    CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
+}
+
+void CFDefaultsSetInt(CFStringRef _key, int _value)
+{
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
+    if( !num )
+        return;
+    auto release_val = at_scope_end([=]{ CFRelease(num); });
+    CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
+}
+
+void CFDefaultsSetLong(CFStringRef _key, long _value)
+{
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });

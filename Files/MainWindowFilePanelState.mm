@@ -111,7 +111,7 @@ static void SetupRatingOverlay(NSView *_background_view)
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
                                                                                      window:_wnd];
         // setup background view if any show be shown
-        if( FeedbackManager::Instance().ShouldShowRatingOverlayWindow() )
+        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
             SetupRatingOverlay( m_OpSummaryController.backgroundView );
         else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
             SetupUnregisteredLabel(m_OpSummaryController.backgroundView);

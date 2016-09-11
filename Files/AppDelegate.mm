@@ -44,6 +44,7 @@
 #include "../NimbleCommander/Viewer/InternalViewerController.h"
 #include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
 #include "../NimbleCommander/GeneralUI/VFSListWindowController.h"
+#include "../NimbleCommander/Core/FeedbackManager.h"
 
 #include "AppStoreHelper.h"
 
@@ -254,6 +255,7 @@ static AppDelegate *g_Me = nil;
     VFSFactory::Instance().RegisterVFS(        VFSXAttrHost::Meta() );
     
     NativeFSManager::Instance();
+    FeedbackManager::Instance();
     
     [self updateMainMenuFeaturesByVersionAndState];
     

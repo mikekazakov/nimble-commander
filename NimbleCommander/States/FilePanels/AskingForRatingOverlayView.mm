@@ -1,5 +1,5 @@
+#include "../../Core/FeedbackManager.h"
 #include "AskingForRatingOverlayView.h"
-
 
 @interface AskingForRatingOverlayLevelIndicator : NSLevelIndicator
 @end
@@ -53,8 +53,6 @@
     NSButton                                *m_DiscardButton;
     int                                     m_Rating;
 }
-
-@synthesize userRating = m_Rating;
 
 - (instancetype) initWithFrame:(NSRect)frameRect
 {
@@ -182,11 +180,13 @@
 {
     AskingForRatingOverlayView *v = self;
     [self removeFromSuperview];
+ 
+    const auto result = m_Rating;
+    dispatch_to_main_queue([=]{
+        FeedbackManager::Instance().CommitRatingOverlayResult(result);
+    });
     
-    if( self.action )
-        [self sendAction:self.action to:self.target];
-    
-    v = nil; // at this moment ARC should kill us
+   v = nil; // at this moment ARC should kill us
 }
 
 - (void)updateTrackingAreas

@@ -30,6 +30,8 @@
 #include "ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
+#include "../NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h"
+#include "../NimbleCommander/Core/FeedbackManager.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -57,7 +59,7 @@ static string ExpandPath(const string &_ref )
     return {};
 }
 
-void SetupUnregisteredLabel(NSView *_background_view)
+static void SetupUnregisteredLabel(NSView *_background_view)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     tf.translatesAutoresizingMaskIntoConstraints = false;
@@ -87,6 +89,12 @@ void SetupUnregisteredLabel(NSView *_background_view)
     [_background_view layoutSubtreeIfNeeded];
 }
 
+static void SetupRatingOverlay(NSView *_background_view)
+{
+    AskingForRatingOverlayView *v = [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds];
+    [_background_view addSubview:v];
+}
+
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
@@ -102,8 +110,10 @@ void SetupUnregisteredLabel(NSView *_background_view)
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
                                                                                      window:_wnd];
-        if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
-            !ActivationManager::Instance().UserHadRegistered() )
+        // setup background view if any show be shown
+        if( FeedbackManager::Instance().ShouldShowRatingOverlayWindow() )
+            SetupRatingOverlay( m_OpSummaryController.backgroundView );
+        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
             SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
         
         m_LeftPanelControllers.emplace_back([PanelController new]);

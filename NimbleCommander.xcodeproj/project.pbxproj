@@ -890,6 +890,13 @@
 		CFB060DD172E6AC4001F6949 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB060DC172E6AC4001F6949 /* Common.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
+		CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
+		CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
+		CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
+		CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
+		CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
+		CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
+		CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
@@ -1125,7 +1132,7 @@
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F3AB1A135D4800011177 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
-		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */; };
+		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFFE09C81B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09C91B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFFE09CA1B200CE40091ED4F /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
@@ -1680,6 +1687,8 @@
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
+		CFB66F901D8537A90017D2A0 /* FeedbackManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManager.h; path = NimbleCommander/Core/FeedbackManager.h; sourceTree = SOURCE_ROOT; };
+		CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackManager.mm; path = NimbleCommander/Core/FeedbackManager.mm; sourceTree = SOURCE_ROOT; };
 		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
@@ -1847,7 +1856,7 @@
 		CFF6F3A61A13586600011177 /* NimbleCommander-Pro-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "NimbleCommander-Pro-Info.plist"; path = "Resource/NimbleCommander-Pro-Info.plist"; sourceTree = "<group>"; };
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
 		CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskingForRatingOverlayView.h; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h; sourceTree = SOURCE_ROOT; };
-		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AskingForRatingOverlayView.m; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.m; sourceTree = SOURCE_ROOT; };
+		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskingForRatingOverlayView.mm; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.mm; sourceTree = SOURCE_ROOT; };
 		CFFE09C61B200CE40091ED4F /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		CFFE09C71B200CE40091ED4F /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Application.mm; sourceTree = "<group>"; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
@@ -2256,7 +2265,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */,
-				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.m */,
+				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */,
 				CF27415218046A6E006D6687 /* BriefSystemOverview.h */,
 				CF27415318046A6E006D6687 /* BriefSystemOverview.mm */,
 				CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */,
@@ -2716,6 +2725,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
+				CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */,
 				CF0939401D12B14700D67AC6 /* ActionShortcut.h */,
 				CF0939411D12B14700D67AC6 /* ActionShortcut.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
@@ -3684,6 +3695,7 @@
 				CF50B7471A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF6D9C6F1966780D0077B146 /* AppleDoubleEA.cpp in Sources */,
 				CF50B7441A15173100E3D96D /* VFSEasyOps.mm in Sources */,
+				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E33DE1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */,
 				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
@@ -3853,6 +3865,7 @@
 				CF50C40F1C0ADE38009DF611 /* FileCompressOperation.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
+				CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CF50C44C1C0ADEFC009DF611 /* xattr.cpp in Sources */,
 				CF6D9BD9196677CA0077B146 /* ButtonWithOptions.m in Sources */,
 				CF6D9BDA196677CA0077B146 /* main.m in Sources */,
@@ -3918,6 +3931,7 @@
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
 				CFA5398E1D433E2A00C562A7 /* VFSError.mm in Sources */,
 				CFA5398F1D433E2A00C562A7 /* VFSArchiveHost.mm in Sources */,
+				CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFA539901D433E2A00C562A7 /* PanelController+DelayedSelection.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFA539921D433E2A00C562A7 /* Job.cpp in Sources */,
@@ -4014,6 +4028,7 @@
 				CFA539E81D433E2A00C562A7 /* DataBlockAnalysis.mm in Sources */,
 				CFA539E91D433E2A00C562A7 /* MainWindowFilePanelState.mm in Sources */,
 				CFA539EA1D433E2A00C562A7 /* TermShellTask.cpp in Sources */,
+				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
 				CFA539EB1D433E2A00C562A7 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */,
@@ -4120,6 +4135,7 @@
 				CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
+				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */,
 				CF73D1FC1BE619B20014C88F /* VFSArchiveHost.mm in Sources */,
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
@@ -4216,7 +4232,7 @@
 				CF50B6C61A15167800E3D96D /* VFSFile.cpp in Sources */,
 				CF50B6CF1A15167800E3D96D /* VFSPath.cpp in Sources */,
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
-				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.m in Sources */,
+				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
 				CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */,
 				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,
@@ -4331,6 +4347,7 @@
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */,
+				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CF50C4401C0ADEE4009DF611 /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF50C4321C0ADEBB009DF611 /* VFSListing.cpp in Sources */,
 				CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */,
@@ -4427,6 +4444,7 @@
 				CF50C44A1C0ADEF7009DF611 /* VFSNativeHost.mm in Sources */,
 				CF46DB7C1C856F37009E28B9 /* TermScreenBuffer.cpp in Sources */,
 				CF50B74B1A15173100E3D96D /* VFSSeqToRandomWrapper.cpp in Sources */,
+				CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,

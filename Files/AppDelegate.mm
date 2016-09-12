@@ -147,20 +147,6 @@ static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
     return pi;
 }
 
-static void BringFeedbackMessageEditor()
-{
-    NSString *toAddress = @"feedback@magnumbytes.com";
-    NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
-    NSString *bodyText = @"Write your message here.";
-    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
-    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
-}
-
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -508,7 +494,7 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnMenuSendFeedback:(id)sender
 {
-    BringFeedbackMessageEditor();
+    FeedbackManager::Instance().EmailFeedback();
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender

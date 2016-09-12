@@ -22,6 +22,12 @@ public:
      * Will reset any information about application usage.
      */
     void ResetStatistics();
+    
+    void EmailFeedback();
+    void RateOnAppStore();
+    void ShareOnFacebook();
+    void ShareOnTwitter();
+    void ShareOnLinkedIn();
 private:
     FeedbackManager();
     

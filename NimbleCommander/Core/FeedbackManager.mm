@@ -1,4 +1,6 @@
 #include <Habanero/CFDefaultsCPP.h>
+#include "../../Files/ActivationManager.h"
+#include "../GeneralUI/FeedbackWindow.h"
 #include "FeedbackManager.h"
 
 static const auto g_RunsKey = CFSTR("feedbackApplicationRunsCount");
@@ -80,14 +82,20 @@ void FeedbackManager::CommitRatingOverlayResult(int _result)
     CFDefaultsSetInt(g_LastRatingKey, *m_LastRating);
     CFDefaultsSetLong(g_LastRatingTimeKey, *m_LastRatingTime);
     
-    // do something
-    
+    if( _result > 0 ) {
+        // used clicked at some star - lets show a window then
+        FeedbackWindow *w = [[FeedbackWindow alloc] init];
+        w.rating = _result;
+        [w showWindow:nil];
+    }
 }
 
 bool FeedbackManager::ShouldShowRatingOverlayView()
 {
     if( m_ShownRatingOverlay )
         return false; // show only once per run anyway
+    
+    return m_ShownRatingOverlay = true;    
     
     const auto now = time(nullptr);
     const auto repeated_show_delay_on_result = 180l * 24l * 3600l; // 180 days
@@ -136,4 +144,45 @@ void FeedbackManager::ResetStatistics()
     CFDefaultsRemoveValue(g_FirstRunKey);
     CFDefaultsRemoveValue(g_LastRatingKey);
     CFDefaultsRemoveValue(g_LastRatingTimeKey);
+}
+
+void FeedbackManager::EmailFeedback()
+{
+    NSString *toAddress = @"feedback@magnumbytes.com";
+    NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
+    NSString *bodyText = @"Write your message here.";
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
+}
+
+void FeedbackManager::RateOnAppStore()
+{
+    NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
+                                 ActivationManager::Instance().AppStoreID().c_str()];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
+}
+
+static const auto g_SocialMessage = @"I use Nimble Commander - a dual-pane file manager for macOS, and it's great! http://magnumbytes.com/";
+
+void FeedbackManager::ShareOnFacebook()
+{
+    if( auto fb = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnFacebook] )
+        [fb performWithItems:@[g_SocialMessage]];
+}
+
+void FeedbackManager::ShareOnTwitter()
+{
+    if( auto tw = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnTwitter] )
+        [tw performWithItems:@[g_SocialMessage]];
+}
+
+void FeedbackManager::ShareOnLinkedIn()
+{
+    if( auto li = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnLinkedIn] )
+        [li performWithItems:@[g_SocialMessage]];
 }

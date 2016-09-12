@@ -897,6 +897,14 @@
 		CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
+		CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
+		CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
+		CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
+		CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
+		CFB66FA51D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
+		CFB66FA61D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
+		CFB66FA71D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
+		CFB66FA81D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
@@ -1689,6 +1697,9 @@
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
 		CFB66F901D8537A90017D2A0 /* FeedbackManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManager.h; path = NimbleCommander/Core/FeedbackManager.h; sourceTree = SOURCE_ROOT; };
 		CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackManager.mm; path = NimbleCommander/Core/FeedbackManager.mm; sourceTree = SOURCE_ROOT; };
+		CFB66F9E1D863EDD0017D2A0 /* FeedbackWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackWindow.h; path = NimbleCommander/GeneralUI/FeedbackWindow.h; sourceTree = SOURCE_ROOT; };
+		CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackWindow.mm; path = NimbleCommander/GeneralUI/FeedbackWindow.mm; sourceTree = SOURCE_ROOT; };
+		CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedbackWindow.xib; path = NimbleCommander/GeneralUI/FeedbackWindow.xib; sourceTree = SOURCE_ROOT; };
 		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
@@ -2725,6 +2736,7 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFB66F9D1D863E5B0017D2A0 /* Marketing */,
 				CF0939401D12B14700D67AC6 /* ActionShortcut.h */,
 				CF0939411D12B14700D67AC6 /* ActionShortcut.mm */,
 				CF7AB35E18BDC7BA00D71B0D /* ActionsShortcutsManager.h */,
@@ -2733,11 +2745,6 @@
 				CFA1834D1C9F028600544633 /* ActivationManager.h */,
 				CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */,
 				CFCD87FB18143F5500D82455 /* AppleDoubleEA.h */,
-				CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */,
-				CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */,
-				CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */,
-				CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */,
-				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
 				CF0A40191B60BA00002A092B /* BlinkingCaret.h */,
 				CF0A40181B60BA00002A092B /* BlinkingCaret.mm */,
 				CF7C93BD1A0DF8BA00FAE649 /* ByteCountFormatter.h */,
@@ -2750,8 +2757,6 @@
 				CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */,
 				CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */,
 				CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */,
-				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
-				CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */,
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
 				CF4E56E91D50712C00452912 /* FileMask.cpp */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
@@ -2818,6 +2823,23 @@
 				CFB598C0196E3A1F00D4C108 /* Help.pdf */,
 			);
 			name = Doc;
+			sourceTree = "<group>";
+		};
+		CFB66F9D1D863E5B0017D2A0 /* Marketing */ = {
+			isa = PBXGroup;
+			children = (
+				CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */,
+				CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */,
+				CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */,
+				CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */,
+				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
+				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
+				CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */,
+				CFB66F9E1D863EDD0017D2A0 /* FeedbackWindow.h */,
+				CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */,
+				CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */,
+			);
+			name = Marketing;
 			sourceTree = "<group>";
 		};
 		CFB7099C18D7007D00A83E61 /* Net */ = {
@@ -3385,6 +3407,7 @@
 				CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */,
+				CFB66FA71D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */,
 				CF1E3D211D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
@@ -3440,6 +3463,7 @@
 				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFA53A551D433E2A00C562A7 /* OperationsSummaryViewController.xib in Resources */,
+				CFB66FA61D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */,
 				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF56BF011D5C85C800A08D2B /* InternalViewerController.xib in Resources */,
 				CFA53A571D433E2A00C562A7 /* Operations.strings in Resources */,
@@ -3504,6 +3528,7 @@
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */,
+				CFB66FA51D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */,
 				CF1E3D1F1D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */,
@@ -3568,6 +3593,7 @@
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
+				CFB66FA81D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */,
 				CF1E3D221D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
@@ -3791,6 +3817,7 @@
 				CF6D9C42196678010077B146 /* PanelController+DataAccess.mm in Sources */,
 				CF6D9C43196678010077B146 /* PanelController+DelayedSelection.mm in Sources */,
 				CF6D9C44196678010077B146 /* PanelController+QuickSearch.mm in Sources */,
+				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF6D9C45196678010077B146 /* PanelController+DragAndDrop.mm in Sources */,
 				CF6D9C46196678010077B146 /* PanelController+Menu.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
@@ -3980,6 +4007,7 @@
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
 				CF1E3D151D59A4A600609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFA539BA1D433E2A00C562A7 /* FilePanelMainSplitView.mm in Sources */,
+				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
 				CFA539BC1D433E2A00C562A7 /* ActivationManager.cpp in Sources */,
 				CFA539BD1D433E2A00C562A7 /* PanelAux.mm in Sources */,
@@ -4184,6 +4212,7 @@
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
+				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
 				CFA1834E1C9F028600544633 /* ActivationManager.cpp in Sources */,
@@ -4396,6 +4425,7 @@
 				CFF6F2C91A13567C00011177 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFF6F2CA1A13567C00011177 /* PanelController+Navigation.mm in Sources */,
 				CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF4E33D91B78CF60005B5292 /* PanelController+NavigationMenu.mm in Sources */,
 				CF50C4451C0ADEEC009DF611 /* DisplayNamesCache.mm in Sources */,

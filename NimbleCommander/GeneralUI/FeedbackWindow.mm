@@ -37,15 +37,14 @@
     [super windowDidLoad];
     m_Self = self;
     
-    //- (void)selectTabViewItemAtIndex:(NSInteger)index;
-    if( self.rating == 5 || self.rating == 4 ) {
+    if( self.rating == 5 || self.rating == 4) {
         // positive branch
         if( ActivationManager::ForAppStore() )
             [self.tabView selectTabViewItemAtIndex:0];
         else
             [self.tabView selectTabViewItemAtIndex:1];
     }
-    else if( self.rating == 3 ) {
+    else if( self.rating == 3 || self.rating == 2 ) {
         // neutral branch
         [self.tabView selectTabViewItemAtIndex:2];
     }
@@ -65,6 +64,11 @@
 - (IBAction)onEmailFeedback:(id)sender
 {
     FeedbackManager::Instance().EmailFeedback();
+}
+
+- (IBAction)onHelp:(id)sender
+{
+    FeedbackManager::Instance().EmailSupport();
 }
 
 - (IBAction)onRate:(id)sender

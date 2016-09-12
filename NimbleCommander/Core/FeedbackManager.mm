@@ -153,7 +153,21 @@ void FeedbackManager::EmailFeedback()
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
-    NSString *bodyText = @"Write your message here.";
+    NSString *bodyText = @"Please write your feedback here.";
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
+}
+
+void FeedbackManager::EmailSupport()
+{
+    NSString *toAddress = @"support@magnumbytes.com";
+    NSString *subject = [NSString stringWithFormat: @"Support on %@ version %@ (%@)",
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
+    NSString *bodyText = @"Please describle your issues with Nimble Commander here.";
     NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
     NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     

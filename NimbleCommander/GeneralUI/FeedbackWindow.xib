@@ -208,12 +208,133 @@
                                 <view key="view" id="1aK-48-heK">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxA-ww-rzk">
+                                            <rect key="frame" x="18" y="233" width="444" height="17"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to improve your experience with Nimble Commander!" id="sVB-UR-1so">
+                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KSp-6u-4fh">
+                                            <rect key="frame" x="18" y="185" width="444" height="34"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We strive to create best-in-class software. Please take this opportunity to let us know how we can assist you." id="kMv-Qv-KdY">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PHl-HC-HuZ">
+                                            <rect key="frame" x="18" y="120" width="444" height="51"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="el2-0A-aKl">
+                                                <font key="font" metaFont="system"/>
+                                                <string key="title">Use the "Get Help" button to describle issues you've encountered, or you can send us an email with any feedback you may want to share. Thanks, we're listening!</string>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j08-TQ-eu2">
+                                            <rect key="frame" x="14" y="13" width="136" height="32"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Myu-zI-F1H"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="push" title="Email Feedback" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="b7R-xN-rjn">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="onEmailFeedback:" target="-2" id="g2e-2T-nus"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8C8-d7-nZh">
+                                            <rect key="frame" x="372" y="13" width="94" height="32"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="FTG-A1-LSy"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="push" title="Get Help" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xzC-7m-M6s">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="onHelp:" target="-2" id="TF8-It-yBc"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="PHl-HC-HuZ" secondAttribute="trailing" constant="20" symbolic="YES" id="9Ab-p7-WfP"/>
+                                        <constraint firstItem="PHl-HC-HuZ" firstAttribute="leading" secondItem="1aK-48-heK" secondAttribute="leading" constant="20" symbolic="YES" id="ErG-Us-zR7"/>
+                                        <constraint firstAttribute="trailing" secondItem="fxA-ww-rzk" secondAttribute="trailing" constant="20" symbolic="YES" id="IEt-yO-axY"/>
+                                        <constraint firstItem="fxA-ww-rzk" firstAttribute="top" secondItem="1aK-48-heK" secondAttribute="top" constant="20" symbolic="YES" id="IPs-Vh-bUU"/>
+                                        <constraint firstAttribute="bottom" secondItem="j08-TQ-eu2" secondAttribute="bottom" constant="20" symbolic="YES" id="L5U-uE-DaQ"/>
+                                        <constraint firstAttribute="bottom" secondItem="8C8-d7-nZh" secondAttribute="bottom" constant="20" symbolic="YES" id="Lc8-8J-680"/>
+                                        <constraint firstItem="KSp-6u-4fh" firstAttribute="top" secondItem="fxA-ww-rzk" secondAttribute="bottom" constant="14" id="MQU-bj-pRR"/>
+                                        <constraint firstItem="KSp-6u-4fh" firstAttribute="leading" secondItem="1aK-48-heK" secondAttribute="leading" constant="20" symbolic="YES" id="SDR-RL-ohX"/>
+                                        <constraint firstItem="fxA-ww-rzk" firstAttribute="leading" secondItem="1aK-48-heK" secondAttribute="leading" constant="20" symbolic="YES" id="cYH-Pz-orn"/>
+                                        <constraint firstItem="j08-TQ-eu2" firstAttribute="leading" secondItem="1aK-48-heK" secondAttribute="leading" constant="20" symbolic="YES" id="cuj-dy-atp"/>
+                                        <constraint firstAttribute="trailing" secondItem="8C8-d7-nZh" secondAttribute="trailing" constant="20" symbolic="YES" id="hLs-W4-Rrw"/>
+                                        <constraint firstItem="PHl-HC-HuZ" firstAttribute="top" secondItem="KSp-6u-4fh" secondAttribute="bottom" constant="14" id="v57-Ef-ws4"/>
+                                        <constraint firstAttribute="trailing" secondItem="KSp-6u-4fh" secondAttribute="trailing" constant="20" symbolic="YES" id="xqn-1l-iTl"/>
+                                    </constraints>
                                 </view>
                             </tabViewItem>
                             <tabViewItem identifier="3" id="DJb-gb-OTt" userLabel="Negative">
                                 <view key="view" id="6fn-k4-lnK">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rbh-6b-jYa">
+                                            <rect key="frame" x="18" y="233" width="444" height="17"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to hear from you." id="O76-JY-rBG">
+                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lBe-pS-dc1">
+                                            <rect key="frame" x="18" y="168" width="444" height="51"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="nqC-L8-L0Y">
+                                                <font key="font" metaFont="system"/>
+                                                <string key="title">Please tell us more about your experience with Nimble Commander. Especially if you feel that a specific function is missing, could be improved, or doesn't work correctly, we want to know about it.</string>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ral-Uh-n6h">
+                                            <rect key="frame" x="330" y="13" width="136" height="32"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="abH-C6-WDY"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="push" title="Email Feedback" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aMn-8e-VEV">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="onEmailFeedback:" target="-2" id="HRJ-dA-E1A"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c9K-7g-hAo">
+                                            <rect key="frame" x="18" y="137" width="444" height="17"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Listening to your feedback is how we keep improving our software." id="ZOg-yO-bAY">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="ral-Uh-n6h" secondAttribute="trailing" constant="20" symbolic="YES" id="11a-0o-84x"/>
+                                        <constraint firstAttribute="trailing" secondItem="lBe-pS-dc1" secondAttribute="trailing" constant="20" symbolic="YES" id="Cf4-vd-LQe"/>
+                                        <constraint firstAttribute="bottom" secondItem="ral-Uh-n6h" secondAttribute="bottom" constant="20" symbolic="YES" id="HRq-JR-pft"/>
+                                        <constraint firstItem="Rbh-6b-jYa" firstAttribute="top" secondItem="6fn-k4-lnK" secondAttribute="top" constant="20" symbolic="YES" id="LW8-Lr-HYt"/>
+                                        <constraint firstAttribute="trailing" secondItem="c9K-7g-hAo" secondAttribute="trailing" constant="20" symbolic="YES" id="MAh-Mi-014"/>
+                                        <constraint firstItem="c9K-7g-hAo" firstAttribute="top" secondItem="lBe-pS-dc1" secondAttribute="bottom" constant="14" id="VFv-eb-ggY"/>
+                                        <constraint firstItem="lBe-pS-dc1" firstAttribute="leading" secondItem="6fn-k4-lnK" secondAttribute="leading" constant="20" symbolic="YES" id="e4l-kh-cEN"/>
+                                        <constraint firstItem="lBe-pS-dc1" firstAttribute="top" secondItem="Rbh-6b-jYa" secondAttribute="bottom" constant="14" id="glE-yL-gh1"/>
+                                        <constraint firstItem="Rbh-6b-jYa" firstAttribute="leading" secondItem="6fn-k4-lnK" secondAttribute="leading" constant="20" symbolic="YES" id="hg6-zU-FXG"/>
+                                        <constraint firstAttribute="trailing" secondItem="Rbh-6b-jYa" secondAttribute="trailing" constant="20" symbolic="YES" id="lQh-R3-a64"/>
+                                        <constraint firstItem="c9K-7g-hAo" firstAttribute="leading" secondItem="6fn-k4-lnK" secondAttribute="leading" constant="20" symbolic="YES" id="wLw-a2-Vaq"/>
+                                    </constraints>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
@@ -229,7 +350,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-13" y="123"/>
+            <point key="canvasLocation" x="-65" y="184"/>
         </window>
     </objects>
     <resources>

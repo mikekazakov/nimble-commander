@@ -24,6 +24,7 @@ public:
     void ResetStatistics();
     
     void EmailFeedback();
+    void EmailSupport();
     void RateOnAppStore();
     void ShareOnFacebook();
     void ShareOnTwitter();

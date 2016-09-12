@@ -1,5 +1,6 @@
 #include <Habanero/CFDefaultsCPP.h>
 #include "../../Files/ActivationManager.h"
+#include "../../Files/GoogleAnalytics.h"
 #include "../GeneralUI/FeedbackWindow.h"
 #include "FeedbackManager.h"
 
@@ -73,8 +74,13 @@ FeedbackManager& FeedbackManager::Instance()
 
 void FeedbackManager::CommitRatingOverlayResult(int _result)
 {
+    dispatch_assert_main_queue();
+    
     if( _result < 0 || _result > 5 )
         return;
+    
+    const char *labels[] = { "Discard", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars" };
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
     
     m_LastRating = _result;
     m_LastRatingTime = time(nullptr);
@@ -89,20 +95,25 @@ void FeedbackManager::CommitRatingOverlayResult(int _result)
         [w showWindow:nil];
     }
 }
-
 bool FeedbackManager::ShouldShowRatingOverlayView()
 {
     if( m_ShownRatingOverlay )
         return false; // show only once per run anyway
-    
-    return m_ShownRatingOverlay = true;    
-    
+
+    if( IsEligibleForRatingOverlay() )
+        return m_ShownRatingOverlay = true;
+
+    return false;
+}
+
+bool FeedbackManager::IsEligibleForRatingOverlay() const
+{
     const auto now = time(nullptr);
     const auto repeated_show_delay_on_result = 180l * 24l * 3600l; // 180 days
     const auto repeated_show_delay_on_discard = 7l * 24l * 3600l; // 7 days
     const auto min_runs = 20;
     const auto min_hours = 10;
-    const auto min_days = 14;
+    const auto min_days = 10;
     
     if( m_LastRating  ) {
         // user had reacted to rating overlay at least once
@@ -111,14 +122,14 @@ bool FeedbackManager::ShouldShowRatingOverlayView()
             // user has discarded question
             if( now - when > repeated_show_delay_on_discard  ) {
                 // we can let ourselves to try to bother user again
-                return m_ShownRatingOverlay = true;
+                return true;
             }
         }
         else {
             // used has clicked to some star
             if( now - when > repeated_show_delay_on_result  ) {
                 // it was a long time ago, we can ask for rating again
-                return m_ShownRatingOverlay = true;
+                return true;
             }
         }
     }
@@ -131,7 +142,7 @@ bool FeedbackManager::ShouldShowRatingOverlayView()
         if( runs >= min_runs &&
             hours_used >= min_hours &&
             days_since_first_run >= min_days )
-            return m_ShownRatingOverlay = true;
+            return true;
     }
     
     return false;
@@ -148,6 +159,7 @@ void FeedbackManager::ResetStatistics()
 
 void FeedbackManager::EmailFeedback()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Email Feedback");
     NSString *toAddress = @"feedback@magnumbytes.com";
     NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
@@ -162,6 +174,7 @@ void FeedbackManager::EmailFeedback()
 
 void FeedbackManager::EmailSupport()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Email Support");
     NSString *toAddress = @"support@magnumbytes.com";
     NSString *subject = [NSString stringWithFormat: @"Support on %@ version %@ (%@)",
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
@@ -176,27 +189,31 @@ void FeedbackManager::EmailSupport()
 
 void FeedbackManager::RateOnAppStore()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Rate on AppStore");
     NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
                                  ActivationManager::Instance().AppStoreID().c_str()];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
-static const auto g_SocialMessage = @"I use Nimble Commander - a dual-pane file manager for macOS, and it's great! http://magnumbytes.com/";
+static const auto g_SocialMessage = @"I use Nimble Commander - a great dual-pane file manager for macOS! http://magnumbytes.com/";
 
 void FeedbackManager::ShareOnFacebook()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on Facebook");
     if( auto fb = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnFacebook] )
         [fb performWithItems:@[g_SocialMessage]];
 }
 
 void FeedbackManager::ShareOnTwitter()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on Twitter");
     if( auto tw = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnTwitter] )
         [tw performWithItems:@[g_SocialMessage]];
 }
 
 void FeedbackManager::ShareOnLinkedIn()
 {
+    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on LinkedIn");
     if( auto li = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnLinkedIn] )
         [li performWithItems:@[g_SocialMessage]];
 }

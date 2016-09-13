@@ -1,3 +1,4 @@
+#include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
@@ -47,6 +48,28 @@ static time_t GetOrSetFirstRunTime()
     }
     CFDefaultsSetLong(g_FirstRunKey, now);
     return now;
+}
+
+// http://stackoverflow.com/questions/7627058/how-to-determine-internet-connection-in-cocoa
+static bool HasInternetConnection()
+{
+    bool returnValue = false;
+    
+    struct sockaddr zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sa_len = sizeof(zeroAddress);
+    zeroAddress.sa_family = AF_INET;
+    
+    if( auto reachabilityRef = SCNetworkReachabilityCreateWithAddress(NULL, (const struct sockaddr*)&zeroAddress) ) {
+        SCNetworkReachabilityFlags flags = 0;
+        if( SCNetworkReachabilityGetFlags(reachabilityRef, &flags) ) {
+            BOOL isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
+            BOOL connectionRequired = ((flags & kSCNetworkFlagsConnectionRequired) != 0);
+            returnValue = (isReachable && !connectionRequired) ? true : false;
+        }
+        CFRelease(reachabilityRef);
+    }
+    return returnValue;
 }
 
 FeedbackManager::FeedbackManager():
@@ -101,7 +124,8 @@ bool FeedbackManager::ShouldShowRatingOverlayView()
         return false; // show only once per run anyway
 
     if( IsEligibleForRatingOverlay() )
-        return m_ShownRatingOverlay = true;
+        if( HasInternetConnection() )
+            return m_ShownRatingOverlay = true;
 
     return false;
 }

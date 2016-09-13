@@ -35,7 +35,6 @@
 #include "MASAppInstalledChecker.h"
 #include "TrialWindowController.h"
 #include "RoutedIO.h"
-#include "AppStoreRatings.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
@@ -341,9 +340,8 @@ static AppDelegate *g_Me = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
     
-    if( ActivationManager::ForAppStore() ) // if we're building for AppStore - check if we want to ask user for rating
-        AppStoreRatings::Instance().Go();
-    else if( !self.isRunningTests ) {
+    // Non-MAS version stuff below:
+    if( !ActivationManager::ForAppStore() && !self.isRunningTests ) {
         if( ActivationManager::Instance().ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, []{ [TrialWindowController showTrialWindow]; });
 

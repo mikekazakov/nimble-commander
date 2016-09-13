@@ -365,15 +365,6 @@
 		CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
-		CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
-		CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
-		CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
-		CF5410191A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */; };
-		CF54101A1A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */; };
-		CF54101B1A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */; };
-		CF54101F1A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
-		CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
-		CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
@@ -696,7 +687,6 @@
 		CFA539901D433E2A00C562A7 /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
 		CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CFA539921D433E2A00C562A7 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9069711BB54035000C3CBB /* Job.cpp */; };
-		CFA539931D433E2A00C562A7 /* AppStoreRatingsSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */; };
 		CFA539941D433E2A00C562A7 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFA539961D433E2A00C562A7 /* IconsGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29312E17D79BA100648A90 /* IconsGenerator.mm */; };
@@ -723,7 +713,6 @@
 		CFA539AE1D433E2A00C562A7 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */; };
 		CFA539B01D433E2A00C562A7 /* VFSGenericMemReadOnlyFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73C1A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp */; };
-		CFA539B11D433E2A00C562A7 /* AppStoreRatings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */; };
 		CFA539B21D433E2A00C562A7 /* VFSEasyOps.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B73B1A15173100E3D96D /* VFSEasyOps.mm */; };
 		CFA539B31D433E2A00C562A7 /* ButtonWithOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A23002171E81ED00D9C1A6 /* ButtonWithOptions.m */; };
 		CFA539B41D433E2A00C562A7 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E8531A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm */; };
@@ -849,7 +838,6 @@
 		CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFA53A3D1D433E2A00C562A7 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
-		CFA53A3F1D433E2A00C562A7 /* AppStoreRatingsSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */; };
 		CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
@@ -1439,11 +1427,6 @@
 		CF50B75C1A1607AA00E3D96D /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
 		CF50C4761C0EB52A009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
 		CF50C4771C0EB6A0009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MassCopySheetController.strings; sourceTree = "<group>"; };
-		CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatings.mm; sourceTree = "<group>"; };
-		CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatings.h; sourceTree = "<group>"; };
-		CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppStoreRatingsSheetController.h; sourceTree = "<group>"; };
-		CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppStoreRatingsSheetController.mm; sourceTree = "<group>"; };
-		CF5410221A90E15F003CD7A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AppStoreRatingsSheetController.xib; sourceTree = "<group>"; };
 		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
@@ -1707,7 +1690,6 @@
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
 		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
 		CFB8CDBC1D82BFAD007B1142 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
-		CFB8FA291A93A5500009315A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AppStoreRatingsSheetController.strings; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC044DA1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
@@ -2828,11 +2810,6 @@
 		CFB66F9D1D863E5B0017D2A0 /* Marketing */ = {
 			isa = PBXGroup;
 			children = (
-				CF5410121A90D0AC003CD7A7 /* AppStoreRatings.h */,
-				CF5410111A90D0AC003CD7A7 /* AppStoreRatings.mm */,
-				CF5410161A90DA99003CD7A7 /* AppStoreRatingsSheetController.h */,
-				CF5410171A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm */,
-				CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */,
 				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
 				CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */,
 				CFB66F9E1D863EDD0017D2A0 /* FeedbackWindow.h */,
@@ -3387,7 +3364,6 @@
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */,
-				CF5410201A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0901CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
@@ -3441,7 +3417,6 @@
 				CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */,
 				CF876D551D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
 				CF4E56C81D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
-				CFA53A3F1D433E2A00C562A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */,
 				CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */,
@@ -3505,7 +3480,6 @@
 				CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
-				CF54101F1A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFD6DD1B1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF876D541D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
@@ -3574,7 +3548,6 @@
 				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFCCFBD81A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
-				CF5410211A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib in Resources */,
 				CFFED0911CC0B41F0059611B /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -3766,7 +3739,6 @@
 				CF50C4501C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
 				CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
-				CF5410141A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
@@ -3781,7 +3753,6 @@
 				CF0A401B1B60BA00002A092B /* BlinkingCaret.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
-				CF54101A1A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
 				CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */,
 				CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */,
@@ -3962,7 +3933,6 @@
 				CFA539901D433E2A00C562A7 /* PanelController+DelayedSelection.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFA539921D433E2A00C562A7 /* Job.cpp in Sources */,
-				CFA539931D433E2A00C562A7 /* AppStoreRatingsSheetController.mm in Sources */,
 				CFA539941D433E2A00C562A7 /* JobSourceItems.cpp in Sources */,
 				CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */,
 				CFA539961D433E2A00C562A7 /* IconsGenerator.mm in Sources */,
@@ -3996,7 +3966,6 @@
 				CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */,
 				CFA539B01D433E2A00C562A7 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
-				CFA539B11D433E2A00C562A7 /* AppStoreRatings.mm in Sources */,
 				CFA539B21D433E2A00C562A7 /* VFSEasyOps.mm in Sources */,
 				CF876D441D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CFA539B31D433E2A00C562A7 /* ButtonWithOptions.m in Sources */,
@@ -4169,7 +4138,6 @@
 				CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069851BB54035000C3CBB /* Job.cpp in Sources */,
-				CF5410191A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
 				CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF29313017D79BA100648A90 /* IconsGenerator.mm in Sources */,
@@ -4203,7 +4171,6 @@
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
 				CF50B7461A15173100E3D96D /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
-				CF5410131A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CF50B7431A15173100E3D96D /* VFSEasyOps.mm in Sources */,
 				CF876D251D51E04A009C0CCE /* BigFileView.mm in Sources */,
 				B5A23003171E81ED00D9C1A6 /* ButtonWithOptions.m in Sources */,
@@ -4391,7 +4358,6 @@
 				CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
-				CF5410151A90D0AC003CD7A7 /* AppStoreRatings.mm in Sources */,
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFF6F28A1A13567C00011177 /* IconsGenerator.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
@@ -4407,7 +4373,6 @@
 				CF46DB9E1C856FE7009E28B9 /* PanelDataPersistency.cpp in Sources */,
 				CF1E96981C96F97A0041C4FA /* Config.cpp in Sources */,
 				CF46DB731C856F2F009E28B9 /* TermParser.mm in Sources */,
-				CF54101B1A90DA99003CD7A7 /* AppStoreRatingsSheetController.mm in Sources */,
 				CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */,
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */,
@@ -4661,15 +4626,6 @@
 			name = FindFilesSheetController.xib;
 			path = NimbleCommander/States/FilePanels;
 			sourceTree = SOURCE_ROOT;
-		};
-		CF5410231A90E15F003CD7A7 /* AppStoreRatingsSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF5410221A90E15F003CD7A7 /* Base */,
-				CFB8FA291A93A5500009315A /* ru */,
-			);
-			name = AppStoreRatingsSheetController.xib;
-			sourceTree = "<group>";
 		};
 		CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */ = {
 			isa = PBXVariantGroup;

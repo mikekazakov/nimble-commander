@@ -245,3 +245,8 @@ void FeedbackManager::ShareOnLinkedIn()
     if( auto li = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnLinkedIn] )
         [li performWithItems:@[g_SocialMessage]];
 }
+
+int FeedbackManager::ApplicationRunsCount() const noexcept
+{
+    return m_ApplicationRunsCount;
+}

@@ -260,7 +260,12 @@ static AppDelegate *g_Me = nil;
     
     
     // if no option already set - ask user to provide anonymous usage statistics
-    if( !m_IsRunningTests && !showed_modal_dialog && !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) ) {
+    // ask him only on 5th startup or later
+    // ask only if there were no modal dialogs before
+    if( !m_IsRunningTests &&
+        !showed_modal_dialog &&
+        !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
+        FeedbackManager::Instance().ApplicationRunsCount() >= 5 ) {
         CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
         GoogleAnalytics::Instance().UpdateEnabledStatus();
     }

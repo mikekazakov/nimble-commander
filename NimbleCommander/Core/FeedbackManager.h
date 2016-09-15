@@ -18,6 +18,11 @@ public:
     void CommitRatingOverlayResult(int _result);
     
     /**
+     * Amount of time application was started, updated on every startup.
+     */
+    int ApplicationRunsCount() const noexcept;
+    
+    /**
      * Will reset any information about application usage.
      */
     void ResetStatistics();

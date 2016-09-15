@@ -7,7 +7,7 @@
 //
 
 #include "../Core/FileMask.h"
-#include "../../Files/ActivationManager.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer

@@ -27,7 +27,7 @@
 #include "ActionsShortcutsManager.h"
 #include "SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 #include "../NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h"

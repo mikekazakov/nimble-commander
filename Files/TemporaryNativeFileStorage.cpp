@@ -15,7 +15,7 @@
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include "TemporaryNativeFileStorage.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking

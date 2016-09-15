@@ -6,7 +6,7 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/ActivationManager.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
 

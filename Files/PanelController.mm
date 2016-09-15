@@ -23,7 +23,7 @@
 #include "Config.h"
 #include "PanelDataPersistency.h"
 #include "AskForPasswordWindowController.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";

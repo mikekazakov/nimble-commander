@@ -14,7 +14,7 @@
 #include "../../3rd_party/apple_sandbox.h"
 #undef __APPLE_API_PRIVATE
 #include <Utility/SystemInformation.h>
-#include "../../ActivationManager.h"
+#include "../../../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "../../RoutedIO.h"
 #include "../VFSListingInput.h"
 #include "VFSPSHost.h"

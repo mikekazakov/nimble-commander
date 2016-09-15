@@ -15,7 +15,7 @@
 #include "PanelController.h"
 #include "Operations/Compress/FileCompressOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 struct OpenWithHandler
 {

@@ -10,7 +10,7 @@
 #include <Habanero/CommonPaths.h>
 #include "VFSSeqToRandomWrapper.h"
 #include "VFSError.h"
-#include "../ActivationManager.h"
+#include "../../NimbleCommander/Bootstrap/ActivationManager.h"
 
 VFSSeqToRandomROWrapperFile::Backend::~Backend()
 {

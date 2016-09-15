@@ -37,7 +37,7 @@
 #include "RoutedIO.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "GoogleAnalytics.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
 #include "../NimbleCommander/Viewer/InternalViewerController.h"

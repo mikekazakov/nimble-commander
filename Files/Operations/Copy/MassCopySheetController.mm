@@ -9,7 +9,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "../../3rd_party/DisclosureViewController/DisclosureViewController.h"
-#include "../../ActivationManager.h"
+#include "../../../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "../../GoogleAnalytics.h"
 #include "MassCopySheetController.h"
 #include "FileCopyOperation.h"

@@ -23,7 +23,7 @@
 #include "PanelAux.h"
 #include "FilePanelMainSplitView.h"
 #include "MainWindowController.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "../NimbleCommander/States/FilePanels/ToolsMenuDelegate.h"
 #include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 

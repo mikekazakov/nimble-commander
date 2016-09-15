@@ -12,7 +12,7 @@
 #include <Habanero/CommonPaths.h>
 #include "RoutedIO.h"
 #include "RoutedIOInterfaces.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 static PosixIOInterface &IODirectCreateProxy();
 static PosixIOInterface &IOWrappedCreateProxy();

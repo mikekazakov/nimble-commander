@@ -6,7 +6,7 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 #include "../../Files/GoogleAnalytics.h"
-#include "../../Files/ActivationManager.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "RegistrationInfoWindow.h"
 
 @interface RegistrationInfoWindow ()

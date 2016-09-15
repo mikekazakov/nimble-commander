@@ -15,7 +15,7 @@
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
 #include "Config.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "PanelAux.h"
 
 static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];

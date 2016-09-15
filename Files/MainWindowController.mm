@@ -27,7 +27,7 @@
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "ActionsShortcutsManager.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";

@@ -1,7 +1,6 @@
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
-#include "ActivationManager.h"
 
 #include "../NimbleCommander/Viewer/BigFileViewHistory.h"
 

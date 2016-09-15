@@ -8,8 +8,8 @@
 
 #include "../../Files/SandboxManager.h"
 #include "../../Files/AppDelegate.h"
-#include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowGeneralTab.h"
 
 @interface PreferencesWindowGeneralTab()

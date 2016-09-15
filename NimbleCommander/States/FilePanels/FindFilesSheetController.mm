@@ -17,7 +17,7 @@
 #include "../../Files/ByteCountFormatter.h"
 #include "../../Files/PanelAux.h"
 #include "../../Files/Config.h"
-#include "../../Files/ActivationManager.h"
+#include "../../Bootstrap/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "../../Files/AppDelegate.h"
 #include "../../Core/VFSInstanceManager.h"

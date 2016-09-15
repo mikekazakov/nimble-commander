@@ -1,7 +1,7 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
-#include "../../Files/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "../GeneralUI/FeedbackWindow.h"
 #include "FeedbackManager.h"
 

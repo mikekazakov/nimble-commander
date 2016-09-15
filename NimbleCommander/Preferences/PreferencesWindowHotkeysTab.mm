@@ -11,7 +11,7 @@
 #import "../../Files/3rd_party/gtm/GTMHotKeyTextField.h"
 #include "../../Files/ActionsShortcutsManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
-#include "../../Files/ActivationManager.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowHotkeysTab.h"
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)

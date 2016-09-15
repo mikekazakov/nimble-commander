@@ -15,7 +15,7 @@
 #include "QLThumbnailsCache.h"
 #include "QLVFSThumbnailsCache.h"
 #include "WorkspaceIconsCache.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones

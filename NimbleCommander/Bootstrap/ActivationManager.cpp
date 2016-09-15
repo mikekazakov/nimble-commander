@@ -1,13 +1,13 @@
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <copyfile.h>
-#include "vfs/VFS.h"
-#include "vfs/vfs_native.h"
-#include "MASAppInstalledChecker.h"
-#include "AppDelegateCPP.h"
+#include "../../Files/vfs/VFS.h"
+#include "../../Files/vfs/vfs_native.h"
+#include "../../Files/MASAppInstalledChecker.h"
+#include "../../Files/AppDelegateCPP.h"
+#include "../../Files/GoogleAnalytics.h"
+#include "../../Files/AppStoreHelper.h"
 #include "ActivationManager.h"
-#include "GoogleAnalytics.h"
-#include "AppStoreHelper.h"
 
 // trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;

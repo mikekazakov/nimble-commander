@@ -7,7 +7,7 @@
 //
 
 #include "PreferencesWindowToolsTab.h"
-#include "../../Files/ActivationManager.h"
+#include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
 
 @interface PreferencesWindowToolsTab ()

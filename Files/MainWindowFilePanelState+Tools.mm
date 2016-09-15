@@ -8,7 +8,7 @@
 #include "MainWindowController.h"
 #include "AppDelegate.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h"
-#include "ActivationManager.h"
+#include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "States/Terminal/TermTask.h"
 
 static string EscapeSpaces(string _str)

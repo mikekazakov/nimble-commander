@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
-        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FeedbackWindow">
@@ -33,7 +32,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uXD-xr-hvO">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We are glad you are enjoying our app!" id="WxI-Pi-SpO">
-                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -106,7 +105,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AZY-eh-wVe">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We are glad you are enjoying our app!" id="XhC-3W-CjC">
-                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -146,7 +145,7 @@
                                                 <constraint firstAttribute="height" constant="42" id="PKO-O8-jxj"/>
                                                 <constraint firstAttribute="width" constant="42" id="wYf-y2-zOl"/>
                                             </constraints>
-                                            <buttonCell key="cell" type="bevel" title="Button" bezelStyle="regularSquare" image="FeedbackIconsFacebook" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="jNx-3x-Sag">
+                                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FeedbackIconsFacebook" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="jNx-3x-Sag">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -160,7 +159,7 @@
                                                 <constraint firstAttribute="height" constant="42" id="krb-gf-oU9"/>
                                                 <constraint firstAttribute="width" constant="42" id="l2i-XT-QsQ"/>
                                             </constraints>
-                                            <buttonCell key="cell" type="bevel" title="Button" bezelStyle="regularSquare" image="FeedbackIconsTwitter" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Iez-K8-AkL">
+                                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FeedbackIconsTwitter" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Iez-K8-AkL">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -174,7 +173,7 @@
                                                 <constraint firstAttribute="height" constant="42" id="06q-zT-h42"/>
                                                 <constraint firstAttribute="width" constant="42" id="gCe-Bm-zdQ"/>
                                             </constraints>
-                                            <buttonCell key="cell" type="bevel" title="Button" bezelStyle="regularSquare" image="FeedbackIconsLinkedin" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Coo-Sh-1ef">
+                                            <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FeedbackIconsLinkedin" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Coo-Sh-1ef">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -212,7 +211,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxA-ww-rzk">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to improve your experience with Nimble Commander!" id="sVB-UR-1so">
-                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -286,7 +285,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rbh-6b-jYa">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to hear from you." id="O76-JY-rBG">
-                                                <font key="font" metaFont="systemSemibold" size="13"/>
+                                                <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>

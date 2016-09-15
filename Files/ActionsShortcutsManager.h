@@ -82,6 +82,7 @@ private:
         {"menu.nimble_commander.purchase_license",         10090},
         {"menu.nimble_commander.purchase_pro_features",    10100},
         {"menu.nimble_commander.restore_purchases",        10110},
+        {"menu.nimble_commander.registration_info",        10120},
         
         {"menu.file.newwindow",                 11000},
         {"menu.file.new_folder",                11090},

@@ -17,6 +17,7 @@
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"
 #include "../NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h"
 #include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
+#include "../NimbleCommander/GeneralUI/RegistrationInfoWindow.h"
 #include "Utility/SystemInformation.h"
 #include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
@@ -504,6 +505,12 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                 [m_Terminal ChDir:"/Volumes/"]; // TODO: need to do something more elegant
         }
     }
+}
+
+- (IBAction)onMainMenuPerformShowRegistrationInfo:(id)sender
+{
+    RegistrationInfoWindow *w = [[RegistrationInfoWindow alloc] init];
+    [self.window beginSheet:w.window completionHandler:^(NSModalResponse){}];    
 }
 
 @end

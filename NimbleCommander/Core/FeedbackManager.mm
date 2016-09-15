@@ -21,12 +21,16 @@ static int GetAndUpdateRunsCount()
             CFDefaultsSetInt(g_RunsKey, v);
         }
         else {
-            CFDefaultsSetInt(g_RunsKey, v + 1);
+            dispatch_to_background([=]{
+                CFDefaultsSetInt(g_RunsKey, v + 1);
+            });
         }
         return v;
     }
     else {
-        CFDefaultsSetInt(g_RunsKey, 1);
+        dispatch_to_background([=]{
+            CFDefaultsSetInt(g_RunsKey, 1);
+        });
         return 1;
     }
 }
@@ -133,7 +137,7 @@ bool FeedbackManager::ShouldShowRatingOverlayView()
 bool FeedbackManager::IsEligibleForRatingOverlay() const
 {
     const auto now = time(nullptr);
-    const auto repeated_show_delay_on_result = 180l * 24l * 3600l; // 180 days
+    const auto repeated_show_delay_on_result = 90l * 24l * 3600l; // 90 days
     const auto repeated_show_delay_on_discard = 7l * 24l * 3600l; // 7 days
     const auto min_runs = 20;
     const auto min_hours = 10;

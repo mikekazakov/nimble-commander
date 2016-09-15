@@ -211,17 +211,14 @@ bool GetCPULoad(CPULoad &_load) noexcept
 
 OSXVersion GetOSXVersion() noexcept
 {
-    static OSXVersion version = []{
-        if( auto dict = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] )
-            if( auto prod_ver = objc_cast<NSString>([dict objectForKey:@"ProductVersion"]) ) {
-                if([prod_ver hasPrefix:@"10.11"])       return OSXVersion::OSX_11;
-                else if([prod_ver hasPrefix:@"10.10"])  return OSXVersion::OSX_10;
-                else if([prod_ver hasPrefix:@"10.9"])   return OSXVersion::OSX_9;
-                else if([prod_ver hasPrefix:@"10.8"])   return OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.7"])   return OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.6"])   return OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.5"])   return OSXVersion::OSX_Old;
-                else if([prod_ver hasPrefix:@"10.4"])   return OSXVersion::OSX_Old;
+    static const auto version = []{
+        const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
+        if( sys_ver.majorVersion == 10 )
+            switch( sys_ver.minorVersion ) {
+                case 12:    return OSXVersion::OSX_12;
+                case 11:    return OSXVersion::OSX_11;
+                case 10:    return OSXVersion::OSX_10;
+                case 9:     return OSXVersion::OSX_9;
             }
         return OSXVersion::OSX_Unknown;
     }();

@@ -100,6 +100,26 @@ static bool CheckAquaticLicense( const string& _path )
     return result;
 }
 
+static unordered_map<string, string> GetAquaticLicenseInfo( const string& _path )
+{
+    unordered_map<string, string> result;
+    if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)_path.c_str(), _path.length(), false) ) {
+        if( CFDictionaryRef d = APCreateDictionaryForLicenseFile(url) ) {
+            CFDictionaryApplyFunction(d,
+                                      [](const void *_key, const void *_value, void *_context){
+                                          if( CFGetTypeID(_key) == CFStringGetTypeID() && CFGetTypeID(_value) == CFStringGetTypeID() )
+                                              ((unordered_map<string, string>*)_context)->insert_or_assign( CFStringGetUTF8StdString( (CFStringRef) _key),
+                                                                                                            CFStringGetUTF8StdString( (CFStringRef) _value) );
+                                      },
+                                      &result);
+            CFRelease(d);
+        }
+        CFRelease(url);
+    }
+    
+    return result;
+}
+
 static string InstalledAquaticLicensePath()
 {
     return AppDelegateCPP::SupportDirectory() + g_LicenseFilename;
@@ -151,8 +171,10 @@ ActivationManager::ActivationManager()
         if(has_mas_paid_version)
             GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "MAS Installed");
         const bool has_valid_license = UserHasValidAquaticLicense();
-        if(has_valid_license)
+        if( has_valid_license ) {
+            m_LicenseInfo = GetAquaticLicenseInfo( InstalledAquaticLicensePath() );
             GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "License Installed");
+        }
         
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
         m_IsActivated = true /*has_mas_paid_version || has_valid_license*/;
@@ -374,4 +396,9 @@ bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
 {
     return Type() == Distribution::Free &&
            m_IsActivated == true;
+}
+
+const unordered_map<string, string> &ActivationManager::LicenseInformation() const noexcept
+{
+    return m_LicenseInfo;
 }

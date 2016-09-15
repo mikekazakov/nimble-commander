@@ -55,6 +55,7 @@ public:
     bool ShouldShowTrialNagScreen() const noexcept;
     static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicence"
     bool ProcessLicenseFile(const string& _path );
+    const unordered_map<string, string> &LicenseInformation() const noexcept;
     
     // Free MAS version stuff
     bool ReCheckProFeaturesInAppPurchased(); // will recheck receipt file and return true if in-app was purchased
@@ -83,4 +84,5 @@ private:
     bool    m_UserHadRegistered = false;
     int     m_TrialDaysLeft = 0;
     bool    m_IsTrialPeriod = false;
+    unordered_map<string, string> m_LicenseInfo;
 };

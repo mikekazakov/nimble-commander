@@ -893,6 +893,14 @@
 		CFB66FA61D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
 		CFB66FA71D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
 		CFB66FA81D863EDD0017D2A0 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */; };
+		CFB66FCA1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
+		CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
+		CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
+		CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
+		CFB66FCE1D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */; };
+		CFB66FCF1D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */; };
+		CFB66FD01D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */; };
+		CFB66FD11D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */; };
 		CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
@@ -1683,6 +1691,9 @@
 		CFB66F9E1D863EDD0017D2A0 /* FeedbackWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackWindow.h; path = NimbleCommander/GeneralUI/FeedbackWindow.h; sourceTree = SOURCE_ROOT; };
 		CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackWindow.mm; path = NimbleCommander/GeneralUI/FeedbackWindow.mm; sourceTree = SOURCE_ROOT; };
 		CFB66FA01D863EDD0017D2A0 /* FeedbackWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedbackWindow.xib; path = NimbleCommander/GeneralUI/FeedbackWindow.xib; sourceTree = SOURCE_ROOT; };
+		CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistrationInfoWindow.h; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.h; sourceTree = SOURCE_ROOT; };
+		CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RegistrationInfoWindow.mm; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.mm; sourceTree = SOURCE_ROOT; };
+		CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RegistrationInfoWindow.xib; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.xib; sourceTree = SOURCE_ROOT; };
 		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessSheetController.h; sourceTree = "<group>"; };
@@ -2770,6 +2781,9 @@
 				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,
 				CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */,
 				CFD6DD161D6C229F006B94C2 /* VFSListWindowController.xib */,
+				CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */,
+				CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */,
+				CFB66FC91D88F9D40017D2A0 /* RegistrationInfoWindow.xib */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -3346,6 +3360,7 @@
 				CFD6DD1D1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CF4E56CD1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFB66FD01D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */,
 				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
 				CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -3449,6 +3464,7 @@
 				CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF4E56AF1D5068E200452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CFA53A5B1D433E2A00C562A7 /* AskForPasswordWindowController.xib in Resources */,
+				CFB66FCF1D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */,
 				CFA53A5E1D433E2A00C562A7 /* ProcessSheetController.xib in Resources */,
 				CFA53A5F1D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFA53A601D433E2A00C562A7 /* SFTPConnectionSheetController.xib in Resources */,
@@ -3513,6 +3529,7 @@
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
+				CFB66FCE1D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,
 				CF4E567E1D50669600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
@@ -3529,6 +3546,7 @@
 				CFD6DD1E1D6C229F006B94C2 /* VFSListWindowController.xib in Resources */,
 				CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CF4E56CC1D50694000452912 /* PreferencesWindowViewerTab.xib in Resources */,
+				CFB66FD11D88F9D40017D2A0 /* RegistrationInfoWindow.xib in Resources */,
 				CF4E56C01D50691A00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CFCCFBBA1A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */,
@@ -3738,6 +3756,7 @@
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CF50C4501C0ADF05009DF611 /* VFSNetFTPFile.mm in Sources */,
 				CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
+				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
@@ -4008,6 +4027,7 @@
 				CFA539D81D433E2A00C562A7 /* Operation.mm in Sources */,
 				CFA539D91D433E2A00C562A7 /* AppDelegateCPP.mm in Sources */,
 				CFA539DA1D433E2A00C562A7 /* ModernPanelViewPresentation.mm in Sources */,
+				CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CFA539DB1D433E2A00C562A7 /* VFSArchiveProxy.mm in Sources */,
 				CFA539DC1D433E2A00C562A7 /* VFSNetSFTPFile.cpp in Sources */,
 				CFA539DD1D433E2A00C562A7 /* VFSPSHost.mm in Sources */,
@@ -4211,6 +4231,7 @@
 				CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */,
+				CFB66FCA1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF82FCEB1CA0399700152ADB /* AppDelegateCPP.mm in Sources */,
 				B52D9A85173E2EF300EC7154 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7401A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
@@ -4422,6 +4443,7 @@
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
 				CF50B7421A15173100E3D96D /* VFSArchiveProxy.mm in Sources */,
 				CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */,
+				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */,
 				CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CFDEB8261D2BB7DE009BCCBD /* ActionShortcut.mm in Sources */,

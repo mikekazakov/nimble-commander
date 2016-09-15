@@ -6,8 +6,9 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSListWindowController.h"
+#include "../../Files/GoogleAnalytics.h"
 #include "../Core/VFSInstanceManager.h"
+#include "VFSListWindowController.h"
 
 @interface VFSListWindowController ()
 @property (strong) IBOutlet NSTableView *vfsTable;
@@ -50,6 +51,7 @@
 {
     [self showWindow:self];
     m_Self = self;
+    GoogleAnalytics::Instance().PostScreenView("VFS List Window");
 }
 
 - (void) updateData

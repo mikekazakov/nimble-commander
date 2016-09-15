@@ -23,6 +23,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.nimble_commander.purchase_license",             u8""     },
         {"menu.nimble_commander.purchase_pro_features",        u8""     },
         {"menu.nimble_commander.restore_purchases",            u8""     },
+        {"menu.nimble_commander.registration_info",            u8""     },
 
         {"menu.file.newwindow",                     u8"⌘n"      },  // cmd+n
         {"menu.file.new_folder",                    u8"⇧⌘n"     },  // cmd+shift+n

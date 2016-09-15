@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Habanero/algo.h>
 #include "SandboxManager.h"
 #include "AppDelegate.h"
 
@@ -56,24 +57,47 @@ static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
 @end
 
+static string EnsureNoTrailingSlash( string _path )
+{
+    while( _path.length() > 1 && _path.back() == '/'  )
+        _path.pop_back();
+    
+    return _path;
+}
+
+static string MakeRealPathWithoutTrailingSlash( string _path )
+{
+    // check if path is a symlink in fact
+    struct stat st;
+    if( lstat(_path.c_str(), &st) == 0 && S_ISLNK(st.st_mode) ) {
+        // need to resolve symlink
+        char actualpath[MAXPATHLEN];
+        if( realpath( _path.c_str(), actualpath) )
+            _path = actualpath;
+    }
+
+    // need to clear trailing slash, since here we store directories _without_ them
+    return EnsureNoTrailingSlash(_path);
+}
+
+SandboxManager::SandboxManager()
+{
+    LoadSecurityScopeBookmarks_Unlocked();
+    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
+                                                    object:NSApplication.sharedApplication
+                                                     queue:NSOperationQueue.mainQueue
+                                                usingBlock:^(NSNotification *note) {
+                                                    SandboxManager::Instance().StopUsingBookmarks();
+                                                }];
+}
+
 SandboxManager &SandboxManager::Instance()
 {
     static auto manager = new SandboxManager;
-    static once_flag once;
-    call_once(once, []{
-        manager->LoadSecurityScopeBookmarks();
-        [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
-                                                        object:NSApplication.sharedApplication
-                                                         queue:NSOperationQueue.mainQueue
-                                                    usingBlock:^(NSNotification *note) {
-                                                        auto &sm = SandboxManager::Instance();
-                                                        sm.StopUsingBookmarks();
-                                                    }];
-    });
     return *manager;
 }
 
-void SandboxManager::LoadSecurityScopeBookmarks()
+void SandboxManager::LoadSecurityScopeBookmarks_Unlocked()
 {
     assert(m_Bookmarks.empty());
     
@@ -103,9 +127,12 @@ void SandboxManager::LoadSecurityScopeBookmarks()
 
 void SandboxManager::SaveSecurityScopeBookmarks()
 {
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:m_Bookmarks.size()];
-    for(auto &i: m_Bookmarks)
-        [array addObject:i.data];
+    NSMutableArray *array;
+    LOCK_GUARD(m_Lock) {
+        array = [NSMutableArray arrayWithCapacity:m_Bookmarks.size()];
+        for(auto &i: m_Bookmarks)
+            [array addObject:i.data];
+    }
     
     [NSUserDefaults.standardUserDefaults setObject:array.copy forKey:g_BookmarksKey];
     [NSUserDefaults.standardUserDefaults synchronize];
@@ -118,25 +145,23 @@ bool SandboxManager::Empty() const
 
 bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_path)
 {
-    // TODO: this stuff should work from non-main thread also.
-    lock_guard<recursive_mutex> lock(m_Lock);
-    
-    string req_path = _path;
-    
-    struct stat st;
-    if( lstat(req_path.c_str(), &st) == 0 && S_ISLNK(st.st_mode) ) {
-        // need to resolve symlink
-        char actualpath[MAXPATHLEN];
-        if(realpath(req_path.c_str(), actualpath))
-            req_path = actualpath;
+    if( !dispatch_is_main_queue() ) {
+        bool result = false;
+        dispatch_sync( dispatch_get_main_queue(), [&] {
+            result = AskAccessForPathSync(_path, _mandatory_path);
+        });
+        return result;
     }
     
-    NSString *dir_string = [NSString stringWithUTF8String:req_path.c_str()];
+    dispatch_assert_main_queue();
+    
+    const auto reqired_path = MakeRealPathWithoutTrailingSlash(_path);
     
     // weird, but somehow NSOpenPanel refuses to go to ~/Documents directory by directoryURL(bug in OSX?)
     // so also change last dir manually
-    [NSUserDefaults.standardUserDefaults setValue:dir_string forKey:@"NSNavLastRootDirectory"];
-
+    [NSUserDefaults.standardUserDefaults setValue:[NSString stringWithUTF8StdString:reqired_path]
+                                           forKey:@"NSNavLastRootDirectory"];
+    
     NSOpenPanel * openPanel = NSOpenPanel.openPanel;
     openPanel.message = NSLocalizedString(@"Click “Allow Access” to grant access to files in the selected directory",
                                           "Asking the user to grant filesystem access for NC");
@@ -145,63 +170,54 @@ bool SandboxManager::AskAccessForPathSync(const string& _path, bool _mandatory_p
     openPanel.canChooseFiles = false;
     openPanel.canChooseDirectories = true;
     openPanel.allowsMultipleSelection = false;
-    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:req_path mandatory:_mandatory_path];
+    SandboxManagerPanelDelegate *delegate = [[SandboxManagerPanelDelegate alloc] initWithPath:reqired_path mandatory:_mandatory_path];
     openPanel.delegate = delegate;
-    openPanel.directoryURL = [[NSURL alloc] initFileURLWithPath:dir_string];
-    long res = [openPanel runModal];
-    if(res == NSModalResponseOK)
+    openPanel.directoryURL = [NSURL fileURLWithFileSystemRepresentation:reqired_path.c_str() isDirectory:true relativeToURL:nil];
+    
+    const auto res = [openPanel runModal];
+    if( res == NSModalResponseOK )
         if(NSURL *url = openPanel.URL) {
-            path url_path = url.path.fileSystemRepresentation;
-        
             NSData *bookmark_data = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
                                   includingResourceValuesForKeys:nil
                                                    relativeToURL:nil
                                                            error:nil];
-            NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
-                                                          options:NSURLBookmarkResolutionWithSecurityScope
-                                                    relativeToURL:nil
-                                              bookmarkDataIsStale:nil
-                                                            error:nil];
-            if([scoped_url startAccessingSecurityScopedResource]) {
-                Bookmark bm;
-                bm.data = bookmark_data;
-                bm.url = scoped_url;
-                bm.path = scoped_url.path.fileSystemRepresentation;
-                if(bm.path.filename() == ".") bm.path.remove_filename();
-                m_Bookmarks.emplace_back(bm);
-                
-                SaveSecurityScopeBookmarks();
-                
-                return HasAccessToFolder(_path);
+            if( bookmark_data ) {
+                NSURL *scoped_url = [NSURL URLByResolvingBookmarkData:bookmark_data
+                                                              options:NSURLBookmarkResolutionWithSecurityScope
+                                                        relativeToURL:nil
+                                                  bookmarkDataIsStale:nil
+                                                                error:nil];
+                if( scoped_url &&[scoped_url startAccessingSecurityScopedResource] ) {
+                    Bookmark bm;
+                    bm.data = bookmark_data;
+                    bm.url = scoped_url;
+                    bm.path = EnsureNoTrailingSlash(scoped_url.path.fileSystemRepresentation);
+                    LOCK_GUARD(m_Lock) {
+                        m_Bookmarks.emplace_back(bm);
+                    }
+                    
+                    dispatch_to_background([=]{
+                        SaveSecurityScopeBookmarks();
+                    });
+                    
+                    return HasAccessToFolder_Unlocked(_path);
+                }
             }
         }
     return false;
 }
 
-bool SandboxManager::HasAccessToFolder(const path &_p) const
+bool SandboxManager::HasAccessToFolder_Unlocked(const string &_p) const
 {
     // NB! TODO: consider using more complex comparison, regaring lowercase/uppercase and normalization stuff.
     // currently doesn't accounts this and compares directly with characters
-    
-    auto p = _p;
-    struct stat st;
-    if( lstat(p.c_str(), &st) == 0 && S_ISLNK(st.st_mode) ) {
-        // need to resolve symlink
-        char actualpath[MAXPATHLEN];
-        if(realpath(p.c_str(), actualpath))
-            p = actualpath;
-    }
-    
-    if(p.filename() == ".") p.remove_filename();
+    const auto p = MakeRealPathWithoutTrailingSlash( _p );
     
     // look in our bookmarks user has given
-    for(auto &i: m_Bookmarks)
-        if( i.path.native().length() <= p.native().length() &&
-           mismatch(i.path.native().begin(),
-                    i.path.native().end(),
-                    p.native().begin()).first == i.path.native().end() )
+    for( auto &i: m_Bookmarks )
+        if( has_prefix(p, i.path) )
             return true;
-
+    
     // look in built-in r/o access
     // also we can do stuff in dedicated temporary directory and in sandbox container
     static const vector<string> granted_ro = {
@@ -212,16 +228,15 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
         "/usr/sbin",
         "/usr/share",
         "/System",
-        (path(NSTemporaryDirectory().fileSystemRepresentation).remove_filename()).native(),
-        ((AppDelegate*)NSApplication.sharedApplication.delegate).startupCWD
+        EnsureNoTrailingSlash(NSTemporaryDirectory().fileSystemRepresentation),
+        EnsureNoTrailingSlash(AppDelegate.me.startupCWD)
     };
-    for(auto &s: granted_ro)
-        if( s.length() <= p.native().length() &&
-           mismatch(s.begin(), s.end(), p.native().begin()).first == s.end())
+    for( auto &s: granted_ro )
+        if( has_prefix(p, s) )
             return true;
   
     // special treating for /Volumes dir - can browse it by default, but not dirs inside it
-    if( p == "/Volumes")
+    if( p == "/Volumes" )
         return true;
     
     return false;
@@ -229,36 +244,42 @@ bool SandboxManager::HasAccessToFolder(const path &_p) const
 
 bool SandboxManager::CanAccessFolder(const string& _path) const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    return HasAccessToFolder(_path);
+    LOCK_GUARD(m_Lock) {
+        return HasAccessToFolder_Unlocked(_path);
+    }
+    return false;
 }
 
 bool SandboxManager::CanAccessFolder(const char* _path) const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    return _path != nullptr ? HasAccessToFolder(_path) : false;
+    LOCK_GUARD(m_Lock) {
+        return _path != nullptr ? HasAccessToFolder_Unlocked(_path) : false;
+    }
+    return false;
 }
 
 string SandboxManager::FirstFolderWithAccess() const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    return m_Bookmarks.empty() ? "" : m_Bookmarks.front().path.native();
+    LOCK_GUARD(m_Lock) {
+        return m_Bookmarks.empty() ? "" : m_Bookmarks.front().path;
+    }
+    return {};
 }
 
 void SandboxManager::ResetBookmarks()
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    
-    for(auto &i: m_Bookmarks)
-        [i.url stopAccessingSecurityScopedResource];
-    
-    m_Bookmarks.clear();
+    LOCK_GUARD(m_Lock) {
+        for(auto &i: m_Bookmarks)
+            [i.url stopAccessingSecurityScopedResource];
+        m_Bookmarks.clear();
+    }
     SaveSecurityScopeBookmarks();
 }
 
 void SandboxManager::StopUsingBookmarks()
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    for(auto &i: m_Bookmarks)
-        [i.url stopAccessingSecurityScopedResource];
+    LOCK_GUARD(m_Lock) {
+        for(auto &i: m_Bookmarks)
+            [i.url stopAccessingSecurityScopedResource];
+    }
 }

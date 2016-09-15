@@ -8,7 +8,9 @@
 
 #pragma once
 
-// todo: mutex locking
+/**
+ * SandboxManager has tread-safe public interface.
+ */
 class SandboxManager
 {
 public:
@@ -42,20 +44,22 @@ public:
     void ResetBookmarks();
 
 private:
+    SandboxManager();
+    
     struct Bookmark
     {
         NSData*data         = nil;
         NSURL *url          = nil;
-        path   path         = "";
+        string path         = "";
     };
     
     
-    void LoadSecurityScopeBookmarks();
+    void LoadSecurityScopeBookmarks_Unlocked();
     void SaveSecurityScopeBookmarks();
     void StopUsingBookmarks();
     
-    bool HasAccessToFolder(const path &_p) const;
+    bool HasAccessToFolder_Unlocked(const string &_p) const;
     
     vector<Bookmark>        m_Bookmarks;
-    mutable recursive_mutex m_Lock;
+    mutable spinlock        m_Lock;
 };

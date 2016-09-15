@@ -246,10 +246,10 @@ optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_f
         goto error;
     
     { // xattrs stuff
-        vfs_file->XAttrIterateNames(^bool(const char *name){
-            ssize_t res = vfs_file->XAttrGet(name, bufp, bufsz);
+        vfs_file->XAttrIterateNames(^bool(const char *_name){
+            ssize_t res = vfs_file->XAttrGet(_name, bufp, bufsz);
             if(res >= 0)
-                fsetxattr(fd, name, bufp, res, 0, 0);
+                fsetxattr(fd, _name, bufp, res, 0, 0);
             return true;
         });
     }
@@ -272,11 +272,11 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     // this is not a-best-of-all implementation.
     // supposed that temp extraction of dirs would be rare thus with much less pressure that extracting of single files
     
-    VFSStat st;
-    if( _host->Stat(_vfs_dirpath.c_str(), st, 0, 0) != 0)
+    VFSStat st_src_dir;
+    if( _host->Stat(_vfs_dirpath.c_str(), st_src_dir, 0, 0) != 0)
         return false;
     
-    if( !st.mode_bits.dir )
+    if( !st_src_dir.mode_bits.dir )
         return false;
     
     uint64_t total_size = 0;
@@ -301,7 +301,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     vector< S > src;
     stack< S > traverse_log;
     
-    src.emplace_back(_vfs_dirpath, top_level_name, st);
+    src.emplace_back(_vfs_dirpath, top_level_name, st_src_dir);
     
     traverse_log.push(src.back());
     while( !traverse_log.empty() ) {

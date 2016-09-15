@@ -319,15 +319,13 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
-
-    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
                                              sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
                                           initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:opts];
+                                            operationOptions:panel::MakeDefaultFileCopyOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -356,15 +354,13 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     auto entries = vector<VFSListingItem>({item});
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
-    
-    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
-    
+        
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()
                                              sourceDirectory:item.Directory()
                                           initialDestination:item.Filename()
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:opts];
+                                            operationOptions:panel::MakeDefaultFileCopyOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -393,15 +389,13 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
-    
-    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
-    
+        
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
                                              sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
                                           initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:opts];
+                                            operationOptions:panel::MakeDefaultFileMoveOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;

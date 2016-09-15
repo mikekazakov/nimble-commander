@@ -43,19 +43,19 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
         __weak auto weak_self = self;
         self.Stats.RegisterObserver(OperationStats::Nofity::CurrentItem,
                                     nullptr,
-                                    [weak_self]{ if(auto self = weak_self) [self updateShortInfo]; }
+                                    [weak_self]{ if(auto strong_self = weak_self) [strong_self updateShortInfo]; }
                                     );
         m_Job.m_OnCantUnlink = [weak_self](int _vfs_error, string _path){
-            auto self = weak_self;
-            return [[self DialogOnUnlinkError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+            auto strong_self = weak_self;
+            return [[strong_self DialogOnUnlinkError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
         };
         m_Job.m_OnCantRmdir =  [weak_self](int _vfs_error, string _path){
-            auto self = weak_self;
-            return [[self DialogOnRmdirError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+            auto strong_self = weak_self;
+            return [[strong_self DialogOnRmdirError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
         };
         m_Job.m_OnCantTrash =  [weak_self](int _vfs_error, string _path){
-            auto self = weak_self;
-            return [[self DialogOnTrashItemError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
+            auto strong_self = weak_self;
+            return [[strong_self DialogOnTrashItemError:VFSError::ToNSError(_vfs_error) ForPath:_path.c_str()] WaitForResult];
         };
 #pragma clang diagnostic pop
     }

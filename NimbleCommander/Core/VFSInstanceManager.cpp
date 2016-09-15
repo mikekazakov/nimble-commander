@@ -158,7 +158,7 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
         
         if( !instance_recursive ) {
             // we have found a matching existing information chain, need to refresh hosts pointers
-            VFSHostPtr instance_recursive = _instance;
+            instance_recursive = _instance;
             for( auto &i: existing_match ) {
                 if( i->m_WeakHost.expired() ) {
                     i->m_WeakHost = instance_recursive;

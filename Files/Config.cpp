@@ -587,15 +587,15 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
     if( _new_overwrites_diff.GetType() != rapidjson::kObjectType )
         return;
     
-    rapidjson::Document new_staging;
-    new_staging.CopyFrom(m_Defaults, m_Defaults.GetAllocator());
-    MergeDocument(new_staging, _new_overwrites_diff);
+    rapidjson::Document new_staging_doc;
+    new_staging_doc.CopyFrom(m_Defaults, m_Defaults.GetAllocator());
+    MergeDocument(new_staging_doc, _new_overwrites_diff);
     
     vector<string> changes;
     {
         lock_guard<mutex> lock(m_DocumentLock);
         stack< tuple<const rapidjson::Value*,const rapidjson::Value*, string> > travel;
-        travel.emplace( make_tuple(&m_Current, &new_staging, "") );
+        travel.emplace( make_tuple(&m_Current, &new_staging_doc, "") );
         
         while( !travel.empty() ) {
             auto current_staging = get<0>(travel.top());
@@ -624,7 +624,7 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
         }
         
         if( !changes.empty() )
-            swap( m_Current, new_staging );
+            swap( m_Current, new_staging_doc );
     }
     
     for(auto &path: changes)

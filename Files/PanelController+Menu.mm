@@ -68,8 +68,8 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<VFSPath, vec
             auto &ind = indeces.back();
             
             unordered_map<string, unsigned> listing_fn_ind;
-            for(unsigned i = 0, e = listing->Count(); i != e; ++i)
-                listing_fn_ind[ listing->Filename(i) ] = i;
+            for(unsigned listing_ind = 0, e = listing->Count(); listing_ind != e; ++listing_ind)
+                listing_fn_ind[ listing->Filename(listing_ind) ] = listing_ind;
                 
                 for( auto &filename: i.second ) {
                     auto it = listing_fn_ind.find(filename);

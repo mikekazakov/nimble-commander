@@ -179,7 +179,7 @@
 - (void) commit
 {
     AskingForRatingOverlayView *v = self;
-    [self removeFromSuperview];
+    [v removeFromSuperview];
  
     const auto result = m_Rating;
     dispatch_to_main_queue([=]{

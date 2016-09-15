@@ -139,10 +139,10 @@ private:
 // implementation details
 
 template <class T>
-inline void dispatch_async( dispatch_queue_t queue, T f )
+inline void dispatch_async( dispatch_queue_t _queue, T _f )
 {
-    dispatch_async_f(queue,
-                     new T( std::move(f) ),
+    dispatch_async_f(_queue,
+                     new T( std::move(_f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
                          (*f)();
@@ -151,11 +151,11 @@ inline void dispatch_async( dispatch_queue_t queue, T f )
 }
 
 template <class T>
-inline void dispatch_group_async( dispatch_group_t group, dispatch_queue_t queue, T f )
+inline void dispatch_group_async( dispatch_group_t _group, dispatch_queue_t _queue, T _f )
 {
-    dispatch_group_async_f(group,
-                           queue,
-                           new T( std::move(f) ),
+    dispatch_group_async_f(_group,
+                           _queue,
+                           new T( std::move(_f) ),
                            [](void* _p) {
                                auto f = static_cast<T*>(_p);
                                (*f)();
@@ -164,10 +164,10 @@ inline void dispatch_group_async( dispatch_group_t group, dispatch_queue_t queue
 }
 
 template <class T>
-inline void dispatch_sync( dispatch_queue_t queue, T f )
+inline void dispatch_sync( dispatch_queue_t _queue, T _f )
 {
-    dispatch_sync_f(queue,
-                    &f,
+    dispatch_sync_f(_queue,
+                    &_f,
                     [](void* _p) {
                         auto f = static_cast<T*>(_p);
                         (*f)();
@@ -175,11 +175,11 @@ inline void dispatch_sync( dispatch_queue_t queue, T f )
 }
 
 template <class T>
-inline void dispatch_apply( size_t iterations, dispatch_queue_t queue, T f )
+inline void dispatch_apply( size_t _iterations, dispatch_queue_t _queue, T _f )
 {
-    dispatch_apply_f(iterations,
-                     queue,
-                     &f,
+    dispatch_apply_f(_iterations,
+                     _queue,
+                     &_f,
                      [](void *_p, size_t _it) {
                          auto f = static_cast<T*>(_p);
                          (*f)(_it);
@@ -187,11 +187,11 @@ inline void dispatch_apply( size_t iterations, dispatch_queue_t queue, T f )
 }
 
 template <class T>
-inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queue, T f )
+inline void dispatch_after( std::chrono::nanoseconds _when, dispatch_queue_t _queue, T _f )
 {
-    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, when.count()),
-                     queue,
-                     new T( std::move(f) ),
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, _when.count()),
+                     _queue,
+                     new T( std::move(_f) ),
                      [](void* _p) {
                          auto f = static_cast<T*>(_p);
                          try
@@ -215,10 +215,10 @@ inline void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queu
 }
 
 template <class T>
-inline void dispatch_barrier_async( dispatch_queue_t queue, T f )
+inline void dispatch_barrier_async( dispatch_queue_t _queue, T _f )
 {
-    dispatch_barrier_async_f(queue,
-                             new T( std::move(f) ),
+    dispatch_barrier_async_f(_queue,
+                             new T( std::move(_f) ),
                              [](void* _p) {
                                  auto f = static_cast<T*>(_p);
                                  (*f)();
@@ -227,10 +227,10 @@ inline void dispatch_barrier_async( dispatch_queue_t queue, T f )
 }
 
 template <class T>
-inline void dispatch_barrier_sync( dispatch_queue_t queue, T f )
+inline void dispatch_barrier_sync( dispatch_queue_t _queue, T _f )
 {
-    dispatch_barrier_sync_f(queue,
-                            new T( std::move(f) ),
+    dispatch_barrier_sync_f(_queue,
+                            new T( std::move(_f) ),
                             [](void* _p) {
                                 auto f = static_cast<T*>(_p);
                                 (*f)();
@@ -322,11 +322,10 @@ template <class T>
 inline void DispatchGroup::Run( T _f ) const
 {
     using CT = std::pair<T, const DispatchGroup*>;
-    auto *context = new CT( std::move(_f), this );
     ++m_Count;
     dispatch_group_async_f(m_Group,
                            m_Queue,
-                           context,
+                           new CT( std::move(_f), this ),
                            [](void* _p) {
                                auto context = static_cast<CT*>(_p);
                                context->first();

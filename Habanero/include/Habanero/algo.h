@@ -55,8 +55,8 @@ auto at_scope_end( T _l )
 {
     struct guard
     {
-        guard( T &&_l ):
-            m_l(std::move(_l))
+        guard( T &&_lock ):
+            m_l(std::move(_lock))
         {
         }
         

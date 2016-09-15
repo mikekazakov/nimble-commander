@@ -206,9 +206,8 @@ void BigFileViewHex::OnBufferDecoded()
                 uint64_t row_offset = i.string_byte_start + raw_window_pos;
                 row_offset -= row_offset % g_BytesPerHexLine;
                 UniChar tmp[g_RowOffsetSymbs];
-                for(int i = g_RowOffsetSymbs - 1; i >= 0; --i)
-                {
-                    tmp[i] = g_4Bits_To_Char[row_offset & 0xF];
+                for( int char_ind = g_RowOffsetSymbs - 1; char_ind >= 0; --char_ind ) {
+                    tmp[char_ind] = g_4Bits_To_Char[row_offset & 0xF];
                     row_offset &= 0xFFFFFFFFFFFFFFF0;
                     row_offset >>= 4;
                 }

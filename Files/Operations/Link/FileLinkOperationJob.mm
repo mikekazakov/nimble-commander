@@ -42,15 +42,14 @@ void FileLinkOperationJob::Do()
 void FileLinkOperationJob::DoNewSymLink()
 {
 dotry:
-    int result = RoutedIO::Default.symlink(m_File, m_Link);
+    int op_result = RoutedIO::Default.symlink(m_File, m_Link);
 
-    if(result != 0)
-    {
+    if( op_result != 0 ) {
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
-        int result = [[m_Op DialogNewSymlinkError:err] WaitForResult];
-        if (result == OperationDialogResult::Retry)
+        int dialog_result = [[m_Op DialogNewSymlinkError:err] WaitForResult];
+        if( dialog_result == OperationDialogResult::Retry )
             goto dotry;
-        else if (result == OperationDialogResult::Stop)
+        else if( dialog_result == OperationDialogResult::Stop )
             RequestStop();
     }
 }
@@ -58,10 +57,9 @@ dotry:
 void FileLinkOperationJob::DoAlterSymLink()
 {
 dounlink:
-    int result = RoutedIO::Default.unlink(m_Link);
+    int op_result = RoutedIO::Default.unlink(m_Link);
     
-    if(result != 0)
-    {
+    if( op_result != 0 ) {
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
         int result = [[m_Op DialogAlterSymlinkError:err] WaitForResult];
         if (result == OperationDialogResult::Retry)
@@ -74,9 +72,8 @@ dounlink:
     }
     
 dosymlink:
-    result = RoutedIO::Default.symlink(m_File, m_Link);
-    if(result != 0)
-    {
+    op_result = RoutedIO::Default.symlink(m_File, m_Link);
+    if( op_result != 0 ){
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
         int result = [[m_Op DialogAlterSymlinkError:err] WaitForResult];
         if (result == OperationDialogResult::Retry)
@@ -89,10 +86,9 @@ dosymlink:
 void FileLinkOperationJob::DoNewHardLink()
 {
 dotry:
-    int result = RoutedIO::Default.link(m_File, m_Link);
+    int op_result = RoutedIO::Default.link(m_File, m_Link);
     
-    if(result != 0)
-    {
+    if( op_result != 0 ) {
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
         int result = [[m_Op DialogNewHardlinkError:err] WaitForResult];
         if (result == OperationDialogResult::Retry)

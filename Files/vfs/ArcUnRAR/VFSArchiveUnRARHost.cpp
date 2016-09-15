@@ -272,7 +272,7 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
 
     string short_name(_path_with_tr_sl, last_sl + 1, _path_with_tr_sl.size() - last_sl - 2);
     
-    if( find_if(begin(entries), end(entries), [&](const VFSArchiveUnRAREntry&i) {return i.name == short_name;} )
+    if( find_if(begin(entries), end(entries), [&](const VFSArchiveUnRAREntry&_i) {return _i.name == short_name;} )
        == end(parent_dir->entries) ) {
         parent_dir->entries.emplace_back();
         parent_dir->entries.back().name = short_name;

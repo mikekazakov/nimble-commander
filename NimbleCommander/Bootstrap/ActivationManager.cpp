@@ -204,8 +204,8 @@ ActivationManager::ActivationManager()
 const string& ActivationManager::BundleID()
 {
     static const string bundle_id = []{
-        if( CFStringRef bundle_id = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
-            return CFStringGetUTF8StdString(bundle_id);
+        if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
+            return CFStringGetUTF8StdString(bid);
         else
             return "unknown"s;
     }();

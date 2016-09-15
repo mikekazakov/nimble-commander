@@ -461,66 +461,66 @@ static NSString *ExtractCopyToName(const string&_s)
 #pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     __weak auto weak_self = self;
     m_Job.m_OnCopyDestinationAlreadyExists = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
-        auto self = weak_self; // what a wonderful dirty code!
+        auto strong_self = weak_self; // what a wonderful dirty code!
         auto apply_to_all = make_shared<bool>(false);
         
         FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
                                                   initWithDestPath:_path
                                                   withSourceStat:_src_stat
                                                   withDestinationStat:_dst_stat];
-        sheet.singleItem = self.isSingleFileCopy;
+        sheet.singleItem = strong_self.isSingleFileCopy;
         sheet.applyToAll = apply_to_all;
-        [self EnqueueDialog:sheet];
+        [strong_self EnqueueDialog:sheet];
         auto result = [sheet WaitForResult];
         
         if( *apply_to_all ) switch (result) {
-                case FileCopyOperationDR::Skip:         m_Job.ToggleExistBehaviorSkipAll();      break;
-                case FileCopyOperationDR::Overwrite:    m_Job.ToggleExistBehaviorOverwriteAll(); break;
-                case FileCopyOperationDR::OverwriteOld: m_Job.ToggleExistBehaviorOverwriteOld(); break;
-                case FileCopyOperationDR::Append:       m_Job.ToggleExistBehaviorAppendAll();    break;
+                case FileCopyOperationDR::Skip:         strong_self->m_Job.ToggleExistBehaviorSkipAll();      break;
+                case FileCopyOperationDR::Overwrite:    strong_self->m_Job.ToggleExistBehaviorOverwriteAll(); break;
+                case FileCopyOperationDR::OverwriteOld: strong_self->m_Job.ToggleExistBehaviorOverwriteOld(); break;
+                case FileCopyOperationDR::Append:       strong_self->m_Job.ToggleExistBehaviorAppendAll();    break;
             }
         return result;
     };
     m_Job.m_OnRenameDestinationAlreadyExists = [weak_self](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){
-        auto self = weak_self; // what a wonderful dirty code!
+        auto strong_self = weak_self; // what a wonderful dirty code!
         auto apply_to_all = make_shared<bool>(false);
         
         FileAlreadyExistSheetController *sheet = [[FileAlreadyExistSheetController alloc]
                                                   initWithDestPath:_path
                                                   withSourceStat:_src_stat
                                                   withDestinationStat:_dst_stat];
-        sheet.singleItem = self.isSingleFileCopy;
+        sheet.singleItem = strong_self.isSingleFileCopy;
         sheet.allowAppending = false;
         sheet.applyToAll = apply_to_all;
-        [self EnqueueDialog:sheet];
+        [strong_self EnqueueDialog:sheet];
         auto result = [sheet WaitForResult];
         
         if( *apply_to_all ) switch (result) {
-            case FileCopyOperationDR::Skip:         m_Job.ToggleExistBehaviorSkipAll();      break;
-            case FileCopyOperationDR::Overwrite:    m_Job.ToggleExistBehaviorOverwriteAll(); break;
-            case FileCopyOperationDR::OverwriteOld: m_Job.ToggleExistBehaviorOverwriteOld(); break;
+            case FileCopyOperationDR::Skip:         strong_self->m_Job.ToggleExistBehaviorSkipAll();      break;
+            case FileCopyOperationDR::Overwrite:    strong_self->m_Job.ToggleExistBehaviorOverwriteAll(); break;
+            case FileCopyOperationDR::OverwriteOld: strong_self->m_Job.ToggleExistBehaviorOverwriteOld(); break;
         }
         return result;
     };
     m_Job.m_OnCantOpenDestinationFile = [weak_self](int _vfs_error, string _path){
-        auto self = weak_self;
-        return [[self OnCopyCantOpenDestFile:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+        auto strong_self = weak_self;
+        return [[strong_self OnCopyCantOpenDestFile:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
     };
     m_Job.m_OnSourceFileReadError = [weak_self](int _vfs_error, string _path){
-        auto self = weak_self;
-        return [[self OnCopyReadError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+        auto strong_self = weak_self;
+        return [[strong_self OnCopyReadError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
     };
     m_Job.m_OnDestinationFileWriteError = [weak_self](int _vfs_error, string _path){
-        auto self = weak_self;
-        return [[self OnCopyWriteError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+        auto strong_self = weak_self;
+        return [[strong_self OnCopyWriteError:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
     };
     m_Job.m_OnCantCreateDestinationDir = [weak_self](int _vfs_error, string _path){
-        auto self = weak_self;
-        return [[self OnCantCreateDir:VFSError::ToNSError(_vfs_error) ForDir:_path.c_str()] WaitForResult];
+        auto strong_self = weak_self;
+        return [[strong_self OnCantCreateDir:VFSError::ToNSError(_vfs_error) ForDir:_path.c_str()] WaitForResult];
     };
     m_Job.m_OnFileVerificationFailed = [weak_self](string _path){
-        auto self = weak_self;
-        return [[self OnFileVerificationFailed:_path.c_str()] WaitForResult];
+        auto strong_self = weak_self;
+        return [[strong_self OnFileVerificationFailed:_path.c_str()] WaitForResult];
     };
     
     m_Job.m_OnCantCreateDestinationRootDir = m_Job.m_OnCantCreateDestinationDir; // it's better to show another dialog in this case... later

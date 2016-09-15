@@ -488,7 +488,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             }
             else {
                 // need to look at a first file (next to dotdot) for current representation if any.
-                if( auto item = m_State.Data->EntryAtSortPosition(1) )
+                if( auto next_item = m_State.Data->EntryAtSortPosition(1) )
                     m_CursorSelectionType = m_State.Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
                 else // singular case - selection doesn't matter - nothing to select
                     m_CursorSelectionType = CursorSelectionType::Selection;

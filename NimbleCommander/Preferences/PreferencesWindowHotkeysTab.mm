@@ -168,10 +168,10 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
         {
             NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
             tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
-            if( auto title = ComposeVerboseMenuItemTitle(menu_item) )
-                tf.stringValue = title;
-            else if( auto title = ComposeVerboseNonMenuActionTitle(tag.first) )
-                tf.stringValue = title;
+            if( auto menu_item_title = ComposeVerboseMenuItemTitle(menu_item) )
+                tf.stringValue = menu_item_title;
+            else if( auto action_title = ComposeVerboseNonMenuActionTitle(tag.first) )
+                tf.stringValue = action_title;
             else
                 tf.stringValue = tf.toolTip;
             tf.bordered = false;

@@ -626,7 +626,7 @@ void ClassicPanelViewPresentation::DoDraw(CGContextRef context)
         int CN = n / entries_in_column;
         int Y = (n % entries_in_column + 1);
         int X = 1;
-        for(int i = 0; i < CN; ++i) X += columns_width[i];
+        for(int col_i = 0; col_i < CN; ++col_i) X += columns_width[col_i];
         
         bool focused = (i == m_State->CursorPos) && View().active;
         auto text_color = GetDirectoryEntryTextColor(current, current_vd, focused);

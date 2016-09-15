@@ -33,10 +33,10 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSPath( const V
         return nullopt;
     
     vector<VFSHost*> hosts;
-    auto h = _listing.Host().get();
-    while( h ) {
-        hosts.emplace_back( h );
-        h = h->Parent().get();
+    auto host_rec = _listing.Host().get();
+    while( host_rec ) {
+        hosts.emplace_back( host_rec );
+        host_rec = host_rec->Parent().get();
     }
     
     reverse( begin(hosts), end(hosts) );

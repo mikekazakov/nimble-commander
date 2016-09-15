@@ -156,8 +156,8 @@ bool TermShellTask::Launch(const char *_work_dir)
             cout << "m_MasterFD is dead!" << endl;
         
         LOCK_GUARD(m_MasterWriteLock) {
-            ssize_t rc = write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
-            if( rc == -1 ) {
+            ssize_t write_res = write( m_MasterFD, prompt_setup, strlen(prompt_setup) );
+            if( write_res == -1 ) {
                 cout << "write() error: " << errno << ", verbose: " << strerror(errno) << endl;
             }
         }

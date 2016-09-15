@@ -134,16 +134,16 @@ static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
     iv.image = NSApplication.sharedApplication.applicationIconImage;
     _dock.contentView = iv;
     
-    NSProgressIndicator *pi = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, _dock.size.width, 18)];
-    pi.style = NSProgressIndicatorBarStyle;
-    pi.indeterminate = NO;
-    pi.bezeled = true;
-    pi.minValue = 0;
-    pi.maxValue = 1;
-    pi.hidden = true;
-    [iv addSubview:pi];
+    NSProgressIndicator *progress = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, _dock.size.width, 18)];
+    progress.style = NSProgressIndicatorBarStyle;
+    progress.indeterminate = NO;
+    progress.bezeled = true;
+    progress.minValue = 0;
+    progress.maxValue = 1;
+    progress.hidden = true;
+    [iv addSubview:progress];
 
-    return pi;
+    return progress;
 }
 
 static AppDelegate *g_Me = nil;

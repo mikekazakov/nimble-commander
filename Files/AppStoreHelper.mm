@@ -53,7 +53,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 }
 
 // background thread
-- (void)request:(SKRequest *)request didFailWithError:(nullable NSError *)error
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error
 {
 }
 

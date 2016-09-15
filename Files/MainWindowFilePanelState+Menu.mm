@@ -421,8 +421,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
         return;
     
-    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
-
     auto entries = vector<VFSListingItem>({item});
     auto update_both_panels = self.refreshBothCurrentControllersLambda;
     __weak auto cur = self.activePanelController;
@@ -431,7 +429,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                                              sourceDirectory:item.Directory()
                                           initialDestination:item.Filename()
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:opts];
+                                            operationOptions:panel::MakeDefaultFileMoveOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;

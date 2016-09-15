@@ -622,6 +622,15 @@
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
 		CF9A9F1A1CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CF9B12BD1D8A6B3C00C4E0A5 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB8CDBC1D82BFAD007B1142 /* libssh2.a */; };
+		CF9B12BE1D8A6B3D00C4E0A5 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB8CDBC1D82BFAD007B1142 /* libssh2.a */; };
+		CF9B12BF1D8A6B3D00C4E0A5 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB8CDBC1D82BFAD007B1142 /* libssh2.a */; };
+		CF9B12C01D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A901D8262BE001F9E7F /* libcrypto.a */; };
+		CF9B12C11D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A901D8262BE001F9E7F /* libcrypto.a */; };
+		CF9B12C21D8A6B4200C4E0A5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A901D8262BE001F9E7F /* libcrypto.a */; };
+		CF9B12C31D8A6B4600C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
+		CF9B12C41D8A6B4700C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
+		CF9B12C51D8A6B4700C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
 		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
@@ -1885,6 +1894,8 @@
 			files = (
 				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
 				CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */,
+				CF9B12C41D8A6B4700C4E0A5 /* libssl.a in Frameworks */,
+				CF9B12BE1D8A6B3D00C4E0A5 /* libssh2.a in Frameworks */,
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
 				CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */,
 				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
@@ -1900,6 +1911,7 @@
 				CF6D9C8D19667A570077B146 /* OpenDirectory.framework in Frameworks */,
 				CF6D9C8B19667A500077B146 /* DiskArbitration.framework in Frameworks */,
 				CF844DBC1D43230A00C735DB /* liblzma.a in Frameworks */,
+				CF9B12C11D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
 				CF6D9C8919667A4A0077B146 /* QuartzCore.framework in Frameworks */,
 				CF6D9C8719667A420077B146 /* IOKit.framework in Frameworks */,
 				CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */,
@@ -1927,6 +1939,8 @@
 				CFA53A1D1D433E2A00C562A7 /* libMMTabBarView_LIB.a in Frameworks */,
 				CFA53A1E1D433E2A00C562A7 /* libHabanero.a in Frameworks */,
 				CFA53A1F1D433E2A00C562A7 /* ServiceManagement.framework in Frameworks */,
+				CF9B12BF1D8A6B3D00C4E0A5 /* libssh2.a in Frameworks */,
+				CF9B12C21D8A6B4200C4E0A5 /* libcrypto.a in Frameworks */,
 				CFA53A201D433E2A00C562A7 /* libcrypto.dylib in Frameworks */,
 				CFA53A211D433E2A00C562A7 /* libssl.dylib in Frameworks */,
 				CFA53A221D433E2A00C562A7 /* libcurl.a in Frameworks */,
@@ -1934,6 +1948,7 @@
 				CFA53A241D433E2A00C562A7 /* libboost_system.a in Frameworks */,
 				CFA53A261D433E2A00C562A7 /* Carbon.framework in Frameworks */,
 				CFA53A271D433E2A00C562A7 /* LDAP.framework in Frameworks */,
+				CF9B12C51D8A6B4700C4E0A5 /* libssl.a in Frameworks */,
 				CFA53A281D433E2A00C562A7 /* Security.framework in Frameworks */,
 				CFA53A291D433E2A00C562A7 /* SystemConfiguration.framework in Frameworks */,
 				CFA53A2A1D433E2A00C562A7 /* Sparkle.framework in Frameworks */,
@@ -1996,6 +2011,7 @@
 			files = (
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
 				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
+				CF9B12C31D8A6B4600C4E0A5 /* libssl.a in Frameworks */,
 				CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
@@ -2004,6 +2020,7 @@
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
 				CFF6F3561A13567C00011177 /* libcurl.a in Frameworks */,
 				CFF6F3571A13567C00011177 /* libboost_filesystem.a in Frameworks */,
+				CF9B12C01D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
 				CFF6F3581A13567C00011177 /* libboost_system.a in Frameworks */,
 				CFF6F35A1A13567C00011177 /* Carbon.framework in Frameworks */,
 				CFF6F35B1A13567C00011177 /* LDAP.framework in Frameworks */,
@@ -2017,6 +2034,7 @@
 				CFF6F3651A13567C00011177 /* libMMTabBarView_LIB.a in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
 				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
+				CF9B12BD1D8A6B3C00C4E0A5 /* libssh2.a in Frameworks */,
 				CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3249,6 +3267,7 @@
 					CF6D997C196675290077B146 = {
 						CreatedOnToolsVersion = 6.0;
 						DevelopmentTeam = AC5SJT236H;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
 								enabled = 1;
@@ -4959,9 +4978,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
+				DEVELOPMENT_TEAM = AC5SJT236H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4988,13 +5008,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1y",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "68170e1a-9b59-4df9-9bc8-c8494d1f002f";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 			};
@@ -5009,10 +5026,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
+				DEVELOPMENT_TEAM = AC5SJT236H;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5037,13 +5055,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				METAL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1y",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "68170e1a-9b59-4df9-9bc8-c8494d1f002f";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Release;

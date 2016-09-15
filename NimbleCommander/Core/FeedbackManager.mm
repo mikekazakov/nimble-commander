@@ -11,7 +11,6 @@ static const auto g_FirstRunKey = CFSTR("feedbackFirstRun");
 static const auto g_LastRatingKey = CFSTR("feedbackLastRating");
 static const auto g_LastRatingTimeKey = CFSTR("feedbackLastRating");
 
-
 static int GetAndUpdateRunsCount()
 {
     if( auto runs = CFDefaultsGetOptionalInt(g_RunsKey) ) {
@@ -223,7 +222,7 @@ void FeedbackManager::RateOnAppStore()
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
-static const auto g_SocialMessage = @"I use Nimble Commander - a great dual-pane file manager for macOS! http://magnumbytes.com/";
+static const auto g_SocialMessage = @"I use Nimble Commander - a great file manager for macOS! http://magnumbytes.com/";
 
 void FeedbackManager::ShareOnFacebook()
 {

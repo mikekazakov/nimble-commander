@@ -43,6 +43,7 @@
 #include "../NimbleCommander/Viewer/InternalViewerController.h"
 #include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
 #include "../NimbleCommander/GeneralUI/VFSListWindowController.h"
+#include "../NimbleCommander/GeneralUI/ProFeaturesWindowController.h"
 #include "../NimbleCommander/Core/FeedbackManager.h"
 
 #include "AppStoreHelper.h"
@@ -175,6 +176,7 @@ static AppDelegate *g_Me = nil;
 @synthesize configDirectory = m_ConfigDirectory;
 @synthesize stateDirectory = m_StateDirectory;
 @synthesize supportDirectory = m_SupportDirectory;
+@synthesize appStoreHelper = m_AppStoreHelper;
 
 - (id) init
 {
@@ -573,8 +575,11 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender
 {
-    [m_AppStoreHelper askUserToBuyProFeatures];
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
+    static ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
+    [w showWindow:self];
+    
+//    [m_AppStoreHelper askUserToBuyProFeatures];
+//    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
 }
 
 - (IBAction)OnRestoreInAppPurchases:(id)sender

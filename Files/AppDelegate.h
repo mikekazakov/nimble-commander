@@ -14,6 +14,7 @@
 @class MainWindowController;
 @class InternalViewerWindowController;
 @class GenericConfigObjC;
+@class AppStoreHelper;
 class ExternalToolsStorage;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
@@ -82,5 +83,7 @@ class ExternalToolsStorage;
 @property (nonatomic, readonly) GenericConfigObjC *config;
 
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
+
+@property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 
 @end

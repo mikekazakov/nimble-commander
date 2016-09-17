@@ -1,6 +1,7 @@
 #include "AppStoreHelper.h"
 
-static const auto g_ProFeaturesInAppID = @"com.magnumbytes.nimblecommander.paid_features";
+static const auto g_ProFeaturesInAppID  = @"com.magnumbytes.nimblecommander.paid_features";
+static const auto g_PrefsPriceString    = @"proFeaturesIAPPriceString";
 
 string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 {
@@ -23,9 +24,11 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     SKProductsRequest                   *m_ProductRequest;
     SKProduct                           *m_ProFeaturesProduct;
     function<void(const string &_id)>   m_PurchaseCallback;
+    NSString                            *m_PriceString;
 }
 
 @synthesize onProductPurchased = m_PurchaseCallback;
+@synthesize priceString = m_PriceString;
 
 - (id) init
 {
@@ -35,8 +38,9 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
         m_ProductRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:g_ProFeaturesInAppID]];
         m_ProductRequest.delegate = self;
         [m_ProductRequest start];
-        
-        
+        m_PriceString = [NSUserDefaults.standardUserDefaults objectForKey:g_PrefsPriceString];
+        if( !m_PriceString )
+            m_PriceString = @"";
     }
     return self;
 }
@@ -45,11 +49,20 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
     for( SKProduct* p in response.products ) {
-        if( [p.productIdentifier isEqualToString:g_ProFeaturesInAppID] )
+        if( [p.productIdentifier isEqualToString:g_ProFeaturesInAppID] ) {
             m_ProFeaturesProduct = p;
-        
-//        NSLog(@"%@ %@ %@", p.productIdentifier, p.localizedTitle, p.price);
-    }    
+            
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            formatter.formatterBehavior = NSNumberFormatterBehavior10_4;
+            formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+            formatter.locale = p.priceLocale;
+            NSString *price_string = [formatter stringFromNumber:p.price];
+            if( ![price_string isEqualToString:m_PriceString] ) {
+                m_PriceString = price_string;
+                [NSUserDefaults.standardUserDefaults setObject:m_PriceString forKey:g_PrefsPriceString];
+            }
+        }
+    }
 }
 
 // background thread

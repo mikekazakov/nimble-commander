@@ -13,24 +13,32 @@
 @interface ProFeaturesWindowController ()
 @property (strong) IBOutlet NSTextView *learnMoreURL;
 @property (strong) IBOutlet NSTextField *priceLabel;
+@property (strong) IBOutlet NSButton *dontShowAgainCheckbox;
 
 @end
 
 @implementation ProFeaturesWindowController
+{
+    bool    m_DontShowAgain;
+}
+
+@synthesize suppressDontShowAgain;
+@synthesize dontShowAgain = m_DontShowAgain;
 
 - (id) init
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
+        m_DontShowAgain = false;
+        self.suppressDontShowAgain = false;
     }
     return self;
 }
 
-
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
     
-
     [self.learnMoreURL.textStorage addAttributes:@{NSLinkAttributeName: @"http://magnumbytes.com/"}
                                            range:NSMakeRange(0, self.learnMoreURL.textStorage.length)];
     self.learnMoreURL.linkTextAttributes = @{NSForegroundColorAttributeName: NSColor.blackColor,
@@ -38,6 +46,25 @@
                                              NSCursorAttributeName:NSCursor.pointingHandCursor};
     
     self.priceLabel.stringValue = AppDelegate.me.appStoreHelper.priceString;
+    self.dontShowAgainCheckbox.hidden = self.suppressDontShowAgain;
+}
+
+- (IBAction)onBuyNow:(id)sender
+{
+    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSOnState);    
+    [NSApplication.sharedApplication stopModalWithCode:NSModalResponseOK];
+}
+
+- (IBAction)onContinue:(id)sender
+{
+    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSOnState);
+    [NSApplication.sharedApplication stopModalWithCode:NSModalResponseCancel];
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSOnState);
+    [NSApplication.sharedApplication stopModalWithCode:NSModalResponseCancel];
 }
 
 @end

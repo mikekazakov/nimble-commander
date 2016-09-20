@@ -1,7 +1,13 @@
+#include <Habanero/CFDefaultsCPP.h>
+#include "../NimbleCommander/GeneralUI/ProFeaturesWindowController.h"
+#include "../NimbleCommander/Core/FeedbackManager.h"
+#include "GoogleAnalytics.h"
 #include "AppStoreHelper.h"
 
 static const auto g_ProFeaturesInAppID  = @"com.magnumbytes.nimblecommander.paid_features";
 static const auto g_PrefsPriceString    = @"proFeaturesIAPPriceString";
+static const auto g_PrefsPFDontShow     = CFSTR("proFeaturesIAPDontShow");
+static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
 
 string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 {
@@ -109,6 +115,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     if( !m_ProFeaturesProduct )
         return;
     
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
 
@@ -121,5 +128,47 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 //            dispatch_to_main_queue([=]{ callback(identifier); } );
 //    }
 //}
+
+- (void) showProFeaturesWindow
+{
+    dispatch_assert_main_queue();
+    ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
+    w.suppressDontShowAgain = true;
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Show Pro features IAP");
+    
+    const auto result = [NSApp runModalForWindow:w.window];
+    
+    if( result == NSModalResponseOK )
+        [self askUserToBuyProFeatures];
+}
+
+- (void) showProFeaturesWindowIfNeededAsNagScreen
+{
+    dispatch_assert_main_queue();
+    const auto min_runs = 10;
+    const auto next_show_delay = 60l * 60l* 24l * 14l; // every 14 days
+
+    if( FeedbackManager::Instance().ApplicationRunsCount() < min_runs ||    // don't show nag screen if user didn't use software for long enough
+        CFDefaultsGetBool(g_PrefsPFDontShow) )                              // don't show nag screen it user has opted to
+        return;
+    
+    const auto next_time = CFDefaultsGetOptionalLong(g_PrefsPFNextTime);
+    if( next_time && *next_time > time(0) )
+        return; // it's not time yet
+    
+    // setup next show time
+    CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
+    
+    // let's show a nag screen
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Show Pro features IAP As Nagscreen");
+
+    ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
+    const auto result = [NSApp runModalForWindow:w.window];
+    
+    if( w.dontShowAgain )
+        CFDefaultsSetBool(g_PrefsPFDontShow, true);
+    if( result == NSModalResponseOK )
+        [self askUserToBuyProFeatures];
+}
 
 @end

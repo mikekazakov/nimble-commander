@@ -43,7 +43,6 @@
 #include "../NimbleCommander/Viewer/InternalViewerController.h"
 #include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
 #include "../NimbleCommander/GeneralUI/VFSListWindowController.h"
-#include "../NimbleCommander/GeneralUI/ProFeaturesWindowController.h"
 #include "../NimbleCommander/Core/FeedbackManager.h"
 
 #include "AppStoreHelper.h"
@@ -373,6 +372,7 @@ static AppDelegate *g_Me = nil;
                 GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
+        dispatch_to_main_queue_after(500ms, [=]{ [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
     }
     
     // accessibility stuff for NonMAS version
@@ -575,17 +575,13 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender
 {
-    static ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
-    [w showWindow:self];
-    
-//    [m_AppStoreHelper askUserToBuyProFeatures];
-//    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
+    [m_AppStoreHelper showProFeaturesWindow];
 }
 
 - (IBAction)OnRestoreInAppPurchases:(id)sender
 {
-    [m_AppStoreHelper askUserToRestorePurchases];
     GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
+    [m_AppStoreHelper askUserToRestorePurchases];
 }
 
 - (void) doRevealNativeItems:(const vector<string>&)_path

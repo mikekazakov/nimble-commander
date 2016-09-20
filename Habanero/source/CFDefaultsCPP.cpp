@@ -1,3 +1,4 @@
+#include <Habanero/CFStackAllocator.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/algo.h>
 #include <Habanero/CFString.h>
@@ -77,7 +78,8 @@ double CFDefaultsGetDouble(CFStringRef _key)
 
 void CFDefaultsSetDouble(CFStringRef _key, double _value)
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
+    CFStackAllocator<> allocator;
+    CFNumberRef num = CFNumberCreate(allocator.alloc, kCFNumberDoubleType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
@@ -86,7 +88,8 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value)
 
 void CFDefaultsSetInt(CFStringRef _key, int _value)
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
+    CFStackAllocator<> allocator;
+    CFNumberRef num = CFNumberCreate(allocator.alloc, kCFNumberIntType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
@@ -95,7 +98,8 @@ void CFDefaultsSetInt(CFStringRef _key, int _value)
 
 void CFDefaultsSetLong(CFStringRef _key, long _value)
 {
-    CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
+    CFStackAllocator<> allocator;
+    CFNumberRef num = CFNumberCreate(allocator.alloc, kCFNumberLongType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });

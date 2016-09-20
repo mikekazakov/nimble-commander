@@ -8,6 +8,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ProFeaturesWindowController">
             <connections>
+                <outlet property="dontShowAgainCheckbox" destination="RfD-A3-3Bj" id="4NS-xP-qD8"/>
                 <outlet property="learnMoreURL" destination="8RA-DN-fpM" id="Q0Z-Rc-rK8"/>
                 <outlet property="priceLabel" destination="GUc-OE-6KU" id="v85-fx-C5i"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -37,9 +38,9 @@
                                     </view>
                                     <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </box>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kVC-XY-DcS">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVC-XY-DcS">
                                     <rect key="frame" x="129" y="371" width="356" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Enjoying Nimble Commander but wanting more?" id="btc-5J-oEi">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enjoying Nimble Commander but wanting more?" id="btc-5J-oEi">
                                         <font key="font" metaFont="systemBold" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -101,73 +102,73 @@
                                     </constraints>
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="IAPNagScreenViewer" id="eBm-YB-VGB"/>
                                 </imageView>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VzQ-1a-o52">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VzQ-1a-o52">
                                     <rect key="frame" x="91" y="346" width="433" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Pro Features add-on brings advanced functionality to your NC:" id="7sC-iv-yjO">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Pro Features add-on brings advanced functionality to your NC:" id="7sC-iv-yjO">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cNX-ba-5zE">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cNX-ba-5zE">
                                     <rect key="frame" x="106" y="286" width="126" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Archives handling" id="CEU-rk-oDM">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Archives handling" id="CEU-rk-oDM">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4H0-IM-sdF">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4H0-IM-sdF">
                                     <rect key="frame" x="106" y="222" width="132" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Custom file search" id="XYy-Fk-2EL">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Custom file search" id="XYy-Fk-2EL">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Ki-9L-EWS">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Ki-9L-EWS">
                                     <rect key="frame" x="106" y="158" width="175" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="External tools integration" id="y8W-w4-V0a">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="External tools integration" id="y8W-w4-V0a">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q6N-gG-ntK">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q6N-gG-ntK">
                                     <rect key="frame" x="106" y="94" width="77" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="File viewer" id="J8g-fm-fPd">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="File viewer" id="J8g-fm-fPd">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="un9-KM-Cq5">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="un9-KM-Cq5">
                                     <rect key="frame" x="375" y="286" width="137" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="System information" id="Bds-RP-yAL">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="System information" id="Bds-RP-yAL">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Oga-3W-T8h">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oga-3W-T8h">
                                     <rect key="frame" x="375" y="222" width="175" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Powerful batch renaming" id="2It-ef-MHO">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Powerful batch renaming" id="2It-ef-MHO">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gqI-gb-M7s">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqI-gb-M7s">
                                     <rect key="frame" x="375" y="158" width="189" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="FTP and SFTP connectivity" id="v7q-uc-sjB">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="FTP and SFTP connectivity" id="v7q-uc-sjB">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j1a-0Y-JOh">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j1a-0Y-JOh">
                                     <rect key="frame" x="375" y="94" width="116" height="19"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Attributes editor" id="lwf-Ux-yiP">
+                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Attributes editor" id="lwf-Ux-yiP">
                                         <font key="font" metaFont="system" size="15"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -326,6 +327,9 @@
 DQ
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="onBuyNow:" target="-2" id="ozj-Ul-Bi6"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fY6-jC-1st">
                         <rect key="frame" x="14" y="13" width="177" height="32"/>
@@ -336,6 +340,9 @@ DQ
 Gw
 </string>
                         </buttonCell>
+                        <connections>
+                            <action selector="onContinue:" target="-2" id="FbY-GZ-dxE"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
@@ -361,13 +368,13 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="IAPNagScreenArchives" width="92" height="96"/>
-        <image name="IAPNagScreenAttributes" width="92" height="96"/>
-        <image name="IAPNagScreenBatchRename" width="92" height="96"/>
-        <image name="IAPNagScreenNetwork" width="92" height="96"/>
-        <image name="IAPNagScreenSearch" width="92" height="96"/>
-        <image name="IAPNagScreenSysInfo" width="92" height="96"/>
+        <image name="IAPNagScreenArchives" width="54" height="54"/>
+        <image name="IAPNagScreenAttributes" width="54" height="54"/>
+        <image name="IAPNagScreenBatchRename" width="54" height="54"/>
+        <image name="IAPNagScreenNetwork" width="54" height="54"/>
+        <image name="IAPNagScreenSearch" width="54" height="54"/>
+        <image name="IAPNagScreenSysInfo" width="54" height="54"/>
         <image name="IAPNagScreenTools" width="92" height="96"/>
-        <image name="IAPNagScreenViewer" width="92" height="96"/>
+        <image name="IAPNagScreenViewer" width="54" height="54"/>
     </resources>
 </document>

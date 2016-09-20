@@ -12,6 +12,9 @@
 - (void) askUserToBuyProFeatures;
 - (void) askUserToRestorePurchases;
 
+- (void) showProFeaturesWindow;
+- (void) showProFeaturesWindowIfNeededAsNagScreen;
+
 @end
 
 #endif

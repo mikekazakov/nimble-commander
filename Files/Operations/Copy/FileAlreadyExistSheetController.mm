@@ -6,11 +6,39 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Carbon/Carbon.h>
 #include "../../GoogleAnalytics.h"
 #include "../Operation.h"
 #include "DialogResults.h"
 #include "FileAlreadyExistSheetController.h"
 #include "FileCopyOperation.h"
+
+@interface FileAlreadyExistSheetWindow : NSPanel
+@end
+
+@implementation FileAlreadyExistSheetWindow
+
+- (BOOL)performKeyEquivalent:(NSEvent *)event
+{
+    if( event.type == NSKeyDown &&
+        (event.modifierFlags & NSEventModifierFlagShift) &&
+        event.keyCode == kVK_Return) { // mimic Shift+Enter as enter so hotkey can trigger
+        return [super performKeyEquivalent:[NSEvent keyEventWithType:NSKeyDown
+                                                            location:event.locationInWindow
+                                                       modifierFlags:0
+                                                           timestamp:event.timestamp
+                                                        windowNumber:event.windowNumber
+                                                             context:nil
+                                                          characters:@"\r"
+                                         charactersIgnoringModifiers:@"\r"
+                                                           isARepeat:false
+                                                             keyCode:kVK_Return]];
+    }
+    return [super performKeyEquivalent:event];
+}
+
+@end
+
 
 @interface FileAlreadyExistSheetController ()
 
@@ -37,6 +65,11 @@
 - (void)OnDialogEnqueued:(Operation *)_operation;
 
 @end
+
+static bool IsShiftPressed()
+{
+    return (NSEvent.modifierFlags & NSEventModifierFlagShift) != 0;
+}
 
 @implementation FileAlreadyExistSheetController
 {
@@ -137,21 +170,33 @@
 
 - (IBAction)OnOverwrite:(id)sender
 {
+    if( IsShiftPressed()  )
+        self.RememberCheck.state = NSOnState;
+    
     [super endSheet:FileCopyOperationDR::Overwrite];
 }
 
 - (IBAction)OnOverwriteOlder:(id)sender
 {
+    if( IsShiftPressed()  )
+        self.RememberCheck.state = NSOnState;
+    
     [super endSheet:FileCopyOperationDR::OverwriteOld];
 }
 
 - (IBAction)OnSkip:(id)sender
 {
+    if( IsShiftPressed()  )
+        self.RememberCheck.state = NSOnState;
+    
     [super endSheet:OperationDialogResult::Skip];
 }
 
 - (IBAction)OnAppend:(id)sender
 {
+    if( IsShiftPressed()  )
+        self.RememberCheck.state = NSOnState;
+    
     [super endSheet:FileCopyOperationDR::Append];
 }
 

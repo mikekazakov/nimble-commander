@@ -845,10 +845,46 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self startFieldEditorRenaming];
 }
 
+
+static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )
+{
+    static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
+
+    // disassemble filename into parts
+    const auto length = _string.length;
+    const NSRange whole = NSMakeRange(0, length);
+    NSRange name;
+    optional<NSRange> extension;
+    
+    const NSRange r = [_string rangeOfCharacterFromSet:dot options:NSBackwardsSearch];
+    if( r.location > 0 && r.location < length - 1) { // has extension
+        name = NSMakeRange(0, r.location);
+        extension = NSMakeRange(r.location + 1, length - r.location - 1);
+    }
+    else { // no extension
+        name = whole;
+    }
+
+    if( _current_selection.length == 0 ) // no selection currently - return name
+        return name;
+    else {
+        if( NSEqualRanges(_current_selection, name) ) // current selection is name only
+            return extension ? *extension : whole;
+        else if( NSEqualRanges(_current_selection, whole) ) // current selection is all filename
+            return name;
+        else
+            return whole;
+    }
+}
+
 - (void)startFieldEditorRenaming
 {
-    if( m_RenamingEditor != nil )
+    if( m_RenamingEditor != nil ) {
+        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
+        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
+            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
         return;
+    }
     
     int cursor_pos = m_State.CursorPos;
     if(!m_Presentation->IsItemVisible(cursor_pos))
@@ -869,14 +905,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     tv.delegate = self;
     tv.fieldEditor = true;
     tv.string = self.item.NSName();
-    NSRange sel_range = NSMakeRange(0, tv.string.length); // select whole filename by default
-    if(self.item.HasExtension()) { // find where extension starts and select filename only
-        NSRange r = [tv.string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"."]
-                                               options:NSBackwardsSearch];
-        if(r.location > 0)
-            sel_range = NSMakeRange(0, r.location);
-    }
-    tv.selectedRange = sel_range;
+    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
     tv.verticallyResizable = tv.horizontallyResizable = true;
     tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;

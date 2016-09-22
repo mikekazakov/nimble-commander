@@ -963,7 +963,9 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
         });
         
         sheet.allowMoveToTrash = all_have_trash;
-        sheet.defaultType = _delete_permanently ? FileDeletionOperationType::Delete : FileDeletionOperationType::MoveToTrash;
+        sheet.defaultType = _delete_permanently ?
+            FileDeletionOperationType::Delete :
+            (sheet.allowMoveToTrash ? FileDeletionOperationType::MoveToTrash : FileDeletionOperationType::Delete);
     }
     else {
         sheet.allowMoveToTrash = false;

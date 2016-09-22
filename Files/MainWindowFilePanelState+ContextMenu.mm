@@ -633,13 +633,15 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
     
     auto op = [[FileCopyOperation alloc] initWithItems:{item} destinationPath:target destinationHost:item.Host() options:opts];
-    
+    const bool force_refresh = item.Host()->IsDirChangeObservingAvailable(item.Directory().c_str()) == false;
     auto filename = target.substr( target.find_last_of('/') + 1 );
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue( [=]{
             PanelControllerDelayedSelection req;
             req.filename = filename;
             [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
+            if( force_refresh  )
+                [m_CurrentController RefreshDirectory];
         });
       }
      ];

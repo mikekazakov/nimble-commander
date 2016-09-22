@@ -11,10 +11,10 @@
 
 @interface FileDeletionSheetController : SheetController
 
-@property (nonatomic) bool allowMoveToTrash;
-@property (nonatomic) FileDeletionOperationType defaultType;
-@property (nonatomic) FileDeletionOperationType resultType;
+@property (nonatomic)           bool                      allowMoveToTrash;
+@property (nonatomic)           FileDeletionOperationType defaultType;
+@property (nonatomic, readonly) FileDeletionOperationType resultType;
 
-- (id)initWithItems:(shared_ptr<vector<VFSListingItem>>)_items;
+- (id)initWithItems:(const shared_ptr<vector<VFSListingItem>>&)_items;
 
 @end

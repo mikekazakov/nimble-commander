@@ -192,7 +192,7 @@ Gw
                             <outlet property="nextKeyView" destination="15" id="ABT-qm-wcf"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="149">
+                    <button toolTip="⎋" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="149">
                         <rect key="frame" x="31" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="150"/>

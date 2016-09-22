@@ -13,12 +13,8 @@
 @interface FileDeletionSheetController()
 
 @property (strong) IBOutlet NSTextField *Label;
-@property (strong) IBOutlet ButtonWithOptions *DeleteButton;
-@property (strong) IBOutlet NSMenu *DeleteButtonMenu;
-
-- (IBAction)OnDeleteAction:(id)sender;
-- (IBAction)OnCancelAction:(id)sender;
-- (IBAction)OnMenuItem:(NSMenuItem *)sender;
+@property (strong) IBOutlet NSButton *primaryActionButton;
+@property (strong) IBOutlet NSPopUpButton *auxiliaryActionPopup;
 
 @end
 
@@ -35,9 +31,9 @@
 @synthesize resultType = m_ResultType;
 @synthesize defaultType = m_DefaultType;
 
-- (id)initWithItems:(shared_ptr<vector<VFSListingItem>>)_items
+- (id)initWithItems:(const shared_ptr<vector<VFSListingItem>>&)_items
 {
-    self = [super initWithWindowNibName:@"FileDeletionSheetController"];
+    self = [super init];
     if (self) {
         m_AllowMoveToTrash = true;
         m_DefaultType = FileDeletionOperationType::Delete;
@@ -52,58 +48,62 @@
 {
     [super windowDidLoad];
     
-    [self.DeleteButtonMenu removeAllItems];
-    if( m_AllowMoveToTrash ) {
-        NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");
-        it.tag = int(FileDeletionOperationType::MoveToTrash);
-        it.action = @selector(OnMenuItem:);
-        it.target = self;
-        [self.DeleteButtonMenu addItem:it];
-    }
-    if( true ) {
-        NSMenuItem *it = [[NSMenuItem alloc] init];
-        it.title = NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet");
-        it.tag = int(FileDeletionOperationType::Delete);
-        it.action = @selector(OnMenuItem:);
-        it.target = self;
-        [self.DeleteButtonMenu addItem:it];        
-    }
-    NSMenuItem *item = [self.DeleteButtonMenu itemWithTag:int(m_DefaultType)];
-    if(!item) {
-        item = [self.DeleteButtonMenu itemWithTag:int(FileDeletionOperationType::Delete)];
-        m_DefaultType = FileDeletionOperationType::Delete;
-    }
+    if( m_DefaultType == FileDeletionOperationType::MoveToTrash ) {
+        self.primaryActionButton.title = NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");
     
-    [self.DeleteButton setLabel:item.title forSegment:0];
-    [self.DeleteButtonMenu removeItem:item];
-    
-    [self.DeleteButton MakeDefault];
-  
-    if( self.DeleteButtonMenu.itemArray.count == 0 )
-        [self.DeleteButton setSegmentCount:1];
+        [self.auxiliaryActionPopup addItemWithTitle:NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet")];
+        self.auxiliaryActionPopup.lastItem.target = self;
+        self.auxiliaryActionPopup.lastItem.action = @selector(onAuxActionPermDelete:);
+    }
+    else if( m_DefaultType == FileDeletionOperationType::Delete ) {
+        self.primaryActionButton.title = NSLocalizedString(@"Delete Permanently", "Menu item title in file deletion sheet");
+        
+        if( m_AllowMoveToTrash ) {
+            [self.auxiliaryActionPopup addItemWithTitle:NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet")];
+            self.auxiliaryActionPopup.lastItem.target = self;
+            self.auxiliaryActionPopup.lastItem.action = @selector(onAuxActionTrash:);
+        }
+        else {
+            self.auxiliaryActionPopup.enabled = false;
+        }
+    }
     
     [self buildTitle];
     
     GoogleAnalytics::Instance().PostScreenView("Delete Files");
 }
 
-- (IBAction)OnDeleteAction:(id)sender
+- (IBAction)onPrimaryAction:(id)sender
 {
     m_ResultType = m_DefaultType;
     [self endSheet:NSModalResponseOK];
 }
 
-- (void)OnCancelAction:(id)sender
+- (IBAction)onAuxActionTrash:(id)sender
+{
+    m_ResultType = FileDeletionOperationType::MoveToTrash;
+    [self endSheet:NSModalResponseOK];
+}
+
+- (IBAction)onAuxActionPermDelete:(id)sender
+{
+    m_ResultType = FileDeletionOperationType::Delete;
+    [self endSheet:NSModalResponseOK];
+}
+
+- (IBAction)OnCancelAction:(id)sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnMenuItem:(NSMenuItem *)sender
+- (void)moveRight:(id)sender
 {
-    NSInteger tag = sender.tag;
-    m_ResultType = FileDeletionOperationType(tag);
-    [self endSheet:NSModalResponseOK];
+    [self.window selectNextKeyView:sender];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [self.window selectPreviousKeyView:sender];
 }
 
 - (void) buildTitle

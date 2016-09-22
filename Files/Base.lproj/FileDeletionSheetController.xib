@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FileDeletionSheetController">
             <connections>
-                <outlet property="DeleteButton" destination="138" id="179"/>
-                <outlet property="DeleteButtonMenu" destination="149" id="180"/>
                 <outlet property="Label" destination="26" id="42"/>
+                <outlet property="auxiliaryActionPopup" destination="5JK-Gz-nyy" id="fF6-9U-IdD"/>
+                <outlet property="primaryActionButton" destination="CAY-6l-o48" id="jMx-nx-mFV"/>
                 <outlet property="window" destination="1" id="3"/>
             </connections>
         </customObject>
@@ -23,12 +23,11 @@
                 <rect key="frame" x="0.0" y="0.0" width="361" height="110"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="20">
-                        <rect key="frame" x="124" y="13" width="92" height="32"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
+                        <rect key="frame" x="146" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="zFu-jE-a9c"/>
                         </constraints>
-                        <animations/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="21">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -38,51 +37,73 @@ Gw
                         </buttonCell>
                         <connections>
                             <action selector="OnCancelAction:" target="-2" id="92"/>
+                            <outlet property="nextKeyView" destination="CAY-6l-o48" id="vKB-Ct-rbr"/>
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" preferredMaxLayoutWidth="321" translatesAutoresizingMaskIntoConstraints="NO" id="26">
                         <rect key="frame" x="18" y="73" width="325" height="17"/>
-                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="27">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <segmentedControl verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="138" customClass="ButtonWithOptions">
-                        <rect key="frame" x="216" y="18" width="127" height="24"/>
-                        <animations/>
-                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="139">
-                            <font key="font" metaFont="system"/>
-                            <segments>
-                                <segment label="Placeholder text"/>
-                            </segments>
-                        </segmentedCell>
+                    <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="5JK-Gz-nyy">
+                        <rect key="frame" x="321" y="17" width="22" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="18" id="15n-x3-edq"/>
+                            <constraint firstAttribute="height" constant="21" id="uNC-oj-DSc"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="bevel" bezelStyle="regularSquare" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="Nsn-SF-iXB">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="Fjv-WS-JPS">
+                                <items>
+                                    <menuItem hidden="YES" id="zYr-aA-Ca8">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
                         <connections>
-                            <action selector="OnDeleteAction:" target="-2" id="182"/>
-                            <outlet property="menu" destination="149" id="167"/>
+                            <outlet property="nextKeyView" destination="20" id="W9Y-Nc-6lF"/>
                         </connections>
-                    </segmentedControl>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CAY-6l-o48">
+                        <rect key="frame" x="238" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="0Jp-uN-XhM"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FBW-ub-U7v">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onPrimaryAction:" target="-2" id="Nja-Jn-7pK"/>
+                            <outlet property="nextKeyView" destination="5JK-Gz-nyy" id="WEX-gq-9vh"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="26" firstAttribute="top" secondItem="2" secondAttribute="top" constant="20" symbolic="YES" id="28"/>
                     <constraint firstItem="26" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="31"/>
                     <constraint firstAttribute="trailing" secondItem="26" secondAttribute="trailing" constant="20" symbolic="YES" id="33"/>
-                    <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="97"/>
-                    <constraint firstItem="138" firstAttribute="top" secondItem="20" secondAttribute="top" id="141"/>
-                    <constraint firstAttribute="trailing" secondItem="138" secondAttribute="trailing" constant="20" symbolic="YES" id="176"/>
-                    <constraint firstItem="138" firstAttribute="leading" secondItem="20" secondAttribute="trailing" constant="8" symbolic="YES" id="177"/>
-                    <constraint firstItem="138" firstAttribute="top" secondItem="26" secondAttribute="bottom" constant="32" id="178"/>
+                    <constraint firstAttribute="bottom" secondItem="5JK-Gz-nyy" secondAttribute="bottom" constant="20" symbolic="YES" id="23u-DJ-agp"/>
+                    <constraint firstAttribute="bottom" secondItem="CAY-6l-o48" secondAttribute="bottom" constant="20" symbolic="YES" id="9wa-yL-mDq"/>
+                    <constraint firstAttribute="trailing" secondItem="5JK-Gz-nyy" secondAttribute="trailing" constant="20" symbolic="YES" id="Hvx-dw-Rfg"/>
+                    <constraint firstItem="5JK-Gz-nyy" firstAttribute="leading" secondItem="CAY-6l-o48" secondAttribute="trailing" constant="-1" id="bcI-pU-6bf"/>
+                    <constraint firstItem="CAY-6l-o48" firstAttribute="leading" secondItem="20" secondAttribute="trailing" constant="12" symbolic="YES" id="kSg-3O-bQq"/>
+                    <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="ruT-Fl-2jp"/>
                 </constraints>
-                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
+                <outlet property="initialFirstResponder" destination="CAY-6l-o48" id="HJu-ka-4aU"/>
             </connections>
-            <point key="canvasLocation" x="30.5" y="334.5"/>
+            <point key="canvasLocation" x="30.5" y="334"/>
         </window>
-        <menu autoenablesItems="NO" id="149">
-            <point key="canvasLocation" x="459" y="365.5"/>
-        </menu>
     </objects>
 </document>

@@ -35,7 +35,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="601" height="441"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RV2-6w-I75">
+                    <scrollView toolTip="^I" focusRingType="exterior" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RV2-6w-I75">
                         <rect key="frame" x="20" y="61" width="561" height="220"/>
                         <clipView key="contentView" id="Dto-5V-GUq">
                             <rect key="frame" x="1" y="0.0" width="559" height="219"/>
@@ -139,6 +139,9 @@
                             <rect key="frame" x="0.0" y="0.0" width="693" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
+                        <connections>
+                            <outlet property="nextKeyView" destination="uV6-QM-UnT" id="yGl-eC-XzD"/>
+                        </connections>
                     </scrollView>
                     <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="lDD-R1-mor">
                         <rect key="frame" x="214" y="289" width="5" height="140"/>
@@ -484,7 +487,7 @@
                         </popUpButtonCell>
                         <connections>
                             <action selector="OnCounterSettingsChanged:" target="-2" id="mAs-ar-oUy"/>
-                            <outlet property="nextKeyView" destination="uV6-QM-UnT" id="dVm-dB-6kE"/>
+                            <outlet property="nextKeyView" destination="C9n-Is-tq6" id="nQo-9p-w34"/>
                         </connections>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q35-59-7UF">

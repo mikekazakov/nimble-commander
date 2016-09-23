@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "../../3rd_party/NSFileManager+DirectoryLocations.h"
 #include "../../SimpleComboBoxPersistentDataSource.h"
@@ -192,6 +193,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     sheet.onCtrlD = [sheet makeActionHotkey:@selector(OnInsertDatePlaceholder:)];
     sheet.onCtrlE = [sheet makeActionHotkey:@selector(OnInsertExtensionPlaceholder:)];
     sheet.onCtrlG = [sheet makeClickHotkey:self.CounterDigits];
+    sheet.onCtrlI = [sheet makeFocusHotkey:self.FilenamesTable];
     sheet.onCtrlL = [sheet makeClickHotkey:self.SearchCaseSensitive];
     sheet.onCtrlN = [sheet makeActionHotkey:@selector(OnInsertNamePlaceholder:)];
     sheet.onCtrlO = [sheet makeClickHotkey:self.SearchOnlyOnce];
@@ -570,6 +572,20 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     [self endSheet:NSModalResponseOK];
 }
 
+- (void) keyDown:(NSEvent *)event
+{
+    int a = 10;
+    if( event.type == NSEventTypeKeyDown &&
+        event.keyCode == kVK_Delete &&
+        self.window.firstResponder == self.FilenamesTable &&
+        self.FilenamesTable.selectedRow != -1) {
+        [self removeItemAtIndex:(int)self.FilenamesTable.selectedRow];
+        return;
+    }
+
+    return [super keyDown:event];
+}
+
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     if( item.menu == self.FilenamesTable.menu ) {
@@ -583,23 +599,33 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     return true;
 }
 
+- (void) removeItemAtIndex:(int)_index
+{
+    // don't forget to erase items in ALL containers!
+    m_FileInfos.erase( next(begin(m_FileInfos), _index) );
+    m_LabelsBefore.erase( next(begin(m_LabelsBefore), _index) );
+    m_LabelsAfter.erase( next(begin(m_LabelsAfter), _index) );
+    m_ResultSource.erase( next(begin(m_ResultSource), _index) );
+    
+    [self.FilenamesTable reloadData];
+
+    if( _index < self.FilenamesTable.numberOfRows )
+        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:_index] byExtendingSelection:false];
+    else if( self.FilenamesTable.numberOfRows > 0 )
+        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1] byExtendingSelection:false];
+    
+    dispatch_to_main_queue([=]{
+        [self UpdateRename];
+    });
+}
+
 - (IBAction)onContextMenuRemoveItem:(id)sender
 {
     auto clicked_row = self.FilenamesTable.clickedRow;
     if( clicked_row < 0 && clicked_row >= self.FilenamesTable.numberOfRows )
         return;
     
-    // don't forget to erase items in ALL containers!
-    m_FileInfos.erase( next(begin(m_FileInfos), clicked_row) );
-    m_LabelsBefore.erase( next(begin(m_LabelsBefore), clicked_row) );
-    m_LabelsAfter.erase( next(begin(m_LabelsAfter), clicked_row) );
-    m_ResultSource.erase( next(begin(m_ResultSource), clicked_row) );
-    
-    [self.FilenamesTable reloadData];
-    
-    dispatch_to_main_queue([=]{
-        [self UpdateRename];
-    });
-}
+    [self removeItemAtIndex:(int)clicked_row];
+ }
 
 @end

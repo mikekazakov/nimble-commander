@@ -570,4 +570,36 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     [self endSheet:NSModalResponseOK];
 }
 
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    if( item.menu == self.FilenamesTable.menu ) {
+        auto clicked_row = self.FilenamesTable.clickedRow;
+        if( clicked_row >= 0 && clicked_row < self.FilenamesTable.numberOfRows )
+            return true;
+        else
+            return false;
+    }
+    
+    return true;
+}
+
+- (IBAction)onContextMenuRemoveItem:(id)sender
+{
+    auto clicked_row = self.FilenamesTable.clickedRow;
+    if( clicked_row < 0 && clicked_row >= self.FilenamesTable.numberOfRows )
+        return;
+    
+    // don't forget to erase items in ALL containers!
+    m_FileInfos.erase( next(begin(m_FileInfos), clicked_row) );
+    m_LabelsBefore.erase( next(begin(m_LabelsBefore), clicked_row) );
+    m_LabelsAfter.erase( next(begin(m_LabelsAfter), clicked_row) );
+    m_ResultSource.erase( next(begin(m_ResultSource), clicked_row) );
+    
+    [self.FilenamesTable reloadData];
+    
+    dispatch_to_main_queue([=]{
+        [self UpdateRename];
+    });
+}
+
 @end

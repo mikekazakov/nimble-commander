@@ -2078,7 +2078,7 @@
 				CF9DF215171320980008CBAE /* CreateDirectoryOperation */,
 				CFA58396170EA35E00E508CF /* Delete */,
 				CFCD87FD1815377100D82455 /* FileCompressOperation */,
-				CF55CDD81B29EF52001B4F91 /* BatchRenameOperation */,
+				CF55CDD81B29EF52001B4F91 /* Batch Rename */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -2391,7 +2391,7 @@
 			name = PanelMainWindowState;
 			sourceTree = "<group>";
 		};
-		CF55CDD81B29EF52001B4F91 /* BatchRenameOperation */ = {
+		CF55CDD81B29EF52001B4F91 /* Batch Rename */ = {
 			isa = PBXGroup;
 			children = (
 				CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */,
@@ -2407,7 +2407,7 @@
 				CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */,
 				CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */,
 			);
-			name = BatchRenameOperation;
+			name = "Batch Rename";
 			sourceTree = "<group>";
 		};
 		CF653C3A18C38CD700502920 /* UnRAR */ = {

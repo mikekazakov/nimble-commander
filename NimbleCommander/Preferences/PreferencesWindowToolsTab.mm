@@ -59,6 +59,15 @@ static bool AskUserToDeleteTool()
     return self;
 }
 
+- (NSToolbarItem *)toolbarItem
+{
+    NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
+    item.image = self.toolbarItemImage;
+    item.label = self.toolbarItemLabel;
+    item.enabled = ActivationManager::Instance().HasExternalTools();
+    return item;
+}
+
 -(NSString*)identifier{
     return NSStringFromClass(self.class);
 }

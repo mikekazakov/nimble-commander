@@ -153,7 +153,6 @@ static AppDelegate *g_Me = nil;
     vector<MainWindowController *>              m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
-    RHPreferencesWindowController *m_PreferencesController;
     ApplicationSkin     m_Skin;
     NSProgressIndicator *m_ProgressIndicator;
     NSDockTile          *m_DockTile;
@@ -647,25 +646,19 @@ static AppDelegate *g_Me = nil;
 
 - (void)OnPreferencesCommand:(id)sender
 {
-    if( !m_PreferencesController ){
+    static auto preferences = [=]{
         auto tools_storage = [=]()->ExternalToolsStorage&{return self.externalTools;};
-        NSMutableArray *controllers = [NSMutableArray new];
-        [controllers addObject:[PreferencesWindowGeneralTab new]];
-        [controllers addObject:[PreferencesWindowPanelsTab new]];
-        if( ActivationManager::Instance().HasInternalViewer() )
-            [controllers addObject:[PreferencesWindowViewerTab new]];
-        [controllers addObject:[PreferencesWindowExternalEditorsTab new]];
-        if( ActivationManager::Instance().HasTerminal() )
-            [controllers addObject:[PreferencesWindowTerminalTab new]];
-        [controllers addObject:[[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage]];
-        if( ActivationManager::Instance().HasExternalTools() )
-            [controllers addObject:[[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
-        
-        m_PreferencesController = [[RHPreferencesWindowController alloc] initWithViewControllers:controllers
-                                                                                        andTitle:@"Preferences"];
-    }
+        auto tabs = @[[PreferencesWindowGeneralTab new],
+                      [PreferencesWindowPanelsTab new],
+                      [PreferencesWindowViewerTab new],
+                      [PreferencesWindowExternalEditorsTab new],
+                      [PreferencesWindowTerminalTab new],
+                      [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],
+                      [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
+        return [[RHPreferencesWindowController alloc] initWithViewControllers:tabs andTitle:@"Preferences"];
+    }();
     
-    [m_PreferencesController showWindow:self];
+    [preferences showWindow:self];
     GoogleAnalytics::Instance().PostScreenView("Preferences Window");
 }
 

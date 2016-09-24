@@ -325,10 +325,11 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
     if ([controller respondsToSelector:@selector(toolbarItem)]){
         NSToolbarItem *item = [controller toolbarItem];
         if (item){
-            item = [item copy]; //we copy the item because it needs to be unique for a specific toolbar
-            item.target = self;
-            item.action = @selector(selectToolbarItem:);
-            return item;
+            NSToolbarItem *new_item = [item copy]; //we copy the item because it needs to be unique for a specific toolbar
+            new_item.target = self;
+            new_item.action = @selector(selectToolbarItem:);
+            new_item.enabled = item.enabled;
+            return new_item;
         }
     }
 
@@ -375,6 +376,11 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
         }
 
     }
+}
+
+- (BOOL)validateToolbarItem:(NSToolbarItem *)item
+{
+    return item.enabled;
 }
 
 -(NSArray*)toolbarItemIdentifiers{

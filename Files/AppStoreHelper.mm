@@ -105,7 +105,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     if( !m_ProFeaturesProduct )
         return;
     
-    
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
     SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
     [SKPaymentQueue.defaultQueue addPayment:payment];
 }
@@ -115,7 +115,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     if( !m_ProFeaturesProduct )
         return;
     
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
+    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
 

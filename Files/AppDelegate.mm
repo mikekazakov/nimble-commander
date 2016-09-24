@@ -579,7 +579,6 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnRestoreInAppPurchases:(id)sender
 {
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [m_AppStoreHelper askUserToRestorePurchases];
 }
 

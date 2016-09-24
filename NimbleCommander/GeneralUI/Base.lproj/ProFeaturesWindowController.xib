@@ -25,9 +25,9 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box boxType="custom" borderType="none" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="Teb-4c-PfV">
-                        <rect key="frame" x="0.0" y="55" width="614" height="410"/>
+                        <rect key="frame" x="0.0" y="55" width="614" height="406"/>
                         <view key="contentView" id="klv-oK-bbB">
-                            <rect key="frame" x="0.0" y="0.0" width="614" height="410"/>
+                            <rect key="frame" x="0.0" y="0.0" width="614" height="406"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <box boxType="custom" borderType="none" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8kj-rZ-zBs">
@@ -39,9 +39,9 @@
                                     <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </box>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVC-XY-DcS">
-                                    <rect key="frame" x="129" y="371" width="356" height="19"/>
+                                    <rect key="frame" x="150" y="369" width="314" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enjoying Nimble Commander but wanting more?" id="btc-5J-oEi">
-                                        <font key="font" metaFont="systemBold" size="15"/>
+                                        <font key="font" metaFont="systemBold"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
@@ -103,73 +103,73 @@
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="IAPNagScreenViewer" id="eBm-YB-VGB"/>
                                 </imageView>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VzQ-1a-o52">
-                                    <rect key="frame" x="91" y="346" width="433" height="19"/>
+                                    <rect key="frame" x="115" y="346" width="384" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Pro Features add-on brings advanced functionality to your NC:" id="7sC-iv-yjO">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cNX-ba-5zE">
-                                    <rect key="frame" x="106" y="286" width="126" height="19"/>
+                                    <rect key="frame" x="106" y="287" width="112" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Archives handling" id="CEU-rk-oDM">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4H0-IM-sdF">
-                                    <rect key="frame" x="106" y="222" width="132" height="19"/>
+                                    <rect key="frame" x="106" y="223" width="117" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Custom file search" id="XYy-Fk-2EL">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Ki-9L-EWS">
-                                    <rect key="frame" x="106" y="158" width="175" height="19"/>
+                                    <rect key="frame" x="106" y="159" width="156" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="External tools integration" id="y8W-w4-V0a">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q6N-gG-ntK">
-                                    <rect key="frame" x="106" y="94" width="77" height="19"/>
+                                    <rect key="frame" x="106" y="95" width="69" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="File viewer" id="J8g-fm-fPd">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="un9-KM-Cq5">
-                                    <rect key="frame" x="375" y="286" width="137" height="19"/>
+                                    <rect key="frame" x="375" y="287" width="122" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="System information" id="Bds-RP-yAL">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oga-3W-T8h">
-                                    <rect key="frame" x="375" y="222" width="175" height="19"/>
+                                    <rect key="frame" x="375" y="223" width="155" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Powerful batch renaming" id="2It-ef-MHO">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqI-gb-M7s">
-                                    <rect key="frame" x="375" y="158" width="189" height="19"/>
+                                    <rect key="frame" x="375" y="159" width="167" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="FTP and SFTP connectivity" id="v7q-uc-sjB">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j1a-0Y-JOh">
-                                    <rect key="frame" x="375" y="94" width="116" height="19"/>
+                                    <rect key="frame" x="375" y="95" width="103" height="17"/>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Attributes editor" id="lwf-Ux-yiP">
-                                        <font key="font" metaFont="system" size="15"/>
+                                        <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>

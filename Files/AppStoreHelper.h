@@ -9,7 +9,6 @@
 @property (nonatomic) function<void(const string &_id)> onProductPurchased;
 @property (nonatomic, readonly) NSString *priceString;
 
-- (void) askUserToBuyProFeatures;
 - (void) askUserToRestorePurchases;
 
 - (void) showProFeaturesWindow;

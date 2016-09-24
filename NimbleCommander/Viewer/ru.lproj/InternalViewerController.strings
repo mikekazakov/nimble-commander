@@ -1,0 +1,6 @@
+/* Class = "NSTextFieldCell"; title = "Go to position (in %):"; ObjectID = "GIm-Ir-imd"; */
+"GIm-Ir-imd.title" = "Перейти к позиции (в %):";
+
+/* Class = "NSButtonCell"; title = "Go"; ObjectID = "eXF-b7-bIU"; */
+"eXF-b7-bIU.title" = "Перейти";
+

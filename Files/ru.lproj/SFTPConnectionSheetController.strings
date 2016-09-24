@@ -1,13 +1,13 @@
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "6LB-Tz-coo"; */
 "6LB-Tz-coo.title" = "Подключиться";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "root"; ObjectID = "9Qu-hD-qcg"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "root"; ObjectID = "9Qu-hD-qcg"; */
 "9Qu-hD-qcg.ibShadowedIsNilPlaceholder" = "root";
 
 /* Class = "NSTextFieldCell"; title = "Connect to SFTP server:"; ObjectID = "096-ee-9Lb"; */
 "096-ee-9Lb.title" = "Подключиться к SFTP серверу:";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "example.com"; ObjectID = "F0g-IE-q0P"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "example.com"; ObjectID = "F0g-IE-q0P"; */
 "F0g-IE-q0P.ibShadowedIsNilPlaceholder" = "example.com";
 
 /* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
@@ -16,13 +16,13 @@
 /* Class = "NSTextFieldCell"; placeholderString = "path"; ObjectID = "KZu-2u-jyV"; */
 "KZu-2u-jyV.placeholderString" = "path";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "path"; ObjectID = "Kba-yc-QkI"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "path"; ObjectID = "Kba-yc-QkI"; */
 "Kba-yc-QkI.ibShadowedIsNilPlaceholder" = "path";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "passwd"; ObjectID = "NpK-Wh-VzO"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "passwd"; ObjectID = "NpK-Wh-VzO"; */
 "NpK-Wh-VzO.ibShadowedIsNilPlaceholder" = "passwd";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "22"; ObjectID = "OFd-Oy-lpd"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "22"; ObjectID = "OFd-Oy-lpd"; */
 "OFd-Oy-lpd.ibShadowedIsNilPlaceholder" = "22";
 
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "OPV-XT-aia"; */
@@ -34,7 +34,7 @@
 /* Class = "NSTextFieldCell"; placeholderString = "22"; ObjectID = "RDb-c0-5jY"; */
 "RDb-c0-5jY.placeholderString" = "22";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "TCG-Oh-q7e"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "TCG-Oh-q7e"; */
 "TCG-Oh-q7e.ibShadowedIsNilPlaceholder" = "произвольное название";
 
 /* Class = "NSButtonCell"; title = "🔑"; ObjectID = "Vpg-ZM-qSO"; */

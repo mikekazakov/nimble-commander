@@ -44,7 +44,7 @@
 /* Asking user if he really wants to delete information about a stored connection */
 "Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
 
-/* Asking user for confirmation on deleting external tool - message */
+/* Asking the user for confirmation on deleting the external tool - message */
 "Are you sure you want to remove this tool?" = "Вы действительно хотите удалить этот инструмент?";
 
 /* Asking user for confirmation on erasing custom settings - message */
@@ -77,7 +77,7 @@
 /* Menu item title in internal viewer search */
 "Clear Recents" = "Очистить недавние поиски";
 
-/* Asking user for granting file system access for NC */
+/* Asking the user to grant filesystem access for NC */
 "Click “Allow Access” to grant access to files in the selected directory" = "Нажмите “Разрешить доступ” чтобы позволить работать с файлами в выбранной директории";
 
 /* Menu item title for closing current tab */
@@ -155,9 +155,6 @@
 
 /* Brief System Information general box title */
 "General" = "Основное";
-
-/* Internal viewer mode - hexadecimal */
-"Hex" = "Hex";
 
 /* Menu item title for hiding tab bar */
 "Hide Tab Bar" = "Скрыть панель вкладок";
@@ -288,9 +285,6 @@
 /* User confirmation on message box */
 "Terminate and Close" = "Прервать и закрыть";
 
-/* Internal viewer mode - textual */
-"Text" = "Текст";
-
 /* Asking user for quitting app with activity */
 "The application has running operations. Do you want to stop all operations and quit?" = "Имеются работающие операции. Прекратить все операции и завершить приложение?";
 
@@ -300,7 +294,7 @@
 /* Asking user to close window with some operations running */
 "The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
 
-/* Asking user for confirmation on deleting external tool - message */
+/* Asking the user for confirmation on deleting the external tool - message */
 "This operation is not reversible." = "Эта операция необратима.";
 
 /* Asking user for confirmation on erasing custom settings - informative text */
@@ -335,9 +329,6 @@
 
 /* Volumes popup menu title in file panels */
 "Volumes" = "Тома";
-
-/* Internal viewer checkbox to wrap words */
-"Word wrap" = "Переносить слова";
 
 /* Asking user to provide anonymous usage information - informative text */
 "Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected." = "Хотели бы Вы отправлять разработчику анонимную статистику об использовании? Никакая личная информация о Вас не будет собираться.";

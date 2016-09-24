@@ -1,16 +1,34 @@
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Otherwise the item will be skipped"; ObjectID = "0un-JC-4pV"; */
+"0un-JC-4pV.ibShadowedToolTip" = "Иначе объект будет пропущен";
+
+/* Class = "NSMenuItem"; ibShadowedToolTip = "Otherwise the item will be skipped"; ObjectID = "2O5-JQ-7Zs"; */
+"2O5-JQ-7Zs.ibShadowedToolTip" = "Иначе объект будет пропущен";
+
+/* Class = "NSMenuItem"; title = "Overwrite Older"; ObjectID = "2O5-JQ-7Zs"; */
+"2O5-JQ-7Zs.title" = "Заменить старый";
+
+/* Class = "NSButtonCell"; title = "Overwrite"; ObjectID = "8Xz-24-O4V"; */
+"8Xz-24-O4V.title" = "Заменить";
+
 /* Class = "NSButtonCell"; title = "Skip"; ObjectID = "12"; */
 "12.title" = "Пропустить";
 
 /* Class = "NSButtonCell"; title = "Append"; ObjectID = "16"; */
 "16.title" = "Дописать";
 
+/* Class = "NSButton"; ibShadowedToolTip = "⌘⎋"; ObjectID = "30"; */
+"30.ibShadowedToolTip" = "⌘⎋";
+
 /* Class = "NSButtonCell"; title = "Abort"; ObjectID = "31"; */
 "31.title" = "Отменить";
+
+/* Class = "NSButton"; ibShadowedToolTip = "Hold Shift to apply to all"; ObjectID = "37"; */
+"37.ibShadowedToolTip" = "Удерживайте Shift чтобы применить ко всем";
 
 /* Class = "NSButtonCell"; title = "Apply to all"; ObjectID = "38"; */
 "38.title" = "Применить ко всем";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "49"; */
+/* Class = "NSBox"; title = "Title"; ObjectID = "49"; */
 "49.title" = "";
 
 /* Class = "NSTextFieldCell"; title = "New:"; ObjectID = "57"; */
@@ -19,21 +37,15 @@
 /* Class = "NSTextFieldCell"; title = "Existing:"; ObjectID = "61"; */
 "61.title" = "Имеющийся:";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "73"; */
+/* Class = "NSBox"; title = "Title"; ObjectID = "73"; */
 "73.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "File already exists"; ObjectID = "120"; */
 "120.title" = "Файл уже существует";
 
+/* Class = "NSButton"; ibShadowedToolTip = "⎋"; ObjectID = "149"; */
+"149.ibShadowedToolTip" = "⎋";
+
 /* Class = "NSButtonCell"; title = "Hide"; ObjectID = "151"; */
 "151.title" = "Скрыть";
-
-/* Class = "NSMenuItem"; ibShadowedToolTip = "Item would be skipped otherwise"; ObjectID = "N9p-bP-tMm"; */
-"N9p-bP-tMm.ibShadowedToolTip" = "Иначе файл будет пропущен";
-
-/* Class = "NSMenuItem"; title = "Overwrite Older"; ObjectID = "N9p-bP-tMm"; */
-"N9p-bP-tMm.title" = "Заменить старый";
-
-/* Class = "NSSegmentedCell"; WZi-jI-2oz.ibShadowedLabels[0] = "Overwrite"; ObjectID = "WZi-jI-2oz"; */
-"WZi-jI-2oz.ibShadowedLabels[0]" = "Заменить";
 

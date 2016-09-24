@@ -1,3 +1,6 @@
+/* Class = "NSButton"; ibShadowedToolTip = "⎋"; ObjectID = "00I-4I-INo"; */
+"00I-4I-INo.ibShadowedToolTip" = "⎋";
+
 /* Class = "NSTextFieldCell"; placeholderString = "0"; ObjectID = "2dl-Rj-gsT"; */
 "2dl-Rj-gsT.placeholderString" = "0";
 
@@ -9,6 +12,9 @@
 
 /* Class = "NSComboBox"; ibShadowedToolTip = "^M"; ObjectID = "4kJ-ln-DDa"; */
 "4kJ-ln-DDa.ibShadowedToolTip" = "^M";
+
+/* Class = "NSButtonCell"; title = "Look in archives"; ObjectID = "7HA-yk-SzZ"; */
+"7HA-yk-SzZ.title" = "Искать в архивах";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "8sA-yU-MON"; */
 "8sA-yU-MON.title" = "";
@@ -34,6 +40,9 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "MOD-fH-Yh6"; */
 "MOD-fH-Yh6.title" = "";
 
+/* Class = "NSButton"; ibShadowedToolTip = "^G"; ObjectID = "NVP-CR-YO4"; */
+"NVP-CR-YO4.ibShadowedToolTip" = "^G";
+
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "NaU-Re-Nxc"; */
 "NaU-Re-Nxc.title" = "";
 
@@ -58,6 +67,9 @@
 /* Class = "NSMenuItem"; title = "Kb"; ObjectID = "WY5-uo-vrc"; */
 "WY5-uo-vrc.title" = "Кб";
 
+/* Class = "NSButton"; ibShadowedToolTip = "^V"; ObjectID = "XFM-mL-fme"; */
+"XFM-mL-fme.ibShadowedToolTip" = "^V";
+
 /* Class = "NSTextFieldCell"; title = "With size:"; ObjectID = "YVt-Nt-3dl"; */
 "YVt-Nt-3dl.title" = "С размером:";
 
@@ -78,6 +90,9 @@
 
 /* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "dF0-bR-jEM"; */
 "dF0-bR-jEM.headerCell.title" = "Имя файла";
+
+/* Class = "NSButton"; ibShadowedToolTip = "^P"; ObjectID = "g6m-zK-tE9"; */
+"g6m-zK-tE9.ibShadowedToolTip" = "^P";
 
 /* Class = "NSButtonCell"; title = "Search for directories"; ObjectID = "ia5-oC-fH7"; */
 "ia5-oC-fH7.title" = "Искать папки";

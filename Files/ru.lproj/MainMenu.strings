@@ -325,6 +325,9 @@
 /* Class = "NSMenuItem"; title = "Recent Connections"; ObjectID = "PPi-Oe-OXM"; */
 "PPi-Oe-OXM.title" = "Последние подключения";
 
+/* Class = "NSMenuItem"; title = "Show VFS List"; ObjectID = "Pid-lQ-zTt"; */
+"Pid-lQ-zTt.title" = "Показать список ВФС";
+
 /* Class = "NSMenuItem"; title = "Calculate All Folders Sizes"; ObjectID = "Pq6-25-hPh"; */
 "Pq6-25-hPh.title" = "Вычислить размер всех папок";
 
@@ -370,8 +373,14 @@
 /* Class = "NSMenuItem"; title = "Focus Overlapped Terminal"; ObjectID = "Z21-QA-ACq"; */
 "Z21-QA-ACq.title" = "Фокус на терминал";
 
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "ZYO-Aa-rPi"; */
+"ZYO-Aa-rPi.title" = "Найти далее";
+
 /* Class = "NSMenuItem"; title = "Move Up"; ObjectID = "aYe-xJ-eDM"; */
 "aYe-xJ-eDM.title" = "Сдвинуть вверх";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "agx-eP-0jI"; */
+"agx-eP-0jI.title" = "Повторить";
 
 /* Class = "NSMenuItem"; title = "SFTP Server"; ObjectID = "bip-nL-0se"; */
 "bip-nL-0se.title" = "SFTP серверу";
@@ -396,6 +405,9 @@
 
 /* Class = "NSMenuItem"; title = "Invert Selection"; ObjectID = "fQ2-fd-Sa6"; */
 "fQ2-fd-Sa6.title" = "Инвертировать выделение";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "fSQ-n4-7Mg"; */
+"fSQ-n4-7Mg.title" = "Вырезать";
 
 /* Class = "NSMenuItem"; title = "Turn Admin Mode On"; ObjectID = "ftk-l8-B5i"; */
 "ftk-l8-B5i.title" = "Включить режим администратора";
@@ -436,8 +448,14 @@
 /* Class = "NSMenuItem"; title = "Open Extended Attributes"; ObjectID = "o44-xu-Cyg"; */
 "o44-xu-Cyg.title" = "Показать расширенные атрибуты";
 
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "oWo-PV-HvD"; */
+"oWo-PV-HvD.title" = "Отменить";
+
 /* Class = "NSMenuItem"; title = "Processes List"; ObjectID = "ooW-Y5-gXA"; */
 "ooW-Y5-gXA.title" = "Список процессов";
+
+/* Class = "NSMenuItem"; title = "Registration Info..."; ObjectID = "p5z-kC-qPf"; */
+"p5z-kC-qPf.title" = "Информация о лицензии...";
 
 /* Class = "NSMenuItem"; title = "Show/Hide Panels"; ObjectID = "pGI-yr-mvL"; */
 "pGI-yr-mvL.title" = "Показать/скрыть панели";

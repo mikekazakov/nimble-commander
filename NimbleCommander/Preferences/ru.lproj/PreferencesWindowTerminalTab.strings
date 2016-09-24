@@ -7,6 +7,9 @@
 /* Class = "NSColorWell"; ibShadowedToolTip = "White (7)"; ObjectID = "6CK-Is-VQh"; */
 "6CK-Is-VQh.ibShadowedToolTip" = "Белый (7)";
 
+/* Class = "NSTextFieldCell"; title = "Supported shells: bash, zsh and [t]csh"; ObjectID = "9D7-aw-d5c"; */
+"9D7-aw-d5c.title" = "Поддерживаемые shell: bash, zsh и [t]csh";
+
 /* Class = "NSTextFieldCell"; title = "Font"; ObjectID = "9LW-aK-nMs"; */
 "9LW-aK-nMs.title" = "Шрифт";
 
@@ -55,6 +58,9 @@
 /* Class = "NSColorWell"; ibShadowedToolTip = "Bright Red (9)"; ObjectID = "Yzb-fh-eM5"; */
 "Yzb-fh-eM5.ibShadowedToolTip" = "Ярко-красный (9)";
 
+/* Class = "NSButtonCell"; title = "Command (complete path):"; ObjectID = "ZFM-pn-oBo"; */
+"ZFM-pn-oBo.title" = "Команда (полный путь)";
+
 /* Class = "NSTextFieldCell"; title = "Background"; ObjectID = "cwt-bk-IjR"; */
 "cwt-bk-IjR.title" = "Фон";
 
@@ -63,6 +69,9 @@
 
 /* Class = "NSColorWell"; ibShadowedToolTip = "Black (0)"; ObjectID = "dZp-nY-uvb"; */
 "dZp-nY-uvb.ibShadowedToolTip" = "Черный (0)";
+
+/* Class = "NSButtonCell"; title = "Default login shell"; ObjectID = "dru-f9-fCV"; */
+"dru-f9-fCV.title" = "Shell входа по умолчанию";
 
 /* Class = "NSTextFieldCell"; title = "Selection"; ObjectID = "ezd-9K-uv3"; */
 "ezd-9K-uv3.title" = "Выделение";
@@ -78,6 +87,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Cursor"; ObjectID = "nU3-et-JNg"; */
 "nU3-et-JNg.title" = "Курсор";
+
+/* Class = "NSTextFieldCell"; title = "Open shell with: "; ObjectID = "nWF-WN-ul0"; */
+"nWF-WN-ul0.title" = "Запускать терминал с:";
 
 /* Class = "NSTextFieldCell"; title = "Text"; ObjectID = "p0R-sF-276"; */
 "p0R-sF-276.title" = "Текст";

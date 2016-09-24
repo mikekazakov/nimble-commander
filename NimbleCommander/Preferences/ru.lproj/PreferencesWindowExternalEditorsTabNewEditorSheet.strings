@@ -22,10 +22,10 @@
 /* Class = "NSButtonCell"; title = "..."; ObjectID = "fkZ-WL-MSq"; */
 "fkZ-WL-MSq.title" = "...";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m, etc."; ObjectID = "hau-43-Cpg"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m, etc."; ObjectID = "hau-43-Cpg"; */
 "hau-43-Cpg.ibShadowedIsNilPlaceholder" = "*, *.*, *.cpp, *.*m и т.д.";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
 "mi2-sj-UPs.ibShadowedIsNilPlaceholder" = "%%";
 
 /* Class = "NSTextFieldCell"; title = "Any occurrences of %% will be replaced with file path. You can use backslashes to escape spaces, so that they are not interpreted as parameter delimiters."; ObjectID = "wWC-fX-UjM"; */

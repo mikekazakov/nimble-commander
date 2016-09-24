@@ -184,7 +184,7 @@
 /* Class = "NSButtonCell"; title = "+"; ObjectID = "bwL-DX-wvp"; */
 "bwL-DX-wvp.title" = "+";
 
-/* Class = "NSTextFieldCell"; title = "Filename coloring rules:"; ObjectID = "cYq-VC-V1Y"; */
+/* Class = "NSTextFieldCell"; title = "Filenames coloring rules:"; ObjectID = "cYq-VC-V1Y"; */
 "cYq-VC-V1Y.title" = "Правила раскраски имен файлов:";
 
 /* Class = "NSTextFieldCell"; title = "Coloring rules are checked in the same order, and the first rule with the appropriate filter is used."; ObjectID = "dVh-IV-Uhm"; */

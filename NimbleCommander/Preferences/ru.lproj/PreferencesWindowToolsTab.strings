@@ -1,3 +1,9 @@
+/* Class = "NSMenuItem"; title = "Run in Terminal"; ObjectID = "1F7-OC-ESO"; */
+"1F7-OC-ESO.title" = "Запускать в терминале";
+
+/* Class = "NSMenuItem"; title = "Run Detached"; ObjectID = "3Ja-QT-yqJ"; */
+"3Ja-QT-yqJ.title" = "Запускать независимо";
+
 /* Class = "NSTextFieldCell"; title = "Tool title:"; ObjectID = "3Pc-uE-9BV"; */
 "3Pc-uE-9BV.title" = "Название инструмента:";
 
@@ -31,10 +37,10 @@
 /* Class = "NSMenuItem"; title = "%p\tSource item path"; ObjectID = "II6-Wo-q1C"; */
 "II6-Wo-q1C.title" = "%p	Путь исходного объекта";
 
-/* Class = "NSMenuItem"; title = "%10LF \tSource filenames as text file, limited"; ObjectID = "JUW-5J-iZz"; */
+/* Class = "NSMenuItem"; title = "%10LF \tSource filenames in a text file, limited"; ObjectID = "JUW-5J-iZz"; */
 "JUW-5J-iZz.title" = "%10LF 	Имена исходных объектов в текстовом файле, ограниченно";
 
-/* Class = "NSMenuItem"; title = "%\"Option name\"? Enter parameter value, named"; ObjectID = "L1y-lC-7iH"; */
+/* Class = "NSMenuItem"; title = "%\"Option name\"? Enter the value of the parameter named"; ObjectID = "L1y-lC-7iH"; */
 "L1y-lC-7iH.title" = "%\"Название параметра\"? Ввести значение параметра, с названием";
 
 /* Class = "NSMenuItem"; title = "Insert Selected Items"; ObjectID = "LrK-w4-iDz"; */
@@ -43,19 +49,19 @@
 /* Class = "NSMenuItem"; title = "Other"; ObjectID = "NVF-cl-n3F"; */
 "NVF-cl-n3F.title" = "Прочее";
 
-/* Class = "NSMenuItem"; title = "%-10LP \tTarget filepaths as text file, limited"; ObjectID = "PeS-us-ncF"; */
+/* Class = "NSMenuItem"; title = "%-10LP \tTarget filepaths in a text file, limited"; ObjectID = "PeS-us-ncF"; */
 "PeS-us-ncF.title" = "%-10LP 	Пути целевых объектов в текстовом файле, ограниченно";
 
-/* Class = "NSMenuItem"; title = "%LP\t\tSource filepaths as text file"; ObjectID = "Uut-qc-UcK"; */
+/* Class = "NSMenuItem"; title = "%LP\t\tSource filepaths in a text file"; ObjectID = "Uut-qc-UcK"; */
 "Uut-qc-UcK.title" = "%LP		Пути исходных объектов в текстовом файле";
 
 /* Class = "NSMenuItem"; title = "%r\tSource panel path"; ObjectID = "X8z-91-qc7"; */
 "X8z-91-qc7.title" = "%r	Путь исходной панели";
 
-/* Class = "NSMenuItem"; title = "%? Enter parameter value"; ObjectID = "XHU-jz-vdf"; */
+/* Class = "NSMenuItem"; title = "%? Enter the value of the parameter"; ObjectID = "XHU-jz-vdf"; */
 "XHU-jz-vdf.title" = "%? Ввести значение параметра";
 
-/* Class = "NSMenuItem"; title = "%-LP \tTarget filepaths as text file"; ObjectID = "XJk-yw-oD6"; */
+/* Class = "NSMenuItem"; title = "%-LP \tTarget filepaths in a text file"; ObjectID = "XJk-yw-oD6"; */
 "XJk-yw-oD6.title" = "%-LP 	Пути целевых объектов в текстовом файле";
 
 /* Class = "NSMenu"; title = "Ask For Value"; ObjectID = "XZ4-7A-fGc"; */
@@ -70,25 +76,31 @@
 /* Class = "NSMenuItem"; title = "%f\tSource item filename"; ObjectID = "dmv-sq-9J8"; */
 "dmv-sq-9J8.title" = "%f	Имя исходного объекта";
 
+/* Class = "NSMenuItem"; title = "Automatic"; ObjectID = "eeB-tN-Fpd"; */
+"eeB-tN-Fpd.title" = "Автоматически";
+
 /* Class = "NSMenu"; title = "Other"; ObjectID = "ezB-E1-baW"; */
 "ezB-E1-baW.title" = "Прочее";
 
-/* Class = "NSMenuItem"; title = "%5T Limit maxium total amount of files output"; ObjectID = "f5c-Cv-ZFZ"; */
+/* Class = "NSMenuItem"; title = "%5T Limit the total number of output files"; ObjectID = "f5c-Cv-ZFZ"; */
 "f5c-Cv-ZFZ.title" = "%5T Ограничить общее число объектов";
 
 /* Class = "NSMenuItem"; title = "%-e\tTarget item extension"; ObjectID = "hhv-Ii-7Ia"; */
 "hhv-Ii-7Ia.title" = "%-e	Расширение целевого объекта";
 
-/* Class = "NSMenuItem"; title = "%LF\t\tSource filenames as text file"; ObjectID = "hk9-iG-W4a"; */
+/* Class = "NSMenuItem"; title = "%LF\t\tSource filenames in a text file"; ObjectID = "hk9-iG-W4a"; */
 "hk9-iG-W4a.title" = "%LF		Имена исходных объектов в текстовом файле";
 
 /* Class = "NSMenuItem"; title = "Insert Current Item"; ObjectID = "hv1-vC-dN8"; */
 "hv1-vC-dN8.title" = "Вставить текущий объект";
 
+/* Class = "NSTextFieldCell"; title = "Startup Mode:"; ObjectID = "iVQ-ca-93Q"; */
+"iVQ-ca-93Q.title" = "Тип запуска:";
+
 /* Class = "NSMenuItem"; title = "Ask For Value"; ObjectID = "kbC-Ac-yjQ"; */
 "kbC-Ac-yjQ.title" = "Спросить значение";
 
-/* Class = "NSMenuItem"; title = "%% Put % symbol"; ObjectID = "l99-bl-ad0"; */
+/* Class = "NSMenuItem"; title = "%% Insert the % character"; ObjectID = "l99-bl-ad0"; */
 "l99-bl-ad0.title" = "%% Вставить символ %";
 
 /* Class = "NSMenuItem"; title = "%-f\tTarget item filename"; ObjectID = "lrv-hw-UfE"; */
@@ -97,7 +109,7 @@
 /* Class = "NSTextFieldCell"; title = "Parameters:"; ObjectID = "lzh-Bc-bxZ"; */
 "lzh-Bc-bxZ.title" = "Параметры:";
 
-/* Class = "NSMenuItem"; title = "%10LP \tSource filepaths as text file, limited"; ObjectID = "n7P-7k-Ogp"; */
+/* Class = "NSMenuItem"; title = "%10LP \tSource filepaths in a text file, limited"; ObjectID = "n7P-7k-Ogp"; */
 "n7P-7k-Ogp.title" = "%10LP 	Пути исходных объектов в текстовом файле, ограниченно";
 
 /* Class = "NSMenu"; title = "Insert Selected Items"; ObjectID = "o8G-ZY-8l8"; */
@@ -124,9 +136,9 @@
 /* Class = "NSMenuItem"; title = "%-10F \tTarget filenames as parameters, limited"; ObjectID = "xbW-7L-Eo6"; */
 "xbW-7L-Eo6.title" = "%-10F 	Имена целевых объектов как параметры, ограниченно";
 
-/* Class = "NSMenuItem"; title = "%-LF \tTarget filenames as text file"; ObjectID = "xqa-ff-fmA"; */
+/* Class = "NSMenuItem"; title = "%-LF \tTarget filenames in a text file"; ObjectID = "xqa-ff-fmA"; */
 "xqa-ff-fmA.title" = "%-LF 	Имена целевых объектов в текстовом файле";
 
-/* Class = "NSMenuItem"; title = "%-10LF \tTarget filenames as text file, limited"; ObjectID = "yBx-gj-ydb"; */
+/* Class = "NSMenuItem"; title = "%-10LF \tTarget filenames in a text file, limited"; ObjectID = "yBx-gj-ydb"; */
 "yBx-gj-ydb.title" = "%-10LF 	Имена целевых объектов в текстовом файле, ограниченно";
 

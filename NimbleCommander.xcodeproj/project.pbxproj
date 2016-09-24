@@ -1651,6 +1651,13 @@
 		CF8D0CFC1D963E1F00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
 		CF8D0D021D963E3400ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InternalViewerController.xib; sourceTree = "<group>"; };
 		CF8D0D081D963E9A00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VFSListWindowController.xib; sourceTree = "<group>"; };
+		CF8D0D0A1D964C9700ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InternalViewerController.strings; sourceTree = "<group>"; };
+		CF8D0D0B1D964C9800ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SpotlightSearchPopupViewController.strings; sourceTree = "<group>"; };
+		CF8D0D0C1D964C9900ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ProFeaturesWindowController.strings; sourceTree = "<group>"; };
+		CF8D0D0D1D964C9A00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/VFSListWindowController.strings; sourceTree = "<group>"; };
+		CF8D0D0E1D964C9A00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FeedbackWindow.strings; sourceTree = "<group>"; };
+		CF8D0D0F1D964C9B00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InternalViewerToolbar.strings; sourceTree = "<group>"; };
+		CF8D0D101D964C9B00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/RegistrationInfoWindow.strings; sourceTree = "<group>"; };
 		CF9066B219AB51B3001DC687 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		CF9066B419AB54CE001DC687 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_party/built/lib/libcrypto.a; sourceTree = "<group>"; };
 		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
@@ -4706,6 +4713,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0CE71D96234900ADFF14 /* Base */,
+				CF8D0D0E1D964C9A00ADFF14 /* ru */,
 			);
 			name = FeedbackWindow.xib;
 			path = NimbleCommander/GeneralUI;
@@ -4715,6 +4723,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0CED1D9623E000ADFF14 /* Base */,
+				CF8D0D101D964C9B00ADFF14 /* ru */,
 			);
 			name = RegistrationInfoWindow.xib;
 			path = NimbleCommander/GeneralUI;
@@ -4724,6 +4733,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0CF01D96244900ADFF14 /* Base */,
+				CF8D0D0C1D964C9900ADFF14 /* ru */,
 			);
 			name = ProFeaturesWindowController.xib;
 			path = NimbleCommander/GeneralUI;
@@ -4733,6 +4743,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0CF61D963E1000ADFF14 /* Base */,
+				CF8D0D0F1D964C9B00ADFF14 /* ru */,
 			);
 			name = InternalViewerToolbar.xib;
 			path = NimbleCommander/Viewer;
@@ -4742,6 +4753,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0CFC1D963E1F00ADFF14 /* Base */,
+				CF8D0D0B1D964C9800ADFF14 /* ru */,
 			);
 			name = SpotlightSearchPopupViewController.xib;
 			sourceTree = "<group>";
@@ -4750,6 +4762,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0D021D963E3400ADFF14 /* Base */,
+				CF8D0D0A1D964C9700ADFF14 /* ru */,
 			);
 			name = InternalViewerController.xib;
 			path = NimbleCommander/Viewer;
@@ -4759,6 +4772,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF8D0D081D963E9A00ADFF14 /* Base */,
+				CF8D0D0D1D964C9A00ADFF14 /* ru */,
 			);
 			name = VFSListWindowController.xib;
 			path = NimbleCommander/GeneralUI;

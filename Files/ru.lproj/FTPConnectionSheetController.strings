@@ -16,13 +16,13 @@
 /* Class = "NSTextFieldCell"; placeholderString = "/"; ObjectID = "KlY-P2-CgM"; */
 "KlY-P2-CgM.placeholderString" = "/";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "anonymous"; ObjectID = "O5E-rL-Xtf"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous"; ObjectID = "O5E-rL-Xtf"; */
 "O5E-rL-Xtf.ibShadowedIsNilPlaceholder" = "anonymous";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "21"; ObjectID = "Oei-y6-cIo"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "21"; ObjectID = "Oei-y6-cIo"; */
 "Oei-y6-cIo.ibShadowedIsNilPlaceholder" = "21";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
 "P18-Nd-gLg.ibShadowedIsNilPlaceholder" = "ftp.example.com";
 
 /* Class = "NSTextFieldCell"; placeholderString = "21"; ObjectID = "Sp1-bt-rdp"; */
@@ -31,7 +31,7 @@
 /* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "Spe-8u-71A"; */
 "Spe-8u-71A.title" = "Логин:";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "Xwj-Vw-t6b"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "Xwj-Vw-t6b"; */
 "Xwj-Vw-t6b.ibShadowedIsNilPlaceholder" = "произвольное название";
 
 /* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "Z0v-Pw-m6u"; */
@@ -40,7 +40,7 @@
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "dA5-HK-3gm"; */
 "dA5-HK-3gm.title" = "Название:";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "dWk-v8-gCF"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "dWk-v8-gCF"; */
 "dWk-v8-gCF.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";
 
 /* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
@@ -52,7 +52,7 @@
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "j8e-Wn-3Fa"; */
 "j8e-Wn-3Fa.title" = "Закрыть";
 
-/* Class = "BindingConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
 "mnE-WW-WZY.ibShadowedIsNilPlaceholder" = "/";
 
 /* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */

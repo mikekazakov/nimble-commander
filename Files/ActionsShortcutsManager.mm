@@ -282,8 +282,7 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
         if([obj isEqualToString:@"default"])
             continue;
         
-        if( ShortCut sc{obj.UTF8String} )
-            m_ShortCutsOverrides[i->second] = sc;
+        m_ShortCutsOverrides[i->second] = ShortCut{obj.UTF8String};
     }
 }
 

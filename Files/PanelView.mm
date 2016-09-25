@@ -375,7 +375,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self OnCursorPositionChanged];
 }
 
-- (void) HandleInsert
+- (void) onInvertCurrentItemSelectionAndMoveNext
 {
     dispatch_assert_main_queue();
     
@@ -388,6 +388,17 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
                              select:!m_State.Data->VolatileDataAtSortPosition(origpos).is_selected()];
     
     [self OnCursorPositionChanged];
+}
+
+- (void) onInvertCurrentItemSelection
+{
+    dispatch_assert_main_queue();
+    
+    int pos = m_State.CursorPos;
+    if( auto entry = m_State.Data->EntryAtSortPosition(pos) )
+        [self SelectUnselectInRange:pos
+                      last_included:pos
+                             select:!m_State.Data->VolatileDataAtSortPosition(pos).is_selected()];
 }
 
 - (void) setCurpos:(int)_pos
@@ -439,10 +450,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     [self checkKeyboardModifierFlags:modifiers];
     
-    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup, hk_insert;
+    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup, &hk_insert},
-       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page", "panel.move_next_and_invert_selection"}
+       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup, &hk_inv_and_move, &hk_inv},
+       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page", "panel.move_next_and_invert_selection", "panel.invert_item_selection"}
       );
     hotkeys_updater.CheckAndUpdate();
 
@@ -462,8 +473,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self HandleNextPage];
     else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandlePrevPage];
-    else if( hk_insert.IsKeyDown(unicode, keycode, modifiers) )
-        [self HandleInsert];
+    else if( hk_inv_and_move.IsKeyDown(unicode, keycode, modifiers) )
+        [self onInvertCurrentItemSelectionAndMoveNext];
+    else if( hk_inv.IsKeyDown(unicode, keycode, modifiers) )
+        [self onInvertCurrentItemSelection];
     else
         [super keyDown:event];
 }

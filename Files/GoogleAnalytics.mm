@@ -150,6 +150,12 @@ GoogleAnalytics::GoogleAnalytics():
                         "an="  + EscapeString(m_AppName) + "&" +
                         "av="  + m_AppVersion + "&" +
                         "ul="  + m_UserLanguage + "&";
+    
+    if( m_Enabled ) {
+        sysinfo::SystemOverview so;
+        if( sysinfo::GetSystemOverview(so) )
+            PostEvent("Init info", "Hardware", so.coded_model.c_str());
+    }
 }
 
 void GoogleAnalytics::UpdateEnabledStatus()

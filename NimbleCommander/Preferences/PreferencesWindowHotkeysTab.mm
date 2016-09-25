@@ -42,6 +42,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
         {"panel.move_next_page",                @"File Panels ▶ Move to the Next Page"},
         {"panel.move_prev_page",                @"File Panels ▶ Move to the Previous Page"},
         {"panel.move_next_and_invert_selection",@"File Panels ▶ Invert Selection and Move Next"},
+        {"panel.invert_item_selection",         @"File Panels ▶ Invert Selection"},
         {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"},
         {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"},
         {"panel.show_preview",                  @"File Panels ▶ Show Preview"},
@@ -61,8 +62,6 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
              [NSString stringWithFormat:@"Tool #%u", _index] :
              [NSString stringWithUTF8StdString:_et.m_Title]) ];
 }
-
-//const ExternalTool
 
 @interface PreferencesWindowHotkeysTab()
 

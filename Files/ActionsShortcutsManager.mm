@@ -152,6 +152,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.move_next_page",                                u8"\uF72D"  }, // page up
         {"panel.move_prev_page",                                u8"\uF72C"  }, // page down
         {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
+        {"panel.invert_item_selection",                         u8""        },
         {"panel.go_root",                                       u8"/"       }, // slash
         {"panel.go_home",                                       u8"~"       }, // tilde
         {"panel.show_preview",                                  u8" "       }, // space

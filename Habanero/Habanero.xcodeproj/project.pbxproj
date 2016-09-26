@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF8D0D171D98EA4300ADFF14 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
 		CF9A9F151CACDD3F0094D6F7 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */; };
 		CF9A9F171CACDD490094D6F7 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
 		CFD62B931C99C2A60021EE7F /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62B861C99C2A60021EE7F /* algo.h */; };
@@ -42,6 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFStackAllocator.cpp; path = source/CFStackAllocator.cpp; sourceTree = "<group>"; };
 		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
 		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
 		CFD62B721C99C19A0021EE7F /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,6 +134,7 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */,
 				CFD6DD211D6C44C1006B94C2 /* Observable.cpp */,
 				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
@@ -239,6 +242,7 @@
 				CFD62BB11C99C2AE0021EE7F /* dispatch_cpp.cpp in Sources */,
 				CFD62BAD1C99C2AE0021EE7F /* CFString.cpp in Sources */,
 				CFD62BBE1C99C7480021EE7F /* chained_strings.cpp in Sources */,
+				CF8D0D171D98EA4300ADFF14 /* CFStackAllocator.cpp in Sources */,
 				CFD62BB01C99C2AE0021EE7F /* debug.cpp in Sources */,
 				CFD62BB61C99C2AE0021EE7F /* KVO.cpp in Sources */,
 				CFD62BB71C99C2AE0021EE7F /* mach_time.cpp in Sources */,

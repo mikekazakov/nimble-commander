@@ -117,13 +117,13 @@ NSImageRep *QLThumbnailsCache::ThumbnailIfHas(const string &_filename)
 
 NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size)
 {
-    CFStackAllocator<> allocator;
+    CFStackAllocator allocator;
     NSBitmapImageRep *result = nil;
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(allocator.alloc, (const UInt8 *)_filename.c_str(), _filename.length(), false);
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(allocator.Alloc(), (const UInt8 *)_filename.c_str(), _filename.length(), false);
     static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
     static void *values[] = {(void*)kCFBooleanTrue};
     static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-    if( auto thumbnail = QLThumbnailImageCreate(allocator.alloc, url, _size, dict) ) {
+    if( auto thumbnail = QLThumbnailImageCreate(allocator.Alloc(), url, _size, dict) ) {
         result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
         CGImageRelease(thumbnail);
     }

@@ -9,9 +9,9 @@ ExtensionLowercaseComparison& ExtensionLowercaseComparison::Instance() noexcept
 
 static string ProduceFormCLowercase(string_view _string)
 {
-    CFStackAllocator<> allocator;
+    CFStackAllocator allocator;
 
-    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.alloc,
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
                                                          (UInt8*)_string.data(),
                                                          _string.length(),
                                                          kCFStringEncodingUTF8,
@@ -21,7 +21,7 @@ static string ProduceFormCLowercase(string_view _string)
     if( !original )
         return "";
     
-    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator.alloc, 0, original);
+    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator.Alloc(), 0, original);
     CFRelease(original);
     if( !mutable_string )
         return "";

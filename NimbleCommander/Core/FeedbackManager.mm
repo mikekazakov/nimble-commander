@@ -222,7 +222,7 @@ void FeedbackManager::RateOnAppStore()
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
-static const auto g_SocialMessage = @"I use Nimble Commander - a great file manager for macOS! http://magnumbytes.com/";
+static const auto g_SocialMessage = NSLocalizedString(@"I use Nimble Commander - a great file manager for macOS! http://magnumbytes.com/", "Note for a social network share");
 
 void FeedbackManager::ShareOnFacebook()
 {

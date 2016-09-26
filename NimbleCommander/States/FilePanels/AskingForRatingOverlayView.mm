@@ -95,7 +95,7 @@
         m_Annotation.drawsBackground = false;
         m_Annotation.font = [NSFont labelFontOfSize:11];
         m_Annotation.textColor = NSColor.secondaryLabelColor;
-        m_Annotation.stringValue = @"How are we doing?"; // Localize!!!
+        m_Annotation.stringValue = NSLocalizedString(@"How are we doing?", "Asking user to provide a rating");
         [self addSubview:m_Annotation];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Annotation
                                                          attribute:NSLayoutAttributeBottom

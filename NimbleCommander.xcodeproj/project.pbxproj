@@ -2957,7 +2957,7 @@
 				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
 				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
-				CFC5121A16C4BD3D00D247EE /* Files */,
+				CFC5121A16C4BD3D00D247EE /* Source */,
 				B51014CF170721340023FF24 /* Resources */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
@@ -3046,7 +3046,7 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		CFC5121A16C4BD3D00D247EE /* Files */ = {
+		CFC5121A16C4BD3D00D247EE /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				CF876D161D51DFD0009C0CCE /* Bootstrap */,
@@ -3061,6 +3061,7 @@
 				CFB8F22B17CA3C65004574FE /* VFS */,
 				CF876D151D51DFAE009C0CCE /* Viewer */,
 			);
+			name = Source;
 			path = Files;
 			sourceTree = "<group>";
 		};

@@ -78,12 +78,6 @@ GoogleAnalytics& GoogleAnalytics::Instance()
 //&aiid=com.android.vending   // App Installer Id.
 //&cd=Home                    // Screen name / content description.
 
-//Mozilla/5.0 (Linux; Android 4.4.2; Nexus 5 Build/KOT49H)
-
-//"Files/543 CFNetwork/673.6 Darwin/13.4.0 (x86_64) (MacBookPro5%2C3)"
-//"Files/543 CFNetwork/673.6 Darwin/13.4.0 (x86_64) (MacBookPro5%2C3)"
-//Mozilla/[version] ([system and browser information]) [platform] ([platform details]) [extensions].
-
 static string UserLanguage()
 {
     NSString *lang = [[NSLocale preferredLanguages] objectAtIndex:0];
@@ -99,23 +93,13 @@ static NSString *GetUserAgent()
     NSDictionary *osInfo = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
     
     NSLocale *currentLocale = [NSLocale autoupdatingCurrentLocale];
-//    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@-%@; %@)",
-/*    NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@)",
-                    osInfo[@"ProductName"],
-                    [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
-//                    [currentLocale objectForKey:NSLocaleLanguageCode],
-//                    [currentLocale objectForKey:NSLocaleCountryCode],
-                    [NSString stringWithUTF8StdString:sysoverview.coded_model]
-                    ];*/
     
-    // escaping codel_model?
     NSString *UA = [NSString stringWithFormat:@"GoogleAnalytics/3.0 (Macintosh; Intel %@ %@; %@-%@) (%@)",
                     osInfo[@"ProductName"],
                     [osInfo[@"ProductVersion"] stringByReplacingOccurrencesOfString:@"." withString:@"_"],
                     [currentLocale objectForKey:NSLocaleLanguageCode],
                     [currentLocale objectForKey:NSLocaleCountryCode],
                     [NSString stringWithUTF8StdString:sysoverview.coded_model]
-//                    [[NSString stringWithUTF8StdString:sysoverview.coded_model] stringByReplacingOccurrencesOfString:@"," withString:@"%2C"]
                     ];
     
     return UA;
@@ -155,6 +139,8 @@ GoogleAnalytics::GoogleAnalytics():
         sysinfo::SystemOverview so;
         if( sysinfo::GetSystemOverview(so) )
             PostEvent("Init info", "Hardware", so.coded_model.c_str());
+    
+        PostEvent("Init info", "UI Language", [[NSLocale.autoupdatingCurrentLocale objectForKey:NSLocaleLanguageCode] UTF8String] );
     }
 }
 

@@ -39,7 +39,7 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V94-yq-2fe">
                                             <rect key="frame" x="18" y="185" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to rate Banktivity at the Mac App Store, we'd really appreciate it." id="21T-EA-38h">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to rate Nimble Commander at the Mac App Store, we'd really appreciate it." id="21T-EA-38h">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -349,7 +349,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-65" y="184"/>
+            <point key="canvasLocation" x="-45" y="7"/>
         </window>
     </objects>
     <resources>

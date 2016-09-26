@@ -18,10 +18,10 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Pro Features for Nimble Commander" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
-            <rect key="contentRect" x="196" y="240" width="614" height="446"/>
+            <rect key="contentRect" x="196" y="240" width="614" height="461"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="614" height="446"/>
+            <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="614" height="461"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <box boxType="custom" borderType="none" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="Teb-4c-PfV">
@@ -31,9 +31,9 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <box boxType="custom" borderType="none" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8kj-rZ-zBs">
-                                    <rect key="frame" x="0.0" y="67" width="614" height="271"/>
+                                    <rect key="frame" x="0.0" y="67" width="614" height="264"/>
                                     <view key="contentView" id="Hsd-aO-CMX">
-                                        <rect key="frame" x="0.0" y="0.0" width="614" height="271"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="614" height="264"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </view>
                                     <color key="fillColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -185,7 +185,10 @@
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="IAPNagScreenAttributes" id="6Bg-mk-f5b"/>
                                 </imageView>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GUc-OE-6KU">
-                                    <rect key="frame" x="592" y="4" width="4" height="17"/>
+                                    <rect key="frame" x="542" y="4" width="54" height="17"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="FY2-Qm-dHM"/>
+                                    </constraints>
                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="fQa-EA-IQa">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -250,7 +253,7 @@
                                     <rect key="frame" x="0.0" y="64" width="614" height="5"/>
                                 </box>
                                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="11N-1c-krG">
-                                    <rect key="frame" x="0.0" y="336" width="614" height="5"/>
+                                    <rect key="frame" x="0.0" y="329" width="614" height="5"/>
                                 </box>
                             </subviews>
                             <constraints>
@@ -270,7 +273,7 @@
                                 <constraint firstItem="3uL-lD-qAF" firstAttribute="top" secondItem="e9Z-UC-fRH" secondAttribute="top" id="KFN-dC-8o7"/>
                                 <constraint firstItem="VzQ-1a-o52" firstAttribute="top" secondItem="kVC-XY-DcS" secondAttribute="bottom" constant="6" id="LaR-EQ-GiT"/>
                                 <constraint firstItem="PSY-rB-nQW" firstAttribute="top" secondItem="52R-MR-kyS" secondAttribute="top" id="LmG-f0-yIl"/>
-                                <constraint firstItem="8kj-rZ-zBs" firstAttribute="top" secondItem="VzQ-1a-o52" secondAttribute="bottom" constant="8" id="MNz-hz-sEP"/>
+                                <constraint firstItem="8kj-rZ-zBs" firstAttribute="top" secondItem="VzQ-1a-o52" secondAttribute="bottom" constant="15" id="MNz-hz-sEP"/>
                                 <constraint firstItem="cNX-ba-5zE" firstAttribute="centerY" secondItem="52R-MR-kyS" secondAttribute="centerY" id="N1S-PY-Bdy"/>
                                 <constraint firstAttribute="bottom" secondItem="3Rm-8l-uiQ" secondAttribute="bottom" constant="36" id="NsY-2q-DpP"/>
                                 <constraint firstItem="un9-KM-Cq5" firstAttribute="centerY" secondItem="PSY-rB-nQW" secondAttribute="centerY" id="O1j-30-KT1"/>
@@ -364,7 +367,7 @@ Gw
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-57" y="225"/>
+            <point key="canvasLocation" x="-57" y="231"/>
         </window>
     </objects>
     <resources>

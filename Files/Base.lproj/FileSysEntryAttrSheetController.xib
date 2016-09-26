@@ -280,7 +280,7 @@
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="4HR-nr-1OR"/>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Y7p-kg-kwE"/>
                     </constraints>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="1313">
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" id="1313">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

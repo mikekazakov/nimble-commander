@@ -112,7 +112,7 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sug-ry-cwV">
                                             <rect key="frame" x="18" y="185" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to post a note on any social network, we'd really appreciate it." id="J7M-Hl-Cyp">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to post a note about Nimble Commander on any social network, we'd really appreciate it." id="J7M-Hl-Cyp">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

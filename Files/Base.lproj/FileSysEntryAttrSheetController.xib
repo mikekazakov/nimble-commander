@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FileSysEntryAttrSheetController">
@@ -274,12 +274,13 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="999" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1312">
-                    <rect key="frame" x="199" y="97" width="72" height="17"/>
+                <textField horizontalHuggingPriority="999" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1312">
+                    <rect key="frame" x="183" y="97" width="104" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="4HR-nr-1OR"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Y7p-kg-kwE"/>
                     </constraints>
-                    <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="center" title="___________" id="1313">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="1313">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -295,11 +296,8 @@
                         <action selector="OnFlag:" target="-2" id="1191"/>
                     </connections>
                 </button>
-                <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="HSK-ed-z2N">
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="HSK-ed-z2N">
                     <rect key="frame" x="0.0" y="-2" width="469" height="5"/>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <font key="titleFont" metaFont="system"/>
                 </box>
             </subviews>
             <constraints>
@@ -515,11 +513,8 @@
                         <action selector="OnFlag:" target="-2" id="qdx-d6-45R"/>
                     </connections>
                 </button>
-                <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="dMG-1I-d6L">
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="dMG-1I-d6L">
                     <rect key="frame" x="0.0" y="-2" width="479" height="5"/>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <font key="titleFont" metaFont="system"/>
                 </box>
             </subviews>
             <constraints>
@@ -571,8 +566,8 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="841">
-                    <rect key="frame" x="137" y="81" width="139" height="22"/>
+                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="841">
+                    <rect key="frame" x="137" y="81" width="142" height="22"/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="842">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -598,8 +593,8 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
-                    <rect key="frame" x="137" y="56" width="139" height="22"/>
+                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1007">
+                    <rect key="frame" x="137" y="56" width="142" height="22"/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1014">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -614,8 +609,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1214"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
-                    <rect key="frame" x="273" y="49" width="53" height="32"/>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1009">
+                    <rect key="frame" x="276" y="49" width="52" height="32"/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1011">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -635,8 +630,8 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
-                    <rect key="frame" x="137" y="31" width="139" height="22"/>
+                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1035">
+                    <rect key="frame" x="137" y="31" width="142" height="22"/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1040">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -651,8 +646,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1215"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
-                    <rect key="frame" x="273" y="24" width="53" height="32"/>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1037">
+                    <rect key="frame" x="276" y="24" width="52" height="32"/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1038">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -672,8 +667,8 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <datePicker verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
-                    <rect key="frame" x="137" y="6" width="139" height="22"/>
+                <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1060">
+                    <rect key="frame" x="137" y="6" width="142" height="22"/>
                     <datePickerCell key="cell" borderStyle="bezel" alignment="left" datePickerStyle="textField" id="1065">
                         <font key="font" metaFont="system"/>
                         <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
@@ -688,8 +683,8 @@
                         <action selector="OnTimeChange:" target="-2" id="1216"/>
                     </connections>
                 </datePicker>
-                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
-                    <rect key="frame" x="273" y="-1" width="53" height="32"/>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1062">
+                    <rect key="frame" x="276" y="-1" width="52" height="32"/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="1063">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -698,11 +693,8 @@
                         <action selector="OnBTimeSet:" target="-2" id="1169"/>
                     </connections>
                 </button>
-                <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="413-Br-NX9">
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="413-Br-NX9">
                     <rect key="frame" x="0.0" y="-2" width="457" height="5"/>
-                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <font key="titleFont" metaFont="system"/>
                 </box>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="SLV-zf-H18">
                     <rect key="frame" x="116" y="83" width="22" height="18"/>
@@ -744,8 +736,8 @@
                         <action selector="OnTimePickerEnabled:" target="-2" id="nwv-tz-vkl"/>
                     </connections>
                 </button>
-                <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="967">
-                    <rect key="frame" x="273" y="74" width="53" height="32"/>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="967">
+                    <rect key="frame" x="276" y="74" width="52" height="32"/>
                     <buttonCell key="cell" type="push" title="←" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="969">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>

@@ -16,7 +16,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Registration" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="650" height="350"/>
@@ -64,7 +64,7 @@ DQ
                         <rect key="frame" x="220" y="41" width="410" height="270"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="MAS" identifier="1" id="HAp-xA-gMY">
+                            <tabViewItem identifier="1" id="HAp-xA-gMY" userLabel="MAS">
                                 <view key="view" id="c9h-7Y-VYm">
                                     <rect key="frame" x="0.0" y="0.0" width="410" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -84,7 +84,7 @@ DQ
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="NonMAS - Registered" identifier="2" id="pp9-9w-v94">
+                            <tabViewItem label="NonMAS - Registered" identifier="2" id="pp9-9w-v94" userLabel="NonMAS - Registered">
                                 <view key="view" id="TuP-lj-P87">
                                     <rect key="frame" x="0.0" y="0.0" width="410" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -178,7 +178,7 @@ DQ
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="MAS -not Registered" identifier="" id="mFQ-Kk-25r">
+                            <tabViewItem label="MAS -not Registered" identifier="" id="mFQ-Kk-25r" userLabel="MAS - Not Registered">
                                 <view key="view" id="0a0-hC-DcZ">
                                     <rect key="frame" x="0.0" y="0.0" width="410" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

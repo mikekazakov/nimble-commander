@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="SpotlightSearchPopupViewController">
@@ -21,16 +21,10 @@
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="8yG-6j-1zT"/>
                     </constraints>
-                    <animations/>
                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Type a search criteria here" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="E0l-6v-dL3">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        <objectValues>
-                            <string>Item 1</string>
-                            <string>Item 2</string>
-                            <string>Item 3</string>
-                        </objectValues>
                     </comboBoxCell>
                     <connections>
                         <action selector="onQueryComboBox:" target="-2" id="QbA-JV-XMK"/>
@@ -38,7 +32,6 @@
                 </comboBox>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AZN-nx-ebo">
                     <rect key="frame" x="18" y="48" width="254" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Find with Spotlight:" id="2XN-fO-zqw">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -55,7 +48,6 @@
                 <constraint firstAttribute="bottom" secondItem="8TS-kP-rE8" secondAttribute="bottom" constant="20" symbolic="YES" id="hrI-IP-oWU"/>
                 <constraint firstAttribute="trailing" secondItem="AZN-nx-ebo" secondAttribute="trailing" constant="20" symbolic="YES" id="x1f-zl-Soy"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="456" y="370.5"/>
         </customView>
     </objects>

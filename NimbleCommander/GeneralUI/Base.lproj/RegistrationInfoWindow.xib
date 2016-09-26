@@ -54,7 +54,7 @@ DQ
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nCu-5L-6bJ">
                         <rect key="frame" x="218" y="311" width="126" height="19"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Registration Info" id="D5Z-0n-EV1">
+                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Registration Info" id="D5Z-0n-EV1">
                             <font key="font" metaFont="systemBold" size="15"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

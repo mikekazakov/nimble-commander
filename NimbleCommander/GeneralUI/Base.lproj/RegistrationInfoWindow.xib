@@ -84,7 +84,7 @@ DQ
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="NonMAS - Registered" identifier="2" id="pp9-9w-v94" userLabel="NonMAS - Registered">
+                            <tabViewItem identifier="2" id="pp9-9w-v94" userLabel="NonMAS - Registered">
                                 <view key="view" id="TuP-lj-P87">
                                     <rect key="frame" x="0.0" y="0.0" width="410" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -178,7 +178,7 @@ DQ
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="MAS -not Registered" identifier="" id="mFQ-Kk-25r" userLabel="MAS - Not Registered">
+                            <tabViewItem identifier="" id="mFQ-Kk-25r" userLabel="MAS - Not Registered">
                                 <view key="view" id="0a0-hC-DcZ">
                                     <rect key="frame" x="0.0" y="0.0" width="410" height="270"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -78,8 +78,7 @@ double CFDefaultsGetDouble(CFStringRef _key)
 
 void CFDefaultsSetDouble(CFStringRef _key, double _value)
 {
-    CFStackAllocator allocator;
-    CFNumberRef num = CFNumberCreate(allocator.Alloc(), kCFNumberDoubleType, &_value);
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
@@ -88,8 +87,7 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value)
 
 void CFDefaultsSetInt(CFStringRef _key, int _value)
 {
-    CFStackAllocator allocator;
-    CFNumberRef num = CFNumberCreate(allocator.Alloc(), kCFNumberIntType, &_value);
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
@@ -98,8 +96,7 @@ void CFDefaultsSetInt(CFStringRef _key, int _value)
 
 void CFDefaultsSetLong(CFStringRef _key, long _value)
 {
-    CFStackAllocator allocator;
-    CFNumberRef num = CFNumberCreate(allocator.Alloc(), kCFNumberLongType, &_value);
+    CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
     if( !num )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });

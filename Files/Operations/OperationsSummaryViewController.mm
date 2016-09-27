@@ -137,6 +137,7 @@
         
         NSButton *pause_button = [[NSButton alloc] initWithFrame:NSMakeRect(261, 2, 14, 14)];
         pause_button.image = [NSImage imageNamed:@"pause_icon"];
+        [pause_button.image setTemplate:true];
         pause_button.imagePosition = NSImageOnly;
         pause_button.buttonType = NSMomentaryChangeButton;
         pause_button.bordered = false;

@@ -663,8 +663,14 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnShowHelp:(id)sender
 {
-    NSString *path = [NSBundle.mainBundle pathForResource:@"Help" ofType:@"pdf"];
-    [NSWorkspace.sharedWorkspace openURL:[NSURL fileURLWithPath:path]];
+    [NSWorkspace.sharedWorkspace openURL:[NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"]];
+    GoogleAnalytics::Instance().PostEvent("Help", "Click", "Open Help");
+}
+
+- (IBAction)onMainMenuPerformGoToProductForum:(id)sender
+{
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/forum/"]];
+    GoogleAnalytics::Instance().PostEvent("Help", "Click", "Visit Forum");
 }
 
 - (IBAction)OnMenuToggleAdminMode:(id)sender
@@ -679,6 +685,7 @@ static AppDelegate *g_Me = nil;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         }
+        GoogleAnalytics::Instance().PostScreenView("Admin Mode");
     }
 
     [self updateDockTileBadge];

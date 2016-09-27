@@ -283,6 +283,9 @@
 /* Class = "NSMenuItem"; title = "Calculate Folders Sizes"; ObjectID = "GcS-df-Z23"; */
 "GcS-df-Z23.title" = "Вычислить размер папок";
 
+/* Class = "NSMenuItem"; title = "Visit Forum"; ObjectID = "HVZ-vW-Cgv"; */
+"HVZ-vW-Cgv.title" = "Посетить форум";
+
 /* Class = "NSMenuItem"; title = "Show/Hide Toolbar"; ObjectID = "I1T-dz-dM2"; */
 "I1T-dz-dM2.title" = "Показать/скрыть панель инструментов";
 
@@ -388,7 +391,7 @@
 /* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
 "chd-VR-dSN.title" = "Купить расширенный функционал";
 
-/* Class = "NSMenuItem"; title = "Compress Here"; ObjectID = "dFg-q8-CBh"; */
+/* Class = "NSMenuItem"; title = "Compress In Opposite Panel"; ObjectID = "dFg-q8-CBh"; */
 "dFg-q8-CBh.title" = "Сжать в противоположной панели";
 
 /* Class = "NSMenuItem"; title = "Desktop"; ObjectID = "dJC-Rr-wZM"; */

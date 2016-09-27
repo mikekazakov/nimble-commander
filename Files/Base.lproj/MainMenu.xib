@@ -919,6 +919,12 @@ CQ
                                     <action selector="OnShowHelp:" target="-1" id="mbF-jF-ZMK"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Visit Forum" id="HVZ-vW-Cgv">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onMainMenuPerformGoToProductForum:" target="-1" id="wNL-dn-2ck"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>

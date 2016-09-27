@@ -117,7 +117,7 @@
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TtZ-FY-dXk">
                     <rect key="frame" x="266" y="304" width="60" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Tool title:" id="3Pc-uE-9BV">
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Tool title:" id="3Pc-uE-9BV">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -138,7 +138,7 @@
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j8B-4J-nM4">
                     <rect key="frame" x="266" y="249" width="76" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Application:" id="GbL-vv-Nbz">
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Application:" id="GbL-vv-Nbz">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -159,7 +159,7 @@
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGo-IY-2d3">
                     <rect key="frame" x="266" y="194" width="77" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Parameters:" id="lzh-Bc-bxZ">
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Parameters:" id="lzh-Bc-bxZ">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -222,7 +222,7 @@
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qe2-8x-UrM">
                     <rect key="frame" x="266" y="139" width="91" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Startup Mode:" id="iVQ-ca-93Q">
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Startup Mode:" id="iVQ-ca-93Q">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

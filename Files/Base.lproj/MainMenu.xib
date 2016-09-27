@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -806,13 +806,13 @@ CA
                             <menuItem title="Compress" tag="15100" id="CEQ-U0-LN9">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="onCompressItems:" target="-1" id="rx8-at-X80"/>
+                                    <action selector="onCompressItemsHere:" target="-1" id="XmN-AH-peI"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Compress Here" tag="15101" alternate="YES" id="dFg-q8-CBh">
+                            <menuItem title="Compress In Opposite Panel" tag="15101" alternate="YES" id="dFg-q8-CBh">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="onCompressItemsHere:" target="-1" id="z37-uB-jup"/>
+                                    <action selector="onCompressItems:" target="-1" id="4BD-vh-ajh"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Links" id="908">

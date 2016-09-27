@@ -389,7 +389,7 @@
 "chd-VR-dSN.title" = "Купить расширенный функционал";
 
 /* Class = "NSMenuItem"; title = "Compress Here"; ObjectID = "dFg-q8-CBh"; */
-"dFg-q8-CBh.title" = "Сжать здесь";
+"dFg-q8-CBh.title" = "Сжать в противоположной панели";
 
 /* Class = "NSMenuItem"; title = "Desktop"; ObjectID = "dJC-Rr-wZM"; */
 "dJC-Rr-wZM.title" = "Рабочий стол";

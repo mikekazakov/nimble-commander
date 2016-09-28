@@ -47,7 +47,7 @@
 "kMv-Qv-KdY.title" = "Мы стремимся к созданию лучшего приложения в области. Пожалуйста, скажите как мы можем помочь Вам.";
 
 /* Class = "NSTextFieldCell"; title = "Please tell us more about your experience with Nimble Commander. Especially if you feel that a specific function is missing, could be improved, or doesn't work correctly, we want to know about it."; ObjectID = "nqC-L8-L0Y"; */
-"nqC-L8-L0Y.title" = "Пожалуйста, расскажите больше о Вашем опыте с Nimble Commander. Если вы считаете, что важный функционал отсутствует, может быть улучшен или работает неправильно -  мы хотели бы знать об этом.  ";
+"nqC-L8-L0Y.title" = "Пожалуйста, расскажите больше о Вашем опыте с Nimble Commander. Если вы считаете, что важный функционал отсутствует, может быть улучшен или работает неправильно -  мы хотели бы знать об этом.";
 
 /* Class = "NSTextFieldCell"; title = "We'd like to improve your experience with Nimble Commander!"; ObjectID = "sVB-UR-1so"; */
 "sVB-UR-1so.title" = "Мы хотели бы улучшить Ваш опыт с Nimble Commander!";

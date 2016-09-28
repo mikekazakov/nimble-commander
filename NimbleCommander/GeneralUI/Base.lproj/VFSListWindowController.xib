@@ -27,8 +27,8 @@
                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="kAV-Pr-c8a">
                             <font key="font" metaFont="smallSystem"/>
                             <segments>
-                                <segment label="Alive VFS" width="120" selected="YES"/>
-                                <segment label="Known VFS" width="120" tag="1"/>
+                                <segment label="Active VFSs" width="120" selected="YES"/>
+                                <segment label="Known VFSs" width="120" tag="1"/>
                             </segments>
                         </segmentedCell>
                         <connections>

@@ -39,7 +39,7 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V94-yq-2fe">
                                             <rect key="frame" x="18" y="185" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to rate Nimble Commander at the Mac App Store, we'd really appreciate it." id="21T-EA-38h">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to rate Nimble Commander on the Mac App Store, we’d really appreciate it." id="21T-EA-38h">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -47,8 +47,9 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TSN-bh-9Hx">
                                             <rect key="frame" x="18" y="137" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers." id="2LV-5v-Msp">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="2LV-5v-Msp">
                                                 <font key="font" metaFont="system"/>
+                                                <string key="title">We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users.</string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -112,7 +113,7 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sug-ry-cwV">
                                             <rect key="frame" x="18" y="185" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to post a note about Nimble Commander on any social network, we'd really appreciate it." id="J7M-Hl-Cyp">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="If you could take a moment to post a note about Nimble Commander on any social network, we’d really appreciate it." id="J7M-Hl-Cyp">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -120,8 +121,9 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w8D-vQ-q8a">
                                             <rect key="frame" x="18" y="137" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers." id="6XR-CU-qa6">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="6XR-CU-qa6">
                                                 <font key="font" metaFont="system"/>
+                                                <string key="title">We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users.</string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -210,7 +212,7 @@
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxA-ww-rzk">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to improve your experience with Nimble Commander!" id="sVB-UR-1so">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We’d like to improve your experience with Nimble Commander!" id="sVB-UR-1so">
                                                 <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -218,7 +220,7 @@
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KSp-6u-4fh">
                                             <rect key="frame" x="18" y="185" width="444" height="34"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We strive to create best-in-class software. Please take this opportunity to let us know how we can assist you." id="kMv-Qv-KdY">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We strive to create the best-in-class software. Please take this opportunity to let us know how we can assist you better." id="kMv-Qv-KdY">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -228,7 +230,7 @@
                                             <rect key="frame" x="18" y="120" width="444" height="51"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="el2-0A-aKl">
                                                 <font key="font" metaFont="system"/>
-                                                <string key="title">Use the "Get Help" button to describe issues you've encountered, or you can send us an email with any feedback you may want to share. Thanks, we're listening!</string>
+                                                <string key="title">Click the “Get Help” button and describe the issues you’ve encountered, or send us an email with any feedback you want to share. Thanks, we’re listening!</string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -284,7 +286,7 @@
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rbh-6b-jYa">
                                             <rect key="frame" x="18" y="233" width="444" height="17"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We'd like to hear from you." id="O76-JY-rBG">
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="We’d like to hear from you." id="O76-JY-rBG">
                                                 <font key="font" metaFont="systemBold"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -294,7 +296,7 @@
                                             <rect key="frame" x="18" y="168" width="444" height="51"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="nqC-L8-L0Y">
                                                 <font key="font" metaFont="system"/>
-                                                <string key="title">Please tell us more about your experience with Nimble Commander. Especially if you feel that a specific function is missing, could be improved, or doesn't work correctly, we want to know about it.</string>
+                                                <string key="title">Please tell us more about your experience with Nimble Commander, especially if you feel that a specific function is missing, could be improved, or doesn’t work correctly. We’d like to know about that.</string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>

@@ -103,16 +103,16 @@
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="IAPNagScreenViewer" id="eBm-YB-VGB"/>
                                 </imageView>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VzQ-1a-o52">
-                                    <rect key="frame" x="115" y="346" width="384" height="17"/>
-                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Pro Features add-on brings advanced functionality to your NC:" id="7sC-iv-yjO">
+                                    <rect key="frame" x="102" y="346" width="411" height="17"/>
+                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="The Pro Features add-on brings advanced functionality to your NC:" id="7sC-iv-yjO">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cNX-ba-5zE">
-                                    <rect key="frame" x="106" y="287" width="112" height="17"/>
-                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Archives handling" id="CEU-rk-oDM">
+                                    <rect key="frame" x="106" y="287" width="105" height="17"/>
+                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Archive handling" id="CEU-rk-oDM">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -241,8 +241,8 @@
                                     </scroller>
                                 </scrollView>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="RfD-A3-3Bj">
-                                    <rect key="frame" x="18" y="2" width="126" height="18"/>
-                                    <buttonCell key="cell" type="check" title="Don't show again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="9gx-7Q-T5i">
+                                    <rect key="frame" x="18" y="2" width="127" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Don’t show again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="9gx-7Q-T5i">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
                                     </buttonCell>

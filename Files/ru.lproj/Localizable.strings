@@ -172,7 +172,7 @@
 "How are we doing?" = "Как мы справляемся?";
 
 /* Note for a social network share */
-"I use Nimble Commander - a great file manager for macOS! http://magnumbytes.com/" = "Я использую Nimble Commander - отличный файловый менеджер для macOS! http://magnumbytes.com/";
+"I use Nimble Commander, a great file manager for macOS! http://magnumbytes.com/" = "Я использую Nimble Commander - отличный файловый менеджер для macOS! http://magnumbytes.com/";
 
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";

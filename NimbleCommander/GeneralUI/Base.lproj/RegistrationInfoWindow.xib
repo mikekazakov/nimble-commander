@@ -70,8 +70,8 @@ DQ
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xeX-6a-PqZ">
-                                            <rect key="frame" x="18" y="233" width="217" height="17"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Purchased from the Mac App Store" id="Kvz-nI-J2i">
+                                            <rect key="frame" x="18" y="233" width="201" height="17"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Purchased at the Mac App Store" id="Kvz-nI-J2i">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

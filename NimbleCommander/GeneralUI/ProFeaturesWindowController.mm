@@ -39,6 +39,7 @@
 {
     [super windowDidLoad];
     
+    self.learnMoreURL.textStorage.mutableString.string = NSLocalizedString(@"Learn more about advanced tools", "IAP dialog text for URL pointing to website");
     [self.learnMoreURL.textStorage addAttributes:@{NSLinkAttributeName: @"http://magnumbytes.com/"}
                                            range:NSMakeRange(0, self.learnMoreURL.textStorage.length)];
     self.learnMoreURL.linkTextAttributes = @{NSForegroundColorAttributeName: NSColor.blackColor,

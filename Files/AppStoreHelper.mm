@@ -167,8 +167,10 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     const auto result = [NSApp runModalForWindow:w.window];
     
-    if( w.dontShowAgain )
+    if( w.dontShowAgain ) {
         CFDefaultsSetBool(g_PrefsPFDontShow, true);
+        GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "User has turned off IAP Nagscreen");
+    }
     if( result == NSModalResponseOK )
         [self askUserToBuyProFeatures];
 }

@@ -177,6 +177,9 @@
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";
 
+/* IAP dialog text for URL pointing to website */
+"Learn more about advanced tools" = "Узнать больше о дополнительных возможностях";
+
 /* Brief System Information mac model label title */
 "Mac Model:" = "Модель Mac:";
 

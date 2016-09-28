@@ -169,10 +169,10 @@
 "History" = "История";
 
 /* Asking user to provide a rating */
-"How are we doing?" = "Как мы справляемся?";
+"How are we doing?" = "Ваше мнение о NC?";
 
 /* Note for a social network share */
-"I use Nimble Commander, a great file manager for macOS! http://magnumbytes.com/" = "Я использую Nimble Commander - отличный файловый менеджер для macOS! http://magnumbytes.com/";
+"I use Nimble Commander, a great file manager for macOS! http://magnumbytes.com/" = "Я использую Nimble Commander! http://magnumbytes.com/";
 
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";

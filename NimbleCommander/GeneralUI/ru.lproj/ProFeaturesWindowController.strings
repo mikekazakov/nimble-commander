@@ -20,7 +20,7 @@
 "F0z-JX-Cv5.title" = "Расширенный функционал Nimble Commander";
 
 /* Class = "NSButtonCell"; title = "Continue in Free Mode"; ObjectID = "Hh3-Sd-YaU"; */
-"Hh3-Sd-YaU.title" = "Отменить";
+"Hh3-Sd-YaU.title" = "Закрыть";
 
 /* Class = "NSTextFieldCell"; title = "File viewer"; ObjectID = "J8g-fm-fPd"; */
 "J8g-fm-fPd.title" = "Встроенный просмотрщик";

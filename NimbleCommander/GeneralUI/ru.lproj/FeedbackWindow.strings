@@ -1,23 +1,23 @@
 /* Class = "NSTextFieldCell"; title = "We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers."; ObjectID = "2LV-5v-Msp"; */
-"2LV-5v-Msp.title" = "Мы стремимся к достижению лучшего качества, и рассказ о Вашем положительном опыте был бы полезен нам и другим пользователям.";
+"2LV-5v-Msp.title" = "Вы поставили нам высокую оценку – покажите её другим пользователям. Это займёт несколько секунд.\r\rСпасибо ещё раз!";
 
 /* Class = "NSTextFieldCell"; title = "We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers."; ObjectID = "6XR-CU-qa6"; */
-"6XR-CU-qa6.title" = "Мы стремимся к достижению лучшего качества, и рассказ о Вашем положительном опыте был бы полезен нам и другим пользователям.";
+"6XR-CU-qa6.title" = "И Вы можете повлиять на это! Всё просто. Вы только что поставили нам высокую оценку – покажите её друзьям и коллегам. Это займёт несколько секунд.\r\rСпасибо ещё раз!";
 
 /* Class = "NSTextFieldCell"; title = "If you could take a moment to rate Nimble Commander at the Mac App Store, we'd really appreciate it."; ObjectID = "21T-EA-38h"; */
-"21T-EA-38h.title" = "Если бы Вы смогли уделить миниту времени, чтобы оценить Nimble Commander в Mac App Store, мы были бы очень признательны.";
+"21T-EA-38h.title" = "Ресурсы, выделяемые на разработку Nimble Commander, зависят от оценки в MAS. Чем она выше – тем больше функций мы добавляем и быстрей обновляемся.";
 
 /* Class = "NSWindow"; title = "Feedback"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Обратная связь";
 
 /* Class = "NSTextFieldCell"; title = "If you could take a moment to post a note about Nimble Commander on any social network, we'd really appreciate it."; ObjectID = "J7M-Hl-Cyp"; */
-"J7M-Hl-Cyp.title" = "Если бы Вы смогли уделить миниту времени, чтобы упомянуть Nimble Commander в социальной сети, мы были бы очень признательны.";
+"J7M-Hl-Cyp.title" = "Развитие Nimble Commander и увеличение числа функций напрямую зависит от количества пользователей.";
 
 /* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "Krl-RL-iK0"; */
 "Krl-RL-iK0.title" = "Написать пожелание";
 
 /* Class = "NSTextFieldCell"; title = "We'd like to hear from you."; ObjectID = "O76-JY-rBG"; */
-"O76-JY-rBG.title" = "Мы хотели бы услышать Вас.";
+"O76-JY-rBG.title" = "Oops…";
 
 /* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "Sqf-IX-N8l"; */
 "Sqf-IX-N8l.title" = "Написать пожелание";
@@ -26,13 +26,13 @@
 "Wbr-8X-Iyc.title" = "Оценить в App Store";
 
 /* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "WxI-Pi-SpO"; */
-"WxI-Pi-SpO.title" = "Мы рады, что Вы довольны нашим продуктом!";
+"WxI-Pi-SpO.title" = "Спасибо! Но мы можем стать ещё лучше!";
 
 /* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "XhC-3W-CjC"; */
-"XhC-3W-CjC.title" = "Мы рады, что Вы довольны нашим продуктом!";
+"XhC-3W-CjC.title" = "Спасибо! Но мы можем стать ещё лучше!";
 
 /* Class = "NSTextFieldCell"; title = "Listening to your feedback is how we keep improving our software."; ObjectID = "ZOg-yO-bAY"; */
-"ZOg-yO-bAY.title" = "Только благодаря отзывам пользователей мы можем улучшать приложение.";
+"ZOg-yO-bAY.title" = "Если нет, то, пожалуйста, напишите, почему Вы поставили Nimble Commander 1 звезду, каких функций Вам не хватает? Мы немедленно возьмём задачу в разработку.";
 
 /* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "aMn-8e-VEV"; */
 "aMn-8e-VEV.title" = "Написать пожелание";
@@ -41,16 +41,16 @@
 "b7R-xN-rjn.title" = "Написать пожелание";
 
 /* Class = "NSTextFieldCell"; title = "Use the \"Get Help\" button to describe issues you've encountered, or you can send us an email with any feedback you may want to share. Thanks, we're listening!"; ObjectID = "el2-0A-aKl"; */
-"el2-0A-aKl.title" = "Нажмите \"Сообщить о проблеме\", чтобы сообщить о возникшем затруднении, или Вы можете написать любое пожелание. Спасибо, отзывы очень важны для нас!";
+"el2-0A-aKl.title" = "Мы можем стать лучше. Но только с Вашей помощью. Пожалуйста, напишите, какие функции Вам нужны, чтобы Вы поставили Nimble Commander 5 звёзд.";
 
 /* Class = "NSTextFieldCell"; title = "We strive to create best-in-class software. Please take this opportunity to let us know how we can assist you."; ObjectID = "kMv-Qv-KdY"; */
-"kMv-Qv-KdY.title" = "Мы стремимся к созданию лучшего приложения в области. Пожалуйста, скажите как мы можем помочь Вам.";
+"kMv-Qv-KdY.title" = "Но Вы всё-таки с нами – и это многое значит для нас.";
 
 /* Class = "NSTextFieldCell"; title = "Please tell us more about your experience with Nimble Commander. Especially if you feel that a specific function is missing, could be improved, or doesn't work correctly, we want to know about it."; ObjectID = "nqC-L8-L0Y"; */
-"nqC-L8-L0Y.title" = "Пожалуйста, расскажите больше о Вашем опыте с Nimble Commander. Если вы считаете, что важный функционал отсутствует, может быть улучшен или работает неправильно -  мы хотели бы знать об этом.";
+"nqC-L8-L0Y.title" = "Надеемся, Вы нажали 1 звезду для проверки.";
 
 /* Class = "NSTextFieldCell"; title = "We'd like to improve your experience with Nimble Commander!"; ObjectID = "sVB-UR-1so"; */
-"sVB-UR-1so.title" = "Мы хотели бы улучшить Ваш опыт с Nimble Commander!";
+"sVB-UR-1so.title" = "Вы правы – мы не идеальны.";
 
 /* Class = "NSButtonCell"; title = "Get Help"; ObjectID = "xzC-7m-M6s"; */
 "xzC-7m-M6s.title" = "Сообщить о проблеме";

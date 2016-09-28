@@ -54,19 +54,6 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0li-JS-FE7">
-                                            <rect key="frame" x="14" y="13" width="136" height="32"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="ESh-8R-F9H"/>
-                                            </constraints>
-                                            <buttonCell key="cell" type="push" title="Email Feedback" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Krl-RL-iK0">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="onEmailFeedback:" target="-2" id="lkG-dl-fmX"/>
-                                            </connections>
-                                        </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vdF-VT-7qA">
                                             <rect key="frame" x="315" y="13" width="151" height="32"/>
                                             <constraints>
@@ -82,10 +69,8 @@
                                         </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="0li-JS-FE7" secondAttribute="bottom" constant="20" symbolic="YES" id="0tz-0H-2My"/>
                                         <constraint firstAttribute="trailing" secondItem="V94-yq-2fe" secondAttribute="trailing" constant="20" symbolic="YES" id="236-Re-J6H"/>
                                         <constraint firstItem="uXD-xr-hvO" firstAttribute="leading" secondItem="oei-E6-Vnb" secondAttribute="leading" constant="20" symbolic="YES" id="3gc-zZ-Wrm"/>
-                                        <constraint firstItem="0li-JS-FE7" firstAttribute="leading" secondItem="oei-E6-Vnb" secondAttribute="leading" constant="20" symbolic="YES" id="93v-20-8hl"/>
                                         <constraint firstItem="V94-yq-2fe" firstAttribute="top" secondItem="uXD-xr-hvO" secondAttribute="bottom" constant="14" id="CvI-XJ-rdz"/>
                                         <constraint firstAttribute="bottom" secondItem="vdF-VT-7qA" secondAttribute="bottom" constant="20" symbolic="YES" id="Fvd-pV-M0z"/>
                                         <constraint firstAttribute="trailing" secondItem="TSN-bh-9Hx" secondAttribute="trailing" constant="20" symbolic="YES" id="GN2-Hw-krd"/>
@@ -128,19 +113,6 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wVl-lP-qws">
-                                            <rect key="frame" x="14" y="13" width="136" height="32"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="1Vq-ym-m2p"/>
-                                            </constraints>
-                                            <buttonCell key="cell" type="push" title="Email Feedback" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Sqf-IX-N8l">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="onEmailFeedback:" target="-2" id="Rei-49-7DI"/>
-                                            </connections>
-                                        </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TE2-rb-C87">
                                             <rect key="frame" x="418" y="10" width="42" height="42"/>
                                             <constraints>
@@ -185,18 +157,16 @@
                                         </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="wVl-lP-qws" firstAttribute="leading" secondItem="raq-0V-EqY" secondAttribute="leading" constant="20" symbolic="YES" id="5yO-dN-SeI"/>
                                         <constraint firstAttribute="trailing" secondItem="AZY-eh-wVe" secondAttribute="trailing" constant="20" symbolic="YES" id="Aez-4b-KBz"/>
-                                        <constraint firstItem="TE2-rb-C87" firstAttribute="centerY" secondItem="wVl-lP-qws" secondAttribute="centerY" id="AkX-ZB-FaH"/>
                                         <constraint firstAttribute="trailing" secondItem="w8D-vQ-q8a" secondAttribute="trailing" constant="20" symbolic="YES" id="Ar4-iK-lQV"/>
+                                        <constraint firstItem="TE2-rb-C87" firstAttribute="bottom" secondItem="G3u-VV-aYO" secondAttribute="bottom" id="Fyg-Da-zoE"/>
                                         <constraint firstItem="Sug-ry-cwV" firstAttribute="leading" secondItem="raq-0V-EqY" secondAttribute="leading" constant="20" symbolic="YES" id="Hzd-2Z-4t7"/>
-                                        <constraint firstItem="G3u-VV-aYO" firstAttribute="centerY" secondItem="wVl-lP-qws" secondAttribute="centerY" id="I8v-Oj-6Rw"/>
                                         <constraint firstItem="Sug-ry-cwV" firstAttribute="top" secondItem="AZY-eh-wVe" secondAttribute="bottom" constant="14" id="Iu1-Nh-EzU"/>
-                                        <constraint firstAttribute="bottom" secondItem="wVl-lP-qws" secondAttribute="bottom" constant="20" symbolic="YES" id="Kdn-of-kUa"/>
                                         <constraint firstItem="AZY-eh-wVe" firstAttribute="top" secondItem="raq-0V-EqY" secondAttribute="top" constant="20" symbolic="YES" id="M5L-wj-WA3"/>
                                         <constraint firstItem="w8D-vQ-q8a" firstAttribute="top" secondItem="Sug-ry-cwV" secondAttribute="bottom" constant="14" id="MrU-Oi-gwm"/>
                                         <constraint firstItem="TE2-rb-C87" firstAttribute="leading" secondItem="flZ-bl-7aQ" secondAttribute="trailing" constant="8" symbolic="YES" id="NBT-Dp-G7E"/>
-                                        <constraint firstItem="flZ-bl-7aQ" firstAttribute="centerY" secondItem="wVl-lP-qws" secondAttribute="centerY" id="TMN-YJ-nDe"/>
+                                        <constraint firstItem="flZ-bl-7aQ" firstAttribute="bottom" secondItem="G3u-VV-aYO" secondAttribute="bottom" id="muN-We-eUa"/>
+                                        <constraint firstAttribute="bottom" secondItem="TE2-rb-C87" secondAttribute="bottom" constant="10" id="pdS-Av-B4t"/>
                                         <constraint firstItem="flZ-bl-7aQ" firstAttribute="leading" secondItem="G3u-VV-aYO" secondAttribute="trailing" constant="8" symbolic="YES" id="q01-5o-vE9"/>
                                         <constraint firstAttribute="trailing" secondItem="Sug-ry-cwV" secondAttribute="trailing" constant="20" symbolic="YES" id="rWb-sx-EAk"/>
                                         <constraint firstAttribute="trailing" secondItem="TE2-rb-C87" secondAttribute="trailing" constant="20" symbolic="YES" id="v4h-1G-TEq"/>
@@ -351,7 +321,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="-19" y="40"/>
+            <point key="canvasLocation" x="-223" y="7"/>
         </window>
     </objects>
     <resources>

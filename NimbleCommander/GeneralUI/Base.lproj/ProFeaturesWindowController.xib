@@ -177,10 +177,8 @@
                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3uL-lD-qAF">
                                     <rect key="frame" x="319" y="76" width="54" height="54"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="54" id="62j-g9-Cb4"/>
                                         <constraint firstAttribute="height" constant="54" id="KgL-uT-JDy"/>
                                         <constraint firstAttribute="width" constant="54" id="U2F-Ba-n9G"/>
-                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="54" id="VKj-xQ-JED"/>
                                     </constraints>
                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="IAPNagScreenAttributes" id="6Bg-mk-f5b"/>
                                 </imageView>
@@ -380,7 +378,7 @@ Gw
         <image name="IAPNagScreenNetwork" width="54" height="54"/>
         <image name="IAPNagScreenSearch" width="54" height="54"/>
         <image name="IAPNagScreenSysInfo" width="54" height="54"/>
-        <image name="IAPNagScreenTools" width="92" height="96"/>
+        <image name="IAPNagScreenTools" width="54" height="54"/>
         <image name="IAPNagScreenViewer" width="54" height="54"/>
     </resources>
 </document>

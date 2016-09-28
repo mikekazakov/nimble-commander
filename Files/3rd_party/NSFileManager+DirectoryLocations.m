@@ -67,10 +67,7 @@ NSString * const DirectoryLocationDomain = @"DirectoryLocationDomain";
 		{
 			NSDictionary *userInfo =
 				[NSDictionary dictionaryWithObjectsAndKeys:
-					NSLocalizedStringFromTable(
-						@"No path found for directory in domain.",
-						@"Errors",
-					nil),
+                    @"No path found for directory in domain.",
 					NSLocalizedDescriptionKey,
 					[NSNumber numberWithInteger:searchPathDirectory],
 					@"NSSearchPathDirectory",

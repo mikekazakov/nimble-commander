@@ -177,6 +177,7 @@ ActivationManager::ActivationManager()
         }
         
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
+        m_UserHasProVersionInstalled = has_mas_paid_version;
         m_IsActivated = true /*has_mas_paid_version || has_valid_license*/;
         
         if( !m_UserHadRegistered ) {
@@ -401,4 +402,9 @@ bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
 const unordered_map<string, string> &ActivationManager::LicenseInformation() const noexcept
 {
     return m_LicenseInfo;
+}
+
+bool ActivationManager::UserHasProVersionInstalled() const noexcept
+{
+    return m_UserHasProVersionInstalled;
 }

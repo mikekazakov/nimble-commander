@@ -50,6 +50,7 @@ public:
     
     // Trial NonMAS version stuff
     bool UserHadRegistered() const noexcept;
+    bool UserHasProVersionInstalled() const noexcept;
     bool IsTrialPeriod() const noexcept;
     int TrialDaysLeft() const noexcept; // zero means that trial has expired
     bool ShouldShowTrialNagScreen() const noexcept;
@@ -84,5 +85,6 @@ private:
     bool    m_UserHadRegistered = false;
     int     m_TrialDaysLeft = 0;
     bool    m_IsTrialPeriod = false;
+    bool    m_UserHasProVersionInstalled = false;
     unordered_map<string, string> m_LicenseInfo;
 };

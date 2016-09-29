@@ -35,23 +35,28 @@
     [super windowDidLoad];
     m_Self = self;
     
-    if( ActivationManager::ForAppStore() ) {
+    if( ActivationManager::ForAppStore() ) { // MAS version
         [self.tabView selectTabViewItemAtIndex:0];
     }
-    else {
+    else { // standalone version
         if( ActivationManager::Instance().UserHadRegistered() ) {
-            [self.tabView selectTabViewItemAtIndex:1];
-            auto &info = ActivationManager::Instance().LicenseInformation();
-            if( info.count("Company") )
-                self.apCompany.stringValue = [NSString stringWithUTF8StdString:info.at("Company")];
-            if( info.count("Email") )
-                self.apEmail.stringValue = [NSString stringWithUTF8StdString:info.at("Email")];
-            if( info.count("Name") )
-                self.apName.stringValue = [NSString stringWithUTF8StdString:info.at("Name")];
-            if( info.count("Product") )
-                self.apProduct.stringValue = [NSString stringWithUTF8StdString:info.at("Product")];
+            if( ActivationManager::Instance().UserHasProVersionInstalled() ) { // Pro version
+                [self.tabView selectTabViewItemAtIndex:0];
+            }
+            else { // License
+                [self.tabView selectTabViewItemAtIndex:1];
+                auto &info = ActivationManager::Instance().LicenseInformation();
+                if( info.count("Company") )
+                    self.apCompany.stringValue = [NSString stringWithUTF8StdString:info.at("Company")];
+                if( info.count("Email") )
+                    self.apEmail.stringValue = [NSString stringWithUTF8StdString:info.at("Email")];
+                if( info.count("Name") )
+                    self.apName.stringValue = [NSString stringWithUTF8StdString:info.at("Name")];
+                if( info.count("Product") )
+                    self.apProduct.stringValue = [NSString stringWithUTF8StdString:info.at("Product")];
+            }
         }
-        else {
+        else { // Unregistered
             [self.tabView selectTabViewItemAtIndex:2];
         }
     }

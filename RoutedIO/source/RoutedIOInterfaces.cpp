@@ -6,6 +6,20 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <ftw.h>
+#include <dirent.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+
 #include "RoutedIOInterfaces.h"
 
 static const uid_t g_UID = getuid();

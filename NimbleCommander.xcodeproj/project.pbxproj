@@ -229,8 +229,6 @@
 		CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
-		CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121916C4BD3D00D247EE /* Foundation.framework */; };
-		CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF50B6C31A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
 		CF50B6C41A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
 		CF50B6C51A15167800E3D96D /* VFSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B6BA1A15167800E3D96D /* VFSError.mm */; };
@@ -381,6 +379,8 @@
 		CF662AE41D8A4E89008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF6708EB1C0423D3002109A2 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6708E91C0423D3002109A2 /* ExtensionLowercaseComparison.cpp */; };
 		CF6879061820A6D800979A4F /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */; };
+		CF69CFAA1DA201B000992B84 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CF69CFC51DA20DD600992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CF6A428B1CD7B9C00085CAF9 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
@@ -467,10 +467,6 @@
 		CF6E44831CCE121F009F45B0 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */; };
 		CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
-		CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
-		CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
-		CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
-		CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
 		CF6FAA211B82E1DD006E0742 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; };
 		CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
@@ -694,7 +690,6 @@
 		CFA5397C1D433E2A00C562A7 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
 		CFA5397E1D433E2A00C562A7 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */; };
-		CFA5397F1D433E2A00C562A7 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFA539811D433E2A00C562A7 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
 		CFA539821D433E2A00C562A7 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF73D1D21BE608BC0014C88F /* VFSNativeFile.cpp */; };
@@ -750,7 +745,6 @@
 		CFA539BD1D433E2A00C562A7 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0519DB17E9C98A00590C74 /* PanelAux.mm */; };
 		CFA539BE1D433E2A00C562A7 /* ModernPanelViewPresentationHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */; };
 		CFA539BF1D433E2A00C562A7 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
-		CFA539C01D433E2A00C562A7 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
 		CFA539C11D433E2A00C562A7 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A40131B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFA539C31D433E2A00C562A7 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50976A8172A3A0E0080412E /* QuickPreview.mm */; };
 		CFA539C51D433E2A00C562A7 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50B75B1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm */; };
@@ -979,7 +973,6 @@
 		CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
-		CFCCFC3F1A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */; };
 		CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */; };
 		CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
@@ -990,11 +983,7 @@
 		CFCD87FC18143F5500D82455 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCD87FA18143F5500D82455 /* AppleDoubleEA.cpp */; };
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
-		CFD54FC31A29C4CA0098A4A9 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */; };
-		CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */; };
 		CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
-		CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */; };
 		CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD629631C2CE7030050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD629641C2CE7040050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
@@ -1158,6 +1147,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CF69CF9C1DA2003D00992B84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF8D0D581D9E4D7400ADFF14;
+			remoteInfo = RoutedIO;
+		};
+		CF69CFC21DA20DC200992B84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF69CFB41DA209F000992B84;
+			remoteInfo = info.filesmanager.Files.PrivilegedIOHelperV2;
+		};
 		CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
@@ -1172,26 +1175,12 @@
 			remoteGlobalIDString = CF7C92271A0B977C00FAE649;
 			remoteInfo = MMTabBarView_LIB;
 		};
-		CFA5395B1D433E2A00C562A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFD54FBB1A29C4C10098A4A9;
-			remoteInfo = info.filesmanager.Files.PrivilegedIOHelper;
-		};
 		CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CFA539591D433E2A00C562A7;
 			remoteInfo = "NimbleCommander NonMAS CI";
-		};
-		CFD54FC61A29C6AD0098A4A9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFD54FBB1A29C4C10098A4A9;
-			remoteInfo = info.filesmanager.Files.PrivilegedIOHelper;
 		};
 		CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1258,7 +1247,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				CFD54FC51A29C6920098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */,
+				CF69CFC51DA20DD600992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1455,6 +1444,7 @@
 		CF6708EA1C0423D3002109A2 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CF6879041820A6D800979A4F /* PanelController+DelayedSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DelayedSelection.h"; sourceTree = "<group>"; };
 		CF6879051820A6D800979A4F /* PanelController+DelayedSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DelayedSelection.mm"; sourceTree = "<group>"; };
+		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF6D9C7819667A180077B146 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = 3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF6D9C7919667A190077B146 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = 3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
@@ -1767,9 +1757,7 @@
 		CFCCFC161A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		CFCCFC171A5E891700313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SFTPConnectionSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC201A5E891A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CalculateChecksumSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC401A5EB38A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/PrivilegedIOHelper-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC451A5EB38B00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
-		CFCCFC471A5EB5E600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/PrivilegedIOHelper-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC481A5EB6B500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC521A5FA85400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
@@ -1782,15 +1770,7 @@
 		CFCF862618939589000552CD /* PanelController+QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+QuickSearch.mm"; sourceTree = "<group>"; };
 		CFCF862B18961393000552CD /* PanelController+DragAndDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DragAndDrop.h"; sourceTree = "<group>"; };
 		CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DragAndDrop.mm"; sourceTree = "<group>"; };
-		CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivilegedIOHelper.cpp; sourceTree = "<group>"; };
-		CFD54FB21A29C2560098A4A9 /* PrivilegedIOHelper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Info.plist"; sourceTree = "<group>"; };
-		CFD54FB31A29C2BF0098A4A9 /* PrivilegedIOHelper-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivilegedIOHelper-Launchd.plist"; sourceTree = "<group>"; };
-		CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelperV2; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoutedIO.cpp; sourceTree = "<group>"; };
-		CFD54FCD1A29C8C30098A4A9 /* RoutedIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutedIO.h; sourceTree = "<group>"; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoutedIOInterfaces.cpp; sourceTree = "<group>"; };
-		CFD54FD21A2A01B30098A4A9 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutedIOInterfaces.h; sourceTree = "<group>"; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = Resource/State.json; sourceTree = "<group>"; };
 		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
 		CFD62D9B1C9BC7540021EE7F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = 3rd_Party/libarchive/built/libarchive.a; sourceTree = SOURCE_ROOT; };
@@ -1978,6 +1958,7 @@
 				CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */,
 				CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */,
 				CFD62D9C1C9BC7540021EE7F /* libarchive.a in Frameworks */,
+				CF69CFAA1DA201B000992B84 /* libRoutedIO.a in Frameworks */,
 				CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */,
 				CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */,
 				CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */,
@@ -1998,15 +1979,6 @@
 				CF029BFD17E87C2700415033 /* libz.a in Frameworks */,
 				CF029BFB17E878A400415033 /* libbz2.a in Frameworks */,
 				CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFD54FB91A29C4C10098A4A9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF4F7FCB1A2B8C6A00F87DF6 /* Security.framework in Frameworks */,
-				CF4F7FC81A2B8C5B00F87DF6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2457,6 +2429,15 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		CF69CF971DA2003C00992B84 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */,
+				CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF6D99A5196675FE0077B146 /* NC Trial NonMAS */ = {
 			isa = PBXGroup;
 			children = (
@@ -2777,11 +2758,6 @@
 				CFDA4CCC182A17C7006EC35C /* LSUrls.mm */,
 				CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */,
 				CF7B20641A2771D8008F1492 /* MASAppInstalledChecker.h */,
-				CFD54FA21A29C0C30098A4A9 /* PrivilegedIOHelper */,
-				CFD54FCC1A29C8C30098A4A9 /* RoutedIO.cpp */,
-				CFD54FCD1A29C8C30098A4A9 /* RoutedIO.h */,
-				CFD54FD11A2A01B30098A4A9 /* RoutedIOInterfaces.cpp */,
-				CFD54FD21A2A01B30098A4A9 /* RoutedIOInterfaces.h */,
 				CF6D9D361966BE840077B146 /* SandboxManager.h */,
 				CF6D9D331966BE710077B146 /* SandboxManager.mm */,
 				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,
@@ -2947,6 +2923,7 @@
 			children = (
 				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
 				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
+				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121A16C4BD3D00D247EE /* Source */,
 				B51014CF170721340023FF24 /* Resources */,
@@ -2963,7 +2940,6 @@
 				CF47A980186C607C00745C4C /* Nimble Commander.xctest */,
 				CF6D997D196675290077B146 /* Nimble Commander.app */,
 				CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */,
-				CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 				CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */,
 			);
 			name = Products;
@@ -3079,17 +3055,6 @@
 			name = FileCompressOperation;
 			sourceTree = "<group>";
 		};
-		CFD54FA21A29C0C30098A4A9 /* PrivilegedIOHelper */ = {
-			isa = PBXGroup;
-			children = (
-				CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */,
-				CFD54FB21A29C2560098A4A9 /* PrivilegedIOHelper-Info.plist */,
-				CFD54FB31A29C2BF0098A4A9 /* PrivilegedIOHelper-Launchd.plist */,
-				CFD54FA51A29C1150098A4A9 /* PrivilegedIOHelper.cpp */,
-			);
-			name = PrivilegedIOHelper;
-			sourceTree = "<group>";
-		};
 		CFD62B7F1C99C1C90021EE7F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3195,7 +3160,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFA5395A1D433E2A00C562A7 /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander NonMAS CI";
 			productName = Directories;
@@ -3216,29 +3180,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander NonMAS";
 			productName = Directories;
 			productReference = CFC5121116C4BD3D00D247EE /* Nimble Commander.app */;
 			productType = "com.apple.product-type.application";
-		};
-		CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */;
-			buildPhases = (
-				CFD54FB81A29C4C10098A4A9 /* Sources */,
-				CFD54FB91A29C4C10098A4A9 /* Frameworks */,
-				CF3120CF1A5115DB0062185A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = info.filesmanager.Files.PrivilegedIOHelperV2;
-			productName = PrivilegedIOHelper;
-			productReference = CFD54FBC1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
-			productType = "com.apple.product-type.tool";
 		};
 		CFF6F2391A13567C00011177 /* NimbleCommander Paid MAS */ = {
 			isa = PBXNativeTarget;
@@ -3294,11 +3240,6 @@
 						DevelopmentTeam = AC5SJT236H;
 						ProvisioningStyle = Manual;
 					};
-					CFD54FBB1A29C4C10098A4A9 = {
-						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = AC5SJT236H;
-						ProvisioningStyle = Manual;
-					};
 					CFF6F2391A13567C00011177 = {
 						DevelopmentTeam = AC5SJT236H;
 					};
@@ -3326,6 +3267,10 @@
 					ProjectRef = CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */;
 				},
 				{
+					ProductGroup = CF69CF971DA2003C00992B84 /* Products */;
+					ProjectRef = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+				},
+				{
 					ProductGroup = CF768DEE1C99C0F4002748BC /* Products */;
 					ProjectRef = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
 				},
@@ -3337,12 +3282,25 @@
 				CF6D997C196675290077B146 /* NimbleCommander Free MAS */,
 				CFF6F2391A13567C00011177 /* NimbleCommander Paid MAS */,
 				CF47A97F186C607B00745C4C /* Nimble Commander Tests */,
-				CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRoutedIO.a;
+			remoteRef = CF69CF9C1DA2003D00992B84 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = info.filesmanager.Files.PrivilegedIOHelperV2;
+			remoteRef = CF69CFC21DA20DC200992B84 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CF768DF51C99C0F4002748BC /* libUtility.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3367,14 +3325,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CF3120CF1A5115DB0062185A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFCCFC3F1A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF47A97E186C607B00745C4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3731,7 +3681,6 @@
 				CF46DB7F1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
 				CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF0A40151B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
-				CF6E6A441A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFC20B4D198F47F3000E73DD /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
@@ -3789,7 +3738,6 @@
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF6D9BED196678000077B146 /* ActionsShortcutsManager.mm in Sources */,
 				CFE3E8551A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
-				CF6E6A461A3AA14500A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */,
 				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
@@ -3961,7 +3909,6 @@
 				CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */,
 				CFA5397E1D433E2A00C562A7 /* TermScreen.cpp in Sources */,
 				CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
-				CFA5397F1D433E2A00C562A7 /* RoutedIO.cpp in Sources */,
 				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
 				CFA539811D433E2A00C562A7 /* NetworkConnectionsManager.mm in Sources */,
 				CFA539821D433E2A00C562A7 /* VFSNativeFile.cpp in Sources */,
@@ -4031,7 +3978,6 @@
 				CFA539BD1D433E2A00C562A7 /* PanelAux.mm in Sources */,
 				CFA539BE1D433E2A00C562A7 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CFA539BF1D433E2A00C562A7 /* FTPConnectionSheetController.mm in Sources */,
-				CFA539C01D433E2A00C562A7 /* RoutedIOInterfaces.cpp in Sources */,
 				CFA539C11D433E2A00C562A7 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFA539C31D433E2A00C562A7 /* QuickPreview.mm in Sources */,
 				CFA539C51D433E2A00C562A7 /* QLVFSThumbnailsCache.mm in Sources */,
@@ -4165,7 +4111,6 @@
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
-				CFD54FCE1A29C8C30098A4A9 /* RoutedIO.cpp in Sources */,
 				CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */,
 				CF39F4421C2EB198009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF73D1D71BE608BC0014C88F /* VFSNativeFile.cpp in Sources */,
@@ -4235,7 +4180,6 @@
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
-				CFD54FD31A2A01B30098A4A9 /* RoutedIOInterfaces.cpp in Sources */,
 				CF0A40141B5966BF002A092B /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				B50976A9172A3A0E0080412E /* QuickPreview.mm in Sources */,
 				CF50B75D1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
@@ -4326,14 +4270,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFD54FB81A29C4C10098A4A9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFD54FC31A29C4CA0098A4A9 /* PrivilegedIOHelper.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CFF6F23A1A13567C00011177 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4369,7 +4305,6 @@
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF50C4531C0ADF0C009DF611 /* VFSNetFTPInternals.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
-				CF6E6A411A3AA14100A3CA65 /* RoutedIO.cpp in Sources */,
 				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,
 				CF4E33DF1B79AF87005B5292 /* VFSConfiguration.cpp in Sources */,
 				CF50C3FE1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
@@ -4450,7 +4385,6 @@
 				CFF6F2D51A13567C00011177 /* ModernPanelViewPresentationHeader.mm in Sources */,
 				CFA7FA6D1C1D6DAF000D039F /* Config.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
-				CF6E6A451A3AA14400A3CA65 /* RoutedIOInterfaces.cpp in Sources */,
 				CF50C43B1C0ADED9009DF611 /* VFSArchiveHost.mm in Sources */,
 				CF3120811A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFF6F2DD1A13567C00011177 /* QuickPreview.mm in Sources */,
@@ -4540,20 +4474,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		CFA5395A1D433E2A00C562A7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
-			targetProxy = CFA5395B1D433E2A00C562A7 /* PBXContainerItemProxy */;
-		};
 		CFA53A731D433F8A00C562A7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CFA539591D433E2A00C562A7 /* NimbleCommander NonMAS CI */;
 			targetProxy = CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */;
-		};
-		CFD54FC71A29C6AD0098A4A9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFD54FBB1A29C4C10098A4A9 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
-			targetProxy = CFD54FC61A29C6AD0098A4A9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4935,15 +4859,6 @@
 			name = FileDeletionSheetController.xib;
 			sourceTree = "<group>";
 		};
-		CFCCFC411A5EB38A00313845 /* PrivilegedIOHelper-InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFC401A5EB38A00313845 /* ru */,
-				CFCCFC471A5EB5E600313845 /* Base */,
-			);
-			name = "PrivilegedIOHelper-InfoPlist.strings";
-			sourceTree = "<group>";
-		};
 		CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -5106,8 +5021,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_ENTITLEMENTS = "Files/Resource/Files-Lite.entitlements";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
@@ -5294,6 +5209,7 @@
 					3rd_Party/AquaticPrime/include/,
 					Utility/include/,
 					Habanero/include/,
+					RoutedIO/include/,
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -5358,6 +5274,7 @@
 					3rd_Party/AquaticPrime/include/,
 					Utility/include/,
 					Habanero/include/,
+					RoutedIO/include/,
 					.,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -5482,83 +5399,6 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		CFD54FC11A29C4C10098A4A9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
-				DEVELOPMENT_TEAM = AC5SJT236H;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files/PrivilegedIOHelper-Info.plist";
-				INFOPLIST_PREPROCESS = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"Files/PrivilegedIOHelper-Info.plist",
-					"-sectcreate",
-					__TEXT,
-					__launchd_plist,
-					"Files/PrivilegedIOHelper-Launchd.plist",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files.PrivilegedIOHelperV2;
-				PRODUCT_NAME = info.filesmanager.Files.PrivilegedIOHelperV2;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		CFD54FC21A29C4C10098A4A9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
-				DEVELOPMENT_TEAM = AC5SJT236H;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "Files/PrivilegedIOHelper-Info.plist";
-				INFOPLIST_PREPROCESS = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"Files/PrivilegedIOHelper-Info.plist",
-					"-sectcreate",
-					__TEXT,
-					__launchd_plist,
-					"Files/PrivilegedIOHelper-Launchd.plist",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files.PrivilegedIOHelperV2;
-				PRODUCT_NAME = info.filesmanager.Files.PrivilegedIOHelperV2;
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -5705,15 +5545,6 @@
 			buildConfigurations = (
 				CFC5122F16C4BD3D00D247EE /* Debug */,
 				CFC5123016C4BD3D00D247EE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFD54FC01A29C4C10098A4A9 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFD54FC11A29C4C10098A4A9 /* Debug */,
-				CFD54FC21A29C4C10098A4A9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

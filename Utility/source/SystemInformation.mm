@@ -286,7 +286,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     return true;
 }
 
-bool IsThisProcessSandboxed()
+bool IsThisProcessSandboxed() noexcept
 {
     static const bool is_sandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
     return is_sandboxed;

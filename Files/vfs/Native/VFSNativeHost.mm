@@ -10,12 +10,12 @@
 #include <Utility/PathManip.h>
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/NativeFSManager.h>
+#include <RoutedIO/RoutedIO.h>
 #include "DisplayNamesCache.h"
 #include "VFSNativeHost.h"
 #include "VFSNativeFile.h"
 #include "../VFSError.h"
 #include "../VFSListingInput.h"
-#include "../../RoutedIO.h"
 
 // TODO:
 // do some research about this new function:

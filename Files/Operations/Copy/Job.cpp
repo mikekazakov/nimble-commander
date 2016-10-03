@@ -10,7 +10,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
 #include <Utility/PathManip.h>
-#include "../../RoutedIO.h"
+#include <RoutedIO/RoutedIO.h>
 #include "Job.h"
 #include "DialogResults.h"
 

@@ -1,0 +1,424 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CF69CFA41DA200E300992B84 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA21DA200E300992B84 /* RoutedIO.cpp */; };
+		CF69CFA51DA200E300992B84 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */; };
+		CF69CFA71DA200EC00992B84 /* RoutedIOInterfaces.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */; };
+		CF69CFA91DA200FA00992B84 /* RoutedIO.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFA81DA200FA00992B84 /* RoutedIO.h */; };
+		CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */; };
+		CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBD1DA20B4F00992B84 /* Foundation.framework */; };
+		CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CF69CFB21DA209F000992B84 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CF69CFA21DA200E300992B84 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIO.cpp; path = source/RoutedIO.cpp; sourceTree = "<group>"; };
+		CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIOInterfaces.cpp; path = source/RoutedIOInterfaces.cpp; sourceTree = "<group>"; };
+		CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoutedIOInterfaces.h; path = source/RoutedIOInterfaces.h; sourceTree = "<group>"; };
+		CF69CFA81DA200FA00992B84 /* RoutedIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoutedIO.h; path = include/RoutedIO/RoutedIO.h; sourceTree = "<group>"; };
+		CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PrivilegedIOHelper.cpp; path = source/PrivilegedIOHelper.cpp; sourceTree = "<group>"; };
+		CF69CFAE1DA209A700992B84 /* PrivilegedIOHelper-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PrivilegedIOHelper-Info.plist"; path = "source/PrivilegedIOHelper-Info.plist"; sourceTree = "<group>"; };
+		CF69CFAF1DA209A700992B84 /* PrivilegedIOHelper-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PrivilegedIOHelper-Launchd.plist"; path = "source/PrivilegedIOHelper-Launchd.plist"; sourceTree = "<group>"; };
+		CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelperV2; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF69CFBD1DA20B4F00992B84 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CF69CFBF1DA20B5500992B84 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		CF8D0D581D9E4D7400ADFF14 /* libRoutedIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRoutedIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CF69CFB11DA209F000992B84 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */,
+				CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF8D0D551D9E4D7400ADFF14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CF69CF9F1DA2005100992B84 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CF69CFA81DA200FA00992B84 /* RoutedIO.h */,
+				CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CF69CFA11DA2006200992B84 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */,
+				CF69CFA21DA200E300992B84 /* RoutedIO.cpp */,
+				CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		CF69CFAB1DA2098300992B84 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CF69CFAE1DA209A700992B84 /* PrivilegedIOHelper-Info.plist */,
+				CF69CFAF1DA209A700992B84 /* PrivilegedIOHelper-Launchd.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CF69CFBC1DA20B4F00992B84 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF69CFBF1DA20B5500992B84 /* Security.framework */,
+				CF69CFBD1DA20B4F00992B84 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CF8D0D4F1D9E4D7400ADFF14 = {
+			isa = PBXGroup;
+			children = (
+				CF69CF9F1DA2005100992B84 /* Headers */,
+				CF69CFA11DA2006200992B84 /* Source */,
+				CF69CFAB1DA2098300992B84 /* Resources */,
+				CF8D0D591D9E4D7400ADFF14 /* Products */,
+				CF69CFBC1DA20B4F00992B84 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CF8D0D591D9E4D7400ADFF14 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF8D0D581D9E4D7400ADFF14 /* libRoutedIO.a */,
+				CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CF8D0D561D9E4D7400ADFF14 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF69CFA71DA200EC00992B84 /* RoutedIOInterfaces.h in Headers */,
+				CF69CFA91DA200FA00992B84 /* RoutedIO.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CF69CFB31DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF69CFB81DA209F000992B84 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */;
+			buildPhases = (
+				CF69CFB01DA209F000992B84 /* Sources */,
+				CF69CFB11DA209F000992B84 /* Frameworks */,
+				CF69CFB21DA209F000992B84 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = info.filesmanager.Files.PrivilegedIOHelperV2;
+			productName = abra;
+			productReference = CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
+			productType = "com.apple.product-type.tool";
+		};
+		CF8D0D571D9E4D7400ADFF14 /* RoutedIO */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF8D0D611D9E4D7400ADFF14 /* Build configuration list for PBXNativeTarget "RoutedIO" */;
+			buildPhases = (
+				CF8D0D541D9E4D7400ADFF14 /* Sources */,
+				CF8D0D551D9E4D7400ADFF14 /* Frameworks */,
+				CF8D0D561D9E4D7400ADFF14 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoutedIO;
+			productName = RoutedIO;
+			productReference = CF8D0D581D9E4D7400ADFF14 /* libRoutedIO.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF8D0D501D9E4D7400ADFF14 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = "Michael G. Kazakov";
+				TargetAttributes = {
+					CF69CFB31DA209F000992B84 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
+					CF8D0D571D9E4D7400ADFF14 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CF8D0D531D9E4D7400ADFF14 /* Build configuration list for PBXProject "RoutedIO" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CF8D0D4F1D9E4D7400ADFF14;
+			productRefGroup = CF8D0D591D9E4D7400ADFF14 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CF8D0D571D9E4D7400ADFF14 /* RoutedIO */,
+				CF69CFB31DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF69CFB01DA209F000992B84 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF8D0D541D9E4D7400ADFF14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF69CFA51DA200E300992B84 /* RoutedIOInterfaces.cpp in Sources */,
+				CF69CFA41DA200E300992B84 /* RoutedIO.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CF69CFB91DA209F000992B84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"source/PrivilegedIOHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"source/PrivilegedIOHelper-Launchd.plist",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CF69CFBA1DA209F000992B84 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"source/PrivilegedIOHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"source/PrivilegedIOHelper-Launchd.plist",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CF8D0D5F1D9E4D7400ADFF14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../Utility/include",
+					"$(PROJECT_DIR)/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		CF8D0D601D9E4D7400ADFF14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../Utility/include",
+					"$(PROJECT_DIR)/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		CF8D0D621D9E4D7400ADFF14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF8D0D631D9E4D7400ADFF14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CF69CFB81DA209F000992B84 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF69CFB91DA209F000992B84 /* Debug */,
+				CF69CFBA1DA209F000992B84 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		CF8D0D531D9E4D7400ADFF14 /* Build configuration list for PBXProject "RoutedIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF8D0D5F1D9E4D7400ADFF14 /* Debug */,
+				CF8D0D601D9E4D7400ADFF14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF8D0D611D9E4D7400ADFF14 /* Build configuration list for PBXNativeTarget "RoutedIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF8D0D621D9E4D7400ADFF14 /* Debug */,
+				CF8D0D631D9E4D7400ADFF14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CF8D0D501D9E4D7400ADFF14 /* Project object */;
+}

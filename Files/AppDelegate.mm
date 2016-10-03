@@ -14,6 +14,7 @@
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
+#include <RoutedIO/RoutedIO.h>
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
 #include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include "vfs/vfs_native.h"
@@ -34,7 +35,6 @@
 #include "SandboxManager.h"
 #include "MASAppInstalledChecker.h"
 #include "TrialWindowController.h"
-#include "RoutedIO.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "../NimbleCommander/Bootstrap/ActivationManager.h"

@@ -9,7 +9,7 @@
 #pragma once
 
 #include <xpc/xpc.h>
-
+#include <dirent.h>
 
 /**
  * NB!
@@ -78,8 +78,3 @@ private:
     volatile bool    m_AuthenticatedAsAdmin = false;
     xpc_connection_t m_Connection = nullptr;
 };
-
-inline bool RoutedIO::Enabled() const noexcept
-{
-    return m_Enabled;
-}

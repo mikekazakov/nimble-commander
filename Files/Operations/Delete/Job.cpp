@@ -1,7 +1,7 @@
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
-#include "../../RoutedIO.h"
+#include <RoutedIO/RoutedIO.h>
 #include "Job.h"
 
 static bool CanBeExternalEA(const char *_short_filename)

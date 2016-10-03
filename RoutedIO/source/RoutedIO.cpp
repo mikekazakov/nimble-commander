@@ -10,9 +10,15 @@
 #include <Security/Authorization.h>
 #include <Security/AuthorizationDB.h>
 #include <Habanero/CommonPaths.h>
-#include "RoutedIO.h"
+#include <Habanero/CFString.h>
+#include <Utility/SystemInformation.h>
+#include <RoutedIO/RoutedIO.h>
+#include <experimental/optional>
+#include <vector>
 #include "RoutedIOInterfaces.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+
+using namespace std;
+using namespace std::experimental;
 
 static PosixIOInterface &IODirectCreateProxy();
 static PosixIOInterface &IOWrappedCreateProxy();
@@ -31,24 +37,11 @@ static PosixIOInterface &IODirectCreateProxy() {
 static PosixIOInterface &IOWrappedCreateProxy()
 {
     static PosixIOInterface *interface = []() -> PosixIOInterface* {
-//        return ActivationManager::Instance().HasRoutedIO() ?
-//        return !ActivationManager::Instance().Sandboxed() ?
-        return !ActivationManager::Sandboxed() ?
+        return !sysinfo::IsThisProcessSandboxed() ?
             new PosixIOInterfaceRouted(RoutedIO::Instance()) :
             new PosixIOInterfaceNative();
-//            return ;
-//        else
-//            return ;
         } ();
     return *interface;
-//    if(configuration::version == configuration::Version::Full) {
-//        static PosixIOInterfaceRouted routed(RoutedIO::Instance());
-//        return routed;
-//    }
-//    else {
-//        static PosixIOInterfaceNative direct;
-//        return direct;
-//    }
 }
 
 static optional<vector<uint8_t>> ReadFile(const char *_path)
@@ -80,7 +73,6 @@ static optional<vector<uint8_t>> ReadFile(const char *_path)
 
 static const char *InstalledPath()
 {
-    // need to check hardcoded path on 10.7, 10.8 and 10.9
     static string s = "/Library/PrivilegedHelperTools/"s + g_HelperLabel;
     return s.c_str();
 }
@@ -122,10 +114,7 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
-    if( ActivationManager::Sandboxed() )
-        return false;
-    
-    if( !ActivationManager::Instance().HasRoutedIO() )
+    if( sysinfo::IsThisProcessSandboxed() )
         return false;
     
     if(m_Enabled)
@@ -205,10 +194,7 @@ bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection)
 
 bool RoutedIO::AskToInstallHelper()
 {
-    if( ActivationManager::Sandboxed() )
-        return false;
-        
-    if( !ActivationManager::Instance().HasRoutedIO() )
+    if( sysinfo::IsThisProcessSandboxed() )
         return false;
     
     AuthorizationItem   authItem   = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
@@ -248,10 +234,10 @@ bool RoutedIO::AskToInstallHelper()
 
 bool RoutedIO::AuthenticateAsAdmin()
 {
-    if( !ActivationManager::Instance().HasRoutedIO() )
+    if( sysinfo::IsThisProcessSandboxed() )
         return false;
     
-    if(m_AuthenticatedAsAdmin)
+    if( m_AuthenticatedAsAdmin )
         return true;
     
     AuthorizationItem authItem     = { kAuthorizationRuleAuthenticateAsAdmin, 0, NULL, 0 };
@@ -334,11 +320,16 @@ bool RoutedIO::IsHelperAlive()
 
 PosixIOInterface &RoutedIO::InterfaceForAccess(const char *_path, int _mode) noexcept
 {
-    if( !ActivationManager::Instance().HasRoutedIO() )
+    if( sysinfo::IsThisProcessSandboxed() )
         return Direct;
     
-    if(!Instance().Enabled())
+    if( !Instance().Enabled() )
         return Direct;
     
     return access(_path, _mode) == 0 ? RoutedIO::Direct : RoutedIO::Default;
+}
+
+bool RoutedIO::Enabled() const noexcept
+{
+    return m_Enabled;
 }

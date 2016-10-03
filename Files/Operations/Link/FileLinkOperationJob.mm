@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../RoutedIO.h"
+#include <RoutedIO/RoutedIO.h>
 #include "../OperationDialogAlert.h"
 #include "FileLinkOperationJob.h"
 

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+extern "C" int NSApplicationMain(int argc, const char *argv[]);
 
 int main(int argc, char *argv[])
 {

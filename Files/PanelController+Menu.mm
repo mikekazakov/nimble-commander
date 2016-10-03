@@ -13,11 +13,11 @@
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
 #include <VFS/VFSListingInput.h>
-#include <VFS/vfs_native.h>
-#include <VFS/vfs_ps.h>
-#include <VFS/vfs_net_ftp.h>
-#include <VFS/vfs_net_sftp.h>
-#include <VFS/vfs_xattr.h>
+#include <VFS/Native.h>
+#include <VFS/PS.h>
+#include <VFS/NetFTP.h>
+#include <VFS/NetSFTP.h>
+#include <VFS/XAttr.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/BatchRename/BatchRename.h"
 #include "Operations/BatchRename/BatchRenameSheetController.h"

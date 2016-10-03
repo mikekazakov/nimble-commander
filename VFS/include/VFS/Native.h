@@ -1,4 +1,4 @@
 #pragma once
 
-#include "vfs.h"
+#include "VFS.h"
 #include "../../source/Native/VFSNativeHost.h"

@@ -11,7 +11,7 @@
 #include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
 #include "3rd_party/rapidjson/include/rapidjson/writer.h"
 #include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "States/Terminal/MainWindowTerminalState.h"
 #include "States/Terminal/TermShellTask.h"
 #include "States/Terminal/MainWindowExternalTerminalEditorState.h"

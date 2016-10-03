@@ -8,7 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "MainWndGoToButton.h"
 #include "AppDelegate.h"
 #include "MainWindowFilePanelState.h"

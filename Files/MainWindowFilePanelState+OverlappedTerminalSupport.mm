@@ -7,7 +7,7 @@
 //
 
 #include <Utility/NativeFSManager.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "FilePanelOverlappedTerminal.h"
 #include "FilePanelMainSplitView.h"

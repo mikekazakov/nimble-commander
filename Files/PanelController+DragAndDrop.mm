@@ -8,7 +8,7 @@
 
 #include <Utility/FontExtras.h>
 #include <Utility/NativeFSManager.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "Operations/Link/FileLinkOperation.h"
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/OperationsController.h"

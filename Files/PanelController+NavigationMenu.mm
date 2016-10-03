@@ -7,7 +7,7 @@
 //
 
 #include <Utility/NativeFSManager.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "PanelController+NavigationMenu.h"
 #include "MainWndGoToButton.h"
 #include "../NimbleCommander/Core/VFSInstanceManager.h"

@@ -1,6 +1,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "PanelController.h"
 #include "PanelView.h"
 #include "MainWindowFilePanelState+Tools.h"

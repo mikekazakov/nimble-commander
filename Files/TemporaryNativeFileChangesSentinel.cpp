@@ -1,7 +1,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
 #include <Utility/FSEventsDirUpdate.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "TemporaryNativeFileChangesSentinel.h"
 
 static optional<vector<uint8_t>> CalculateFileHash(const string &_path)

@@ -9,7 +9,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/OperationsController.h"
 #include "Operations/OperationsSummaryViewController.h"

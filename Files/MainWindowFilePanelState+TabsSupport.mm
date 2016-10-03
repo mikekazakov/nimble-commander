@@ -1,7 +1,7 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
 #include <Habanero/CommonPaths.h>
 #include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include "PanelView.h"
 #include "PanelController.h"

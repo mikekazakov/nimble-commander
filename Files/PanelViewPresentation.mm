@@ -8,7 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSView+Sugar.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "PanelViewPresentation.h"
 #include "PanelView.h"
 #include "PanelData.h"

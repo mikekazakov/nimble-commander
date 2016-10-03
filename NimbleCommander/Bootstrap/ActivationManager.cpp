@@ -2,8 +2,7 @@
 #include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
 #include <copyfile.h>
-#include <VFS/VFS.h>
-#include <VFS/vfs_native.h>
+#include <VFS/Native.h>
 #include "../../Files/MASAppInstalledChecker.h"
 #include "../../Files/AppDelegateCPP.h"
 #include "../../Files/GoogleAnalytics.h"

@@ -3,8 +3,8 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include <Habanero/spinlock.h>
-#include "vfs/vfs_net_ftp.h"
-#include "vfs/vfs_net_sftp.h"
+#include <VFS/NetFTP.h>
+#include <VFS/NetSFTP.h>
 #include "AppDelegate.h"
 #include "NetworkConnectionsManager.h"
 #include "KeychainServices.h"

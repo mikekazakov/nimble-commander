@@ -7,7 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "PanelController.h"
 
 @implementation PanelController (Navigation)

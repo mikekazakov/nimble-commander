@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF69CFF41DA227E400992B84 /* vfs_arc_la.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* vfs_arc_la.h */; };
-		CF69CFF51DA227E400992B84 /* vfs_arc_unrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* vfs_arc_unrar.h */; };
-		CF69CFF61DA227E400992B84 /* vfs_native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* vfs_native.h */; };
-		CF69CFF71DA227E400992B84 /* vfs_net_ftp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE31DA227E400992B84 /* vfs_net_ftp.h */; };
-		CF69CFF81DA227E400992B84 /* vfs_net_sftp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE41DA227E400992B84 /* vfs_net_sftp.h */; };
-		CF69CFF91DA227E400992B84 /* vfs_ps.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE51DA227E400992B84 /* vfs_ps.h */; };
-		CF69CFFA1DA227E400992B84 /* vfs_xattr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE61DA227E400992B84 /* vfs_xattr.h */; };
+		CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* ArcLA.h */; };
+		CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* ArcUnRAR.h */; };
+		CF69CFF61DA227E400992B84 /* Native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* Native.h */; };
+		CF69CFF71DA227E400992B84 /* NetFTP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE31DA227E400992B84 /* NetFTP.h */; };
+		CF69CFF81DA227E400992B84 /* NetSFTP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE41DA227E400992B84 /* NetSFTP.h */; };
+		CF69CFF91DA227E400992B84 /* PS.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE51DA227E400992B84 /* PS.h */; };
+		CF69CFFA1DA227E400992B84 /* XAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE61DA227E400992B84 /* XAttr.h */; };
 		CF69CFFB1DA227E400992B84 /* VFS.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE71DA227E400992B84 /* VFS.h */; };
 		CF69CFFC1DA227E400992B84 /* VFSArchiveProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE81DA227E400992B84 /* VFSArchiveProxy.h */; };
 		CF69CFFD1DA227E400992B84 /* VFSConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE91DA227E400992B84 /* VFSConfiguration.h */; };
@@ -85,13 +85,13 @@
 
 /* Begin PBXFileReference section */
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF69CFE01DA227E400992B84 /* vfs_arc_la.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_arc_la.h; path = include/VFS/vfs_arc_la.h; sourceTree = "<group>"; };
-		CF69CFE11DA227E400992B84 /* vfs_arc_unrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_arc_unrar.h; path = include/VFS/vfs_arc_unrar.h; sourceTree = "<group>"; };
-		CF69CFE21DA227E400992B84 /* vfs_native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_native.h; path = include/VFS/vfs_native.h; sourceTree = "<group>"; };
-		CF69CFE31DA227E400992B84 /* vfs_net_ftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_net_ftp.h; path = include/VFS/vfs_net_ftp.h; sourceTree = "<group>"; };
-		CF69CFE41DA227E400992B84 /* vfs_net_sftp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_net_sftp.h; path = include/VFS/vfs_net_sftp.h; sourceTree = "<group>"; };
-		CF69CFE51DA227E400992B84 /* vfs_ps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_ps.h; path = include/VFS/vfs_ps.h; sourceTree = "<group>"; };
-		CF69CFE61DA227E400992B84 /* vfs_xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs_xattr.h; path = include/VFS/vfs_xattr.h; sourceTree = "<group>"; };
+		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
+		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
+		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
+		CF69CFE31DA227E400992B84 /* NetFTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetFTP.h; path = include/VFS/NetFTP.h; sourceTree = "<group>"; };
+		CF69CFE41DA227E400992B84 /* NetSFTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetSFTP.h; path = include/VFS/NetSFTP.h; sourceTree = "<group>"; };
+		CF69CFE51DA227E400992B84 /* PS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PS.h; path = include/VFS/PS.h; sourceTree = "<group>"; };
+		CF69CFE61DA227E400992B84 /* XAttr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XAttr.h; path = include/VFS/XAttr.h; sourceTree = "<group>"; };
 		CF69CFE71DA227E400992B84 /* VFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFS.h; path = include/VFS/VFS.h; sourceTree = "<group>"; };
 		CF69CFE81DA227E400992B84 /* VFSArchiveProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveProxy.h; path = include/VFS/VFSArchiveProxy.h; sourceTree = "<group>"; };
 		CF69CFE91DA227E400992B84 /* VFSConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSConfiguration.h; path = include/VFS/VFSConfiguration.h; sourceTree = "<group>"; };
@@ -194,13 +194,13 @@
 			children = (
 				CF69D0791DA238D400992B84 /* VFSListingInput.h */,
 				CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */,
-				CF69CFE01DA227E400992B84 /* vfs_arc_la.h */,
-				CF69CFE11DA227E400992B84 /* vfs_arc_unrar.h */,
-				CF69CFE21DA227E400992B84 /* vfs_native.h */,
-				CF69CFE31DA227E400992B84 /* vfs_net_ftp.h */,
-				CF69CFE41DA227E400992B84 /* vfs_net_sftp.h */,
-				CF69CFE51DA227E400992B84 /* vfs_ps.h */,
-				CF69CFE61DA227E400992B84 /* vfs_xattr.h */,
+				CF69CFE01DA227E400992B84 /* ArcLA.h */,
+				CF69CFE11DA227E400992B84 /* ArcUnRAR.h */,
+				CF69CFE21DA227E400992B84 /* Native.h */,
+				CF69CFE31DA227E400992B84 /* NetFTP.h */,
+				CF69CFE41DA227E400992B84 /* NetSFTP.h */,
+				CF69CFE51DA227E400992B84 /* PS.h */,
+				CF69CFE61DA227E400992B84 /* XAttr.h */,
 				CF69CFE71DA227E400992B84 /* VFS.h */,
 				CF69CFE81DA227E400992B84 /* VFSArchiveProxy.h */,
 				CF69CFE91DA227E400992B84 /* VFSConfiguration.h */,
@@ -340,9 +340,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF69CFF51DA227E400992B84 /* vfs_arc_unrar.h in Headers */,
+				CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */,
 				CF69D0401DA2324100992B84 /* VFSNetFTPFile.h in Headers */,
-				CF69CFF71DA227E400992B84 /* vfs_net_ftp.h in Headers */,
+				CF69CFF71DA227E400992B84 /* NetFTP.h in Headers */,
 				CF69CFFB1DA227E400992B84 /* VFS.h in Headers */,
 				CF69D0751DA2353000992B84 /* VFSPSFile.h in Headers */,
 				CF69D06B1DA2344A00992B84 /* VFSArchiveUnRARHost.h in Headers */,
@@ -358,20 +358,20 @@
 				CF69D04F1DA232F000992B84 /* VFSNetSFTPHost.h in Headers */,
 				CF69D0011DA227E400992B84 /* VFSFactory.h in Headers */,
 				CF69D05B1DA2336500992B84 /* VFSArchiveInternal.h in Headers */,
-				CF69CFF41DA227E400992B84 /* vfs_arc_la.h in Headers */,
+				CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */,
 				CF69D01F1DA22BE800992B84 /* VFSListingInput.h in Headers */,
 				CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */,
-				CF69CFF91DA227E400992B84 /* vfs_ps.h in Headers */,
+				CF69CFF91DA227E400992B84 /* PS.h in Headers */,
 				CF69CFFF1DA227E400992B84 /* VFSEasyOps.h in Headers */,
 				CF69D0001DA227E400992B84 /* VFSError.h in Headers */,
-				CF69CFF81DA227E400992B84 /* vfs_net_sftp.h in Headers */,
+				CF69CFF81DA227E400992B84 /* NetSFTP.h in Headers */,
 				CF69D0031DA227E400992B84 /* VFSGenericMemReadOnlyFile.h in Headers */,
-				CF69CFFA1DA227E400992B84 /* vfs_xattr.h in Headers */,
+				CF69CFFA1DA227E400992B84 /* XAttr.h in Headers */,
 				CF69D05E1DA233EC00992B84 /* AppleDoubleEA.h in Headers */,
 				CF69CFFD1DA227E400992B84 /* VFSConfiguration.h in Headers */,
 				CF69D06D1DA2344A00992B84 /* VFSArchiveUnRARInternals.h in Headers */,
 				CF69D0291DA2305A00992B84 /* DisplayNamesCache.h in Headers */,
-				CF69CFF61DA227E400992B84 /* vfs_native.h in Headers */,
+				CF69CFF61DA227E400992B84 /* Native.h in Headers */,
 				CF69CFFE1DA227E400992B84 /* VFSDeclarations.h in Headers */,
 				CF69D02C1DA2305A00992B84 /* VFSNativeFile.h in Headers */,
 				CF69D0331DA231EA00992B84 /* xattr.h in Headers */,

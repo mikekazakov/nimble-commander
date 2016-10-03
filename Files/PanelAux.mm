@@ -11,7 +11,7 @@
 #include <dirent.h>
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/OperationsController.h"
-#include "vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "TemporaryNativeFileStorage.h"
 #include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"

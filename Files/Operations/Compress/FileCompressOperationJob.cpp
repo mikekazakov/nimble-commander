@@ -14,7 +14,7 @@
 #include <Utility/PathManip.h>
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-#include "../../AppleDoubleEA.h"
+#include <VFS/AppleDoubleEA.h>
 #include "FileCompressOperationJob.h"
 
 static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _path, const char *_name)

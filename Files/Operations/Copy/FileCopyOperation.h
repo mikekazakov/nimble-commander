@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "../Operation.h"
 #include "Options.h"
 

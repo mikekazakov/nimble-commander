@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "../../Files/vfs/VFS.h"
+#include <VFS/VFS.h>
 
 struct FindFilesSheetControllerFoundItem
 {

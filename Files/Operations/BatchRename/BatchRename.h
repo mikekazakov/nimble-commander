@@ -55,7 +55,7 @@
 //Same as above, but for partial strings (here: letters 4-7).
 //Supports the same ranges as the [N] field (see above), including leading spaces or zeroes.
 
-#include "../../vfs/VFS.h"
+#include <VFS/VFS.h>
 
 class BatchRename
 {

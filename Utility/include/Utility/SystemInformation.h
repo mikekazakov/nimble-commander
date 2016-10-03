@@ -88,5 +88,7 @@ bool GetSystemOverview(SystemOverview &_overview);
 int GetBSDProcessList(kinfo_proc **procList, size_t *procCount);
 
 bool IsThisProcessSandboxed() noexcept;
+
+const string& GetBundleID() noexcept;
     
 }

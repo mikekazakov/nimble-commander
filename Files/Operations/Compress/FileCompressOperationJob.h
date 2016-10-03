@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Habanero/chained_strings.h>
-#include "../../vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "../OperationJob.h"
 #include "../OperationDialogProtocol.h"
 

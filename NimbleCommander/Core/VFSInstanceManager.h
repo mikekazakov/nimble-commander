@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Habanero/Observable.h>
-#include "../../Files/VFS/vfs.h"
+#include <VFS/VFS.h>
 
 /**
  * Keeps track of alive VFS in the system.

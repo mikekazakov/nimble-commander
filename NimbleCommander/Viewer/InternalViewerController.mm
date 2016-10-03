@@ -1,4 +1,4 @@
-#include "../../Files/vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "../../Files/ProcessSheetController.h"
 #include "../../Files/Config.h"
 #include "../../Files/SearchInFile.h"

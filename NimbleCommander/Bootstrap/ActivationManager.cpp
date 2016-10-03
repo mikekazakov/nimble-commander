@@ -1,8 +1,9 @@
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
+#include <Utility/SystemInformation.h>
 #include <copyfile.h>
-#include "../../Files/vfs/VFS.h"
-#include "../../Files/vfs/vfs_native.h"
+#include <VFS/VFS.h>
+#include <VFS/vfs_native.h>
 #include "../../Files/MASAppInstalledChecker.h"
 #include "../../Files/AppDelegateCPP.h"
 #include "../../Files/GoogleAnalytics.h"
@@ -204,14 +205,7 @@ ActivationManager::ActivationManager()
 
 const string& ActivationManager::BundleID()
 {
-    static const string bundle_id = []{
-        if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
-            return CFStringGetUTF8StdString(bid);
-        else
-            return "unknown"s;
-    }();
-    
-    return bundle_id;
+    return sysinfo::GetBundleID();
 }
 
 const string& ActivationManager::AppStoreID() const

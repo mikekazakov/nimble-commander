@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../Files/vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "../../Files/MainWindowStateProtocol.h"
 #include "../../Viewer/BigFileView.h"
 #include "../../Viewer/InternalViewerToolbarProtocol.h"

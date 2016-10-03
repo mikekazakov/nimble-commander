@@ -7,7 +7,7 @@
 //
 
 #include <Utility/SheetController.h>
-#include "../../vfs/VFS.h"
+#include <VFS/VFS.h>
 
 struct FileCopyOperationOptions;
 

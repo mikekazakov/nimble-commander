@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../Files/vfs/VFS.h"
+#include <VFS/VFS.h>
 
 @class InternalViewerController;
 

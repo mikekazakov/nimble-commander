@@ -10,7 +10,7 @@
 
 #include <Habanero/DispatchQueue.h>
 #include <Utility/Encodings.h>
-#include "../../Files/vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "FileMask.h"
 
 class SearchForFiles

@@ -14,6 +14,7 @@
 #include <mutex>
 #include <Utility/ObjCpp.h>
 #include <Utility/SystemInformation.h>
+#include <Habanero/CFString.h>
 
 namespace sysinfo
 {
@@ -290,6 +291,17 @@ bool IsThisProcessSandboxed() noexcept
 {
     static const bool is_sandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
     return is_sandboxed;
+}
+    
+const string& GetBundleID() noexcept
+{
+    static const string bundle_id = []{
+        if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
+            return CFStringGetUTF8StdString(bid);
+        else
+            return "unknown"s;
+    }();
+    return bundle_id;
 }
     
 }

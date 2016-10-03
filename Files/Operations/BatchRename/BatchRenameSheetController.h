@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "../../vfs/VFS.h"
+#include <VFS/VFS.h>
 
 @interface BatchRenameSheetController : SheetController<NSTableViewDataSource,NSTableViewDelegate,NSTextFieldDelegate,NSComboBoxDelegate>
 

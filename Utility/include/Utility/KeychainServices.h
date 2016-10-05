@@ -8,17 +8,19 @@
 
 #pragma once
 
+#include <string>
+
 class KeychainServices
 {
 public:
     static KeychainServices &Instance();
 
     // will override on duplicate
-    bool SetPassword(const string& _where, const string &_account, const string &_password);
+    bool SetPassword(const std::string& _where, const std::string &_account, const std::string &_password);
     
-    bool GetPassword(const string& _where, const string &_account, string &_password);
+    bool GetPassword(const std::string& _where, const std::string &_account, std::string &_password);
     
-    bool ErasePassword(const string& _where, const string &_account);
+    bool ErasePassword(const std::string& _where, const std::string &_account);
     
 private:
     KeychainServices();

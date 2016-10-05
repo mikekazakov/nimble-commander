@@ -1,13 +1,11 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
-#include <Habanero/spinlock.h>
+#include <Utility/KeychainServices.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include "AppDelegate.h"
 #include "NetworkConnectionsManager.h"
-#include "KeychainServices.h"
 #include "AskForPasswordWindowController.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";

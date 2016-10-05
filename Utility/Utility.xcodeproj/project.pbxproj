@@ -23,6 +23,8 @@
 		CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
 		CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
 		CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E281C992F35001D8B02 /* VolumeInformation.cpp */; };
+		CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */; };
+		CFD3CAF31DA4AD32006DA143 /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */; };
 		CFD62BCE1C9A66C50021EE7F /* ObjcToCppObservingBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BCD1C9A66C50021EE7F /* ObjcToCppObservingBridge.h */; };
 		CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */; };
 		CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */; };
@@ -72,6 +74,8 @@
 		CF960E261C992F35001D8B02 /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = source/PathManip.c; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
+		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BCD1C9A66C50021EE7F /* ObjcToCppObservingBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjcToCppObservingBridge.h; path = include/Utility/ObjcToCppObservingBridge.h; sourceTree = "<group>"; };
 		CFD62BCF1C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ObjcToCppObservingBridge.mm; path = source/ObjcToCppObservingBridge.mm; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
@@ -134,6 +138,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */,
 				CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */,
@@ -163,6 +168,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
@@ -209,6 +215,7 @@
 				CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */,
 				CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */,
 				CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */,
+				CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
@@ -299,6 +306,7 @@
 				CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */,
 				CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */,
 				CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */,
+				CFD3CAF31DA4AD32006DA143 /* KeychainServices.cpp in Sources */,
 				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,
 				CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */,
 			);

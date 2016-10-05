@@ -559,9 +559,6 @@
 		CF9B12C31D8A6B4600C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
 		CF9B12C41D8A6B4700C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
 		CF9B12C51D8A6B4700C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
-		CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
-		CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
-		CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CFA0B22F18648F9A00501C35 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B22D18648F9A00501C35 /* PanelHistory.mm */; };
 		CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23118653FF300501C35 /* PanelController+Navigation.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
@@ -633,7 +630,6 @@
 		CFA539A91D433E2A00C562A7 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
 		CFA539AA1D433E2A00C562A7 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
 		CFA539AB1D433E2A00C562A7 /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF747BC91C117C280081185B /* Config.mm */; };
-		CFA539AC1D433E2A00C562A7 /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */; };
 		CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
 		CFA539AE1D433E2A00C562A7 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */; };
@@ -1490,8 +1486,6 @@
 		CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleAnalytics.mm; sourceTree = "<group>"; };
 		CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileChangesSentinel.cpp; sourceTree = "<group>"; };
 		CF9A9F191CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileChangesSentinel.h; sourceTree = "<group>"; };
-		CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainServices.cpp; sourceTree = "<group>"; };
-		CF9DBE0C1A485E7800FF735B /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainServices.h; sourceTree = "<group>"; };
 		CFA0B22D18648F9A00501C35 /* PanelHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelHistory.mm; sourceTree = "<group>"; };
 		CFA0B22E18648F9A00501C35 /* PanelHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelHistory.h; sourceTree = "<group>"; };
 		CFA0B23018653FF300501C35 /* PanelController+Navigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "PanelController+Navigation.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -2355,8 +2349,6 @@
 				CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */,
 				CF31207D1A4FFAAA0062185A /* ConnectionsMenuDelegate.h */,
 				CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */,
-				CF9DBE0B1A485E7800FF735B /* KeychainServices.cpp */,
-				CF9DBE0C1A485E7800FF735B /* KeychainServices.h */,
 				CF39F4401C2EB198009CEFBB /* NetworkConnectionsManager.h */,
 				CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */,
 				CF0939461D1510DF00D67AC6 /* ToolsMenuDelegate.h */,
@@ -3342,7 +3334,6 @@
 				CF9069741BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
-				CF9DBE0E1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
 				CF6D9D351966BE710077B146 /* SandboxManager.mm in Sources */,
@@ -3586,7 +3577,6 @@
 				CFA539A91D433E2A00C562A7 /* FileLinkOperationJob.mm in Sources */,
 				CFA539AA1D433E2A00C562A7 /* OrthodoxMonospace.mm in Sources */,
 				CFA539AB1D433E2A00C562A7 /* Config.mm in Sources */,
-				CFA539AC1D433E2A00C562A7 /* KeychainServices.cpp in Sources */,
 				CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFA539AE1D433E2A00C562A7 /* PanelController+DragAndDrop.mm in Sources */,
 				CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */,
@@ -3758,7 +3748,6 @@
 				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
 				CF747BCB1C117C280081185B /* Config.mm in Sources */,
-				CF9DBE0D1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
 				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
@@ -3879,7 +3868,6 @@
 				CF46DB821C856F44009E28B9 /* TermSingleTask.mm in Sources */,
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
-				CF9DBE0F1A485E7800FF735B /* KeychainServices.cpp in Sources */,
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFF6F2601A13567C00011177 /* PanelHistory.mm in Sources */,
 				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,

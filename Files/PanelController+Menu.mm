@@ -766,7 +766,8 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     popover.contentViewController = _view;
     popover.behavior = NSPopoverBehaviorTransient;
     popover.delegate = _delegate;
-    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, self.view.presentation->GetSingleItemHeight())
+//    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, self.view.presentation->GetSingleItemHeight())
+    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, 0)
                          ofView:self.view
                   preferredEdge:NSMaxYEdge];
     return popover;

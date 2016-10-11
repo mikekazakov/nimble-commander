@@ -863,6 +863,7 @@
 		CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
+		CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */; };
 		CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD629631C2CE7030050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
@@ -1586,6 +1587,8 @@
 		CFCF862618939589000552CD /* PanelController+QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+QuickSearch.mm"; sourceTree = "<group>"; };
 		CFCF862B18961393000552CD /* PanelController+DragAndDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PanelController+DragAndDrop.h"; sourceTree = "<group>"; };
 		CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DragAndDrop.mm"; sourceTree = "<group>"; };
+		CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefView.h; path = NimbleCommander/States/FilePanels/PanelBriefView.h; sourceTree = SOURCE_ROOT; };
+		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = Resource/State.json; sourceTree = "<group>"; };
 		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
@@ -1870,6 +1873,8 @@
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */,
+				CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */,
 				B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */,
 				B52D9A7C1736D7DE00EC7154 /* PanelViewPresentation.h */,
 				CFC20B49198F47DD000E73DD /* PanelViewPresentationItemsColoringFilter.h */,
@@ -3689,6 +3694,7 @@
 				CF56BEFE1D5C3CBB00A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFC5123616C5284800D247EE /* PanelData.mm in Sources */,
 				CF7AB35F18BDC7BA00D71B0D /* ActionsShortcutsManager.mm in Sources */,
+				CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */,
 				CFC5123916C5287B00D247EE /* PanelView.mm in Sources */,
 				CF7D135C1BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CF9069761BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
@@ -4654,7 +4660,7 @@
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
 				);
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -4720,7 +4726,7 @@
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
 				);
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-std=c++1z",

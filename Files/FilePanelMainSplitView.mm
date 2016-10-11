@@ -72,13 +72,13 @@ static CGColorRef DividerColor(bool _wnd_active)
     
     m_Prop = proposedPosition / self.frame.size.width;
     
-    if(AppDelegate.me.skin == ApplicationSkin::Modern)
-        return proposedPosition;
-    else if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
-        float gran = p->Granularity();
-        float rest = fmod(proposedPosition, gran);
-        return proposedPosition - rest;
-    }
+//    if(AppDelegate.me.skin == ApplicationSkin::Modern)
+//        return proposedPosition;
+//    else if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
+//        float gran = p->Granularity();
+//        float rest = fmod(proposedPosition, gran);
+//        return proposedPosition - rest;
+//    }
     return proposedPosition;
 }
 
@@ -98,27 +98,27 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (void)resizeSubviewsManually
 {
-    NSRect newFrame = self.frame;
-    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
-        NSRect leftRect  = [self.subviews[0] frame];
-        NSRect rightRect = [self.subviews[1] frame];
-        
-        float gran = p->Granularity();
-        float center_x = m_Prop * newFrame.size.width;
-        float rest = fmod(center_x, gran);
-        
-        leftRect.origin = NSMakePoint(0, 0);
-        leftRect.size.height = newFrame.size.height;
-        leftRect.size.width = center_x - rest;
-        [self.subviews[0] setFrame:leftRect];
-        
-        rightRect.origin.y = 0;
-        rightRect.origin.x = leftRect.size.width + 1;
-        rightRect.size.height = newFrame.size.height;
-        rightRect.size.width = newFrame.size.width - leftRect.size.width;
-        [self.subviews[1] setFrame:rightRect];
-        return;
-    }
+//    NSRect newFrame = self.frame;
+//    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
+//        NSRect leftRect  = [self.subviews[0] frame];
+//        NSRect rightRect = [self.subviews[1] frame];
+//        
+//        float gran = p->Granularity();
+//        float center_x = m_Prop * newFrame.size.width;
+//        float rest = fmod(center_x, gran);
+//        
+//        leftRect.origin = NSMakePoint(0, 0);
+//        leftRect.size.height = newFrame.size.height;
+//        leftRect.size.width = center_x - rest;
+//        [self.subviews[0] setFrame:leftRect];
+//        
+//        rightRect.origin.y = 0;
+//        rightRect.origin.x = leftRect.size.width + 1;
+//        rightRect.size.height = newFrame.size.height;
+//        rightRect.size.width = newFrame.size.width - leftRect.size.width;
+//        [self.subviews[1] setFrame:rightRect];
+//        return;
+//    }
     [self adjustSubviews];
 }
 
@@ -300,8 +300,8 @@ static CGColorRef DividerColor(bool _wnd_active)
     else if(m_BasicViews[1]) v = m_BasicViews[1];
     else v = (FilePanelsTabbedHolder *)[self.subviews objectAtIndex:0];
     
-    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.current.presentation))
-        return p->Granularity();
+//    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.current.presentation))
+//        return p->Granularity();
     return 14.;
 }
 

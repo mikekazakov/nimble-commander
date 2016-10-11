@@ -131,6 +131,18 @@ void PanelData::PanelVolatileData::toggle_shown( bool _v ) noexcept
     flags = (flags & ~flag_shown) | (_v ? flag_shown : 0);
 }
 
+bool PanelData::PanelVolatileData::operator==(PanelVolatileData&_rhs) const noexcept
+{
+    return size  == _rhs.size  &&
+           flags == _rhs.flags &&
+           icon  == _rhs.icon   ;
+}
+
+bool PanelData::PanelVolatileData::operator!=(PanelVolatileData&_rhs) const noexcept
+{
+    return !(*this == _rhs);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // Statistics
 //////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -89,6 +89,8 @@ public:
         bool is_size_calculated() const noexcept;
         void toggle_selected( bool _v ) noexcept;
         void toggle_shown( bool _v ) noexcept;
+        bool operator==(PanelVolatileData&_rhs) const noexcept;
+        bool operator!=(PanelVolatileData&_rhs) const noexcept;
     };
     
     struct Statistics

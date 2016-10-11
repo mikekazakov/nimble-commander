@@ -17,6 +17,8 @@
 #include "AppDelegate.h"
 #include "ActionsShortcutsManager.h"
 
+#include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
+
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
 
 enum class CursorSelectionType
@@ -52,7 +54,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     unsigned long               m_KeyboardModifierFlags;
     CursorSelectionType         m_CursorSelectionType;
-    unique_ptr<PanelViewPresentation> m_Presentation;
+//    unique_ptr<PanelViewPresentation> m_Presentation;
     PanelViewState              m_State;
     
     unordered_map<size_t, PanelViewStateStorage> m_States;
@@ -79,6 +81,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     FPSLimitedDrawer           *m_FPSLimitedDrawer;
     
     vector<int>                 m_ContextMenuHighlights;
+    
+    
+    PanelBriefView             *m_ItemsView;
 }
 
 @synthesize fpsDrawer = m_FPSLimitedDrawer;
@@ -115,6 +120,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
         else if(skin == ApplicationSkin::Classic)
             [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
+        
+        
+        m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
+        m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_ItemsView];
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
     }
     
     return self;
@@ -213,47 +226,47 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    if (!m_State.Data || !m_Presentation) return;
-    m_Presentation->Draw(dirtyRect);
-    
-    if(m_RenamingEditor) {
-        [NSGraphicsContext saveGraphicsState];
-        NSSetFocusRingStyle(NSFocusRingOnly);
-        [[NSBezierPath bezierPathWithRect:m_RenamingEditor.frame] fill];
-        [NSGraphicsContext restoreGraphicsState];
-    }
-    
-    if( m_DraggingOver ) {
-        if( m_DraggingOverItemAtPosition >= 0 && m_Presentation->IsItemVisible(m_DraggingOverItemAtPosition) ) {
-            NSRect rc = m_Presentation->ItemRect(m_DraggingOverItemAtPosition);
-            [NSGraphicsContext saveGraphicsState];
-            NSSetFocusRingStyle(NSFocusRingOnly);
-            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
-            [NSGraphicsContext restoreGraphicsState];
-        }
-        else {
-            [NSGraphicsContext saveGraphicsState];
-            NSSetFocusRingStyle(NSFocusRingOnly);
-            [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
-            [NSGraphicsContext restoreGraphicsState];
-        }
-    }
-  
-    for( auto n: m_ContextMenuHighlights ) {
-        if( m_Presentation->IsItemVisible(n) ) {
-            NSRect rc = m_Presentation->ItemRect(n);
-            [NSGraphicsContext saveGraphicsState];
-            NSSetFocusRingStyle(NSFocusRingOnly);
-            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
-            [NSGraphicsContext restoreGraphicsState];
-        }
-    }
+//    if (!m_State.Data || !m_Presentation) return;
+//    m_Presentation->Draw(dirtyRect);
+//    
+//    if(m_RenamingEditor) {
+//        [NSGraphicsContext saveGraphicsState];
+//        NSSetFocusRingStyle(NSFocusRingOnly);
+//        [[NSBezierPath bezierPathWithRect:m_RenamingEditor.frame] fill];
+//        [NSGraphicsContext restoreGraphicsState];
+//    }
+//    
+//    if( m_DraggingOver ) {
+//        if( m_DraggingOverItemAtPosition >= 0 && m_Presentation->IsItemVisible(m_DraggingOverItemAtPosition) ) {
+//            NSRect rc = m_Presentation->ItemRect(m_DraggingOverItemAtPosition);
+//            [NSGraphicsContext saveGraphicsState];
+//            NSSetFocusRingStyle(NSFocusRingOnly);
+//            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
+//            [NSGraphicsContext restoreGraphicsState];
+//        }
+//        else {
+//            [NSGraphicsContext saveGraphicsState];
+//            NSSetFocusRingStyle(NSFocusRingOnly);
+//            [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
+//            [NSGraphicsContext restoreGraphicsState];
+//        }
+//    }
+//  
+//    for( auto n: m_ContextMenuHighlights ) {
+//        if( m_Presentation->IsItemVisible(n) ) {
+//            NSRect rc = m_Presentation->ItemRect(n);
+//            [NSGraphicsContext saveGraphicsState];
+//            NSSetFocusRingStyle(NSFocusRingOnly);
+//            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
+//            [NSGraphicsContext restoreGraphicsState];
+//        }
+//    }
 }
 
 - (void)frameDidChange
 {
-    if (m_Presentation)
-        m_Presentation->OnFrameChanged([self frame]);
+//    if (m_Presentation)
+//        m_Presentation->OnFrameChanged([self frame]);
     [self commitFieldEditor];
 }
 
@@ -266,23 +279,29 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     self.needsDisplay = true;
     m_State.Data = data;
+    
+//    if( data )
+
+    
+    [m_ItemsView setData:data];
+    
     if( !data )
         self.presentation = nullptr;
 }
 
 - (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
 {
-    m_Presentation = move(_presentation);
-    if (m_Presentation) {
-        [self frameDidChange];
-        self.needsDisplay = true;
-    }
+//    m_Presentation = move(_presentation);
+//    if (m_Presentation) {
+//        [self frameDidChange];
+//        self.needsDisplay = true;
+//    }
 }
 
-- (PanelViewPresentation*) presentation
-{
-    return m_Presentation.get();
-}
+//- (PanelViewPresentation*) presentation
+//{
+//    return m_Presentation.get();
+//}
 
 - (void) HandlePrevFile
 {
@@ -290,7 +309,15 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     int origpos = m_State.CursorPos;
     
-    m_Presentation->MoveCursorToPrevItem();
+//    m_Presentation->MoveCursorToPrevItem();
+//    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+//    
+    if(m_State.CursorPos <= 0)
+        return;
+        
+    m_State.CursorPos--;
+//    EnsureCursorIsVisible();
+    
     
     if(m_CursorSelectionType != CursorSelectionType::No)
         [self SelectUnselectInRange:origpos last_included:origpos];
@@ -303,7 +330,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToNextItem();
+//    m_Presentation->MoveCursorToNextItem();
+    
+//    if(m_State->Data->SortedDirectoryEntries().empty()) return;
+//    
+    if( m_State.CursorPos + 1 >= m_State.Data->SortedDirectoryEntries().size() )
+        return;
+
+    m_State.CursorPos++;
     
     [self SelectUnselectInRange:origpos last_included:origpos];
     [self OnCursorPositionChanged];
@@ -314,7 +348,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToPrevPage();
+//    m_Presentation->MoveCursorToPrevPage();
 
     [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
@@ -325,7 +359,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToNextPage();
+//    m_Presentation->MoveCursorToNextPage();
 
     [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
@@ -335,10 +369,18 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToPrevColumn();
+    const auto orig_pos = m_State.CursorPos;
     
-    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
+    if( m_State.Data->SortedDirectoryEntries().empty() ) return;
+    const auto items_per_column = m_ItemsView.itemsInColumn;
+    const auto new_pos = max( orig_pos - items_per_column, 0 );
+    
+    if( new_pos == orig_pos )
+        return;
+
+    m_State.CursorPos = new_pos;
+    
+    [self SelectUnselectInRange:orig_pos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -346,10 +388,20 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToNextColumn();
+    const auto orig_pos = m_State.CursorPos;
+//    m_Presentation->MoveCursorToNextColumn();
+    
+    if( m_State.Data->SortedDirectoryEntries().empty() ) return;
+    const auto total_items = (int)m_State.Data->SortedDirectoryEntries().size();
+    const auto items_per_column = m_ItemsView.itemsInColumn;
+    const auto new_pos = min( orig_pos + items_per_column, total_items - 1 );
+    
+    if( new_pos == orig_pos )
+        return;
+    
+    m_State.CursorPos = new_pos;
 
-    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:orig_pos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -357,8 +409,15 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToFirstItem();
+    const auto origpos = m_State.CursorPos;
+    
+    if( m_State.Data->SortedDirectoryEntries().empty() ||
+        m_State.CursorPos == 0 )
+        return;
+    
+    m_State.CursorPos = 0;
+    
+//    m_Presentation->MoveCursorToFirstItem();
 
     [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
     [self OnCursorPositionChanged];
@@ -368,8 +427,15 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToLastItem();
+    const auto origpos = m_State.CursorPos;
+    
+    if( m_State.Data->SortedDirectoryEntries().empty() ||
+        m_State.CursorPos == m_State.Data->SortedDirectoryEntries().size() - 1 )
+        return;
+    
+    m_State.CursorPos = (int)m_State.Data->SortedDirectoryEntries().size() - 1;
+    
+//    m_Presentation->MoveCursorToLastItem();
 
     [self SelectUnselectInRange:origpos last_included: m_State.CursorPos];
     [self OnCursorPositionChanged];
@@ -380,7 +446,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     dispatch_assert_main_queue();
     
     int origpos = m_State.CursorPos;
-    m_Presentation->MoveCursorToNextItem();
+//    m_Presentation->MoveCursorToNextItem();
     
     if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
         [self SelectUnselectInRange:origpos
@@ -405,10 +471,24 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    if (m_State.CursorPos == _pos) return;
+    const auto clipped_pos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
+                         _pos >= 0 &&
+                         _pos < m_State.Data->SortedDirectoryEntries().size() ) ?
+                        _pos : -1;
+    
+    if (m_State.CursorPos == clipped_pos)
+        return;
 
-    m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
-
+//    m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
+//    [m_ItemsView setCursorPosition:_pos];
+    
+    m_State.CursorPos = clipped_pos;
+//        m_Presentation->SetCursorPos(cursor);
+//    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
+//                         _pos >= 0 &&
+//                         _pos < m_State.Data->SortedDirectoryEntries().size() ) ?
+//                        _pos : -1;
+    
     [self OnCursorPositionChanged];
 }
 
@@ -422,6 +502,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     [m_FPSLimitedDrawer invalidate];
+    [m_ItemsView setCursorPosition:m_State.CursorPos];
     
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
@@ -535,48 +616,48 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void) mouseDown:(NSEvent *)_event
 {
-    m_LastPotentialRenamingLBDown = -1;
-    
-    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    const int current_cursor_pos = m_State.CursorPos;
-    const bool window_focused = self.window.isKeyWindow;
-    
-    const int clicked_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if( clicked_pos == -1 )
-        return;
-
-    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(clicked_pos);
-    const bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-    const bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
-    
-    // any cursor movements or selection changes should be performed only in active window
-    if( window_focused ) {
-        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-        
-        // Select range of items with shift+click.
-        // If clicked item is selected, then deselect the range instead.
-        if(modifier_flags & NSShiftKeyMask)
-            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
-                          last_included:clicked_pos
-                                 select:!click_entry_vd.is_selected()];
-        else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
-            [self SelectUnselectInRange:clicked_pos
-                          last_included:clicked_pos
-                                 select:!click_entry_vd.is_selected()];
-        
-        m_Presentation->SetCursorPos(clicked_pos);
-        
-        if( current_cursor_pos != clicked_pos )
-            [self OnCursorPositionChanged];
-        else if(lb_pressed && !lb_cooldown)
-            m_LastPotentialRenamingLBDown = clicked_pos; // need more complex logic here (?)
-
-    }
-    
-    if( lb_pressed ) {
-        m_ReadyToDrag = true;
-        m_LButtonDownPos = local_point;
-    }
+//    m_LastPotentialRenamingLBDown = -1;
+//    
+//    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+//    const int current_cursor_pos = m_State.CursorPos;
+//    const bool window_focused = self.window.isKeyWindow;
+//    
+//    const int clicked_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+//    if( clicked_pos == -1 )
+//        return;
+//
+//    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(clicked_pos);
+//    const bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+//    const bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
+//    
+//    // any cursor movements or selection changes should be performed only in active window
+//    if( window_focused ) {
+//        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+//        
+//        // Select range of items with shift+click.
+//        // If clicked item is selected, then deselect the range instead.
+//        if(modifier_flags & NSShiftKeyMask)
+//            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
+//                          last_included:clicked_pos
+//                                 select:!click_entry_vd.is_selected()];
+//        else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
+//            [self SelectUnselectInRange:clicked_pos
+//                          last_included:clicked_pos
+//                                 select:!click_entry_vd.is_selected()];
+//        
+//        m_Presentation->SetCursorPos(clicked_pos);
+//        
+//        if( current_cursor_pos != clicked_pos )
+//            [self OnCursorPositionChanged];
+//        else if(lb_pressed && !lb_cooldown)
+//            m_LastPotentialRenamingLBDown = clicked_pos; // need more complex logic here (?)
+//
+//    }
+//    
+//    if( lb_pressed ) {
+//        m_ReadyToDrag = true;
+//        m_LButtonDownPos = local_point;
+//    }
 }
 
 - (void) setupContextMenuHighlights:(vector<int>)_positions
@@ -595,91 +676,91 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
 {
-    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-    if (cursor_pos >= 0) {
-        self.needsDisplay = true; // force immediately redraw on any rbc since by default there's a delay by invalidate timer and
-                                  // in this case it wont be fired before menu showed
-        return [self.delegate panelView:self requestsContextMenuForItemNo:cursor_pos];
-    }
+//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+//    if (cursor_pos >= 0) {
+//        self.needsDisplay = true; // force immediately redraw on any rbc since by default there's a delay by invalidate timer and
+//                                  // in this case it wont be fired before menu showed
+//        return [self.delegate panelView:self requestsContextMenuForItemNo:cursor_pos];
+//    }
     return nil;
 }
 
 - (void) mouseDragged:(NSEvent *)_event
 {
-    const auto max_drag_dist = 5.;
-    if( m_ReadyToDrag ) {
-        NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
-        if( hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > max_drag_dist ) {
-            const int clicked_pos = m_Presentation->GetItemIndexByPointInView(m_LButtonDownPos, PanelViewHitTest::FullArea);
-            if( clicked_pos == -1 )
-                return;
-            
-            [self.delegate panelView:self wantsToDragItemNo:clicked_pos byEvent:_event];
-            
-            m_ReadyToDrag = false;
-            m_LastPotentialRenamingLBDown = -1;
-        }
-    }
+//    const auto max_drag_dist = 5.;
+//    if( m_ReadyToDrag ) {
+//        NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
+//        if( hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > max_drag_dist ) {
+//            const int clicked_pos = m_Presentation->GetItemIndexByPointInView(m_LButtonDownPos, PanelViewHitTest::FullArea);
+//            if( clicked_pos == -1 )
+//                return;
+//            
+//            [self.delegate panelView:self wantsToDragItemNo:clicked_pos byEvent:_event];
+//            
+//            m_ReadyToDrag = false;
+//            m_LastPotentialRenamingLBDown = -1;
+//        }
+//    }
 }
 
 - (void) mouseUp:(NSEvent *)_event
 {
-    int click_count = (int)_event.clickCount;
-    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-
-    if( click_count <= 1 ) {
-        if( m_LastPotentialRenamingLBDown >= 0 && m_LastPotentialRenamingLBDown == cursor_pos ) {
-            static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
-            uint64_t renaming_ticket = ++m_FieldRenamingRequestTicket;
-            dispatch_to_main_queue_after(delay,[=]{
-                               if(renaming_ticket == m_FieldRenamingRequestTicket)
-                                   [self startFieldEditorRenamingByEvent:_event];
-                           });
-        }
-    }
-    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
-        // Handle double-or-four-etc clicks as double-click
-        ++m_FieldRenamingRequestTicket; // to abort field editing
-        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
-            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
-    }
-
-    m_ReadyToDrag = false;
-    m_LastPotentialRenamingLBDown = -1;
+//    int click_count = (int)_event.clickCount;
+//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
+//
+//    if( click_count <= 1 ) {
+//        if( m_LastPotentialRenamingLBDown >= 0 && m_LastPotentialRenamingLBDown == cursor_pos ) {
+//            static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
+//            uint64_t renaming_ticket = ++m_FieldRenamingRequestTicket;
+//            dispatch_to_main_queue_after(delay,[=]{
+//                               if(renaming_ticket == m_FieldRenamingRequestTicket)
+//                                   [self startFieldEditorRenamingByEvent:_event];
+//                           });
+//        }
+//    }
+//    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
+//        // Handle double-or-four-etc clicks as double-click
+//        ++m_FieldRenamingRequestTicket; // to abort field editing
+//        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
+//            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
+//    }
+//
+//    m_ReadyToDrag = false;
+//    m_LastPotentialRenamingLBDown = -1;
 }
 
 - (void)scrollWheel:(NSEvent *)_event
 {
-    if (!self.active) // will react only on active panels
-        return;
-    
-    if(m_DisableCurrentMomentumScroll == true &&
-       _event.phase == NSEventPhaseNone &&
-       _event.momentumPhase != NSEventPhaseNone )
-        return; // momentum scroll is temporary disabled due to folder change or quick search.
-    m_DisableCurrentMomentumScroll = false;    
-    if(_event.momentumPhase == NSEventPhaseBegan)
-        m_IsCurrentlyMomentumScroll = true;
-    else if(_event.momentumPhase == NSEventPhaseEnded)
-        m_IsCurrentlyMomentumScroll = false;
-    
-    const double item_height = m_Presentation->GetSingleItemHeight();
-    m_ScrollDY += _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.deltaY * item_height;
-    int idx = int(_event.deltaX/2.0); // less sensitive than vertical scrolling
-    int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
-    
-    if(fabs(m_ScrollDY) >= item_height) {
-        const double sgn = m_ScrollDY / fabs(m_ScrollDY);
-        for(;fabs(m_ScrollDY) >= item_height; m_ScrollDY -= item_height * sgn)
-            m_Presentation->ScrollCursor(0, int(sgn));
-    }
-    else if(idx != 0)
-        m_Presentation->ScrollCursor(idx, 0);
-
-    if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)
-        [self OnCursorPositionChanged];
+//    if (!self.active) // will react only on active panels
+//        return;
+//    
+//    if(m_DisableCurrentMomentumScroll == true &&
+//       _event.phase == NSEventPhaseNone &&
+//       _event.momentumPhase != NSEventPhaseNone )
+//        return; // momentum scroll is temporary disabled due to folder change or quick search.
+//    m_DisableCurrentMomentumScroll = false;    
+//    if(_event.momentumPhase == NSEventPhaseBegan)
+//        m_IsCurrentlyMomentumScroll = true;
+//    else if(_event.momentumPhase == NSEventPhaseEnded)
+//        m_IsCurrentlyMomentumScroll = false;
+//    
+//    const double item_height = m_Presentation->GetSingleItemHeight();
+//    m_ScrollDY += _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.deltaY * item_height;
+//    int idx = int(_event.deltaX/2.0); // less sensitive than vertical scrolling
+//    int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
+//    
+//    if(fabs(m_ScrollDY) >= item_height) {
+//        const double sgn = m_ScrollDY / fabs(m_ScrollDY);
+//        for(;fabs(m_ScrollDY) >= item_height; m_ScrollDY -= item_height * sgn)
+//            m_Presentation->ScrollCursor(0, int(sgn));
+//    }
+//    else if(idx != 0)
+//        m_Presentation->ScrollCursor(idx, 0);
+//
+//    if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)
+//        [self OnCursorPositionChanged];
 }
 
 - (VFSListingItem)item
@@ -716,6 +797,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     for(int i = _start; i <= _end; ++i)
         m_State.Data->CustomFlagsSelectSorted(i, _select);
     
+    [m_ItemsView syncVolatileData];
     [self setNeedsDisplay];
 }
 
@@ -731,10 +813,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void) setType:(PanelViewType)_type
 {
-    m_State.ViewType = _type;
-    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
-    [self commitFieldEditor];
-    self.needsDisplay = true;
+//    m_State.ViewType = _type;
+//    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
+//    [self commitFieldEditor];
+//    self.needsDisplay = true;
 }
 
 - (PanelViewType)type
@@ -778,7 +860,21 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         return;
     
     m_State.ItemsDisplayOffset = storage.dispay_offset;
-    m_Presentation->SetCursorPos(cursor);
+//    m_Presentation->SetCursorPos(cursor);
+//    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
+//                         cursor >= 0 &&
+//                         cursor < m_State.Data->SortedDirectoryEntries().size() ) ?
+//                         cursor : -1;
+    
+    
+//    m_State->CursorPos = -1;
+//    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
+//       _pos >= 0 &&
+//       _pos < m_State->Data->SortedDirectoryEntries().size())
+//        m_State->CursorPos = _pos;
+    
+    
+    [self setCurpos:cursor];
     [self OnCursorPositionChanged];
 }
 
@@ -788,25 +884,27 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     m_State.ItemsDisplayOffset = 0;
     m_State.CursorPos = -1;
     
-    if(_load)
+    if( _load )
         [self LoadPathState];
     
-    int cur = m_State.Data->SortedIndexForName(_focused_filename.c_str());
-    if(cur >= 0) {
-        m_Presentation->SetCursorPos(cur);
-        [self OnCursorPositionChanged];
+    const int cur = m_State.Data->SortedIndexForName(_focused_filename.c_str());
+    if( cur >= 0 ) {
+        //m_Presentation->SetCursorPos(cur);
+        [self setCurpos:cur];
+//        [self OnCursorPositionChanged];
     }
     
-    if(m_State.CursorPos < 0 &&
-       m_State.Data->SortedDirectoryEntries().size() > 0) {
-        m_Presentation->SetCursorPos(0);
-        [self OnCursorPositionChanged];        
+    if( m_State.CursorPos < 0 &&
+        m_State.Data->SortedDirectoryEntries().size() > 0) {
+//        m_Presentation->SetCursorPos(0);
+        [self setCurpos:0];
+//        [self OnCursorPositionChanged];
     }
     
     [self disableCurrentMomentumScroll];
     [self discardFieldEditor];
     [self setHeaderTitle:self.headerTitleForPanel];
-    m_Presentation->OnDirectoryChanged();
+//    m_Presentation->OnDirectoryChanged();
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
@@ -850,12 +948,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void)startFieldEditorRenamingByEvent:(NSEvent*)_event
 {
-    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FilenameFact);
-    if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
-        return;
-    
-    [self startFieldEditorRenaming];
+//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FilenameFact);
+//    if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
+//        return;
+//    
+//    [self startFieldEditorRenaming];
 }
 
 
@@ -892,57 +990,57 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)startFieldEditorRenaming
 {
-    if( m_RenamingEditor != nil ) {
-        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
-        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
-            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
-        return;
-    }
-    
-    int cursor_pos = m_State.CursorPos;
-    if(!m_Presentation->IsItemVisible(cursor_pos))
-        return;
-    
-    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
-        return;
-    
-    m_RenamingEditor = [NSScrollView new];
-    m_RenamingEditor.borderType = NSNoBorder;
-    m_RenamingEditor.hasVerticalScroller = false;
-    m_RenamingEditor.hasHorizontalScroller = false;
-    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
-    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
-    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
-    
-    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    tv.delegate = self;
-    tv.fieldEditor = true;
-    tv.string = self.item.NSName();
-    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
-    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
-    tv.verticallyResizable = tv.horizontallyResizable = true;
-    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    tv.richText = false;
-    tv.importsGraphics = false;
-    tv.allowsImageEditing = false;
-    tv.automaticQuoteSubstitutionEnabled = false;
-    tv.automaticLinkDetectionEnabled = false;
-    tv.continuousSpellCheckingEnabled = false;
-    tv.grammarCheckingEnabled = false;
-    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
-    ps.lineBreakMode = NSLineBreakByClipping;
-    tv.defaultParagraphStyle = ps;
-    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
-    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
-    
-    m_RenamingEditor.documentView = tv;
-    
-    m_Presentation->SetupFieldRenaming(m_RenamingEditor, cursor_pos);
-
-    [self addSubview:m_RenamingEditor];
-    [self.window makeFirstResponder:m_RenamingEditor];
-    
-    m_RenamingOriginalName = self.item.Name();
+//    if( m_RenamingEditor != nil ) {
+//        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
+//        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
+//            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+//        return;
+//    }
+//    
+//    int cursor_pos = m_State.CursorPos;
+//    if(!m_Presentation->IsItemVisible(cursor_pos))
+//        return;
+//    
+//    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
+//        return;
+//    
+//    m_RenamingEditor = [NSScrollView new];
+//    m_RenamingEditor.borderType = NSNoBorder;
+//    m_RenamingEditor.hasVerticalScroller = false;
+//    m_RenamingEditor.hasHorizontalScroller = false;
+//    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
+//    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
+//    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
+//    
+//    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+//    tv.delegate = self;
+//    tv.fieldEditor = true;
+//    tv.string = self.item.NSName();
+//    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+//    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
+//    tv.verticallyResizable = tv.horizontallyResizable = true;
+//    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+//    tv.richText = false;
+//    tv.importsGraphics = false;
+//    tv.allowsImageEditing = false;
+//    tv.automaticQuoteSubstitutionEnabled = false;
+//    tv.automaticLinkDetectionEnabled = false;
+//    tv.continuousSpellCheckingEnabled = false;
+//    tv.grammarCheckingEnabled = false;
+//    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
+//    ps.lineBreakMode = NSLineBreakByClipping;
+//    tv.defaultParagraphStyle = ps;
+//    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
+//    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
+//    
+//    m_RenamingEditor.documentView = tv;
+//    
+//    m_Presentation->SetupFieldRenaming(m_RenamingEditor, cursor_pos);
+//
+//    [self addSubview:m_RenamingEditor];
+//    [self.window makeFirstResponder:m_RenamingEditor];
+//    
+//    m_RenamingOriginalName = self.item.Name();
 }
 
 - (void)commitFieldEditor
@@ -1007,7 +1105,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     assert( dispatch_is_main_queue() );
     if(!self.item || m_RenamingOriginalName != self.item.Name())
         [self discardFieldEditor];
-    [self setNeedsDisplay];
+//    [self setNeedsDisplay];
+    [m_ItemsView dataChanged];
+    [m_ItemsView setCursorPosition:m_State.CursorPos];
 }
 
 - (void) setQuickSearchPrompt:(NSString*)_text
@@ -1024,15 +1124,16 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
 {
-    assert(dispatch_is_main_queue());
-    int pos = m_Presentation->GetItemIndexByPointInView(_point, _options);
-    if(pos < 0)
-        return -1;
-    
-    auto item = m_State.Data->EntryAtSortPosition(pos);
-    if(!item)
-        return -1;
-    return pos;
+    return -1;
+//    assert(dispatch_is_main_queue());
+//    int pos = m_Presentation->GetItemIndexByPointInView(_point, _options);
+//    if(pos < 0)
+//        return -1;
+//    
+//    auto item = m_State.Data->EntryAtSortPosition(pos);
+//    if(!item)
+//        return -1;
+//    return pos;
 }
 
 - (int) draggingOverItemAtPosition
@@ -1091,12 +1192,12 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void) setHeaderTitle:(NSString *)headerTitle
 {
-    dispatch_assert_main_queue();
-    if( ![m_HeaderTitle isEqualToString:headerTitle] ) {
-        m_HeaderTitle = headerTitle;
-        if( m_Presentation )
-            m_Presentation->OnPanelTitleChanged();
-    }
+//    dispatch_assert_main_queue();
+//    if( ![m_HeaderTitle isEqualToString:headerTitle] ) {
+//        m_HeaderTitle = headerTitle;
+//        if( m_Presentation )
+//            m_Presentation->OnPanelTitleChanged();
+//    }
 }
 
 - (NSString *) headerTitle

@@ -44,7 +44,7 @@ struct PanelVolatileData;
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;
-@property (nonatomic, readonly) PanelViewPresentation* presentation;
+//@property (nonatomic, readonly) PanelViewPresentation* presentation;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 
 /**

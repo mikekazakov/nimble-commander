@@ -140,6 +140,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
         pers.Restore();
     
     m_View.quickSearchPrompt = nil;
+    [m_View dataUpdated]; // need to call only when something actually changed
 }
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
@@ -270,6 +271,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
        m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0]).IsDotDot() )
         m_View.curpos = 1;
     
+    [m_View dataUpdated];
     [self QuickSearchHardUpdateTypingUI];
     
     return true;

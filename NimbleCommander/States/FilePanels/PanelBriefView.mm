@@ -1,203 +1,23 @@
 #include <VFS/VFS.h>
+#include <Habanero/CFStackAllocator.h>
 #include "../../../Files/PanelData.h"
 #include "../../../Files/PanelView.h"
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
 #include "../../../Files/Config.h"
 #include "PanelBriefView.h"
+#include "PanelBriefViewCollectionViewLayout.h"
+#include "PanelBriefViewCollectionViewItem.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
 
-@interface PanelBriefViewItemCarrier : NSView
 
-@property NSTextField *label;
-@property NSColor *background;
 
-@end
-
-@implementation PanelBriefViewItemCarrier
-{
-    NSTextField *m_Label;
-    NSColor *m_Background;
-}
-
-@synthesize label = m_Label;
-@synthesize background = m_Background;
-
-- (id)initWithFrame:(NSRect)frameRect
-{
-    self = [super initWithFrame:frameRect];
-    if( self ) {
-        m_Label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
-        m_Label.bordered = false;
-        m_Label.editable = false;
-        m_Label.drawsBackground = false;
-        m_Label.font = [NSFont labelFontOfSize:13];
-        m_Label.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        [self addSubview:m_Label];
-        
-        m_Background = NSColor.yellowColor;
-    }
-    return self;
-}
-
-- (void) doLayout
-{
-    [m_Label setFrame:NSMakeRect(0, 0, self.bounds.size.width, self.bounds.size.height)];
-}
-
-- (void)setFrameOrigin:(NSPoint)newOrigin
-{
-    [super setFrameOrigin:newOrigin];
-}
-
-- (void)setFrameSize:(NSSize)newSize
-{
-    [super setFrameSize:newSize];
-    [self doLayout];
-}
-
-- (void) setFrame:(NSRect)frame
-{
-    [super setFrame:frame];
-    [self doLayout];
-}
-
-//@property NSRect frame;
-
-//-(id)initWithCoder:(NSCoder *)coder
-//{
-//    self = [super initWithCoder:coder];
-//    if( self ) {
-//        m_Label = [coder decodeObjectForKey:@"label"];
-//        m_Background = [coder decodeObjectForKey:@"background"];
-//    }
-//    return self;
-//}
-
-//- (void)encodeWithCoder: (NSCoder *)coder
-//{
-//    [super encodeWithCoder:coder];
-//    [coder encodeObject:m_Label forKey:@"label"];
-//    [coder encodeObject:m_Background forKey: @"background"];
-//}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-    if( m_Background  ) {
-        CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-        CGContextSetFillColorWithColor(context, m_Background.CGColor);
-        CGContextFillRect(context, NSRectToCGRect(dirtyRect));
-    }
-}
-
-@end
-
-@interface PanelBriefViewItem : NSCollectionViewItem
-
-//@property (strong) NSView *view;
-
-- (void) setItem:(VFSListingItem)_item;
-- (void) setVD:(PanelData::PanelVolatileData)_vd;
-
-@end
 
 //- (void)prepareForReuse NS_AVAILABLE_MAC(10_11);
 
 static auto g_ItemsCount = 0;
 
-@implementation PanelBriefViewItem
-{
-    VFSListingItem                  m_Item;
-    PanelData::PanelVolatileData    m_VD;
-}
-
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    
-}
-
-- (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if( self ) {
-//        static PanelBriefViewItemCarrier* proto = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-//        static
-//        NSKeyedArchiver
-//        static NSData *archived_proto = [NSKeyedArchiver archivedDataWithRootObject:proto];
-//        NSView * myViewCopy = [NSKeyedUnarchiver unarchiveObjectWithData:archivedView];
-        
-        //self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-        
-//        MachTimeBenchmark mtb;
-self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-//        self.view = [NSKeyedUnarchiver unarchiveObjectWithData:archived_proto];
-//        mtb.ResetMicro("PanelBriefViewItemCarrier ");
-        
-        
-        
-        g_ItemsCount++;
-//        cout << g_ItemsCount << endl;
-    }
-    return self;
-}
-
-- (void) dealloc
-{
-    g_ItemsCount--;
-//    cout << g_ItemsCount << endl;
-    
-}
-
-- (PanelBriefViewItemCarrier*) carrier
-{
-    return (PanelBriefViewItemCarrier*)self.view;
-}
-
-- (void) setItem:(VFSListingItem)_item
-{
-    m_Item = _item;
-    
-    self.carrier.label.stringValue = m_Item.NSDisplayName();
-}
-
-- (void)setSelected:(BOOL)selected
-{
-    if( self.selected == selected )
-        return;
-    [super setSelected:selected];
-    
-    if( selected )
-        self.carrier.background = NSColor.blueColor;
-    else
-        self.carrier.background = nil/*NSColor.yellowColor*/;
-    
-    if( m_Item)
-        [self updateColoring];
-    [self.carrier setNeedsDisplay:true];
-}
-
-- (void) updateColoring
-{
-    assert( m_Item );
-    for( const auto &i: g_ColoringRules ) {
-        if( i.filter.Filter(m_Item, m_VD) ) {
-            self.carrier.label.textColor = self.selected ? i.focused : i.regular;
-            break;
-        }
-    }
-}
-
-- (void) setVD:(PanelData::PanelVolatileData)_vd
-{
-    if( m_VD == _vd )
-        return;
-    m_VD = _vd;
-    [self updateColoring];
-}
-
-@end
 
 @interface PanelBriefViewCollectionView : NSCollectionView
 @end
@@ -216,249 +36,14 @@ self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10
 
 @end
 
-@interface PanelBriefViewCollectionViewLayout : NSCollectionViewFlowLayout/*NSCollectionViewLayout*/
-
-- (int) rowsCount;
-
-@end
-
-@implementation PanelBriefViewCollectionViewLayout
-
-- (id) init
-{
-    self = [super init];
-    if( self ) {
-        self.minimumInteritemSpacing = 0;
-        self.minimumLineSpacing = 0;
-    }
-    return self;
-}
-
-- (int) rowsCount
-{
-//    @property CGFloat minimumLineSpacing;
-//    @property CGFloat minimumInteritemSpacing;
-//    @property NSSize itemSize;
- 
-//@property (nullable, readonly, weak) NSCollectionView *collectionView;
-    //double height = self.collectionView.bounds.size.height;
-    
-    double height = self.collectionViewContentSize.height;
-//    self.m
-    double n = floor(height / (self.itemSize.height  + self.minimumInteritemSpacing ));
-//        double n = floor(height / (20  + 1));
-    return int(n);
-}
-
-//- (nullable NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    NSCollectionViewLayoutAttributes *attributes = [self.class.layoutAttributesClass layoutAttributesForItemWithIndexPath:indexPath];
-//    
-////    NSSize res = NSMakeSize(50, 20);
-//    int n = (int)indexPath.item;
-//    int rows = self.rowsCount;
-//
-//    NSRect f;
-//    f.origin.x = n * 100;
-//    f.origin.y = (n % rows) * 20;
-//    f.size.width = 100;
-//    f.size.height = 20;
-//    
-//    
-//    
-//    attributes.frame = f;
-////    [attributes setZIndex:[indexPath item]];
-//    return attributes;
-//}
-
-//@property(readonly) NSSize collectionViewContentSize;
-
-- (NSArray<__kindof NSCollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(NSRect)rect
-{
-    NSArray<__kindof NSCollectionViewLayoutAttributes *> *attrs = [super layoutAttributesForElementsInRect:rect];
-    const int items_per_column = self.rowsCount;
-    
-    struct Col {
-        short width = 0;
-        short origin = numeric_limits<short>::max();
-    };
-    vector<Col> columns;
-    
-    
-    for( NSCollectionViewLayoutAttributes *i in attrs ) {
-        const int index = (int)i.indexPath.item;
-        const int row = index % items_per_column;
-        const int col = index / items_per_column;
-        NSRect orig_frame = i.frame;
-        
-        if( col >= columns.size() )
-            columns.resize(col+1);
-        
-        if( columns[col].width < orig_frame.size.width )
-            columns[col].width = orig_frame.size.width;
-        if( columns[col].origin > orig_frame.origin.x )
-            columns[col].origin = orig_frame.origin.x;
-    }
-
-    const double item_height = self.itemSize.height;
-    for( NSCollectionViewLayoutAttributes *i in attrs ) {
-        const int index = (int)i.indexPath.item;
-        const int row = index % items_per_column;
-        const int col = index / items_per_column;
-        NSRect orig_frame = i.frame;
-        
-//        int x_origin = 0;
-//        for( auto n = 0; n < col; ++n ) x_origin += column_widths[n];
-        
-        
-        //NSRect new_frame = NSMakeRect(orig_frame.origin.x,
-        NSRect new_frame = NSMakeRect(columns[col].origin,
-//                                      row * (self.itemSize.height + self.minimumInteritemSpacing),
-                                      row * item_height,
-                                      columns[col].width,
-                                      item_height);
-        
-        i.frame = new_frame;
-        
-    }
-    
-    return attrs;
-    
-    
-}
-
-- (NSArray<__kindof NSCollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect11:(NSRect)rect
-{
-    //let frame = NSMakeRect(self.containerPadding.left, self.containerPadding.top + ((self.itemHeight + self.verticalSpacing) * CGFloat(indexPath.item)),
-
-    int items_amount = (int)[self.collectionView numberOfItemsInSection:0];
-    NSMutableArray<__kindof NSCollectionViewLayoutAttributes *> *attr_array = [[NSMutableArray alloc] init];
-    
-//    float ff = [(id<NSCollectionViewDelegateFlowLayout>)self.collectionView.delegate collectionView:self.collectionView layout:self minimumLineSpacingForSectionAtIndex:0];
-    
-    //- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
-    //{
-    //    return 0;
-    //}
-
-    
-//
-    int items_per_column = self.rowsCount;
-
-    double x_offset = 0;
-    
-    for( int i = 0; i < items_amount; ++i ) {
-        NSIndexPath *ip = [NSIndexPath indexPathForItem:i inSection:0];
-//        if( NSCollectionViewLayoutAttributes*  )
-        double max_width = 0;
-        double y_offset = 0;
-//        for( int row = 0; row < items_per_column; ++row ) {
-        for( int row = 0; row < 5; ++row ) {
-//            NSSize sz = [(id<NSCollectionViewDelegateFlowLayout>)self.collectionView.delegate collectionView:self.collectionView layout:self sizeForItemAtIndexPath:ip];
-            NSSize sz = NSMakeSize(50, 20);
-            
-            max_width = max(max_width, sz.width);
-            
-            NSRect frame = NSMakeRect(/*x_offset*/ 0,
-                                      /*y_offset*/ row * 20,
-                                      sz.width,
-                                      sz.height);
-            y_offset += sz.height;
-            
-////- (nullable NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
-//            NSCollectionViewLayoutAttributes *attr = [self layoutAttributesForItemAtIndexPath:ip];
-            NSCollectionViewLayoutAttributes *attr = [self.class.layoutAttributesClass layoutAttributesForItemWithIndexPath:ip];
-            attr.frame = frame;
-//                        attr.frame = NSMakeRect(300, 300, 100, 100);
-//
-//            FOUNDATION_EXPORT BOOL NSContainsRect(NSRect aRect, NSRect bRect);
-//            FOUNDATION_EXPORT BOOL NSIntersectsRect(NSRect aRect, NSRect bRect);
-//            
-//            if( NSIntersectsRect(<#NSRect aRect#>, <#NSRect bRect#>)  )
-
-//            if( NSContainsRect(rect, frame) )
-                [attr_array addObject:attr];
-            
-//            let frame = NSMakeRect(self.containerPadding.left, self.containerPadding.top + ((self.itemHeight + self.verticalSpacing) * CGFloat(indexPath.item)), self.collectionViewContentSize.width - self.containerPadding.left - self.containerPadding.right, self.itemHeight)
-//            
-//            let itemAttributes = NSCollectionViewLayoutAttributes(forItemWithIndexPath: indexPath)
-//            itemAttributes.frame = frame
-            
-            
-            
-        }
-        break;
-        x_offset += max_width;
-    }
-    
-    return attr_array;
-    
-//[self.class.layoutAttributesClass layoutAttributesForItemWithIndexPath:indexPath];
-    
-}
-
-//- (NSArray<__kindof NSCollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(NSRect)rect
-//{
-//    NSArray<__kindof NSCollectionViewLayoutAttributes *> *a = [super layoutAttributesForElementsInRect:rect];
-// 
-//    if( a.count == 0 )
-//        return a;
-//    
-
-    
-/*
-    override func layoutAttributesForElementsInRect(rect: CGRect) -> [NSCollectionViewLayoutAttributes] {
-        
-        let defaultAttributes = super.layoutAttributesForElementsInRect(rect)
-        
-        if defaultAttributes.count == 0 {
-            // we rely on 0th element being present,
-            // bail if missing (when there's no work to do anyway)
-            return defaultAttributes
-        }
-        
-        var leftAlignedAttributes = [NSCollectionViewLayoutAttributes]()
-        
-        var xCursor = self.sectionInset.left // left margin
-        
-        // if/when there is a new row, we want to start at left margin
-        // the default FlowLayout will sometimes centre items,
-        // i.e. new rows do not always start at the left edge
-        
-        var lastYPosition = defaultAttributes[0].frame.origin.y
-        
-        for attributes in defaultAttributes {
-            if attributes.frame.origin.y != lastYPosition {
-                // we have changed line
-                xCursor = self.sectionInset.left
-                lastYPosition = attributes.frame.origin.y
-            }
-            
-            attributes.frame.origin.x = xCursor
-            // by using the minimumInterimitemSpacing we no we'll never go
-            // beyond the right margin, so no further checks are required
-            xCursor += attributes.frame.size.width + minimumInteritemSpacing
-            
-            leftAlignedAttributes.append(attributes)
-        }
-        return leftAlignedAttributes
-    }
-*/
-    
-//    
-//    return a;
-//}
-
-@end
-
-
 @implementation PanelBriefView
 {
     NSScrollView                        *m_ScrollView;
     PanelBriefViewCollectionView        *m_CollectionView;
     PanelBriefViewCollectionViewLayout  *m_Layout;
     
-    PanelData                       *m_Data;
+    PanelData                           *m_Data;
+    vector<short>                        m_FilenamesPxWidths;
 //    int                 m_CursorPosition;
 }
 
@@ -471,7 +56,7 @@ self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10
 - (void) setData:(PanelData*)_data
 {
     m_Data = _data;
-    
+    [self dataChanged];
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -488,9 +73,6 @@ self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10
             g_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
         });
         
-        
-        
-//        m_Data = &_data;
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ScrollView];
@@ -578,57 +160,189 @@ self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10
 {
     return 0;
 }
-
-- (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+/*
+static CGFloat maxWidthOfStringsUsingCTFramesetter(NSArray *strings, NSRange range) {
+    NSString *bigString = [[strings subarrayWithRange:range] componentsJoinedByString:@"\n"];
+    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:bigString attributes:@{ NSFontAttributeName: (__bridge NSFont *)font }];
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
+    CGFloat width = 0.0;
+    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)richText);
+    CTFrameRef frame = CTFramesetterCreateFrame(setter, CFRangeMake(0, bigString.length), path, NULL);
+    NSArray *lines = (__bridge NSArray *)CTFrameGetLines(frame);
+    for (id item in lines) {
+        CTLineRef line = (__bridge CTLineRef)item;
+        width = MAX(width, CTLineGetTypographicBounds(line, NULL, NULL, NULL));
+    }
+    CFRelease(frame);
+    CFRelease(setter);
+    CFRelease(path);
+    return (CGFloat)width;
+}
+*/
+- (void) calculateFilenamesWidths
 {
-    NSSize res = NSMakeSize(100, 20);
-//    res.width += indexPath.item * 10;
     
-//    return res;
-    
-    
-    auto item = m_Data->EntryAtSortPosition( (int)indexPath.item );
-    if( !item )
-        return res;
-
-    static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
-    
-//    NSRect rc = [[item.NSDisplayName() copy]boundingRectWithSize:NSMakeSize(10000, 500)
+//    auto item = m_Data->EntryAtSortPosition( (int)indexPath.item );
+//    if( !item )
+//        return res;
+//    
+//    static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
+//    
+//    //    NSRect rc = [[item.NSDisplayName() copy]boundingRectWithSize:NSMakeSize(10000, 500)
+//    //                                                   options:0
+//    //                                                attributes:attrs
+//    //                                                   context:nil];
+//    NSRect rc = [item.NSDisplayName() boundingRectWithSize:NSMakeSize(10000, 500)
 //                                                   options:0
 //                                                attributes:attrs
 //                                                   context:nil];
-    NSRect rc = [item.NSDisplayName() boundingRectWithSize:NSMakeSize(10000, 500)
-                                                         options:0
-                                                      attributes:attrs
-                                                         context:nil];
+    const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
+    static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
+    
+//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//    paragraphStyle.lineBreakMode = lineBreakMode;
+    
+    
+    m_FilenamesPxWidths.resize( count );
+#if 0
+    for( auto i = 0; i < count; ++i ) {
+        auto item = m_Data->EntryAtSortPosition( i );
+        if( !item ) {
+            m_FilenamesPxWidths[ i ] = 50; // backup
+        }
+        else {
+            NSSize sz = [item.NSDisplayName() sizeWithAttributes:attrs];
+            auto v = (short)floor( sz.width + 0.5 );
+            
+//            - (NSSize)sizeWithAttributes:(nullable NSDictionary<NSString *, id> *)attrs NS_AVAILABLE(10_0, 7_0);
+            
+//            NSRect rc = [item.NSDisplayName() boundingRectWithSize:NSMakeSize(10000, 500)
+//                                                           options:0
+//                                                        attributes:attrs
+//                                                           context:nil];
+//            auto v = (short)floor( rc.size.width + 0.5 );
+            
 
+//            NSAttributedString
+//            CFStackAllocator allocator;
+//            CFAttributedStringRef attr_str =  CFAttributedStringCreate(nullptr,
+//                                                                       item.CFDisplayName(),
+//                                                                       (CFDictionaryRef)attrs);
+//            
+//            CTLineRef line = CTLineCreateWithAttributedString(attr_str);
+//            
+//            
+//            CGRect ct_rc = CTLineGetBoundsWithOptions( line, 0 );
+//            auto v = (short)floor( ct_rc.size.width + 0.5 );
+//            
+//            
+//            CFRelease(line);
+//            
+//            
+//            CFRelease(attr_str);
+            
+            m_FilenamesPxWidths[i] = v;
+
+            
+            
+            
+        }
+    }
+#endif
+    static const CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
+    
+    const auto items_per_chunk = 300;
+    vector<NSRange> chunks;
+    for( int i = 0; i < count; i += items_per_chunk )
+        chunks.emplace_back( NSMakeRange(i, min(items_per_chunk, count - i)) );
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    for( auto r: chunks )
+        dispatch_group_async(group, queue, [&, r]{
+            CFMutableStringRef storage = CFStringCreateMutable(nullptr, r.length * 100);
+            for( auto i = (int)r.location; i < r.location + r.length; ++i ) {
+                CFStringAppend(storage, m_Data->EntryAtSortPosition(i).CFDisplayName());
+                CFStringAppend(storage, CFSTR("\n"));
+            }
+            
+            const auto storage_length = CFStringGetLength(storage);
+            CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, storage, (CFDictionaryRef)attrs);
+            CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
+            CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage_length), path, NULL);
+            NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
+            int i = 0;
+            for( id item in lines ) {
+                CTLineRef line = (__bridge CTLineRef)item;
+                double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+                m_FilenamesPxWidths[ r.location + i++ ] = (short)floor( lineWidth + 0.5 );
+            }
+            CFRelease(frameRef);
+            CFRelease(framesetterRef);
+            CFRelease(stringRef);
+            CFRelease(storage);
+        });
+    
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    
+//    for( auto w: m_FilenamesPxWidths )
+//        cout << w << endl;
+    
+//    NSMutableString *storage = [[NSMutableString alloc] initWithCapacity:count * 100];
+//    for( auto i = 0; i < count; ++i ) {
+//        auto item = m_Data->EntryAtSortPosition( i );
+//        [storage appendString:item ? item.NSDisplayName() : @""];
+//        [storage appendString:@"\n"];
+//    }
+//    
+//    CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, (CFStringRef)storage, (CFDictionaryRef)attrs);
+//    CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
+//    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);    
+//    CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage.length), path, NULL);
+//    
+//    NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
+//    int i = 0;
+//    for( id item in lines ) {
+//        CTLineRef line = (__bridge CTLineRef)item;
+//        double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+//        auto v = (short)floor( lineWidth + 0.5 );
+//        m_FilenamesPxWidths[i] = v;
+//        ++i;
+//    }
+//    
+//    CFRelease(frameRef);
+//    CFRelease(framesetterRef);
+//    CFRelease(stringRef);
     
     
     
-//    return NSMakeSize(200, 20);
     
-    rc.size.width += 6;
-    rc.size.width = floor( rc.size.width + 0.5 );
+}
+
+- (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
     
-//    res.width += rand() % 100;
+//    vector<short>                       m_FilenamesPxWidths;
+//    bool                                m_FilenamesPxWidthsIsValid;
+    const auto index = (int)indexPath.item;
+    assert( index < m_FilenamesPxWidths.size() );
     
-//    return res;
+    NSSize sz = NSMakeSize( m_FilenamesPxWidths[index], 20);
+
+    sz.width += 6;
     
-    if( rc.size.width < 50 )
-        res.width = 50;
-    else if( rc.size.width > 200 )
-        res.width = 200;
-    else
-        res.width = rc.size.width;
+    if( sz.width < 50 )
+        sz.width = 50;
+    else if( sz.width > 200 )
+        sz.width = 200;
     
-//    cout << res.width << endl;
-    
-//    return NSMakeSize(rc.size.width, 20);
-    return res;
+    return sz;
 }
 
 - (void) dataChanged
 {
+    dispatch_assert_main_queue();
+    [self calculateFilenamesWidths];
     [m_CollectionView reloadData];
     [self syncVolatileData];
 }
@@ -697,9 +411,15 @@ self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10
 //    /* Returns the index path of the specified item (or nil if the specified item is not in the collection view).
 //     */
 //    - (nullable NSIndexPath *)indexPathForItem:(NSCollectionViewItem *)item NS_AVAILABLE_MAC(10_11);
-//    
+//
+}
+
+- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules
+{
+    return g_ColoringRules;
 }
 
 //- (NSArray<NSCollectionViewItem *> *)visibleItems
+
 
 @end

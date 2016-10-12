@@ -1,6 +1,7 @@
 #pragma once
 
 class PanelData;
+struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 
 @interface PanelBriefView : NSView<NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
@@ -14,5 +15,9 @@ class PanelData;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
+
+
+- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
+
 
 @end

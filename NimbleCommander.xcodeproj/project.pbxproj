@@ -864,6 +864,8 @@
 		CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862618939589000552CD /* PanelController+QuickSearch.mm */; };
 		CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */; };
 		CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */; };
+		CFD3CB2B1DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB2A1DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.mm */; };
+		CFD3CB341DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB331DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm */; };
 		CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFD629631C2CE7030050EC68 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
@@ -1589,6 +1591,10 @@
 		CFCF862C18961393000552CD /* PanelController+DragAndDrop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PanelController+DragAndDrop.mm"; sourceTree = "<group>"; };
 		CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefView.h; path = NimbleCommander/States/FilePanels/PanelBriefView.h; sourceTree = SOURCE_ROOT; };
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
+		CFD3CB291DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewCollectionViewLayout.h; path = NimbleCommander/States/FilePanels/PanelBriefViewCollectionViewLayout.h; sourceTree = SOURCE_ROOT; };
+		CFD3CB2A1DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionViewLayout.mm; path = NimbleCommander/States/FilePanels/PanelBriefViewCollectionViewLayout.mm; sourceTree = SOURCE_ROOT; };
+		CFD3CB321DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewCollectionViewItem.h; path = NimbleCommander/States/FilePanels/PanelBriefViewCollectionViewItem.h; sourceTree = SOURCE_ROOT; };
+		CFD3CB331DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionViewItem.mm; path = NimbleCommander/States/FilePanels/PanelBriefViewCollectionViewItem.mm; sourceTree = SOURCE_ROOT; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = Resource/State.json; sourceTree = "<group>"; };
 		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
@@ -1873,6 +1879,10 @@
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CFD3CB321DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.h */,
+				CFD3CB331DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm */,
+				CFD3CB291DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.h */,
+				CFD3CB2A1DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.mm */,
 				CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */,
 				CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */,
 				B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */,
@@ -3766,6 +3776,7 @@
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
+				CFD3CB341DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CFE38BA518FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm in Sources */,
@@ -3789,6 +3800,7 @@
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF876D291D51E04A009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */,
+				CFD3CB2B1DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */,
 				CFB66FCA1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,

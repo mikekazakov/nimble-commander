@@ -94,7 +94,7 @@ static auto g_ItemsCount = 0;
 //        NSSet<NSIndexPath *> *sel = m_CollectionView.selectionIndexPaths;
         
         
-        [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"Slide"];
+        [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"Item"];
         
         //- (void)registerClass:(nullable Class)itemClass forItemWithIdentifier:(NSString *)identifier NS_AVAILABLE_MAC(10_11);
         
@@ -113,10 +113,7 @@ static auto g_ItemsCount = 0;
 
 - (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    if( !m_Data )
-        return 0;
-    return m_Data->SortedDirectoryEntries().size();
-//    return 10;
+    return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
 /* Asks the data source to provide an NSCollectionViewItem for the specified represented object.
@@ -130,7 +127,7 @@ static auto g_ItemsCount = 0;
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
     MachTimeBenchmark mtb1;
-    PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"Slide" forIndexPath:indexPath];
+    PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"Item" forIndexPath:indexPath];
 //    mtb1.ResetMicro("PanelBriefViewItem ");
     assert(item);
 //    AAPLImageFile *imageFile = [self imageFileAtIndexPath:indexPath];
@@ -160,95 +157,16 @@ static auto g_ItemsCount = 0;
 {
     return 0;
 }
-/*
-static CGFloat maxWidthOfStringsUsingCTFramesetter(NSArray *strings, NSRange range) {
-    NSString *bigString = [[strings subarrayWithRange:range] componentsJoinedByString:@"\n"];
-    NSAttributedString *richText = [[NSAttributedString alloc] initWithString:bigString attributes:@{ NSFontAttributeName: (__bridge NSFont *)font }];
-    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
-    CGFloat width = 0.0;
-    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)richText);
-    CTFrameRef frame = CTFramesetterCreateFrame(setter, CFRangeMake(0, bigString.length), path, NULL);
-    NSArray *lines = (__bridge NSArray *)CTFrameGetLines(frame);
-    for (id item in lines) {
-        CTLineRef line = (__bridge CTLineRef)item;
-        width = MAX(width, CTLineGetTypographicBounds(line, NULL, NULL, NULL));
-    }
-    CFRelease(frame);
-    CFRelease(setter);
-    CFRelease(path);
-    return (CGFloat)width;
-}
-*/
+
 - (void) calculateFilenamesWidths
 {
-    
-//    auto item = m_Data->EntryAtSortPosition( (int)indexPath.item );
-//    if( !item )
-//        return res;
-//    
-//    static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
-//    
-//    //    NSRect rc = [[item.NSDisplayName() copy]boundingRectWithSize:NSMakeSize(10000, 500)
-//    //                                                   options:0
-//    //                                                attributes:attrs
-//    //                                                   context:nil];
-//    NSRect rc = [item.NSDisplayName() boundingRectWithSize:NSMakeSize(10000, 500)
-//                                                   options:0
-//                                                attributes:attrs
-//                                                   context:nil];
     const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
+    m_FilenamesPxWidths.resize( count );
+
+    // something meaningful needed here:
     static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
     
-//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//    paragraphStyle.lineBreakMode = lineBreakMode;
     
-    
-    m_FilenamesPxWidths.resize( count );
-#if 0
-    for( auto i = 0; i < count; ++i ) {
-        auto item = m_Data->EntryAtSortPosition( i );
-        if( !item ) {
-            m_FilenamesPxWidths[ i ] = 50; // backup
-        }
-        else {
-            NSSize sz = [item.NSDisplayName() sizeWithAttributes:attrs];
-            auto v = (short)floor( sz.width + 0.5 );
-            
-//            - (NSSize)sizeWithAttributes:(nullable NSDictionary<NSString *, id> *)attrs NS_AVAILABLE(10_0, 7_0);
-            
-//            NSRect rc = [item.NSDisplayName() boundingRectWithSize:NSMakeSize(10000, 500)
-//                                                           options:0
-//                                                        attributes:attrs
-//                                                           context:nil];
-//            auto v = (short)floor( rc.size.width + 0.5 );
-            
-
-//            NSAttributedString
-//            CFStackAllocator allocator;
-//            CFAttributedStringRef attr_str =  CFAttributedStringCreate(nullptr,
-//                                                                       item.CFDisplayName(),
-//                                                                       (CFDictionaryRef)attrs);
-//            
-//            CTLineRef line = CTLineCreateWithAttributedString(attr_str);
-//            
-//            
-//            CGRect ct_rc = CTLineGetBoundsWithOptions( line, 0 );
-//            auto v = (short)floor( ct_rc.size.width + 0.5 );
-//            
-//            
-//            CFRelease(line);
-//            
-//            
-//            CFRelease(attr_str);
-            
-            m_FilenamesPxWidths[i] = v;
-
-            
-            
-            
-        }
-    }
-#endif
     static const CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
     
     const auto items_per_chunk = 300;
@@ -260,7 +178,7 @@ static CGFloat maxWidthOfStringsUsingCTFramesetter(NSArray *strings, NSRange ran
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     for( auto r: chunks )
         dispatch_group_async(group, queue, [&, r]{
-            CFMutableStringRef storage = CFStringCreateMutable(nullptr, r.length * 100);
+            CFMutableStringRef storage = CFStringCreateMutable(NULL, r.length * 100);
             for( auto i = (int)r.location; i < r.location + r.length; ++i ) {
                 CFStringAppend(storage, m_Data->EntryAtSortPosition(i).CFDisplayName());
                 CFStringAppend(storage, CFSTR("\n"));
@@ -282,48 +200,11 @@ static CGFloat maxWidthOfStringsUsingCTFramesetter(NSArray *strings, NSRange ran
             CFRelease(stringRef);
             CFRelease(storage);
         });
-    
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
-    
-//    for( auto w: m_FilenamesPxWidths )
-//        cout << w << endl;
-    
-//    NSMutableString *storage = [[NSMutableString alloc] initWithCapacity:count * 100];
-//    for( auto i = 0; i < count; ++i ) {
-//        auto item = m_Data->EntryAtSortPosition( i );
-//        [storage appendString:item ? item.NSDisplayName() : @""];
-//        [storage appendString:@"\n"];
-//    }
-//    
-//    CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, (CFStringRef)storage, (CFDictionaryRef)attrs);
-//    CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
-//    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);    
-//    CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage.length), path, NULL);
-//    
-//    NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
-//    int i = 0;
-//    for( id item in lines ) {
-//        CTLineRef line = (__bridge CTLineRef)item;
-//        double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-//        auto v = (short)floor( lineWidth + 0.5 );
-//        m_FilenamesPxWidths[i] = v;
-//        ++i;
-//    }
-//    
-//    CFRelease(frameRef);
-//    CFRelease(framesetterRef);
-//    CFRelease(stringRef);
-    
-    
-    
-    
 }
 
 - (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-//    vector<short>                       m_FilenamesPxWidths;
-//    bool                                m_FilenamesPxWidthsIsValid;
     const auto index = (int)indexPath.item;
     assert( index < m_FilenamesPxWidths.size() );
     

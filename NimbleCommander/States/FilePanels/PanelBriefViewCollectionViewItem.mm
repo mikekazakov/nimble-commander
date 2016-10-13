@@ -7,86 +7,91 @@
 @property NSTextField *label;
 @property NSColor *background;
 
+@property NSString *filename;
+@property NSColor *filenameColor;
+
 @end
 
 @implementation PanelBriefViewItemCarrier
 {
-    NSTextField *m_Label;
     NSColor *m_Background;
+    NSColor *m_TextColor;
+    NSString *m_Filename;
 }
 
 @synthesize label = m_Label;
 @synthesize background = m_Background;
+@synthesize filename = m_Filename;
+@synthesize filenameColor = m_TextColor;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-        m_Label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
-        m_Label.bordered = false;
-        m_Label.editable = false;
-        m_Label.drawsBackground = false;
-        m_Label.font = [NSFont labelFontOfSize:13];
-        m_Label.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        [self addSubview:m_Label];
         
-//        m_Background = NSColor.yellowColor;
+        m_TextColor = NSColor.blackColor;
+        m_Background = NSColor.yellowColor;
+//        cout << "spawn" << endl;
     }
     return self;
-}
-
-- (void) doLayout
-{
-    [m_Label setFrame:NSMakeRect(0, 0, self.bounds.size.width, self.bounds.size.height)];
-}
-
-- (void)setFrameOrigin:(NSPoint)newOrigin
-{
-    [super setFrameOrigin:newOrigin];
 }
 
 - (void)setFrameSize:(NSSize)newSize
 {
     [super setFrameSize:newSize];
-    [self doLayout];
+    [self setNeedsDisplay:true];
 }
 
 - (void) setFrame:(NSRect)frame
 {
     [super setFrame:frame];
-    [self doLayout];
+    [self setNeedsDisplay:true];
 }
-
-//@property NSRect frame;
-
-//-(id)initWithCoder:(NSCoder *)coder
-//{
-//    self = [super initWithCoder:coder];
-//    if( self ) {
-//        m_Label = [coder decodeObjectForKey:@"label"];
-//        m_Background = [coder decodeObjectForKey:@"background"];
-//    }
-//    return self;
-//}
-
-//- (void)encodeWithCoder: (NSCoder *)coder
-//{
-//    [super encodeWithCoder:coder];
-//    [coder encodeObject:m_Label forKey:@"label"];
-//    [coder encodeObject:m_Background forKey: @"background"];
-//}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+    static const double m_LineHeight = 20;
+    static const double m_LineTextBaseline = m_LineHeight - 4;
+    
+    static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
+    
+    
+    
+    
     if( m_Background  ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(dirtyRect));
     }
+
+    NSRect rect = NSMakeRect(0,
+                             /*item_start_y + m_LineTextBaseline*/4,
+                             /*column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2]*/self.bounds.size.width,
+                             /*m_FontHeight*/0);
+    
+    
+    
+    NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
+    item_text_pstyle.alignment = NSLeftTextAlignment;
+    item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+        
+    
+
+    auto attrs = @{NSFontAttributeName: [NSFont labelFontOfSize:13],
+                   NSForegroundColorAttributeName: m_TextColor,
+                   NSParagraphStyleAttributeName: item_text_pstyle};
+    
+    
+    
+    
+    [m_Filename drawWithRect:/*self.bounds*/rect
+                     options:0
+                  attributes:attrs];
 }
 
 @end
 
+//<NSCollectionViewElement>
 
 @implementation PanelBriefViewItem
 {
@@ -102,21 +107,9 @@
 
 - (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super initWithNibName:nil bundle:nil];
     if( self ) {
-        //        static PanelBriefViewItemCarrier* proto = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-        //        static
-        //        NSKeyedArchiver
-        //        static NSData *archived_proto = [NSKeyedArchiver archivedDataWithRootObject:proto];
-        //        NSView * myViewCopy = [NSKeyedUnarchiver unarchiveObjectWithData:archivedView];
-        
-        //self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-        
-        //        MachTimeBenchmark mtb;
         self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
-        //        self.view = [NSKeyedUnarchiver unarchiveObjectWithData:archived_proto];
-        //        mtb.ResetMicro("PanelBriefViewItemCarrier ");
-        
     }
     return self;
 }
@@ -130,7 +123,8 @@
 {
     m_Item = _item;
     
-    self.carrier.label.stringValue = m_Item.NSDisplayName();
+    self.carrier.filename = m_Item.NSDisplayName();
+    [self.carrier setNeedsDisplay:true];
 }
 
 - (void)setSelected:(BOOL)selected
@@ -153,13 +147,11 @@
 {
     assert( m_Item );
     const auto &rules = [((PanelBriefView*)self.collectionView.delegate) coloringRules];
-//    PanelBriefView.h
-    for( const auto &i: rules ) {
+    for( const auto &i: rules )
         if( i.filter.Filter(m_Item, m_VD) ) {
-            self.carrier.label.textColor = self.selected ? i.focused : i.regular;
+            self.carrier.filenameColor = self.selected ? i.focused : i.regular;
             break;
         }
-    }
 }
 
 - (void) setVD:(PanelData::PanelVolatileData)_vd
@@ -168,6 +160,7 @@
         return;
     m_VD = _vd;
     [self updateColoring];
+    [self.carrier setNeedsDisplay:true];    
 }
 
 @end

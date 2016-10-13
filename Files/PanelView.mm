@@ -160,11 +160,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return YES;
 }
 
-- (BOOL)isOpaque
-{
-    return YES;
-}
-
 - (BOOL)acceptsFirstResponder
 {
     return YES;
@@ -224,8 +219,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self addCursorRect:self.frame cursor:NSCursor.arrowCursor];
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
+//- (void)drawRect:(NSRect)dirtyRect
+//{
 //    if (!m_State.Data || !m_Presentation) return;
 //    m_Presentation->Draw(dirtyRect);
 //    
@@ -261,7 +256,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //            [NSGraphicsContext restoreGraphicsState];
 //        }
 //    }
-}
+//}
 
 - (void)frameDidChange
 {

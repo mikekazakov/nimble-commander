@@ -247,55 +247,96 @@ void IconsGenerator2::BuildGenericIcons()
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
+unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
+{
+    if( m_IconsHoles == 0 ) {
+        assert( m_Icons.size() < MaxIcons );
+        auto n = (unsigned short)m_Icons.size();
+        m_Icons.emplace_back( IconStorage() );
+        return n;
+    }
+    else {
+        for( auto i = 0, e = (int)m_Icons.size(); i != e; ++i ) {
+            if( !m_Icons[i] ) {
+                m_Icons[i].emplace();
+                --m_IconsHoles;
+                return i;
+            }
+        }
+        assert( 0 );
+    }
+}
+
+NSImageRep *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
+{
+    return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+}
+
+NSImageRep *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
+{
+    if( m_IconsMode < IconMode::Icons )
+        return nil;
+    
+    if( !_item.HasExtension() )
+        return nil;
+
+    LOCK_GUARD( m_ExtensionIconsCacheLock ) {
+        auto it = m_ExtensionIconsCache.find( _item.Extension() );
+        if( it != end(m_ExtensionIconsCache) )
+            return it->second;
+    }
+    
+    return nil;
+}
+
+bool IconsGenerator2::IsFull() const
+{
+    return m_Icons.size() - m_IconsHoles >= MaxIcons;
+}
+
 NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::PanelVolatileData &_item_vd)
 {
-    assert(dispatch_is_main_queue()); // STA api design
+    assert( dispatch_is_main_queue() ); // STA api design
+    assert( m_UpdateCallback );
     
     if( _item_vd.icon > 0 ) {
+        // short path - we have an already produced icon
+        
         int number = _item_vd.icon - 1;
         // sanity check - not founding meta with such number means sanity breach in calling module
         assert( number < m_Icons.size() );
-        const auto &is = m_Icons[number];
         
+        const auto &is = m_Icons[number];
+        assert( is );
+
+        return is->Any(); // short path - return a stored icon from stash
         // check if Icon meta stored here is outdated
-        if( is.file_size == _item.Size() &&
-           is.mtime == _item.MTime() )
-            return is.Any(); // short path - return a stored icon from stash
     }
     
     // long path: no icon - first request for this entry (or mb entry changed)
     // need to collect the appropriate info and put request into generating queue
     
-    if(m_Icons.size() >= MaxIcons ||
+    if( IsFull() ||
        m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_item.Host()) ) {
         // we're full - sorry
         
         // but we can try to quickly find an filetype icon
-        if( m_IconsMode >= IconMode::Icons && _item.HasExtension() ) {
-            lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
-            auto it = m_ExtensionIconsCache.find(_item.Extension());
-            if(it != end(m_ExtensionIconsCache))
-                return it->second;
-        }
-
+        if( auto icon = GetCachedExtensionIcon(_item) )
+            return icon;
+        
         // nope, just return a generic icons
-        return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+        return GetGenericIcon(_item);
     }
 
     // build IconStorage
-    unsigned short is_no = m_Icons.size();
-    m_Icons.emplace_back();
-    auto &is = m_Icons.back();
+    unsigned short is_no = GetSuitablePositionForNewIcon();
+    auto &is = *m_Icons[is_no];
     is.file_size = _item.Size();
     is.mtime = _item.MTime();
-    is.generic = _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
-    if( m_IconsMode >= IconMode::Icons && _item.HasExtension() ) {
-        lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
-        auto it = m_ExtensionIconsCache.find(_item.Extension());
-        if(it != end(m_ExtensionIconsCache))
-            is.filetype = it->second;
-    }
-    
+    is.generic = GetGenericIcon(_item);
+    if( auto icon = GetCachedExtensionIcon(_item) )
+        is.filetype = icon;
+
     auto rel_path = _item.IsDotDot() ? _item.Directory() : string(_item.Directory()) + _item.Name();
     bool is_native_fs = _item.Host()->IsNativeFS();
     
@@ -338,13 +379,13 @@ NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::Pa
                     if( curr_gen != *act_gen )
                         return;
                     assert( is_no < m_Icons.size() ); // consistancy check
+                    assert( m_Icons[is_no] ); // consistancy check
                     
                     if(res.filetype)
-                        m_Icons[is_no].filetype = res.filetype;
+                        m_Icons[is_no]->filetype = res.filetype;
                     if(res.thumbnail)
-                        m_Icons[is_no].thumbnail = res.thumbnail;
-                    if(m_UpdateCallback)
-                        m_UpdateCallback();
+                        m_Icons[is_no]->thumbnail = res.thumbnail;
+                    m_UpdateCallback(is_no + 1);
                 });
     });
 
@@ -458,11 +499,48 @@ void IconsGenerator2::SetIconMode(IconMode _mode)
         m_IconsMode = _mode;
 }
 
-void IconsGenerator2::Flush()
+void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
 {
-    assert(dispatch_is_main_queue()); // STA api design
-    m_Generation++;
-    m_Icons.clear();
+    assert(dispatch_is_main_queue()); // STA api design    
+   
+    bool has_outdated = false; /// ....
+    
+    
+    vector<bool> sweep_mark( m_Icons.size(), true );
+    
+    const auto count = (int)_pd.SortedDirectoryEntries().size();
+    for( auto i = 0; i < count; ++i ) {
+        auto &vd = _pd.VolatileDataAtSortPosition( i );
+        if( vd.icon != 0 ) {
+            auto is_no = vd.icon - 1;
+            assert( m_Icons[is_no] );
+            
+            auto item = _pd.EntryAtSortPosition( i );
+            
+            if(m_Icons[is_no]->file_size != item.Size() &&
+               m_Icons[is_no]->mtime != item.MTime() ) {
+                // this icon might be outdated, drop it
+                vd.icon = 0;
+            }
+            else {
+                // this icon is fine
+                sweep_mark[is_no] = false;
+            }
+        }
+    }
+
+    for( int i = 0, e = (int)m_Icons.size(); i != e; ++i )
+        if( m_Icons[i] && sweep_mark[i] ) {
+            m_Icons[i] = nullopt;
+            ++m_IconsHoles;
+        }
+    
+    if( m_IconsHoles == m_Icons.size() ) {
+        // complete change on data - discard everything and increment generation
+        m_Icons.clear();
+        m_IconsHoles = 0;
+        m_Generation++;
+    }
 }
 
 void IconsGenerator2::SetIconSize(int _size)
@@ -475,7 +553,7 @@ void IconsGenerator2::SetIconSize(int _size)
     m_ExtensionIconsCache.clear();
 }
 
-void IconsGenerator2::SetUpdateCallback(function<void()> _cb)
+void IconsGenerator2::SetUpdateCallback(function<void(uint16_t)> _cb)
 {
     assert(dispatch_is_main_queue()); // STA api design
     m_UpdateCallback = move(_cb);

@@ -12,13 +12,51 @@
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
 
-
-
-
-//- (void)prepareForReuse NS_AVAILABLE_MAC(10_11);
-
 static auto g_ItemsCount = 0;
 
+static vector<short> CalculateStringsWidths( const vector<CFStringRef> &_strings, NSFont *_font )
+{
+    static const auto path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
+    static const auto items_per_chunk = 300;
+    
+    auto attrs = @{NSFontAttributeName:_font};
+    
+    const auto count = (int)_strings.size();
+    vector<short> widths( count );
+    
+    vector<NSRange> chunks;
+    for( int i = 0; i < count; i += items_per_chunk )
+        chunks.emplace_back( NSMakeRange(i, min(items_per_chunk, count - i)) );
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    for( auto r: chunks )
+        dispatch_group_async(group, queue, [&, r]{
+            CFMutableStringRef storage = CFStringCreateMutable(NULL, r.length * 100);
+            for( auto i = (int)r.location; i < r.location + r.length; ++i ) {
+                CFStringAppend(storage, _strings[i]);
+                CFStringAppend(storage, CFSTR("\n"));
+            }
+            
+            const auto storage_length = CFStringGetLength(storage);
+            CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, storage, (CFDictionaryRef)attrs);
+            CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
+            CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage_length), path, NULL);
+            NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
+            int i = 0;
+            for( id item in lines ) {
+                CTLineRef line = (__bridge CTLineRef)item;
+                double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+                widths[ r.location + i++ ] = (short)floor( lineWidth + 0.5 );
+            }
+            CFRelease(frameRef);
+            CFRelease(framesetterRef);
+            CFRelease(stringRef);
+            CFRelease(storage);
+        });
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    return widths;
+}
 
 @interface PanelBriefViewCollectionView : NSCollectionView
 @end
@@ -56,23 +94,13 @@ static auto g_ItemsCount = 0;
 
 @implementation PanelBriefView
 {
-    NSScrollView                        *m_ScrollView;
-    PanelBriefViewCollectionView        *m_CollectionView;
-    PanelBriefViewCollectionViewLayout  *m_Layout;
-    
-    PanelData                           *m_Data;
-    vector<short>                        m_FilenamesPxWidths;
-    
+    NSScrollView                       *m_ScrollView;
+    PanelBriefViewCollectionView       *m_CollectionView;
+    PanelBriefViewCollectionViewLayout *m_Layout;
+    PanelData                          *m_Data;
+    vector<short>                       m_FilenamesPxWidths;
     IconsGenerator2                     m_IconsGenerator;
-    
-//    int                 m_CursorPosition;
 }
-
-//@synthesize cursorPosition = m_CursorPosition;
-
-//@property (nonatomic) int cursorPosition;
-
-//NSCollectionViewDelegate, NSCollectionViewDataSource
 
 - (void) setData:(PanelData*)_data
 {
@@ -112,6 +140,11 @@ static auto g_ItemsCount = 0;
         
         m_ScrollView.documentView = m_CollectionView;
         
+        __weak PanelBriefView* weak_self = self;
+        m_IconsGenerator.SetUpdateCallback([=](uint16_t _icon){
+            if( auto strong_self = weak_self )
+                [strong_self onIconUpdated:_icon];
+        });
     }
     return self;
 }
@@ -167,50 +200,17 @@ static auto g_ItemsCount = 0;
 - (void) calculateFilenamesWidths
 {
     const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
-    m_FilenamesPxWidths.resize( count );
-
-    // something meaningful needed here:
-    static auto attrs = @{NSFontAttributeName:[NSFont labelFontOfSize:13]};
-    
-    
-    static const CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);
-    
-    const auto items_per_chunk = 300;
-    vector<NSRange> chunks;
-    for( int i = 0; i < count; i += items_per_chunk )
-        chunks.emplace_back( NSMakeRange(i, min(items_per_chunk, count - i)) );
-    
-    dispatch_group_t group = dispatch_group_create();
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    for( auto r: chunks )
-        dispatch_group_async(group, queue, [&, r]{
-            CFMutableStringRef storage = CFStringCreateMutable(NULL, r.length * 100);
-            for( auto i = (int)r.location; i < r.location + r.length; ++i ) {
-                CFStringAppend(storage, m_Data->EntryAtSortPosition(i).CFDisplayName());
-                CFStringAppend(storage, CFSTR("\n"));
-            }
-            
-            const auto storage_length = CFStringGetLength(storage);
-            CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, storage, (CFDictionaryRef)attrs);
-            CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
-            CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage_length), path, NULL);
-            NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
-            int i = 0;
-            for( id item in lines ) {
-                CTLineRef line = (__bridge CTLineRef)item;
-                double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-                m_FilenamesPxWidths[ r.location + i++ ] = (short)floor( lineWidth + 0.5 );
-            }
-            CFRelease(frameRef);
-            CFRelease(framesetterRef);
-            CFRelease(stringRef);
-            CFRelease(storage);
-        });
-    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    vector<CFStringRef> strings(count);
+    for( auto i = 0; i < count; ++i )
+        strings[i] = m_Data->EntryAtSortPosition(i).CFDisplayName();
+    m_FilenamesPxWidths = CalculateStringsWidths(strings, [NSFont labelFontOfSize:13]);
 }
 
 - (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+//    return NSMakeSize( self.bounds.size.width / 1, 20);
+    
     const auto index = (int)indexPath.item;
     assert( index < m_FilenamesPxWidths.size() );
     
@@ -229,7 +229,9 @@ static auto g_ItemsCount = 0;
 - (void) dataChanged
 {
     dispatch_assert_main_queue();
+    assert( m_Data );
     [self calculateFilenamesWidths];
+    m_IconsGenerator.SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
 }
@@ -281,35 +283,18 @@ static auto g_ItemsCount = 0;
 
 - (void) syncVolatileData
 {
-    // ...
-    //return m_Data->SortedDirectoryEntries().size();
-        //auto vfs_item = m_Data->EntryAtSortPosition( (int)indexPath.item );
-    NSArray<PanelBriefViewItem *> *visible_items = (NSArray<PanelBriefViewItem *>*)m_CollectionView.visibleItems;
-    for( PanelBriefViewItem *i in visible_items ) {
+    dispatch_assert_main_queue();
+    for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
         if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
-            int index = (int)index_path.item;
+            const auto index = (int)index_path.item;
             [i setVD:m_Data->VolatileDataAtSortPosition(index)];
         }
-    }
-//    */
-//    - (NSArray<NSCollectionViewItem *> *)visibleItems NS_AVAILABLE_MAC(10_11);
-//    
-//    /* Returns the index paths of the items that are currently displayed by the CollectionView. Note that these indexPaths correspond to the same items as "visibleItems", and thus may include items whose views fall outside the CollectionView's current "visibleRect".
-//     */
-//    - (NSSet<NSIndexPath *> *)indexPathsForVisibleItems NS_AVAILABLE_MAC(10_11);
-//    
-//    /* Returns the index path of the specified item (or nil if the specified item is not in the collection view).
-//     */
-//    - (nullable NSIndexPath *)indexPathForItem:(NSCollectionViewItem *)item NS_AVAILABLE_MAC(10_11);
-//
 }
 
 - (vector<PanelViewPresentationItemsColoringRule>&) coloringRules
 {
     return g_ColoringRules;
 }
-
-//- (NSArray<NSCollectionViewItem *> *)visibleItems
 
 - (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
 {
@@ -326,7 +311,24 @@ static auto g_ItemsCount = 0;
     lc.inset_bottom = 1;
     lc.icon_size = 16;
     lc.font_baseline = 4;
+    lc.item_height = 20;
     return lc;
 }
 
+- (void) onIconUpdated:(uint16_t)_icon
+{
+    dispatch_assert_main_queue();
+    for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
+        if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
+            const auto index = (int)index_path.item;
+            auto &vd = m_Data->VolatileDataAtSortPosition(index);
+            if( vd.icon == _icon ) {
+                auto vfs_item = m_Data->EntryAtSortPosition(index);
+                NSImageRep *icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+                [i setIcon:icon];
+            }
+        }
+}
+
 @end
+

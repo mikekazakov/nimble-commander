@@ -22,8 +22,6 @@
 
 @synthesize background = m_Background;
 @synthesize filename = m_Filename;
-@synthesize filenameColor = m_TextColor;
-@synthesize icon = m_Icon;
 @synthesize layoutConstants = m_LayoutConstants;
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -118,6 +116,22 @@
     
 }
 
+- (void) setIcon:(NSImageRep *)icon
+{
+    if( m_Icon != icon ) {
+        m_Icon = icon;
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (void) setFilenameColor:(NSColor *)filenameColor
+{
+    if( m_TextColor != filenameColor ) {
+        m_TextColor = filenameColor;
+        [self setNeedsDisplay:true];
+    }
+}
+
 @end
 
 //<NSCollectionViewElement>
@@ -194,7 +208,6 @@
         return;
     m_VD = _vd;
     [self updateColoring];
-    [self.carrier setNeedsDisplay:true];    
 }
 
 - (void) setIcon:(NSImageRep*)_icon

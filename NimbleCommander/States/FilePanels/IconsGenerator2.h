@@ -26,7 +26,7 @@ public:
     IconsGenerator2();
     ~IconsGenerator2();
     
-    void SetUpdateCallback( function<void()> _callback ); // callback will be executed in main thread
+    void SetUpdateCallback( function<void(uint16_t)> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
     IconMode GetIconMode() const noexcept { return m_IconsMode; };
 
@@ -34,8 +34,8 @@ public:
     int IconSize() const { return m_IconSize; }
     
     NSImageRep *ImageFor(const VFSListingItem &_item, PanelData::PanelVolatileData &_item_vd);
-    void Flush(); // should be called on every directory changes thus loosing generated icons' ID
-    
+
+    void SyncDiscardedAndOutdated( PanelData &_pd );
     
 private:
     enum {MaxIcons = 65535,
@@ -72,26 +72,34 @@ private:
         NSImageRep *thumbnail;
     };
     
+    NSImageRep *GetGenericIcon( const VFSListingItem &_item ) const;
+    NSImageRep *GetCachedExtensionIcon( const VFSListingItem &_item ) const;
+    unsigned short GetSuitablePositionForNewIcon();
+    bool IsFull() const;
+    
     void BuildGenericIcons();
+    
+    
     optional<BuildResult> Runner(const BuildRequest &_req);
     IconsGenerator2(const IconsGenerator2&) = delete;
     void operator=(const IconsGenerator2&) = delete;
     
+    vector< optional<IconStorage> > m_Icons;
+    int                     m_IconsHoles = 0;
     
-    vector<IconStorage>     m_Icons;
     int                     m_IconSize = 16;
     IconMode                m_IconsMode = IconMode::Thumbnails;
 
     shared_ptr<atomic_ulong>m_GenerationSh = make_shared<atomic_ulong>(0);
     atomic_ulong           &m_Generation = *m_GenerationSh;
     DispatchGroup           m_WorkGroup{DispatchGroup::Low};
-    function<void()>        m_UpdateCallback;
+    function<void(uint16_t)>m_UpdateCallback;
     
     NSImageRep             *m_GenericFileIcon;
     NSImageRep             *m_GenericFolderIcon;
     NSBitmapImageRep       *m_GenericFileIconBitmap;
     NSBitmapImageRep       *m_GenericFolderIconBitmap;
 
-    mutex                   m_ExtensionIconsCacheLock;
+    mutable mutex           m_ExtensionIconsCacheLock;
     map<string,NSImageRep*> m_ExtensionIconsCache;
 };

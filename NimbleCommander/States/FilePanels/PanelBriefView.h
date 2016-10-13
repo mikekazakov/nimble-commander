@@ -3,10 +3,6 @@
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
-//@class PanelBriefViewItem;
-
-
-//static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 
 struct PanelBriefViewItemLayoutConstants
 {
@@ -16,12 +12,18 @@ struct PanelBriefViewItemLayoutConstants
     int8_t  inset_bottom;
     int16_t icon_size;
     int16_t font_baseline;
+    int16_t item_height;
 };
 
+// 3 modes:
+// - fixed widths for columns
+//      setting: this width
+// - fixed amount of columns
+//      setting: amount of columns
+// - dynamic widths of columns
+//      settings: min width, max width, should be equal
+
 @interface PanelBriefView : NSView<NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
-
-//- (id)initWithFrame:(NSRect)frameRect andData:(PanelData&)_data;
-
 
 - (void) dataChanged;
 - (void) syncVolatileData;

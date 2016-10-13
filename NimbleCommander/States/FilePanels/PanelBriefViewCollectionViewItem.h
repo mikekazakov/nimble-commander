@@ -5,9 +5,8 @@
 
 @interface PanelBriefViewItem : NSCollectionViewItem
 
-//@property (strong) NSView *view;
-
 - (void) setItem:(VFSListingItem)_item;
 - (void) setVD:(PanelData::PanelVolatileData)_vd;
+- (void) setIcon:(NSImageRep*)_icon;
 
 @end

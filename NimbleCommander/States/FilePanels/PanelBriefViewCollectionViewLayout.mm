@@ -8,6 +8,8 @@
     if( self ) {
         self.minimumInteritemSpacing = 0;
         self.minimumLineSpacing = 0;
+        self.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
+        self.itemSize = NSMakeSize(100, 20);
     }
     return self;
 }

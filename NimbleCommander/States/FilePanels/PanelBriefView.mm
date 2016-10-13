@@ -4,6 +4,7 @@
 #include "../../../Files/PanelView.h"
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
 #include "../../../Files/Config.h"
+#include "IconsGenerator2.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewLayout.h"
 #include "PanelBriefViewCollectionViewItem.h"
@@ -24,6 +25,15 @@ static auto g_ItemsCount = 0;
 
 @implementation PanelBriefViewCollectionView
 
+- (id) initWithFrame:(NSRect)frameRect
+{
+    self = [super initWithFrame:frameRect];
+    if( self ) {
+        self.selectable = true;
+    }
+    return self;
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     NSView *sv = self.superview;
@@ -32,6 +42,14 @@ static auto g_ItemsCount = 0;
     
     if( auto pv = objc_cast<PanelView>(sv) )
         [pv keyDown:event];
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
 }
 
 @end
@@ -44,6 +62,9 @@ static auto g_ItemsCount = 0;
     
     PanelData                           *m_Data;
     vector<short>                        m_FilenamesPxWidths;
+    
+    IconsGenerator2                     m_IconsGenerator;
+    
 //    int                 m_CursorPosition;
 }
 
@@ -83,29 +104,13 @@ static auto g_ItemsCount = 0;
         m_CollectionView = [[PanelBriefViewCollectionView alloc] initWithFrame:frameRect];
         m_CollectionView.dataSource = self;
         m_CollectionView.delegate = self;
-//@property NSCollectionViewScrollDirection scrollDirection; // default is NSCollectionViewScrollDirectionVertical
+        
+        
         m_Layout = [[PanelBriefViewCollectionViewLayout alloc] init];
-        m_Layout.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
-        m_Layout.itemSize = NSMakeSize(100, 20);
-        //@property NSSize itemSize;
-        
         m_CollectionView.collectionViewLayout = m_Layout;
-        m_CollectionView.selectable = true;
-//        NSSet<NSIndexPath *> *sel = m_CollectionView.selectionIndexPaths;
-        
-        
         [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"Item"];
         
-        //- (void)registerClass:(nullable Class)itemClass forItemWithIdentifier:(NSString *)identifier NS_AVAILABLE_MAC(10_11);
-        
-//@property (nullable, strong) __kindof NSCollectionViewLayout *collectionViewLayout NS_AVAILABLE_MAC(10_11);
-        
         m_ScrollView.documentView = m_CollectionView;
-        
-        
-//        self.scrollview = NSScrollView.alloc().initWithFrame_(NSZeroRect)
-//        self.collectionview = NSCollectionView.alloc().initWithFrame_(NSZeroRect)
-//        self.scrollview.setDocumentView_(self.paxPictureView_CollectionView)
         
     }
     return self;
@@ -116,14 +121,6 @@ static auto g_ItemsCount = 0;
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
-/* Asks the data source to provide an NSCollectionViewItem for the specified represented object.
- 
- Your implementation of this method is responsible for creating, configuring, and returning the appropriate item for the given represented object.  You do this by sending -makeItemWithIdentifier:forIndexPath: method to the collection view and passing the identifier that corresponds to the item type you want.  Upon receiving the item, you should set any properties that correspond to the data of the corresponding model object, perform any additional needed configuration, and return the item.
- 
- You do not need to set the location of the item's view inside the collection view’s bounds. The collection view sets the location of each item automatically using the layout attributes provided by its layout object.
- 
- This method must always return a valid item instance.
- */
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
     MachTimeBenchmark mtb1;
@@ -138,8 +135,17 @@ static auto g_ItemsCount = 0;
         const auto index = (int)indexPath.item;
         auto vfs_item = m_Data->EntryAtSortPosition(index);
         [item setItem:vfs_item];
-        [item setVD:m_Data->VolatileDataAtSortPosition(index)];
+        
+        auto &vd = m_Data->VolatileDataAtSortPosition(index);
+        
+        NSImageRep*icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+        
+        [item setVD:vd];
+        [item setIcon:icon];
     }
+    
+//    - (NSImageRep*) itemRequestsIcon:(PanelBriefViewItem*)_item;
+    
 
 //    mtb.ResetMicro("setting up PanelBriefViewItem ");
     
@@ -257,10 +263,13 @@ static auto g_ItemsCount = 0;
         
         
         NSRect vis_rect = m_ScrollView.documentVisibleRect;
-        NSRect item_rect = [m_CollectionView itemAtIndexPath:path].view.frame;
-        if( !NSContainsRect(vis_rect, item_rect)) {
-            [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:NSCollectionViewScrollPositionCenteredHorizontally];
-        }
+        
+        NSCollectionViewItem *collection_item = [m_CollectionView itemAtIndexPath:path];
+//        NSRect item_rect = [m_CollectionView itemAtIndexPath:path].view.frame;
+        if( !collection_item || !NSContainsRect(vis_rect, collection_item.view.frame) )
+            dispatch_to_main_queue([=]{
+                [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:NSCollectionViewScrollPositionCenteredHorizontally];
+            });
     }
 }
 
@@ -302,5 +311,22 @@ static auto g_ItemsCount = 0;
 
 //- (NSArray<NSCollectionViewItem *> *)visibleItems
 
+- (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
+{
+    int a = 10;
+    
+}
+
+- (PanelBriefViewItemLayoutConstants) layoutConstants
+{
+    PanelBriefViewItemLayoutConstants lc;
+    lc.inset_left = 7;
+    lc.inset_top = 1;
+    lc.inset_right = 5;
+    lc.inset_bottom = 1;
+    lc.icon_size = 16;
+    lc.font_baseline = 4;
+    return lc;
+}
 
 @end

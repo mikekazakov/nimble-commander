@@ -99,6 +99,7 @@
 		CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
 		CF3C88D716D73A23006346CD /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3C88D616D73A23006346CD /* PanelController.mm */; };
 		CF3FCE081908C49400E55698 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */; };
+		CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
 		CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA2A1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
@@ -1231,6 +1232,8 @@
 		CF3FCE061908C49400E55698 /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QLThumbnailsCache.mm; sourceTree = "<group>"; };
 		CF3FCE071908C49400E55698 /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QLThumbnailsCache.h; sourceTree = "<group>"; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
+		CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconsGenerator2.h; path = NimbleCommander/States/FilePanels/IconsGenerator2.h; sourceTree = SOURCE_ROOT; };
+		CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconsGenerator2.mm; path = NimbleCommander/States/FilePanels/IconsGenerator2.mm; sourceTree = SOURCE_ROOT; };
 		CF45CA2B1D3E3A6F0074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowToolsTab.xib; sourceTree = "<group>"; };
 		CF45CA301D3E3AA70074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ExternalToolParameterValueSheetController.xib; sourceTree = "<group>"; };
 		CF45CA321D3E433B0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowToolsTab.strings; sourceTree = "<group>"; };
@@ -1879,6 +1882,8 @@
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */,
+				CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */,
 				CFD3CB321DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.h */,
 				CFD3CB331DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm */,
 				CFD3CB291DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.h */,
@@ -3817,6 +3822,7 @@
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
 				CF07DE39175D981500757DE1 /* MainWindowFilePanelState.mm in Sources */,
+				CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */,
 				CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */,
 				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,

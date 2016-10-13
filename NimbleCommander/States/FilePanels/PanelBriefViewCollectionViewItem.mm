@@ -4,34 +4,35 @@
 
 @interface PanelBriefViewItemCarrier : NSView
 
-@property NSTextField *label;
-@property NSColor *background;
-
-@property NSString *filename;
-@property NSColor *filenameColor;
-
+@property (nonatomic) NSColor       *background;
+@property (nonatomic) NSString      *filename;
+@property (nonatomic) NSColor       *filenameColor;
+@property (nonatomic) NSImageRep    *icon;
+@property (nonatomic) PanelBriefViewItemLayoutConstants layoutConstants;
 @end
 
 @implementation PanelBriefViewItemCarrier
 {
-    NSColor *m_Background;
-    NSColor *m_TextColor;
-    NSString *m_Filename;
+    NSColor     *m_Background;
+    NSColor     *m_TextColor;
+    NSString    *m_Filename;
+    NSImageRep  *m_Icon;
+    PanelBriefViewItemLayoutConstants m_LayoutConstants;
 }
 
-@synthesize label = m_Label;
 @synthesize background = m_Background;
 @synthesize filename = m_Filename;
 @synthesize filenameColor = m_TextColor;
+@synthesize icon = m_Icon;
+@synthesize layoutConstants = m_LayoutConstants;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-        
         m_TextColor = NSColor.blackColor;
         m_Background = NSColor.yellowColor;
-//        cout << "spawn" << endl;
+        m_Filename = @"";
     }
     return self;
 }
@@ -50,43 +51,71 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    static const double m_LineHeight = 20;
-    static const double m_LineTextBaseline = m_LineHeight - 4;
-    
-    static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
-    
-    
-    
+    const auto bounds = self.bounds;
     
     if( m_Background  ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
-        CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+        CGContextFillRect(context, NSRectToCGRect(bounds));
     }
+    
+    const auto text_rect = NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
+                                      m_LayoutConstants.font_baseline,
+                                      bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
+                                      0);
 
-    NSRect rect = NSMakeRect(0,
-                             /*item_start_y + m_LineTextBaseline*/4,
-                             /*column_width - icon_size - 2*g_TextInsetsInLine[0] - g_TextInsetsInLine[2]*/self.bounds.size.width,
-                             /*m_FontHeight*/0);
-    
-    
-    
     NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
     item_text_pstyle.alignment = NSLeftTextAlignment;
     item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        
-    
 
     auto attrs = @{NSFontAttributeName: [NSFont labelFontOfSize:13],
                    NSForegroundColorAttributeName: m_TextColor,
                    NSParagraphStyleAttributeName: item_text_pstyle};
     
+    [m_Filename drawWithRect:text_rect options:0 attributes:attrs];
     
     
+    const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
+                                      (bounds.size.height - m_LayoutConstants.icon_size) / 2. - 0.5,
+                                      m_LayoutConstants.icon_size,
+                                      m_LayoutConstants.icon_size);
+    [m_Icon drawInRect:icon_rect
+              fromRect:NSZeroRect
+             operation:NSCompositeSourceOver
+              fraction:1.0
+        respectFlipped:false
+                 hints:nil];
     
-    [m_Filename drawWithRect:/*self.bounds*/rect
-                     options:0
-                  attributes:attrs];
+    
+//    NSImageRep *image_rep = m_IconCache.ImageFor(item, item_vd);
+//    NSRect icon_rect = NSMakeRect(start_x + g_TextInsetsInLine[0],
+//                                  item_start_y + floor((m_LineHeight - icon_size) / 2. - 0.5),
+//                                  icon_size,
+//                                  icon_size);
+//    [image_rep drawInRect:icon_rect
+//                 fromRect:NSZeroRect
+//                operation:NSCompositeSourceOver
+//                 fraction:1.0
+//           respectFlipped:YES
+//                    hints:nil];
+//    
+//    // Draw symlink arrow over an icon
+//    if(item.IsSymlink())
+//        [m_SymlinkArrowImage drawInRect:NSMakeRect(start_x + g_TextInsetsInLine[0],
+//                                                   item_start_y + m_LineHeight - m_SymlinkArrowImage.size.height - 1,
+//                                                   m_SymlinkArrowImage.size.width,
+//                                                   m_SymlinkArrowImage.size.height)
+//                               fromRect:NSZeroRect
+//                              operation:NSCompositeSourceOver
+//                               fraction:1.0
+//                         respectFlipped:YES
+//                                  hints:nil];
+}
+
+- (void) mouseDown:(NSEvent *)event
+{
+    
+    
 }
 
 @end
@@ -122,8 +151,8 @@
 - (void) setItem:(VFSListingItem)_item
 {
     m_Item = _item;
-    
     self.carrier.filename = m_Item.NSDisplayName();
+    self.carrier.layoutConstants = self.mainView.layoutConstants;
     [self.carrier setNeedsDisplay:true];
 }
 
@@ -143,10 +172,15 @@
     [self.carrier setNeedsDisplay:true];
 }
 
+- (PanelBriefView*)mainView
+{
+    return (PanelBriefView*)self.collectionView.delegate;
+}
+
 - (void) updateColoring
 {
     assert( m_Item );
-    const auto &rules = [((PanelBriefView*)self.collectionView.delegate) coloringRules];
+    const auto &rules = [self.mainView coloringRules];
     for( const auto &i: rules )
         if( i.filter.Filter(m_Item, m_VD) ) {
             self.carrier.filenameColor = self.selected ? i.focused : i.regular;
@@ -161,6 +195,11 @@
     m_VD = _vd;
     [self updateColoring];
     [self.carrier setNeedsDisplay:true];    
+}
+
+- (void) setIcon:(NSImageRep*)_icon
+{
+    self.carrier.icon = _icon;
 }
 
 @end

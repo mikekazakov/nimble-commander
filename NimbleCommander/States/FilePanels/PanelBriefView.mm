@@ -9,6 +9,7 @@
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewLayout.h"
 #include "PanelBriefViewCollectionViewItem.h"
+#include "PanelBriefViewCollectionViewBackground.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
@@ -52,15 +53,53 @@ static auto g_ItemsCount = 0;
 static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* double icon size*/ )
 {
     assert( _font );
+    static const int insets[4] = {7, 1, 5, 1};
+
+    // TODO: generic case for custom font (not SF)
+    
+    // hardcoded stuff to mimic Finder's layout
+    int icon_size = 16;
+    int line_height = 20;
+    int text_baseline = 4;
+    switch ( (int)floor(_font.pointSize+0.5) ) {
+        case 10:
+        case 11:
+            line_height = 17;
+            text_baseline = 5;
+            break;
+        case 12:
+            line_height = 19;
+            text_baseline = 5;
+            break;
+        case 13:
+        case 14:
+            line_height = 19;
+            text_baseline = 4;
+            break;
+        case 15:
+            line_height = 21;
+            text_baseline = 6;
+            break;
+        case 16:
+            line_height = 22;
+            text_baseline = 6;
+            break;
+        default: {
+            auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
+            line_height = font_info.LineHeight() + insets[1] + insets[3];
+            text_baseline = insets[1] + font_info.Ascent();
+            icon_size = font_info.LineHeight();
+        }
+    }
 
     PanelBriefViewItemLayoutConstants lc;
-    lc.inset_left = 7;
-    lc.inset_top = 1;
-    lc.inset_right = 5;
-    lc.inset_bottom = 1;
-    lc.icon_size = 16;
-    lc.font_baseline = 4;
-    lc.item_height = 20;
+    lc.inset_left = insets[0]/*7*/;
+    lc.inset_top = insets[1]/*1*/;
+    lc.inset_right = insets[2]/*5*/;
+    lc.inset_bottom = insets[3]/*1*/;
+    lc.icon_size = icon_size/*16*/;
+    lc.font_baseline = text_baseline /*4*/;
+    lc.item_height = line_height /*20*/;
     
     return lc;
 }
@@ -70,6 +109,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     NSScrollView                       *m_ScrollView;
     PanelBriefViewCollectionView       *m_CollectionView;
     PanelBriefViewCollectionViewLayout *m_Layout;
+    PanelBriefViewCollectionViewBackground *m_Background;
     PanelData                          *m_Data;
     vector<short>                       m_FilenamesPxWidths;
     IconsGenerator2                     m_IconsGenerator;
@@ -78,6 +118,11 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 }
 
 @synthesize font = m_Font;
+@synthesize regularBackgroundColor;
+@synthesize alternateBackgroundColor;
+//@property (nonatomic) NSColor *regularBackgroundColor;
+//@property (nonatomic) NSColor *alternateBackgroundColor;
+
 
 //@property (nonatomic) NSFont *font;
 - (void) setData:(PanelData*)_data
@@ -100,11 +145,16 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             g_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
         });
         
-        m_Font = [NSFont labelFontOfSize:13];
+        self.regularBackgroundColor = NSColor.controlAlternatingRowBackgroundColors[0];
+        self.alternateBackgroundColor = NSColor.controlAlternatingRowBackgroundColors[1];
+        
+        //m_Font = [NSFont labelFontOfSize:13];
+        m_Font = [NSFont systemFontOfSize:13];
         [self calculateItemLayout];
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
+        m_ScrollView.wantsLayer = true;
         [self addSubview:m_ScrollView];
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
@@ -113,12 +163,16 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         m_CollectionView = [[PanelBriefViewCollectionView alloc] initWithFrame:frameRect];
         m_CollectionView.dataSource = self;
         m_CollectionView.delegate = self;
-        
+
+        m_Background = [[PanelBriefViewCollectionViewBackground alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        m_Background.rowHeight = m_ItemLayout.item_height;
+        m_CollectionView.backgroundView = m_Background;
+        m_CollectionView.backgroundColors = @[NSColor.clearColor];
         
         m_Layout = [[PanelBriefViewCollectionViewLayout alloc] init];
         m_Layout.itemSize = NSMakeSize(100, m_ItemLayout.item_height);
         m_CollectionView.collectionViewLayout = m_Layout;
-        [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"Item"];
+        [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"A"];
         
         m_ScrollView.documentView = m_CollectionView;
         
@@ -139,7 +193,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
     MachTimeBenchmark mtb1;
-    PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"Item" forIndexPath:indexPath];
+    PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"A" forIndexPath:indexPath];
 //    mtb1.ResetMicro("PanelBriefViewItem ");
     assert(item);
 //    AAPLImageFile *imageFile = [self imageFileAtIndexPath:indexPath];

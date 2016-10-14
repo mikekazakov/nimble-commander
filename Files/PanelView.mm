@@ -92,7 +92,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.wantsLayer = true;
+//        self.wantsLayer = true;
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
         m_FieldRenamingRequestTicket = 0;

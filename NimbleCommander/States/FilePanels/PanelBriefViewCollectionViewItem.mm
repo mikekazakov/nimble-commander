@@ -5,6 +5,8 @@
 @interface PanelBriefViewItemCarrier : NSView
 
 @property (nonatomic) NSColor       *background;
+@property (nonatomic) NSColor *regularBackgroundColor;
+@property (nonatomic) NSColor *alternateBackgroundColor;
 @property (nonatomic) NSString      *filename;
 @property (nonatomic) NSColor       *filenameColor;
 @property (nonatomic) NSImageRep    *icon;
@@ -21,6 +23,8 @@
 }
 
 @synthesize background = m_Background;
+@synthesize regularBackgroundColor;
+@synthesize alternateBackgroundColor;
 @synthesize filename = m_Filename;
 @synthesize layoutConstants = m_LayoutConstants;
 
@@ -49,13 +53,23 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+    auto aa = [self layer];
     const auto bounds = self.bounds;
+
+    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     
     if( m_Background  ) {
-        CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(bounds));
     }
+    else {
+        bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
+        CGContextSetFillColorWithColor(context, is_odd ? self.alternateBackgroundColor.CGColor : self.regularBackgroundColor.CGColor);
+        CGContextFillRect(context, NSRectToCGRect(bounds));
+    }
+    
+    CGContextSetShouldSmoothFonts(context, true);
+    CGContextSetShouldAntialias(context, true);
     
     const auto text_rect = NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
                                       m_LayoutConstants.font_baseline,
@@ -167,6 +181,8 @@
     m_Item = _item;
     self.carrier.filename = m_Item.NSDisplayName();
     self.carrier.layoutConstants = self.mainView.layoutConstants;
+    self.carrier.regularBackgroundColor  = self.mainView.regularBackgroundColor;
+    self.carrier.alternateBackgroundColor  = self.mainView.alternateBackgroundColor;
     [self.carrier setNeedsDisplay:true];
 }
 

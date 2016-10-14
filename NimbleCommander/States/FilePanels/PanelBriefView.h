@@ -33,6 +33,9 @@ struct PanelBriefViewItemLayoutConstants
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) NSFont *font;
 
+@property (nonatomic) NSColor *regularBackgroundColor;
+@property (nonatomic) NSColor *alternateBackgroundColor;
+
 - (vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
 
 - (PanelBriefViewItemLayoutConstants) layoutConstants;

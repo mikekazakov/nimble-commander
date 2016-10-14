@@ -29,7 +29,7 @@
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_TextColor = NSColor.blackColor;
-        m_Background = NSColor.yellowColor;
+//        m_Background = NSColor.yellowColor;
         m_Filename = @"";
     }
     return self;

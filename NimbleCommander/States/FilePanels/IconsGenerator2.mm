@@ -379,13 +379,14 @@ NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::Pa
                     if( curr_gen != *act_gen )
                         return;
                     assert( is_no < m_Icons.size() ); // consistancy check
-                    assert( m_Icons[is_no] ); // consistancy check
                     
-                    if(res.filetype)
-                        m_Icons[is_no]->filetype = res.filetype;
-                    if(res.thumbnail)
-                        m_Icons[is_no]->thumbnail = res.thumbnail;
-                    m_UpdateCallback(is_no + 1);
+                    if( m_Icons[is_no] ) {
+                        if( res.filetype )
+                            m_Icons[is_no]->filetype = res.filetype;
+                        if( res.thumbnail )
+                            m_Icons[is_no]->thumbnail = res.thumbnail;
+                        m_UpdateCallback(is_no + 1, m_Icons[is_no]->Any());
+                    }
                 });
     });
 
@@ -505,8 +506,8 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
    
     bool has_outdated = false; /// ....
     
-    
     vector<bool> sweep_mark( m_Icons.size(), true );
+    vector<int> entries_to_update;
     
     const auto count = (int)_pd.SortedDirectoryEntries().size();
     for( auto i = 0; i < count; ++i ) {
@@ -521,6 +522,7 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
                m_Icons[is_no]->mtime != item.MTime() ) {
                 // this icon might be outdated, drop it
                 vd.icon = 0;
+                entries_to_update.emplace_back(i);
             }
             else {
                 // this icon is fine
@@ -541,6 +543,10 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
         m_IconsHoles = 0;
         m_Generation++;
     }
+    else {    
+        for( auto i: entries_to_update )
+            ImageFor( _pd.EntryAtSortPosition(i), _pd.VolatileDataAtSortPosition(i) );
+    }
 }
 
 void IconsGenerator2::SetIconSize(int _size)
@@ -553,7 +559,7 @@ void IconsGenerator2::SetIconSize(int _size)
     m_ExtensionIconsCache.clear();
 }
 
-void IconsGenerator2::SetUpdateCallback(function<void(uint16_t)> _cb)
+void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImageRep*)> _cb)
 {
     assert(dispatch_is_main_queue()); // STA api design
     m_UpdateCallback = move(_cb);

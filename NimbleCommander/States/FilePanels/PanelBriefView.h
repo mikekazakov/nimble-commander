@@ -31,7 +31,7 @@ struct PanelBriefViewItemLayoutConstants
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
-
+@property (nonatomic) NSFont *font;
 
 - (vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
 

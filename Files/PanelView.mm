@@ -277,8 +277,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    if( data )
 
-    
-    [m_ItemsView setData:data];
+    if( data )
+        [m_ItemsView setData:data];
     
     if( !data )
         self.presentation = nullptr;

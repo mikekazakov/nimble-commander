@@ -26,7 +26,7 @@ public:
     IconsGenerator2();
     ~IconsGenerator2();
     
-    void SetUpdateCallback( function<void(uint16_t)> _callback ); // callback will be executed in main thread
+    void SetUpdateCallback( function<void(uint16_t, NSImageRep*)> _callback ); // callback will be executed in main thread
     void SetIconMode(IconMode _mode);
     IconMode GetIconMode() const noexcept { return m_IconsMode; };
 
@@ -93,7 +93,7 @@ private:
     shared_ptr<atomic_ulong>m_GenerationSh = make_shared<atomic_ulong>(0);
     atomic_ulong           &m_Generation = *m_GenerationSh;
     DispatchGroup           m_WorkGroup{DispatchGroup::Low};
-    function<void(uint16_t)>m_UpdateCallback;
+    function<void(uint16_t, NSImageRep*)>m_UpdateCallback;
     
     NSImageRep             *m_GenericFileIcon;
     NSImageRep             *m_GenericFolderIcon;

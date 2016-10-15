@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <assert.h>
 #include <stdio.h>
 
 /**
@@ -119,3 +120,17 @@ public:
     inline operator bool() const noexcept { return _state; };
     inline void toggle() noexcept { _state = false; };
 };
+
+// remove this after switching to C++17
+template<class T, class Compare>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi, Compare comp )
+{
+    return assert( !comp(hi, lo) ),
+    comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+}
+
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    return clamp( v, lo, hi, std::less<>() );
+}

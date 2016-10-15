@@ -1,5 +1,6 @@
 #include <VFS/VFS.h>
 #include <Habanero/CFStackAllocator.h>
+#include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
 #include "../../../Files/PanelData.h"
 #include "../../../Files/PanelView.h"
@@ -15,6 +16,22 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
 
 static auto g_ItemsCount = 0;
+
+bool PanelBriefViewColumnsLayout::operator ==(const PanelBriefViewColumnsLayout& _rhs) const noexcept
+{
+    return mode == _rhs.mode &&
+            fixed_mode_width == _rhs.fixed_mode_width &&
+            fixed_amount_value == _rhs.fixed_amount_value &&
+            dynamic_width_min == _rhs.dynamic_width_min &&
+            dynamic_width_max == _rhs.dynamic_width_max &&
+            dynamic_width_equal == _rhs.dynamic_width_equal;
+}
+
+bool PanelBriefViewColumnsLayout::operator !=(const PanelBriefViewColumnsLayout& _rhs) const noexcept
+{
+    return !(*this == _rhs);
+}
+
 
 @interface PanelBriefViewCollectionView : NSCollectionView
 @end
@@ -112,19 +129,18 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     PanelBriefViewCollectionViewBackground *m_Background;
     PanelData                          *m_Data;
     vector<short>                       m_FilenamesPxWidths;
+    short                               m_MaxFilenamePxWidth;
     IconsGenerator2                     m_IconsGenerator;
     NSFont                             *m_Font;
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
+    PanelBriefViewColumnsLayout         m_ColumnsLayout;
 }
 
 @synthesize font = m_Font;
 @synthesize regularBackgroundColor;
 @synthesize alternateBackgroundColor;
-//@property (nonatomic) NSColor *regularBackgroundColor;
-//@property (nonatomic) NSColor *alternateBackgroundColor;
+@synthesize columnsLayout = m_ColumnsLayout;
 
-
-//@property (nonatomic) NSFont *font;
 - (void) setData:(PanelData*)_data
 {
     m_Data = _data;
@@ -181,8 +197,18 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
     }
     return self;
+}
+
+-(void) dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -240,29 +266,35 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     for( auto i = 0; i < count; ++i )
         strings[i] = m_Data->EntryAtSortPosition(i).CFDisplayName();
     m_FilenamesPxWidths = FontGeometryInfo::CalculateStringsWidths(strings, m_Font);
+    auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );
+    m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : 50;
 }
 
 - (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-//    return NSMakeSize( self.bounds.size.width / 1, 20);
-    
+    const auto layout = m_ItemLayout;
     const auto index = (int)indexPath.item;
-    assert( index < m_FilenamesPxWidths.size() );
     
-    NSSize sz = NSMakeSize( m_FilenamesPxWidths[index], m_ItemLayout.item_height );
-
-    auto layout = self.layoutConstants;
+    switch( m_ColumnsLayout.mode ) {
+        case PanelBriefViewColumnsLayout::Mode::DynamicWidth: {
+            assert( index < m_FilenamesPxWidths.size() );
+            short width = m_ColumnsLayout.dynamic_width_equal ? m_MaxFilenamePxWidth : m_FilenamesPxWidths[index];
+            width += 2*layout.inset_left + layout.icon_size + layout.inset_right;
+            width = clamp( width, m_ColumnsLayout.dynamic_width_min, m_ColumnsLayout.dynamic_width_max );
+            return NSMakeSize( width, layout.item_height );
+        }
+        case PanelBriefViewColumnsLayout::Mode::FixedWidth: {
+            return NSMakeSize( m_ColumnsLayout.fixed_mode_width, layout.item_height );
+        }
+        case PanelBriefViewColumnsLayout::Mode::FixedAmount: {
+            assert( m_ColumnsLayout.fixed_amount_value != 0);
+            return NSMakeSize( self.bounds.size.width / m_ColumnsLayout.fixed_amount_value, layout.item_height );
+        }
+        default:
+            break;
+    }
     
-//    sz.width += 6;
-    sz.width += 2*layout.inset_left + layout.icon_size + layout.inset_right;
-    
-    if( sz.width < 50 )
-        sz.width = 50;
-    else if( sz.width > 200 )
-        sz.width = 200;
-    
-    return sz;
+    return {50, 20};
 }
 
 - (void) calculateItemLayout
@@ -363,6 +395,16 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
                 break;
             }
         }
+}
+
+- (void)frameDidChange
+{
+    if( m_ColumnsLayout.mode == PanelBriefViewColumnsLayout::Mode::FixedAmount ) {
+//        [m_CollectionView reloadData];
+//        MachTimeBenchmark mtb;
+        [m_CollectionView.collectionViewLayout invalidateLayout];
+//        mtb.ResetMicro();
+    }
 }
 
 @end

@@ -171,7 +171,9 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
+        m_ScrollView.contentView.copiesOnScroll = true;
         [self addSubview:m_ScrollView];
+        
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];

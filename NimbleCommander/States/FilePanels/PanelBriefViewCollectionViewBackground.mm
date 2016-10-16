@@ -33,6 +33,11 @@
     return true;
 }
 
+- (BOOL) wantsDefaultClipping
+{
+    return false;
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
 //    auto aa = [self layer];

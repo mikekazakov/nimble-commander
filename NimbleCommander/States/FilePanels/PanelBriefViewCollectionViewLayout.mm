@@ -1,6 +1,9 @@
 #include "PanelBriefViewCollectionViewLayout.h"
 
 @implementation PanelBriefViewCollectionViewLayout
+{
+    vector<int> m_ColumnPositions;
+}
 
 - (id) init
 {
@@ -62,8 +65,19 @@
         
         i.frame = new_frame;
     }
+    
+    m_ColumnPositions.clear();
+    m_ColumnPositions.reserve( columns.size() );
+    for( auto &v: columns )
+        m_ColumnPositions.emplace_back( v.origin );
 
     return attrs;
+}
+
+- (vector<int>&) columnPositions
+{
+    dispatch_assert_main_queue();
+    return m_ColumnPositions;
 }
 
 @end

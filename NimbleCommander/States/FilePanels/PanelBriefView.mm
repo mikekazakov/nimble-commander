@@ -401,11 +401,41 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (void)frameDidChange
 {
+    // special treating for FixedAmount layout mode
     if( m_ColumnsLayout.mode == PanelBriefViewColumnsLayout::Mode::FixedAmount ) {
-//        [m_CollectionView reloadData];
-//        MachTimeBenchmark mtb;
+        
+        // find a column to stick with
+        const auto &column_positions = m_Layout.columnPositions;
+        optional<int> column_stick;
+        if( !column_positions.empty() ) {
+            const auto visible_rect = m_ScrollView.documentVisibleRect;
+            const auto it = find_if( begin(column_positions), end(column_positions), [=](auto v) {
+                return v != numeric_limits<int>::max() && v >= visible_rect.origin.x;
+            });
+            if( it != end(column_positions) )
+                column_stick = (int)distance( begin(column_positions), it );
+        }
+        
+        // find delta between that column origin and visible rect
+        const auto  previous_scroll_position = m_ScrollView.contentView.bounds.origin;
+        int previous_delta = column_stick ? column_positions[*column_stick] - previous_scroll_position.x : 0;
+        
+        // rearrange stuff now
         [m_CollectionView.collectionViewLayout invalidateLayout];
-//        mtb.ResetMicro();
+        [self layoutSubtreeIfNeeded];
+
+        // find a new delta between sticked column and visible rect
+        NSPoint new_scroll_position = m_ScrollView.contentView.bounds.origin;
+        int new_delta = 0;
+        if(column_stick &&
+           *column_stick < column_positions.size() &&
+           column_positions[*column_stick] != numeric_limits<int>::max() )
+            new_delta = column_positions[*column_stick] - new_scroll_position.x;
+        
+        // if there is the difference - adjust scroll position 
+        if( previous_delta != new_delta )
+            [m_ScrollView.documentView scrollPoint:NSMakePoint(new_scroll_position.x + new_delta - previous_delta,
+                                                                 new_scroll_position.y)];
     }
 }
 

@@ -32,7 +32,7 @@ struct PanelBriefViewColumnsLayout
     };
     Mode    mode                = Mode::FixedAmount;
     short   fixed_mode_width    = 150;
-    short   fixed_amount_value  = 4;
+    short   fixed_amount_value  = 3;
     short   dynamic_width_min   = 100;
     short   dynamic_width_max   = 300;
     bool    dynamic_width_equal = false;

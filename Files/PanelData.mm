@@ -1247,3 +1247,8 @@ void PanelData::__InvariantCheck() const
     assert( m_EntriesByCustomSort.size() <= m_Listing->Count() );
     assert( m_EntriesBySoftFiltering.size() <= m_EntriesByCustomSort.size() );    
 }
+
+int PanelData::RawEntriesCount() const noexcept
+{
+    return m_Listing ? (int)m_Listing->Count() : 0;
+}

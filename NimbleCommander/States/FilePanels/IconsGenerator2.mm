@@ -509,14 +509,14 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
     vector<bool> sweep_mark( m_Icons.size(), true );
     vector<int> entries_to_update;
     
-    const auto count = (int)_pd.SortedDirectoryEntries().size();
+    const auto count = (int)_pd.RawEntriesCount();
     for( auto i = 0; i < count; ++i ) {
-        auto &vd = _pd.VolatileDataAtSortPosition( i );
+        auto &vd = _pd.VolatileDataAtRawPosition( i );
         if( vd.icon != 0 ) {
             auto is_no = vd.icon - 1;
             assert( m_Icons[is_no] );
             
-            auto item = _pd.EntryAtSortPosition( i );
+            auto item = _pd.EntryAtRawPosition( i );
             
             if(m_Icons[is_no]->file_size != item.Size() &&
                m_Icons[is_no]->mtime != item.MTime() ) {
@@ -545,7 +545,7 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
     }
     else {    
         for( auto i: entries_to_update )
-            ImageFor( _pd.EntryAtSortPosition(i), _pd.VolatileDataAtSortPosition(i) );
+            ImageFor( _pd.EntryAtRawPosition(i), _pd.VolatileDataAtRawPosition(i) );
     }
 }
 

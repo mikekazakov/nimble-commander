@@ -172,6 +172,8 @@ public:
     const VFSListing&   Listing() const;
     PanelType                        Type() const noexcept;
     
+    int RawEntriesCount() const noexcept;
+    
     const DirSortIndT&      SortedDirectoryEntries() const;
     
     

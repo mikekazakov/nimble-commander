@@ -59,4 +59,6 @@ struct PanelBriefViewColumnsLayout
 
 - (PanelBriefViewItemLayoutConstants) layoutConstants;
 
+- (PanelView*) panelView;
+
 @end

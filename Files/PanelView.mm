@@ -1237,5 +1237,32 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     }
 }
 
+- (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event
+{
+    if( _sorted_index < 0 )
+        return;
+    
+    const int current_cursor_pos = m_State.CursorPos;
+    const bool window_focused = self.window.isKeyWindow;
+    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(_sorted_index);
+    
+    // any cursor movements or selection changes should be performed only in active window
+    if( window_focused ) {
+        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+        
+        // Select range of items with shift+click.
+        // If clicked item is selected, then deselect the range instead.
+        if( modifier_flags & NSShiftKeyMask )
+            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
+                          last_included:_sorted_index
+                                 select:!click_entry_vd.is_selected()];
+        else if( modifier_flags & NSCommandKeyMask ) // Select or deselect a single item with cmd+click.
+            [self SelectUnselectInRange:_sorted_index
+                          last_included:_sorted_index
+                                 select:!click_entry_vd.is_selected()];
+        
+        [self setCurpos:_sorted_index];        
+    }
+}
 
 @end

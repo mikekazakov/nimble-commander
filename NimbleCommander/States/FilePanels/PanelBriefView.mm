@@ -439,5 +439,10 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     }
 }
 
+- (PanelView*) panelView
+{
+    return objc_cast<PanelView>(self.superview);
+}
+
 @end
 

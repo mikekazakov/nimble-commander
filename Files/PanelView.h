@@ -99,4 +99,10 @@ struct PanelVolatileData;
 
 - (void) startFieldEditorRenaming;
 
+/*
+ * PanelView implementation hooks
+ */
+- (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event; // add hit-test info flags here
+
+
 @end

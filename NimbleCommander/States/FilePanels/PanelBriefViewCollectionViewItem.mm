@@ -1,4 +1,5 @@
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
+#include "../../../Files/PanelView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefView.h"
 
@@ -33,13 +34,14 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 @interface PanelBriefViewItemCarrier : NSView
 
-@property (nonatomic) NSColor       *background;
-@property (nonatomic) NSColor *regularBackgroundColor;
-@property (nonatomic) NSColor *alternateBackgroundColor;
-@property (nonatomic) NSString      *filename;
-@property (nonatomic) NSColor       *filenameColor;
-@property (nonatomic) NSImageRep    *icon;
-@property (nonatomic) PanelBriefViewItemLayoutConstants layoutConstants;
+@property (nonatomic, weak) PanelBriefViewItem                 *controller;
+@property (nonatomic)       NSColor                            *background;
+@property (nonatomic)       NSColor                            *regularBackgroundColor;
+@property (nonatomic)       NSColor                            *alternateBackgroundColor;
+@property (nonatomic)       NSString                           *filename;
+@property (nonatomic)       NSColor                            *filenameColor;
+@property (nonatomic)       NSImageRep                         *icon;
+@property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
 @end
 
 @implementation PanelBriefViewItemCarrier
@@ -51,6 +53,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     NSFont                             *m_Font;
     NSDictionary                       *m_TextAttributes;
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
+    __weak PanelBriefViewItem          *m_Controller;
 }
 
 @synthesize background = m_Background;
@@ -58,6 +61,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @synthesize alternateBackgroundColor;
 @synthesize filename = m_Filename;
 @synthesize layoutConstants = m_LayoutConstants;
+@synthesize controller = m_Controller;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -134,6 +138,18 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void) mouseDown:(NSEvent *)event
 {
+    /// ...
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return;
+    
+    [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
+    
+    // check if focus and selection didn't change - in that case allow renaming 
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
     
     
 }
@@ -151,6 +167,14 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     if( m_TextColor != filenameColor ) {
         m_TextColor = filenameColor;
         [self buildTextAttributes];
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (void) setBackground:(NSColor *)background
+{
+    if( m_Background != background ) {
+        m_Background = background;
         [self setNeedsDisplay:true];
     }
 }
@@ -180,7 +204,9 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
-        self.view = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
+        PanelBriefViewItemCarrier *v = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
+        v.controller = self;
+        self.view = v;
     }
     return self;
 }
@@ -194,9 +220,9 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     m_Item = _item;
     self.carrier.filename = m_Item.NSDisplayName();
-    self.carrier.layoutConstants = self.mainView.layoutConstants;
-    self.carrier.regularBackgroundColor  = self.mainView.regularBackgroundColor;
-    self.carrier.alternateBackgroundColor  = self.mainView.alternateBackgroundColor;
+    self.carrier.layoutConstants = self.briefView.layoutConstants;
+    self.carrier.regularBackgroundColor  = self.briefView.regularBackgroundColor;
+    self.carrier.alternateBackgroundColor  = self.briefView.alternateBackgroundColor;
     [self.carrier setNeedsDisplay:true];
 }
 
@@ -206,25 +232,28 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         return;
     [super setSelected:selected];
     
-    if( selected )
-        self.carrier.background = NSColor.blueColor;
-    else
-        self.carrier.background = nil/*NSColor.yellowColor*/;
-    
-    if( m_Item)
+    self.carrier.background = selected ? NSColor.blueColor : nil;
+    if( m_Item )
         [self updateColoring];
-    [self.carrier setNeedsDisplay:true];
 }
 
-- (PanelBriefView*)mainView
+- (PanelBriefView*)briefView
 {
     return (PanelBriefView*)self.collectionView.delegate;
+}
+
+- (int) itemIndex
+{
+    if( auto c = self.collectionView )
+        if( auto p = [c indexPathForItem:self] )
+            return (int)p.item;
+    return -1;
 }
 
 - (void) updateColoring
 {
     assert( m_Item );
-    const auto &rules = [self.mainView coloringRules];
+    const auto &rules = [self.briefView coloringRules];
     for( const auto &i: rules )
         if( i.filter.Filter(m_Item, m_VD) ) {
             self.carrier.filenameColor = self.selected ? i.focused : i.regular;

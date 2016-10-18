@@ -72,6 +72,9 @@ namespace panel
     };
 }
 
+/**
+ * PanelController is reponder to enable menu events processing
+ */
 @interface PanelController : NSResponder<PanelViewDelegate>
 {
     // Main controller's possessions

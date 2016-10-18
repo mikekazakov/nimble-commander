@@ -46,7 +46,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     
     NSBox                *m_SeparatorLine;
     MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;
-    NSResponder          *m_LastResponder;
+    __weak NSResponder   *m_LastResponder;
     
     bool                m_ShowTabs;
     bool                m_GoToForceActivation;

@@ -444,7 +444,7 @@ static void SetupRatingOverlay(NSView *_background_view)
         for(NSTabViewItem *it in m_MainSplitView.leftTabbedHolder.tabView.tabViewItems)
             if(it.view == controller.view) {
                 [m_MainSplitView.leftTabbedHolder.tabView selectTabViewItem:it];
-                [self.window makeFirstResponder:it.view];
+                [self.window makeFirstResponder:controller.view];
                 return;
             }
     }
@@ -456,7 +456,7 @@ static void SetupRatingOverlay(NSView *_background_view)
         for(NSTabViewItem *it in m_MainSplitView.rightTabbedHolder.tabView.tabViewItems)
             if(it.view == controller.view) {
                 [m_MainSplitView.rightTabbedHolder.tabView selectTabViewItem:it];
-                [self.window makeFirstResponder:it.view];
+                [self.window makeFirstResponder:controller.view];
                 return;
             }
     }

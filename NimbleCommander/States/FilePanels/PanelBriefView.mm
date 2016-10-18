@@ -47,6 +47,11 @@ bool PanelBriefViewColumnsLayout::operator !=(const PanelBriefViewColumnsLayout&
     return self;
 }
 
+- (BOOL)acceptsFirstResponder
+{
+    return false;
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     NSView *sv = self.superview;
@@ -134,6 +139,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     NSFont                             *m_Font;
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
+    __weak PanelView                   *m_PanelView;
 }
 
 @synthesize font = m_Font;
@@ -210,7 +216,27 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 -(void) dealloc
 {
+    if( m_PanelView ) {
+        [m_PanelView removeObserver:self forKeyPath:@"active"];
+    }
     [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if( auto pv = objc_cast<PanelView>(self.superview) ) {
+        m_PanelView = pv;
+        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if( [keyPath isEqualToString:@"active"] ) {
+        bool active = m_PanelView.active;
+        for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
+            [i setPanelActive:active];
+    }    
 }
 
 - (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section

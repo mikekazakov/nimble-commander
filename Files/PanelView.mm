@@ -162,22 +162,34 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (BOOL)acceptsFirstResponder
 {
-    return YES;
+    return true;
 }
 
 - (BOOL)becomeFirstResponder
 {
-    m_ActivationTime = machtime();
-    self.needsDisplay = true;
-    [self.delegate PanelViewDidBecomeFirstResponder:self];
-    m_ReadyToDrag = false;
-    m_LastPotentialRenamingLBDown = -1;
-    return YES;
+//    m_ActivationTime = machtime();
+//    self.needsDisplay = true;
+//    [self.delegate PanelViewDidBecomeFirstResponder:self];
+//    m_ReadyToDrag = false;
+//    m_LastPotentialRenamingLBDown = -1;
+//    
+//    [self.window makeFirstResponder:m_ItemsView];
+//
+    [self willChangeValueForKey:@"active"];
+    [self didChangeValueForKey:@"active"];
+    return true;
 }
 
 - (BOOL)resignFirstResponder
 {
-    self.needsDisplay = true;
+//    self.needsDisplay = true;
+    __weak PanelView* weak_self = self;
+    dispatch_to_main_queue([=]{
+        if( PanelView* strong_self = weak_self ) {
+            [strong_self willChangeValueForKey:@"active"];
+            [strong_self didChangeValueForKey:@"active"];
+        }
+    });
     return YES;
 }
 
@@ -206,12 +218,19 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
                                                    name:NSWindowDidResignKeyNotification
                                                  object:_wnd];
     }
+    
+    if( _wnd == nil ) {
+        [m_ItemsView removeFromSuperview];
+        m_ItemsView = nil;
+    }
 
 }
 
 - (bool)active
 {
-    return self.window == nil ? false : self.window.firstResponder == self;
+    return self.window == nil ?
+        false :
+        self.window.isKeyWindow && self.window.firstResponder == self;
 }
 
 - (void)resetCursorRects
@@ -1166,12 +1185,14 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void) windowDidBecomeKey
 {
-    self.needsDisplay = true;
+    [self willChangeValueForKey:@"active"];
+    [self didChangeValueForKey:@"active"];
 }
 
 - (void) windowDidResignKey
 {
-    self.needsDisplay = true;
+    [self willChangeValueForKey:@"active"];
+    [self didChangeValueForKey:@"active"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -1249,6 +1270,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     // any cursor movements or selection changes should be performed only in active window
     if( window_focused ) {
         const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+        
+        if( !self.active )
+            [self.window makeFirstResponder:self];
         
         // Select range of items with shift+click.
         // If clicked item is selected, then deselect the range instead.

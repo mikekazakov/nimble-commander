@@ -192,6 +192,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     VFSListingItem                  m_Item;
     PanelData::PanelVolatileData    m_VD;
+    bool                            m_PanelActive;
 }
 
 - (void)prepareForReuse
@@ -204,6 +205,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
+        m_PanelActive = false;
         PanelBriefViewItemCarrier *v = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
         v.controller = self;
         self.view = v;
@@ -226,15 +228,37 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     [self.carrier setNeedsDisplay:true];
 }
 
+
+- (void) setPanelActive:(bool)_active
+{
+    if( m_PanelActive != _active ) {
+        m_PanelActive = _active;
+        
+        if( self.selected  ) {
+            self.carrier.background = self.selectedBackgroundColor;
+            if( m_Item )
+                [self updateColoring];
+        }
+    }
+}
+
 - (void)setSelected:(BOOL)selected
 {
     if( self.selected == selected )
         return;
     [super setSelected:selected];
     
-    self.carrier.background = selected ? NSColor.blueColor : nil;
+    self.carrier.background = selected ? self.selectedBackgroundColor : nil;
     if( m_Item )
         [self updateColoring];
+}
+
+- (NSColor*) selectedBackgroundColor
+{
+    if( m_PanelActive )
+        return NSColor.blueColor;
+    else
+        return NSColor.lightGrayColor;
 }
 
 - (PanelBriefView*)briefView
@@ -253,12 +277,15 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) updateColoring
 {
     assert( m_Item );
+    if( self.briefView ) {
     const auto &rules = [self.briefView coloringRules];
+    const bool focus = self.selected && m_PanelActive;
     for( const auto &i: rules )
         if( i.filter.Filter(m_Item, m_VD) ) {
-            self.carrier.filenameColor = self.selected ? i.focused : i.regular;
+            self.carrier.filenameColor = focus ? i.focused : i.regular;
             break;
         }
+    }
 }
 
 - (void) setVD:(PanelData::PanelVolatileData)_vd

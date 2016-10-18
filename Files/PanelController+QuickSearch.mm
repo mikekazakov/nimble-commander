@@ -306,7 +306,6 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
          )
        )
     {
-        [m_View disableCurrentMomentumScroll];
         if(m_QuickSearchIsSoftFiltering)
             return [self HandleQuickSearchSoft:character.decomposedStringWithCanonicalMapping];
         else
@@ -318,14 +317,12 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
             case NSUpArrowFunctionKey:
                 if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
                 {
-                    [m_View disableCurrentMomentumScroll];
                     [self QuickSearchPrevious];
                     return true;
                 }
             case NSDownArrowFunctionKey:
                 if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
                 {
-                    [m_View disableCurrentMomentumScroll];
                     [self QuickSearchNext];
                     return true;
                 }

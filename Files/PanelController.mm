@@ -68,7 +68,6 @@ void panel::GenericCursorPersistance::Restore() const
             m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
         }
     }
-    [m_View setNeedsDisplay];
 }
 
 panel::ActivityTicket::ActivityTicket():
@@ -559,7 +558,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                     panel::GenericCursorPersistance pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size
                     if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
-                        [m_View setNeedsDisplay];
+//                        [m_View setNeedsDisplay];
+                        [m_View volatileDataChanged];
                         pers.Restore();
                     }
                 });
@@ -633,13 +633,15 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 - (void) SelectAllEntries:(bool) _select
 {
     m_Data.CustomFlagsSelectAllSorted(_select);
-    [m_View setNeedsDisplay];
+//    [m_View setNeedsDisplay];
+    [m_View volatileDataChanged];
 }
 
 - (void) invertSelection
 {
     m_Data.CustomFlagsSelectInvert();
-    [m_View setNeedsDisplay];
+//    [m_View setNeedsDisplay];
+    [m_View volatileDataChanged];
 }
 
 - (void) OnPathChanged
@@ -817,7 +819,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
     if( m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, self.ignoreDirectoriesOnSelectionByMask) )
-        [m_View setNeedsDisplay:true];
+        [m_View volatileDataChanged];
 }
 
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path

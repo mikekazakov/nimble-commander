@@ -752,7 +752,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 {
     if( auto item = self.view.item )
         if( m_Data.CustomFlagsSelectAllSortedByExtension(item.HasExtension() ? item.Extension() : "", _select, self.ignoreDirectoriesOnSelectionByMask) )
-            [m_View setNeedsDisplay:true];
+           [m_View volatileDataChanged];
 }
 
 - (IBAction)OnQuickSelectByExtension:(id)sender

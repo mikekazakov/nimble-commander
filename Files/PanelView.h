@@ -43,8 +43,6 @@ struct PanelVolatileData;
 @property (nonatomic, readonly) const PanelData::PanelVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
-@property (nonatomic, readonly) FPSLimitedDrawer* fpsDrawer;
-//@property (nonatomic, readonly) PanelViewPresentation* presentation;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 
 /**
@@ -76,6 +74,8 @@ struct PanelVolatileData;
  */
 - (void) dataUpdated;
 
+- (void) volatileDataChanged;
+
 - (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 - (rapidjson::StandaloneValue) encodeRestorableState;
@@ -88,8 +88,6 @@ struct PanelVolatileData;
  * _text can be nil.
  */
 - (void) setQuickSearchPrompt:(NSString*)_text;
-
-- (void) disableCurrentMomentumScroll;
 
 /**
  * return a number of item at specified point.

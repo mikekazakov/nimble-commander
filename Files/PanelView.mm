@@ -65,12 +65,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
     atomic_ullong               m_FieldRenamingRequestTicket; // used for delayed action to ensure that click was single, not double or more
     
-    double                      m_ScrollDY;
-    
     bool                        m_ReadyToDrag;
     NSPoint                     m_LButtonDownPos;
-    bool                        m_IsCurrentlyMomentumScroll;
-    bool                        m_DisableCurrentMomentumScroll;
     
     __weak id<PanelViewDelegate> m_Delegate;
     nanoseconds                 m_ActivationTime; // time when view did became a first responder
@@ -78,15 +74,11 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     bool                        m_DraggingOver;
     int                         m_DraggingOverItemAtPosition;
     
-    FPSLimitedDrawer           *m_FPSLimitedDrawer;
-    
     vector<int>                 m_ContextMenuHighlights;
     
     
     PanelBriefView             *m_ItemsView;
 }
-
-@synthesize fpsDrawer = m_FPSLimitedDrawer;
 
 - (id)initWithFrame:(NSRect)frame
 {
@@ -96,14 +88,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
         m_FieldRenamingRequestTicket = 0;
-        m_ScrollDY = 0.0;
-        m_DisableCurrentMomentumScroll = false;
-        m_IsCurrentlyMomentumScroll = false;
         m_LastPotentialRenamingLBDown = -1;
         m_DraggingOver = false;
         m_DraggingOverItemAtPosition = -1;
-        m_FPSLimitedDrawer = [[FPSLimitedDrawer alloc] initWithView:self];
-        m_FPSLimitedDrawer.fps = GlobalConfig().GetInt(g_ConfigMaxFPS);
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -231,11 +218,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return self.window == nil ?
         false :
         self.window.isKeyWindow && self.window.firstResponder == self;
-}
-
-- (void)resetCursorRects
-{
-    [self addCursorRect:self.frame cursor:NSCursor.arrowCursor];
 }
 
 //- (void)drawRect:(NSRect)dirtyRect
@@ -515,7 +497,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 - (void) OnCursorPositionChanged
 {
     dispatch_assert_main_queue();
-    [m_FPSLimitedDrawer invalidate];
     [m_ItemsView setCursorPosition:m_State.CursorPos];
     
     if(id<PanelViewDelegate> del = self.delegate)
@@ -812,7 +793,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_State.Data->CustomFlagsSelectSorted(i, _select);
     
     [m_ItemsView syncVolatileData];
-    [self setNeedsDisplay];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end
@@ -915,7 +895,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //        [self OnCursorPositionChanged];
     }
     
-    [self disableCurrentMomentumScroll];
     [self discardFieldEditor];
     [self setHeaderTitle:self.headerTitleForPanel];
 //    m_Presentation->OnDirectoryChanged();
@@ -1124,16 +1103,15 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     [m_ItemsView setCursorPosition:m_State.CursorPos];
 }
 
+- (void) volatileDataChanged
+{
+    [m_ItemsView syncVolatileData];
+}
+
 - (void) setQuickSearchPrompt:(NSString*)_text
 {
     [self setHeaderTitle:_text != nil ? _text : self.headerTitleForPanel];
     [self setNeedsDisplay];
-}
-
-- (void) disableCurrentMomentumScroll
-{
-    if(m_IsCurrentlyMomentumScroll)
-        m_DisableCurrentMomentumScroll = true;
 }
 
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;

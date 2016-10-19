@@ -216,9 +216,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 -(void) dealloc
 {
-    if( m_PanelView ) {
-        [m_PanelView removeObserver:self forKeyPath:@"active"];
-    }
+    [m_PanelView removeObserver:self forKeyPath:@"active"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -227,13 +225,14 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     if( auto pv = objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+        [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if( [keyPath isEqualToString:@"active"] ) {
-        bool active = m_PanelView.active;
+        const bool active = m_PanelView.active;
         for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
             [i setPanelActive:active];
     }    
@@ -265,6 +264,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         
         [item setVD:vd];
         [item setIcon:icon];
+        [item setPanelActive:m_PanelView.active];
     }
     
 //    - (NSImageRep*) itemRequestsIcon:(PanelBriefViewItem*)_item;

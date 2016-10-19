@@ -198,7 +198,9 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    
+    m_Item = VFSListingItem{};
+    m_VD = PanelData::PanelVolatileData{};
+    m_PanelActive = false;
 }
 
 - (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil

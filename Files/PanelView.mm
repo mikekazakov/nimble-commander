@@ -18,6 +18,7 @@
 #include "ActionsShortcutsManager.h"
 
 #include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
+#include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
 
@@ -78,6 +79,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     
     PanelBriefView             *m_ItemsView;
+    PanelViewHeader            *m_HeaderView;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -112,8 +114,16 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
         m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ItemsView];
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        
+        m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
+        m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_HeaderView];
+        
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
+//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_HeaderView]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
     }
     

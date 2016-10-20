@@ -87,7 +87,7 @@ struct PanelVolatileData;
 /**
  * _text can be nil.
  */
-- (void) setQuickSearchPrompt:(NSString*)_text;
+- (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count;
 
 /**
  * return a number of item at specified point.

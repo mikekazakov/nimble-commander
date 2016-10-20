@@ -255,15 +255,16 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     MachTimeBenchmark mtb;
     if( m_Data ) {
         const auto index = (int)indexPath.item;
-        auto vfs_item = m_Data->EntryAtSortPosition(index);
-        [item setItem:vfs_item];
-        
-        auto &vd = m_Data->VolatileDataAtSortPosition(index);
-        
-        NSImageRep*icon = m_IconsGenerator.ImageFor(vfs_item, vd);
-        
-        [item setVD:vd];
-        [item setIcon:icon];
+        if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {
+            [item setItem:vfs_item];
+            
+            auto &vd = m_Data->VolatileDataAtSortPosition(index);
+            
+            NSImageRep*icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+            
+            [item setVD:vd];
+            [item setIcon:icon];
+        }
         [item setPanelActive:m_PanelView.active];
     }
     

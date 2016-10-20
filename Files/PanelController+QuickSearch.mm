@@ -139,7 +139,7 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     if(m_Data.ClearTextFiltering())
         pers.Restore();
     
-    m_View.quickSearchPrompt = nil;
+    [m_View setQuickSearchPrompt:nil withMatchesCount:0];
     [m_View dataUpdated]; // need to call only when something actually changed
 }
 
@@ -194,14 +194,16 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     if(m_QuickSearchTypingView)
     {
         int total = (int)m_Data.EntriesBySoftFiltering().size();
-        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
+        [m_View setQuickSearchPrompt:m_Data.SoftFiltering().text withMatchesCount:total];
+//        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
         dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
             if(PanelController *sself = wself)
                 if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
-                    sself->m_View.quickSearchPrompt = nil;
+                    [sself->m_View setQuickSearchPrompt:nil withMatchesCount:0];
+//                    sself->m_View.quickSearchPrompt = nil;
                 }
         });
     }
@@ -215,13 +217,15 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     
     auto filtering = m_Data.HardFiltering();
     if(!filtering.text.text) {
-        m_View.quickSearchPrompt = nil;
+        [m_View setQuickSearchPrompt:nil withMatchesCount:0];
+//        m_View.quickSearchPrompt = nil;
     }
     else {
         int total = (int)m_Data.SortedDirectoryEntries().size();
         if(total > 0 && m_Data.Listing().IsDotDot(0))
             total--;
-        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
+//        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
+        [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
     }
 }
 

@@ -219,6 +219,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     if( _wnd == nil ) {
         [m_ItemsView removeFromSuperview];
         m_ItemsView = nil;
+        
+        [m_HeaderView removeFromSuperview];
+        m_HeaderView = nil;
     }
 
 }
@@ -1118,10 +1121,13 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     [m_ItemsView syncVolatileData];
 }
 
-- (void) setQuickSearchPrompt:(NSString*)_text
+- (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count
 {
-    [self setHeaderTitle:_text != nil ? _text : self.headerTitleForPanel];
-    [self setNeedsDisplay];
+//    [self setHeaderTitle:_text != nil ? _text : self.headerTitleForPanel];
+//    [self setNeedsDisplay];
+    m_HeaderView.searchPrompt = _text;
+    m_HeaderView.searchMatches = _count;
+    
 }
 
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
@@ -1196,12 +1202,13 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void) setHeaderTitle:(NSString *)headerTitle
 {
-//    dispatch_assert_main_queue();
-//    if( ![m_HeaderTitle isEqualToString:headerTitle] ) {
-//        m_HeaderTitle = headerTitle;
+    dispatch_assert_main_queue();
+    if( m_HeaderTitle != headerTitle ) {
+        m_HeaderTitle = headerTitle;
 //        if( m_Presentation )
 //            m_Presentation->OnPanelTitleChanged();
-//    }
+        [m_HeaderView setPath:m_HeaderTitle];        
+    }
 }
 
 - (NSString *) headerTitle

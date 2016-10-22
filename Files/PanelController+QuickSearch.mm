@@ -100,31 +100,45 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
     return s.decomposedStringWithCanonicalMapping;
 }
 
-static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
+//static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
+//{
+//    if(_matches == 0)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Not found | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 1)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"1 match | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 2)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"2 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 3)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"3 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 4)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"4 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 5)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"5 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 6)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"6 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 7)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"7 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 8)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"8 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else if(_matches == 9)
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"9 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+//    else
+//        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%1$@ matches | %2$@", @"FilePanelsQuickSearch", ""), [NSNumber numberWithInt:_matches], _string];
+//}
+
+NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
 {
-    if(_matches == 0)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Not found | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 1)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"1 match | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 2)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"2 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 3)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"3 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 4)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"4 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 5)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"5 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 6)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"6 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 7)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"7 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 8)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"8 matches | %@", @"FilePanelsQuickSearch", ""), _string];
-    else if(_matches == 9)
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"9 matches | %@", @"FilePanelsQuickSearch", ""), _string];
+    if( !_key )
+        return _str;
+    
+    if( !IsBackspace(_key) )
+        _str = _str ? [_str stringByAppendingString:_key] : _key;
     else
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%1$@ matches | %2$@", @"FilePanelsQuickSearch", ""), [NSNumber numberWithInt:_matches], _string];
+        _str = _str.length > 0 ? RemoveLastCharacterWithNormalization(_str) : nil;
+    
+    return _str;
 }
+
 
 @implementation PanelController (QuickSearch)
 
@@ -146,56 +160,55 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
 - (bool)HandleQuickSearchSoft: (NSString*) _key
 {
     nanoseconds currenttime = machtime();
-    if(_key != nil)
-    {
-        // update soft filtering
-        auto filtering = m_Data.SoftFiltering();
 
-        if(!IsBackspace(_key))
-        {
-            if(m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime ||
-               filtering.text == nil)
-            {
-                filtering.text = _key; // flush
-                m_QuickSearchOffset = 0;
-            }
-            else
-                filtering.text = [filtering.text stringByAppendingString:_key]; // append
-        }
-        else
-        {
-            if(filtering.text != nil && filtering.text.length > 0 )
-                filtering.text = RemoveLastCharacterWithNormalization(filtering.text);
-            else
-                return false;
-            
-            if(filtering.text.length == 0) {
-                [self QuickSearchClearFiltering];
-                return true;
-            }
-        }
-        
-        filtering.type = m_QuickSearchWhere;
-        filtering.ignoredotdot = false;
-        m_Data.SetSoftFiltering(filtering);
-    }
-    m_QuickSearchLastType = currenttime;
+    // update soft filtering
+    NSString *text = m_Data.SoftFiltering().text;
+    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
+        text = nil;
     
-    if(m_Data.SoftFiltering().text == nil)
+    text = ModifyStringByKeyDownString(text, _key);
+    if( !text  )
         return false;
     
-    if(!m_Data.EntriesBySoftFiltering().empty())
-    {
+    if( text.length == 0 ) {
+        [self QuickSearchClearFiltering];
+        return true;
+    }
+    
+    [self SetQuickSearchSoft:text];
+
+    return true;
+}
+
+- (void)SetQuickSearchSoft:(NSString*) _text
+{
+    if( !_text )
+        return;
+    
+    nanoseconds currenttime = machtime();
+    
+    // update soft filtering
+    auto filtering = m_Data.SoftFiltering();
+    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
+        m_QuickSearchOffset = 0;
+    
+    filtering.text = _text;
+    filtering.type = m_QuickSearchWhere;
+    filtering.ignoredotdot = false;
+    m_Data.SetSoftFiltering(filtering);
+    
+    m_QuickSearchLastType = currenttime;
+    
+    if( !m_Data.EntriesBySoftFiltering().empty() ) {
         if(m_QuickSearchOffset >= m_Data.EntriesBySoftFiltering().size())
             m_QuickSearchOffset = (unsigned)m_Data.EntriesBySoftFiltering().size() - 1;
         m_View.curpos = m_Data.EntriesBySoftFiltering()[m_QuickSearchOffset];
     }
     
-    if(m_QuickSearchTypingView)
-    {
+    if(m_QuickSearchTypingView) {
         int total = (int)m_Data.EntriesBySoftFiltering().size();
         [m_View setQuickSearchPrompt:m_Data.SoftFiltering().text withMatchesCount:total];
-//        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
+        //        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
         
         // automatically remove prompt after g_FastSeachDelayTresh
         __weak PanelController *wself = self;
@@ -203,11 +216,10 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
             if(PanelController *sself = wself)
                 if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
                     [sself->m_View setQuickSearchPrompt:nil withMatchesCount:0];
-//                    sself->m_View.quickSearchPrompt = nil;
+                    //                    sself->m_View.quickSearchPrompt = nil;
                 }
         });
     }
-    return true;
 }
 
 - (void)QuickSearchHardUpdateTypingUI
@@ -229,36 +241,30 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     }
 }
 
-- (bool)HandleQuickSearchHard: (NSString*) _key
+- (bool)HandleQuickSearchHard:(NSString*) _key
+{
+    NSString *text = m_Data.HardFiltering().text.text;
+    
+    text = ModifyStringByKeyDownString(text, _key);
+    if( text == nil )
+        return false;
+
+    if( text.length == 0 ) {
+        [self QuickSearchClearFiltering];
+        return true;
+    }
+
+    [self SetQuickSearchHard:text];
+    
+    return true;
+}
+
+- (void)SetQuickSearchHard:(NSString*)_text
 {
     auto filtering = m_Data.HardFiltering();
-    
-    if(_key != nil)
-    {
-        // update hard filtering
-        if(!IsBackspace(_key))
-        {
-            if(filtering.text.text == nil)
-                filtering.text.text = _key;
-            else
-                filtering.text.text = [filtering.text.text stringByAppendingString:_key];
-        }
-        else
-        {
-            if(filtering.text.text != nil && filtering.text.text.length > 0 )
-                filtering.text.text = RemoveLastCharacterWithNormalization(filtering.text.text);
-            else
-                return false;
-            
-            if(filtering.text.text.length == 0) {
-                [self QuickSearchClearFiltering];
-                return true;
-            }
-        }
-    }
-    
-    if(filtering.text.text == nil)
-        return false;
+    filtering.text.text = _text;
+    if( filtering.text.text == nil )
+        return;
     
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
@@ -277,8 +283,14 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
     
     [m_View dataUpdated];
     [self QuickSearchHardUpdateTypingUI];
-    
-    return true;
+}
+
+- (void) QuickSearchSetCriteria:(NSString *)_text
+{
+    if( m_QuickSearchIsSoftFiltering )
+        [self SetQuickSearchSoft:_text];
+    else
+        [self SetQuickSearchHard:_text];
 }
 
 - (void)QuickSearchPrevious
@@ -308,25 +320,21 @@ static NSString *PromptForMatchesAndString(unsigned _matches, NSString *_string)
             ( !empty_text && IsSpace(character) ) ||
             IsBackspace(character)
          )
-       )
-    {
+       ) {
         if(m_QuickSearchIsSoftFiltering)
             return [self HandleQuickSearchSoft:character.decomposedStringWithCanonicalMapping];
         else
             return [self HandleQuickSearchHard:character.decomposedStringWithCanonicalMapping];
     }
-    else if([character length] == 1)
-        switch([character characterAtIndex:0])
-        {
+    else if( character.length == 1 )
+        switch([character characterAtIndex:0]) {
             case NSUpArrowFunctionKey:
-                if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
-                {
+                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
                     [self QuickSearchPrevious];
                     return true;
                 }
             case NSDownArrowFunctionKey:
-                if(IsQuickSearchModifierForArrows(modif, m_QuickSearchMode))
-                {
+                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
                     [self QuickSearchNext];
                     return true;
                 }

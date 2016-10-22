@@ -21,6 +21,8 @@
  */
 - (bool) QuickSearchProcessKeyDown:(NSEvent *)event;
 
+- (void) QuickSearchSetCriteria:(NSString *)_text;
+
 /**
  * Updates textual info after panel data changed.
  */

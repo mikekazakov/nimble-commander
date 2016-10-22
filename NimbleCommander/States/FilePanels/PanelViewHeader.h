@@ -1,6 +1,6 @@
 #pragma once
 
-@interface PanelViewHeader : NSView
+@interface PanelViewHeader : NSView<NSSearchFieldDelegate>
 
 - (void) setPath:(NSString*)_path;
 

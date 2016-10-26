@@ -465,6 +465,7 @@
 		CF844DBF1D43231600C735DB /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
+		CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
@@ -1432,6 +1433,8 @@
 		CF8432011862AB830062B318 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+Menu.mm"; sourceTree = "<group>"; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
 		CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeader.mm; path = NimbleCommander/States/FilePanels/PanelViewHeader.mm; sourceTree = SOURCE_ROOT; };
+		CF84C8F61DBB2AC300B4E888 /* PanelListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListView.h; path = NimbleCommander/States/FilePanels/PanelListView.h; sourceTree = SOURCE_ROOT; };
+		CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListView.mm; path = NimbleCommander/States/FilePanels/PanelListView.mm; sourceTree = SOURCE_ROOT; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailedVolumeInformationSheetController.h; sourceTree = "<group>"; };
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DetailedVolumeInformationSheetController.mm; sourceTree = "<group>"; };
 		CF8629211B956B7A00B33CFD /* Sparkle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sparkle.h; path = 3rd_party/SparkleEmbedded/Sparkle/Sparkle.h; sourceTree = "<group>"; };
@@ -1892,6 +1895,7 @@
 				CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */,
 				CF5D25EA1DB6040C0073156F /* Old */,
 				CF5D25E31DB604060073156F /* Brief */,
+				CF84C8EF1DBB2AA900B4E888 /* List */,
 				CF5D25EB1DB6043D0073156F /* Helpers */,
 			);
 			name = Presentation;
@@ -2294,6 +2298,15 @@
 				CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CF84C8EF1DBB2AA900B4E888 /* List */ = {
+			isa = PBXGroup;
+			children = (
+				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
+				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
+			);
+			name = List;
 			sourceTree = "<group>";
 		};
 		CF859A9116FC10180081183E /* DetailedVolumeInformationSheetController */ = {
@@ -3890,6 +3903,7 @@
 				CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */,
 				CF1E3D2A1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,
+				CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */,
 				CF876D4C1D530F46009C0CCE /* InternalViewerController.mm in Sources */,
 				CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */,
 				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,

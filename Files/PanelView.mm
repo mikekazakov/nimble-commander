@@ -18,6 +18,7 @@
 #include "ActionsShortcutsManager.h"
 
 #include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
+#include "../NimbleCommander/States/FilePanels/PanelListView.h"
 #include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
@@ -78,7 +79,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     vector<int>                 m_ContextMenuHighlights;
     
     
-    PanelBriefView             *m_ItemsView;
+//    PanelBriefView             *m_ItemsView;
+    PanelListView              *m_ItemsView;
     PanelViewHeader            *m_HeaderView;
 }
 
@@ -111,7 +113,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
         
         
-        m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
+        //m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
+        m_ItemsView = [[PanelListView alloc] initWithFrame:frame];
         m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ItemsView];
         

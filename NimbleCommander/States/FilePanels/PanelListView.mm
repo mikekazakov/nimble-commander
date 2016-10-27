@@ -37,10 +37,16 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 @interface PanelListViewRowView : NSTableRowView
 
-@property (nonatomic) VFSListingItem item;
+- (id) initWithItem:(VFSListingItem)_item atIndex:(int)index;
+
+@property (nonatomic, readonly) VFSListingItem item;
 @property (nonatomic) PanelData::PanelVolatileData vd;
 @property (nonatomic, weak) PanelListView *listView;
 @property (nonatomic, readonly) NSColor *rowColor;
+@property (nonatomic) bool panelActive;
+@property (nonatomic, readonly) int itemIndex;
+
+//- (void) setPanelActive:(bool)_active;
 
 @end
 
@@ -100,12 +106,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void) buildPresentation
 {
-    NSColor *text_color = NSColor.blackColor;
-    PanelListViewRowView* row_view = (PanelListViewRowView*)self.superview;
-    PanelListView *list_view = row_view.listView;
+    auto text_color = NSColor.blackColor;
+    const auto row_view = (PanelListViewRowView*)self.superview;
+    const auto list_view = row_view.listView;
     const auto &rules = row_view.listView.coloringRules;
-//    const bool focus = self.selected && m_PanelActive;
-    const bool focus = row_view.selected;
+    const auto focus = row_view.selected && row_view.panelActive;
     const auto item = row_view.item;
     const auto vd = row_view.vd;
     for( const auto &i: rules )
@@ -129,32 +134,42 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     VFSListingItem                  m_Item;
     PanelData::PanelVolatileData    m_VD;
     NSColor*                        m_RowColor;
+    bool                            m_PanelActive;
+    int                             m_ItemIndex;
 }
-
+//@property (nonatomic) int itemIndex;
 @synthesize rowColor = m_RowColor;
+@synthesize itemIndex = m_ItemIndex;
+@synthesize item = m_Item;
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id) initWithItem:(VFSListingItem)_item atIndex:(int)index;
+//- (id) initWithFrame:(NSRect)frameRect
 {
-    self = [super initWithFrame:frameRect];
+    self = [super initWithFrame:NSRect()];
     if( self ) {
+        m_Item = _item;
+        m_ItemIndex = index;
         m_RowColor = NSColor.blackColor;
         self.selected = false;
         [self updateBackgroundColor];
+        m_PanelActive = false;
     }
     return self;
 }
 
-- (void) setItem:(VFSListingItem)item
+- (void) setPanelActive:(bool)panelActive
 {
-    if( m_Item != item ) {
-        m_Item = item;
-        /// ...
+    if( m_PanelActive != panelActive ) {
+        m_PanelActive = panelActive;
+        
+        if( self.selected )
+            [self updateBackgroundColor];    
     }
 }
 
-- (VFSListingItem) item
+- (bool) panelActive
 {
-    return m_Item;
+    return m_PanelActive;
 }
 
 - (void) setVd:(PanelData::PanelVolatileData)vd
@@ -173,7 +188,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void) setSelected:(BOOL)selected
 {
-//    int a = 10;
     if( selected != self.selected ) {
         [super setSelected:selected];
         [self updateBackgroundColor];
@@ -183,11 +197,13 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void) updateBackgroundColor
 {
+//@property(getter=isEmphasized) BOOL emphasized;    
+    
     if( self.selected ) {
-        m_RowColor = NSColor.blueColor;
+        m_RowColor = m_PanelActive ? NSColor.blueColor : NSColor.lightGrayColor;
     }
     else {
-        m_RowColor = NSColor.controlAlternatingRowBackgroundColors[0];
+        m_RowColor = m_ItemIndex % 2 ? NSColor.controlAlternatingRowBackgroundColors[1] : NSColor.controlAlternatingRowBackgroundColors[0];
     }
     
     for( NSView *w in self.subviews )
@@ -263,7 +279,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     NSScrollView                       *m_ScrollView;
     PanelListViewTableView             *m_TableView;
-    PanelData                          *m_Data;    
+    PanelData                          *m_Data;
+    __weak PanelView                   *m_PanelView;    
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -275,10 +292,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         m_ScrollView.wantsLayer = true;
         m_ScrollView.layer.drawsAsynchronously = true;
         m_ScrollView.contentView.copiesOnScroll = true;
-//        m_ScrollView.canDrawSubviewsIntoLayer = true;
         m_ScrollView.hasVerticalScroller = true;
-//        @property BOOL hasHorizontalScroller;
-//        @property BOOL canDrawSubviewsIntoLayer NS_AVAILABLE_MAC(10_9);
         [self addSubview:m_ScrollView];
     
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
@@ -291,9 +305,10 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         m_TableView.allowsMultipleSelection = false;
         m_TableView.allowsEmptySelection = false;
         m_TableView.allowsColumnSelection = false;
+        m_TableView.usesAlternatingRowBackgroundColors = true;
         
         NSTableColumn *col1 = [[NSTableColumn alloc] initWithIdentifier:@"A"];
-        col1.title = @"Abra";
+        col1.title = @"Name";
         col1.width = 200;
         [m_TableView addTableColumn:col1];
 
@@ -313,6 +328,33 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         
     }
     return self;
+}
+
+-(void) dealloc
+{
+    [m_PanelView removeObserver:self forKeyPath:@"active"];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if( auto pv = objc_cast<PanelView>(self.superview) ) {
+        m_PanelView = pv;
+        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
+        [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if( [keyPath isEqualToString:@"active"] ) {
+        const bool active = m_PanelView.active;
+//        for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
+//            [i setPanelActive:active];
+        [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
+            rowView.panelActive = active;
+        }];
+    }
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -357,10 +399,12 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         if( auto item = m_Data->EntryAtSortPosition((int)row) ) {
             auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
             
-            PanelListViewRowView *row_view = [[PanelListViewRowView alloc] initWithFrame:NSRect()];
+            PanelListViewRowView *row_view = [[PanelListViewRowView alloc] initWithItem:item atIndex:(int)row];
             row_view.listView = self;
-            row_view.item = item;
+//            row_view.item = item;
+//            row_view.itemIndex = (int)row;
             row_view.vd = vd;
+            row_view.panelActive = m_PanelView.active;
             return row_view;
         }
     }
@@ -398,9 +442,9 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void)frameDidChange
 {
-    MachTimeBenchmark mtb;
+//    MachTimeBenchmark mtb;
     [m_ScrollView layoutSubtreeIfNeeded];
-    mtb.ResetMicro();
+//    mtb.ResetMicro();
     
 }
 

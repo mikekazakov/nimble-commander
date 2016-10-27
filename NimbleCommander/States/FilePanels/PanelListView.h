@@ -3,7 +3,7 @@
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
-
+class PanelListViewGeometry;
 
 @interface PanelListView: NSView<NSTableViewDataSource, NSTableViewDelegate>
 
@@ -14,6 +14,10 @@ struct PanelViewPresentationItemsColoringRule;
 - (void) syncVolatileData;
 - (void) setData:(PanelData*)_data;
 
-- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
+- (const vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
+
+- (const PanelListViewGeometry&) geometry;
+
+- (NSFont*) font;
 
 @end

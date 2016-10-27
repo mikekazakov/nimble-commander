@@ -5,6 +5,7 @@
 #include "List/PanelListViewNameView.h"
 #include "List/PanelListViewRowView.h"
 #include "List/PanelListViewTableView.h"
+#include "List/PanelListViewGeometry.h"
 #include "PanelListView.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
@@ -14,23 +15,27 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     NSScrollView                       *m_ScrollView;
     PanelListViewTableView             *m_TableView;
     PanelData                          *m_Data;
-    __weak PanelView                   *m_PanelView;    
+    __weak PanelView                   *m_PanelView;
+    PanelListViewGeometry               m_Geometry;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_Geometry = PanelListViewGeometry( [NSFont systemFontOfSize:13] );
+        
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
         m_ScrollView.layer.drawsAsynchronously = true;
         m_ScrollView.contentView.copiesOnScroll = true;
         m_ScrollView.hasVerticalScroller = true;
+        m_ScrollView.borderType = NSNoBorder;
         [self addSubview:m_ScrollView];
     
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-1)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
 
         m_TableView = [[PanelListViewTableView alloc] initWithFrame:frameRect];
@@ -40,6 +45,22 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         m_TableView.allowsEmptySelection = false;
         m_TableView.allowsColumnSelection = false;
         m_TableView.usesAlternatingRowBackgroundColors = true;
+        m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
+        m_TableView.rowHeight = m_Geometry.LineHeight();
+        m_TableView.intercellSpacing = NSMakeSize(0, 0);
+//        @property NSSize intercellSpacing;
+        
+        
+//        @property NSTableViewRowSizeStyle rowSizeStyle NS_AVAILABLE_MAC(10_7);
+//        
+//        /* Returns the effective row size style for the table. If the rowSizeStyle is NSTableViewRowSizeStyleDefault, then this method returns the default size for this particular table.
+//         */
+//        @property (readonly) NSTableViewRowSizeStyle effectiveRowSizeStyle NS_AVAILABLE_MAC(10_7);
+//        
+//        
+//        /* Get and set the rowHeight. The value must be greater than 0. Calling -setRowHeight: with a non-pixel aligning (fractional) value will be forced to a pixel aligning (integral) value. For variable row height tableViews (ones that have the delegate implement -tableView:heightOfRow:), -rowHeight will be used to draw alternating rows past the last row in the tableView. The actual -rectOfRow: is equal to the -rowHeight plus the intercellSpacing.height. The default value is 17.0 for applications linked on 10.5 and higher (the height acceptable for [NSFont systemFontSize]). The default value is 16.0 for 10.4 and lower.
+//         */
+//        @property CGFloat rowHeight;
         
         NSTableColumn *col1 = [[NSTableColumn alloc] initWithIdentifier:@"A"];
         col1.title = @"Name";
@@ -187,7 +208,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //@property (nonatomic, readonly) int itemsInColumn;
 //@property (nonatomic) int cursorPosition;
 
-- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules
+- (const vector<PanelViewPresentationItemsColoringRule>&) coloringRules
 {
 //    return g_ColoringRules;
     static vector<PanelViewPresentationItemsColoringRule> rules;
@@ -200,6 +221,16 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         rules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     });
     return rules;
+}
+
+- (const PanelListViewGeometry&) geometry
+{
+    return m_Geometry;
+}
+
+- (NSFont*) font
+{
+    return [NSFont systemFontOfSize:13];
 }
 
 @end

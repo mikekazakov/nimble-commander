@@ -101,7 +101,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     const auto bounds = self.bounds;
 
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     
     if( m_Background  ) {
         CGContextSetFillColorWithColor(context, m_Background.CGColor);

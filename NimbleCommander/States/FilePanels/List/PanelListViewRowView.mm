@@ -32,13 +32,25 @@
     return self;
 }
 
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) wantsDefaultClipping
+{
+    return false;
+}
+
 - (void) setPanelActive:(bool)panelActive
 {
     if( m_PanelActive != panelActive ) {
         m_PanelActive = panelActive;
         
-        [self updateColors];
-        [self notifySubviewsToRebuildPresentation];        
+        if( self.selected ) {
+            [self updateColors];
+            [self notifySubviewsToRebuildPresentation];
+        }
     }
 }
 
@@ -93,7 +105,7 @@
 
 - (void) drawRect:(NSRect)dirtyRect
 {
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     CGContextSetFillColorWithColor(context, m_RowColor.CGColor);
     CGContextFillRect(context, NSRectToCGRect(dirtyRect));
 }

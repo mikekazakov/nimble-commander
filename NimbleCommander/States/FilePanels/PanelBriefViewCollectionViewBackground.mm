@@ -41,7 +41,7 @@
 - (void)drawRect:(NSRect)dirtyRect
 {
 //    auto aa = [self layer];
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
 //
 //    CGContextSetFillColorWithColor(context, NSColor.yellowColor.CGColor);
 //    CGContextFillRect(context,

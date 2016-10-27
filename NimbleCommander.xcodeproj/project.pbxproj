@@ -309,6 +309,7 @@
 		CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */; };
 		CF56C2B91DC1934D00F0DF0F /* PanelListViewRowView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */; };
 		CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */; };
+		CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */; };
 		CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -1319,6 +1320,8 @@
 		CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewRowView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewRowView.mm; sourceTree = SOURCE_ROOT; };
 		CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableView.h; sourceTree = SOURCE_ROOT; };
 		CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableView.mm; sourceTree = SOURCE_ROOT; };
+		CF56C2C11DC1A33300F0DF0F /* PanelListViewGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewGeometry.h; path = NimbleCommander/States/FilePanels/List/PanelListViewGeometry.h; sourceTree = SOURCE_ROOT; };
+		CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewGeometry.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewGeometry.mm; sourceTree = SOURCE_ROOT; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
 		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
@@ -2312,14 +2315,16 @@
 		CF84C8EF1DBB2AA900B4E888 /* List */ = {
 			isa = PBXGroup;
 			children = (
+				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
+				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
+				CF56C2C11DC1A33300F0DF0F /* PanelListViewGeometry.h */,
+				CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */,
 				CF56C2B21DC1934C00F0DF0F /* PanelListViewNameView.h */,
 				CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */,
 				CF56C2B41DC1934D00F0DF0F /* PanelListViewRowView.h */,
 				CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */,
 				CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */,
 				CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */,
-				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
-				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
 			);
 			name = List;
 			sourceTree = "<group>";
@@ -3764,6 +3769,7 @@
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
 				CFED5A201C4F8D3200BFCB5C /* TermView.mm in Sources */,
 				CFED5A191C4F8D3200BFCB5C /* TermParser.mm in Sources */,
+				CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */,
 				CFC5122116C4BD3D00D247EE /* main.cpp in Sources */,
 				CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFC5122816C4BD3D00D247EE /* AppDelegate.mm in Sources */,

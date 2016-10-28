@@ -14,7 +14,7 @@
 #include "../../Viewer/BigFileViewSheet.h"
 #include "../../Viewer/InternalViewerWindowController.h"
 #include "../../Core/SearchForFiles.h"
-#include "../../Files/ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "../../Files/PanelAux.h"
 #include "../../Files/Config.h"
 #include "../../Bootstrap/ActivationManager.h"

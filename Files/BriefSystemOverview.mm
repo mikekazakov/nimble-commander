@@ -10,7 +10,7 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NSView+Sugar.h>
-#include "ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "BriefSystemOverview.h"
 
 static NSTextField *CreateStockTF()

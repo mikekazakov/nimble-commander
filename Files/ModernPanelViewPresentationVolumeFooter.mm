@@ -7,8 +7,8 @@
 //
 
 #include <Utility/FontExtras.h>
+#include <Utility/ByteCountFormatter.h>
 #include "ModernPanelViewPresentationVolumeFooter.h"
-#include "ByteCountFormatter.h"
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 

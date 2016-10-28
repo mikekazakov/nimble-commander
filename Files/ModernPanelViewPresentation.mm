@@ -15,7 +15,7 @@
 #include "ModernPanelViewPresentationHeader.h"
 #include "ModernPanelViewPresentationItemsFooter.h"
 #include "ModernPanelViewPresentationVolumeFooter.h"
-#include "ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 
 static const auto g_ConfigShowVolumeBar         = "filePanel.general.showVolumeInformationBar";
 static const auto g_ConfigFontSize              = "filePanel.modern.fontSize";

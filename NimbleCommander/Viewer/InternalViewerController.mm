@@ -2,7 +2,7 @@
 #include "../../Files/ProcessSheetController.h"
 #include "../../Files/Config.h"
 #include "../../Files/SearchInFile.h"
-#include "../../Files/ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "InternalViewerHistory.h"
 #include "InternalViewerController.h"
 

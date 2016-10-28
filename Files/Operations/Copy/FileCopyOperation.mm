@@ -9,7 +9,7 @@
 #include <Utility/PathManip.h>
 #include "FileCopyOperation.h"
 #include "Job.h"
-#include "../../ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "../OperationDialogAlert.h"
 #include "FileAlreadyExistSheetController.h"
 #include "DialogResults.h"

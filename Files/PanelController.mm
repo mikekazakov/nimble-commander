@@ -560,6 +560,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                     // may cause re-sorting if current sorting is by size
                     if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
 //                        [m_View setNeedsDisplay];
+                        [m_View dataUpdated];
                         [m_View volatileDataChanged];
                         pers.Restore();
                     }

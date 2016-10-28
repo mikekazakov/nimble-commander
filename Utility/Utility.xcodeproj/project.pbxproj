@@ -11,6 +11,8 @@
 		CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
 		CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */; };
 		CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
+		CF56C2D11DC3719000F0DF0F /* ByteCountFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */; };
+		CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */; };
 		CF84C8E71DB867F200B4E888 /* Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = CF84C8E61DB867F200B4E888 /* Layout.h */; };
 		CF84C8E91DB867FC00B4E888 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8E81DB867FC00B4E888 /* Layout.mm */; };
 		CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E171C992F2C001D8B02 /* Encodings.h */; };
@@ -63,6 +65,8 @@
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
+		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
+		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
 		CF84C8E61DB867F200B4E888 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = include/Utility/Layout.h; sourceTree = "<group>"; };
 		CF84C8E81DB867FC00B4E888 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = source/Layout.mm; sourceTree = "<group>"; };
 		CF960E0C1C97FA73001D8B02 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +146,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
 				CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
@@ -173,6 +178,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
 				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
@@ -227,6 +233,7 @@
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
 				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
+				CF56C2D11DC3719000F0DF0F /* ByteCountFormatter.h in Headers */,
 				CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */,
 				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
 				CF84C8E71DB867F200B4E888 /* Layout.h in Headers */,
@@ -308,6 +315,7 @@
 				CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */,
+				CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */,
 				CFD62BD01C9A66CF0021EE7F /* ObjcToCppObservingBridge.mm in Sources */,

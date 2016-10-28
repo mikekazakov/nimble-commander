@@ -9,11 +9,11 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/Encodings.h>
 #include <Utility/FontCache.h>
+#include <Utility/ByteCountFormatter.h>
 #include "ClassicPanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
 #include "PanelView.h"
 #include "PanelData.h"
-#include "ByteCountFormatter.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.

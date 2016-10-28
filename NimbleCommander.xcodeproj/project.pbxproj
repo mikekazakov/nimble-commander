@@ -427,8 +427,6 @@
 		CF7C920D1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */; };
 		CF7C93381A0B991500FAE649 /* libMMTabBarView_LIB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C924F1A0B97EC00FAE649 /* libMMTabBarView_LIB.a */; };
-		CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
-		CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
 		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
@@ -675,7 +673,6 @@
 		CFA539DA1D433E2A00C562A7 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
 		CFA539DE1D433E2A00C562A7 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFE09C71B200CE40091ED4F /* Application.mm */; };
 		CFA539DF1D433E2A00C562A7 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */; };
-		CFA539E01D433E2A00C562A7 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CFA539E11D433E2A00C562A7 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CFA539E21D433E2A00C562A7 /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13891BF5E38B001F53FD /* OperationStats.mm */; };
 		CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
@@ -985,7 +982,6 @@
 		CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
 		CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */; };
-		CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */; };
 		CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */; };
 		CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
 		CFF6F3001A13567C00011177 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE38175D981500757DE1 /* MainWindowFilePanelState.mm */; };
@@ -1381,8 +1377,6 @@
 		CF7C920B1A07458900FAE649 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTabBarStyle.h; sourceTree = "<group>"; };
 		CF7C920C1A07458900FAE649 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MMTabBarStyle.mm; sourceTree = "<group>"; };
 		CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView_LIB.xcodeproj; path = 3rd_party/MMTabBarView/MMTabBarView_LIB.xcodeproj; sourceTree = "<group>"; };
-		CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter.mm; sourceTree = "<group>"; };
-		CF7C93BD1A0DF8BA00FAE649 /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
 		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = Operations/Delete/DialogResults.h; sourceTree = "<group>"; };
 		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
@@ -2540,8 +2534,6 @@
 				CF7AB35D18BDC7BA00D71B0D /* ActionsShortcutsManager.mm */,
 				CF0A40191B60BA00002A092B /* BlinkingCaret.h */,
 				CF0A40181B60BA00002A092B /* BlinkingCaret.mm */,
-				CF7C93BD1A0DF8BA00FAE649 /* ByteCountFormatter.h */,
-				CF7C93BC1A0DF8BA00FAE649 /* ByteCountFormatter.mm */,
 				CFB060DC172E6AC4001F6949 /* Common.mm */,
 				CF754D4B1C8F11F800381260 /* Config.cpp */,
 				CF747BCA1C117C280081185B /* Config.h */,
@@ -3494,7 +3486,6 @@
 				CFE3E84D19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF9069901BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
-				CF7C93BF1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
@@ -3711,7 +3702,6 @@
 				CFA539DE1D433E2A00C562A7 /* Application.mm in Sources */,
 				CFA539DF1D433E2A00C562A7 /* AppDelegate+Migration.mm in Sources */,
 				CF56BF571D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
-				CFA539E01D433E2A00C562A7 /* ByteCountFormatter.mm in Sources */,
 				CFA539E11D433E2A00C562A7 /* FileWindow.cpp in Sources */,
 				CFA539E21D433E2A00C562A7 /* OperationStats.mm in Sources */,
 				CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
@@ -3890,7 +3880,6 @@
 				CFFE09C81B200CE40091ED4F /* Application.mm in Sources */,
 				CFA2C0C21C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm in Sources */,
 				CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */,
-				CF7C93BE1A0DF8BA00FAE649 /* ByteCountFormatter.mm in Sources */,
 				CF396AEE173FA8AF00A20C42 /* FileWindow.cpp in Sources */,
 				CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */,
 				CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
@@ -4058,7 +4047,6 @@
 				CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFF6F2F11A13567C00011177 /* ModernPanelViewPresentation.mm in Sources */,
-				CFF6F2F31A13567C00011177 /* ByteCountFormatter.mm in Sources */,
 				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CFF6F2F41A13567C00011177 /* FileWindow.cpp in Sources */,
 				CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */,

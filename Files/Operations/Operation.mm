@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "../AppDelegate.h"
 #include "Operation.h"
 #include "OperationJob.h"

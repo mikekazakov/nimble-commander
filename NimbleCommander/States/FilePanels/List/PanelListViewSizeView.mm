@@ -1,4 +1,4 @@
-#include "../../../ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "../PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"

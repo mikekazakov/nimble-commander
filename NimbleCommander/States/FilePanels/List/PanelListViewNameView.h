@@ -2,6 +2,8 @@
 
 @interface PanelListViewNameView : NSView
 
+@property (nonatomic) NSImageRep *icon;
+
 - (void) setFilename:(NSString*)_filename;
 
 - (void) buildPresentation;

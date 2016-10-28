@@ -26,4 +26,27 @@
 {
 }
 
+//- (void)drawBackgroundInClipRect:(NSRect)clipRect
+//{
+//    
+//    
+//}
+
+//- (void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect {}
+//- (void)highlightSelectionInClipRect:(NSRect)clipRect {}
+//- (void)drawGridInClipRect:(NSRect)clipRect {}
+//- (void)drawBackgroundInClipRect:(NSRect)clipRect {}
+//
+//
+//- (void)display{}
+//- (void)displayIfNeeded{}
+//- (void)displayIfNeededIgnoringOpacity{}
+//- (void)displayRect:(NSRect)rect{}
+//- (void)displayIfNeededInRect:(NSRect)rect{}
+//- (void)displayRectIgnoringOpacity:(NSRect)rect{}
+//- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
+//- (void)drawRect:(NSRect)dirtyRect{}
+//- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
+
+
 @end

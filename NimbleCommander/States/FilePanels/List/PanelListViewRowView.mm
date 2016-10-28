@@ -28,19 +28,20 @@
         self.selected = false;
         [self updateColors];
         m_PanelActive = false;
+//        self.wantsLayer = true;
     }
     return self;
 }
 
-- (BOOL) isOpaque
-{
-    return true;
-}
-
-- (BOOL) wantsDefaultClipping
-{
-    return false;
-}
+//- (BOOL) isOpaque
+//{
+//    return true;
+//}
+//
+//- (BOOL) wantsDefaultClipping
+//{
+//    return false;
+//}
 
 - (void) setPanelActive:(bool)panelActive
 {
@@ -78,6 +79,7 @@
 {
     if( selected != self.selected ) {
         [super setSelected:selected];
+        [self updateLayer];
         [self updateColors];
         [self notifySubviewsToRebuildPresentation];
     }
@@ -89,6 +91,9 @@
         m_RowColor = m_PanelActive ? NSColor.blueColor : NSColor.lightGrayColor;
     else
         m_RowColor = m_ItemIndex % 2 ? NSColor.controlAlternatingRowBackgroundColors[1] : NSColor.controlAlternatingRowBackgroundColors[0];
+//    NSColor *backgroundColor;
+//    self.backgroundColor = m_RowColor;
+//   self.layer.backgroundColor = m_RowColor.CGColor;
     
     if(const auto list_view = self.listView) {
         const auto &rules = list_view.coloringRules;
@@ -103,12 +108,78 @@
     [self setNeedsDisplay:true];
 }
 
+- (void)updateLayer
+{
+    self.layer.backgroundColor = m_RowColor.CGColor;
+//    self.layer.backgroundColor = NSColor.yellowColor.CGColor;
+    
+}
+
+- (BOOL)wantsUpdateLayer {
+    return true;  // Tells NSView to call `updateLayer` instead of `drawRect:`
+}
+
+- (void) addSubview:(NSView *)view
+{
+    if( [view respondsToSelector:@selector(buildPresentation)] ) {
+        [super addSubview: view];
+    }
+    else {
+        int a = 10;
+        
+        
+    }
+    
+}
+
+- (void)addSubview:(NSView *)view positioned:(NSWindowOrderingMode)place relativeTo:(nullable NSView *)otherView
+{
+    /* Fuck off you NSTableView, I'll not accept your fake selection view as my child! */
+}
+
 - (void) drawRect:(NSRect)dirtyRect
 {
-    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-    CGContextSetFillColorWithColor(context, m_RowColor.CGColor);
-    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+//    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+//    CGContextSetFillColorWithColor(context, m_RowColor.CGColor);
+//    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
 }
+
+//- (void)display {}
+//- (void)displayIfNeeded{}
+//- (void)displayIfNeededIgnoringOpacity{}
+//- (void)displayRect:(NSRect)rect{}
+//- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
+//
+//- (void)displayIfNeededInRect:(NSRect)rect{}
+//- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
+
+
+- (void)display{}
+- (void)displayIfNeeded{}
+- (void)displayIfNeededIgnoringOpacity{}
+- (void)displayRect:(NSRect)rect{}
+- (void)displayIfNeededInRect:(NSRect)rect{}
+- (void)displayRectIgnoringOpacity:(NSRect)rect{}
+- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
+//- (void)drawRect:(NSRect)dirtyRect{}
+- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
+
+- (void)drawBackgroundInRect:(NSRect)dirtyRect
+{
+}
+
+- (void)drawSelectionInRect:(NSRect)dirtyRect
+{
+}
+
+- (void)drawSeparatorInRect:(NSRect)dirtyRect
+{
+}
+
+- (void)drawDraggingDestinationFeedbackInRect:(NSRect)dirtyRect
+{
+}
+
 
 - (void)viewDidMoveToSuperview
 {
@@ -122,6 +193,8 @@
     for( NSView *w in self.subviews ) {
         if( [w respondsToSelector:@selector(buildPresentation)] )
             [(id)w buildPresentation];
+        
+//        w.layer.backgroundColor = m_RowColor.CGColor;
     }
 }
 
@@ -130,5 +203,12 @@
     if( [subview respondsToSelector:@selector(buildPresentation)] )
         [(id)subview buildPresentation];
 }
+
+- (PanelListViewNameView*) nameView
+{
+    return objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
+}
+
+//@property (nonatomic, readonly) PanelListViewNameView *nameView;
 
 @end

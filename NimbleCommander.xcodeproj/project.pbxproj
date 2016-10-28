@@ -1903,6 +1903,8 @@
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */,
+				CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */,
 				CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */,
 				CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */,
 				CF5D25EA1DB6040C0073156F /* Old */,
@@ -2212,8 +2214,6 @@
 			children = (
 				CF44AAD81DB09CE50064D754 /* PanelBriefViewCollectionViewBackground.h */,
 				CF44AAD91DB09CE50064D754 /* PanelBriefViewCollectionViewBackground.mm */,
-				CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */,
-				CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */,
 				CFD3CB321DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.h */,
 				CFD3CB331DACFB5A006DA143 /* PanelBriefViewCollectionViewItem.mm */,
 				CFD3CB291DACFA2E006DA143 /* PanelBriefViewCollectionViewLayout.h */,

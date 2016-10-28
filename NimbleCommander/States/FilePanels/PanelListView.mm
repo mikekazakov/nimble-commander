@@ -6,6 +6,7 @@
 #include "List/PanelListViewRowView.h"
 #include "List/PanelListViewTableView.h"
 #include "List/PanelListViewGeometry.h"
+#include "IconsGenerator2.h"
 #include "PanelListView.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
@@ -17,6 +18,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     PanelData                          *m_Data;
     __weak PanelView                   *m_PanelView;
     PanelListViewGeometry               m_Geometry;
+    IconsGenerator2                     m_IconsGenerator;    
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -70,12 +72,17 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         NSTableColumn *col2 = [[NSTableColumn alloc] initWithIdentifier:@"B"];
         col2.title = @"Cadabra";
         col2.width = 200;
+        col2.maxWidth = 250;
         [m_TableView addTableColumn:col2];
         
         
         m_ScrollView.documentView = m_TableView;
         
-        
+        __weak PanelListView* weak_self = self;
+        m_IconsGenerator.SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
+            if( auto strong_self = weak_self )
+                [strong_self onIconUpdated:_icon_no image:_icon];
+        });
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
@@ -135,10 +142,20 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                     nv.identifier = identifier;
                 }
                 
+//                if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {
+//                    [item setItem:vfs_item];
+//                    
+                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+                NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+                
                 [nv setFilename:vfs_item.NSDisplayName()];
+                [nv setIcon:icon];
                 
                 return nv;
             }
+//            if( col_id == 'B' ) {
+//                return [[NSView alloc] initWithFrame:NSRect()];
+//            }
         }
         
         
@@ -166,6 +183,12 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     return nil;
 }
 
+//- (void)tableView:(NSTableView *)tableView didAddRowView:(NSTableRowView *)rowView forRow:(NSInteger)row
+//{
+//    rowView.backgroundColor = [NSColor clearColor];
+//    
+//}
+
 - (void) dataChanged
 {
     [m_TableView reloadData];
@@ -186,13 +209,23 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 
 - (int)itemsInColumn
 {
-    return 0;
+    return m_ScrollView.contentView.bounds.size.height / m_Geometry.LineHeight();
+//    return 0;
 }
 
 - (void)setCursorPosition:(int)cursorPosition
 {
-    [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:cursorPosition]
-             byExtendingSelection:false];
+    if( cursorPosition >= 0 ) {
+        [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:cursorPosition]
+                 byExtendingSelection:false];
+        dispatch_to_main_queue([=]{
+            [m_TableView scrollRowToVisible:cursorPosition];
+        });
+    }
+    else {
+        [m_TableView selectRowIndexes:[NSIndexSet indexSet]
+                 byExtendingSelection:false];
+    }
 }
 
 - (void)frameDidChange
@@ -232,5 +265,33 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 {
     return [NSFont systemFontOfSize:13];
 }
+
+- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImageRep*)_image
+{
+    dispatch_assert_main_queue();
+    [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
+//        rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
+        const auto index = (int)row;
+        auto &vd = m_Data->VolatileDataAtSortPosition(index);
+        if( vd.icon == _icon_no ) {
+//                        [i setIcon:_image];
+            rowView.nameView.icon = _image;
+//            break;
+        }
+        
+    }];
+    
+    
+//    for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
+//        if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
+//            const auto index = (int)index_path.item;
+//            auto &vd = m_Data->VolatileDataAtSortPosition(index);
+//            if( vd.icon == _icon_no ) {
+//                [i setIcon:_image];
+//                break;
+//            }
+//        }
+}
+
 
 @end

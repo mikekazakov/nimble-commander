@@ -3,6 +3,7 @@
 #include "../../../Files/PanelData.h"
 
 @class PanelListView;
+@class PanelListViewNameView;
 
 @interface PanelListViewRowView : NSTableRowView
 
@@ -15,6 +16,6 @@
 @property (nonatomic, readonly) NSColor *rowTextColor;
 @property (nonatomic) bool panelActive;
 @property (nonatomic, readonly) int itemIndex;
-
+@property (nonatomic, readonly) PanelListViewNameView *nameView;
 
 @end

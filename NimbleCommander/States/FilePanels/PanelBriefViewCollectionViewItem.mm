@@ -124,7 +124,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     
     
     const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
-                                      (bounds.size.height - m_LayoutConstants.icon_size) / 2. - 0.5,
+                                      (bounds.size.height - m_LayoutConstants.icon_size) / 2. + 0.5,
                                       m_LayoutConstants.icon_size,
                                       m_LayoutConstants.icon_size);
     [m_Icon drawInRect:icon_rect

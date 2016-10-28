@@ -55,7 +55,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     if( self ) {
         //        m_Filename = _filename;
         //        self.wantsLayer = true;
-        
+//        self.wantsLayer = YES;
     }
     return self;
 }
@@ -65,8 +65,26 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     m_Filename = _filename;
 }
 
+//- (void)updateLayer
+//{
+//    if( auto v = objc_cast<PanelListViewRowView>(self.superview) ) {
+//        auto layer = self.layer;
+//        self.layer.backgroundColor = v.rowBackgroundColor.CGColor;
+//    }
+//    
+//}
+
+//- (BOOL)wantsUpdateLayer {
+//    return YES;  // Tells NSView to call `updateLayer` instead of `drawRect:`
+//}
+
 - (void) drawRect:(NSRect)dirtyRect
 {
+//    auto layer = self.layer;
+//    auto bg = layer.backgroundColor;
+    if( !((PanelListViewRowView*)self.superview).listView )
+        return;
+    
     const auto bounds = self.bounds;
     const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
     
@@ -89,16 +107,16 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
                   attributes:m_TextAttributes];
     
     
-//    const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
-//                                      (bounds.size.height - m_LayoutConstants.icon_size) / 2. - 0.5,
-//                                      m_LayoutConstants.icon_size,
-//                                      m_LayoutConstants.icon_size);
-//    [m_Icon drawInRect:icon_rect
-//              fromRect:NSZeroRect
-//             operation:NSCompositeSourceOver
-//              fraction:1.0
-//        respectFlipped:false
-//                 hints:nil];
+    const auto icon_rect = NSMakeRect(geometry.LeftInset(),
+                                      (bounds.size.height - geometry.IconSize()) / 2. + 0.5,
+                                      geometry.IconSize(),
+                                      geometry.IconSize());
+    [m_Icon drawInRect:icon_rect
+              fromRect:NSZeroRect
+             operation:NSCompositeSourceOver
+              fraction:1.0
+        respectFlipped:false
+                 hints:nil];
     
 //    [m_Filename drawWithRect:self.bounds
 //                     options:0
@@ -108,12 +126,31 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) buildPresentation
 {
     PanelListViewRowView *row_view = (PanelListViewRowView*)self.superview;
-    
+//    self.layer.backgroundColor = row_view.rowBackgroundColor.CGColor;
+//    self.layer.backgroundColor = NSColor.redColor.CGColor;
+// self.layer.backgroundColor = m_RowColor.CGColor;
     m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
                          NSForegroundColorAttributeName: row_view.rowTextColor,
                          NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
     
     [self setNeedsDisplay:true];
+//    [self updateLayer];
+//    self.wantsUpdateLayer = true;
+}
+
+//@property (nonatomic) NSImageRep *icon;
+- (void) setIcon:(NSImageRep *)icon
+{
+    if( m_Icon != icon ) {
+        m_Icon = icon;
+        
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (NSImageRep*)icon
+{
+    return m_Icon;
 }
 
 @end

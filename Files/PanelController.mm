@@ -294,6 +294,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     mode.sort = mode.sort != _direct ? _direct : _rev;
     [self ChangeSortingModeTo:mode];
     [self markRestorableStateAsInvalid];
+    [m_View dataUpdated];    
 }
 
 - (bool) HandleGoToUpperDirectory

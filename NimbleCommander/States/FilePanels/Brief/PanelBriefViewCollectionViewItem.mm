@@ -1,7 +1,7 @@
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
 #include "../../../Files/PanelView.h"
 #include "PanelBriefViewCollectionViewItem.h"
-#include "PanelBriefView.h"
+#include "../PanelBriefView.h"
 
 static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {

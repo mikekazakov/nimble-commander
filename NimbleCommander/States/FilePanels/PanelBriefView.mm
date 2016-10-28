@@ -8,9 +8,9 @@
 #include "../../../Files/Config.h"
 #include "IconsGenerator2.h"
 #include "PanelBriefView.h"
-#include "PanelBriefViewCollectionViewLayout.h"
-#include "PanelBriefViewCollectionViewItem.h"
-#include "PanelBriefViewCollectionViewBackground.h"
+#include "Brief/PanelBriefViewCollectionViewLayout.h"
+#include "Brief/PanelBriefViewCollectionViewItem.h"
+#include "Brief/PanelBriefViewCollectionViewBackground.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;

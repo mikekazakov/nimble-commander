@@ -6,10 +6,16 @@
 #include "List/PanelListViewRowView.h"
 #include "List/PanelListViewTableView.h"
 #include "List/PanelListViewGeometry.h"
+#include "List/PanelListViewSizeView.h"
 #include "IconsGenerator2.h"
 #include "PanelListView.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
+
+
+// identifiers legenda:
+// A - Name
+// B - Size
 
 @implementation PanelListView
 {
@@ -70,9 +76,12 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         [m_TableView addTableColumn:col1];
 
         NSTableColumn *col2 = [[NSTableColumn alloc] initWithIdentifier:@"B"];
-        col2.title = @"Cadabra";
-        col2.width = 200;
-        col2.maxWidth = 250;
+        col2.title = @"Size";
+        col2.width = 90;
+        col2.minWidth = 75;
+        col2.maxWidth = 110;
+        col2.headerCell.alignment = NSTextAlignmentRight;
+//        headerCell
         [m_TableView addTableColumn:col2];
         
         
@@ -153,6 +162,16 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                 
                 return nv;
             }
+            if( col_id == 'B' ) {
+                PanelListViewSizeView *sv = [tableView makeViewWithIdentifier:identifier owner:self];
+                if( !sv ) {
+                    sv = [[PanelListViewSizeView alloc] initWithFrame:NSRect()];
+                    sv.identifier = identifier;
+                }
+                
+                return sv;
+            }
+            
 //            if( col_id == 'B' ) {
 //                return [[NSView alloc] initWithFrame:NSRect()];
 //            }

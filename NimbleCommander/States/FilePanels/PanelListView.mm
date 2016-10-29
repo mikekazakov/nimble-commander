@@ -33,6 +33,15 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //bool            HasBTime()          const;
 //time_t          BTime()             const;
 
+
+@interface PanelListView()
+
+@property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
+
+
+@end
+
+
 @implementation PanelListView
 {
     NSScrollView                       *m_ScrollView;
@@ -43,6 +52,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     IconsGenerator2                     m_IconsGenerator;
     NSTableColumn                      *m_NameColumn;
     NSTableColumn                      *m_DateCreatedColumn;
+    PanelListViewDateFormatting::Style  m_DateCreatedFormattingStyle;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -114,8 +124,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
             [m_TableView addTableColumn:col];
             m_DateCreatedColumn = col;
             [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+            m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
         }
-        
         
         m_ScrollView.documentView = m_TableView;
         
@@ -128,11 +138,6 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(tableColumnsResized:)
-//                                                     name:NSTableViewColumnDidResizeNotification
-//                                                   object:m_TableView];
-        
     }
     return self;
 }
@@ -140,6 +145,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 -(void) dealloc
 {
     [m_PanelView removeObserver:self forKeyPath:@"active"];
+    [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -156,34 +162,14 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 {
     if( object == m_PanelView && [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
-//        for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
-//            [i setPanelActive:active];
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
             rowView.panelActive = active;
         }];
     }
     if( object == m_DateCreatedColumn && [keyPath isEqualToString:@"width"] ) {
-//        cout << "!!!" << endl;
-        auto new_width = m_DateCreatedColumn.width;
-        auto style = PanelListViewDateFormatting::SuitableStyleForWidth( new_width, self.font );
-        
-//        - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-//            NSUInteger index = [[aTableView tableColumns] indexOf:aTableColumn];
-//            ...
-//        }
-        auto col_index = [m_TableView.tableColumns indexOfObject:m_DateCreatedColumn];
-        if( col_index != NSNotFound ) {
-            [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-//                rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
-//- (nullable id)viewAtColumn:(NSInteger)column;
-                if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) ) {
-                    v.style = style;
-                }
-            }];
-            
-            
-        }
-        
+        const auto new_width = m_DateCreatedColumn.width;
+        const auto style = PanelListViewDateFormatting::SuitableStyleForWidth( new_width, self.font );
+        self.dateCreatedFormattingStyle = style;
     }
 }
 
@@ -197,8 +183,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     if( !m_Data )
         return nil;
     
-    if( PanelListViewRowView *w = objc_cast<PanelListViewRowView>([tableView rowViewAtRow:row makeIfNecessary:false]) ) {
-        
+    if( auto w = objc_cast<PanelListViewRowView>([tableView rowViewAtRow:row makeIfNecessary:false]) ) {        
         if( auto vfs_item = w.item ) {
             NSString *identifier = tableColumn.identifier;
             
@@ -210,9 +195,6 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                     nv.identifier = identifier;
                 }
                 
-//                if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {
-//                    [item setItem:vfs_item];
-//                    
                 auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
                 NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
                 
@@ -236,21 +218,13 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                     dv = [[PanelListViewDateTimeView alloc] initWithFrame:NSRect()];
                     dv.identifier = identifier;
                 }
-                dv.time = vfs_item.MTime();
+                dv.time = vfs_item.BTime();
+                dv.style = m_DateCreatedFormattingStyle;
 
                 return dv;
             }
-           
-            
-//            if( col_id == 'B' ) {
-//                return [[NSView alloc] initWithFrame:NSRect()];
-//            }
         }
-        
-        
     }
-    
-    
     return nil;
 }
 
@@ -380,25 +354,23 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //        }
 }
 
-//- (void)tableViewColumnDidResize:(NSNotification *)notification
-//{
-////@property (readonly) NSInteger resizedColumn;
-//    auto col_index = m_TableView.headerView.resizedColumn;
-//    if( col_index >= 0 ) {
-//        cout << col_index << endl;
-//        
-//        
-//        
-//    }
-//}
-//
-//- (void)tableColumnsResized:(NSNotification *)notification
-//{
-//    cout << "!!" << endl;
-//    
-//}
+- (PanelListViewDateFormatting::Style) dateCreatedFormattingStyle
+{
+    return m_DateCreatedFormattingStyle;
+}
 
-//tableColumnsResized
+- (void) setDateCreatedFormattingStyle:(PanelListViewDateFormatting::Style)dateCreatedFormattingStyle
+{
+    if( m_DateCreatedFormattingStyle != dateCreatedFormattingStyle ) {
+        m_DateCreatedFormattingStyle = dateCreatedFormattingStyle;
 
+        auto col_index = [m_TableView.tableColumns indexOfObject:m_DateCreatedColumn];
+        if( col_index != NSNotFound )
+            [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
+                if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
+                    v.style = dateCreatedFormattingStyle;
+            }];
+    }
+}
 
 @end

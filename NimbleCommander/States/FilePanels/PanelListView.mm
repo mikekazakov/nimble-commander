@@ -7,6 +7,8 @@
 #include "List/PanelListViewTableView.h"
 #include "List/PanelListViewGeometry.h"
 #include "List/PanelListViewSizeView.h"
+#include "List/PanelListViewDateTimeView.h"
+#include "List/PanelListViewDateFormatting.h"
 #include "IconsGenerator2.h"
 #include "PanelListView.h"
 
@@ -16,6 +18,20 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 // identifiers legenda:
 // A - Name
 // B - Size
+// C - Date created
+
+
+//bool            HasATime()          const;
+//time_t          ATime()             const;
+//
+//bool            HasMTime()          const;
+//time_t          MTime()             const;
+//
+//bool            HasCTime()          const;
+//time_t          CTime()             const;
+//
+//bool            HasBTime()          const;
+//time_t          BTime()             const;
 
 @implementation PanelListView
 {
@@ -24,7 +40,9 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     PanelData                          *m_Data;
     __weak PanelView                   *m_PanelView;
     PanelListViewGeometry               m_Geometry;
-    IconsGenerator2                     m_IconsGenerator;    
+    IconsGenerator2                     m_IconsGenerator;
+    NSTableColumn                      *m_NameColumn;
+    NSTableColumn                      *m_DateCreatedColumn;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -69,20 +87,34 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //        /* Get and set the rowHeight. The value must be greater than 0. Calling -setRowHeight: with a non-pixel aligning (fractional) value will be forced to a pixel aligning (integral) value. For variable row height tableViews (ones that have the delegate implement -tableView:heightOfRow:), -rowHeight will be used to draw alternating rows past the last row in the tableView. The actual -rectOfRow: is equal to the -rowHeight plus the intercellSpacing.height. The default value is 17.0 for applications linked on 10.5 and higher (the height acceptable for [NSFont systemFontSize]). The default value is 16.0 for 10.4 and lower.
 //         */
 //        @property CGFloat rowHeight;
-        
-        NSTableColumn *col1 = [[NSTableColumn alloc] initWithIdentifier:@"A"];
-        col1.title = @"Name";
-        col1.width = 200;
-        [m_TableView addTableColumn:col1];
 
-        NSTableColumn *col2 = [[NSTableColumn alloc] initWithIdentifier:@"B"];
-        col2.title = @"Size";
-        col2.width = 90;
-        col2.minWidth = 75;
-        col2.maxWidth = 110;
-        col2.headerCell.alignment = NSTextAlignmentRight;
-//        headerCell
-        [m_TableView addTableColumn:col2];
+        
+        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
+            col.title = @"Name";
+            col.width = 200;
+            [m_TableView addTableColumn:col];
+            m_NameColumn = col;
+        }
+
+        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
+            col.title = @"Size";
+            col.width = 90;
+            col.minWidth = 75;
+            col.maxWidth = 110;
+            col.headerCell.alignment = NSTextAlignmentRight;
+            [m_TableView addTableColumn:col];
+        }
+        
+        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
+            col.title = @"Date Created";
+            col.width = 90;
+            col.minWidth = 75;
+            col.maxWidth = 300;
+            col.headerCell.alignment = NSTextAlignmentRight;
+            [m_TableView addTableColumn:col];
+            m_DateCreatedColumn = col;
+            [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        }
         
         
         m_ScrollView.documentView = m_TableView;
@@ -96,6 +128,10 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(tableColumnsResized:)
+//                                                     name:NSTableViewColumnDidResizeNotification
+//                                                   object:m_TableView];
         
     }
     return self;
@@ -118,13 +154,36 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if( [keyPath isEqualToString:@"active"] ) {
+    if( object == m_PanelView && [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
 //        for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
 //            [i setPanelActive:active];
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
             rowView.panelActive = active;
         }];
+    }
+    if( object == m_DateCreatedColumn && [keyPath isEqualToString:@"width"] ) {
+//        cout << "!!!" << endl;
+        auto new_width = m_DateCreatedColumn.width;
+        auto style = PanelListViewDateFormatting::SuitableStyleForWidth( new_width, self.font );
+        
+//        - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+//            NSUInteger index = [[aTableView tableColumns] indexOf:aTableColumn];
+//            ...
+//        }
+        auto col_index = [m_TableView.tableColumns indexOfObject:m_DateCreatedColumn];
+        if( col_index != NSNotFound ) {
+            [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
+//                rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
+//- (nullable id)viewAtColumn:(NSInteger)column;
+                if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) ) {
+                    v.style = style;
+                }
+            }];
+            
+            
+        }
+        
     }
 }
 
@@ -171,6 +230,17 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
                 
                 return sv;
             }
+            if( col_id == 'C' ) {
+                PanelListViewDateTimeView *dv = [tableView makeViewWithIdentifier:identifier owner:self];
+                if( !dv ) {
+                    dv = [[PanelListViewDateTimeView alloc] initWithFrame:NSRect()];
+                    dv.identifier = identifier;
+                }
+                dv.time = vfs_item.MTime();
+
+                return dv;
+            }
+           
             
 //            if( col_id == 'B' ) {
 //                return [[NSView alloc] initWithFrame:NSRect()];
@@ -192,8 +262,6 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
             
             PanelListViewRowView *row_view = [[PanelListViewRowView alloc] initWithItem:item atIndex:(int)row];
             row_view.listView = self;
-//            row_view.item = item;
-//            row_view.itemIndex = (int)row;
             row_view.vd = vd;
             row_view.panelActive = m_PanelView.active;
             return row_view;
@@ -311,6 +379,26 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //            }
 //        }
 }
+
+//- (void)tableViewColumnDidResize:(NSNotification *)notification
+//{
+////@property (readonly) NSInteger resizedColumn;
+//    auto col_index = m_TableView.headerView.resizedColumn;
+//    if( col_index >= 0 ) {
+//        cout << col_index << endl;
+//        
+//        
+//        
+//    }
+//}
+//
+//- (void)tableColumnsResized:(NSNotification *)notification
+//{
+//    cout << "!!" << endl;
+//    
+//}
+
+//tableColumnsResized
 
 
 @end

@@ -231,9 +231,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (bool)active
 {
-    return self.window == nil ?
-        false :
-        self.window.isKeyWindow && self.window.firstResponder == self;
+    NSWindow *w = self.window;
+    return w == nil ? false : w.isKeyWindow && w.firstResponder == self;
 }
 
 //- (void)drawRect:(NSRect)dirtyRect

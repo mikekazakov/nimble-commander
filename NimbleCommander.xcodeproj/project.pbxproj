@@ -313,6 +313,8 @@
 		CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
 		CF56C2CC1DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */; };
 		CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
+		CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CF56C2DE1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */; };
 		CF5A0B2A1C9E7D76005839B7 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -1325,6 +1327,10 @@
 		CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionViewLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionViewLayout.mm; sourceTree = SOURCE_ROOT; };
 		CF56C2CD1DC35E8B00F0DF0F /* PanelListViewSizeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewSizeView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewSizeView.h; sourceTree = SOURCE_ROOT; };
 		CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewSizeView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewSizeView.mm; sourceTree = SOURCE_ROOT; };
+		CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateTimeView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.h; sourceTree = SOURCE_ROOT; };
+		CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateTimeView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.mm; sourceTree = SOURCE_ROOT; };
+		CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateFormatting.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.h; sourceTree = SOURCE_ROOT; };
+		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
 		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
@@ -2312,6 +2318,10 @@
 		CF84C8EF1DBB2AA900B4E888 /* List */ = {
 			isa = PBXGroup;
 			children = (
+				CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */,
+				CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */,
+				CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */,
+				CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */,
 				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
 				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
 				CF56C2C11DC1A33300F0DF0F /* PanelListViewGeometry.h */,
@@ -3761,6 +3771,7 @@
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,
 				CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */,
+				CF56C2DE1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm in Sources */,
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
 				CFED5A201C4F8D3200BFCB5C /* TermView.mm in Sources */,
@@ -3926,6 +3937,7 @@
 				CF876D4C1D530F46009C0CCE /* InternalViewerController.mm in Sources */,
 				CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */,
 				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
+				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
 				CF0A400F1B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFCF862718939589000552CD /* PanelController+QuickSearch.mm in Sources */,
 				CF27414917FF04EF006D6687 /* SharingService.mm in Sources */,

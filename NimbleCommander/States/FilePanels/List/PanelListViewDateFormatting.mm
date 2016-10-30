@@ -132,64 +132,55 @@ static NSString *Orthodox( time_t _time )
 static NSString *Long( time_t _time )
 {
     static const auto formatter = []{
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        f.dateStyle = NSDateFormatterLongStyle;
-        f.timeStyle = NSDateFormatterShortStyle;
-        f.doesRelativeDateFormatting = true;
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterLongStyle, kCFDateFormatterShortStyle);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     
-    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    return (NSString*)CFBridgingRelease(str);
 }
 
 static NSString *Medium( time_t _time )
 {
     static const auto formatter = []{
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        f.dateStyle = NSDateFormatterMediumStyle;
-        f.timeStyle = NSDateFormatterShortStyle;
-        f.doesRelativeDateFormatting = true;
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterMediumStyle, kCFDateFormatterShortStyle);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     
-    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    return (NSString*)CFBridgingRelease(str);
 }
 
 static NSString *Short( time_t _time )
 {
     static const auto formatter = []{
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        f.dateStyle = NSDateFormatterShortStyle;
-        f.timeStyle = NSDateFormatterShortStyle;
-        f.doesRelativeDateFormatting = true;
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterShortStyle, kCFDateFormatterShortStyle);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     
-    return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_time]];
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    return (NSString*)CFBridgingRelease(str);
 }
 
 static NSString *Tiny( time_t _time )
 {
     static const auto general = []{
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        f.dateStyle = NSDateFormatterShortStyle;
-        f.timeStyle = NSDateFormatterNoStyle;
-        f.doesRelativeDateFormatting = true;
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterShortStyle, kCFDateFormatterNoStyle);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-
     static const auto today = []{
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        f.dateStyle = NSDateFormatterNoStyle;
-        f.timeStyle = NSDateFormatterShortStyle;
-        f.doesRelativeDateFormatting = true;
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterNoStyle, kCFDateFormatterShortStyle);
+        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
     
-    const auto date = [NSDate dateWithTimeIntervalSince1970:_time];
-    const auto is_today = [NSCalendar.currentCalendar isDateInToday:date];
-    
-    return [is_today?today:general stringFromDate:date];
+    const auto is_today = [NSCalendar.currentCalendar isDateInToday:[NSDate dateWithTimeIntervalSince1970:_time]];
+    auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, is_today ? today : general, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    return (NSString*)CFBridgingRelease(str);
 }
 
 NSString *PanelListViewDateFormatting::Format( Style _style, time_t _time )

@@ -4,40 +4,10 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewDateTimeView.h"
 
-static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
-{
-    static NSParagraphStyle *styles[3];
-    static once_flag once;
-    call_once(once, []{
-        NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
-        p0.alignment = NSTextAlignmentLeft;
-        p0.lineBreakMode = NSLineBreakByTruncatingHead;
-        styles[0] = p0;
-        
-        NSMutableParagraphStyle *p1 = [NSMutableParagraphStyle new];
-        p1.alignment = NSTextAlignmentLeft;
-        p1.lineBreakMode = NSLineBreakByTruncatingTail;
-        styles[1] = p1;
-        
-        NSMutableParagraphStyle *p2 = [NSMutableParagraphStyle new];
-        p2.alignment = NSTextAlignmentLeft;
-        p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        styles[2] = p2;
-    });
-    
-    switch( _mode ) {
-        case NSLineBreakByTruncatingHead:   return styles[0];
-        case NSLineBreakByTruncatingTail:   return styles[1];
-        case NSLineBreakByTruncatingMiddle: return styles[2];
-        default:                            return nil;
-    }
-}
-
 @implementation PanelListViewDateTimeView
 {
     time_t          m_Time;
     NSString       *m_String;
-    NSDictionary   *m_TextAttributes;
     PanelListViewDateFormatting::Style m_Style;
 }
 
@@ -111,20 +81,14 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
                                               0);
             [m_String drawWithRect:text_rect
                            options:0
-                        attributes:m_TextAttributes];
+                        attributes:rv.dateTimeViewTextAttributes];
         }
     }
 }
 
 - (void) buildPresentation
 {
-    if( auto row_view = objc_cast<PanelListViewRowView>(self.superview) )
-        if( auto list_view = row_view.listView ) {
-            m_TextAttributes = @{NSFontAttributeName: list_view.font,
-                                 NSForegroundColorAttributeName: row_view.rowTextColor,
-                                 NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
-            [self setNeedsDisplay:true];
-    }
+    [self setNeedsDisplay:true];
 }
 
 @end

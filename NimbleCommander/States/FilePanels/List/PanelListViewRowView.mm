@@ -11,11 +11,13 @@
     NSColor*                        m_TextColor;
     bool                            m_PanelActive;
     int                             m_ItemIndex;
+    NSDictionary                   *m_DateTimeViewTextAttributes;
 }
 @synthesize rowBackgroundColor = m_RowColor;
 @synthesize rowTextColor = m_TextColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
+@synthesize dateTimeViewTextAttributes = m_DateTimeViewTextAttributes;
 
 - (id) initWithItem:(VFSListingItem)_item atIndex:(int)index
 {
@@ -85,6 +87,13 @@
     }
 }
 
+static const auto g_DateTimeParagraphStyle = []{
+    NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+    p.alignment = NSLeftTextAlignment;
+    p.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    return p;
+}();
+
 - (void) updateColors
 {
     if( self.selected )
@@ -103,6 +112,11 @@
                 m_TextColor = focus ? i.focused : i.regular;
                 break;
             }
+
+        // build date-time view text attributes here
+        m_DateTimeViewTextAttributes = @{NSFontAttributeName: list_view.font,
+                                         NSForegroundColorAttributeName: m_TextColor,
+                                         NSParagraphStyleAttributeName: g_DateTimeParagraphStyle};
     }
     
     [self setNeedsDisplay:true];

@@ -17,5 +17,6 @@
 @property (nonatomic) bool panelActive;
 @property (nonatomic, readonly) int itemIndex;
 @property (nonatomic, readonly) PanelListViewNameView *nameView;
+@property (nonatomic, readonly) NSDictionary *dateTimeViewTextAttributes;
 
 @end

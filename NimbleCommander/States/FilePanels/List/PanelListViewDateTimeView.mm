@@ -33,7 +33,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
 }
 
-
 @implementation PanelListViewDateTimeView
 {
     time_t          m_Time;
@@ -63,40 +62,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     return false;
 }
 
-// 0:
-// some orthodox fixed time formatting
-
-// 1:
-//formatter.dateStyle = NSDateFormatterLongStyle;
-//formatter.timeStyle = NSDateFormatterShortStyle;
-
-// 2:
-//formatter.dateStyle = NSDateFormatterMediumStyle;
-//formatter.timeStyle = NSDateFormatterShortStyle;
-
-// 3:
-//formatter.dateStyle = NSDateFormatterShortStyle;
-//formatter.timeStyle = NSDateFormatterShortStyle;
-
-// 4:
-//formatter.dateStyle = NSDateFormatterShortStyle;
-//formatter.timeStyle = NSDateFormatterNoStyle;
-// for today:
-//formatter.dateStyle = NSDateFormatterNoStyle;
-//formatter.timeStyle = NSDateFormatterShortStyle;
-
-
-
-
-
 - (void) setTime:(time_t)time
 {
     if( m_Time != time ) {
         m_Time = time;
-        
         [self buildString];
-        
-//        m_String = PanelListViewDateFormatting::Format(PanelListViewDateFormatting::Style::Long, time);
     }
 }
 
@@ -112,8 +82,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         [self buildString];
     }
 }
-
-//    PanelListViewDateFormatting::Style m_Style;
 
 - (void) buildString
 {
@@ -150,21 +118,13 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 - (void) buildPresentation
 {
-//    NSDateFormatter
-    
-    if( PanelListViewRowView *row_view = (PanelListViewRowView*)self.superview ) {
-//        if( auto item = row_view.item )
-//            m_String = FileSizeToString(item,
-//                                        row_view.vd,
-//                                        ByteCountFormatter::Type::Adaptive8);
-        
-        m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
-                             NSForegroundColorAttributeName: row_view.rowTextColor,
-                             NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
-        
-        [self setNeedsDisplay:true];
+    if( auto row_view = objc_cast<PanelListViewRowView>(self.superview) )
+        if( auto list_view = row_view.listView ) {
+            m_TextAttributes = @{NSFontAttributeName: list_view.font,
+                                 NSForegroundColorAttributeName: row_view.rowTextColor,
+                                 NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+            [self setNeedsDisplay:true];
     }
 }
-
 
 @end

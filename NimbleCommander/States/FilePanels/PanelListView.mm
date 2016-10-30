@@ -19,6 +19,9 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 // A - Name
 // B - Size
 // C - Date created
+// D - Date added
+// E - Date modified
+// F - Date last accessed
 
 
 //bool            HasATime()          const;
@@ -37,6 +40,9 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 @interface PanelListView()
 
 @property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
+@property (nonatomic) PanelListViewDateFormatting::Style dateAddedFormattingStyle;
+@property (nonatomic) PanelListViewDateFormatting::Style dateModifiedFormattingStyle;
+@property (nonatomic) PanelListViewDateFormatting::Style dateAccessedFormattingStyle;
 
 
 @end
@@ -52,8 +58,19 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     IconsGenerator2                     m_IconsGenerator;
     NSTableColumn                      *m_NameColumn;
     NSTableColumn                      *m_DateCreatedColumn;
+    NSTableColumn                      *m_DateAddedColumn;
+    NSTableColumn                      *m_DateModifiedColumn;
+    NSTableColumn                      *m_DateAccessedColumn;
     PanelListViewDateFormatting::Style  m_DateCreatedFormattingStyle;
+    PanelListViewDateFormatting::Style  m_DateAddedFormattingStyle;
+    PanelListViewDateFormatting::Style  m_DateModifiedFormattingStyle;
+    PanelListViewDateFormatting::Style  m_DateAccessedFormattingStyle;
 }
+
+@synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
+@synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
+@synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
+@synthesize dateAccessedFormattingStyle = m_DateAccessedFormattingStyle;
 
 - (id) initWithFrame:(NSRect)frameRect
 {
@@ -84,48 +101,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
         m_TableView.rowHeight = m_Geometry.LineHeight();
         m_TableView.intercellSpacing = NSMakeSize(0, 0);
-//        @property NSSize intercellSpacing;
-        
-        
-//        @property NSTableViewRowSizeStyle rowSizeStyle NS_AVAILABLE_MAC(10_7);
-//        
-//        /* Returns the effective row size style for the table. If the rowSizeStyle is NSTableViewRowSizeStyleDefault, then this method returns the default size for this particular table.
-//         */
-//        @property (readonly) NSTableViewRowSizeStyle effectiveRowSizeStyle NS_AVAILABLE_MAC(10_7);
-//        
-//        
-//        /* Get and set the rowHeight. The value must be greater than 0. Calling -setRowHeight: with a non-pixel aligning (fractional) value will be forced to a pixel aligning (integral) value. For variable row height tableViews (ones that have the delegate implement -tableView:heightOfRow:), -rowHeight will be used to draw alternating rows past the last row in the tableView. The actual -rectOfRow: is equal to the -rowHeight plus the intercellSpacing.height. The default value is 17.0 for applications linked on 10.5 and higher (the height acceptable for [NSFont systemFontSize]). The default value is 16.0 for 10.4 and lower.
-//         */
-//        @property CGFloat rowHeight;
+        [self setupColumns];
 
-        
-        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
-            col.title = @"Name";
-            col.width = 200;
-            [m_TableView addTableColumn:col];
-            m_NameColumn = col;
-        }
-
-        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
-            col.title = @"Size";
-            col.width = 90;
-            col.minWidth = 75;
-            col.maxWidth = 110;
-            col.headerCell.alignment = NSTextAlignmentRight;
-            [m_TableView addTableColumn:col];
-        }
-        
-        if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
-            col.title = @"Date Created";
-            col.width = 90;
-            col.minWidth = 75;
-            col.maxWidth = 300;
-            col.headerCell.alignment = NSTextAlignmentRight;
-            [m_TableView addTableColumn:col];
-            m_DateCreatedColumn = col;
-            [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-            m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
-        }
         
         m_ScrollView.documentView = m_TableView;
         
@@ -142,10 +119,71 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     return self;
 }
 
+- (void) setupColumns
+{
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
+        col.title = @"Name";
+        col.width = 200;
+        [m_TableView addTableColumn:col];
+        m_NameColumn = col;
+    }
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
+        col.title = @"Size";
+        col.width = 90;
+        col.minWidth = 75;
+        col.maxWidth = 110;
+        col.headerCell.alignment = NSTextAlignmentRight;
+        [m_TableView addTableColumn:col];
+    }
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
+        col.title = @"Date Created";
+        col.width = 90;
+        col.minWidth = 75;
+        col.maxWidth = 300;
+        [m_TableView addTableColumn:col];
+        m_DateCreatedColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+    }
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"D"] ) {
+        col.title = @"Date Added";
+        col.width = 90;
+        col.minWidth = 75;
+        col.maxWidth = 300;
+        [m_TableView addTableColumn:col];
+        m_DateAddedColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        m_DateAddedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+    }
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"E"] ) {
+        col.title = @"Date Modified";
+        col.width = 90;
+        col.minWidth = 75;
+        col.maxWidth = 300;
+        [m_TableView addTableColumn:col];
+        m_DateModifiedColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        m_DateModifiedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+    }
+    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"F"] ) {
+        col.title = @"Date Last Opened";
+        col.width = 90;
+        col.minWidth = 75;
+        col.maxWidth = 300;
+        [m_TableView addTableColumn:col];
+        m_DateAccessedColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        m_DateAccessedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+    }
+}
+
 -(void) dealloc
 {
     [m_PanelView removeObserver:self forKeyPath:@"active"];
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
+    [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
+    [m_DateModifiedColumn removeObserver:self forKeyPath:@"width"];
+    [m_DateAccessedColumn removeObserver:self forKeyPath:@"width"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -166,10 +204,16 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
             rowView.panelActive = active;
         }];
     }
-    if( object == m_DateCreatedColumn && [keyPath isEqualToString:@"width"] ) {
-        const auto new_width = m_DateCreatedColumn.width;
-        const auto style = PanelListViewDateFormatting::SuitableStyleForWidth( new_width, self.font );
-        self.dateCreatedFormattingStyle = style;
+    if( [keyPath isEqualToString:@"width"] ) {
+        using df = PanelListViewDateFormatting;
+        if( object == m_DateCreatedColumn )
+            self.dateCreatedFormattingStyle = df::SuitableStyleForWidth( m_DateCreatedColumn.width, self.font );
+        if( object == m_DateAddedColumn )
+            self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
+        if( object == m_DateModifiedColumn )
+            self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
+        if( object == m_DateAccessedColumn )
+            self.dateAccessedFormattingStyle = df::SuitableStyleForWidth( m_DateAccessedColumn.width, self.font );
     }
 }
 
@@ -178,8 +222,19 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
+template <typename View>
+static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
+{
+    if( View *v = [_tv makeViewWithIdentifier:_identifier owner:nil] )
+        return v;
+    auto v = [[View alloc] initWithFrame:NSRect()];
+    v.identifier = _identifier;
+    return v;
+}
+
 - (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
 {
+    
     if( !m_Data )
         return nil;
     
@@ -189,38 +244,38 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
             
             unichar col_id = [identifier characterAtIndex:0];
             if( col_id == 'A' ) {
-                PanelListViewNameView *nv = [tableView makeViewWithIdentifier:identifier owner:self];
-                if( !nv ) {
-                    nv = [[PanelListViewNameView alloc] initWithFrame:NSRect()];
-                    nv.identifier = identifier;
-                }
-                
+                auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
                 auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
                 NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
-                
                 [nv setFilename:vfs_item.NSDisplayName()];
                 [nv setIcon:icon];
-                
                 return nv;
             }
             if( col_id == 'B' ) {
-                PanelListViewSizeView *sv = [tableView makeViewWithIdentifier:identifier owner:self];
-                if( !sv ) {
-                    sv = [[PanelListViewSizeView alloc] initWithFrame:NSRect()];
-                    sv.identifier = identifier;
-                }
-                
-                return sv;
+                return RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
             }
             if( col_id == 'C' ) {
-                PanelListViewDateTimeView *dv = [tableView makeViewWithIdentifier:identifier owner:self];
-                if( !dv ) {
-                    dv = [[PanelListViewDateTimeView alloc] initWithFrame:NSRect()];
-                    dv.identifier = identifier;
-                }
+                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 dv.time = vfs_item.BTime();
                 dv.style = m_DateCreatedFormattingStyle;
-
+                return dv;
+            }
+            if( col_id == 'D' ) {
+                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+                dv.time = vfs_item.BTime();
+                dv.style = m_DateAddedFormattingStyle;
+                return dv;
+            }
+            if( col_id == 'E' ) {
+                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+                dv.time = vfs_item.MTime();
+                dv.style = m_DateModifiedFormattingStyle;
+                return dv;
+            }
+            if( col_id == 'F' ) {
+                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+                dv.time = vfs_item.ATime();
+                dv.style = m_DateAccessedFormattingStyle;
                 return dv;
             }
         }
@@ -354,22 +409,50 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 //        }
 }
 
-- (PanelListViewDateFormatting::Style) dateCreatedFormattingStyle
+//- (PanelListViewDateFormatting::Style) dateCreatedFormattingStyle
+//{
+//    return m_DateCreatedFormattingStyle;
+//}
+
+- (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(PanelListViewDateFormatting::Style)_style
 {
-    return m_DateCreatedFormattingStyle;
+    const auto col_index = [m_TableView.tableColumns indexOfObject:_column];
+    if( col_index != NSNotFound )
+        [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
+            if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
+                v.style = _style;
+        }];
 }
 
 - (void) setDateCreatedFormattingStyle:(PanelListViewDateFormatting::Style)dateCreatedFormattingStyle
 {
     if( m_DateCreatedFormattingStyle != dateCreatedFormattingStyle ) {
         m_DateCreatedFormattingStyle = dateCreatedFormattingStyle;
+        [self updateDateTimeViewAtColumn:m_DateCreatedColumn withStyle:dateCreatedFormattingStyle];
+    }
+}
 
-        auto col_index = [m_TableView.tableColumns indexOfObject:m_DateCreatedColumn];
-        if( col_index != NSNotFound )
-            [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-                if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
-                    v.style = dateCreatedFormattingStyle;
-            }];
+- (void) setDateAddedFormattingStyle:(PanelListViewDateFormatting::Style)dateAddedFormattingStyle
+{
+    if( m_DateAddedFormattingStyle != dateAddedFormattingStyle ) {
+        m_DateAddedFormattingStyle = dateAddedFormattingStyle;
+        [self updateDateTimeViewAtColumn:m_DateAddedColumn withStyle:dateAddedFormattingStyle];
+    }
+}
+
+- (void) setDateModifiedFormattingStyle:(PanelListViewDateFormatting::Style)dateModifiedFormattingStyle
+{
+    if( m_DateModifiedFormattingStyle != dateModifiedFormattingStyle ) {
+        m_DateModifiedFormattingStyle = dateModifiedFormattingStyle;
+        [self updateDateTimeViewAtColumn:m_DateModifiedColumn withStyle:dateModifiedFormattingStyle];
+    }
+}
+
+- (void) setDateAccessedFormattingStyle:(PanelListViewDateFormatting::Style)dateAccessedFormattingStyle
+{
+    if( m_DateAccessedFormattingStyle != dateAccessedFormattingStyle ) {
+        m_DateAccessedFormattingStyle = dateAccessedFormattingStyle;
+        [self updateDateTimeViewAtColumn:m_DateAccessedColumn withStyle:dateAccessedFormattingStyle];
     }
 }
 

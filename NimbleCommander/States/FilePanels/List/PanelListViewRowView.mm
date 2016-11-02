@@ -8,12 +8,14 @@
     VFSListingItem                  m_Item;
     PanelData::PanelVolatileData    m_VD;
     NSColor*                        m_RowColor;
+    DoubleColor                     m_RowDoubleColor;
     NSColor*                        m_TextColor;
     bool                            m_PanelActive;
     int                             m_ItemIndex;
     NSDictionary                   *m_DateTimeViewTextAttributes;
 }
 @synthesize rowBackgroundColor = m_RowColor;
+@synthesize rowBackgroundDoubleColor = m_RowDoubleColor;
 @synthesize rowTextColor = m_TextColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
@@ -31,19 +33,21 @@
         [self updateColors];
         m_PanelActive = false;
 //        self.wantsLayer = true;
+//        self.canDrawSubviewsIntoLayer = true;
+//        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
     }
     return self;
 }
 
-//- (BOOL) isOpaque
-//{
-//    return true;
-//}
-//
-//- (BOOL) wantsDefaultClipping
-//{
-//    return false;
-//}
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) wantsDefaultClipping
+{
+    return false;
+}
 
 - (void) setPanelActive:(bool)panelActive
 {
@@ -54,6 +58,14 @@
             [self updateColors];
             [self notifySubviewsToRebuildPresentation];
         }
+    }
+}
+
+- (void)setItem:(VFSListingItem)item
+{
+    if( m_Item != item ) {
+        m_Item = item; /// ....
+        
     }
 }
 
@@ -90,7 +102,7 @@
 static const auto g_DateTimeParagraphStyle = []{
     NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
     p.alignment = NSLeftTextAlignment;
-    p.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    p.lineBreakMode = /*NSLineBreakByTruncatingMiddle*/NSLineBreakByClipping;
     return p;
 }();
 
@@ -100,6 +112,8 @@ static const auto g_DateTimeParagraphStyle = []{
         m_RowColor = m_PanelActive ? NSColor.blueColor : NSColor.lightGrayColor;
     else
         m_RowColor = m_ItemIndex % 2 ? NSColor.controlAlternatingRowBackgroundColors[1] : NSColor.controlAlternatingRowBackgroundColors[0];
+    m_RowDoubleColor = DoubleColor(m_RowColor);
+    
 //    NSColor *backgroundColor;
 //    self.backgroundColor = m_RowColor;
 //   self.layer.backgroundColor = m_RowColor.CGColor;

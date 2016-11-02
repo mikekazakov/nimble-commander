@@ -72,7 +72,8 @@
             const auto geometry = lv.geometry;
             
             const auto context = NSGraphicsContext.currentContext.CGContext;
-            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
+            rv.rowBackgroundDoubleColor.Set( context );
+//            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
             CGContextFillRect(context, NSRectToCGRect(self.bounds));
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
@@ -81,7 +82,8 @@
                                               0);
             [m_String drawWithRect:text_rect
                            options:0
-                        attributes:rv.dateTimeViewTextAttributes];
+                        attributes:rv.dateTimeViewTextAttributes
+                           context:nil];
         }
     }
 }

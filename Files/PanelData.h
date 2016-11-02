@@ -173,6 +173,7 @@ public:
     PanelType                        Type() const noexcept;
     
     int RawEntriesCount() const noexcept;
+    int SortedEntriesCount() const noexcept;
     
     const DirSortIndT&      SortedDirectoryEntries() const;
     

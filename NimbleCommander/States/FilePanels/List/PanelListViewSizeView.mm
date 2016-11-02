@@ -4,7 +4,6 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
 
-
 static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::PanelVolatileData &_vd, ByteCountFormatter::Type _format)
 {
     if( _dirent.IsDir() ) {
@@ -55,8 +54,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @implementation PanelListViewSizeView
 {
     NSString        *m_String;
-    NSDictionary    *m_TextAttributes;    
-    
+    NSDictionary    *m_TextAttributes;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -79,14 +77,16 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 }
 
 - (void) drawRect:(NSRect)dirtyRect
-{
+{    
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
         if( auto lv = rv.listView ) {
             const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
             
             const auto context = NSGraphicsContext.currentContext.CGContext;
-            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
+            rv.rowBackgroundDoubleColor.Set( context );
+//            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
+//            CGContextSetRGBFillColor
             CGContextFillRect(context, NSRectToCGRect(self.bounds));
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
@@ -95,10 +95,18 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
                                               0);
             [m_String drawWithRect:text_rect
                            options:0
-                        attributes:m_TextAttributes];
+                        attributes:m_TextAttributes
+                           context:nil];
         }
     }
 }
+
+static const auto g_ParagraphStyle = []{
+    NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+    p.alignment = NSTextAlignmentRight;
+    p.lineBreakMode = /*NSLineBreakByTruncatingMiddle*/NSLineBreakByClipping;
+    return p;
+}();
 
 - (void) buildPresentation
 {
@@ -110,7 +118,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
         m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
                              NSForegroundColorAttributeName: row_view.rowTextColor,
-                             NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+                             NSParagraphStyleAttributeName: g_ParagraphStyle};
         
         [self setNeedsDisplay:true];
     }

@@ -143,7 +143,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         [m_TableView addTableColumn:col];
         m_DateCreatedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+//        m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"D"] ) {
         col.title = @"Date Added";
@@ -153,7 +154,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         [m_TableView addTableColumn:col];
         m_DateAddedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        m_DateAddedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+//        m_DateAddedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"E"] ) {
         col.title = @"Date Modified";
@@ -163,7 +165,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         [m_TableView addTableColumn:col];
         m_DateModifiedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        m_DateModifiedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+//        m_DateModifiedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"F"] ) {
         col.title = @"Date Last Opened";
@@ -173,7 +176,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
         [m_TableView addTableColumn:col];
         m_DateAccessedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        m_DateAccessedFormattingStyle = PanelListViewDateFormatting::Style::Long;
+        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+//        m_DateAccessedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
 }
 
@@ -219,7 +223,7 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
+    return m_Data ? m_Data->SortedEntriesCount() : 0;
 }
 
 template <typename View>
@@ -234,7 +238,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    
     if( !m_Data )
         return nil;
     
@@ -242,13 +245,15 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         if( auto vfs_item = w.item ) {
             NSString *identifier = tableColumn.identifier;
             
-            unichar col_id = [identifier characterAtIndex:0];
+            const auto col_id = [identifier characterAtIndex:0];
             if( col_id == 'A' ) {
                 auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
                 auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
-                NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
-                [nv setFilename:vfs_item.NSDisplayName()];
-                [nv setIcon:icon];
+                [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
+//- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
+//                NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+//                [nv setFilename:vfs_item.NSDisplayName()];
+//                [nv setIcon:icon];
                 return nv;
             }
             if( col_id == 'B' ) {
@@ -256,26 +261,32 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             }
             if( col_id == 'C' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                dv.time = vfs_item.BTime();
-                dv.style = m_DateCreatedFormattingStyle;
+                [self fillDataForDateCreatedView:dv withItem:vfs_item];
+//                - (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
+                
+//                dv.time = vfs_item.BTime();
+//                dv.style = m_DateCreatedFormattingStyle;
                 return dv;
             }
             if( col_id == 'D' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                dv.time = vfs_item.BTime();
-                dv.style = m_DateAddedFormattingStyle;
+                [self fillDataForDateAddedView:dv withItem:vfs_item];
+//                dv.time = vfs_item.BTime();
+//                dv.style = m_DateAddedFormattingStyle;
                 return dv;
             }
             if( col_id == 'E' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                dv.time = vfs_item.MTime();
-                dv.style = m_DateModifiedFormattingStyle;
+                [self fillDataForDateModifiedView:dv withItem:vfs_item];
+//                dv.time = vfs_item.MTime();
+//                dv.style = m_DateModifiedFormattingStyle;
                 return dv;
             }
             if( col_id == 'F' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                dv.time = vfs_item.ATime();
-                dv.style = m_DateAccessedFormattingStyle;
+//                dv.time = vfs_item.ATime();
+//                dv.style = m_DateAccessedFormattingStyle;
+                [self fillDataForDateAccessedView:dv withItem:vfs_item];
                 return dv;
             }
         }
@@ -305,9 +316,97 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 //    
 //}
 
+- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
+{
+    NSImageRep* icon = m_IconsGenerator.ImageFor(_item, _vd);
+    [_view setFilename:_item.NSDisplayName()];
+    [_view setIcon:icon];
+}
+
+- (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
+{
+    _view.time = _item.BTime();
+    _view.style = m_DateCreatedFormattingStyle;
+}
+
+- (void) fillDataForDateAddedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
+{
+    _view.time = _item.BTime();
+    _view.style = m_DateAddedFormattingStyle;
+}
+
+- (void) fillDataForDateModifiedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
+{
+    _view.time = _item.MTime();
+    _view.style = m_DateModifiedFormattingStyle;
+}
+
+- (void) fillDataForDateAccessedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
+{
+    _view.time = _item.ATime();
+    _view.style = m_DateAccessedFormattingStyle;
+}
+
+//dv.time = vfs_item.ATime();
+//dv.style = m_DateAccessedFormattingStyle;
+
+
+//dv.time = vfs_item.MTime();
+//dv.style = m_DateModifiedFormattingStyle;
+
+
+//if( col_id == 'D' ) {
+//    auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+//    dv.time = vfs_item.BTime();
+//    dv.style = m_DateAddedFormattingStyle;
+//    return dv;
+//}
+
+//if( col_id == 'C' ) {
+//    auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+//    dv.time = vfs_item.BTime();
+//    dv.style = m_DateCreatedFormattingStyle;
+//    return dv;
+//}
+
 - (void) dataChanged
 {
-    [m_TableView reloadData];
+//    MachTimeBenchmark mtb;
+    const auto old_rows_count = (int)m_TableView.numberOfRows;
+    const auto new_rows_count = m_Data->SortedEntriesCount();
+
+    m_IconsGenerator.SyncDiscardedAndOutdated( *m_Data );
+    
+    [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *row_view, NSInteger row) {
+        if( row >= new_rows_count )
+            return;
+
+        if( auto item = m_Data->EntryAtSortPosition((int)row) ) {
+            auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+            row_view.item = item;
+            row_view.vd = vd;
+            for( NSView *v in row_view.subviews ) {
+                NSString *identifier = v.identifier;
+                if( identifier.length == 0 )
+                    continue;
+                const auto col_id = [v.identifier characterAtIndex:0];
+                if( col_id == 'A' )     [self fillDataForNameView:(PanelListViewNameView*)v withItem:item andVD:vd];
+                if( col_id == 'C' )     [self fillDataForDateCreatedView:(PanelListViewDateTimeView*)v withItem:item];
+                if( col_id == 'D' )     [self fillDataForDateAddedView:(PanelListViewDateTimeView*)v withItem:item];
+                if( col_id == 'E' )     [self fillDataForDateModifiedView:(PanelListViewDateTimeView*)v withItem:item];
+                if( col_id == 'F' )     [self fillDataForDateAccessedView:(PanelListViewDateTimeView*)v withItem:item];
+            }
+        }
+    }];
+
+    // update first?
+    if( old_rows_count < new_rows_count )
+        [m_TableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(old_rows_count, new_rows_count - old_rows_count)]
+                           withAnimation:NSTableViewAnimationEffectNone];
+    else if( old_rows_count > new_rows_count )
+        [m_TableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(new_rows_count, old_rows_count - new_rows_count)]
+                           withAnimation:NSTableViewAnimationEffectNone];
+//    mtb.ResetMilli();
 }
 
 - (void) syncVolatileData
@@ -416,6 +515,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(PanelListViewDateFormatting::Style)_style
 {
+// use this!!!!
+//m_TableView viewAtColumn:<#(NSInteger)#> row:<#(NSInteger)#> makeIfNecessary:<#(BOOL)#>
+    
     const auto col_index = [m_TableView.tableColumns indexOfObject:_column];
     if( col_index != NSNotFound )
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {

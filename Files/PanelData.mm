@@ -1252,3 +1252,8 @@ int PanelData::RawEntriesCount() const noexcept
 {
     return m_Listing ? (int)m_Listing->Count() : 0;
 }
+
+int PanelData::SortedEntriesCount() const noexcept
+{
+    return (int)m_EntriesByCustomSort.size();
+}

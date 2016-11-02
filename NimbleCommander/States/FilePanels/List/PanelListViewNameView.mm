@@ -63,6 +63,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) setFilename:(NSString*)_filename
 {
     m_Filename = _filename;
+    [self setNeedsDisplay:true];    
 }
 
 //- (void)updateLayer
@@ -89,12 +90,12 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
     
     if( auto v = objc_cast<PanelListViewRowView>(self.superview) ) {
-        CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-        
-        if( auto c = v.rowBackgroundColor  ) {
-            CGContextSetFillColorWithColor(context, c.CGColor);
+        const auto context = NSGraphicsContext.currentContext.CGContext;
+        v.rowBackgroundDoubleColor.Set( context );
+//        if( auto c = v.rowBackgroundColor  ) {
+//            CGContextSetFillColorWithColor(context, c.CGColor);
             CGContextFillRect(context, NSRectToCGRect(self.bounds));
-        }
+//        }
     }
     
     const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),

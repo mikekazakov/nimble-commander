@@ -504,8 +504,6 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
 {
     assert(dispatch_is_main_queue()); // STA api design    
    
-    bool has_outdated = false; /// ....
-    
     vector<bool> sweep_mark( m_Icons.size(), true );
     vector<int> entries_to_update;
     

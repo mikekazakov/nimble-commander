@@ -10,16 +10,18 @@
     NSColor*                        m_RowColor;
     DoubleColor                     m_RowDoubleColor;
     NSColor*                        m_TextColor;
+    DoubleColor                     m_TextDoubleColor;
     bool                            m_PanelActive;
     int                             m_ItemIndex;
-    NSDictionary                   *m_DateTimeViewTextAttributes;
+//    NSDictionary                   *m_DateTimeViewTextAttributes;
 }
 @synthesize rowBackgroundColor = m_RowColor;
 @synthesize rowBackgroundDoubleColor = m_RowDoubleColor;
 @synthesize rowTextColor = m_TextColor;
+@synthesize rowTextDoubleColor = m_TextDoubleColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
-@synthesize dateTimeViewTextAttributes = m_DateTimeViewTextAttributes;
+//@synthesize dateTimeViewTextAttributes = m_DateTimeViewTextAttributes;
 
 - (id) initWithItem:(VFSListingItem)_item atIndex:(int)index
 {
@@ -99,12 +101,12 @@
     }
 }
 
-static const auto g_DateTimeParagraphStyle = []{
+/*static const auto g_DateTimeParagraphStyle = []{
     NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
     p.alignment = NSLeftTextAlignment;
-    p.lineBreakMode = /*NSLineBreakByTruncatingMiddle*/NSLineBreakByClipping;
+    p.lineBreakMode = NSLineBreakByTruncatingMiddle;
     return p;
-}();
+}();*/
 
 - (void) updateColors
 {
@@ -126,11 +128,12 @@ static const auto g_DateTimeParagraphStyle = []{
                 m_TextColor = focus ? i.focused : i.regular;
                 break;
             }
+        m_TextDoubleColor = DoubleColor(m_TextColor);
 
         // build date-time view text attributes here
-        m_DateTimeViewTextAttributes = @{NSFontAttributeName: list_view.font,
+/*        m_DateTimeViewTextAttributes = @{NSFontAttributeName: list_view.font,
                                          NSForegroundColorAttributeName: m_TextColor,
-                                         NSParagraphStyleAttributeName: g_DateTimeParagraphStyle};
+                                         NSParagraphStyleAttributeName: g_DateTimeParagraphStyle};*/
     }
     
     [self setNeedsDisplay:true];

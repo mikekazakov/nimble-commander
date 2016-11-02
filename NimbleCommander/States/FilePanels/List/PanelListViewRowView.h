@@ -17,9 +17,10 @@
 @property (nonatomic, readonly) NSColor *rowBackgroundColor;
 @property (nonatomic, readonly) DoubleColor rowBackgroundDoubleColor;
 @property (nonatomic, readonly) NSColor *rowTextColor;
+@property (nonatomic, readonly) DoubleColor rowTextDoubleColor;
 @property (nonatomic) bool panelActive;
 @property (nonatomic, readonly) int itemIndex;
 @property (nonatomic, readonly) PanelListViewNameView *nameView;
-@property (nonatomic, readonly) NSDictionary *dateTimeViewTextAttributes;
+//@property (nonatomic, readonly) NSDictionary *dateTimeViewTextAttributes;
 
 @end

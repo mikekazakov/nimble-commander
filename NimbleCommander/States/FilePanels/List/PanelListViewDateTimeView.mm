@@ -69,7 +69,12 @@
         m_Line = nullptr;
     }
     [self buildLine];
-    [self setNeedsDisplay:true];
+    if( dispatch_is_main_queue() )
+        [self setNeedsDisplay:true];
+    else
+        dispatch_to_main_queue([=]{
+            [self setNeedsDisplay:true];
+        });
 }
 
 - (void) buildLine

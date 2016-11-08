@@ -23,12 +23,12 @@
 @synthesize item = m_Item;
 //@synthesize dateTimeViewTextAttributes = m_DateTimeViewTextAttributes;
 
-- (id) initWithItem:(VFSListingItem)_item atIndex:(int)index
+- (id) initWithItem:(VFSListingItem)_item
 {
     self = [super initWithFrame:NSRect()];
     if( self ) {
         m_Item = _item;
-        m_ItemIndex = index;
+        m_ItemIndex = 0;
         m_RowColor = NSColor.whiteColor;
         m_TextColor = NSColor.blackColor;
         self.selected = false;
@@ -39,6 +39,11 @@
 //        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
     }
     return self;
+}
+
+- (void) setItemIndex:(int)itemIndex
+{
+    m_ItemIndex = itemIndex;
 }
 
 - (BOOL) isOpaque

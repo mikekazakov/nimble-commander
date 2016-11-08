@@ -13,7 +13,7 @@
 #include "PanelListView.h"
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
-
+static const auto g_MaxStashedRows              = 50;
 
 // identifiers legenda:
 // A - Name
@@ -69,6 +69,8 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
     dispatch_group_t                    m_BatchUpdateGroup;
     dispatch_queue_t                    m_BatchUpdateQueue;
     bool                                m_IsBatchUpdate;
+    
+    stack<PanelListViewRowView*>        m_RowsStash;
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
@@ -249,7 +251,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( !m_Data )
         return nil;
     
-    if( auto w = objc_cast<PanelListViewRowView>([tableView rowViewAtRow:row makeIfNecessary:false]) ) {        
+    if( auto w = objc_cast<PanelListViewRowView>([tableView rowViewAtRow:row makeIfNecessary:false]) ) {
         if( auto vfs_item = w.item ) {
             NSString *identifier = tableColumn.identifier;
             
@@ -302,20 +304,40 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return nil;
 }
 
-- (nullable NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row
+- (nullable NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)rowIndex
 {
+    const auto row = (int)rowIndex;
     if( m_Data ) {
-        if( auto item = m_Data->EntryAtSortPosition((int)row) ) {
-            auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+        if( auto item = m_Data->EntryAtSortPosition(row) ) {
+            auto &vd = m_Data->VolatileDataAtSortPosition(row);
             
-            PanelListViewRowView *row_view = [[PanelListViewRowView alloc] initWithItem:item atIndex:(int)row];
-            row_view.listView = self;
+            PanelListViewRowView *row_view;
+            if( !m_RowsStash.empty() ) {
+                row_view = m_RowsStash.top();
+                m_RowsStash.pop();
+                row_view.item = item;
+            }
+            else {
+                row_view = [[PanelListViewRowView alloc] initWithItem:item];
+                row_view.listView = self;
+            }
+            row_view.itemIndex = row;
             row_view.vd = vd;
             row_view.panelActive = m_PanelView.active;
+            
             return row_view;
         }
     }
     return nil;
+}
+
+- (void)tableView:(NSTableView *)tableView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row
+{
+    if( row < 0 && m_RowsStash.size() < g_MaxStashedRows )
+        if( auto r = objc_cast<PanelListViewRowView>(rowView) ) {
+            r.item = VFSListingItem();
+            m_RowsStash.push( r );
+        }
 }
 
 - (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
@@ -409,8 +431,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
     }];
 
-    // update first?
-    [m_TableView beginUpdates];
     if( old_rows_count < new_rows_count )
         [m_TableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(old_rows_count, new_rows_count - old_rows_count)]
                            withAnimation:NSTableViewAnimationEffectNone];
@@ -420,9 +440,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     
     dispatch_group_wait(m_BatchUpdateGroup, DISPATCH_TIME_FOREVER);
     m_IsBatchUpdate = false;
-    [m_TableView endUpdates];
     
-//    mtb.ResetMilli();
+//     mtb.ResetMicro();
 }
 
 - (void) syncVolatileData

@@ -79,7 +79,6 @@ public:
     static const shared_ptr<VFSNativeHost> &SharedHost();
     virtual bool IsNativeFS() const noexcept override;
 private:
+    int FetchFlexibleListingBulk(const char *_path, shared_ptr<VFSListing> &_target, int _flags, VFSCancelChecker _cancel_checker);
     
-    
-
 };

@@ -21,7 +21,6 @@ static const auto g_MaxStashedRows              = 50;
 // C - Date created
 // D - Date added
 // E - Date modified
-// F - Date last accessed
 
 
 //bool            HasATime()          const;
@@ -42,7 +41,6 @@ static const auto g_MaxStashedRows              = 50;
 @property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
 @property (nonatomic) PanelListViewDateFormatting::Style dateAddedFormattingStyle;
 @property (nonatomic) PanelListViewDateFormatting::Style dateModifiedFormattingStyle;
-@property (nonatomic) PanelListViewDateFormatting::Style dateAccessedFormattingStyle;
 
 
 @end
@@ -60,11 +58,9 @@ static const auto g_MaxStashedRows              = 50;
     NSTableColumn                      *m_DateCreatedColumn;
     NSTableColumn                      *m_DateAddedColumn;
     NSTableColumn                      *m_DateModifiedColumn;
-    NSTableColumn                      *m_DateAccessedColumn;
     PanelListViewDateFormatting::Style  m_DateCreatedFormattingStyle;
     PanelListViewDateFormatting::Style  m_DateAddedFormattingStyle;
     PanelListViewDateFormatting::Style  m_DateModifiedFormattingStyle;
-    PanelListViewDateFormatting::Style  m_DateAccessedFormattingStyle;
     
     dispatch_group_t                    m_BatchUpdateGroup;
     dispatch_queue_t                    m_BatchUpdateQueue;
@@ -76,7 +72,6 @@ static const auto g_MaxStashedRows              = 50;
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
-@synthesize dateAccessedFormattingStyle = m_DateAccessedFormattingStyle;
 
 - (id) initWithFrame:(NSRect)frameRect
 {
@@ -178,17 +173,6 @@ static const auto g_MaxStashedRows              = 50;
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
 //        m_DateModifiedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"F"] ) {
-        col.title = @"Date Last Opened";
-        col.width = 90;
-        col.minWidth = 75;
-        col.maxWidth = 300;
-        [m_TableView addTableColumn:col];
-        m_DateAccessedColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
-//        m_DateAccessedFormattingStyle = PanelListViewDateFormatting::Style::Long;
-    }
 }
 
 -(void) dealloc
@@ -197,7 +181,6 @@ static const auto g_MaxStashedRows              = 50;
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateModifiedColumn removeObserver:self forKeyPath:@"width"];
-    [m_DateAccessedColumn removeObserver:self forKeyPath:@"width"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -226,8 +209,6 @@ static const auto g_MaxStashedRows              = 50;
             self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
         if( object == m_DateModifiedColumn )
             self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
-        if( object == m_DateAccessedColumn )
-            self.dateAccessedFormattingStyle = df::SuitableStyleForWidth( m_DateAccessedColumn.width, self.font );
     }
 }
 
@@ -290,13 +271,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 [self fillDataForDateModifiedView:dv withItem:vfs_item];
 //                dv.time = vfs_item.MTime();
 //                dv.style = m_DateModifiedFormattingStyle;
-                return dv;
-            }
-            if( col_id == 'F' ) {
-                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-//                dv.time = vfs_item.ATime();
-//                dv.style = m_DateAccessedFormattingStyle;
-                [self fillDataForDateAccessedView:dv withItem:vfs_item];
                 return dv;
             }
         }
@@ -364,11 +338,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     if( m_IsBatchUpdate )
         dispatch_group_async(m_BatchUpdateGroup, m_BatchUpdateQueue, [=]{
-            _view.time = _item.BTime();
+            _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
             _view.style = m_DateAddedFormattingStyle;
         });
     else {
-        _view.time = _item.BTime();
+        _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
         _view.style = m_DateAddedFormattingStyle;
     }
 }
@@ -383,19 +357,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     else {
         _view.time = _item.MTime();
         _view.style = m_DateModifiedFormattingStyle;
-    }
-}
-
-- (void) fillDataForDateAccessedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
-{
-    if( m_IsBatchUpdate )
-        dispatch_group_async(m_BatchUpdateGroup, m_BatchUpdateQueue, [=]{
-            _view.time = _item.ATime();
-            _view.style = m_DateAccessedFormattingStyle;
-        });
-    else {
-        _view.time = _item.ATime();
-        _view.style = m_DateAccessedFormattingStyle;
     }
 }
 
@@ -426,7 +387,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 if( col_id == 'C' )     [self fillDataForDateCreatedView:(PanelListViewDateTimeView*)v withItem:item];
                 if( col_id == 'D' )     [self fillDataForDateAddedView:(PanelListViewDateTimeView*)v withItem:item];
                 if( col_id == 'E' )     [self fillDataForDateModifiedView:(PanelListViewDateTimeView*)v withItem:item];
-                if( col_id == 'F' )     [self fillDataForDateAccessedView:(PanelListViewDateTimeView*)v withItem:item];
             }
         }
     }];
@@ -582,14 +542,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( m_DateModifiedFormattingStyle != dateModifiedFormattingStyle ) {
         m_DateModifiedFormattingStyle = dateModifiedFormattingStyle;
         [self updateDateTimeViewAtColumn:m_DateModifiedColumn withStyle:dateModifiedFormattingStyle];
-    }
-}
-
-- (void) setDateAccessedFormattingStyle:(PanelListViewDateFormatting::Style)dateAccessedFormattingStyle
-{
-    if( m_DateAccessedFormattingStyle != dateAccessedFormattingStyle ) {
-        m_DateAccessedFormattingStyle = dateAccessedFormattingStyle;
-        [self updateDateTimeViewAtColumn:m_DateAccessedColumn withStyle:dateAccessedFormattingStyle];
     }
 }
 

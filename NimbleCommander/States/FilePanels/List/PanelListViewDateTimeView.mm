@@ -63,7 +63,10 @@
 
 - (void) buildString
 {
-    m_String = PanelListViewDateFormatting::Format(m_Style, m_Time);
+    if( m_Time >= 0 )
+        m_String = PanelListViewDateFormatting::Format(m_Style, m_Time);
+    else
+        m_String = @"--";
     if( m_Line ) {
         CFRelease( m_Line );
         m_Line = nullptr;

@@ -378,7 +378,8 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
 {
 //    MachTimeBenchmark mtb;
     
-    const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot);
+    const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) &&
+                                     strcmp(_path, "/") != 0;
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
     const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
@@ -469,10 +470,30 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     if( ret != 0 )
         return VFSError::FromErrno(ret);
     
-    if( index < approx_entries_count ) // check if final entries count is less than approximate
+    // check if final entries count is less than approximate
+    if( index < approx_entries_count )
         resize_dense( index );
     
-    
+    // a little more work with symlinks, if any
+    for( int n = 0; n < index; ++n )
+        if( listing_source.unix_types[n] == DT_LNK ) {
+            char linkpath[MAXPATHLEN];
+            ssize_t sz = readlinkat(fd, listing_source.filenames[n].c_str(), linkpath, MAXPATHLEN);
+            if( sz != -1 ) {
+                linkpath[sz] = 0;
+                listing_source.symlinks.insert(n, linkpath);
+            }
+            
+            // stat the target file
+            struct stat stat_buffer;
+            if( fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0) == 0 ) {
+                listing_source.unix_modes[n]    = stat_buffer.st_mode;
+                listing_source.unix_flags[n]    = stat_buffer.st_flags;
+                listing_source.uids[n]          = stat_buffer.st_uid;
+                listing_source.gids[n]          = stat_buffer.st_gid;
+                listing_source.sizes[n]         = stat_buffer.st_size;
+            }
+        }
     
     _target = VFSListing::Build(move(listing_source));
     
@@ -605,125 +626,6 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
         listing_source.unix_types[n] = get<2>(i);
     }
     
-//    auto grp = dispatch_group_create();
-//    auto que = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-
-#if 0
-    dispatch_group_async(grp, que, [&]{
-        vector< tuple<string, optional<time_t>,optional<time_t>> > mac_times = FetchSpotlightTimesViaFM(_path);
-        
-        for( unsigned n = 0; n != amount ; ++n ) {
-            auto it = lower_bound(begin(mac_times), end(mac_times),
-                                  listing_source.filenames[n],
-                                  [](const auto &v1, const auto &v2){
-                                      return get<0>(v1) < v2;
-                                  });
-            if( it != end(mac_times) &&
-               listing_source.filenames[n] == get<0>(*it) ) {
-                if( get<1>(*it) )
-                    listing_source.add_times.insert(n, *get<1>(*it) );
-                if( get<2>(*it) )
-                    listing_source.open_times.insert(n, *get<2>(*it) );
-            }
-        }
-    });
-#endif
-    
-    
-#if 0
-    dispatch_group_async(grp, que, [&]{
-        vector< string > paths;
-        paths.reserve( amount );
-        for(unsigned n = 0; n != amount ; ++n )
-            paths.emplace_back( listing_source.directories[0] + listing_source.filenames[n] );
-        
-        auto times = FetchSpotlightTimesViaQuery( paths );
-        
-        for( unsigned n = 0; n != amount ; ++n ) {
-            if( get<0>(times[n]) )
-                listing_source.add_times.insert(n, *get<0>(times[n]) );
-            if( get<1>(times[n]) )
-                listing_source.open_times.insert(n, *get<1>(times[n]) );
-        }
-    });
-#endif
-
-#if 0
-    
-    dispatch_group_async(grp, que, [&]{
-        struct AttrListTimes {
-            u_int32_t       length;
-            struct timespec st_addtime;
-        } __attribute__((aligned(4), packed));
-        
-//        vector< string > paths;
-//        paths.reserve( amount );
-        for(unsigned n = 0; n != amount ; ++n ) {
-            auto path = listing_source.directories[0] + listing_source.filenames[n];
-            
-            
-            struct attrlist attrList;
-            struct AttrListTimes myStat = {0};
-//            const char           *path = _item_paths[0].c_str();
-            
-            memset(&attrList, 0, sizeof(attrList));
-            attrList.bitmapcount = ATTR_BIT_MAP_COUNT;
-            attrList.commonattr = ATTR_CMN_ADDEDTIME ;
-            
-//int	getattrlistat(int, const char *, void *, void *, size_t, unsigned long) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
-            
-//            getattrlistat
-//            getattrlistbulk
-            
-//            ATTR_CMN_OBJTYPE
-            int rv = getattrlist(path.c_str(), &attrList, &myStat, sizeof(myStat), 0);
-            if( rv == 0 ) {
-                listing_source.add_times.insert(n, myStat.st_addtime.tv_sec );
-            }
-            //            int a = 10;
-        }
-        
-//        auto times = FetchSpotlightTimesViaQuery( paths );
-//        
-//        for( unsigned n = 0; n != amount ; ++n ) {
-//            if( get<0>(times[n]) )
-//                listing_source.add_times.insert(n, *get<0>(times[n]) );
-//            if( get<1>(times[n]) )
-//                listing_source.open_times.insert(n, *get<1>(times[n]) );
-//        }
-    });
-    
-#endif
-
-//    
-//    vector< tuple<optional<time_t>,optional<time_t>> > FetchSpotlightTimesViaQuery( const vector<string> &_item_paths )
-//    {
-//        {
-
-//        }
-    
-    
-/*
- #define ATTR_CMN_CRTIME	- st_birthtime
- #define ATTR_CMN_MODTIME	- st_mtime
- #define ATTR_CMN_CHGTIME	- st_ctime
- #define ATTR_CMN_ACCTIME   - st_atime
- 
- 
- * ATTR_CMN_OWNERID     - uid?
- * ATTR_CMN_GRPID       - giud?
- * ATTR_CMN_ACCESSMASK  - mode?
- (read/write) A u_int32_t containing the access permissions of the file system
- object.  Equivalent to the st_mode field of the stat structure returned by
- stat(2).  Only the permission bits of st_mode are valid; other bits should be
- ignored, e.g., by masking with ~S_IFMT.
- 
- * ATTR_CMN_FLAGS       - flags?
- 
- 
- */
-    
-    
     // stat files, read info about symlinks ands possible display names
     dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
         if(_cancel_checker && _cancel_checker()) return;
@@ -750,18 +652,6 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             struct timespec time;
         } __attribute__((aligned(4), packed)) added_time_buffer;
         
-//        struct AttrListTimes add_time_buffer = {0};
-        
-        //        vector< string > paths;
-        //        paths.reserve( amount );
-//        for(unsigned n = 0; n != amount ; ++n ) {
-//            auto path = listing_source.directories[0] + listing_source.filenames[n];
-//            
-//            
-//            struct attrlist attrList;
-//            struct AttrListTimes myStat = {0};
-//            //            const char           *path = _item_paths[0].c_str();
-//
         struct attrlist attr_list;
         memset(&attr_list, 0, sizeof(attr_list));
         attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
@@ -802,9 +692,6 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             }
     });
     
-//    dispatch_group_wait(grp, DISPATCH_TIME_FOREVER);
-    
-
     _target = VFSListing::Build(move(listing_source));
     
     mtb.ResetMicro();

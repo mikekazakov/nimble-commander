@@ -89,6 +89,7 @@ static const auto g_MaxStashedRows              = 50;
         m_ScrollView.layer.drawsAsynchronously = true;
         m_ScrollView.contentView.copiesOnScroll = true;
         m_ScrollView.hasVerticalScroller = true;
+        m_ScrollView.hasHorizontalScroller = true;
         m_ScrollView.borderType = NSNoBorder;
         [self addSubview:m_ScrollView];
     
@@ -106,6 +107,7 @@ static const auto g_MaxStashedRows              = 50;
         m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
         m_TableView.rowHeight = m_Geometry.LineHeight();
         m_TableView.intercellSpacing = NSMakeSize(0, 0);
+        m_TableView.columnAutoresizingStyle = NSTableViewFirstColumnOnlyAutoresizingStyle;
         [self setupColumns];
 
         
@@ -129,6 +131,8 @@ static const auto g_MaxStashedRows              = 50;
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
         col.title = @"Name";
         col.width = 200;
+        col.minWidth = 100;
+        col.maxWidth = 1000;
         [m_TableView addTableColumn:col];
         m_NameColumn = col;
     }
@@ -138,6 +142,7 @@ static const auto g_MaxStashedRows              = 50;
         col.minWidth = 75;
         col.maxWidth = 110;
         col.headerCell.alignment = NSTextAlignmentRight;
+        col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
@@ -145,33 +150,33 @@ static const auto g_MaxStashedRows              = 50;
         col.width = 90;
         col.minWidth = 75;
         col.maxWidth = 300;
+        col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
         m_DateCreatedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
-//        m_DateCreatedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"D"] ) {
         col.title = @"Date Added";
         col.width = 90;
         col.minWidth = 75;
         col.maxWidth = 300;
+        col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
         m_DateAddedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
-//        m_DateAddedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"E"] ) {
         col.title = @"Date Modified";
         col.width = 90;
         col.minWidth = 75;
         col.maxWidth = 300;
+        col.resizingMask = NSTableColumnUserResizingMask;        
         [m_TableView addTableColumn:col];
         m_DateModifiedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
-//        m_DateModifiedFormattingStyle = PanelListViewDateFormatting::Style::Long;
     }
 }
 
@@ -443,7 +448,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 //    MachTimeBenchmark mtb;
     [m_ScrollView layoutSubtreeIfNeeded];
 //    mtb.ResetMicro();
-    
+
 }
 
 

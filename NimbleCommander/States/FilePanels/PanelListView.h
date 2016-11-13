@@ -1,11 +1,14 @@
 #pragma once
 
+#include "List/Layout.h"
+#include "PanelViewImplementationProtocol.h"
+
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
 
-@interface PanelListView: NSView<NSTableViewDataSource, NSTableViewDelegate>
+@interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
@@ -19,5 +22,8 @@ class PanelListViewGeometry;
 - (const PanelListViewGeometry&) geometry;
 
 - (NSFont*) font;
+
+
+@property (nonatomic) PanelListViewColumnsLayout columnsLayout;
 
 @end

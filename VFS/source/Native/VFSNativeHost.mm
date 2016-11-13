@@ -475,7 +475,8 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
         resize_dense( index );
     
     // a little more work with symlinks, if any
-    for( int n = 0; n < index; ++n )
+    // also fetching DisplayNames if necessary
+    for( int n = 0; n < index; ++n ){
         if( listing_source.unix_types[n] == DT_LNK ) {
             char linkpath[MAXPATHLEN];
             ssize_t sz = readlinkat(fd, listing_source.filenames[n].c_str(), linkpath, MAXPATHLEN);
@@ -494,7 +495,22 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
                 listing_source.sizes[n]         = stat_buffer.st_size;
             }
         }
+
+        
+//      TODO!!!
+//        if( _flags & VFSFlags::F_LoadDisplayNames )
+//            if( S_ISDIR(listing_source.unix_modes[n]) &&
+//               !strisdotdot(listing_source.filenames[n]) ) {
+//                static auto &dnc = DisplayNamesCache::Instance();
+//                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, listing_source.directories[0] + listing_source.filenames[n]) ) {
+//                    lock_guard<spinlock> guard(display_names_guard);
+//                    listing_source.display_filenames.insert(n, display_name);
+//                }
+//            }
+        
     
+    }
+
     _target = VFSListing::Build(move(listing_source));
     
 //    mtb.ResetMicro();

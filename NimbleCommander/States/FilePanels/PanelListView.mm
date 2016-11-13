@@ -36,6 +36,7 @@ static const auto g_MaxStashedRows              = 50;
 //time_t          BTime()             const;
 
 
+
 @interface PanelListView()
 
 @property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
@@ -55,6 +56,7 @@ static const auto g_MaxStashedRows              = 50;
     PanelListViewGeometry               m_Geometry;
     IconsGenerator2                     m_IconsGenerator;
     NSTableColumn                      *m_NameColumn;
+    NSTableColumn                      *m_SizeColumn;
     NSTableColumn                      *m_DateCreatedColumn;
     NSTableColumn                      *m_DateAddedColumn;
     NSTableColumn                      *m_DateModifiedColumn;
@@ -144,6 +146,7 @@ static const auto g_MaxStashedRows              = 50;
         col.headerCell.alignment = NSTextAlignmentRight;
         col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
+        m_SizeColumn = col;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
         col.title = @"Date Created";
@@ -547,6 +550,57 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( m_DateModifiedFormattingStyle != dateModifiedFormattingStyle ) {
         m_DateModifiedFormattingStyle = dateModifiedFormattingStyle;
         [self updateDateTimeViewAtColumn:m_DateModifiedColumn withStyle:dateModifiedFormattingStyle];
+    }
+}
+
+- (NSTableColumn*)columnByType:(PanelListViewColumns)_type
+{
+    switch( _type ) {
+        case PanelListViewColumns::Filename:        return m_NameColumn;
+        case PanelListViewColumns::Size:            return m_SizeColumn;
+        case PanelListViewColumns::DateCreated:     return m_DateCreatedColumn;
+        case PanelListViewColumns::DateAdded:       return m_DateAddedColumn;
+        case PanelListViewColumns::DateModified:    return m_DateModifiedColumn;
+        default: return nil;
+    }
+}
+
+- (PanelListViewColumns)typeByColumn:(NSTableColumn*)_col
+{
+    if( _col == m_NameColumn )          return PanelListViewColumns::Filename;
+    if( _col == m_SizeColumn )          return PanelListViewColumns::Size;
+    if( _col == m_DateCreatedColumn )   return PanelListViewColumns::DateCreated;
+    if( _col == m_DateAddedColumn )     return PanelListViewColumns::DateAdded;
+    if( _col == m_DateModifiedColumn )  return PanelListViewColumns::DateModified;
+    return PanelListViewColumns::Empty;
+}
+
+- (PanelListViewColumnsLayout)columnsLayout
+{
+    PanelListViewColumnsLayout l;
+    for( NSTableColumn *tc in m_TableView.tableColumns) {
+        PanelListViewColumnsLayout::Column c;
+        c.kind = [self typeByColumn:tc];
+        l.columns.emplace_back( c );
+    }
+    return l;
+}
+
+- (void) setColumnsLayout:(PanelListViewColumnsLayout)columnsLayout
+{
+    // TODO: check if we already have the same layout
+    
+    for( NSTableColumn *c in [m_TableView.tableColumns copy] )
+        [m_TableView removeTableColumn:c];
+
+    for( auto &c: columnsLayout.columns ) {
+        if( NSTableColumn *tc = [self columnByType:c.kind] ) {
+            if( c.width >= 0 )      tc.width = c.width;
+            if( c.min_width >= 0 )  tc.minWidth = c.min_width;
+            if( c.max_width >= 0 )  tc.maxWidth = c.max_width;
+
+            [m_TableView addTableColumn:tc];
+        }
     }
 }
 

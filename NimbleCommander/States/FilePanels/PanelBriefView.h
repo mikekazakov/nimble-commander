@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PanelViewImplementationProtocol.h"
+
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
@@ -40,7 +42,7 @@ struct PanelBriefViewColumnsLayout
     bool operator !=(const PanelBriefViewColumnsLayout& _rhs) const noexcept;
 };
 
-@interface PanelBriefView : NSView<NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
+@interface PanelBriefView : NSView<PanelViewImplementationProtocol, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
 
 - (void) dataChanged;
 - (void) syncVolatileData;

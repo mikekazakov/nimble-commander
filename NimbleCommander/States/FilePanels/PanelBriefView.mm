@@ -150,6 +150,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 - (void) setData:(PanelData*)_data
 {
     m_Data = _data;
+    m_Data->CustomIconClearAll();
     [self dataChanged];
 }
 

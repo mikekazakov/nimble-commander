@@ -35,6 +35,12 @@ struct PanelVolatileData;
 
 @end
 
+struct PanelViewLayout
+{
+    string name; // for the future
+    any layout; // perhaps switch to variant?
+};
+
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible

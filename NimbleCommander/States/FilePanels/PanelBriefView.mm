@@ -373,7 +373,6 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         NSRect vis_rect = m_ScrollView.documentVisibleRect;
         
         NSCollectionViewItem *collection_item = [m_CollectionView itemAtIndexPath:path];
-//        NSRect item_rect = [m_CollectionView itemAtIndexPath:path].view.frame;
         if( !collection_item || !NSContainsRect(vis_rect, collection_item.view.frame) )
             dispatch_to_main_queue([=]{
                 [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:NSCollectionViewScrollPositionCenteredHorizontally];
@@ -464,6 +463,15 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         if( previous_delta != new_delta )
             [m_ScrollView.documentView scrollPoint:NSMakePoint(new_scroll_position.x + new_delta - previous_delta,
                                                                  new_scroll_position.y)];
+    }
+}
+
+- (void) setColumnsLayout:(PanelBriefViewColumnsLayout)columnsLayout
+{
+    if( columnsLayout != m_ColumnsLayout ) {
+        m_ColumnsLayout = columnsLayout;
+        
+        [m_CollectionView.collectionViewLayout invalidateLayout];
     }
 }
 

@@ -837,36 +837,32 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
                          select:m_CursorSelectionType == CursorSelectionType::Selection];
 }
 
-- (void) setListLayout:(const PanelListViewColumnsLayout&)_layout
+- (void) setupBriefPresentationWithLayout:(PanelBriefViewColumnsLayout)_layout
 {
-    if( auto plv = objc_cast<PanelListView>(m_ItemsView) ) {
-        plv.columnsLayout = _layout;
+    const auto init = !objc_cast<PanelBriefView>(m_ItemsView);
+    if( init ) {
+        auto v = [self spawnBriefView];
+        v.translatesAutoresizingMaskIntoConstraints = false;
+        //    [self addSubview:m_ItemsView];
         
+        [self replaceSubview:m_ItemsView with:v];
+        m_ItemsView = v;
         
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
+        [self layout];
         
+        if( m_State.Data )
+            [m_ItemsView setData:m_State.Data];
         
+        if( m_State.CursorPos >= 0 )
+            [m_ItemsView setCursorPosition:m_State.CursorPos];
     }
-}
 
-
-- (void) setupBriefPresentationWithLayout //:....
-{
-    auto v = [self spawnBriefView];
-    v.translatesAutoresizingMaskIntoConstraints = false;
-//    [self addSubview:m_ItemsView];
-    
-    [self replaceSubview:m_ItemsView with:v];
-    m_ItemsView = v;
-    
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
-    [self layout];
-    
-    if( m_State.Data )
-        [m_ItemsView setData:m_State.Data];
-    
-    
+    if( auto v = objc_cast<PanelBriefView>(m_ItemsView) ) {
+        [v setColumnsLayout:_layout];
+    }
 }
 
 - (void) setupListPresentationWithLayout:(PanelListViewColumnsLayout)_layout
@@ -887,6 +883,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         if( m_State.Data )
             [m_ItemsView setData:m_State.Data];
+        
+        if( m_State.CursorPos >= 0 )
+            [m_ItemsView setCursorPosition:m_State.CursorPos];
     }
     
     if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {
@@ -894,57 +893,123 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
 }
 
+
+- (void) setupPresentationLayout:(const PanelViewLayout&)_pvl
+{
+    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_pvl.layout) ) {
+        [self setupListPresentationWithLayout:*ll];
+    }
+    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_pvl.layout) ) {
+        [self setupBriefPresentationWithLayout:*bl];
+    }
+}
+
+PanelViewLayout L1()
+{
+    
+    //    struct PanelBriefViewColumnsLayout
+    //    {
+    //        enum class Mode : short {
+    //            FixedWidth      = 0,
+    //            FixedAmount     = 1,
+    //            DynamicWidth    = 2
+    //        };
+    //        Mode    mode                = Mode::FixedAmount;
+    //        short   fixed_mode_width    = 150;
+    //        short   fixed_amount_value  = 3;
+    //        short   dynamic_width_min   = 100;
+    //        short   dynamic_width_max   = 300;
+    //        bool    dynamic_width_equal = false;
+    
+    PanelBriefViewColumnsLayout cl;
+    cl.mode = PanelBriefViewColumnsLayout::Mode::FixedAmount;
+    cl.fixed_amount_value = 3;
+    
+    PanelViewLayout ret;
+    ret.layout = cl;
+    return ret;
+}
+
+PanelViewLayout L2()
+{
+    
+    //    struct PanelBriefViewColumnsLayout
+    //    {
+    //        enum class Mode : short {
+    //            FixedWidth      = 0,
+    //            FixedAmount     = 1,
+    //            DynamicWidth    = 2
+    //        };
+    //        Mode    mode                = Mode::FixedAmount;
+    //        short   fixed_mode_width    = 150;
+    //        short   fixed_amount_value  = 3;
+    //        short   dynamic_width_min   = 100;
+    //        short   dynamic_width_max   = 300;
+    //        bool    dynamic_width_equal = false;
+    
+    PanelBriefViewColumnsLayout cl;
+    cl.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+    
+    PanelViewLayout ret;
+    ret.layout = cl;
+    return ret;
+}
+
+PanelViewLayout L3()
+{
+    PanelListViewColumnsLayout l;
+    
+    PanelListViewColumnsLayout::Column c;
+    c.kind = PanelListViewColumns::Filename;
+    l.columns.emplace_back(c);
+    
+    c.kind = PanelListViewColumns::Size;
+    l.columns.emplace_back(c);
+    
+    c.kind = PanelListViewColumns::DateCreated;
+    l.columns.emplace_back(c);
+    
+    c.kind = PanelListViewColumns::DateModified;
+    l.columns.emplace_back(c);
+    
+    c.kind = PanelListViewColumns::DateAdded;
+    l.columns.emplace_back(c);
+    
+    PanelViewLayout ret;
+    ret.layout = l;
+    return ret;
+}
+
+PanelViewLayout L4()
+{
+    PanelListViewColumnsLayout l;
+    
+    PanelListViewColumnsLayout::Column c;
+    c.kind = PanelListViewColumns::Filename;
+    l.columns.emplace_back(c);
+    
+    c.kind = PanelListViewColumns::Size;
+    l.columns.emplace_back(c);
+    
+    PanelViewLayout ret;
+    ret.layout = l;
+    return ret;
+}
+
 - (void) setType:(PanelViewType)_type
 {
     
-    if( _type == PanelViewType::Wide ) {
-        [self setupBriefPresentationWithLayout];
-    }
+    if( _type == PanelViewType::Short )
+        [self setupPresentationLayout:L1()];
+
+    if( _type == PanelViewType::Medium )
+        [self setupPresentationLayout:L2()];
     
-    if( _type == PanelViewType::Full ) {
-        PanelListViewColumnsLayout l;
-        
-        PanelListViewColumnsLayout::Column c;
-        c.kind = PanelListViewColumns::Filename;
-        l.columns.emplace_back(c);
-        
-        c.kind = PanelListViewColumns::Size;
-        l.columns.emplace_back(c);
-        
-        c.kind = PanelListViewColumns::DateCreated;
-        l.columns.emplace_back(c);
-        
-        c.kind = PanelListViewColumns::DateModified;
-        l.columns.emplace_back(c);
-        
-        c.kind = PanelListViewColumns::DateAdded;
-        l.columns.emplace_back(c);
-        
-//        m_ItemsView.columnsLayout = l;
-//        [self setListLayout:l];
-        
-        [self setupListPresentationWithLayout:l];
-    }
+    if( _type == PanelViewType::Full )
+        [self setupPresentationLayout:L3()];
     
-//    if( _type == PanelViewType::Wide ) {
-//        PanelListViewColumnsLayout l;
-//        
-//        PanelListViewColumnsLayout::Column c;
-//        c.kind = PanelListViewColumns::Filename;
-//        l.columns.emplace_back(c);
-//        
-//        c.kind = PanelListViewColumns::Size;
-//        l.columns.emplace_back(c);
-//        
-////        m_ItemsView.columnsLayout = l;
-//        [self setListLayout:l];
-//    }
-    
-    
-    
-    
-    
-    
+    if( _type == PanelViewType::Wide )
+        [self setupPresentationLayout:L4()];
     
     
 //    m_State.ViewType = _type;

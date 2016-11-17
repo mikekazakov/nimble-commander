@@ -603,6 +603,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             [m_TableView addTableColumn:tc];
         }
     }
+    [m_TableView sizeToFit];
 }
 
 @end

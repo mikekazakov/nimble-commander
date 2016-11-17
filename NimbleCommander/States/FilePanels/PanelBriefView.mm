@@ -365,18 +365,21 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     if( cursorPosition < 0 )
         m_CollectionView.selectionIndexPaths = [NSSet set];
     else {
-        NSIndexPath *path = [NSIndexPath indexPathForItem:cursorPosition inSection:0];
         NSSet *ind = [NSSet setWithObject:[NSIndexPath indexPathForItem:cursorPosition inSection:0]];
         m_CollectionView.selectionIndexPaths = ind;
         
-        
-        NSRect vis_rect = m_ScrollView.documentVisibleRect;
-        
-        NSCollectionViewItem *collection_item = [m_CollectionView itemAtIndexPath:path];
-        if( !collection_item || !NSContainsRect(vis_rect, collection_item.view.frame) )
+        const auto vis_rect = m_ScrollView.documentVisibleRect;
+        const auto item_rect = [m_CollectionView frameForItemAtIndex:cursorPosition];
+        if( !NSContainsRect(vis_rect, item_rect) ) {
+            auto scroll_mode = NSCollectionViewScrollPositionCenteredHorizontally;
+            if( item_rect.origin.x < vis_rect.origin.x )
+                scroll_mode = NSCollectionViewScrollPositionLeft;
+            if( item_rect.origin.x + item_rect.size.width > vis_rect.origin.x + vis_rect.size.width )
+                scroll_mode = NSCollectionViewScrollPositionRight;
             dispatch_to_main_queue([=]{
-                [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:NSCollectionViewScrollPositionCenteredHorizontally];
+                [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:scroll_mode];
             });
+        }
     }
 }
 

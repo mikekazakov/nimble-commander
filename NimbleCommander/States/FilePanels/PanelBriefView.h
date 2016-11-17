@@ -5,6 +5,7 @@
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
+class IconsGenerator2;
 
 struct PanelBriefViewItemLayoutConstants
 {
@@ -43,6 +44,8 @@ struct PanelBriefViewColumnsLayout
 };
 
 @interface PanelBriefView : NSView<PanelViewImplementationProtocol, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
+
+- (id)initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

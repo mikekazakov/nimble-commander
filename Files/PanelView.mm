@@ -20,6 +20,7 @@
 #include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
 #include "../NimbleCommander/States/FilePanels/PanelListView.h"
 #include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
+#include "../NimbleCommander/States/FilePanels/IconsGenerator2.h"
 
 static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
 
@@ -84,6 +85,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
     
     PanelViewHeader            *m_HeaderView;
+    
+    IconsGenerator2             m_IconsGenerator;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -116,7 +119,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         
         //m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
-        m_ItemsView = [[PanelListView alloc] initWithFrame:frame];
+//        m_ItemsView = [[PanelListView alloc] initWithFrame:frame];
+        m_ItemsView = [self spawnListView];
         m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ItemsView];
         
@@ -155,6 +159,17 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 - (id<PanelViewDelegate>) delegate
 {
     return m_Delegate;
+}
+
+- (PanelListView*) spawnListView
+{
+    return [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+}
+
+- (PanelBriefView*) spawnBriefView
+{
+    return [[PanelBriefView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+    
 }
 
 - (BOOL)isFlipped
@@ -836,12 +851,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void) setupBriefPresentationWithLayout //:....
 {
-    
-    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds];
+    auto v = [self spawnBriefView];
     v.translatesAutoresizingMaskIntoConstraints = false;
 //    [self addSubview:m_ItemsView];
-    
-    
     
     [self replaceSubview:m_ItemsView with:v];
     m_ItemsView = v;
@@ -857,6 +869,30 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 }
 
+- (void) setupListPresentationWithLayout:(PanelListViewColumnsLayout)_layout
+{
+    const auto init = !objc_cast<PanelListView>(m_ItemsView);
+    
+    if( init ) {
+        auto v = [self spawnListView];
+        v.translatesAutoresizingMaskIntoConstraints = false;
+        
+        [self replaceSubview:m_ItemsView with:v];
+        m_ItemsView = v;
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
+        [self layout];
+        
+        if( m_State.Data )
+            [m_ItemsView setData:m_State.Data];
+    }
+    
+    if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {
+        [v setColumnsLayout:_layout];
+    }
+}
 
 - (void) setType:(PanelViewType)_type
 {
@@ -885,7 +921,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         l.columns.emplace_back(c);
         
 //        m_ItemsView.columnsLayout = l;
-        [self setListLayout:l];
+//        [self setListLayout:l];
+        
+        [self setupListPresentationWithLayout:l];
     }
     
 //    if( _type == PanelViewType::Wide ) {

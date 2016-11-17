@@ -54,7 +54,7 @@ static const auto g_MaxStashedRows              = 50;
     PanelData                          *m_Data;
     __weak PanelView                   *m_PanelView;
     PanelListViewGeometry               m_Geometry;
-    IconsGenerator2                     m_IconsGenerator;
+    IconsGenerator2                    *m_IconsGenerator;
     NSTableColumn                      *m_NameColumn;
     NSTableColumn                      *m_SizeColumn;
     NSTableColumn                      *m_DateCreatedColumn;
@@ -75,7 +75,7 @@ static const auto g_MaxStashedRows              = 50;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
@@ -116,7 +116,8 @@ static const auto g_MaxStashedRows              = 50;
         m_ScrollView.documentView = m_TableView;
         
         __weak PanelListView* weak_self = self;
-        m_IconsGenerator.SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
+        m_IconsGenerator = &_ic;
+        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
@@ -324,7 +325,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
 {
-    NSImageRep* icon = m_IconsGenerator.ImageFor(_item, _vd);
+    NSImageRep* icon = m_IconsGenerator->ImageFor(_item, _vd);
     [_view setFilename:_item.NSDisplayName()];
     [_view setIcon:icon];
 }
@@ -374,7 +375,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     const auto old_rows_count = (int)m_TableView.numberOfRows;
     const auto new_rows_count = m_Data->SortedEntriesCount();
 
-    m_IconsGenerator.SyncDiscardedAndOutdated( *m_Data );
+    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     
     m_IsBatchUpdate = true;
     

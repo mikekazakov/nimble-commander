@@ -135,7 +135,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     PanelData                          *m_Data;
     vector<short>                       m_FilenamesPxWidths;
     short                               m_MaxFilenamePxWidth;
-    IconsGenerator2                     m_IconsGenerator;
+    IconsGenerator2                    *m_IconsGenerator;
     NSFont                             *m_Font;
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
@@ -150,11 +150,10 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 - (void) setData:(PanelData*)_data
 {
     m_Data = _data;
-    m_Data->CustomIconClearAll();
     [self dataChanged];
 }
 
-- (id)initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
@@ -202,7 +201,8 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         m_ScrollView.documentView = m_CollectionView;
         
         __weak PanelBriefView* weak_self = self;
-        m_IconsGenerator.SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
+        m_IconsGenerator = &_ic;
+        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
@@ -261,7 +261,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             
-            NSImageRep*icon = m_IconsGenerator.ImageFor(vfs_item, vd);
+            NSImageRep*icon = m_IconsGenerator->ImageFor(vfs_item, vd);
             
             [item setVD:vd];
             [item setIcon:icon];
@@ -337,7 +337,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     dispatch_assert_main_queue();
     assert( m_Data );
     [self calculateFilenamesWidths];
-    m_IconsGenerator.SyncDiscardedAndOutdated( *m_Data );
+    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
 }

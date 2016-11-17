@@ -7,8 +7,11 @@ class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
+class IconsGenerator2;
 
 @interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
+
+- (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;

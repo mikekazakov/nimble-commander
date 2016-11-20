@@ -1,7 +1,9 @@
 #pragma once
 #include <Habanero/DispatchQueue.h>
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
 #include "rapidjson.h"
+#include "../NimbleCommander/States/FilePanels/PanelDataSortMode.h"
+
 
 /**
  * PanelData actually does the following things:
@@ -35,43 +37,8 @@ public:
         bool        is_valid() const noexcept;
     };
     
-    struct PanelSortMode
-    {
-        enum Mode
-        {
-            SortNoSort      = 0x000,
-            SortByName      = 0x001,
-            SortByNameRev   = 0x002,
-            SortByExt       = SortByName    << 2,
-            SortByExtRev    = SortByNameRev << 2,
-            SortBySize      = SortByName    << 4,
-            SortBySizeRev   = SortByNameRev << 4,
-            SortByMTime     = SortByName    << 6,
-            SortByMTimeRev  = SortByNameRev << 6,
-            SortByBTime     = SortByName    << 8,
-            SortByBTimeRev  = SortByNameRev << 8,
-            // for internal usage, seems to be meaningless for human reading (sort by internal UTF8 representation)
-            SortByRawCName  = 0xF0000000,
-            SortByNameMask  = SortByName | SortByNameRev,
-            SortByExtMask   = SortByExt  | SortByExtRev,
-            SortBySizeMask  = SortBySize | SortBySizeRev,
-            SortByMTimeMask = SortByMTime| SortByMTimeRev,
-            SortByBTimeMask = SortByBTime| SortByBTimeRev
-        };
-        
-        Mode sort;
-        bool sep_dirs;      // separate directories from files, like win-like
-        bool case_sens;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
-        bool numeric_sort;  // try to treat filenames as numbers and use them as compare basis
-        
-        PanelSortMode();
-        bool isdirect() const;
-        bool isrevert() const;
-        static bool validate(Mode _mode);
-        bool operator ==(const PanelSortMode& _r) const;
-        bool operator !=(const PanelSortMode& _r) const;
-    };
-
+    using PanelSortMode = PanelDataSortMode;
+    
     struct PanelVolatileData
     {
         enum {

@@ -80,6 +80,8 @@ struct PanelViewLayout
  */
 - (void) dataUpdated;
 
+- (void) dataSortingHasChanged;
+
 - (void) volatileDataChanged;
 
 - (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed

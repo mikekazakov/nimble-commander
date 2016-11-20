@@ -310,8 +310,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    if( data )
 
-    if( data )
+    if( data ) {
         [m_ItemsView setData:data];
+        m_HeaderView.sortMode = data->SortMode();
+    }
     
     if( !data )
         self.presentation = nullptr;
@@ -1474,6 +1476,11 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         
         [self setCurpos:_sorted_index];        
     }
+}
+
+- (void) dataSortingHasChanged
+{
+    m_HeaderView.sortMode = m_State.Data->SortMode();
 }
 
 @end

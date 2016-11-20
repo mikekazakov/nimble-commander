@@ -59,51 +59,6 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-// PanelSortMode
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-PanelData::PanelSortMode::PanelSortMode():
-    sort(SortByRawCName),
-    sep_dirs(false),
-    case_sens(false),
-    numeric_sort(false)
-{}
-
-bool PanelData::PanelSortMode::isdirect() const
-{
-    return sort == SortByName || sort == SortByExt || sort == SortBySize || sort == SortByMTime || sort == SortByBTime;
-}
-
-bool PanelData::PanelSortMode::isrevert() const
-{
-    return sort == SortByNameRev || sort == SortByExtRev || sort == SortBySizeRev || sort == SortByMTimeRev || sort == SortByBTimeRev;
-}
-
-bool PanelData::PanelSortMode::validate(Mode _mode)
-{
-    return _mode == SortNoSort ||
-           _mode == SortByName ||
-           _mode == SortByNameRev ||
-           _mode == SortByExt ||
-           _mode == SortByExtRev ||
-           _mode == SortBySize ||
-           _mode == SortBySizeRev ||
-           _mode == SortByMTime ||
-           _mode == SortByMTimeRev ||
-           _mode == SortByBTime ||
-           _mode == SortByBTimeRev;
-}
-
-bool PanelData::PanelSortMode::operator ==(const PanelData::PanelSortMode& _r) const
-{
-    return sort == _r.sort && sep_dirs == _r.sep_dirs && case_sens == _r.case_sens && numeric_sort == _r.numeric_sort;
-}
-
-bool PanelData::PanelSortMode::operator !=(const PanelData::PanelSortMode& _r) const
-{
-    return !(*this == _r);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 // PanelVolatileData
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 bool PanelData::PanelVolatileData::is_selected() const noexcept
@@ -627,10 +582,10 @@ struct SortPredLessIndToInd : public SortPredLessBase
                 if( l.HasExtension(_1) && !l.HasExtension(_2) ) return true;
                 if(!l.HasExtension(_1) &&  l.HasExtension(_2) ) return false;
                 return by_name() > 0; // fallback case
-            case _::SortByMTime:    return l.MTime(_1) > l.MTime(_2);
-            case _::SortByMTimeRev: return l.MTime(_1) < l.MTime(_2);
-            case _::SortByBTime:    return l.BTime(_1) > l.BTime(_2);
-            case _::SortByBTimeRev: return l.BTime(_1) < l.BTime(_2);
+            case _::SortByModTime:    return l.MTime(_1) > l.MTime(_2);
+            case _::SortByModTimeRev: return l.MTime(_1) < l.MTime(_2);
+            case _::SortByBirthTime:    return l.BTime(_1) > l.BTime(_2);
+            case _::SortByBirthTimeRev: return l.BTime(_1) < l.BTime(_2);
             case _::SortBySize: {
                 auto s1 = vd[_1].size, s2 = vd[_2].size;
                 if(s1 != invalid_size && s2 != invalid_size)
@@ -703,10 +658,10 @@ struct SortPredLessIndToKeys : public SortPredLessBase
                 if( l.HasExtension(_1) &&  _val2.extension.empty() ) return true;
                 if(!l.HasExtension(_1) && !_val2.extension.empty() ) return false;
                 return by_name() > 0; // fallback case
-            case _::SortByMTime:    return l.MTime(_1) > _val2.mtime;
-            case _::SortByMTimeRev: return l.MTime(_1) < _val2.mtime;
-            case _::SortByBTime:    return l.BTime(_1) > _val2.btime;
-            case _::SortByBTimeRev: return l.BTime(_1) < _val2.btime;
+            case _::SortByModTime:    return l.MTime(_1) > _val2.mtime;
+            case _::SortByModTimeRev: return l.MTime(_1) < _val2.mtime;
+            case _::SortByBirthTime:    return l.BTime(_1) > _val2.btime;
+            case _::SortByBirthTimeRev: return l.BTime(_1) < _val2.btime;
             case _::SortBySize: {
                 auto s1 = vd[_1].size;
                 if( s1 != invalid_size && _val2.size != invalid_size )

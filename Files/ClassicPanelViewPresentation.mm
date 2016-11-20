@@ -170,10 +170,10 @@ static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelData::PanelS
         case PanelData::PanelSortMode::SortByExtRev:   c='E'; break;
         case PanelData::PanelSortMode::SortBySize:     c='s'; break;
         case PanelData::PanelSortMode::SortBySizeRev:  c='S'; break;
-        case PanelData::PanelSortMode::SortByMTime:    c='m'; break;
-        case PanelData::PanelSortMode::SortByMTimeRev: c='M'; break;
-        case PanelData::PanelSortMode::SortByBTime:    c='b'; break;
-        case PanelData::PanelSortMode::SortByBTimeRev: c='B'; break;
+        case PanelData::PanelSortMode::SortByModTime:    c='m'; break;
+        case PanelData::PanelSortMode::SortByModTimeRev: c='M'; break;
+        case PanelData::PanelSortMode::SortByBirthTime:    c='b'; break;
+        case PanelData::PanelSortMode::SortByBirthTimeRev: c='B'; break;
         default:                                       c='?'; break;
     }
     oms::StringBuf<1> r;

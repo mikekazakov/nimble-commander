@@ -3,6 +3,25 @@
 #include "../../../Files/PanelController.h"
 #include "PanelViewHeader.h"
 
+static NSString *SortLetter(PanelDataSortMode _mode)
+{
+    switch( _mode.sort ) {
+        case PanelDataSortMode::SortByName:         return @"n";
+        case PanelDataSortMode::SortByNameRev:      return @"N";
+        case PanelDataSortMode::SortByExt:          return @"e";
+        case PanelDataSortMode::SortByExtRev:       return @"E";
+        case PanelDataSortMode::SortBySize:         return @"s";
+        case PanelDataSortMode::SortBySizeRev:      return @"S";
+        case PanelDataSortMode::SortByModTime:      return @"m";
+        case PanelDataSortMode::SortByModTimeRev:   return @"M";
+        case PanelDataSortMode::SortByBirthTime:    return @"b";
+        case PanelDataSortMode::SortByBirthTimeRev: return @"B";
+        case PanelDataSortMode::SortByAddTime:      return @"a";
+        case PanelDataSortMode::SortByAddTimeRev:   return @"A";
+        default:                                    return @"?";
+    }
+}
+
 @implementation PanelViewHeader
 {
     NSTextField         *m_PathTextField;
@@ -11,8 +30,12 @@
     NSBox               *m_SeparatorLine;
     NSColor             *m_Background;
     NSString            *m_SearchPrompt;
+    NSButton            *m_SortButton;
     __weak PanelView    *m_PanelView;
+    PanelDataSortMode    m_SortMode;
 }
+
+@synthesize sortMode = m_SortMode;
 
 - (id) initWithFrame:(NSRect)frameRect
 {
@@ -46,21 +69,7 @@
         m_SearchTextField.alignment = NSTextAlignmentCenter;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.target = self;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.action = @selector(onSearchFieldDiscardButton:);
-//        [((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell setButtonType:NSButtonTypeMomentaryLight];
-//        - (void)setButtonType:(NSButtonType)type;
-        //- (void)setButtonType:(NSButtonType)type;
-//        m_SearchTextField.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-//        m_SearchTextField.cell.wraps = false;
-        
-//        NSTextFieldCellz
-        
-//- (void) onSearchFieldDiscardButton:(id)sender
-        
         [self addSubview:m_SearchTextField];
-        
-        
-//        NSSearchFieldCell
-        
         
         m_SearchMatchesField= [[NSTextField alloc] initWithFrame:NSRect()];
         m_SearchMatchesField.translatesAutoresizingMaskIntoConstraints = false;
@@ -79,6 +88,19 @@
         m_SeparatorLine.boxType = NSBoxSeparator;
         [self addSubview:m_SeparatorLine];
    
+        m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];
+        m_SortButton.translatesAutoresizingMaskIntoConstraints = NO;
+        m_SortButton.title = @"N";
+        m_SortButton.bezelStyle = NSBezelStyleInline;
+        m_SortButton.bordered = false;
+        m_SortButton.buttonType = NSMomentaryLightButton;
+//m_DiscardButton.buttonType = NSMomentaryChangeButton;
+        m_SortButton.action = @selector(onSortButtonAction:);
+        m_SortButton.target = self;
+        m_SortButton.enabled = true;
+        [self addSubview:m_SortButton];
+        
+        
         [self setupLayout];
     }
     return self;
@@ -86,9 +108,10 @@
 
 - (void) setupLayout
 {
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField);
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==40)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==1)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[m_SortButton(==20)]-(==4)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeLeft
                                                      relatedBy:NSLayoutRelationEqual
@@ -219,6 +242,20 @@
         [((PanelController*)m_PanelView.delegate) QuickSearchSetCriteria:v];
     else
         [self onSearchFieldDiscardButton:sender];
+}
+
+- (void) onSortButtonAction:(id)sender
+{
+    NSLog(@"!!");
+    // show a pop-up menu
+}
+
+- (void) setSortMode:(PanelDataSortMode)_mode
+{
+    if( m_SortMode != _mode ) {
+        m_SortMode = _mode;
+        m_SortButton.title = SortLetter(_mode);
+    }
 }
 
 @end

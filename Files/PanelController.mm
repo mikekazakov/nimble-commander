@@ -277,6 +277,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     m_Data.SetSortMode(_mode);
 
     pers.Restore();
+    
+    [m_View dataSortingHasChanged];
 }
 
 - (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter

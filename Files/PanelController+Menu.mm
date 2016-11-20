@@ -256,10 +256,14 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
-    auto upd_for_sort = [](NSMenuItem * _item, PanelData::PanelSortMode _mode, PanelData::PanelSortMode::Mode _mask){
+    auto upd_for_sort = [](NSMenuItem * _item, PanelData::PanelSortMode _mode, PanelData::PanelSortMode::Mode _dir, PanelData::PanelSortMode::Mode _rev ){
         static NSImage *img = [NSImage imageNamed:NSImageNameRemoveTemplate];
-        if(_mode.sort & _mask) {
-            _item.image = _mode.isrevert() ? img : nil;
+        if(_mode.sort == _dir) {
+            _item.image = nil;
+            _item.state = NSOnState;
+        }
+        else if(_mode.sort == _rev) {
+            _item.image = img;
             _item.state = NSOnState;
         }
         else {
@@ -295,11 +299,11 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
     IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
     IF(tag_sort_numeric)    item.state = m_Data.SortMode().numeric_sort;
-    IF(tag_sort_name)       upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByNameMask);
-    IF(tag_sort_ext)        upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByExtMask);
-    IF(tag_sort_mod)        upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByMTimeMask);
-    IF(tag_sort_size)       upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortBySizeMask);
-    IF(tag_sort_creat)      upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByBTimeMask);
+    IF(tag_sort_name)       upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByName, PanelData::PanelSortMode::SortByNameRev );
+    IF(tag_sort_ext)        upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByExt,PanelData::PanelSortMode::SortByExtRev );
+    IF(tag_sort_mod)        upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByModTime, PanelData::PanelSortMode::SortByModTimeRev );
+    IF(tag_sort_size)       upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortBySize, PanelData::PanelSortMode::SortBySizeRev );
+    IF(tag_sort_creat)      upd_for_sort(item, m_Data.SortMode(), PanelData::PanelSortMode::SortByBirthTime, PanelData::PanelSortMode::SortByBirthTimeRev );
 #undef IF
     
     IF_MENU_TAG("menu.edit.paste")                      return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
@@ -895,13 +899,13 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self MakeSortWith:PanelData::PanelSortMode::SortByExt Rev:PanelData::PanelSortMode::SortByExtRev];
 }
 - (IBAction)ToggleSortByMTime:(id)sender{
-    [self MakeSortWith:PanelData::PanelSortMode::SortByMTime Rev:PanelData::PanelSortMode::SortByMTimeRev];
+    [self MakeSortWith:PanelData::PanelSortMode::SortByModTime Rev:PanelData::PanelSortMode::SortByModTimeRev];
 }
 - (IBAction)ToggleSortBySize:(id)sender{
     [self MakeSortWith:PanelData::PanelSortMode::SortBySize Rev:PanelData::PanelSortMode::SortBySizeRev];
 }
 - (IBAction)ToggleSortByBTime:(id)sender{
-    [self MakeSortWith:PanelData::PanelSortMode::SortByBTime Rev:PanelData::PanelSortMode::SortByBTimeRev];
+    [self MakeSortWith:PanelData::PanelSortMode::SortByBirthTime Rev:PanelData::PanelSortMode::SortByBirthTimeRev];
 }
 - (IBAction)ToggleShortViewMode:(id)sender {
     m_View.type = PanelViewType::Short;

@@ -344,14 +344,10 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (int) cursorPosition
 {
-//    return m_CursorPosition;
-//    NSIndexPath *sel = m_CollectionView.selectionIndexPaths;
-    NSSet<NSIndexPath *> *sel = m_CollectionView.selectionIndexPaths;
-    NSArray *indeces = sel.allObjects;
-    if( indeces.count == 0 )
-        return -1;
-    else
-        return (int)((NSIndexPath*)indeces[0]).item;
+    if( NSIndexPath *ip = m_CollectionView.selectionIndexPaths.anyObject )
+        return (int)ip.item;
+     else
+         return -1;
 }
 
 - (void) setCursorPosition:(int)cursorPosition

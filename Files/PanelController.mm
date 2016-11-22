@@ -270,15 +270,19 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                                           self);
 }
 
-- (void) ChangeSortingModeTo:(PanelData::PanelSortMode)_mode
+- (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode
 {
-    panel::GenericCursorPersistance pers(m_View, m_Data);
-    
-    m_Data.SetSortMode(_mode);
-
-    pers.Restore();
-    
-    [m_View dataSortingHasChanged];
+    if( _mode != m_Data.SortMode() ) {
+        panel::GenericCursorPersistance pers(m_View, m_Data);
+        
+        m_Data.SetSortMode(_mode);
+        
+        pers.Restore();
+        
+        [m_View dataSortingHasChanged];
+        [m_View dataUpdated];
+        [self markRestorableStateAsInvalid];
+    }
 }
 
 - (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter
@@ -294,9 +298,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 {
     PanelData::PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
     mode.sort = mode.sort != _direct ? _direct : _rev;
-    [self ChangeSortingModeTo:mode];
-    [self markRestorableStateAsInvalid];
-    [m_View dataUpdated];    
+    [self changeSortingModeTo:mode];
 }
 
 - (bool) HandleGoToUpperDirectory

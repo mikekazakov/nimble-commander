@@ -183,6 +183,8 @@ namespace panel
  */
 - (panel::ActivityTicket) registerExtActivity;
 
+- (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode;
+
 @end
 
 // internal stuff, move it somewehere else
@@ -200,7 +202,6 @@ namespace panel
 - (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
 - (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
-- (void) ChangeSortingModeTo:(PanelData::PanelSortMode)_mode;
 - (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter;
 - (void) MakeSortWith:(PanelData::PanelSortMode::Mode)_direct Rev:(PanelData::PanelSortMode::Mode)_rev;
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;

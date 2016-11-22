@@ -22,6 +22,10 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     }
 }
 
+@interface PanelViewHeader()
+@property (strong) IBOutlet NSMenu *sortMenuPopup;
+@end
+
 @implementation PanelViewHeader
 {
     NSTextField         *m_PathTextField;
@@ -33,9 +37,11 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     NSButton            *m_SortButton;
     __weak PanelView    *m_PanelView;
     PanelDataSortMode    m_SortMode;
+    function<void(PanelDataSortMode)> m_SortModeChangeCallback;
 }
 
 @synthesize sortMode = m_SortMode;
+@synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
 - (id) initWithFrame:(NSRect)frameRect
 {
@@ -91,10 +97,8 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];
         m_SortButton.translatesAutoresizingMaskIntoConstraints = NO;
         m_SortButton.title = @"N";
-        m_SortButton.bezelStyle = NSBezelStyleInline;
         m_SortButton.bordered = false;
         m_SortButton.buttonType = NSMomentaryLightButton;
-//m_DiscardButton.buttonType = NSMomentaryChangeButton;
         m_SortButton.action = @selector(onSortButtonAction:);
         m_SortButton.target = self;
         m_SortButton.enabled = true;
@@ -110,8 +114,8 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 {
     NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==1)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==1)-[m_SortButton(==20)]-(==4)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==4)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeLeft
                                                      relatedBy:NSLayoutRelationEqual
@@ -246,8 +250,25 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 
 - (void) onSortButtonAction:(id)sender
 {
-    NSLog(@"!!");
-    // show a pop-up menu
+    if( !self.sortMenuPopup ) {
+        NSNib *nib = [[NSNib alloc] initWithNibNamed:@"PanelViewHeaderSortPopup" bundle:nil];
+        [nib instantiateWithOwner:self topLevelObjects:nil];
+    }
+    
+    for( NSMenuItem *i in self.sortMenuPopup.itemArray ) {
+        if( i.action == @selector(onSortPopupMenuSortByClicked:) )
+            i.state = i.tag == m_SortMode.sort ? NSOnState : NSOffState;
+        else if( i.action == @selector(onSortPopupMenuOptionsClicked:) )
+            switch ( i.tag ) {
+                case 1: i.state = m_SortMode.sep_dirs ? NSOnState : NSOffState; break;
+                case 2: i.state = m_SortMode.case_sens ? NSOnState : NSOffState; break;
+                case 3: i.state = m_SortMode.numeric_sort ? NSOnState : NSOffState; break;
+            }
+    }
+
+    [self.sortMenuPopup popUpMenuPositioningItem:nil
+                                      atLocation:NSMakePoint(m_SortButton.bounds.size.width, 0)
+                                          inView:m_SortButton];
 }
 
 - (void) setSortMode:(PanelDataSortMode)_mode
@@ -255,6 +276,32 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     if( m_SortMode != _mode ) {
         m_SortMode = _mode;
         m_SortButton.title = SortLetter(_mode);
+    }
+}
+
+- (IBAction)onSortPopupMenuSortByClicked:(id)sender
+{
+    if( auto item = objc_cast<NSMenuItem>(sender) ) {
+        PanelDataSortMode proposed = m_SortMode;
+        proposed.sort = (PanelDataSortMode::Mode)item.tag;
+        
+        if( proposed != m_SortMode && m_SortModeChangeCallback )
+            m_SortModeChangeCallback(proposed);
+    }
+}
+
+- (IBAction)onSortPopupMenuOptionsClicked:(id)sender
+{
+    if( auto item = objc_cast<NSMenuItem>(sender) ) {
+        PanelDataSortMode proposed = m_SortMode;
+        switch ( item.tag ) {
+            case 1: proposed.sep_dirs = !proposed.sep_dirs; break;
+            case 2: proposed.case_sens = !proposed.case_sens; break;
+            case 3: proposed.numeric_sort = !proposed.numeric_sort; break;
+        }
+        
+        if( proposed != m_SortMode && m_SortModeChangeCallback )
+            m_SortModeChangeCallback(proposed);
     }
 }
 

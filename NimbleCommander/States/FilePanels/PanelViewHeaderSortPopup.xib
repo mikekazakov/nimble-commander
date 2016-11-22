@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PanelViewHeader">
+            <connections>
+                <outlet property="sortMenuPopup" destination="fFG-pK-fYg" id="unv-gf-o2t"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <menu id="fFG-pK-fYg">
+            <items>
+                <menuItem title="Sort by" enabled="NO" id="uNn-d9-xaM">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Name ↓" tag="1" indentationLevel="1" id="prK-sX-wWv">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="fZ1-5z-vax"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Name ↑" tag="2" indentationLevel="1" id="VRa-0i-JUb">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="Kt3-AH-hEx"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Extention ↓" tag="3" indentationLevel="1" id="tzp-Uh-dub">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="nab-3h-kD5"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Extention ↑" tag="4" indentationLevel="1" id="eaf-hX-ZwB">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="2Jm-oI-T92"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Size ↓" tag="5" indentationLevel="1" id="hdq-ge-Odh">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="bWG-g9-bNB"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Size ↑" tag="6" indentationLevel="1" id="kDo-Q7-LNI">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="gUA-j8-Gux"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Modified Time ↓" tag="7" indentationLevel="1" id="gjX-58-iwr">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="EuD-hm-CCD"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Modified Time ↑" tag="8" indentationLevel="1" id="Nl7-FN-dds">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="9sB-fE-4LY"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Created Time ↓" tag="9" indentationLevel="1" id="0zO-Xr-vjm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="1hM-uh-rzQ"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Created Time ↑" tag="10" indentationLevel="1" id="1AJ-eC-Yem">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="r3i-WK-rRv"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Added Time ↑" tag="11" indentationLevel="1" id="UsI-k2-dKl">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="RCh-33-csw"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Added Time ↓" tag="12" indentationLevel="1" id="9QW-2S-sOs">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="l4g-rc-ufv"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Options" enabled="NO" id="cz9-Bn-pwk">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Separate Folders from Files" tag="1" indentationLevel="1" id="RYi-mW-ybA">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="bBL-wY-YUM"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Case-Sensitive Comparison" tag="2" indentationLevel="1" id="fpg-oA-HmO">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="hLW-AQ-HMM"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Numeric Comparison" tag="3" indentationLevel="1" id="mJ3-ls-nKo">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="9aY-hJ-6GI"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="-244" y="173"/>
+        </menu>
+    </objects>
+</document>

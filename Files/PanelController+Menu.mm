@@ -874,23 +874,17 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
     auto mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
-    [self ChangeSortingModeTo:mode];
-    [self markRestorableStateAsInvalid];
-    [m_View dataUpdated];
+    [self changeSortingModeTo:mode];
 }
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender{
     auto mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
-    [self ChangeSortingModeTo:mode];
-    [self markRestorableStateAsInvalid];
-    [m_View dataUpdated];
+    [self changeSortingModeTo:mode];
 }
 - (IBAction)ToggleNumericComparison:(id)sender{
     auto mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
-    [self ChangeSortingModeTo:mode];
-    [self markRestorableStateAsInvalid];
-    [m_View dataUpdated];
+    [self changeSortingModeTo:mode];
 }
 - (IBAction)ToggleSortByName:(id)sender{
     [self MakeSortWith:PanelData::PanelSortMode::SortByName Rev:PanelData::PanelSortMode::SortByNameRev];

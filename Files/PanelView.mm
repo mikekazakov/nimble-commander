@@ -11,6 +11,7 @@
 #include "vfs/VFS.h"
 #include "PanelView.h"
 #include "PanelData.h"
+#include "PanelController.h"
 #include "PanelViewPresentation.h"
 #include "ModernPanelViewPresentation.h"
 #include "ClassicPanelViewPresentation.h"
@@ -53,6 +54,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 ////////////////////////////////////////////////////////////////////////////////
 
+@interface PanelView()
+
+@property (nonatomic, readonly) PanelController *controller;
+
+@end
+
 @implementation PanelView
 {
     unsigned long               m_KeyboardModifierFlags;
@@ -94,6 +101,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     self = [super initWithFrame:frame];
     if (self) {
 //        self.wantsLayer = true;
+        __weak PanelView *weak_self = self;
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
         m_FieldRenamingRequestTicket = 0;
@@ -126,6 +134,11 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
+        m_HeaderView.sortModeChangeCallback = [=](PanelDataSortMode _sm){
+            if( PanelView *strong_self = weak_self )
+                [strong_self.controller changeSortingModeTo:_sm];
+        };
+        
         [self addSubview:m_HeaderView];
         
         
@@ -1481,6 +1494,12 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 - (void) dataSortingHasChanged
 {
     m_HeaderView.sortMode = m_State.Data->SortMode();
+}
+
+//@property (nonatomic, readonly) PanelController *controller
+- (PanelController*)controller
+{
+    return objc_cast<PanelController>(m_Delegate);
 }
 
 @end

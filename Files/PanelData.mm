@@ -586,6 +586,22 @@ struct SortPredLessIndToInd : public SortPredLessBase
             case _::SortByModTimeRev: return l.MTime(_1) < l.MTime(_2);
             case _::SortByBirthTime:    return l.BTime(_1) > l.BTime(_2);
             case _::SortByBirthTimeRev: return l.BTime(_1) < l.BTime(_2);
+            case _::SortByAddTime: {
+                const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
+                if( h1 && h2 )
+                    return l.AddTime(_1) > l.AddTime(_2);
+                if( h1 && !h2 ) return true;
+                if( h2 && !h1 ) return false;
+                return by_name() < 0; // fallback case
+            }
+            case _::SortByAddTimeRev: {
+                const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
+                if( h1 && h2 )
+                    return l.AddTime(_1) < l.AddTime(_2);
+                if( h1 && !h2 ) return false;
+                if( h2 && !h1 ) return true;
+                return by_name() > 0; // fallback case
+            }
             case _::SortBySize: {
                 auto s1 = vd[_1].size, s2 = vd[_2].size;
                 if(s1 != invalid_size && s2 != invalid_size)
@@ -662,6 +678,22 @@ struct SortPredLessIndToKeys : public SortPredLessBase
             case _::SortByModTimeRev: return l.MTime(_1) < _val2.mtime;
             case _::SortByBirthTime:    return l.BTime(_1) > _val2.btime;
             case _::SortByBirthTimeRev: return l.BTime(_1) < _val2.btime;
+            case _::SortByAddTime: {
+                const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
+                if( h1 && h2 )
+                    return l.AddTime(_1) > _val2.add_time;
+                if( h1 && !h2 ) return true;
+                if( h2 && !h1 ) return false;
+                return by_name() < 0; // fallback case
+            }
+            case _::SortByAddTimeRev: {
+                const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
+                if( h1 && h2 )
+                    return l.AddTime(_1) < _val2.add_time;
+                if( h1 && !h2 ) return false;
+                if( h2 && !h1 ) return true;
+                return by_name() > 0; // fallback case
+            }
             case _::SortBySize: {
                 auto s1 = vd[_1].size;
                 if( s1 != invalid_size && _val2.size != invalid_size )
@@ -1116,6 +1148,7 @@ PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingIte
     keys.size = _item_vd.size;
     keys.mtime = _item.MTime();
     keys.btime = _item.BTime();
+    keys.add_time = _item.HasAddTime() ? _item.AddTime() : -1;
     keys.is_dir = _item.IsDir();
     return keys;
 }

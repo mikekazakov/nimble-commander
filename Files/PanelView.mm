@@ -906,6 +906,11 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         m_ItemsView.sortMode = m_State.Data->SortMode();
         
+        __weak PanelView *weak_self = self;
+        v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
+            if( PanelView *strong_self = weak_self )
+                [strong_self.controller changeSortingModeTo:_sm];
+        };
     }
     
     if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {

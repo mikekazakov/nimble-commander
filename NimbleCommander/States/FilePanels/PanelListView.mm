@@ -73,12 +73,14 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
     stack<PanelListViewRowView*>        m_RowsStash;
     
     PanelDataSortMode                   m_SortMode;
+    function<void(PanelDataSortMode)> m_SortModeChangeCallback;    
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
 @synthesize sortMode = m_SortMode;
+@synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
 - (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
 {
@@ -617,11 +619,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return;
     m_SortMode = _mode;
     
-    [m_TableView setIndicatorImage:nil inTableColumn:m_NameColumn];
-    [m_TableView setIndicatorImage:nil inTableColumn:m_SizeColumn];
-    [m_TableView setIndicatorImage:nil inTableColumn:m_DateCreatedColumn];
-    [m_TableView setIndicatorImage:nil inTableColumn:m_DateModifiedColumn];
-    [m_TableView setIndicatorImage:nil inTableColumn:m_DateAddedColumn];
+    for( auto c: {m_NameColumn, m_SizeColumn, m_DateCreatedColumn, m_DateModifiedColumn, m_DateAddedColumn} )
+        [m_TableView setIndicatorImage:nil inTableColumn:c];
     
     auto set = [&]()->pair<NSImage*,NSTableColumn*>{
         switch( _mode.sort ) {
@@ -641,7 +640,28 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     
     if( set.first && set.second )
         [m_TableView setIndicatorImage:set.first inTableColumn:set.second];
+}
+
+- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn
+{
+    PanelDataSortMode proposed = m_SortMode;
+    auto swp = [&]( PanelDataSortMode::Mode _1st, PanelDataSortMode::Mode _2nd ){
+        proposed.sort = (proposed.sort == _1st ? _2nd : _1st );
+    };
+
+    if( tableColumn == m_NameColumn )
+        swp(PanelDataSortMode::SortByName, PanelDataSortMode::SortByNameRev);
+    if( tableColumn == m_SizeColumn )
+        swp(PanelDataSortMode::SortBySize, PanelDataSortMode::SortBySizeRev);
+    if( tableColumn == m_DateCreatedColumn )
+        swp(PanelDataSortMode::SortByBirthTime, PanelDataSortMode::SortByBirthTimeRev);
+    if( tableColumn == m_DateModifiedColumn )
+        swp(PanelDataSortMode::SortByModTime, PanelDataSortMode::SortByModTimeRev);
+    if( tableColumn == m_DateAddedColumn )
+        swp(PanelDataSortMode::SortByAddTime, PanelDataSortMode::SortByAddTimeRev);
     
+    if( proposed != m_SortMode && m_SortModeChangeCallback )
+        m_SortModeChangeCallback(proposed);
 }
 
 @end

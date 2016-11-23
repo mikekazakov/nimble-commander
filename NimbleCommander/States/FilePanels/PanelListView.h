@@ -17,6 +17,7 @@ class IconsGenerator2;
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) PanelDataSortMode sortMode;
+@property (nonatomic) function<void(PanelDataSortMode)> sortModeChangeCallback;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

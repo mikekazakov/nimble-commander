@@ -873,6 +873,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         if( m_State.CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_State.CursorPos];
+        
+        m_ItemsView.sortMode = m_State.Data->SortMode();
     }
 
     if( auto v = objc_cast<PanelBriefView>(m_ItemsView) ) {
@@ -901,6 +903,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         if( m_State.CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_State.CursorPos];
+        
+        m_ItemsView.sortMode = m_State.Data->SortMode();
+        
     }
     
     if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {
@@ -1494,6 +1499,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 - (void) dataSortingHasChanged
 {
     m_HeaderView.sortMode = m_State.Data->SortMode();
+    m_ItemsView.sortMode = m_State.Data->SortMode();
 }
 
 //@property (nonatomic, readonly) PanelController *controller

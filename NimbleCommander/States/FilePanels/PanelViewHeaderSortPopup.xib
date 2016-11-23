@@ -17,25 +17,25 @@
                 <menuItem title="Sort by" enabled="NO" id="uNn-d9-xaM">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Name ↓" tag="1" indentationLevel="1" id="prK-sX-wWv">
+                <menuItem title="Name ↑" tag="1" indentationLevel="1" id="prK-sX-wWv">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="fZ1-5z-vax"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Name ↑" tag="2" indentationLevel="1" id="VRa-0i-JUb">
+                <menuItem title="Name ↓" tag="2" indentationLevel="1" id="VRa-0i-JUb">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="Kt3-AH-hEx"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Extention ↓" tag="3" indentationLevel="1" id="tzp-Uh-dub">
+                <menuItem title="Extention ↑" tag="3" indentationLevel="1" id="tzp-Uh-dub">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="nab-3h-kD5"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Extention ↑" tag="4" indentationLevel="1" id="eaf-hX-ZwB">
+                <menuItem title="Extention ↓" tag="4" indentationLevel="1" id="eaf-hX-ZwB">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="2Jm-oI-T92"/>

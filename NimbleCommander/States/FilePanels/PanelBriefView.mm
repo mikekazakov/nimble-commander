@@ -140,12 +140,14 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
+    PanelDataSortMode                   m_SortMode;
 }
 
 @synthesize font = m_Font;
 @synthesize regularBackgroundColor;
 @synthesize alternateBackgroundColor;
 @synthesize columnsLayout = m_ColumnsLayout;
+@synthesize sortMode = m_SortMode;
 
 - (void) setData:(PanelData*)_data
 {

@@ -14,6 +14,8 @@
 
 static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 static const auto g_MaxStashedRows              = 50;
+static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
+static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
 
 // identifiers legenda:
 // A - Name
@@ -69,11 +71,14 @@ static const auto g_MaxStashedRows              = 50;
     bool                                m_IsBatchUpdate;
     
     stack<PanelListViewRowView*>        m_RowsStash;
+    
+    PanelDataSortMode                   m_SortMode;
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
+@synthesize sortMode = m_SortMode;
 
 - (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
 {
@@ -604,6 +609,39 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
     }
     [m_TableView sizeToFit];
+}
+
+- (void) setSortMode:(PanelDataSortMode)_mode
+{
+    if( m_SortMode == _mode )
+        return;
+    m_SortMode = _mode;
+    
+    [m_TableView setIndicatorImage:nil inTableColumn:m_NameColumn];
+    [m_TableView setIndicatorImage:nil inTableColumn:m_SizeColumn];
+    [m_TableView setIndicatorImage:nil inTableColumn:m_DateCreatedColumn];
+    [m_TableView setIndicatorImage:nil inTableColumn:m_DateModifiedColumn];
+    [m_TableView setIndicatorImage:nil inTableColumn:m_DateAddedColumn];
+    
+    auto set = [&]()->pair<NSImage*,NSTableColumn*>{
+        switch( _mode.sort ) {
+            case PanelDataSortMode::SortByName:         return {g_SortAscImage,     m_NameColumn};
+            case PanelDataSortMode::SortByNameRev:      return {g_SortDescImage,    m_NameColumn};
+            case PanelDataSortMode::SortBySize:         return {g_SortDescImage,    m_SizeColumn};
+            case PanelDataSortMode::SortBySizeRev:      return {g_SortAscImage,     m_SizeColumn};
+            case PanelDataSortMode::SortByBirthTime:    return {g_SortDescImage,    m_DateCreatedColumn};
+            case PanelDataSortMode::SortByBirthTimeRev: return {g_SortAscImage,     m_DateCreatedColumn};
+            case PanelDataSortMode::SortByModTime:      return {g_SortDescImage,    m_DateModifiedColumn};
+            case PanelDataSortMode::SortByModTimeRev:   return {g_SortAscImage,     m_DateModifiedColumn};
+            case PanelDataSortMode::SortByAddTime:      return {g_SortDescImage,    m_DateAddedColumn};
+            case PanelDataSortMode::SortByAddTimeRev:   return {g_SortAscImage,     m_DateAddedColumn};
+            default: return make_pair(nil, nil);
+        }
+    }();
+    
+    if( set.first && set.second )
+        [m_TableView setIndicatorImage:set.first inTableColumn:set.second];
+    
 }
 
 @end

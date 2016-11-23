@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PanelDataSortMode.h"
 #include "List/Layout.h"
 #include "PanelViewImplementationProtocol.h"
 
@@ -15,6 +16,7 @@ class IconsGenerator2;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
+@property (nonatomic) PanelDataSortMode sortMode;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

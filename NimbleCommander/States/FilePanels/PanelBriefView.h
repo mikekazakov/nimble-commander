@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PanelDataSortMode.h"
 #include "PanelViewImplementationProtocol.h"
 
 class PanelData;
@@ -53,6 +54,7 @@ struct PanelBriefViewColumnsLayout
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
+@property (nonatomic) PanelDataSortMode sortMode;
 @property (nonatomic) NSFont *font;
 
 @property (nonatomic) NSColor *regularBackgroundColor;

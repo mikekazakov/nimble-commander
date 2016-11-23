@@ -582,22 +582,50 @@ struct SortPredLessIndToInd : public SortPredLessBase
                 if( l.HasExtension(_1) && !l.HasExtension(_2) ) return true;
                 if(!l.HasExtension(_1) &&  l.HasExtension(_2) ) return false;
                 return by_name() > 0; // fallback case
-            case _::SortByModTime:    return l.MTime(_1) > l.MTime(_2);
-            case _::SortByModTimeRev: return l.MTime(_1) < l.MTime(_2);
-            case _::SortByBirthTime:    return l.BTime(_1) > l.BTime(_2);
-            case _::SortByBirthTimeRev: return l.BTime(_1) < l.BTime(_2);
+            case _::SortByModTime: {
+                const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
+                if( v1 != v2 )
+                    return v1 > v2;
+                return by_name() < 0;
+            }
+            case _::SortByModTimeRev: {
+                const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
+                if( v1 != v2 )
+                    return v1 < v2;
+                return by_name() > 0;
+            }
+            case _::SortByBirthTime: {
+                const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
+                if( v1 != v2 )
+                    return v1 > v2;
+                return by_name() < 0;
+            }
+            case _::SortByBirthTimeRev: {
+                const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
+                if( v1 != v2 )
+                    return v1 < v2;
+                return by_name() > 0;
+            }
             case _::SortByAddTime: {
                 const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
-                if( h1 && h2 )
-                    return l.AddTime(_1) > l.AddTime(_2);
+                if( h1 && h2 ) {
+                    const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
+                    if( v1 != v2 )
+                        return v1 > v2;
+//                    return l.AddTime(_1) > l.AddTime(_2);
+                }
                 if( h1 && !h2 ) return true;
                 if( h2 && !h1 ) return false;
                 return by_name() < 0; // fallback case
             }
             case _::SortByAddTimeRev: {
                 const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
-                if( h1 && h2 )
-                    return l.AddTime(_1) < l.AddTime(_2);
+                if( h1 && h2 ) {
+                    const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
+                    if( v1 != v2 )
+                        return v1 < v2;
+//                    return l.AddTime(_1) < l.AddTime(_2);
+                }
                 if( h1 && !h2 ) return false;
                 if( h2 && !h1 ) return true;
                 return by_name() > 0; // fallback case
@@ -622,7 +650,6 @@ struct SortPredLessIndToInd : public SortPredLessBase
             }
             case _::SortByRawCName:
                 return l.Filename(_1) < l.Filename(_2);
-                break;
             case _::SortNoSort:
                 assert(0); // meaningless sort call
                 break;
@@ -654,7 +681,7 @@ struct SortPredLessIndToKeys : public SortPredLessBase
         {
             case _::SortByName: return by_name() < 0;
             case _::SortByNameRev: return by_name() > 0;
-            case _::SortByExt:
+            case _::SortByExt: {
                 if( l.HasExtension(_1) && !_val2.extension.empty() ) {
                     int r = compare_extensions(l.Extension(_1), _val2.extension.c_str());
                     if(r < 0) return true;
@@ -664,7 +691,8 @@ struct SortPredLessIndToKeys : public SortPredLessBase
                 if( l.HasExtension(_1) &&  _val2.extension.empty() ) return false;
                 if(!l.HasExtension(_1) && !_val2.extension.empty() ) return true;
                 return by_name() < 0; // fallback case
-            case _::SortByExtRev:
+            }
+            case _::SortByExtRev: {
                 if( l.HasExtension(_1) && !_val2.extension.empty() ) {
                     int r = compare_extensions(l.Extension(_1), _val2.extension.c_str());
                     if(r < 0) return false;
@@ -674,14 +702,32 @@ struct SortPredLessIndToKeys : public SortPredLessBase
                 if( l.HasExtension(_1) &&  _val2.extension.empty() ) return true;
                 if(!l.HasExtension(_1) && !_val2.extension.empty() ) return false;
                 return by_name() > 0; // fallback case
-            case _::SortByModTime:    return l.MTime(_1) > _val2.mtime;
-            case _::SortByModTimeRev: return l.MTime(_1) < _val2.mtime;
-            case _::SortByBirthTime:    return l.BTime(_1) > _val2.btime;
-            case _::SortByBirthTimeRev: return l.BTime(_1) < _val2.btime;
+            }
+            case _::SortByModTime: {
+                if( l.MTime(_1) != _val2.mtime  )
+                    return l.MTime(_1) > _val2.mtime;
+                return by_name() < 0;
+            }
+            case _::SortByModTimeRev: {
+                if( l.MTime(_1) != _val2.mtime  )
+                    return l.MTime(_1) < _val2.mtime;
+                return by_name() > 0;
+            }
+            case _::SortByBirthTime: {
+                if( l.BTime(_1) != _val2.btime )
+                    return l.BTime(_1) > _val2.btime;
+                return by_name() < 0;
+            }
+            case _::SortByBirthTimeRev: {
+                if( l.BTime(_1) != _val2.btime )
+                    return l.BTime(_1) < _val2.btime;
+                return by_name() > 0;
+            }
             case _::SortByAddTime: {
                 const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
                 if( h1 && h2 )
-                    return l.AddTime(_1) > _val2.add_time;
+                    if( l.AddTime(_1) != _val2.add_time )
+                        return l.AddTime(_1) > _val2.add_time;
                 if( h1 && !h2 ) return true;
                 if( h2 && !h1 ) return false;
                 return by_name() < 0; // fallback case
@@ -689,7 +735,8 @@ struct SortPredLessIndToKeys : public SortPredLessBase
             case _::SortByAddTimeRev: {
                 const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
                 if( h1 && h2 )
-                    return l.AddTime(_1) < _val2.add_time;
+                    if( l.AddTime(_1) != _val2.add_time )
+                        return l.AddTime(_1) < _val2.add_time;
                 if( h1 && !h2 ) return false;
                 if( h2 && !h1 ) return true;
                 return by_name() > 0; // fallback case

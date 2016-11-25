@@ -35,8 +35,9 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @implementation PanelListViewNameView
 {
     NSString        *m_Filename;
-    NSDictionary    *m_TextAttributes;
     NSImageRep      *m_Icon;
+    
+    NSMutableAttributedString *m_AttrString;
 }
 
 - (BOOL) isOpaque
@@ -63,7 +64,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) setFilename:(NSString*)_filename
 {
     m_Filename = _filename;
-    [self setNeedsDisplay:true];    
+    [self buildPresentation];
 }
 
 //- (void)updateLayer
@@ -103,10 +104,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
                                       bounds.size.width - 2 * geometry.LeftInset() - geometry.IconSize() - geometry.RightInset(),
                                       0);
     
-    [m_Filename drawWithRect:text_rect
-                     options:0
-                  attributes:m_TextAttributes];
-    
+    [m_AttrString drawWithRect:text_rect
+                       options:0];    
     
     const auto icon_rect = NSMakeRect(geometry.LeftInset(),
                                       (bounds.size.height - geometry.IconSize()) / 2. + 0.5,
@@ -127,16 +126,23 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) buildPresentation
 {
     PanelListViewRowView *row_view = (PanelListViewRowView*)self.superview;
-//    self.layer.backgroundColor = row_view.rowBackgroundColor.CGColor;
-//    self.layer.backgroundColor = NSColor.redColor.CGColor;
-// self.layer.backgroundColor = m_RowColor.CGColor;
-    m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
-                         NSForegroundColorAttributeName: row_view.rowTextColor,
-                         NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+    if( !row_view )
+        return;
+    
+    NSDictionary *attrs = @{NSFontAttributeName:row_view.listView.font,
+                            NSForegroundColorAttributeName: row_view.rowTextColor,
+                            NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+    m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename
+                                                          attributes:attrs];
+    
+    auto vd = row_view.vd;
+    if( vd.qs_highlight_begin != vd.qs_highlight_end )
+        if( vd.qs_highlight_begin < m_Filename.length && vd.qs_highlight_end <= m_Filename.length  )
+            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
+                                 value:@(NSUnderlineStyleSingle)
+                                 range:NSMakeRange(vd.qs_highlight_begin, vd.qs_highlight_end - vd.qs_highlight_begin)];
     
     [self setNeedsDisplay:true];
-//    [self updateLayer];
-//    self.wantsUpdateLayer = true;
 }
 
 //@property (nonatomic) NSImageRep *icon;

@@ -61,6 +61,8 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // PanelVolatileData
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+static_assert( sizeof(PanelData::PanelVolatileData) == 16 );
+
 bool PanelData::PanelVolatileData::is_selected() const noexcept
 {
     return (flags & flag_selected) != 0;
@@ -90,7 +92,9 @@ bool PanelData::PanelVolatileData::operator==(PanelVolatileData&_rhs) const noex
 {
     return size  == _rhs.size  &&
            flags == _rhs.flags &&
-           icon  == _rhs.icon   ;
+           icon  == _rhs.icon  &&
+           qs_highlight_begin == _rhs.qs_highlight_begin &&
+           qs_highlight_end == _rhs.qs_highlight_end;
 }
 
 bool PanelData::PanelVolatileData::operator!=(PanelVolatileData&_rhs) const noexcept
@@ -159,52 +163,88 @@ PanelData::TextualFilter PanelData::TextualFilter::NoFilter() noexcept
     return filter;
 }
 
-bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item) const
+static PanelData::TextualFilter::FoundRange g_DummyFoundRange;
+bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
+                                           FoundRange *_found_range) const
 {
-    if(text == nil)
-        return true;
+    if( !_found_range )
+        _found_range = &g_DummyFoundRange;
+    *_found_range = {0, 0};
     
-    if(ignoredotdot && _item.IsDotDot())
+    if( text == nil )
+        return true; // nothing to filter with - just say yes
+    
+    if( ignoredotdot && _item.IsDotDot() )
         return true; // never filter out the Holy Dot-Dot directory!
     
-    auto textlen = text.length;
-    if(textlen == 0)
+    const auto textlen = text.length;
+    if( textlen == 0 )
         return true; // will return true on any item with @"" filter
     
     NSString *name = _item.NSDisplayName();
-    if(type == Anywhere) {
-        return [name rangeOfString:text
-                           options:NSCaseInsensitiveSearch].length != 0;
-    }
-    else if(type == Beginning) {
-        return [name rangeOfString:text
-                           options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0;
-    }
-    else if(type == Ending || type == BeginningOrEnding) {
-        if((type == BeginningOrEnding) &&
-           [name rangeOfString:text // look at beginning
-                       options:NSCaseInsensitiveSearch|NSAnchoredSearch].length != 0)
-            return true;
+    if( type == Anywhere ) {
+        NSRange result = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch];
+        if( result.length == 0 )
+            return false;
+
+        _found_range->first = result.location;
+        _found_range->second = result.location + result.length;
         
-        if(_item.HasExtension())
-        { // slow path here - look before extension
-            NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
-            if(dotrange.length != 0 &&
-               dotrange.location > textlen) {
-                auto r = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
-                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
-                if(r.length != 0)
-                    return true;
+        return true;
+    }
+    else if( type == Beginning ) {
+        NSRange result = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch];
+        
+        if( result.length == 0 )
+            return false;
+        
+        _found_range->first = result.location;
+        _found_range->second = result.location + result.length;
+        
+        return true;
+    }
+    else if( type == Ending || type == BeginningOrEnding ) {
+        if( type == BeginningOrEnding) { // look at beginning
+            NSRange result = [name rangeOfString:text
+                                         options:NSCaseInsensitiveSearch|NSAnchoredSearch];
+            if( result.length != 0  ) {
+                _found_range->first = result.location;
+                _found_range->second = result.location + result.length;
+                return true;
             }
         }
         
-        return [name rangeOfString:text // look at the end at last
-                           options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch].length != 0;
+        if( _item.HasExtension() ) {
+            // slow path here - look before extension
+            NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
+            if(dotrange.length != 0 &&
+               dotrange.location > textlen) {
+                NSRange result = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
+                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
+                if( result.length != 0 ) {
+                    _found_range->first = result.location;
+                    _found_range->second = result.location + result.length;
+                    return true;
+                }
+            }
+        }
+        
+        // look at the end at last
+        NSRange result = [name rangeOfString:text
+                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch];
+        if( result.length != 0 ) {
+            _found_range->first = result.location;
+            _found_range->second = result.location + result.length;
+            return true;
+        }
+        else
+            return false;
     }
     
-    assert(0); // should never came here!
-    return true;
+    return false;
 }
 
 void PanelData::TextualFilter::OnPanelDataLoad()
@@ -222,12 +262,13 @@ bool PanelData::TextualFilter::IsFiltering() const noexcept
 // HardFilter
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool PanelData::HardFilter::IsValidItem(const VFSListingItem& _item) const
+bool PanelData::HardFilter::IsValidItem(const VFSListingItem& _item,
+                                        TextualFilter::FoundRange *_found_range) const
 {
-    if(show_hidden == false && _item.IsHidden())
+    if( show_hidden == false && _item.IsHidden() )
         return false;
     
-    return text.IsValidItem(_item);
+    return text.IsValidItem(_item, _found_range);
 }
     
 bool PanelData::HardFilter::IsFiltering() const noexcept
@@ -1116,26 +1157,32 @@ void PanelData::DoSortWithHardFiltering()
 {
     m_EntriesByCustomSort.clear();
     
-    int size = m_Listing->Count();
+    const int size = m_Listing->Count();
     
-    if(size == 0)
+    if( size == 0 )
         return;
 
     m_EntriesByCustomSort.reserve(size);
-    for(auto &vd: m_VolatileData)
+    for( auto &vd: m_VolatileData ) {
+        vd.qs_highlight_begin = 0;
+        vd.qs_highlight_end = 0;
         vd.toggle_shown(true);
-  
-    if(m_HardFiltering.IsFiltering())
-    {
-        for(int i = 0; i < size; ++i)
-            if( m_HardFiltering.IsValidItem(m_Listing->Item(i)) )
-                m_EntriesByCustomSort.push_back(i);
-            else
-                m_VolatileData[i].toggle_shown(false);
     }
-    else
-    {
-        m_EntriesByCustomSort.resize(m_Listing->Count());
+  
+    if( m_HardFiltering.IsFiltering() ) {
+        TextualFilter::FoundRange found_range;
+        for( int i = 0; i < size; ++i )
+            if( m_HardFiltering.IsValidItem(m_Listing->Item(i), &found_range) ) {
+                m_VolatileData[i].qs_highlight_begin = found_range.first;
+                m_VolatileData[i].qs_highlight_end = found_range.second;
+                m_EntriesByCustomSort.push_back(i);
+            }
+            else {
+                m_VolatileData[i].toggle_shown(false);
+            }
+    }
+    else {
+        m_EntriesByCustomSort.resize( m_Listing->Count() );
         generate( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), linear_generator(0, 1) );
     }
 
@@ -1172,13 +1219,23 @@ const PanelData::DirSortIndT& PanelData::EntriesBySoftFiltering() const
 
 void PanelData::BuildSoftFilteringIndeces()
 {
-    if(m_SoftFiltering.IsFiltering()) {
+    if( m_SoftFiltering.IsFiltering() ) {
         m_EntriesBySoftFiltering.clear();
         m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
+        TextualFilter::FoundRange found_range;
         int i = 0, e = (int)m_EntriesByCustomSort.size();
-        for(;i!=e;++i)
-            if(m_SoftFiltering.IsValidItem( m_Listing->Item(m_EntriesByCustomSort[i])) )
+        for( ; i != e; ++i ) {
+            const int raw_index = m_EntriesByCustomSort[i];
+            if( m_SoftFiltering.IsValidItem( m_Listing->Item(raw_index), &found_range ) ) {
+                m_VolatileData[raw_index].qs_highlight_begin = found_range.first;
+                m_VolatileData[raw_index].qs_highlight_end = found_range.second;
                 m_EntriesBySoftFiltering.push_back(i);
+            }
+            else {
+                m_VolatileData[raw_index].qs_highlight_begin = 0;
+                m_VolatileData[raw_index].qs_highlight_end = 0;
+            }
+        }
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());

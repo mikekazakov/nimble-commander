@@ -182,12 +182,13 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
         [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
         [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
-        
+        [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
     }
     else {
         [m_SearchTextField unbind:@"hidden"];
         [m_SearchMatchesField unbind:@"hidden"];
         [m_PathTextField unbind:@"hidden"];
+        [m_SortButton unbind:@"hidden"];
     }
 }
 

@@ -42,6 +42,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @property (nonatomic)       NSColor                            *filenameColor;
 @property (nonatomic)       NSImageRep                         *icon;
 @property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
+@property (nonatomic)       pair<int16_t, int16_t>              qsHighlight;
 @end
 
 @implementation PanelBriefViewItemCarrier
@@ -51,9 +52,10 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     NSString                           *m_Filename;
     NSImageRep                         *m_Icon;
     NSFont                             *m_Font;
-    NSDictionary                       *m_TextAttributes;
+    NSMutableAttributedString          *m_AttrString;
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
+    pair<int16_t, int16_t>              m_QSHighlight;
 }
 
 @synthesize background = m_Background;
@@ -62,6 +64,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @synthesize filename = m_Filename;
 @synthesize layoutConstants = m_LayoutConstants;
 @synthesize controller = m_Controller;
+@synthesize qsHighlight = m_QSHighlight;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -70,6 +73,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         m_TextColor = NSColor.blackColor;
         m_Font = [NSFont systemFontOfSize:13];
         m_Filename = @"";
+        m_QSHighlight = {0, 0};
         [self buildTextAttributes];
     }
     return self;
@@ -118,10 +122,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
                                       bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
                                       0);
     
-    [m_Filename drawWithRect:text_rect
-                     options:0
-                  attributes:m_TextAttributes];
-    
+    [m_AttrString drawWithRect:text_rect
+                       options:0];
     
     const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
                                       (bounds.size.height - m_LayoutConstants.icon_size) / 2. + 0.5,
@@ -179,11 +181,38 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
 }
 
+- (void) setFilename:(NSString *)filename
+{
+    if( m_Filename != filename ) {
+        m_Filename = filename;
+        [self buildTextAttributes];
+        [self setNeedsDisplay:true];
+    }
+}
+
 - (void) buildTextAttributes
 {
-    m_TextAttributes = @{NSFontAttributeName: m_Font,
-                         NSForegroundColorAttributeName: m_TextColor,
-                         NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+    NSDictionary *attrs = @{NSFontAttributeName: m_Font,
+                            NSForegroundColorAttributeName: m_TextColor,
+                            NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+
+    m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename
+                                                          attributes:attrs];
+    
+    if( m_QSHighlight.first != m_QSHighlight.second )
+        if( m_QSHighlight.first < m_Filename.length && m_QSHighlight.second <= m_Filename.length  )
+            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
+                                 value:@(NSUnderlineStyleSingle)
+                                 range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
+}
+
+- (void) setQsHighlight:(pair<int16_t, int16_t>)qsHighlight
+{
+    if( m_QSHighlight != qsHighlight ) {
+        m_QSHighlight = qsHighlight;
+        [self buildTextAttributes];
+        [self setNeedsDisplay:true];
+    }
 }
 
 @end
@@ -280,13 +309,13 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     assert( m_Item );
     if( self.briefView ) {
-    const auto &rules = [self.briefView coloringRules];
-    const bool focus = self.selected && m_PanelActive;
-    for( const auto &i: rules )
-        if( i.filter.Filter(m_Item, m_VD) ) {
-            self.carrier.filenameColor = focus ? i.focused : i.regular;
-            break;
-        }
+        const auto &rules = [self.briefView coloringRules];
+        const bool focus = self.selected && m_PanelActive;
+        for( const auto &i: rules )
+            if( i.filter.Filter(m_Item, m_VD) ) {
+                self.carrier.filenameColor = focus ? i.focused : i.regular;
+                break;
+            }
     }
 }
 
@@ -296,6 +325,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         return;
     m_VD = _vd;
     [self updateColoring];
+    self.carrier.qsHighlight = {_vd.qs_highlight_begin, _vd.qs_highlight_end};
 }
 
 - (void) setIcon:(NSImageRep*)_icon

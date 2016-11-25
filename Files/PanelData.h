@@ -49,8 +49,10 @@ public:
         };
         
         uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
-        uint32_t flags = 0;
         uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
+        int16_t qs_highlight_begin = 0;
+        int16_t qs_highlight_end = 0;
+        uint16_t flags = 0;
         
         bool is_selected() const noexcept;
         bool is_shown() const noexcept;
@@ -100,6 +102,8 @@ public:
             BeginningOrEnding   = 3
         };
         
+        using FoundRange = pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
+        
         Where     type = Anywhere;
         NSString *text = nil;
         bool      ignoredotdot = true; // will not apply filter on dot-dot entries
@@ -109,7 +113,7 @@ public:
         bool operator!=(const TextualFilter& _r) const noexcept;
         static Where WhereFromInt(int _v) noexcept;
         static TextualFilter NoFilter() noexcept;
-        bool IsValidItem(const VFSListingItem& _item) const;
+        bool IsValidItem(const VFSListingItem& _item, FoundRange *_found_range = nullptr) const;
         void OnPanelDataLoad();
         bool IsFiltering() const noexcept;
     };
@@ -118,7 +122,7 @@ public:
     {
         bool show_hidden = true;
         TextualFilter text = TextualFilter::NoFilter();
-        bool IsValidItem(const VFSListingItem& _item) const;
+        bool IsValidItem(const VFSListingItem& _item, TextualFilter::FoundRange *_found_range = nullptr) const;
         bool IsFiltering() const noexcept;
         bool operator==(const HardFilter& _r) const noexcept;
         bool operator!=(const HardFilter& _r) const noexcept;

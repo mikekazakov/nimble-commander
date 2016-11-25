@@ -150,11 +150,13 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
-    if(m_Data.ClearTextFiltering())
-        pers.Restore();
+    bool any_changed = m_Data.ClearTextFiltering();
     
     [m_View setQuickSearchPrompt:nil withMatchesCount:0];
     [m_View dataUpdated]; // need to call only when something actually changed
+    
+    if( any_changed )
+        pers.Restore();
 }
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key
@@ -205,7 +207,7 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         m_View.curpos = m_Data.EntriesBySoftFiltering()[m_QuickSearchOffset];
     }
     
-    if(m_QuickSearchTypingView) {
+    if( m_QuickSearchTypingView ) {
         int total = (int)m_Data.EntriesBySoftFiltering().size();
         [m_View setQuickSearchPrompt:m_Data.SoftFiltering().text withMatchesCount:total];
         //        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
@@ -220,6 +222,8 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
                 }
         });
     }
+    
+    [m_View volatileDataChanged];
 }
 
 - (void)QuickSearchHardUpdateTypingUI
@@ -274,6 +278,9 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     
     pers.Restore();
     
+    [m_View dataUpdated];
+    [self QuickSearchHardUpdateTypingUI];    
+    
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
     if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
        m_View.curpos == 0 &&
@@ -281,8 +288,6 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
        m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0]).IsDotDot() )
         m_View.curpos = 1;
     
-    [m_View dataUpdated];
-    [self QuickSearchHardUpdateTypingUI];
 }
 
 - (void) QuickSearchSetCriteria:(NSString *)_text

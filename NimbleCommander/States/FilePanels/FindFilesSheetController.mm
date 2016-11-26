@@ -221,7 +221,8 @@ private:
     NSMutableArray             *m_FoundItemsBatch;
     NSTimer                    *m_BatchDrainTimer;
     SerialQueue                 m_BatchQueue;
-    DispatchGroup               m_StatGroup;
+    DispatchGroup               m_StatGroup; // for native VFS
+    SerialQueue                 m_StatQueue; // for custom VFS
 
     string                      m_LookingInPath;
     spinlock                    m_LookingInPathGuard;
@@ -248,6 +249,8 @@ private:
         m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         
         m_BatchQueue = SerialQueueT::Make();
+        m_StatQueue = SerialQueueT::Make();
+        
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
@@ -363,6 +366,7 @@ private:
 {
     dispatch_assert_background_queue();
     m_StatGroup.Wait();
+    m_StatQueue->Wait();
 
     [self UpdateByTimer:m_BatchDrainTimer];
     m_BatchQueue->Wait();
@@ -467,9 +471,9 @@ private:
                                                                              ensure_tr_slash(_in_path),
                                                                              string(m_Host->JunctionPath()) + m_Path);
                                               
-                                              // NEED TO LIMIT MAXIMUM CONCURRENT BLOCKS!!!!
                                               
-                                              m_StatGroup.Run([=, it=move(it)]()mutable{
+                                              // TODO: need some decent cancelling mechanics here
+                                              auto stat_block = [=, it=move(it)]()mutable{
                                                   // doing stat()'ing item in async background thread
                                                   it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
                                                   
@@ -478,7 +482,12 @@ private:
                                                       // dumping result entry into batch array in BatchQueue
                                                       [m_FoundItemsBatch addObject:item];
                                                   });
-                                              });
+                                              };
+                                              
+                                              if( _in_host.IsNativeFS() )
+                                                  m_StatGroup.Run( move(stat_block) );
+                                              else
+                                                  m_StatQueue->Run( move(stat_block) );
                                               
                                               if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
                                                   m_FileSearch->Stop(); // gorshochek, ne vari!!!

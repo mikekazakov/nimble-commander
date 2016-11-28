@@ -16,7 +16,9 @@ class DisplayNamesCache
 public:
     static DisplayNamesCache& Instance();
 
-    const char* DisplayNameByStat( const struct stat &_st, const string &_path ); // nullptr string means that there's no dispay string for this
+    // nullptr string means that there's no dispay string for this
+    const char* DisplayName( const struct stat &_st, const string &_path );
+    const char* DisplayName( ino_t _ino, dev_t _dev, const string &_path );
     
 private:
 #pragma pack(1)
@@ -24,12 +26,14 @@ private:
     {
         ino_t ino;
         dev_t dev;
+        const char *filename;
     };
 #pragma pack()
-    static_assert( sizeof(Tag) == 12, "" );
+    static_assert( sizeof(Tag) == 20 );
 
-    bool TryToFind( const struct stat &_st, const string &_path, const char *&_result ) const noexcept;
-    const char* Commit( const struct stat &_st, const char *_dispay_name );
+    bool Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_path, const char *&_result ) const noexcept;
+    static const char* Slow( const string &_path );
+    void Commit_Locked( ino_t _ino, dev_t _dev, const string &_path, const char *_dispay_name );
     
     atomic_int          m_Readers{0};
     spinlock            m_ReadLock;

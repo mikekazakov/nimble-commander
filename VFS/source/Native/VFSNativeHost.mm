@@ -91,6 +91,7 @@ struct EntryAttributesCallbackParams
     uid_t               uid;
     gid_t               gid;
     mode_t              mode;
+    dev_t               dev;
     uint32_t            inode;
     uint32_t            flags;
     int64_t             size; // will be 0 if absent
@@ -133,6 +134,7 @@ static int ReadSingleEntryAttributesByPath(const char *_path,
     struct Attrs {
         uint32_t          length;
         attribute_set_t   returned;
+        dev_t             dev;
         fsobj_type_t      obj_type;
         fsobj_id_t        obj_id;
         struct timespec   crt_time;
@@ -151,6 +153,7 @@ static int ReadSingleEntryAttributesByPath(const char *_path,
     memset(&attr_list, 0, sizeof(attr_list));
     attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
     attr_list.commonattr  = ATTR_CMN_RETURNED_ATTRS |
+                            ATTR_CMN_DEVID          |
                             ATTR_CMN_OBJTYPE        |
                             ATTR_CMN_OBJPERMANENTID |
                             ATTR_CMN_CRTIME         |
@@ -170,6 +173,9 @@ static int ReadSingleEntryAttributesByPath(const char *_path,
     
     EntryAttributesCallbackParams params;
     params.filename = "";
+    
+    if( attrs.returned.commonattr & ATTR_CMN_DEVID )
+        params.dev = attrs.dev;
     
     params.mode = 0;
     if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE )
@@ -227,6 +233,7 @@ static int ReadDirAttributesBulk(const int _dir_fd,
         uint32_t          error;
         attrreference_t   name_info;
         char              *name;
+        dev_t             dev;
         fsobj_type_t      obj_type;
         fsobj_id_t        obj_id;
         struct timespec   crt_time;
@@ -247,6 +254,7 @@ static int ReadDirAttributesBulk(const int _dir_fd,
     attr_list.commonattr  = ATTR_CMN_RETURNED_ATTRS |
                             ATTR_CMN_NAME           |
                             ATTR_CMN_ERROR          |
+                            ATTR_CMN_DEVID          |    
                             ATTR_CMN_OBJTYPE        |
                             ATTR_CMN_OBJPERMANENTID |
                             ATTR_CMN_CRTIME         |
@@ -260,6 +268,7 @@ static int ReadDirAttributesBulk(const int _dir_fd,
                             ATTR_CMN_FLAGS;
     attr_list.fileattr    = ATTR_FILE_TOTALSIZE;
     
+
     char attr_buf[65536];
     EntryAttributesCallbackParams params;
     while( true ) {
@@ -299,6 +308,10 @@ static int ReadDirAttributesBulk(const int _dir_fd,
                 else
                     continue; // can't work without filename
                 
+                if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
+                    params.dev = *(dev_t*)field;
+                    field += sizeof(dev_t);
+                }
                 
                 params.mode = 0;
                 if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE ) {
@@ -442,6 +455,15 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
         listing_source.sizes[_n]         = _params.size;
         if( _params.add_time >= 0 )
             listing_source.add_times.insert(_n, _params.add_time );
+        
+        if( _flags & VFSFlags::F_LoadDisplayNames )
+            if( S_ISDIR(listing_source.unix_modes[_n]) &&
+               !listing_source.filenames[_n].empty() &&
+               !strisdotdot(listing_source.filenames[_n]) ) {
+                static auto &dnc = DisplayNamesCache::Instance();
+                if( auto display_name = dnc.DisplayName( _params.inode, _params.dev, listing_source.directories[0] + listing_source.filenames[_n]) )
+                    listing_source.display_filenames.insert(_n, display_name);
+            }
     };
     
     resize_dense( approx_entries_count );
@@ -496,17 +518,6 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
             }
         }
 
-        
-//      TODO!!!
-//        if( _flags & VFSFlags::F_LoadDisplayNames )
-//            if( S_ISDIR(listing_source.unix_modes[n]) &&
-//               !strisdotdot(listing_source.filenames[n]) ) {
-//                static auto &dnc = DisplayNamesCache::Instance();
-//                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, listing_source.directories[0] + listing_source.filenames[n]) ) {
-//                    lock_guard<spinlock> guard(display_names_guard);
-//                    listing_source.display_filenames.insert(n, display_name);
-//                }
-//            }
         
     
     }
@@ -701,7 +712,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
             if( S_ISDIR(listing_source.unix_modes[n]) &&
                !strisdotdot(listing_source.filenames[n]) ) {
                 static auto &dnc = DisplayNamesCache::Instance();
-                if( auto display_name = dnc.DisplayNameByStat(stat_buffer, listing_source.directories[0] + filename) ) {
+                if( auto display_name = dnc.DisplayName(stat_buffer, listing_source.directories[0] + filename) ) {
                     lock_guard<spinlock> guard(display_names_guard);
                     listing_source.display_filenames.insert(n, display_name);
                 }

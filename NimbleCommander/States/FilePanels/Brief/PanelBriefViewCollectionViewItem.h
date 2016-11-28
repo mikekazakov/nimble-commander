@@ -19,4 +19,7 @@
 
 - (PanelBriefView*)briefView;
 
+- (void) setupFieldEditor:(NSScrollView*)_editor;
+
+
 @end

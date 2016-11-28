@@ -354,7 +354,13 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (void) setCursorPosition:(int)cursorPosition
 {
-    if( cursorPosition >= 0 && cursorPosition >= m_Data->SortedDirectoryEntries().size() ) {
+    if( self.cursorPosition == cursorPosition )
+        return;
+    
+    const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
+    
+//    if( cursorPosition >= 0 && cursorPosition >= m_Data->SortedDirectoryEntries().size() ) {
+    if( cursorPosition >= 0 && cursorPosition >= entries_count ) {
         // temporary solution
         // currently data<->cursor invariant is broken
         return;
@@ -379,6 +385,22 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             });
         }
     }
+}
+
+- (bool) isItemVisible:(int)_sorted_item_index
+{
+    // TODO:
+    return true;
+}
+
+- (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index
+{
+    
+    if( auto i = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:[NSIndexPath indexPathForItem:_sorted_item_index
+                                                                                                     inSection:0]]) ) {
+        [i setupFieldEditor:_editor];
+    }
+        
 }
 
 //@property (nonatomic, readonly) itemsInColumn

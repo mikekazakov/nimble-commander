@@ -29,6 +29,11 @@ using namespace std;
 
 @end
 
+FontGeometryInfo::FontGeometryInfo(NSFont *_font):
+    FontGeometryInfo( (__bridge CTFontRef)_font )
+{
+}
+
 vector<short> FontGeometryInfo::CalculateStringsWidths( const vector<CFStringRef> &_strings, NSFont *_font )
 {
     static const auto path = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), NULL);

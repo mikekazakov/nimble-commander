@@ -1,3 +1,4 @@
+#include <Utility/FontExtras.h>
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
 #include "../../../Files/PanelView.h"
 #include "PanelBriefViewCollectionViewItem.h"
@@ -215,6 +216,30 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
 }
 
+- (void) setupFieldEditor:(NSScrollView*)_editor
+{
+    const auto line_padding = 2.;
+
+    const auto bounds = self.bounds;
+    NSRect rc =  NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
+                            0,
+                            bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
+                            bounds.size.height);
+    
+    auto fi = FontGeometryInfo(m_Font);
+
+    rc.size.height = fi.LineHeight();
+    
+    _editor.frame = rc;
+    
+    NSTextView *tv = _editor.documentView;
+    tv.font = m_Font;
+    tv.textContainerInset = NSMakeSize(0, 0);
+    tv.textContainer.lineFragmentPadding = line_padding;
+    
+    [self addSubview:_editor];
+}
+
 @end
 
 @implementation PanelBriefViewItem
@@ -331,6 +356,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (void) setIcon:(NSImageRep*)_icon
 {
     self.carrier.icon = _icon;
+}
+
+- (void) setupFieldEditor:(NSScrollView*)_editor
+{
+    [self.carrier setupFieldEditor:_editor];
 }
 
 @end

@@ -279,7 +279,7 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     pers.Restore();
     
     [m_View dataUpdated];
-    [self QuickSearchHardUpdateTypingUI];    
+    [self QuickSearchHardUpdateTypingUI];
     
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
     if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&

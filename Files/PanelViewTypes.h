@@ -10,7 +10,7 @@
 
 class PanelData;
 
-enum class PanelViewType
+enum class PanelViewType : int8_t
 {
     Short   = 0,
     Medium  = 1,
@@ -18,7 +18,7 @@ enum class PanelViewType
     Wide    = 3
 };
 
-enum class PanelViewFilenameTrimming
+enum class PanelViewFilenameTrimming : int8_t
 {
     Heading     = 0,
     Middle      = 1,
@@ -34,7 +34,7 @@ struct PanelViewState
 };
 
 namespace PanelViewHitTest {
-    enum Options {
+    enum Options : int8_t {
         FullArea,
         FilenameArea,
         FilenameFact,

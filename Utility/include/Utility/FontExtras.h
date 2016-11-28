@@ -22,6 +22,9 @@ class FontGeometryInfo
 public:
     FontGeometryInfo();
     FontGeometryInfo(CTFontRef _font);
+#ifdef __OBJC__
+    FontGeometryInfo(NSFont *_font);
+#endif
     
     inline double Size() const noexcept { return m_Size; }
     inline double Ascent() const noexcept { return m_Ascent; }

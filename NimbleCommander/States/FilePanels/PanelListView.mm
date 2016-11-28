@@ -664,4 +664,16 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         m_SortModeChangeCallback(proposed);
 }
 
+- (bool) isItemVisible:(int)_sorted_item_index
+{
+    // TODO:
+    return true;
+}
+
+- (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index
+{
+    
+    
+}
+
 @end

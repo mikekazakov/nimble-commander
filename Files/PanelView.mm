@@ -354,16 +354,22 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    m_Presentation->MoveCursorToPrevItem();
 //    if(m_State->Data->SortedDirectoryEntries().empty()) return;
-//    
-    if(m_State.CursorPos <= 0)
+//
+    if(m_State.CursorPos < 0)
         return;
-        
+    
+    [self SelectUnselectInRange:origpos last_included:origpos];
+
+    if(m_State.CursorPos == 0)
+        return;
+    
+    
     m_State.CursorPos--;
 //    EnsureCursorIsVisible();
     
     
-    if(m_CursorSelectionType != CursorSelectionType::No)
-        [self SelectUnselectInRange:origpos last_included:origpos];
+//    if(m_CursorSelectionType != CursorSelectionType::No)
+    
     
     [self OnCursorPositionChanged];
 }
@@ -376,13 +382,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //    m_Presentation->MoveCursorToNextItem();
     
 //    if(m_State->Data->SortedDirectoryEntries().empty()) return;
-//    
+//
+    [self SelectUnselectInRange:origpos last_included:origpos];
     if( m_State.CursorPos + 1 >= m_State.Data->SortedDirectoryEntries().size() )
         return;
 
     m_State.CursorPos++;
     
-    [self SelectUnselectInRange:origpos last_included:origpos];
+    
     [self OnCursorPositionChanged];
 }
 
@@ -1213,57 +1220,60 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)startFieldEditorRenaming
 {
-//    if( m_RenamingEditor != nil ) {
-//        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
-//        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
-//            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
-//        return;
-//    }
-//    
-//    int cursor_pos = m_State.CursorPos;
-//    if(!m_Presentation->IsItemVisible(cursor_pos))
-//        return;
-//    
-//    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
-//        return;
-//    
-//    m_RenamingEditor = [NSScrollView new];
-//    m_RenamingEditor.borderType = NSNoBorder;
-//    m_RenamingEditor.hasVerticalScroller = false;
-//    m_RenamingEditor.hasHorizontalScroller = false;
-//    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
-//    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
-//    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
-//    
-//    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-//    tv.delegate = self;
-//    tv.fieldEditor = true;
-//    tv.string = self.item.NSName();
-//    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
-//    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
-//    tv.verticallyResizable = tv.horizontallyResizable = true;
-//    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-//    tv.richText = false;
-//    tv.importsGraphics = false;
-//    tv.allowsImageEditing = false;
-//    tv.automaticQuoteSubstitutionEnabled = false;
-//    tv.automaticLinkDetectionEnabled = false;
-//    tv.continuousSpellCheckingEnabled = false;
-//    tv.grammarCheckingEnabled = false;
-//    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
-//    ps.lineBreakMode = NSLineBreakByClipping;
-//    tv.defaultParagraphStyle = ps;
-//    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
-//    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
-//    
-//    m_RenamingEditor.documentView = tv;
-//    
+    if( m_RenamingEditor != nil ) {
+        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
+        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
+            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+        return;
+    }
+    
+    int cursor_pos = m_State.CursorPos;
+//    if( !m_Presentation->IsItemVisible(cursor_pos) )
+    if( ![m_ItemsView isItemVisible:cursor_pos] )
+        return;
+
+    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
+        return;
+    
+    m_RenamingEditor = [NSScrollView new];
+    m_RenamingEditor.borderType = NSNoBorder;
+    m_RenamingEditor.hasVerticalScroller = false;
+    m_RenamingEditor.hasHorizontalScroller = false;
+    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
+    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
+    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
+
+    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    tv.delegate = self;
+    tv.fieldEditor = true;
+    tv.string = self.item.NSName();
+    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
+    tv.verticallyResizable = tv.horizontallyResizable = true;
+    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    tv.richText = false;
+    tv.importsGraphics = false;
+    tv.allowsImageEditing = false;
+    tv.automaticQuoteSubstitutionEnabled = false;
+    tv.automaticLinkDetectionEnabled = false;
+    tv.continuousSpellCheckingEnabled = false;
+    tv.grammarCheckingEnabled = false;
+    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
+    ps.lineBreakMode = NSLineBreakByClipping;
+    tv.defaultParagraphStyle = ps;
+    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
+    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
+    
+    m_RenamingEditor.documentView = tv;
+//
 //    m_Presentation->SetupFieldRenaming(m_RenamingEditor, cursor_pos);
 //
 //    [self addSubview:m_RenamingEditor];
-//    [self.window makeFirstResponder:m_RenamingEditor];
-//    
-//    m_RenamingOriginalName = self.item.Name();
+    [m_ItemsView setupFieldEditor:m_RenamingEditor forItemAtIndex:cursor_pos];
+    
+    [self.window makeFirstResponder:m_RenamingEditor];
+    
+    m_RenamingOriginalName = self.item.Name();
 }
 
 - (void)commitFieldEditor
@@ -1305,8 +1315,10 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     m_RenamingEditor = nil;
     m_RenamingOriginalName = "";
     
-    if(self.window.firstResponder == nil || self.window.firstResponder == self.window)
-        [self.window makeFirstResponder:self];
+    if( self.window.firstResponder == nil || self.window.firstResponder == self.window )
+        dispatch_to_main_queue([=]{
+            [self.window makeFirstResponder:self];
+        });
 }
 
 - (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index

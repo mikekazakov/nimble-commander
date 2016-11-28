@@ -24,21 +24,6 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 // D - Date added
 // E - Date modified
 
-
-//bool            HasATime()          const;
-//time_t          ATime()             const;
-//
-//bool            HasMTime()          const;
-//time_t          MTime()             const;
-//
-//bool            HasCTime()          const;
-//time_t          CTime()             const;
-//
-//bool            HasBTime()          const;
-//time_t          BTime()             const;
-
-
-
 @interface PanelListView()
 
 @property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
@@ -666,14 +651,15 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (bool) isItemVisible:(int)_sorted_item_index
 {
-    // TODO:
-    return true;
+    CGRect visibleRect = m_ScrollView.contentView.visibleRect;
+    NSRange range = [m_TableView rowsInRect:visibleRect];
+    return NSLocationInRange(_sorted_item_index, range);
 }
 
 - (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index
 {
-    
-    
+    if( PanelListViewRowView *rv = [m_TableView rowViewAtRow:_sorted_item_index makeIfNecessary:false] )
+        [rv.nameView setupFieldEditor:_editor];
 }
 
 @end

@@ -1,3 +1,4 @@
+#include <Utility/FontExtras.h>
 #include "../PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -158,6 +159,36 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 - (NSImageRep*)icon
 {
     return m_Icon;
+}
+
+- (void) setupFieldEditor:(NSScrollView*)_editor
+{
+    const auto line_padding = 2.;
+    
+    const auto bounds = self.bounds;
+    const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
+    const auto font = ((PanelListViewRowView*)self.superview).listView.font;
+    
+    NSRect rc =  NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
+                            0,
+                            bounds.size.width - 2 * geometry.LeftInset() - geometry.IconSize() - geometry.RightInset(),
+                            bounds.size.height);
+    
+    auto fi = FontGeometryInfo(font);
+    rc.size.height = fi.LineHeight();
+    rc.origin.y += 1;
+    rc.origin.x -= line_padding;
+    
+    _editor.frame = rc;
+    
+    NSTextView *tv = _editor.documentView;
+    tv.font = font;
+    tv.textContainerInset = NSMakeSize(0, 0);
+    tv.textContainer.lineFragmentPadding = line_padding;
+    auto aa = tv.textContainerOrigin;
+    
+    
+    [self addSubview:_editor];
 }
 
 @end

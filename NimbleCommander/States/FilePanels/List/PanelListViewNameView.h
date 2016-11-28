@@ -8,4 +8,6 @@
 
 - (void) buildPresentation;
 
+- (void) setupFieldEditor:(NSScrollView*)_editor;
+
 @end

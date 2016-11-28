@@ -389,8 +389,13 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (bool) isItemVisible:(int)_sorted_item_index
 {
-    // TODO:
-    return true;
+    const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
+    if( _sorted_item_index < 0 || _sorted_item_index >= entries_count )
+        return false;
+    
+    const auto vis_rect = m_ScrollView.documentVisibleRect;
+    const auto item_rect = [m_CollectionView frameForItemAtIndex:_sorted_item_index];
+    return NSContainsRect(vis_rect, item_rect) || NSIntersectsRect(vis_rect, item_rect);
 }
 
 - (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index

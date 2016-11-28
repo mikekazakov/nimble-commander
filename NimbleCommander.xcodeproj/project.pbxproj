@@ -79,6 +79,7 @@
 		CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */; };
 		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
+		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF27414917FF04EF006D6687 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
 		CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414B18000832006D6687 /* FilePanelMainSplitView.mm */; };
 		CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
@@ -1215,6 +1216,8 @@
 		CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindowInternalViewerState.xib; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.xib; sourceTree = SOURCE_ROOT; };
 		CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerToolbarProtocol.h; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerToolbarProtocol.mm; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.mm; sourceTree = SOURCE_ROOT; };
+		CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewItemCarrier.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.h; sourceTree = SOURCE_ROOT; };
+		CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewItemCarrier.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.mm; sourceTree = SOURCE_ROOT; };
 		CF27414717FF04EF006D6687 /* SharingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharingService.h; sourceTree = "<group>"; };
 		CF27414817FF04EF006D6687 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharingService.mm; sourceTree = "<group>"; };
 		CF27414A18000832006D6687 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePanelMainSplitView.h; sourceTree = "<group>"; };
@@ -2234,6 +2237,8 @@
 		CF5D25E31DB604060073156F /* Brief */ = {
 			isa = PBXGroup;
 			children = (
+				CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */,
+				CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */,
 				CF56C2C41DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.h */,
 				CF56C2C51DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm */,
 				CF56C2C61DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.h */,
@@ -3792,6 +3797,7 @@
 			files = (
 				CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */,
 				CF9069731BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
+				CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */,
 				CF8432021862AB830062B318 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFF0C83818FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm in Sources */,

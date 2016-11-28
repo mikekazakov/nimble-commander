@@ -259,10 +259,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 }
 
-- (bool)active
+- (bool) active
 {
-    NSWindow *w = self.window;
-    return w == nil ? false : w.isKeyWindow && w.firstResponder == self;
+//    return w == nil ? false : w.isKeyWindow && w.firstResponder == self;
+    if( NSWindow *w = self.window )
+        if( w.isKeyWindow )
+            if( id fr = w.firstResponder )
+                return fr == self || [objc_cast<NSView>(fr) isDescendantOf:self];
+    return false;
 }
 
 //- (void)drawRect:(NSRect)dirtyRect

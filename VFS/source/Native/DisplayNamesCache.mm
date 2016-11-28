@@ -20,9 +20,9 @@ bool DisplayNamesCache::Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_pa
     for( size_t i = 0, e = m_Tags.size(); i != e; ++i )
         if( m_Tags[i].ino == _ino && m_Tags[i].dev == _dev ) {
             // same ino-dev pair, need to check filename
-            auto i = _path.rfind('/');
-            if( i != string::npos &&
-               strcmp( m_Tags[i].filename, _path.c_str() + i + 1 ) == 0 ) {
+            auto p = _path.rfind('/');
+            if( p != string::npos &&
+               strcmp( m_Tags[i].filename, _path.c_str() + p + 1 ) == 0 ) {
                 _result = m_DisplayNames[i];
                 return true;
             }

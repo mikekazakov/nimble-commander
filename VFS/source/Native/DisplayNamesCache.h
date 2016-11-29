@@ -21,23 +21,14 @@ public:
     const char* DisplayName( ino_t _ino, dev_t _dev, const string &_path );
     
 private:
-#pragma pack(1)
-    struct Tag
-    {
-        ino_t ino;
-        dev_t dev;
-        const char *filename;
-    };
-#pragma pack()
-    static_assert( sizeof(Tag) == 20 );
-
-    bool Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_path, const char *&_result ) const noexcept;
-    static const char* Slow( const string &_path );
+    optional<const char*> Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_path ) const noexcept;
     void Commit_Locked( ino_t _ino, dev_t _dev, const string &_path, const char *_dispay_name );
     
     atomic_int          m_Readers{0};
     spinlock            m_ReadLock;
     spinlock            m_WriteLock;
-    vector<Tag>         m_Tags;
+    vector<dev_t>       m_Devs;
+    vector<uint32_t>    m_Inodes; // inodes actually cannot exceed 32bit range
+    vector<const char*> m_Filenames;
     vector<const char*> m_DisplayNames;
 };

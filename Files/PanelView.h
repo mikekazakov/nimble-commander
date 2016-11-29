@@ -106,9 +106,11 @@ struct PanelViewLayout
 - (void) startFieldEditorRenaming;
 
 /*
- * PanelView implementation hooks
+ * PanelView implementation hooks.
+ * Later: add hit-test info flags here
  */
-- (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event; // add hit-test info flags here
-
+- (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event;
+- (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event;
+- (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event;
 
 @end

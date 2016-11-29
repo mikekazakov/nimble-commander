@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Utility/FPSLimitedDrawer.h>
 #include <Utility/NSView+Sugar.h>
 #include "vfs/VFS.h"
 #include "PanelView.h"
@@ -23,13 +22,11 @@
 #include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
 #include "../NimbleCommander/States/FilePanels/IconsGenerator2.h"
 
-static const auto g_ConfigMaxFPS = "filePanel.general.maxFPS";
-
-enum class CursorSelectionType
+enum class CursorSelectionType : int8_t
 {
-    No,
-    Selection,
-    Unselection
+    No          = 0,
+    Selection   = 1,
+    Unselection = 2
 };
 
 struct PanelViewStateStorage
@@ -72,11 +69,11 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     string                      m_RenamingOriginalName;
-    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
-    atomic_ullong               m_FieldRenamingRequestTicket; // used for delayed action to ensure that click was single, not double or more
+//    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
+//    atomic_ullong               m_FieldRenamingRequestTicket; // used for delayed action to ensure that click was single, not double or more
     
     bool                        m_ReadyToDrag;
-    NSPoint                     m_LButtonDownPos;
+//    NSPoint                     m_LButtonDownPos;
     
     __weak id<PanelViewDelegate> m_Delegate;
     nanoseconds                 m_ActivationTime; // time when view did became a first responder
@@ -104,8 +101,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         __weak PanelView *weak_self = self;
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
-        m_FieldRenamingRequestTicket = 0;
-        m_LastPotentialRenamingLBDown = -1;
+//        m_FieldRenamingRequestTicket = 0;
+//        m_LastPotentialRenamingLBDown = -1;
         m_DraggingOver = false;
         m_DraggingOverItemAtPosition = -1;
         
@@ -185,10 +182,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 }
 
-- (BOOL)isFlipped
-{
-    return YES;
-}
+//- (BOOL)isFlipped
+//{
+//    return YES;
+//}
 
 - (BOOL)acceptsFirstResponder
 {
@@ -250,11 +247,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
     
     if( _wnd == nil ) {
-        [m_ItemsView removeFromSuperview];
-        m_ItemsView = nil;
-        
-        [m_HeaderView removeFromSuperview];
-        m_HeaderView = nil;
     }
 
 }
@@ -332,8 +324,19 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_HeaderView.sortMode = data->SortMode();
     }
     
-    if( !data )
+    if( !data ) {
+        // we're in destruction phase
+        
+        // !!! this might be dangerous!
+        
+        [m_ItemsView removeFromSuperview];
+        m_ItemsView = nil;
+        
+        [m_HeaderView removeFromSuperview];
+        m_HeaderView = nil;
+ 
         self.presentation = nullptr;
+    }
 }
 
 - (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
@@ -561,7 +564,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
             [del PanelViewCursorChanged:self];
     
-    m_LastPotentialRenamingLBDown = -1;
+//    m_LastPotentialRenamingLBDown = -1;
     [self commitFieldEditor];
 }
 
@@ -782,38 +785,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //
 //    m_ReadyToDrag = false;
 //    m_LastPotentialRenamingLBDown = -1;
-}
-
-- (void)scrollWheel:(NSEvent *)_event
-{
-//    if (!self.active) // will react only on active panels
-//        return;
-//    
-//    if(m_DisableCurrentMomentumScroll == true &&
-//       _event.phase == NSEventPhaseNone &&
-//       _event.momentumPhase != NSEventPhaseNone )
-//        return; // momentum scroll is temporary disabled due to folder change or quick search.
-//    m_DisableCurrentMomentumScroll = false;    
-//    if(_event.momentumPhase == NSEventPhaseBegan)
-//        m_IsCurrentlyMomentumScroll = true;
-//    else if(_event.momentumPhase == NSEventPhaseEnded)
-//        m_IsCurrentlyMomentumScroll = false;
-//    
-//    const double item_height = m_Presentation->GetSingleItemHeight();
-//    m_ScrollDY += _event.hasPreciseScrollingDeltas ? _event.scrollingDeltaY : _event.deltaY * item_height;
-//    int idx = int(_event.deltaX/2.0); // less sensitive than vertical scrolling
-//    int old_curpos = m_State.CursorPos, old_offset = m_State.ItemsDisplayOffset;
-//    
-//    if(fabs(m_ScrollDY) >= item_height) {
-//        const double sgn = m_ScrollDY / fabs(m_ScrollDY);
-//        for(;fabs(m_ScrollDY) >= item_height; m_ScrollDY -= item_height * sgn)
-//            m_Presentation->ScrollCursor(0, int(sgn));
-//    }
-//    else if(idx != 0)
-//        m_Presentation->ScrollCursor(idx, 0);
-//
-//    if(old_curpos != m_State.CursorPos || old_offset != m_State.ItemsDisplayOffset)
-//        [self OnCursorPositionChanged];
 }
 
 - (VFSListingItem)item
@@ -1180,17 +1151,6 @@ PanelViewLayout L4()
     return NO;
 }
 
-- (void)startFieldEditorRenamingByEvent:(NSEvent*)_event
-{
-//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FilenameFact);
-//    if (cursor_pos < 0 || cursor_pos != m_State.CursorPos)
-//        return;
-//    
-//    [self startFieldEditorRenaming];
-}
-
-
 static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )
 {
     static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
@@ -1515,6 +1475,18 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         
         [self setCurpos:_sorted_index];        
     }
+}
+
+- (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event
+{
+    if( _sorted_index >= 0 && _sorted_index == m_State.CursorPos )
+        [self startFieldEditorRenaming];
+}
+
+- (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event
+{
+    if( _sorted_index >= 0 && _sorted_index == m_State.CursorPos )
+        [self.delegate PanelViewDoubleClick:self atElement:_sorted_index];
 }
 
 - (void) dataSortingHasChanged

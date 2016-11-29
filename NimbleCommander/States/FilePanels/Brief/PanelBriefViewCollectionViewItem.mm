@@ -11,6 +11,8 @@
     bool                            m_PanelActive;
 }
 
+@synthesize panelActive = m_PanelActive;
+
 - (void)prepareForReuse
 {
     [super prepareForReuse];

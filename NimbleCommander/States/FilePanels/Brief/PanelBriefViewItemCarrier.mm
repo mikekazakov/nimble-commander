@@ -44,6 +44,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
     pair<int16_t, int16_t>              m_QSHighlight;
+    bool                                m_PermitFieldRenaming;
 }
 
 @synthesize background = m_Background;
@@ -62,6 +63,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         m_Font = [NSFont systemFontOfSize:13];
         m_Filename = @"";
         m_QSHighlight = {0, 0};
+        m_PermitFieldRenaming = false;
         [self buildTextAttributes];
     }
     return self;
@@ -123,25 +125,44 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
               fraction:1.0
         respectFlipped:false
                  hints:nil];
-    
 }
 
 - (void) mouseDown:(NSEvent *)event
 {
-    /// ...
+    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive;
+    
     const auto my_index = m_Controller.itemIndex;
     if( my_index < 0 )
         return;
     
     [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
-    
-    // check if focus and selection didn't change - in that case allow renaming
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
+    // used for delayed action to ensure that click was single, not double or more
+    static atomic_ullong current_ticket = {0};
+    static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
     
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return;
     
+    int click_count = (int)event.clickCount;
+    if( click_count <= 1 && m_PermitFieldRenaming ) {
+        uint64_t renaming_ticket = ++current_ticket;
+        dispatch_to_main_queue_after(delay, [=]{
+            if( renaming_ticket == current_ticket )
+                [m_Controller.briefView.panelView panelItem:my_index fieldEditor:event];
+        });
+    }
+    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
+        // Handle double-or-four-etc clicks as double-click
+        ++current_ticket; // to abort field editing
+        [m_Controller.briefView.panelView panelItem:my_index dblClick:event];
+    }
+    
+    m_PermitFieldRenaming = false;
 }
 
 - (void) setIcon:(NSImageRep *)icon

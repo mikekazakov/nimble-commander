@@ -25,6 +25,7 @@ enum class PanelViewFilenameTrimming : int8_t
     Trailing    = 2
 };
 
+// not used anymore
 struct PanelViewState
 {
     PanelData                  *Data                = nullptr;

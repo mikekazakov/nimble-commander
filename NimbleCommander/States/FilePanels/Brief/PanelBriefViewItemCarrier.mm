@@ -165,6 +165,15 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     m_PermitFieldRenaming = false;
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return nil;
+
+    return [m_Controller.briefView.panelView panelItem:my_index menuForForEvent:_event];    
+}
+
 - (void) setIcon:(NSImageRep *)icon
 {
     if( m_Icon != icon ) {

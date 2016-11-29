@@ -62,7 +62,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     unsigned long               m_KeyboardModifierFlags;
     CursorSelectionType         m_CursorSelectionType;
 //    unique_ptr<PanelViewPresentation> m_Presentation;
-    PanelViewState              m_State;
+//    PanelViewState             m_State;
+    PanelData                  *m_Data;
+    int                         m_CursorPos;
+    PanelViewType               m_ViewType;
     
     unordered_map<size_t, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
@@ -98,6 +101,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     self = [super initWithFrame:frame];
     if (self) {
 //        self.wantsLayer = true;
+        m_Data = nullptr;
+        m_CursorPos = -1;
+        m_ViewType = PanelViewType::Medium;
+        
         __weak PanelView *weak_self = self;
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
@@ -116,12 +123,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
                                                  object:[NSApplication sharedApplication]];
         [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
         
-        auto skin = AppDelegate.me.skin;
-        if (skin == ApplicationSkin::Modern)
-            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
-        else if(skin == ApplicationSkin::Classic)
-            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
-        
+//        auto skin = AppDelegate.me.skin;
+//        if (skin == ApplicationSkin::Modern)
+//            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
+//        else if(skin == ApplicationSkin::Classic)
+//            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
+//        
         
         //m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
 //        m_ItemsView = [[PanelListView alloc] initWithFrame:frame];
@@ -151,7 +158,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 -(void) dealloc
 {
-    m_State.Data = nullptr;
+    m_Data = nullptr;
     [NSNotificationCenter.defaultCenter removeObserver:self];
     [AppDelegate.me removeObserver:self forKeyPath:@"skin"];    
 }
@@ -309,13 +316,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (PanelData*) data
 {
-    return m_State.Data;
+    return m_Data;
 }
 
 - (void) setData:(PanelData *)data
 {
     self.needsDisplay = true;
-    m_State.Data = data;
+    m_Data = data;
     
 //    if( data )
 
@@ -357,21 +364,21 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
+    int origpos = m_CursorPos;
     
 //    m_Presentation->MoveCursorToPrevItem();
 //    if(m_State->Data->SortedDirectoryEntries().empty()) return;
 //
-    if(m_State.CursorPos < 0)
+    if( m_CursorPos < 0 )
         return;
     
     [self SelectUnselectInRange:origpos last_included:origpos];
 
-    if(m_State.CursorPos == 0)
+    if( m_CursorPos == 0 )
         return;
     
     
-    m_State.CursorPos--;
+    m_CursorPos--;
 //    EnsureCursorIsVisible();
     
     
@@ -385,16 +392,16 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
+    int origpos = m_CursorPos;
 //    m_Presentation->MoveCursorToNextItem();
     
 //    if(m_State->Data->SortedDirectoryEntries().empty()) return;
 //
     [self SelectUnselectInRange:origpos last_included:origpos];
-    if( m_State.CursorPos + 1 >= m_State.Data->SortedDirectoryEntries().size() )
+    if( m_CursorPos + 1 >= m_Data->SortedDirectoryEntries().size() )
         return;
 
-    m_State.CursorPos++;
+    m_CursorPos++;
     
     
     [self OnCursorPositionChanged];
@@ -404,10 +411,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
+    int origpos = m_CursorPos;
 //    m_Presentation->MoveCursorToPrevPage();
 
-    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -415,10 +422,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
+    int origpos = m_CursorPos;
 //    m_Presentation->MoveCursorToNextPage();
 
-    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -426,18 +433,18 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    const auto orig_pos = m_State.CursorPos;
+    const auto orig_pos = m_CursorPos;
     
-    if( m_State.Data->SortedDirectoryEntries().empty() ) return;
+    if( m_Data->SortedDirectoryEntries().empty() ) return;
     const auto items_per_column = m_ItemsView.itemsInColumn;
     const auto new_pos = max( orig_pos - items_per_column, 0 );
     
     if( new_pos == orig_pos )
         return;
 
-    m_State.CursorPos = new_pos;
+    m_CursorPos = new_pos;
     
-    [self SelectUnselectInRange:orig_pos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -445,20 +452,20 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    const auto orig_pos = m_State.CursorPos;
+    const auto orig_pos = m_CursorPos;
 //    m_Presentation->MoveCursorToNextColumn();
     
-    if( m_State.Data->SortedDirectoryEntries().empty() ) return;
-    const auto total_items = (int)m_State.Data->SortedDirectoryEntries().size();
+    if( m_Data->SortedDirectoryEntries().empty() ) return;
+    const auto total_items = (int)m_Data->SortedDirectoryEntries().size();
     const auto items_per_column = m_ItemsView.itemsInColumn;
     const auto new_pos = min( orig_pos + items_per_column, total_items - 1 );
     
     if( new_pos == orig_pos )
         return;
     
-    m_State.CursorPos = new_pos;
+    m_CursorPos = new_pos;
 
-    [self SelectUnselectInRange:orig_pos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -466,17 +473,17 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    const auto origpos = m_State.CursorPos;
+    const auto origpos = m_CursorPos;
     
-    if( m_State.Data->SortedDirectoryEntries().empty() ||
-        m_State.CursorPos == 0 )
+    if( m_Data->SortedDirectoryEntries().empty() ||
+        m_CursorPos == 0 )
         return;
     
-    m_State.CursorPos = 0;
+    m_CursorPos = 0;
     
 //    m_Presentation->MoveCursorToFirstItem();
 
-    [self SelectUnselectInRange:origpos last_included:m_State.CursorPos];
+    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -484,17 +491,17 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    const auto origpos = m_State.CursorPos;
+    const auto origpos = m_CursorPos;
     
-    if( m_State.Data->SortedDirectoryEntries().empty() ||
-        m_State.CursorPos == m_State.Data->SortedDirectoryEntries().size() - 1 )
+    if( m_Data->SortedDirectoryEntries().empty() ||
+        m_CursorPos == m_Data->SortedDirectoryEntries().size() - 1 )
         return;
     
-    m_State.CursorPos = (int)m_State.Data->SortedDirectoryEntries().size() - 1;
+    m_CursorPos = (int)m_Data->SortedDirectoryEntries().size() - 1;
     
 //    m_Presentation->MoveCursorToLastItem();
 
-    [self SelectUnselectInRange:origpos last_included: m_State.CursorPos];
+    [self SelectUnselectInRange:origpos last_included: m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -502,13 +509,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_State.CursorPos;
+    int origpos = m_CursorPos;
 //    m_Presentation->MoveCursorToNextItem();
     
-    if(auto entry = m_State.Data->EntryAtSortPosition(origpos))
+    if(auto entry = m_Data->EntryAtSortPosition(origpos))
         [self SelectUnselectInRange:origpos
                       last_included:origpos
-                             select:!m_State.Data->VolatileDataAtSortPosition(origpos).is_selected()];
+                             select:!m_Data->VolatileDataAtSortPosition(origpos).is_selected()];
     
     [self OnCursorPositionChanged];
 }
@@ -517,29 +524,29 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int pos = m_State.CursorPos;
-    if( auto entry = m_State.Data->EntryAtSortPosition(pos) )
+    int pos = m_CursorPos;
+    if( auto entry = m_Data->EntryAtSortPosition(pos) )
         [self SelectUnselectInRange:pos
                       last_included:pos
-                             select:!m_State.Data->VolatileDataAtSortPosition(pos).is_selected()];
+                             select:!m_Data->VolatileDataAtSortPosition(pos).is_selected()];
 }
 
 - (void) setCurpos:(int)_pos
 {
     dispatch_assert_main_queue();
     
-    const auto clipped_pos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
+    const auto clipped_pos = (m_Data->SortedDirectoryEntries().size() > 0 &&
                          _pos >= 0 &&
-                         _pos < m_State.Data->SortedDirectoryEntries().size() ) ?
+                         _pos < m_Data->SortedDirectoryEntries().size() ) ?
                         _pos : -1;
     
-    if (m_State.CursorPos == clipped_pos)
+    if (m_CursorPos == clipped_pos)
         return;
 
 //    m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
 //    [m_ItemsView setCursorPosition:_pos];
     
-    m_State.CursorPos = clipped_pos;
+    m_CursorPos = clipped_pos;
 //        m_Presentation->SetCursorPos(cursor);
 //    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
 //                         _pos >= 0 &&
@@ -552,13 +559,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 - (int) curpos
 {
     dispatch_assert_main_queue();
-    return m_State.CursorPos;
+    return m_CursorPos;
 }
 
 - (void) OnCursorPositionChanged
 {
     dispatch_assert_main_queue();
-    [m_ItemsView setCursorPosition:m_State.CursorPos];
+    [m_ItemsView setCursorPosition:m_CursorPos];
     
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
@@ -638,8 +645,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             }
             else {
                 // need to look at a first file (next to dotdot) for current representation if any.
-                if( auto next_item = m_State.Data->EntryAtSortPosition(1) )
-                    m_CursorSelectionType = m_State.Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                if( auto next_item = m_Data->EntryAtSortPosition(1) )
+                    m_CursorSelectionType = m_Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
                 else // singular case - selection doesn't matter - nothing to select
                     m_CursorSelectionType = CursorSelectionType::Selection;
             }
@@ -730,15 +737,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self setNeedsDisplay:true];
 }
 
-- (NSMenu *)menuForEvent:(NSEvent *)_event
+- (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event
 {
-//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-//    if (cursor_pos >= 0) {
-//        self.needsDisplay = true; // force immediately redraw on any rbc since by default there's a delay by invalidate timer and
-//                                  // in this case it wont be fired before menu showed
-//        return [self.delegate panelView:self requestsContextMenuForItemNo:cursor_pos];
-//    }
+    if( _sorted_index >= 0 )
+        return [self.delegate panelView:self requestsContextMenuForItemNo:_sorted_index];    
     return nil;
 }
 
@@ -789,23 +791,23 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (VFSListingItem)item
 {
-    return m_State.Data->EntryAtSortPosition(m_State.CursorPos);
+    return m_Data->EntryAtSortPosition(m_CursorPos);
 }
 
 - (const PanelData::PanelVolatileData &)item_vd
 {
     static const PanelData::PanelVolatileData stub{};
-    int indx = m_State.Data->RawIndexForSortIndex( m_State.CursorPos );
+    int indx = m_Data->RawIndexForSortIndex( m_CursorPos );
     if( indx < 0 )
         return stub;
-    return m_State.Data->VolatileDataAtRawPosition(indx);
+    return m_Data->VolatileDataAtRawPosition(indx);
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
     assert( dispatch_is_main_queue() );
-    if(_start < 0 || _start >= m_State.Data->SortedDirectoryEntries().size() ||
-         _end < 0 || _end >= m_State.Data->SortedDirectoryEntries().size() ) {
+    if(_start < 0 || _start >= m_Data->SortedDirectoryEntries().size() ||
+         _end < 0 || _end >= m_Data->SortedDirectoryEntries().size() ) {
         NSLog(@"SelectUnselectInRange - invalid range");
         return;
     }
@@ -814,12 +816,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         swap(_start, _end);
     
     // we never want to select a first (dotdot) entry
-    if( auto i = m_State.Data->EntryAtSortPosition(_start) )
+    if( auto i = m_Data->EntryAtSortPosition(_start) )
         if( i.IsDotDot() )
             ++_start; // we don't want to select or unselect a dotdot entry - they are higher than that stuff
     
     for(int i = _start; i <= _end; ++i)
-        m_State.Data->CustomFlagsSelectSorted(i, _select);
+        m_Data->CustomFlagsSelectSorted(i, _select);
     
     [m_ItemsView syncVolatileData];
 }
@@ -850,13 +852,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         
-        if( m_State.Data )
-            [m_ItemsView setData:m_State.Data];
+        if( m_Data )
+            [m_ItemsView setData:m_Data];
         
-        if( m_State.CursorPos >= 0 )
-            [m_ItemsView setCursorPosition:m_State.CursorPos];
+        if( m_CursorPos >= 0 )
+            [m_ItemsView setCursorPosition:m_CursorPos];
         
-        m_ItemsView.sortMode = m_State.Data->SortMode();
+        m_ItemsView.sortMode = m_Data->SortMode();
     }
 
     if( auto v = objc_cast<PanelBriefView>(m_ItemsView) ) {
@@ -880,13 +882,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         
-        if( m_State.Data )
-            [m_ItemsView setData:m_State.Data];
+        if( m_Data )
+            [m_ItemsView setData:m_Data];
         
-        if( m_State.CursorPos >= 0 )
-            [m_ItemsView setCursorPosition:m_State.CursorPos];
+        if( m_CursorPos >= 0 )
+            [m_ItemsView setCursorPosition:m_CursorPos];
         
-        m_ItemsView.sortMode = m_State.Data->SortMode();
+        m_ItemsView.sortMode = m_Data->SortMode();
         
         __weak PanelView *weak_self = self;
         v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
@@ -1027,16 +1029,16 @@ PanelViewLayout L4()
 
 - (PanelViewType)type
 {
-    return m_State.ViewType;
+    return m_ViewType;
 }
 
 - (void) SavePathState
 {
     assert( dispatch_is_main_queue() );
-    if(!m_State.Data || !m_State.Data->Listing().IsUniform())
+    if(!m_Data || !m_Data->Listing().IsUniform())
         return;
     
-    auto &listing = m_State.Data->Listing();
+    auto &listing = m_Data->Listing();
     
     auto item = self.item;
     if( !item )
@@ -1045,27 +1047,27 @@ PanelViewLayout L4()
     auto &storage = m_States[ HashForPath(listing.Host(), listing.Directory()) ];
     
     storage.focused_item = item.Name();
-    storage.dispay_offset = m_State.ItemsDisplayOffset;
+//    storage.dispay_offset = m_State.ItemsDisplayOffset;
 }
 
 - (void) LoadPathState
 {
     assert( dispatch_is_main_queue() );
-    if(!m_State.Data || !m_State.Data->Listing().IsUniform())
+    if( !m_Data || !m_Data->Listing().IsUniform() )
         return;
     
-    auto &listing = m_State.Data->Listing();
+    auto &listing = m_Data->Listing();
     
     auto it = m_States.find(HashForPath(listing.Host(), listing.Directory()));
     if(it == end(m_States))
         return;
     
     auto &storage = it->second;
-    int cursor = m_State.Data->SortedIndexForName(storage.focused_item.c_str());
-    if(cursor < 0)
+    int cursor = m_Data->SortedIndexForName(storage.focused_item.c_str());
+    if( cursor < 0 )
         return;
     
-    m_State.ItemsDisplayOffset = storage.dispay_offset;
+//    m_State.ItemsDisplayOffset = storage.dispay_offset;
 //    m_Presentation->SetCursorPos(cursor);
 //    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
 //                         cursor >= 0 &&
@@ -1087,21 +1089,21 @@ PanelViewLayout L4()
 - (void)panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
 {
     assert( dispatch_is_main_queue() );
-    m_State.ItemsDisplayOffset = 0;
-    m_State.CursorPos = -1;
+//    m_State.ItemsDisplayOffset = 0;
+    m_CursorPos = -1;
     
     if( _load )
         [self LoadPathState];
     
-    const int cur = m_State.Data->SortedIndexForName(_focused_filename.c_str());
+    const int cur = m_Data->SortedIndexForName(_focused_filename.c_str());
     if( cur >= 0 ) {
         //m_Presentation->SetCursorPos(cur);
         [self setCurpos:cur];
 //        [self OnCursorPositionChanged];
     }
     
-    if( m_State.CursorPos < 0 &&
-        m_State.Data->SortedDirectoryEntries().size() > 0) {
+    if( m_CursorPos < 0 &&
+        m_Data->SortedDirectoryEntries().size() > 0) {
 //        m_Presentation->SetCursorPos(0);
         [self setCurpos:0];
 //        [self OnCursorPositionChanged];
@@ -1191,7 +1193,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         return;
     }
     
-    int cursor_pos = m_State.CursorPos;
+    int cursor_pos = m_CursorPos;
 //    if( !m_Presentation->IsItemVisible(cursor_pos) )
     if( ![m_ItemsView isItemVisible:cursor_pos] )
         return;
@@ -1306,7 +1308,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         [self discardFieldEditor];
 //    [self setNeedsDisplay];
     [m_ItemsView dataChanged];
-    [m_ItemsView setCursorPosition:m_State.CursorPos];
+    [m_ItemsView setCursorPosition:m_CursorPos];
 }
 
 - (void) volatileDataChanged
@@ -1384,13 +1386,13 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
-        auto skin = AppDelegate.me.skin;
-        if (skin == ApplicationSkin::Modern)
-            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
-        else if(skin == ApplicationSkin::Classic)
-            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
-    }
+//    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
+//        auto skin = AppDelegate.me.skin;
+//        if (skin == ApplicationSkin::Modern)
+//            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
+//        else if(skin == ApplicationSkin::Classic)
+//            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
+//    }
 }
 
 - (void) setHeaderTitle:(NSString *)headerTitle
@@ -1411,9 +1413,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (NSString *) headerTitleForPanel
 {
-    switch(m_State.Data->Type()) {
+    switch( m_Data->Type() ) {
         case PanelData::PanelType::Directory:
-            return [NSString stringWithUTF8StdString:m_State.Data->VerboseDirectoryFullPath()];
+            return [NSString stringWithUTF8StdString:m_Data->VerboseDirectoryFullPath()];
         case PanelData::PanelType::Temporary:
             return @"Temporary Panel"; // TODO: localize
         default:
@@ -1451,9 +1453,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     if( _sorted_index < 0 )
         return;
     
-    const int current_cursor_pos = m_State.CursorPos;
+    const int current_cursor_pos = m_CursorPos;
     const bool window_focused = self.window.isKeyWindow;
-    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(_sorted_index);
+    const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);
     
     // any cursor movements or selection changes should be performed only in active window
     if( window_focused ) {
@@ -1479,20 +1481,20 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event
 {
-    if( _sorted_index >= 0 && _sorted_index == m_State.CursorPos )
+    if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
         [self startFieldEditorRenaming];
 }
 
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event
 {
-    if( _sorted_index >= 0 && _sorted_index == m_State.CursorPos )
+    if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
         [self.delegate PanelViewDoubleClick:self atElement:_sorted_index];
 }
 
 - (void) dataSortingHasChanged
 {
-    m_HeaderView.sortMode = m_State.Data->SortMode();
-    m_ItemsView.sortMode = m_State.Data->SortMode();
+    m_HeaderView.sortMode = m_Data->SortMode();
+    m_ItemsView.sortMode = m_Data->SortMode();
 }
 
 //@property (nonatomic, readonly) PanelController *controller

@@ -112,5 +112,6 @@ struct PanelViewLayout
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event;
+- (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event;
 
 @end

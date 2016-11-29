@@ -44,6 +44,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
     pair<int16_t, int16_t>              m_QSHighlight;
+    bool                                m_Highlighted;
     bool                                m_PermitFieldRenaming;
 }
 
@@ -54,6 +55,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @synthesize layoutConstants = m_LayoutConstants;
 @synthesize controller = m_Controller;
 @synthesize qsHighlight = m_QSHighlight;
+@synthesize highlighted = m_Highlighted;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -125,6 +127,15 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
               fraction:1.0
         respectFlipped:false
                  hints:nil];
+    
+    if( m_Highlighted ) {
+        // TODO: need to implement something like in Finder - draw rect with a color regaring current background color
+        NSRect rc = self.bounds;
+        [NSGraphicsContext saveGraphicsState];
+        NSSetFocusRingStyle(NSFocusRingOnly);
+        [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
+        [NSGraphicsContext restoreGraphicsState];
+    }
 }
 
 - (void) mouseDown:(NSEvent *)event
@@ -259,6 +270,14 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     
     
     [self addSubview:_editor];
+}
+
+- (void) setHighlighted:(bool)highlighted
+{
+    if( m_Highlighted != highlighted ) {
+        m_Highlighted = highlighted;
+        [self setNeedsDisplay:true];
+    }
 }
 
 @end

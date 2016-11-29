@@ -65,9 +65,6 @@ struct PanelViewLayout
  */
 @property (nonatomic) int draggingOverItemAtPosition;
 
-- (void) setupContextMenuHighlights:(vector<int>)_positions;
-- (void) resetContextMenuHighlights;
-
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
  * possibly focusing some file, may be "".

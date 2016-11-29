@@ -72,20 +72,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     string                      m_RenamingOriginalName;
-//    int                         m_LastPotentialRenamingLBDown; // -1 if there's no such
-//    atomic_ullong               m_FieldRenamingRequestTicket; // used for delayed action to ensure that click was single, not double or more
     
     bool                        m_ReadyToDrag;
-//    NSPoint                     m_LButtonDownPos;
     
     __weak id<PanelViewDelegate> m_Delegate;
-    nanoseconds                 m_ActivationTime; // time when view did became a first responder
+//    nanoseconds                 m_ActivationTime; // time when view did became a first responder
     
     bool                        m_DraggingOver;
     int                         m_DraggingOverItemAtPosition;
-    
-    vector<int>                 m_ContextMenuHighlights;
-    
     
 //    PanelBriefView             *m_ItemsView;
 //    PanelListView              *m_ItemsView;
@@ -721,20 +715,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //        m_ReadyToDrag = true;
 //        m_LButtonDownPos = local_point;
 //    }
-}
-
-- (void) setupContextMenuHighlights:(vector<int>)_positions
-{
-    dispatch_assert_main_queue();
-    m_ContextMenuHighlights = move(_positions);
-    [self setNeedsDisplay:true];
-}
-
-- (void) resetContextMenuHighlights
-{
-    dispatch_assert_main_queue();
-    m_ContextMenuHighlights.clear();
-    [self setNeedsDisplay:true];
 }
 
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event

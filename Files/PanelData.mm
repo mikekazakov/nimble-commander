@@ -73,6 +73,11 @@ bool PanelData::PanelVolatileData::is_shown() const noexcept
     return (flags & flag_shown) != 0;
 }
 
+bool PanelData::PanelVolatileData::is_highlighted() const noexcept
+{
+    return (flags & flag_highlight) != 0;
+}
+
 bool PanelData::PanelVolatileData::is_size_calculated() const noexcept
 {
     return size != invalid_size;
@@ -86,6 +91,11 @@ void PanelData::PanelVolatileData::toggle_selected( bool _v ) noexcept
 void PanelData::PanelVolatileData::toggle_shown( bool _v ) noexcept
 {
     flags = (flags & ~flag_shown) | (_v ? flag_shown : 0);
+}
+
+void PanelData::PanelVolatileData::toggle_highlight( bool _v ) noexcept
+{
+    flags = (flags & ~flag_highlight) | (_v ? flag_highlight : 0);
 }
 
 bool PanelData::PanelVolatileData::operator==(PanelVolatileData&_rhs) const noexcept
@@ -1059,6 +1069,12 @@ void PanelData::CustomIconClearAll()
 {
     for(auto &vd: m_VolatileData)
         vd.icon = 0;
+}
+
+void PanelData::CustomFlagsClearHighlights()
+{
+    for( auto &vd: m_VolatileData )
+        vd.toggle_highlight(false);
 }
 
 int PanelData::SortedIndexForName(const char *_filename) const

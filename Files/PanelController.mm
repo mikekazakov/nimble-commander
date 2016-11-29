@@ -745,10 +745,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     
     NSMenu *menu = [self.state RequestContextMenuOn:vfs_items caller:self];
     if( menu ) {
-        vector<int> idx;
         for( auto &i: vfs_items )
-            idx.emplace_back( m_Data.SortIndexForEntry(i) );
-        [_view setupContextMenuHighlights:move(idx)];
+            m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);
+        [_view volatileDataChanged];
     }
     
     return menu;

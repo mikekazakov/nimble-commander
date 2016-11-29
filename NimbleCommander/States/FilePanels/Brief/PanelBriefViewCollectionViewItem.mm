@@ -115,6 +115,7 @@
     m_VD = _vd;
     [self updateColoring];
     self.carrier.qsHighlight = {_vd.qs_highlight_begin, _vd.qs_highlight_end};
+    self.carrier.highlighted = _vd.is_highlighted();
 }
 
 - (void) setIcon:(NSImageRep*)_icon

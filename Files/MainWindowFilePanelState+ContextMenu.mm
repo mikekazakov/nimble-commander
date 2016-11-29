@@ -190,7 +190,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    [m_CurrentController.view resetContextMenuHighlights];
+    m_CurrentController.data.CustomFlagsClearHighlights();
+    [m_CurrentController.view volatileDataChanged];
 }
 
 - (void) doStuffing

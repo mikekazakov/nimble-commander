@@ -14,6 +14,7 @@ struct PanelBriefViewItemLayoutConstants;
 @property (nonatomic)       NSImageRep                         *icon;
 @property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
 @property (nonatomic)       pair<int16_t, int16_t>              qsHighlight;
+@property (nonatomic)       bool                                highlighted;
 
 - (void) setupFieldEditor:(NSScrollView*)_editor;
 

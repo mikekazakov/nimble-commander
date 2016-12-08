@@ -35,7 +35,7 @@ struct PanelViewPresentationItemsColoringFilter
      * If any defined filter disagree with _item - will return false immediately.
      * Any empty coloring filter will return true on any _item.
      */
-    bool Filter(const VFSListingItem& _item, const PanelData::PanelVolatileData &_item_vd) const;
+    bool Filter(const VFSListingItem& _item, const PanelData::VolatileData &_item_vd) const;
     
     /**
      * Persistance support - store values in a dictionary.

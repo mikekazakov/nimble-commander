@@ -61,75 +61,7 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // PanelVolatileData
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-static_assert( sizeof(PanelData::PanelVolatileData) == 16 );
 
-bool PanelData::PanelVolatileData::is_selected() const noexcept
-{
-    return (flags & flag_selected) != 0;
-};
-
-bool PanelData::PanelVolatileData::is_shown() const noexcept
-{
-    return (flags & flag_shown) != 0;
-}
-
-bool PanelData::PanelVolatileData::is_highlighted() const noexcept
-{
-    return (flags & flag_highlight) != 0;
-}
-
-bool PanelData::PanelVolatileData::is_size_calculated() const noexcept
-{
-    return size != invalid_size;
-}
-
-void PanelData::PanelVolatileData::toggle_selected( bool _v ) noexcept
-{
-    flags = (flags & ~flag_selected) | (_v ? flag_selected : 0);
-}
-
-void PanelData::PanelVolatileData::toggle_shown( bool _v ) noexcept
-{
-    flags = (flags & ~flag_shown) | (_v ? flag_shown : 0);
-}
-
-void PanelData::PanelVolatileData::toggle_highlight( bool _v ) noexcept
-{
-    flags = (flags & ~flag_highlight) | (_v ? flag_highlight : 0);
-}
-
-bool PanelData::PanelVolatileData::operator==(PanelVolatileData&_rhs) const noexcept
-{
-    return size  == _rhs.size  &&
-           flags == _rhs.flags &&
-           icon  == _rhs.icon  &&
-           qs_highlight_begin == _rhs.qs_highlight_begin &&
-           qs_highlight_end == _rhs.qs_highlight_end;
-}
-
-bool PanelData::PanelVolatileData::operator!=(PanelVolatileData&_rhs) const noexcept
-{
-    return !(*this == _rhs);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// Statistics
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-bool PanelData::Statistics::operator ==(const PanelData::Statistics& _r) const noexcept
-{
-    return
-    bytes_in_raw_reg_files    == _r.bytes_in_raw_reg_files    &&
-    raw_reg_files_amount      == _r.raw_reg_files_amount      &&
-    bytes_in_selected_entries == _r.bytes_in_selected_entries &&
-    selected_entries_amount   == _r.selected_entries_amount   &&
-    selected_reg_amount       == _r.selected_reg_amount       &&
-    selected_dirs_amount      == _r.selected_dirs_amount;
-}
-
-bool PanelData::Statistics::operator !=(const PanelData::Statistics& _r) const noexcept
-{
-    return !(*this == _r);
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // TextualFilter
@@ -307,7 +239,7 @@ PanelData::PanelData():
 {
 }
 
-static void InitVolatileDataWithListing( vector<PanelData::PanelVolatileData> &_vd, const VFSListing &_listing)
+static void InitVolatileDataWithListing( vector<PanelData::VolatileData> &_vd, const VFSListing &_listing)
 {
     _vd.clear();
     _vd.resize(_listing.Count());
@@ -347,7 +279,7 @@ void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
     DirSortIndT dirbyrawcname;
     DoRawSort(*_listing, dirbyrawcname);
     
-    vector<PanelVolatileData> new_vd;
+    vector<VolatileData> new_vd;
     InitVolatileDataWithListing(new_vd, *_listing);
     
     if( _listing->IsUniform() && m_Listing->IsUniform() ) {
@@ -433,7 +365,7 @@ const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
     return m_EntriesByCustomSort;
 }
 
-PanelData::PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
+PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -441,7 +373,7 @@ PanelData::PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
     return m_VolatileData[_pos];
 }
 
-const PanelData::PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _pos ) const
+const PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos ) const
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -449,12 +381,12 @@ const PanelData::PanelVolatileData& PanelData::VolatileDataAtRawPosition( int _p
     return m_VolatileData[_pos];
 }
 
-PanelData::PanelVolatileData& PanelData::VolatileDataAtSortPosition( int _pos )
+PanelData::VolatileData& PanelData::VolatileDataAtSortPosition( int _pos )
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
 
-const PanelData::PanelVolatileData& PanelData::VolatileDataAtSortPosition( int _pos ) const
+const PanelData::VolatileData& PanelData::VolatileDataAtSortPosition( int _pos ) const
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
@@ -575,13 +507,13 @@ struct SortPredLessBase
 {
 protected:
     const VFSListing&                       l;
-    const vector<PanelData::PanelVolatileData>& vd;
+    const vector<PanelData::VolatileData>& vd;
     const PanelData::PanelSortMode          sort_mode;
     const CFStringCompareFlags              str_comp_flags;
     typedef int (*CompareExtensionsT)(const char *, const char *);
     const CompareExtensionsT                compare_extensions;
 public:
-    SortPredLessBase(const VFSListing &_items, const vector<PanelData::PanelVolatileData>& _vd, PanelData::PanelSortMode _sort_mode):
+    SortPredLessBase(const VFSListing &_items, const vector<PanelData::VolatileData>& _vd, PanelData::PanelSortMode _sort_mode):
         l(_items),
         vd(_vd),
         sort_mode{ _sort_mode },
@@ -593,12 +525,12 @@ public:
 
 struct SortPredLessIndToInd : public SortPredLessBase
 {
-    SortPredLessIndToInd(const VFSListing &_items, const vector<PanelData::PanelVolatileData>& _vd, PanelData::PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
+    SortPredLessIndToInd(const VFSListing &_items, const vector<PanelData::VolatileData>& _vd, PanelData::PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
     
     bool operator()(unsigned _1, unsigned _2) const
     {
         using _ = PanelData::PanelSortMode::Mode;
-        const auto invalid_size = PanelData::PanelVolatileData::invalid_size;
+        const auto invalid_size = PanelData::VolatileData::invalid_size;
         
         if(sort_mode.sep_dirs) {
             if( l.IsDir(_1) && !l.IsDir(_2) ) return true;
@@ -714,12 +646,12 @@ struct SortPredLessIndToInd : public SortPredLessBase
 
 struct SortPredLessIndToKeys : public SortPredLessBase
 {
-    SortPredLessIndToKeys(const VFSListing &_items, const vector<PanelData::PanelVolatileData>& _vd, PanelData::PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
+    SortPredLessIndToKeys(const VFSListing &_items, const vector<PanelData::VolatileData>& _vd, PanelData::PanelSortMode sort_mode): SortPredLessBase(_items, _vd, sort_mode) {}
     
     bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
     {
         using _ = PanelData::PanelSortMode::Mode;
-        const auto invalid_size = PanelData::PanelVolatileData::invalid_size;
+        const auto invalid_size = PanelData::VolatileData::invalid_size;
         
         if(sort_mode.sep_dirs) {
             if( l.IsDir(_1) && !_val2.is_dir) return true;
@@ -865,10 +797,14 @@ PanelData::PanelSortMode PanelData::SortMode() const
 
 void PanelData::UpdateStatictics()
 {
-    m_Stats = Statistics();
+    m_Stats = Statistics{};
     if(m_Listing.get() == nullptr)
         return;
     assert( m_Listing->Count() == m_VolatileData.size() );
+ 
+    m_Stats.total_entries_amount = m_Listing->Count();
+    if( !m_Listing->Empty() && m_Listing->IsDotDot(0) )
+        m_Stats.total_entries_amount--;
     
     // calculate totals for directory
     for(const auto &i: *m_Listing)
@@ -1010,7 +946,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
 {
     if(_entry    == nullptr ||
        _entry[0] == 0       ||
-       _size == PanelVolatileData::invalid_size )
+       _size == VolatileData::invalid_size )
         return false;
     
     int n = RawIndexForName(_entry);
@@ -1040,7 +976,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_filename, const char 
        _filename[0] == 0       ||
        _directory == nullptr   ||
        _directory[0] == 0      ||
-       _size == PanelVolatileData::invalid_size )
+       _size == VolatileData::invalid_size )
         return false;
     
     // dumb linear search here
@@ -1259,7 +1195,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item, const PanelVolatileData &_item_vd)
+PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item, const VolatileData &_item_vd)
 {
     EntrySortKeys keys;
     keys.name = _item.Name();

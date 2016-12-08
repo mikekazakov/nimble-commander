@@ -13,7 +13,7 @@
 - (int) itemIndex;
 
 - (void) setItem:(VFSListingItem)_item;
-- (void) setVD:(PanelData::PanelVolatileData)_vd;
+- (void) setVD:(PanelData::VolatileData)_vd;
 - (void) setIcon:(NSImageRep*)_icon;
 @property (nonatomic) bool panelActive;
 

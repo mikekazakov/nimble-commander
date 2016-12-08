@@ -406,6 +406,11 @@ unsigned VFSListing::Count() const noexcept
     return m_ItemsCount;
 };
 
+bool VFSListing::Empty() const noexcept
+{
+    return m_ItemsCount == 0;
+}
+
 bool VFSListing::IsUniform() const noexcept
 {
     return HasCommonHost() && HasCommonDirectory();

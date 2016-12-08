@@ -315,7 +315,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
 }
 
-- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
+- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::VolatileData&)_vd
 {
     NSImageRep* icon = m_IconsGenerator->ImageFor(_item, _vd);
     [_view setFilename:_item.NSDisplayName()];

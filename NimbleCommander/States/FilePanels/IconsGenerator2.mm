@@ -294,7 +294,7 @@ bool IconsGenerator2::IsFull() const
     return m_Icons.size() - m_IconsHoles >= MaxIcons;
 }
 
-NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::PanelVolatileData &_item_vd)
+NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd)
 {
     assert( dispatch_is_main_queue() ); // STA api design
     assert( m_UpdateCallback );

@@ -20,7 +20,7 @@ public:
     ModernPanelViewPresentationItemsFooter(ModernPanelViewPresentation *_parent);
     
     void Draw(const VFSListingItem &_current_item,
-              const PanelData::PanelVolatileData &_current_item_vd,
+              const PanelData::VolatileData &_current_item_vd,
               const PanelData::Statistics &_stats,
               PanelViewType _view_type,
               bool _active,
@@ -33,7 +33,7 @@ public:
     
 private:
     NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files);
-    void PrepareToDraw(const VFSListingItem& _current_item, const PanelData::PanelVolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active);
+    void PrepareToDraw(const VFSListingItem& _current_item, const PanelData::VolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active);
     
     
     NSFont                          *m_Font = nil;

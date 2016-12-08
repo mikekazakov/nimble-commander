@@ -4,7 +4,7 @@
 
 #include "PanelViewFooter.h"
 
-static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::PanelVolatileData &_vd, ByteCountFormatter::Type _format)
+static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::VolatileData &_vd, ByteCountFormatter::Type _format)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -22,16 +22,67 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
     }
 }
 
+static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, ByteCountFormatter::Type _format)
+{
+    NSString *bytes = ByteCountFormatter::Instance().ToNSString(_sz, _format);
+    if(_total_files == 1)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 1 file",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 2)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 2 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 3)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 3 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 4)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 4 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 5)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 5 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 6)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 6 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 7)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 7 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 8)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 8 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else if(_total_files == 9)
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 9 files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes];
+    else
+        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in %@ files",
+                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
+                bytes,
+                [NSNumber numberWithInt:_total_files]];
+}
+
 @implementation PanelViewFooter
 {
     NSColor             *m_Background;
     NSBox               *m_SeparatorLine;
+    NSBox               *m_VSeparatorLine1;
     NSTextField         *m_FilenameLabel;
     NSTextField         *m_SizeLabel;
     NSTextField         *m_ModTime;
     NSTextField         *m_ItemsLabel;
+    NSTextField         *m_SelectionLabel;
+    
     
     __weak PanelView    *m_PanelView;
+    
+    PanelDataStatistics m_Stats;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -80,10 +131,24 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
         m_ModTime.alignment = NSTextAlignmentRight;
         m_ModTime.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         m_ModTime.stringValue = @"ABra!";
-        m_ModTime.preferredMaxLayoutWidth = 150;
+//        m_ModTime.preferredMaxLayoutWidth = 150;
         [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
         [self addSubview:m_ModTime];
+        
+        m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+        m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_SelectionLabel.bordered = false;
+        m_SelectionLabel.editable = false;
+        m_SelectionLabel.drawsBackground = false;
+        m_SelectionLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+        m_SelectionLabel.usesSingleLineMode = true;
+        m_SelectionLabel.alignment = NSTextAlignmentCenter;
+        m_SelectionLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
+        m_SelectionLabel.stringValue = @"Abra!!!!!";
+//        m_SelectionLabel.preferredMaxLayoutWidth = 0;
+        [m_SelectionLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [self addSubview:m_SelectionLabel];
 
         m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
@@ -92,13 +157,27 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
         m_ItemsLabel.drawsBackground = false;
         m_ItemsLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_ItemsLabel.usesSingleLineMode = true;
-        m_ItemsLabel.alignment = NSTextAlignmentRight;
+        m_ItemsLabel.alignment = NSTextAlignmentCenter;
         m_ItemsLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        m_ItemsLabel.stringValue = @"ABra!";
+        m_ItemsLabel.stringValue = @"";
+//        m_ItemsLabel.preferredMaxLayoutWidth = 50;
         [m_ItemsLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_ItemsLabel];
+        
+        m_VSeparatorLine1 = [[NSBox alloc] initWithFrame:NSRect()];
+        m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
+        m_VSeparatorLine1.boxType = NSBoxSeparator;
+        [m_VSeparatorLine1 setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [self addSubview:m_VSeparatorLine1];
+        
+        
                 
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_FilenameLabel, m_SizeLabel, m_ModTime, m_ItemsLabel);
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_FilenameLabel, m_SizeLabel, m_ModTime, m_ItemsLabel, m_VSeparatorLine1);
+        NSDictionary *metrics = @{@"lm1":@400};
+        [self addConstraints:[NSLayoutConstraint
+                              constraintsWithVisualFormat:@"V:|-(0)-[m_SeparatorLine]-(==0)-[m_FilenameLabel]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint
+                              constraintsWithVisualFormat:@"V:|-(0)-[m_VSeparatorLine1]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:@"V:|-(0)-[m_SeparatorLine]-(==0)-[m_FilenameLabel]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
@@ -110,9 +189,30 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=150@500)]-(4)-[m_ItemsLabel]-(4)-|" options:0 metrics:nil views:views]];
+                              constraintsWithVisualFormat:@"[m_ModTime]-(>=4@500)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=400@400)-[m_ItemsLabel]" options:0 metrics:nil views:views]];
+                              constraintsWithVisualFormat:@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=150@500)]-(4@400)-[m_VSeparatorLine1(<=1@400)]-(2@400)-[m_ItemsLabel(>=50@300)]-(4@400)-|" options:0 metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint
+                              constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_VSeparatorLine1]" options:0 metrics:metrics views:views]];
+        [self addConstraints:[NSLayoutConstraint
+                              constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_ItemsLabel]" options:0 metrics:metrics views:views]];
+
+//        [self addConstraint:NSLayoutAnchor
+//        [myView.topAnchor constraintEqualToAnchor:otherView.topAnchor constant:10];
+        [self addConstraint:[m_SelectionLabel.leadingAnchor constraintEqualToAnchor:m_FilenameLabel.leadingAnchor]];
+        [self addConstraint:[m_SelectionLabel.topAnchor constraintEqualToAnchor:m_FilenameLabel.topAnchor]];
+        [self addConstraint:[m_SelectionLabel.bottomAnchor constraintEqualToAnchor:m_FilenameLabel.bottomAnchor]];
+        [self addConstraint:[m_SelectionLabel.trailingAnchor constraintEqualToAnchor:m_ModTime.trailingAnchor]];
+        
+//        [self addConstraints:[NSLayoutConstraint
+//                              constraintsWithVisualFormat:@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=150@500)]-(4@400)-[m_VSeparatorLine1(<=1@40)]-(4@400)-|" options:0 metrics:nil views:views]];
+//        [self addConstraints:[NSLayoutConstraint
+//                              constraintsWithVisualFormat:@"[m_ModTime(>=150@500)]-(>=4@500)-|" options:0 metrics:nil views:views]];
+//        [self addConstraints:[NSLayoutConstraint
+//                              constraintsWithVisualFormat:@"|-(>=400@410)-[m_VSeparatorLine1]" options:0 metrics:nil views:views]];
+//        [self addConstraints:[NSLayoutConstraint
+//                              constraintsWithVisualFormat:@"|-(>=400@400)-[m_ItemsLabel]" options:0 metrics:nil views:views]];
+        
         
     }
     return self;
@@ -123,7 +223,7 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
     [m_PanelView removeObserver:self forKeyPath:@"active"];
 }
 
-- (void) updateFocusedItem:(VFSListingItem)_item VD:(PanelData::PanelVolatileData)_vd // may be empty
+- (void) updateFocusedItem:(VFSListingItem)_item VD:(PanelDataItemVolatileData)_vd // may be empty
 {
     if( _item ) {
         m_FilenameLabel.stringValue = _item.NSName();
@@ -163,7 +263,11 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
         
-//        [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
+        
+        
+//        [m_FilenameLabel bind:@"hidden" toObject:m_SelectionLabel withKeyPath:@"self.text.length" options:nil];
+        
+        
 //        [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
 //        [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
 //        [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
@@ -185,5 +289,39 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
     }
 }
 
+- (void) updateStatistics:(const PanelDataStatistics&)_stats
+{
+    if( m_Stats != _stats ) {
+        m_Stats = _stats;
+        
+        m_ItemsLabel.stringValue = [NSString stringWithFormat:@"(%d)", m_Stats.total_entries_amount];
+  
+        if( m_Stats.selected_entries_amount == 0 ) {
+            m_SelectionLabel.stringValue = @"";
+            m_SelectionLabel.hidden = true;
+            m_FilenameLabel.hidden = false;
+            m_SizeLabel.hidden = false;
+            m_ModTime.hidden = false;
+        }
+        else {
+            m_SelectionLabel.stringValue = FormHumanReadableBytesAndFiles(m_Stats.bytes_in_selected_entries,
+                                                                          m_Stats.selected_entries_amount,
+                                                                          ByteCountFormatter::Type::SpaceSeparated);
+            m_SelectionLabel.hidden = false;
+            m_FilenameLabel.hidden = true;
+            m_SizeLabel.hidden = true;
+            m_ModTime.hidden = true;
+        }
+        
+        
+        
+        
+//static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, ByteCountFormatter::Type _format)        
+        
+//        Formatter
+        
+        /// ...
+    }
+}
 
 @end

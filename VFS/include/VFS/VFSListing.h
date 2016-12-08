@@ -36,11 +36,12 @@ public:
      * Returns items amount in this listing. 
      */
     unsigned            Count               () const noexcept;
+    bool                Empty               () const noexcept;
     bool                IsUniform           () const noexcept;
     bool                HasCommonHost       () const noexcept;
     bool                HasCommonDirectory  () const noexcept;
 
-    VFSListingItem     Item                 (unsigned _ind) const;
+    VFSListingItem      Item                (unsigned _ind) const;
 
     const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;

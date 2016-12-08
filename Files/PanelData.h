@@ -3,7 +3,8 @@
 #include <VFS/VFS.h>
 #include "rapidjson.h"
 #include "../NimbleCommander/States/FilePanels/PanelDataSortMode.h"
-
+#include "../NimbleCommander/States/FilePanels/PanelDataStatistics.h"
+#include "../NimbleCommander/States/FilePanels/PanelDataItemVolatileData.h"
 
 /**
  * PanelData actually does the following things:
@@ -39,61 +40,8 @@ public:
     };
     
     using PanelSortMode = PanelDataSortMode;
-    
-    struct PanelVolatileData
-    {
-        enum {
-            invalid_size = (0xFFFFFFFFFFFFFFFFu),
-            flag_selected   = 1 << 0,
-            flag_shown      = 1 << 1,
-            flag_highlight  = 1 << 2
-        };
-        
-        uint64_t size = invalid_size; // for directories will contain invalid_size or actually calculated size. for other types will contain the original size from listing.
-        uint16_t icon = 0;   // custom icon ID. zero means invalid value. volatile - can be changed. saved upon directory reload.
-        int16_t qs_highlight_begin = 0;
-        int16_t qs_highlight_end = 0;
-        uint16_t flags = 0;
-        
-        bool is_selected() const noexcept;
-        bool is_shown() const noexcept;
-        bool is_highlighted() const noexcept;
-        bool is_size_calculated() const noexcept;
-        void toggle_selected( bool _v ) noexcept;
-        void toggle_shown( bool _v ) noexcept;
-        void toggle_highlight( bool _v ) noexcept;
-        bool operator==(PanelVolatileData&_rhs) const noexcept;
-        bool operator!=(PanelVolatileData&_rhs) const noexcept;
-    };
-    
-    struct Statistics
-    {
-        /**
-         * All regular files in listing, including hidden ones.
-         * Not counting directories even when it's size was calculated.
-         */
-        uint64_t bytes_in_raw_reg_files = 0;
-        
-        /**
-         * Amount of regular files in directory listing, regardless of sorting.
-         * Includes the possibly hidden ones.
-         */
-        uint32_t raw_reg_files_amount = 0;
-        
-        /**
-         * Total bytes in all selected entries, including reg files and directories (if it's size was calculated).
-         *
-         */
-        uint64_t bytes_in_selected_entries = 0;
-        
-        // trivial
-        uint32_t selected_entries_amount = 0;
-        uint32_t selected_reg_amount = 0;
-        uint32_t selected_dirs_amount = 0;
-        
-        bool operator ==(const Statistics& _r) const noexcept;
-        bool operator !=(const Statistics& _r) const noexcept;
-    };
+    using Statistics = PanelDataStatistics;
+    using VolatileData = PanelDataItemVolatileData;
     
     struct TextualFilter
     {
@@ -159,12 +107,12 @@ public:
     const DirSortIndT&      EntriesBySoftFiltering() const;
     
     VFSListingItem   EntryAtRawPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
-    PanelVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
-    const PanelVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
+    VolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
+    const VolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
     
     VFSListingItem   EntryAtSortPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
-    PanelVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
-    const PanelVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
+    VolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
+    const VolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     vector<string>          SelectedEntriesFilenames() const;
     vector<VFSListingItem> SelectedEntries() const;
     
@@ -288,12 +236,12 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
-    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item, const PanelVolatileData &_item_vd);
+    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item, const VolatileData &_item_vd);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     shared_ptr<VFSListing>      m_Listing;
-    vector<PanelVolatileData>   m_VolatileData;
+    vector<VolatileData>   m_VolatileData;
     DirSortIndT                 m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT                 m_EntriesByCustomSort; // custom defined sort
     DirSortIndT                 m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones

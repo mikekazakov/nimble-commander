@@ -46,7 +46,7 @@ struct PanelViewLayout
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
-@property (nonatomic, readonly) const PanelData::PanelVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
+@property (nonatomic, readonly) const PanelData::VolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound

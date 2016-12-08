@@ -908,6 +908,8 @@
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
 		CFDA4CD0182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */; };
+		CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */; };
+		CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
@@ -1668,6 +1670,10 @@
 		CFDA4CCC182A17C7006EC35C /* LSUrls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LSUrls.mm; sourceTree = "<group>"; };
 		CFDA4CCE182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MainWindowFilePanelState+ContextMenu.h"; sourceTree = "<group>"; };
 		CFDA4CCF182B739D006EC35C /* MainWindowFilePanelState+ContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MainWindowFilePanelState+ContextMenu.mm"; sourceTree = "<group>"; };
+		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataStatistics.cpp; path = NimbleCommander/States/FilePanels/PanelDataStatistics.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataItemVolatileData.cpp; path = NimbleCommander/States/FilePanels/PanelDataItemVolatileData.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC20D1DF921E10039A104 /* PanelDataItemVolatileData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataItemVolatileData.h; path = NimbleCommander/States/FilePanels/PanelDataItemVolatileData.h; sourceTree = SOURCE_ROOT; };
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
@@ -2040,6 +2046,10 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */,
+				CFDAC20D1DF921E10039A104 /* PanelDataItemVolatileData.h */,
+				CFDAC2031DF921160039A104 /* PanelDataStatistics.h */,
+				CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */,
 				CF9A7FF71DE1914100DEDF0B /* PanelDataSortMode.h */,
 				CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */,
 				CFED5A2A1C4F914000BFCB5C /* ExternalEditorInfo.h */,
@@ -3883,6 +3893,7 @@
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,
 				CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */,
+				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
 				CF747BCB1C117C280081185B /* Config.mm in Sources */,
 				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFCF862D18961393000552CD /* PanelController+DragAndDrop.mm in Sources */,
@@ -3894,6 +3905,7 @@
 				CFE3E8541A011226009ADE5E /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFA0B23218653FF300501C35 /* PanelController+Navigation.mm in Sources */,
 				CF0939481D1510DF00D67AC6 /* ToolsMenuDelegate.mm in Sources */,
+				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,

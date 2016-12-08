@@ -7,7 +7,7 @@
 @implementation PanelBriefViewItem
 {
     VFSListingItem                  m_Item;
-    PanelData::PanelVolatileData    m_VD;
+    PanelData::VolatileData         m_VD;
     bool                            m_PanelActive;
 }
 
@@ -17,7 +17,7 @@
 {
     [super prepareForReuse];
     m_Item = VFSListingItem{};
-    m_VD = PanelData::PanelVolatileData{};
+    m_VD = PanelData::VolatileData{};
     m_PanelActive = false;
 }
 
@@ -108,7 +108,7 @@
     }
 }
 
-- (void) setVD:(PanelData::PanelVolatileData)_vd
+- (void) setVD:(PanelData::VolatileData)_vd
 {
     if( m_VD == _vd )
         return;

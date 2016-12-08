@@ -33,7 +33,7 @@ public:
     void SetIconSize(int _size);
     int IconSize() const { return m_IconSize; }
     
-    NSImageRep *ImageFor(const VFSListingItem &_item, PanelData::PanelVolatileData &_item_vd);
+    NSImageRep *ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd);
 
     void SyncDiscardedAndOutdated( PanelData &_pd );
     

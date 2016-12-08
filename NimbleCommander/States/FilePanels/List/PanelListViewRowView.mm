@@ -6,7 +6,7 @@
 @implementation PanelListViewRowView
 {
     VFSListingItem                  m_Item;
-    PanelData::PanelVolatileData    m_VD;
+    PanelData::VolatileData         m_VD;
     NSColor*                        m_RowColor;
     DoubleColor                     m_RowDoubleColor;
     NSColor*                        m_TextColor;
@@ -81,7 +81,7 @@
     return m_PanelActive;
 }
 
-- (void) setVd:(PanelData::PanelVolatileData)vd
+- (void) setVd:(PanelData::VolatileData)vd
 {
     if( m_VD != vd ) {
         m_VD = vd;
@@ -91,7 +91,7 @@
     }
 }
 
-- (PanelData::PanelVolatileData) vd
+- (PanelData::VolatileData) vd
 {
     return m_VD;
 }

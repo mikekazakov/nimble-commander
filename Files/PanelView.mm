@@ -780,9 +780,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return m_Data->EntryAtSortPosition(m_CursorPos);
 }
 
-- (const PanelData::PanelVolatileData &)item_vd
+- (const PanelData::VolatileData &)item_vd
 {
-    static const PanelData::PanelVolatileData stub{};
+    static const PanelData::VolatileData stub{};
     int indx = m_Data->RawIndexForSortIndex( m_CursorPos );
     if( indx < 0 )
         return stub;
@@ -809,7 +809,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     for(int i = _start; i <= _end; ++i)
         m_Data->CustomFlagsSelectSorted(i, _select);
     
-    [m_ItemsView syncVolatileData];
+//    [m_ItemsView syncVolatileData];
+    [self volatileDataChanged];
 }
 
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end
@@ -1300,11 +1301,15 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 //    [self setNeedsDisplay];
     [m_ItemsView dataChanged];
     [m_ItemsView setCursorPosition:m_CursorPos];
+    
+    [self volatileDataChanged];
 }
 
 - (void) volatileDataChanged
 {
     [m_ItemsView syncVolatileData];
+    [m_FooterView updateFocusedItem:self.item VD:self.item_vd];
+    [m_FooterView updateStatistics:m_Data->Stats()];
 }
 
 - (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count

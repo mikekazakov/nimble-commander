@@ -130,7 +130,7 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd) const
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelData::VolatileData& _vd) const
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -317,7 +317,7 @@ void ClassicPanelViewPresentation::BuildAppearance()
     SetViewNeedsDisplay();    
 }
 
-DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd, bool _is_focused)
+DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelData::VolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
         if(r.filter.Filter(_dirent, _vd))

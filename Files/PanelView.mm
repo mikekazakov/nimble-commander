@@ -20,6 +20,7 @@
 #include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
 #include "../NimbleCommander/States/FilePanels/PanelListView.h"
 #include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
+#include "../NimbleCommander/States/FilePanels/PanelViewFooter.h"
 #include "../NimbleCommander/States/FilePanels/IconsGenerator2.h"
 
 enum class CursorSelectionType : int8_t
@@ -86,6 +87,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
     
     PanelViewHeader            *m_HeaderView;
+    PanelViewFooter            *m_FooterView;
     
     IconsGenerator2             m_IconsGenerator;
 }
@@ -136,15 +138,18 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
             if( PanelView *strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
-        
         [self addSubview:m_HeaderView];
         
+        m_FooterView = [[PanelViewFooter alloc] initWithFrame:NSRect()];
+        m_FooterView.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:m_FooterView];
         
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
 //        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_HeaderView]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_FooterView]-(0)-|" options:0 metrics:nil views:views]];
     }
     
     return self;
@@ -560,6 +565,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     [m_ItemsView setCursorPosition:m_CursorPos];
+    [m_FooterView updateFocusedItem:self.item VD:self.item_vd];
     
     if(id<PanelViewDelegate> del = self.delegate)
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
@@ -827,8 +833,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self replaceSubview:m_ItemsView with:v];
         m_ItemsView = v;
         
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView]" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         
@@ -857,8 +863,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self replaceSubview:m_ItemsView with:v];
         m_ItemsView = v;
         
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+//        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
+        //        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|" options:0 metrics:nil views:views]];
+        
+        
+        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView]" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         

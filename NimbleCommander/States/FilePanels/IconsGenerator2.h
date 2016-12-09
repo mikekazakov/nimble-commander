@@ -39,6 +39,7 @@ public:
     
 private:
     enum {MaxIcons = 65535,
+        MaxStashedRequests = 100,
         MaxFileSizeForThumbnailNative = 256*1024*1024,
         MaxFileSizeForThumbnailNonNative = 1*1024*1024 // ?
     };
@@ -64,6 +65,7 @@ private:
         VFSHostPtr  host;
         NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
         NSImageRep *thumbnail; // the best - thumbnail generated from file's content
+        unsigned short icon_number;
     };
     
     struct BuildResult
@@ -76,10 +78,13 @@ private:
     NSImageRep *GetCachedExtensionIcon( const VFSListingItem &_item ) const;
     unsigned short GetSuitablePositionForNewIcon();
     bool IsFull() const;
+    bool IsRequestsStashFull() const;
     
     void BuildGenericIcons();
     
-    
+    void RunOrStash( BuildRequest _req );
+    void DrainStash();
+    void BackgroundWork(const BuildRequest &_req);
     optional<BuildResult> Runner(const BuildRequest &_req);
     IconsGenerator2(const IconsGenerator2&) = delete;
     void operator=(const IconsGenerator2&) = delete;
@@ -90,8 +95,7 @@ private:
     int                     m_IconSize = 16;
     IconMode                m_IconsMode = IconMode::Thumbnails;
 
-    shared_ptr<atomic_ulong>m_GenerationSh = make_shared<atomic_ulong>(0);
-    atomic_ulong           &m_Generation = *m_GenerationSh;
+    atomic_ulong            m_Generation{0};
     DispatchGroup           m_WorkGroup{DispatchGroup::Low};
     function<void(uint16_t, NSImageRep*)>m_UpdateCallback;
     
@@ -100,6 +104,9 @@ private:
     NSBitmapImageRep       *m_GenericFileIconBitmap;
     NSBitmapImageRep       *m_GenericFolderIconBitmap;
 
-    mutable mutex           m_ExtensionIconsCacheLock;
+    mutable spinlock        m_ExtensionIconsCacheLock;
     map<string,NSImageRep*> m_ExtensionIconsCache;
+    
+    mutable spinlock        m_RequestsStashLock;
+    queue<BuildRequest>     m_RequestsStash;
 };

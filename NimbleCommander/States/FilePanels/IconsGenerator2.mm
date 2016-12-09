@@ -226,11 +226,18 @@ inline NSImageRep *IconsGenerator2::IconStorage::Any() const
 IconsGenerator2::IconsGenerator2()
 {
     BuildGenericIcons();
+    m_WorkGroup.SetOnDry([=]{
+        DrainStash();
+    });
 }
 
 IconsGenerator2::~IconsGenerator2()
 {
     m_Generation++;
+    LOCK_GUARD( m_RequestsStashLock ) {
+        m_RequestsStash = {};
+    }
+    m_WorkGroup.SetOnDry( nullptr );
     m_WorkGroup.Wait();
 }
 
@@ -294,9 +301,18 @@ bool IconsGenerator2::IsFull() const
     return m_Icons.size() - m_IconsHoles >= MaxIcons;
 }
 
+bool IconsGenerator2::IsRequestsStashFull() const
+{
+    int amount = 0;
+    LOCK_GUARD(m_RequestsStashLock) {
+        amount = (int)m_RequestsStash.size();
+    }
+    return amount >= MaxStashedRequests;
+}
+
 NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd)
 {
-    assert( dispatch_is_main_queue() ); // STA api design
+    dispatch_assert_main_queue(); // STA api design
     assert( m_UpdateCallback );
     
     if( _item_vd.icon > 0 ) {
@@ -316,8 +332,7 @@ NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::Vo
     // long path: no icon - first request for this entry (or mb entry changed)
     // need to collect the appropriate info and put request into generating queue
     
-    if( IsFull() ||
-       m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS(_item.Host()) ) {
+    if( IsFull() || IsRequestsStashFull() ) {
         // we're full - sorry
         
         // but we can try to quickly find an filetype icon
@@ -363,34 +378,71 @@ NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::Vo
     br.relative_path = move(rel_path);
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
+    br.icon_number = is_no;
     
-    const auto act_gen = m_GenerationSh;
-    const auto curr_gen = br.generation;
-    
-    m_WorkGroup.Run([=,request=move(br)] () {
-        // went to background worker thread
-        
-        if(auto opt_res = Runner(request))
-            if(curr_gen == *act_gen &&
-               (opt_res->filetype || opt_res->thumbnail) )
-                dispatch_to_main_queue([=,res=opt_res.value()] {
-                    // returned to main thread
-                    
-                    if( curr_gen != *act_gen )
-                        return;
-                    assert( is_no < m_Icons.size() ); // consistancy check
-                    
-                    if( m_Icons[is_no] ) {
-                        if( res.filetype )
-                            m_Icons[is_no]->filetype = res.filetype;
-                        if( res.thumbnail )
-                            m_Icons[is_no]->thumbnail = res.thumbnail;
-                        m_UpdateCallback(is_no + 1, m_Icons[is_no]->Any());
-                    }
-                });
-    });
+    RunOrStash( move(br) );
 
     return is.Any();
+}
+
+void IconsGenerator2::RunOrStash( BuildRequest _req )
+{
+    dispatch_assert_main_queue(); // STA api design
+    
+    if( m_WorkGroup.Count() <= MaximumConcurrentRunnersForVFS( _req.host )  ) {
+        // run task now
+        m_WorkGroup.Run([=,request=move(_req)]{
+            // went to background worker thread
+            BackgroundWork( request );
+        });
+    }
+    else {
+        // stash request and fire it group becomes dry
+        LOCK_GUARD( m_RequestsStashLock ) {
+            m_RequestsStash.emplace( move(_req) );
+        }
+    }
+}
+
+void IconsGenerator2::DrainStash()
+{
+    // this is a background thread
+    LOCK_GUARD( m_RequestsStashLock ) {
+        while( !m_RequestsStash.empty() ) {
+            if( m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS( m_RequestsStash.front().host ) )
+                break; // we load enough of workload
+            
+            m_WorkGroup.Run([=,request=move(m_RequestsStash.front())] {
+                BackgroundWork( request ); // went to background worker thread
+            });
+            
+            m_RequestsStash.pop();
+        }
+    }
+}
+
+void IconsGenerator2::BackgroundWork(const BuildRequest &_request)
+{
+    if( auto opt_res = Runner(_request) )
+        if( _request.generation == m_Generation &&
+           (opt_res->filetype || opt_res->thumbnail) )
+            dispatch_to_main_queue([=,res=opt_res.value()] {
+                // returned to main thread
+                
+                if( _request.generation != m_Generation )
+                    return;
+                
+                const auto is_no = _request.icon_number;
+                assert( is_no < m_Icons.size() ); // consistancy check
+                
+                if( m_Icons[is_no] ) {
+                    if( res.filetype )
+                        m_Icons[is_no]->filetype = res.filetype;
+                    if( res.thumbnail )
+                        m_Icons[is_no]->thumbnail = res.thumbnail;
+                    m_UpdateCallback(is_no + 1, m_Icons[is_no]->Any());
+                }
+            });
 }
 
 optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildRequest &_req)
@@ -553,8 +605,9 @@ void IconsGenerator2::SetIconSize(int _size)
     if(m_IconSize == _size) return;
     m_IconSize = _size;
     BuildGenericIcons();
-    lock_guard<mutex> lock(m_ExtensionIconsCacheLock);
-    m_ExtensionIconsCache.clear();
+    LOCK_GUARD(m_ExtensionIconsCacheLock) {
+        m_ExtensionIconsCache.clear();
+    }
 }
 
 void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImageRep*)> _cb)

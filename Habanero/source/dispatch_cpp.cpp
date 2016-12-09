@@ -48,7 +48,33 @@ void DispatchGroup::Wait() const noexcept
     dispatch_group_wait(m_Group, DISPATCH_TIME_FOREVER);
 }
 
-unsigned DispatchGroup::Count() const noexcept
+int DispatchGroup::Count() const noexcept
 {
     return m_Count;
+}
+
+void DispatchGroup::SetOnDry( std::function<void()> _cb )
+{
+    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>( move(_cb) );
+    LOCK_GUARD(m_CBLock) {
+        m_OnDry = cb;
+    }
+}
+
+void DispatchGroup::Increment() const
+{
+    ++m_Count;
+}
+
+void DispatchGroup::Decrement() const
+{
+    if( --m_Count == 0 ) {
+        std::shared_ptr<std::function<void()>> cb;
+        LOCK_GUARD(m_CBLock) {
+            cb = m_OnDry;
+        }
+
+        if( cb && *cb )
+            (*cb)();
+    }
 }

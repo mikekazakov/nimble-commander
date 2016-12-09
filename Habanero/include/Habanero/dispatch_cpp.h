@@ -7,6 +7,8 @@
 #include <iostream>
 #include <assert.h>
 
+#include "spinlock.h"
+
 // synopsis
 
 /** returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread. */
@@ -126,14 +128,26 @@ public:
     /**
      * Returnes amount of blocks currently running in this group.
      */
-    unsigned Count() const noexcept;
+    int Count() const noexcept;
+    
+    /**
+     * Set a callback function which will be called when Count() becomes zero.
+     * Will be called from undefined background thread.
+     * Will be called even on Wait() inside ~DispatchGroup().
+     */
+    void SetOnDry( std::function<void()> _cb );
     
 private:
+    void Increment() const;
+    void Decrement() const;
+    
     DispatchGroup(const DispatchGroup&) = delete;
     void operator=(const DispatchGroup&) = delete;
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
-    mutable std::atomic_uint m_Count{0};
+    mutable std::atomic_int m_Count{0};
+    mutable spinlock m_CBLock;
+    std::shared_ptr< std::function<void()> > m_OnDry;
 };
 
 // implementation details
@@ -322,14 +336,17 @@ template <class T>
 inline void DispatchGroup::Run( T _f ) const
 {
     using CT = std::pair<T, const DispatchGroup*>;
-    ++m_Count;
+//    ++m_Count;
+    Increment();
     dispatch_group_async_f(m_Group,
                            m_Queue,
                            new CT( std::move(_f), this ),
                            [](void* _p) {
                                auto context = static_cast<CT*>(_p);
                                context->first();
-                               --context->second->m_Count;
+//                               --context->second->m_Count;
+                               auto dg = context->second;
                                delete context;
+                               dg->Decrement();
                            });
 }

@@ -340,6 +340,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         
         [m_HeaderView removeFromSuperview];
         m_HeaderView = nil;
+        
+        [m_FooterView removeFromSuperview];
+        m_FooterView = nil;
  
         self.presentation = nullptr;
     }
@@ -665,20 +668,20 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [super flagsChanged:event];
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
-{
-    /* really always??? */
-    return true;
-}
+//- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+//{
+//    /* really always??? */
+//    return true;
+//}
+//
+//- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+//{
+//    /* really always??? */
+//    return true;
+//}
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
-{
-    /* really always??? */
-    return true;
-}
-
-- (void) mouseDown:(NSEvent *)_event
-{
+//- (void) mouseDown:(NSEvent *)_event
+//{
 //    m_LastPotentialRenamingLBDown = -1;
 //    
 //    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
@@ -721,7 +724,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //        m_ReadyToDrag = true;
 //        m_LButtonDownPos = local_point;
 //    }
-}
+//}
 
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event
 {
@@ -730,8 +733,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return nil;
 }
 
-- (void) mouseDragged:(NSEvent *)_event
-{
+//- (void) mouseDragged:(NSEvent *)_event
+//{
 //    const auto max_drag_dist = 5.;
 //    if( m_ReadyToDrag ) {
 //        NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
@@ -746,10 +749,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //            m_LastPotentialRenamingLBDown = -1;
 //        }
 //    }
-}
+//}
 
-- (void) mouseUp:(NSEvent *)_event
-{
+//- (void) mouseUp:(NSEvent *)_event
+//{
 //    int click_count = (int)_event.clickCount;
 //    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
 //    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
@@ -773,7 +776,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //
 //    m_ReadyToDrag = false;
 //    m_LastPotentialRenamingLBDown = -1;
-}
+//}
 
 - (VFSListingItem)item
 {
@@ -1223,10 +1226,6 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
     
     m_RenamingEditor.documentView = tv;
-//
-//    m_Presentation->SetupFieldRenaming(m_RenamingEditor, cursor_pos);
-//
-//    [self addSubview:m_RenamingEditor];
     [m_ItemsView setupFieldEditor:m_RenamingEditor forItemAtIndex:cursor_pos];
     
     [self.window makeFirstResponder:m_RenamingEditor];
@@ -1303,6 +1302,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     [m_ItemsView setCursorPosition:m_CursorPos];
     
     [self volatileDataChanged];
+    [m_FooterView updateListing:m_Data->ListingPtr()];
 }
 
 - (void) volatileDataChanged

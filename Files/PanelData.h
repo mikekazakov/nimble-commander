@@ -92,7 +92,8 @@ public:
      * Will throw logic_error if called on listing with no common host.
      */
     const shared_ptr<VFSHost>&  Host() const;
-    const VFSListing&   Listing() const;
+    const VFSListing&       Listing() const;
+    const VFSListingPtr&    ListingPtr() const;
     PanelType                        Type() const noexcept;
     
     int RawEntriesCount() const noexcept;

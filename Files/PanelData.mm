@@ -355,6 +355,11 @@ const VFSListing &PanelData::Listing() const
     return *m_Listing;
 }
 
+const VFSListingPtr& PanelData::ListingPtr() const
+{
+    return m_Listing;
+}
+
 PanelData::PanelType PanelData::Type() const noexcept
 {
     return m_Type;

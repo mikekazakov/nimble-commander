@@ -1,4 +1,5 @@
 #include <Utility/FontExtras.h>
+#include "../../../../Files/PanelView.h"
 #include "../PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -35,10 +36,10 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 
 @implementation PanelListViewNameView
 {
-    NSString        *m_Filename;
-    NSImageRep      *m_Icon;
-    
-    NSMutableAttributedString *m_AttrString;
+    NSString                   *m_Filename;
+    NSImageRep                 *m_Icon;
+    NSMutableAttributedString  *m_AttrString;
+    bool                        m_PermitFieldRenaming;
 }
 
 - (BOOL) isOpaque
@@ -55,6 +56,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     self = [super initWithFrame:NSRect()];
     if( self ) {
+        m_PermitFieldRenaming = false;
         //        m_Filename = _filename;
         //        self.wantsLayer = true;
 //        self.wantsLayer = YES;
@@ -67,19 +69,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     m_Filename = _filename;
     [self buildPresentation];
 }
-
-//- (void)updateLayer
-//{
-//    if( auto v = objc_cast<PanelListViewRowView>(self.superview) ) {
-//        auto layer = self.layer;
-//        self.layer.backgroundColor = v.rowBackgroundColor.CGColor;
-//    }
-//    
-//}
-
-//- (BOOL)wantsUpdateLayer {
-//    return YES;  // Tells NSView to call `updateLayer` instead of `drawRect:`
-//}
 
 - (void) drawRect:(NSRect)dirtyRect
 {
@@ -161,13 +150,23 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     return m_Icon;
 }
 
+- (PanelListViewRowView*)row
+{
+    return (PanelListViewRowView*)self.superview;
+}
+
+- (PanelListView*)listView
+{
+    return self.row.listView;
+}
+
 - (void) setupFieldEditor:(NSScrollView*)_editor
 {
     const auto line_padding = 2.;
     
     const auto bounds = self.bounds;
-    const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
-    const auto font = ((PanelListViewRowView*)self.superview).listView.font;
+    const auto geometry = self.row.listView.geometry;
+    const auto font = self.row.listView.font;
     
     NSRect rc =  NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
                             0,
@@ -191,5 +190,37 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     [self addSubview:_editor];
 }
 
-@end
+- (void) mouseDown:(NSEvent *)event
+{
+    m_PermitFieldRenaming = self.row.selected && self.row.panelActive;
+    [super mouseDown:event];
+}
 
+- (void)mouseUp:(NSEvent *)event
+{
+//    used for delayed action to ensure that click was single, not double or more
+    static atomic_ullong current_ticket = {0};
+    static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
+    
+    const auto my_index = self.row.itemIndex;
+    if( my_index < 0 )
+        return;
+    
+    int click_count = (int)event.clickCount;
+    if( click_count <= 1 && m_PermitFieldRenaming ) {
+        uint64_t renaming_ticket = ++current_ticket;
+        dispatch_to_main_queue_after(delay, [=]{
+            if( renaming_ticket == current_ticket )
+                [self.listView.panelView panelItem:my_index fieldEditor:event];
+        });
+    }
+    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
+        // Handle double-or-four-etc clicks as double-click
+        ++current_ticket; // to abort field editing
+        [super mouseUp:event];
+    }
+    
+    m_PermitFieldRenaming = false;
+}
+
+@end

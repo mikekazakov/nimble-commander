@@ -102,6 +102,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_FilenameLabel.bordered = false;
         m_FilenameLabel.editable = false;
+        m_FilenameLabel.selectable = false;
         m_FilenameLabel.drawsBackground = false;
         m_FilenameLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_FilenameLabel.usesSingleLineMode = true;
@@ -265,7 +266,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     if( _item ) {
         m_FilenameLabel.stringValue = ComposeFooterFileNameForEntry(_item);
-        
+        m_FilenameLabel.toolTip = [NSString stringWithUTF8StdString:_item.Path()];
         
         m_SizeLabel.stringValue = FileSizeToString(_item,
                                                    _vd,

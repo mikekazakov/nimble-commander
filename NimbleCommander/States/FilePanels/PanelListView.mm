@@ -662,4 +662,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [rv.nameView setupFieldEditor:_editor];
 }
 
+- (PanelView*)panelView
+{
+    return m_PanelView;
+}
+
 @end

@@ -1,4 +1,5 @@
 #include "../../../../Files/PanelViewPresentationItemsColoringFilter.h"
+#include "../../../../Files/PanelView.h"
 #include "../PanelListView.h"
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
@@ -245,6 +246,33 @@
     return objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
 }
 
-//@property (nonatomic, readonly) PanelListViewNameView *nameView;
+- (void) mouseDown:(NSEvent *)event
+{
+    const auto my_index = m_ItemIndex;
+    if( my_index < 0 )
+        return;
+    
+    [self.listView.panelView panelItem:my_index mouseDown:event];
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+    const auto my_index = m_ItemIndex;
+    if( my_index < 0 )
+        return;
+    const int click_count = (int)event.clickCount;
+    // Handle double-or-four-etc clicks as double-click
+    if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 )
+        [self.listView.panelView panelItem:my_index dblClick:event];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    const auto my_index = m_ItemIndex;
+    if( my_index < 0 )
+        return nil;
+    
+    return [self.listView.panelView panelItem:my_index menuForForEvent:_event];
+}
 
 @end

@@ -158,7 +158,6 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_ItemsLabel.usesSingleLineMode = true;
         m_ItemsLabel.alignment = NSTextAlignmentCenter;
         m_ItemsLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-//        m_ItemsLabel.preferredMaxLayoutWidth = 50;
         [m_ItemsLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_ItemsLabel];
         
@@ -169,10 +168,9 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_VolumeLabel.drawsBackground = false;
         m_VolumeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_VolumeLabel.usesSingleLineMode = true;
-        m_VolumeLabel.alignment = NSTextAlignmentCenter;
+        m_VolumeLabel.alignment = NSTextAlignmentRight;
+        m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
         m_VolumeLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        m_VolumeLabel.stringValue = @"Abra!!!";
-        //        m_ItemsLabel.preferredMaxLayoutWidth = 50;
         [m_VolumeLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_VolumeLabel];
         
@@ -213,19 +211,17 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
                               constraintsWithVisualFormat:@"[m_ModTime]-(>=4@500)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:
-@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=150@500)]-(4@400)-\
+@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-\
 [m_VSeparatorLine1(<=1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-\
-[m_VSeparatorLine2(<=1@200)]-(2@200)-[m_VolumeLabel(>=100@200)]-(4@200)-|" options:0 metrics:metrics views:views]];
+[m_VSeparatorLine2(<=1@290)]-(2@300)-[m_VolumeLabel(>=120@290)]-(4@300)-|" options:0 metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_VSeparatorLine1]" options:0 metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_ItemsLabel]" options:0 metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm2@300)-[m_VSeparatorLine2]" options:0 metrics:metrics views:views]];
+                              constraintsWithVisualFormat:@"|-(>=lm2@400)-[m_VSeparatorLine2]" options:0 metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm2@300)-[m_VolumeLabel]" options:0 metrics:metrics views:views]];
-
-        
+                              constraintsWithVisualFormat:@"|-(>=lm2@400)-[m_VolumeLabel]" options:0 metrics:metrics views:views]];
 
         [self addConstraint:[m_SelectionLabel.leadingAnchor constraintEqualToAnchor:m_FilenameLabel.leadingAnchor]];
         [self addConstraint:[m_SelectionLabel.topAnchor constraintEqualToAnchor:m_FilenameLabel.topAnchor]];
@@ -234,7 +230,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         
         __weak PanelViewFooter *weak_self = self;
         m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &_st) {
-            cout << _st.avail_bytes << " " << _st.volume_name << endl;
+//            cout << _st.avail_bytes << " " << _st.volume_name << endl;
             if( PanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
@@ -247,32 +243,46 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
 {
 }
 
+static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
+{
+    // output is a direct filename or symlink path in ->filename form
+    if(!_dirent.IsSymlink()) {
+        if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
+            return _dirent.NSName(); // we're on regular panel - just return filename
+        
+        // we're on non-uniform panel like temporary, will return full path
+        return [NSString stringWithUTF8StdString:_dirent.Path()];
+    }
+    else if(_dirent.Symlink() != 0) {
+        NSString *link = [NSString stringWithUTF8String:_dirent.Symlink()];
+        if(link != nil)
+            return [@"->" stringByAppendingString:link];
+    }
+    return @""; // fallback case
+}
+
 - (void) updateFocusedItem:(VFSListingItem)_item VD:(PanelDataItemVolatileData)_vd // may be empty
 {
     if( _item ) {
-        m_FilenameLabel.stringValue = _item.NSName();
+        m_FilenameLabel.stringValue = ComposeFooterFileNameForEntry(_item);
+        
+        
         m_SizeLabel.stringValue = FileSizeToString(_item,
                                                    _vd,
                                                    ByteCountFormatter::Type::Fixed6);
         
-        m_ModTime.stringValue =PanelListViewDateFormatting::Format(
+        m_ModTime.stringValue = PanelListViewDateFormatting::Format(
                                                                    PanelListViewDateFormatting::Style::Medium,
                                                                    _item.MTime());
-        
-//        class PanelListViewDateFormatting
-
     }
     else {
         m_FilenameLabel.stringValue = @"";
         m_SizeLabel.stringValue = @"";
     }
-
-//    NSColor
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    //    const auto bounds = self.bounds;
     if( m_Background  ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
@@ -351,6 +361,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
                              ByteCountFormatter::Instance().ToNSString(m_VolumeInfoFetcher.Current().avail_bytes,
                                                                        ByteCountFormatter::Adaptive6)];
     m_VolumeLabel.stringValue = text;
+    m_VolumeLabel.toolTip = [NSString stringWithUTF8StdString:m_VolumeInfoFetcher.Current().volume_name];
 }
 
 - (void)viewDidMoveToWindow

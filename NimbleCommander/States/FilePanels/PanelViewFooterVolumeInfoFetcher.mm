@@ -76,7 +76,7 @@ static void ScheduleIfNeed( LookPath &_lp, bool _hurry = false)
     _lp.scheduled = true;
 }
 
-static VFSStatFS* RegisterWatcher( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static const VFSStatFS* RegisterWatcher( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -97,6 +97,21 @@ static VFSStatFS* RegisterWatcher( PanelViewFooterVolumeInfoFetcher* _w, const V
     lp.watchers.emplace_back(_w);
     g_Context.emplace_back( move(lp) );
     ScheduleIfNeed( g_Context.back(), true );
+    return nullptr;
+}
+    
+static const VFSStatFS* Probe( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+{
+    dispatch_assert_main_queue();
+    
+    if( _host.expired() )
+        return nullptr;
+    
+    for( auto &lp: g_Context )
+        if( equals( lp.host, _host ) &&
+           lp.path == _path )
+            return lp.current ? &(*lp.current) : nullptr;
+    
     return nullptr;
 }
 
@@ -159,7 +174,6 @@ void PanelViewFooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing 
         }
     }
     
-    // if ....
     if( equals(m_Host, current_host) && m_Path == current_path )
         return;
     const bool is_active = IsActive();
@@ -172,6 +186,11 @@ void PanelViewFooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing 
     
     if( is_active )
         ResumeUpdates();
+    else {
+        auto st = PanelViewFooterVolumeInfoFetcherInternals::Probe( this, m_Host, m_Path );
+        if( st )
+            m_Current = *st;
+    }
 }
 
 const VFSStatFS& PanelViewFooterVolumeInfoFetcher::Current() const

@@ -7,7 +7,7 @@
 //
 
 #include "QuickPreview.h"
-#include "TemporaryNativeFileStorage.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 
 static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const nanoseconds g_Delay = 100ms;

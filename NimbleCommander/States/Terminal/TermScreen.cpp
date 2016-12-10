@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../../Files/OrthodoxMonospace.h"
+#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include "TermScreen.h"
 
 TermScreen::TermScreen(unsigned _w, unsigned _h):

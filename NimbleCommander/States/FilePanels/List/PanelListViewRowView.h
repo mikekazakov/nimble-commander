@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../../../Files/OrthodoxMonospace.h"
+#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include "../PanelDataItemVolatileData.h"
 
 @class PanelListView;

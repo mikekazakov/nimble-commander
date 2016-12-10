@@ -11,7 +11,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkingCaret.h>
 #include <Habanero/algo.h>
-#include "../../../Files/OrthodoxMonospace.h"
+#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "TermView.h"
 #include "TermScreen.h"

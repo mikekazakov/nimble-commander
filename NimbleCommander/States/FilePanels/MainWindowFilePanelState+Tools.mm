@@ -4,7 +4,7 @@
 #include "PanelController.h"
 #include "PanelView.h"
 #include "MainWindowFilePanelState+Tools.h"
-#include "../../../Files/TemporaryNativeFileStorage.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "ExternalToolParameterValueSheetController.h"

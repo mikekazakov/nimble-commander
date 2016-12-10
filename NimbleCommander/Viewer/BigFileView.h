@@ -10,7 +10,7 @@
 
 #include <Utility/Encodings.h>
 #include "../../Files/FileWindow.h"
-#include "../../Files/OrthodoxMonospace.h"
+#include <NimbleCommander/Core/OrthodoxMonospace.h>
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption

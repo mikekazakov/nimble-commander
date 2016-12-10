@@ -11,7 +11,7 @@
 #include "../../Files/DataBlockAnalysis.h"
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/Config.h"
-#include "../../Files/TemporaryNativeFileStorage.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"

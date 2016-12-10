@@ -29,7 +29,7 @@
 #include "../States/MainWindowController.h"
 #include "../../Files/Operations/OperationsController.h"
 #include "../Preferences/Preferences.h"
-#include "../../Files/TemporaryNativeFileStorage.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include "../Core/ActionsShortcutsManager.h"
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "../Core/SandboxManager.h"

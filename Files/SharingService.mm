@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "SharingService.h"
-#include "TemporaryNativeFileStorage.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 
 static const uint64_t g_MaxFileSizeForVFSShare = 64*1024*1024; // 64mb
 static atomic<int> g_IsCurrentlySharing(0);

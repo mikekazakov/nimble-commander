@@ -12,8 +12,8 @@
 #include "Operations/Copy/FileCopyOperation.h"
 #include "Operations/OperationsController.h"
 #include <VFS/Native.h>
-#include "TemporaryNativeFileStorage.h"
-#include "TemporaryNativeFileChangesSentinel.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
 #include "ExtensionLowercaseComparison.h"
 #include "../NimbleCommander/Bootstrap/Config.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>

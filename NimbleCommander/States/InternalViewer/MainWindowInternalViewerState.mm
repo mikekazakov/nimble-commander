@@ -9,7 +9,7 @@
 #include "../../Files/MainWindowController.h"
 #include "../../Viewer/InternalViewerController.h"
 #include "../../Files/GoogleAnalytics.h"
-#include "../../Files/ActionsShortcutsManager.h"
+#include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 
 @interface MainWindowInternalViewerState ()

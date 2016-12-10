@@ -18,7 +18,7 @@
 #include "Operations/Compress/FileCompressOperation.h"
 #include "Operations/OperationsController.h"
 #include "MainWindowFilePanelState+Menu.h"
-#include "ActionsShortcutsManager.h"
+#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "PanelController.h"
 #include "PanelAux.h"
 #include "FilePanelMainSplitView.h"

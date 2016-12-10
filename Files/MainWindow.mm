@@ -7,7 +7,7 @@
 //
 
 #include "MainWindow.h"
-#include "ActionsShortcutsManager.h"
+#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "MainWindowController.h"
 
 @implementation MainWindow

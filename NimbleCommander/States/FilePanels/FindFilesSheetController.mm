@@ -16,10 +16,10 @@
 #include "../../Core/SearchForFiles.h"
 #include <Utility/ByteCountFormatter.h>
 #include "../../Files/PanelAux.h"
-#include "../../Files/Config.h"
+#include "../../Bootstrap/Config.h"
 #include "../../Bootstrap/ActivationManager.h"
 #include "../../Files/GoogleAnalytics.h"
-#include "../../Files/AppDelegate.h"
+#include "../../Bootstrap/AppDelegate.h"
 #include "../../Core/VFSInstanceManager.h"
 #include "FindFilesSheetController.h"
 

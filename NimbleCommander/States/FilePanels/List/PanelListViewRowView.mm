@@ -1,4 +1,4 @@
-#include "../../../../Files/PanelViewPresentationItemsColoringFilter.h"
+#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
 #include "../PanelListView.h"
 #include "PanelListViewNameView.h"
@@ -7,7 +7,7 @@
 @implementation PanelListViewRowView
 {
     VFSListingItem                  m_Item;
-    PanelData::VolatileData         m_VD;
+    PanelDataItemVolatileData         m_VD;
     NSColor*                        m_RowColor;
     DoubleColor                     m_RowDoubleColor;
     NSColor*                        m_TextColor;
@@ -82,7 +82,7 @@
     return m_PanelActive;
 }
 
-- (void) setVd:(PanelData::VolatileData)vd
+- (void) setVd:(PanelDataItemVolatileData)vd
 {
     if( m_VD != vd ) {
         m_VD = vd;

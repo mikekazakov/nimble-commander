@@ -6,7 +6,7 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/AppDelegate.h"
+#include "../Bootstrap/AppDelegate.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "BigFileView.h"
 #include "InternalViewerController.h"

@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../Config.h"
+#include "../../../NimbleCommander/Bootstrap/Config.h"
 #include "TermParser.h"
 #include "TermView.h"
 #include "TermScreen.h"

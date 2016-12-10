@@ -10,11 +10,11 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWndGoToButton.h"
-#include "AppDelegate.h"
+#include "../NimbleCommander/Bootstrap/AppDelegate.h"
 #include "MainWindowFilePanelState.h"
 #include "MainWindowController.h"
 #include "PanelController.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";

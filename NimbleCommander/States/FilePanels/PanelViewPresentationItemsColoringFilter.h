@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "vfs/vfs.h"
-#include "../NimbleCommander/Core/FileMask.h"
-#include "PanelData.h"
-#include "Config.h"
+#include <VFS/VFS.h>
+#include "../../Core/FileMask.h"
+#include "PanelDataItemVolatileData.h"
+#include "../../Bootstrap/Config.h"
 
 struct PanelViewPresentationItemsColoringFilter
 {
@@ -35,7 +35,7 @@ struct PanelViewPresentationItemsColoringFilter
      * If any defined filter disagree with _item - will return false immediately.
      * Any empty coloring filter will return true on any _item.
      */
-    bool Filter(const VFSListingItem& _item, const PanelData::VolatileData &_item_vd) const;
+    bool Filter(const VFSListingItem& _item, const PanelDataItemVolatileData &_item_vd) const;
     
     /**
      * Persistance support - store values in a dictionary.

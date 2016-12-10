@@ -13,7 +13,7 @@
 #include "States/Terminal/TermParser.h"
 #include "States/Terminal/TermView.h"
 #include "States/Terminal/TermScrollView.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 #include "FilePanelOverlappedTerminal.h"
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";

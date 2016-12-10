@@ -1,6 +1,6 @@
 #include <VFS/VFS.h>
 #include "../../Files/ProcessSheetController.h"
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 #include "../../Files/SearchInFile.h"
 #include <Utility/ByteCountFormatter.h>
 #include "InternalViewerHistory.h"

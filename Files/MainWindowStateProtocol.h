@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "ApplicationSkins.h"
-
 @class MainWindowController;
 @class MyToolbar;
 
@@ -26,7 +24,7 @@
 - (void)WindowWillBeginSheet;
 - (void)WindowDidEndSheet;
 - (bool)WindowShouldClose:(MainWindowController*)sender;
-- (void)SkinSettingsChanged;
+//- (void)SkinSettingsChanged;
 - (void)OnApplicationWillTerminate;
 - (bool)needsWindowTitle;
 @end

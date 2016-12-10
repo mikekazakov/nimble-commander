@@ -2,8 +2,8 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
-#include "Config.h"
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
+#include "../NimbleCommander/Bootstrap/Config.h"
 
 class NetworkConnectionsManager
 {

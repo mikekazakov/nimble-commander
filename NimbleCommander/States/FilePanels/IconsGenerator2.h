@@ -7,10 +7,10 @@
 //
 
 #pragma once
+
 #include <Habanero/DispatchQueue.h>
 #include <VFS/VFS.h>
-
-#include "../../../Files/PanelData.h"
+#include "PanelData.h"
 
 class IconsGenerator2
 {

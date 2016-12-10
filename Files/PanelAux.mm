@@ -15,7 +15,7 @@
 #include "TemporaryNativeFileStorage.h"
 #include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 #include "PanelController.h"
 #include "MainWindowController.h"
 #include "PanelAux.h"

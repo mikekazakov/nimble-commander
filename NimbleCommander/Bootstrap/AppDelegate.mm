@@ -15,8 +15,8 @@
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
 #include <RoutedIO/RoutedIO.h>
-#include "3rd_party/NSFileManager+DirectoryLocations.h"
-#include "3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+#include "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../Files/3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
 #include <VFS/ArcUnRAR.h>
@@ -24,28 +24,28 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include "States/Terminal/MainWindowTerminalState.h"
+#include "../../Files/States/Terminal/MainWindowTerminalState.h"
 #include "AppDelegate.h"
-#include "MainWindowController.h"
-#include "Operations/OperationsController.h"
-#include "../NimbleCommander/Preferences/Preferences.h"
-#include "TemporaryNativeFileStorage.h"
-#include "ActionsShortcutsManager.h"
-#include "MainWindowFilePanelState.h"
-#include "../NimbleCommander/Core/SandboxManager.h"
-#include "MASAppInstalledChecker.h"
-#include "TrialWindowController.h"
+#include "../../Files/MainWindowController.h"
+#include "../../Files/Operations/OperationsController.h"
+#include "../Preferences/Preferences.h"
+#include "../../Files/TemporaryNativeFileStorage.h"
+#include "../Core/ActionsShortcutsManager.h"
+#include "../../Files/MainWindowFilePanelState.h"
+#include "../Core/SandboxManager.h"
+#include "../../Files/MASAppInstalledChecker.h"
+#include "../../Files/TrialWindowController.h"
 #include "Config.h"
-#include "AppDelegate+Migration.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "GoogleAnalytics.h"
-#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
-#include "../NimbleCommander/Viewer/InternalViewerController.h"
-#include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
-#include "../NimbleCommander/GeneralUI/VFSListWindowController.h"
-#include "../NimbleCommander/Core/FeedbackManager.h"
+#include "../../Files/AppDelegate+Migration.h"
+#include "ActivationManager.h"
+#include "../../Files/GoogleAnalytics.h"
+#include "../States/FilePanels/ExternalToolsSupport.h"
+#include "../Viewer/InternalViewerController.h"
+#include "../Viewer/InternalViewerWindowController.h"
+#include "../GeneralUI/VFSListWindowController.h"
+#include "../Core/FeedbackManager.h"
 
-#include "AppStoreHelper.h"
+#include "../../Files/AppStoreHelper.h"
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -146,7 +146,6 @@ static AppDelegate *g_Me = nil;
     vector<MainWindowController *>              m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
-    ApplicationSkin     m_Skin;
     NSProgressIndicator *m_ProgressIndicator;
     NSDockTile          *m_DockTile;
     double              m_AppProgress;
@@ -160,7 +159,6 @@ static AppDelegate *g_Me = nil;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
-@synthesize skin = m_Skin;
 @synthesize mainWindowControllers = m_MainWindows;
 @synthesize configDirectory = m_ConfigDirectory;
 @synthesize stateDirectory = m_StateDirectory;
@@ -174,7 +172,6 @@ static AppDelegate *g_Me = nil;
         g_Me = self;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
-        m_Skin = ApplicationSkin::Modern;
 
         if( ActivationManager::ForAppStore() &&
            ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
@@ -191,8 +188,8 @@ static AppDelegate *g_Me = nil;
         
         [self setupConfigs];
         
-        [self reloadSkinSetting];
-        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
+//        [self reloadSkinSetting];
+//        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
         
         [self migrateViewerHistory_1_1_3_to_1_1_5];        
     }
@@ -204,19 +201,19 @@ static AppDelegate *g_Me = nil;
     return g_Me;
 }
 
-- (void) reloadSkinSetting
-{
-    auto new_skin = (ApplicationSkin)GlobalConfig().GetInt(g_ConfigGeneralSkin);
-    if( new_skin == ApplicationSkin::Modern || new_skin == ApplicationSkin::Classic ) {
-        [self willChangeValueForKey:@"skin"];
-        m_Skin = new_skin;
-        [self didChangeValueForKey:@"skin"];
-        
-        GoogleAnalytics::Instance().PostEvent("Appearance",
-                                              "Set",
-                                              new_skin == ApplicationSkin::Classic ? "Classic" : "Modern");
-    }
-}
+//- (void) reloadSkinSetting
+//{
+//    auto new_skin = (ApplicationSkin)GlobalConfig().GetInt(g_ConfigGeneralSkin);
+//    if( new_skin == ApplicationSkin::Modern || new_skin == ApplicationSkin::Classic ) {
+//        [self willChangeValueForKey:@"skin"];
+//        m_Skin = new_skin;
+//        [self didChangeValueForKey:@"skin"];
+//        
+//        GoogleAnalytics::Instance().PostEvent("Appearance",
+//                                              "Set",
+//                                              new_skin == ApplicationSkin::Classic ? "Classic" : "Modern");
+//    }
+//}
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {

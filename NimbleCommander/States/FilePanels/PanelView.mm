@@ -13,8 +13,8 @@
 //#include "PanelViewPresentation.h"
 //#include "ModernPanelViewPresentation.h"
 //#include "ClassicPanelViewPresentation.h"
-#include "../../../Files/AppDelegate.h"
-#include "../../../Files/ActionsShortcutsManager.h"
+#include "../../Bootstrap/AppDelegate.h"
+#include "../../Core/ActionsShortcutsManager.h"
 
 #include "PanelBriefView.h"
 #include "PanelListView.h"
@@ -116,7 +116,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
                                                selector:@selector(appWillResignActive)
                                                    name:NSApplicationWillResignActiveNotification
                                                  object:[NSApplication sharedApplication]];
-        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
+//        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
         
 //        auto skin = AppDelegate.me.skin;
 //        if (skin == ApplicationSkin::Modern)
@@ -158,7 +158,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     m_Data = nullptr;
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];    
+//    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];    
 }
 
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
@@ -1379,8 +1379,8 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     [self didChangeValueForKey:@"active"];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+//{
 //    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
 //        auto skin = AppDelegate.me.skin;
 //        if (skin == ApplicationSkin::Modern)
@@ -1388,7 +1388,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 //        else if(skin == ApplicationSkin::Classic)
 //            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
 //    }
-}
+//}
 
 - (void) setHeaderTitle:(NSString *)headerTitle
 {

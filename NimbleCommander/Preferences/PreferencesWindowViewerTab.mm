@@ -11,7 +11,7 @@
 #include "../Viewer/InternalViewerHistory.h"
 #include "Utility/Encodings.h"
 #include "PreferencesWindowViewerTab.h"
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 static const auto g_ConfigModernFont      = "viewer.modern.font";

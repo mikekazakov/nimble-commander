@@ -4,7 +4,7 @@
 #include <Utility/KeychainServices.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include "AppDelegate.h"
+#include "../NimbleCommander/Bootstrap/AppDelegate.h"
 #include "NetworkConnectionsManager.h"
 #include "AskForPasswordWindowController.h"
 

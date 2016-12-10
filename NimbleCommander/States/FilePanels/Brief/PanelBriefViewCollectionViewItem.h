@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../../../Files/PanelData.h"
+#include "../PanelDataItemVolatileData.h"
 
 @class PanelBriefView;
 
@@ -13,7 +13,7 @@
 - (int) itemIndex;
 
 - (void) setItem:(VFSListingItem)_item;
-- (void) setVD:(PanelData::VolatileData)_vd;
+- (void) setVD:(PanelDataItemVolatileData)_vd;
 - (void) setIcon:(NSImageRep*)_icon;
 @property (nonatomic) bool panelActive;
 

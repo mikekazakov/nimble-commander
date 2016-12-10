@@ -7,7 +7,7 @@
 //
 
 #include "ActionsShortcutsManager.h"
-#include "AppDelegate.h"
+#include "../Bootstrap/AppDelegate.h"
 
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
 

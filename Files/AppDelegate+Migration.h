@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AppDelegate.h"
+#include "../NimbleCommander/Bootstrap/AppDelegate.h"
 
 @interface AppDelegate(Migration)
 

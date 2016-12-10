@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 #include "SimpleComboBoxPersistentDataSource.h"
 
 @implementation SimpleComboBoxPersistentDataSource

@@ -8,9 +8,9 @@
 
 #include <Habanero/CommonPaths.h>
 #include "../../MainWindowController.h"
-#include "../../ActionsShortcutsManager.h"
+#include "../../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "../../GoogleAnalytics.h"
-#include "../../Config.h"
+#include "../../NimbleCommander/Bootstrap/Config.h"
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"
 #include "TermScreen.h"

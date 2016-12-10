@@ -9,10 +9,10 @@
 #pragma once
 
 #include <Habanero/DispatchQueue.h>
-#include "PanelData.h"
+#include "../NimbleCommander/States/FilePanels/PanelData.h"
 #include "../NimbleCommander/States/FilePanels/PanelView.h"
 #include "../NimbleCommander/States/FilePanels/PanelHistory.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 
 @class PanelController;
 @class QuickLookView;

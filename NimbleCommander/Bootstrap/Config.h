@@ -3,7 +3,7 @@
 #include <Habanero/DispatchQueue.h>
 //#include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
 //#include "3rd_party/rapidjson/include/rapidjson/document.h"
-#include "../NimbleCommander/Core/rapidjson.h"
+#include "../Core/rapidjson.h"
 
 class GenericConfig;
 

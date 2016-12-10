@@ -1,4 +1,3 @@
-#include "../../Files/Config.h"
 #include "../Core/rapidjson.h"
 #include "InternalViewerHistory.h"
 

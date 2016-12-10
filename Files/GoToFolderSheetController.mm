@@ -9,7 +9,7 @@
 #include "vfs/VFS.h"
 #include "GoogleAnalytics.h"
 #include "GoToFolderSheetController.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 #include "PanelController.h"
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";

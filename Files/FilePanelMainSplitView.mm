@@ -11,8 +11,7 @@
 //#include "ModernPanelViewPresentation.h"
 //#include "ClassicPanelViewPresentation.h"
 #include "FilePanelsTabbedHolder.h"
-#include "AppDelegate.h"
-#include "ActionsShortcutsManager.h"
+#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;
@@ -48,15 +47,15 @@ static CGColorRef DividerColor(bool _wnd_active)
         FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th2];
 
-        [self observeValueForKeyPath:@"skin" ofObject:AppDelegate.me change:nil context:nullptr];
-        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
+//        [self observeValueForKeyPath:@"skin" ofObject:AppDelegate.me change:nil context:nullptr];
+//        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];
+//    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];
 }
 
 - (CGFloat)dividerThickness
@@ -88,16 +87,16 @@ static CGColorRef DividerColor(bool _wnd_active)
     
     // if the width hasn't changed - tell sender to adjust subviews
     // this is also true for modern presentation - default behaviour that case
-    if (newFrame.size.width == oldSize.width || AppDelegate.me.skin == ApplicationSkin::Modern) {
+//    if (newFrame.size.width == oldSize.width || AppDelegate.me.skin == ApplicationSkin::Modern) {
         [splitView adjustSubviews];
         return;
-    }
-    
-    [self resizeSubviewsManually];
+//    }
+//    
+//    [self resizeSubviewsManually];
 }
 
-- (void)resizeSubviewsManually
-{
+//- (void)resizeSubviewsManually
+//{
 //    NSRect newFrame = self.frame;
 //    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
 //        NSRect leftRect  = [self.subviews[0] frame];
@@ -119,8 +118,8 @@ static CGColorRef DividerColor(bool _wnd_active)
 //        [self.subviews[1] setFrame:rightRect];
 //        return;
 //    }
-    [self adjustSubviews];
-}
+//    [self adjustSubviews];
+//}
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
@@ -305,13 +304,13 @@ static CGColorRef DividerColor(bool _wnd_active)
     return 14.;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
-        m_DividerThickness = AppDelegate.me.skin == ApplicationSkin::Classic ? 0 : 1;
-        dispatch_to_main_queue_after(1ms, [=]{ [self resizeSubviewsManually]; });
-    }
-}
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+//{
+//    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
+//        m_DividerThickness = AppDelegate.me.skin == ApplicationSkin::Classic ? 0 : 1;
+//        dispatch_to_main_queue_after(1ms, [=]{ [self resizeSubviewsManually]; });
+//    }
+//}
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {

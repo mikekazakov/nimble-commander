@@ -9,10 +9,10 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/NSView+Sugar.h>
+#include <Utility/BlinkingCaret.h>
 #include <Habanero/algo.h>
 #include "../../OrthodoxMonospace.h"
-#include "../../BlinkingCaret.h"
-#include "../../Config.h"
+#include "../../../NimbleCommander/Bootstrap/Config.h"
 #include "TermView.h"
 #include "TermScreen.h"
 #include "TermParser.h"

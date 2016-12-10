@@ -1,5 +1,5 @@
 #include "ToolsMenuDelegate.h"
-#include "../../../Files/AppDelegate.h"
+#include "../../Bootstrap/AppDelegate.h"
 #include "../../../Files/MainWindowFilePanelState+Menu.h"
 
 @implementation ToolsMenuDelegateInfoWrapper

@@ -25,11 +25,11 @@
 #include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
 #include "MainWindow.h"
-#include "AppDelegate.h"
+#include "../NimbleCommander/Bootstrap/AppDelegate.h"
 #include "QuickPreview.h"
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
-#include "ActionsShortcutsManager.h"
+#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "../NimbleCommander/Bootstrap/ActivationManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";

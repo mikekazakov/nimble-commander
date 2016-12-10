@@ -9,7 +9,7 @@
 #include <Habanero/DispatchQueue.h>
 #include <Utility/Encodings.h>
 #import "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 #include "BigFileViewHistory.h"
 #include "InternalViewerHistory.h"
 

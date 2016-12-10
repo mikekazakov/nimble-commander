@@ -1,7 +1,7 @@
 #include "../../../Files/MainWindowFilePanelState.h"
 #include "../../../Files/Operations/OperationsSummaryViewController.h"
 #include "../../../Files/MainWndGoToButton.h"
-#include "../../../Files/ActionsShortcutsManager.h"
+#include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 
 // do not change these strings, they are used for persistency in NSUserDefaults

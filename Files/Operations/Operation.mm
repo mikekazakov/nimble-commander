@@ -7,7 +7,7 @@
 //
 
 #include <Utility/ByteCountFormatter.h>
-#include "../AppDelegate.h"
+#include "../../NimbleCommander/Bootstrap/AppDelegate.h"
 #include "Operation.h"
 #include "OperationJob.h"
 

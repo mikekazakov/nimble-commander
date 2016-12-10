@@ -6,7 +6,7 @@
 #include "MainWindowFilePanelState+Tools.h"
 #include "TemporaryNativeFileStorage.h"
 #include "MainWindowController.h"
-#include "AppDelegate.h"
+#include "../NimbleCommander/Bootstrap/AppDelegate.h"
 #include "../NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h"
 #include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "States/Terminal/TermTask.h"

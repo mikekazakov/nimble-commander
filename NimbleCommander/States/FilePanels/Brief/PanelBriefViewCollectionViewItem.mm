@@ -1,4 +1,4 @@
-#include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
+#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
 #include "../PanelBriefView.h"
 #include "PanelBriefViewItemCarrier.h"
@@ -7,7 +7,7 @@
 @implementation PanelBriefViewItem
 {
     VFSListingItem                  m_Item;
-    PanelData::VolatileData         m_VD;
+    PanelDataItemVolatileData       m_VD;
     bool                            m_PanelActive;
 }
 
@@ -108,7 +108,7 @@
     }
 }
 
-- (void) setVD:(PanelData::VolatileData)_vd
+- (void) setVD:(PanelDataItemVolatileData)_vd
 {
     if( m_VD == _vd )
         return;

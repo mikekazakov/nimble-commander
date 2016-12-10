@@ -4,7 +4,7 @@
 #include <copyfile.h>
 #include <VFS/Native.h>
 #include "../../Files/MASAppInstalledChecker.h"
-#include "../../Files/AppDelegateCPP.h"
+#include "AppDelegateCPP.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "../../Files/AppStoreHelper.h"
 #include "ActivationManager.h"

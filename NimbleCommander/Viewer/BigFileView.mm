@@ -9,8 +9,8 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include "../../Files/DataBlockAnalysis.h"
-#include "../../Files/AppDelegate.h"
-#include "../../Files/Config.h"
+#include "../Bootstrap/AppDelegate.h"
+#include "../Bootstrap/Config.h"
 #include "../../Files/TemporaryNativeFileStorage.h"
 #include "BigFileView.h"
 #include "BigFileViewText.h"
@@ -149,8 +149,8 @@ const static double g_BorderWidth = 1.0;
 
 - (void)reloadAppearance
 {
-    auto skin = AppDelegate.me.skin;
-    if(skin == ApplicationSkin::Modern) {
+//    auto skin = AppDelegate.me.skin;
+//    if(skin == ApplicationSkin::Modern) {
         m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
         m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
 
@@ -163,21 +163,21 @@ const static double g_BorderWidth = 1.0;
         
         if(m_Font) CFRelease(m_Font);
         m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
-    }
-    else if(skin == ApplicationSkin::Classic) {
-        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
-        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
-
-        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicBackgroundColor).value_or(""));
-        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
-        // todo: switch to NSColor!
-        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
-        
-        if(m_Font) CFRelease(m_Font);
-        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
-    }
-    m_ViewImpl->OnFontSettingsChanged();    
+//    }
+//    else if(skin == ApplicationSkin::Classic) {
+//        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
+//        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
+//
+//        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicBackgroundColor).value_or(""));
+//        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
+//        // todo: switch to NSColor!
+//        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
+//        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
+//        
+//        if(m_Font) CFRelease(m_Font);
+//        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
+//    }
+    m_ViewImpl->OnFontSettingsChanged();
     [self setNeedsDisplay];
 }
 

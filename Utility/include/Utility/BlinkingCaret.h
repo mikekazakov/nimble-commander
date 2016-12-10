@@ -8,13 +8,13 @@
 
 #pragma once
 
-
+#include <chrono>
 #include <Utility/FPSLimitedDrawer.h>
 
 class BlinkingCaret
 {
 public:
-    BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, milliseconds _blink_time = 600ms );
+    BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600) );
     ~BlinkingCaret();
 
     bool Enabled() const;
@@ -26,7 +26,7 @@ public:
     
 private:
     const __weak id<ViewWithFPSLimitedDrawer>   m_View;
-    const milliseconds                          m_BlinkTime;
-    nanoseconds                                 m_NextScheduleTime;
+    const std::chrono::milliseconds             m_BlinkTime;
+    std::chrono::nanoseconds                    m_NextScheduleTime;
     bool                                        m_Enabled = true;
 };

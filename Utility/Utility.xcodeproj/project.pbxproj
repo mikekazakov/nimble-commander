@@ -58,6 +58,8 @@
 		CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
 		CFD62C1E1C9B01320021EE7F /* SheetWithHotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */; };
 		CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */; };
+		CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */; };
+		CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -113,6 +115,8 @@
 		CFD62C1B1C9AFF280021EE7F /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetController.mm; path = source/SheetController.mm; sourceTree = "<group>"; };
 		CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SheetWithHotkeys.h; path = include/Utility/SheetWithHotkeys.h; sourceTree = "<group>"; };
 		CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetWithHotkeys.mm; path = source/SheetWithHotkeys.mm; sourceTree = "<group>"; };
+		CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkingCaret.h; path = include/Utility/BlinkingCaret.h; sourceTree = "<group>"; };
+		CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BlinkingCaret.mm; path = source/BlinkingCaret.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +150,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
 				CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */,
@@ -178,6 +183,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
 				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
@@ -217,6 +223,7 @@
 			files = (
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
 				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
+				CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */,
 				CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */,
 				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
 				CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */,
@@ -307,6 +314,7 @@
 				CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */,
 				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
 				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
+				CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */,
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
 				CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */,
 				CF84C8E91DB867FC00B4E888 /* Layout.mm in Sources */,

@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include <VFS/VFS.h>
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
 #include "MainWindowStateProtocol.h"
-#include "vfs/VFS.h"
-#include "Config.h"
+#include "../NimbleCommander/Bootstrap/Config.h"
 //#include "rapidjson.h"
 
 class PanelData;

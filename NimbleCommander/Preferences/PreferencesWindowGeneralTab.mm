@@ -7,7 +7,7 @@
 //
 
 #include "../Core/SandboxManager.h"
-#include "../../Files/AppDelegate.h"
+#include "../Bootstrap/AppDelegate.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowGeneralTab.h"

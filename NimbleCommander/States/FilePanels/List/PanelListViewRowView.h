@@ -1,7 +1,8 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "../../../Files/OrthodoxMonospace.h"
-#include "../../../Files/PanelData.h"
+#include "../PanelDataItemVolatileData.h"
 
 @class PanelListView;
 @class PanelListViewNameView;
@@ -11,7 +12,7 @@
 - (id) initWithItem:(VFSListingItem)_item;
 
 @property (nonatomic) VFSListingItem item; // may be empty!
-@property (nonatomic) PanelData::VolatileData vd;
+@property (nonatomic) PanelDataItemVolatileData vd;
 @property (nonatomic, weak) PanelListView *listView;
 @property (nonatomic, readonly) NSColor *rowBackgroundColor;
 @property (nonatomic, readonly) DoubleColor rowBackgroundDoubleColor;

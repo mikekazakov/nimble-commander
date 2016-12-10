@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../NimbleCommander/Core/rapidjson.h"
+#include "../../Core/rapidjson.h"
 
 class PanelDataPersisency
 {

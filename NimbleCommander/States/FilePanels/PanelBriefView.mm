@@ -2,10 +2,10 @@
 #include <Habanero/CFStackAllocator.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
-#include "../../../Files/PanelData.h"
+#include "PanelData.h"
 #include "PanelView.h"
-#include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
-#include "../../../Files/Config.h"
+#include "PanelViewPresentationItemsColoringFilter.h"
+#include "../../Bootstrap/Config.h"
 #include "IconsGenerator2.h"
 #include "PanelBriefView.h"
 #include "Brief/PanelBriefViewCollectionViewLayout.h"

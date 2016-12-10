@@ -8,8 +8,7 @@
 
 #pragma once
 
-#include "ApplicationSkins.h"
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
 
 @class MainWindowController;
 @class InternalViewerWindowController;
@@ -40,11 +39,6 @@ class ExternalToolsStorage;
  * Equal to (AppDelegate*) ((NSApplication*)NSApp).delegate.
  */
 + (AppDelegate*) me;
-
-/**
- * KVO-compatible property about current app skin.
- */
-@property (nonatomic, readonly) ApplicationSkin skin;
 
 /**
  * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].

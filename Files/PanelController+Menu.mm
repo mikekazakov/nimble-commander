@@ -28,7 +28,7 @@
 #include "Operations/Attrs/FileSysEntryAttrSheetController.h"
 #include "Operations/Attrs/FileSysAttrChangeOperationCommand.h"
 #include "ExternalEditorInfo.h"
-#include "ActionsShortcutsManager.h"
+#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "PanelController+Menu.h"
 #include "GoToFolderSheetController.h"
 #include "MainWindowFilePanelState.h"

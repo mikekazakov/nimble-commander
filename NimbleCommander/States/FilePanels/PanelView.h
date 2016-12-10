@@ -9,13 +9,13 @@
 
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
-#include "../../../Files/PanelData.h"
+#include "PanelData.h"
 #include "PanelViewTypes.h"
 
-@class FPSLimitedDrawer;
+//@class FPSLimitedDrawer;
 @class PanelView;
 //class PanelViewPresentation;
-struct PanelVolatileData;
+//struct PanelVolatileData;
 
 @protocol PanelViewDelegate<NSObject>
 @optional

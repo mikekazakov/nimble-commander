@@ -6,7 +6,13 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "BlinkingCaret.h"
+#include <stdexcept>
+#include <Habanero/mach_time.h>
+#include <Habanero/dispatch_cpp.h>
+#include "../include/Utility/BlinkingCaret.h"
+
+using namespace std;
+using namespace std::chrono;
 
 BlinkingCaret::BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, milliseconds _blink_time ):
     m_View( _view ),
@@ -14,9 +20,9 @@ BlinkingCaret::BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, milliseconds _
     m_NextScheduleTime( 0 )
 {
     if( !_view )
-        throw logic_error("BlinkingCaret::BlinkingCaret _view can't be nil");
+        throw std::logic_error("BlinkingCaret::BlinkingCaret _view can't be nil");
     if( _blink_time == 0ms )
-        throw logic_error("BlinkingCaret::BlinkingCaret _blink_time can't be zero");
+        throw std::logic_error("BlinkingCaret::BlinkingCaret _blink_time can't be zero");
 }
 
 BlinkingCaret::~BlinkingCaret()

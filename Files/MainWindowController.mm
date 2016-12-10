@@ -8,9 +8,12 @@
 //
 
 #include <Habanero/debug.h>
-#include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
-#include "3rd_party/rapidjson/include/rapidjson/writer.h"
-#include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
+//#include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
+//#include "3rd_party/rapidjson/include/rapidjson/writer.h"
+//#include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
 #include "States/Terminal/MainWindowTerminalState.h"
 #include "States/Terminal/TermShellTask.h"

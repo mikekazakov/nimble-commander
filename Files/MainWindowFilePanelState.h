@@ -12,7 +12,7 @@
 #include "MainWindowStateProtocol.h"
 #include "vfs/VFS.h"
 #include "Config.h"
-#include "rapidjson.h"
+//#include "rapidjson.h"
 
 class PanelData;
 class ExternalToolsStorage;

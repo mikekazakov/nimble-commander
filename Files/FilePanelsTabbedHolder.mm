@@ -10,7 +10,7 @@
 #import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
 #include "FilePanelsTabbedHolder.h"
 #include "PanelController.h"
-#include "PanelView.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
 #include "MMTabBarStyle.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>

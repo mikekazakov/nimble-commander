@@ -3,11 +3,6 @@
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 
-const string &AppDelegateCPP::StartupCWD()
-{
-    return AppDelegate.me.startupCWD;
-}
-
 const string &AppDelegateCPP::ConfigDirectory()
 {
     return AppDelegate.me.configDirectory;

@@ -1,5 +1,5 @@
 #include "../../Files/Config.h"
-#include "../../Files/rapidjson.h"
+#include "../Core/rapidjson.h"
 #include "InternalViewerHistory.h"
 
 static const auto g_StatePath                   = "viewer.history";

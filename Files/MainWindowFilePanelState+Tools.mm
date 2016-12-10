@@ -2,7 +2,7 @@
 #include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
 #include <VFS/Native.h>
 #include "PanelController.h"
-#include "PanelView.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
 #include "MainWindowFilePanelState+Tools.h"
 #include "TemporaryNativeFileStorage.h"
 #include "MainWindowController.h"

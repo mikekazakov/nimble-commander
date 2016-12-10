@@ -7,9 +7,9 @@
 //
 
 #include "FilePanelMainSplitView.h"
-#include "PanelView.h"
-#include "ModernPanelViewPresentation.h"
-#include "ClassicPanelViewPresentation.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
+//#include "ModernPanelViewPresentation.h"
+//#include "ClassicPanelViewPresentation.h"
 #include "FilePanelsTabbedHolder.h"
 #include "AppDelegate.h"
 #include "ActionsShortcutsManager.h"

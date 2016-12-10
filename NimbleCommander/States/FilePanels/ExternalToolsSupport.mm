@@ -1,6 +1,5 @@
 #include "ExternalToolsSupport.h"
 #include "../../../Files/Config.h"
-#include "../../../Files/rapidjson.h"
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i):
     type(t),

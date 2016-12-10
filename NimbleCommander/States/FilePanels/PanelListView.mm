@@ -1,7 +1,7 @@
 #include "../../../Files/Config.h"
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
 #include "../../../Files/PanelData.h"
-#include "../../../Files/PanelView.h"
+#include "PanelView.h"
 #include "List/PanelListViewNameView.h"
 #include "List/PanelListViewRowView.h"
 #include "List/PanelListViewTableView.h"

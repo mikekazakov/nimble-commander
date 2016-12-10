@@ -26,4 +26,5 @@ namespace CommonPaths
     const std::string &Movies() noexcept;
     const std::string &Root() noexcept;
     const std::string &AppTemporaryDirectory() noexcept;
+    const std::string &StartupCWD() noexcept;
 };

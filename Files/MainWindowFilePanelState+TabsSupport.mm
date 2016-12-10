@@ -3,7 +3,7 @@
 #include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+TabsSupport.h"
-#include "PanelView.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
 #include "PanelController.h"
 #include "FilePanelMainSplitView.h"
 

@@ -40,7 +40,7 @@
 #include "SFTPConnectionSheetController.h"
 #include "../NimbleCommander/Core/FileMask.h"
 #include "SelectionWithMaskPopupViewController.h"
-#include "PanelViewPresentation.h"
+//#include "PanelViewPresentation.h"
 #include "CalculateChecksumSheetController.h"
 #include "ConnectionsMenuDelegate.h"
 #include "SpotlightSearchPopupViewController.h"

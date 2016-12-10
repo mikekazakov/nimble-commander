@@ -18,7 +18,7 @@
 #include "SharingService.h"
 #include "BriefSystemOverview.h"
 #include "ActionsShortcutsManager.h"
-#include "SandboxManager.h"
+#include "../NimbleCommander/Core/SandboxManager.h"
 #include "ExtensionLowercaseComparison.h"
 #include "Config.h"
 #include "PanelDataPersistency.h"

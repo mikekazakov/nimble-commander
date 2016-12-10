@@ -1,5 +1,5 @@
 #include <Utility/Layout.h>
-#include "../../../Files/PanelView.h"
+#include "PanelView.h"
 #include "../../../Files/PanelController.h"
 #include "PanelViewHeader.h"
 

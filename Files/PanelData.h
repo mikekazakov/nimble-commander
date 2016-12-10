@@ -1,7 +1,7 @@
 #pragma once
 #include <Habanero/DispatchQueue.h>
 #include <VFS/VFS.h>
-#include "rapidjson.h"
+#include "../NimbleCommander/Core/rapidjson.h"
 #include "../NimbleCommander/States/FilePanels/PanelDataSortMode.h"
 #include "../NimbleCommander/States/FilePanels/PanelDataStatistics.h"
 #include "../NimbleCommander/States/FilePanels/PanelDataItemVolatileData.h"

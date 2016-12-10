@@ -1,5 +1,5 @@
 #include <Utility/ByteCountFormatter.h>
-#include "../../../Files/PanelView.h"
+#include "PanelView.h"
 #include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"

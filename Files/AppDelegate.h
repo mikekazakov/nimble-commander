@@ -59,11 +59,6 @@ class ExternalToolsStorage;
 @property (nonatomic, readonly) bool isRunningTests;
 
 /**
- * Initial working directory registered at application startup.
- */
-@property (nonatomic, readonly) const string& startupCWD;
-
-/**
  * Support dir, ~/Library/Application Support/Nimble Commander/.
  * Is in Containers for Sandboxes versions
  */

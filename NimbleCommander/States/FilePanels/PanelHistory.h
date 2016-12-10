@@ -7,8 +7,9 @@
 //
 
 #pragma once
-#include "vfs/VFS.h"
-#include "../NimbleCommander/Core/VFSInstanceManager.h"
+
+#include <VFS/VFS.h>
+#include "../../Core/VFSInstanceManager.h"
 
 /**
  * This class is not thread-safe.

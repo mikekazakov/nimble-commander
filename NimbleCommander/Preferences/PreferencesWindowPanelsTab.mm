@@ -7,9 +7,10 @@
 //
 
 #include <Utility/HexadecimalColor.h>
+#include <Utility/FontExtras.h>
 #include "PreferencesWindowPanelsTab.h"
-#include "../../Files/ClassicPanelViewPresentation.h"
-#include "../../Files/ModernPanelViewPresentation.h"
+//#include "../../Files/ClassicPanelViewPresentation.h"
+//#include "../../Files/ModernPanelViewPresentation.h"
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/ByteCountFormatter.h>
 

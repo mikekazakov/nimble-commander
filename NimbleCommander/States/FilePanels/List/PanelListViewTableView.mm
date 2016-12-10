@@ -1,4 +1,4 @@
-#include "../../../Files/PanelView.h"
+#include "../PanelView.h"
 #include "PanelListViewTableView.h"
 
 @implementation PanelListViewTableView

@@ -11,7 +11,7 @@
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "FilePanelOverlappedTerminal.h"
 #include "FilePanelMainSplitView.h"
-#include "PanelView.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
 #include "PanelController.h"
 #include "PanelAux.h"
 

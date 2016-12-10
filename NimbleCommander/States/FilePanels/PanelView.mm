@@ -7,21 +7,20 @@
 //
 
 #include <Utility/NSView+Sugar.h>
-#include "vfs/VFS.h"
 #include "PanelView.h"
-#include "PanelData.h"
-#include "PanelController.h"
-#include "PanelViewPresentation.h"
-#include "ModernPanelViewPresentation.h"
-#include "ClassicPanelViewPresentation.h"
-#include "AppDelegate.h"
-#include "ActionsShortcutsManager.h"
+//#include "PanelData.h"
+#include "../../../Files/PanelController.h"
+//#include "PanelViewPresentation.h"
+//#include "ModernPanelViewPresentation.h"
+//#include "ClassicPanelViewPresentation.h"
+#include "../../../Files/AppDelegate.h"
+#include "../../../Files/ActionsShortcutsManager.h"
 
-#include "../NimbleCommander/States/FilePanels/PanelBriefView.h"
-#include "../NimbleCommander/States/FilePanels/PanelListView.h"
-#include "../NimbleCommander/States/FilePanels/PanelViewHeader.h"
-#include "../NimbleCommander/States/FilePanels/PanelViewFooter.h"
-#include "../NimbleCommander/States/FilePanels/IconsGenerator2.h"
+#include "PanelBriefView.h"
+#include "PanelListView.h"
+#include "PanelViewHeader.h"
+#include "PanelViewFooter.h"
+#include "IconsGenerator2.h"
 
 enum class CursorSelectionType : int8_t
 {
@@ -344,18 +343,18 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [m_FooterView removeFromSuperview];
         m_FooterView = nil;
  
-        self.presentation = nullptr;
+//        self.presentation = nullptr;
     }
 }
 
-- (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
-{
+//- (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
+//{
 //    m_Presentation = move(_presentation);
 //    if (m_Presentation) {
 //        [self frameDidChange];
 //        self.needsDisplay = true;
 //    }
-}
+//}
 
 //- (PanelViewPresentation*) presentation
 //{

@@ -7,14 +7,14 @@
 //
 #pragma once
 
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
+#include "../../Core/rapidjson.h"
+#include "../../../Files/PanelData.h"
 #include "PanelViewTypes.h"
-#include "rapidjson.h"
-#include "PanelData.h"
 
 @class FPSLimitedDrawer;
 @class PanelView;
-class PanelViewPresentation;
+//class PanelViewPresentation;
 struct PanelVolatileData;
 
 @protocol PanelViewDelegate<NSObject>

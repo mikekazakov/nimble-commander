@@ -10,8 +10,8 @@
 
 #include <Habanero/DispatchQueue.h>
 #include "PanelData.h"
-#include "PanelView.h"
-#include "PanelHistory.h"
+#include "../NimbleCommander/States/FilePanels/PanelView.h"
+#include "../NimbleCommander/States/FilePanels/PanelHistory.h"
 #include "Config.h"
 
 @class PanelController;

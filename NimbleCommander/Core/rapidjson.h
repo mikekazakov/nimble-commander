@@ -1,7 +1,7 @@
 #pragma once
 
-#include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
-#include "3rd_party/rapidjson/include/rapidjson/document.h"
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
 
 namespace rapidjson
 {

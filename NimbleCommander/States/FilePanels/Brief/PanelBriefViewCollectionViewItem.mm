@@ -1,5 +1,5 @@
 #include "../../../Files/PanelViewPresentationItemsColoringFilter.h"
-#include "../../../Files/PanelView.h"
+#include "../PanelView.h"
 #include "../PanelBriefView.h"
 #include "PanelBriefViewItemCarrier.h"
 #include "PanelBriefViewCollectionViewItem.h"

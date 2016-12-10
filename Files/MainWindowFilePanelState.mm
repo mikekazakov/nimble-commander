@@ -25,7 +25,7 @@
 #include "BriefSystemOverview.h"
 #include "LSUrls.h"
 #include "ActionsShortcutsManager.h"
-#include "SandboxManager.h"
+#include "../NimbleCommander/Core/SandboxManager.h"
 #include "FilePanelOverlappedTerminal.h"
 #include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "GoogleAnalytics.h"
@@ -187,8 +187,8 @@ static void SetupRatingOverlay(NSView *_background_view)
     }
     
     // 4rth attempt - load dir at startup cwd
-    left_panel_desired_paths.emplace_back(AppDelegate.me.startupCWD);
-    right_panel_desired_paths.emplace_back(AppDelegate.me.startupCWD);
+    left_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
+    right_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
     
     for( auto &p: left_panel_desired_paths ) {
         if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )

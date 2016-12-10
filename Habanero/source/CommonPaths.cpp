@@ -26,7 +26,7 @@ static std::string GetMainBundlePath()
 
 static std::string ensure_tr_slash( std::string _str )
 {
-    if(_str.empty() || _str.back() != '/')
+    if( _str.empty() || _str.back() != '/' )
         _str += '/';
     return _str;
 }
@@ -101,6 +101,19 @@ const std::string &Root() noexcept
 {
     static auto path = std::string("/");
     return path;
+}
+
+static std::string cwd()
+{
+    char cwd[MAXPATHLEN];
+    getcwd(cwd, MAXPATHLEN);
+    return cwd;
+}
+
+static const std::string g_StartupCWD = ensure_tr_slash( cwd() );
+const std::string &StartupCWD() noexcept
+{
+    return g_StartupCWD;
 }
     
 }

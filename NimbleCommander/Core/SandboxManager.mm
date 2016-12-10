@@ -7,8 +7,8 @@
 //
 
 #include <Habanero/algo.h>
+#include <Habanero/CommonPaths.h>
 #include "SandboxManager.h"
-#include "AppDelegate.h"
 
 static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
@@ -229,7 +229,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const string &_p) const
         "/usr/share",
         "/System",
         EnsureNoTrailingSlash(NSTemporaryDirectory().fileSystemRepresentation),
-        EnsureNoTrailingSlash(AppDelegate.me.startupCWD)
+        EnsureNoTrailingSlash(CommonPaths::StartupCWD())
     };
     for( auto &s: granted_ro )
         if( has_prefix(p, s) )

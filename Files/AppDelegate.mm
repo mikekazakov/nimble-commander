@@ -32,7 +32,7 @@
 #include "TemporaryNativeFileStorage.h"
 #include "ActionsShortcutsManager.h"
 #include "MainWindowFilePanelState.h"
-#include "SandboxManager.h"
+#include "../NimbleCommander/Core/SandboxManager.h"
 #include "MASAppInstalledChecker.h"
 #include "TrialWindowController.h"
 #include "Config.h"
@@ -70,13 +70,6 @@ GenericConfig &StateConfig() noexcept
 {
     assert(g_State);
     return *g_State;
-}
-
-static string cwd()
-{
-    char cwd[MAXPATHLEN];
-    getcwd(cwd, MAXPATHLEN);
-    return cwd;
 }
 
 static optional<string> AskUserForLicenseFile()
@@ -158,7 +151,6 @@ static AppDelegate *g_Me = nil;
     NSDockTile          *m_DockTile;
     double              m_AppProgress;
     bool                m_IsRunningTests;
-    string              m_StartupCWD;
     string              m_SupportDirectory;
     string              m_ConfigDirectory;
     string              m_StateDirectory;
@@ -168,7 +160,6 @@ static AppDelegate *g_Me = nil;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
-@synthesize startupCWD = m_StartupCWD;
 @synthesize skin = m_Skin;
 @synthesize mainWindowControllers = m_MainWindows;
 @synthesize configDirectory = m_ConfigDirectory;
@@ -181,7 +172,6 @@ static AppDelegate *g_Me = nil;
     self = [super init];
     if(self) {
         g_Me = self;
-        m_StartupCWD = cwd();
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
         m_AppProgress = -1;
         m_Skin = ApplicationSkin::Modern;

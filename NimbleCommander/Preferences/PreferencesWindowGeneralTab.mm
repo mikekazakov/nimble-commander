@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/SandboxManager.h"
+#include "../Core/SandboxManager.h"
 #include "../../Files/AppDelegate.h"
 #include "../../Files/GoogleAnalytics.h"
 #include "../Bootstrap/ActivationManager.h"

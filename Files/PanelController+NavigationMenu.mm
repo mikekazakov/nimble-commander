@@ -145,7 +145,7 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     
     NSPoint p;
     p.x = (self.view.bounds.size.width - menu.size.width) / 2.;
-    p.y = (self.view.bounds.size.height - menu.size.height) / 2.;
+    p.y = self.view.bounds.size.height - (self.view.bounds.size.height - menu.size.height) / 2.;
     
     p = [self.view convertPoint:p toView:nil];
     p = [self.view.window convertRectToScreen:NSMakeRect(p.x, p.y, 1, 1)].origin;

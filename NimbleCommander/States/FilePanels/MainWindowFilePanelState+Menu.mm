@@ -8,24 +8,24 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include "Operations/Link/FileLinkNewSymlinkSheetController.h"
-#include "Operations/Link/FileLinkAlterSymlinkSheetController.h"
-#include "Operations/Link/FileLinkNewHardlinkSheetController.h"
-#include "Operations/Link/FileLinkOperation.h"
-#include "Operations/Copy/FileCopyOperation.h"
-#include "Operations/Copy/MassCopySheetController.h"
-#include "Operations/Delete/FileDeletionOperation.h"
-#include "Operations/Compress/FileCompressOperation.h"
-#include "Operations/OperationsController.h"
+#include "../../../Files/Operations/Link/FileLinkNewSymlinkSheetController.h"
+#include "../../../Files/Operations/Link/FileLinkAlterSymlinkSheetController.h"
+#include "../../../Files/Operations/Link/FileLinkNewHardlinkSheetController.h"
+#include "../../../Files/Operations/Link/FileLinkOperation.h"
+#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include "../../../Files/Operations/Copy/MassCopySheetController.h"
+#include "../../../Files/Operations/Delete/FileDeletionOperation.h"
+#include "../../../Files/Operations/Compress/FileCompressOperation.h"
+#include "../../../Files/Operations/OperationsController.h"
 #include "MainWindowFilePanelState+Menu.h"
-#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
-#include "PanelController.h"
-#include "PanelAux.h"
-#include "FilePanelMainSplitView.h"
-#include "MainWindowController.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "../NimbleCommander/States/FilePanels/ToolsMenuDelegate.h"
-#include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/States/FilePanels/PanelController.h>
+#include "../../../Files/PanelAux.h"
+#include "../../../Files/FilePanelMainSplitView.h"
+#include <NimbleCommander/States/MainWindowController.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
+#include <NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h>
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 

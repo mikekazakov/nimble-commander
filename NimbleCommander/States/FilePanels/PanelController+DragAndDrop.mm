@@ -9,14 +9,14 @@
 #include <Utility/FontExtras.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include "Operations/Link/FileLinkOperation.h"
-#include "Operations/Copy/FileCopyOperation.h"
-#include "Operations/OperationsController.h"
+#include "../../../Files/Operations/Link/FileLinkOperation.h"
+#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include "../../../Files/Operations/OperationsController.h"
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "PanelAux.h"
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "../../../Files/PanelAux.h"
 
 static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;

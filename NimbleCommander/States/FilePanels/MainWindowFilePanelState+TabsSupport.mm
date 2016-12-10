@@ -1,11 +1,11 @@
-#import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
+#import "../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
 #include <Habanero/CommonPaths.h>
-#include "../NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h"
+#include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+TabsSupport.h"
-#include "../NimbleCommander/States/FilePanels/PanelView.h"
+#include "PanelView.h"
 #include "PanelController.h"
-#include "FilePanelMainSplitView.h"
+#include "../../../Files/FilePanelMainSplitView.h"
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)

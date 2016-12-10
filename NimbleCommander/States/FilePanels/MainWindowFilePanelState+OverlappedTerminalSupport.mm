@@ -9,11 +9,11 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
-#include "FilePanelOverlappedTerminal.h"
-#include "FilePanelMainSplitView.h"
-#include "../NimbleCommander/States/FilePanels/PanelView.h"
+#include "../../../Files/FilePanelOverlappedTerminal.h"
+#include "../../../Files/FilePanelMainSplitView.h"
+#include "PanelView.h"
 #include "PanelController.h"
-#include "PanelAux.h"
+#include "../../../Files/PanelAux.h"
 
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 

@@ -1,15 +1,15 @@
 #include <boost/algorithm/string/replace.hpp>
-#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
+#include "ExternalToolsSupport.h"
 #include <VFS/Native.h>
 #include "PanelController.h"
-#include "../NimbleCommander/States/FilePanels/PanelView.h"
+#include "PanelView.h"
 #include "MainWindowFilePanelState+Tools.h"
-#include "TemporaryNativeFileStorage.h"
-#include "MainWindowController.h"
-#include "../NimbleCommander/Bootstrap/AppDelegate.h"
-#include "../NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "States/Terminal/TermTask.h"
+#include "../../../Files/TemporaryNativeFileStorage.h"
+#include <NimbleCommander/States/MainWindowController.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include "ExternalToolParameterValueSheetController.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "../../../Files/States/Terminal/TermTask.h"
 
 static string EscapeSpaces(string _str)
 {

@@ -9,8 +9,8 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "PanelController+NavigationMenu.h"
-#include "MainWndGoToButton.h"
-#include "../NimbleCommander/Core/VFSInstanceManager.h"
+#include "../../../Files/MainWndGoToButton.h"
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 
 static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
 //static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);

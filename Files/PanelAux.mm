@@ -16,8 +16,8 @@
 #include "TemporaryNativeFileChangesSentinel.h"
 #include "ExtensionLowercaseComparison.h"
 #include "../NimbleCommander/Bootstrap/Config.h"
-#include "PanelController.h"
-#include "MainWindowController.h"
+#include <NimbleCommander/States/FilePanels/PanelController.h>
+#include "../NimbleCommander/States/MainWindowController.h"
 #include "PanelAux.h"
 #include "../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "ExternalEditorInfo.h"

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelController.h"
-#include "../NimbleCommander/Core/VFSInstanceManager.h"
+#include "../../Core/VFSInstanceManager.h"
+#include "PanelController.h"
 
 class PanelControllerGoToDirContext
 {

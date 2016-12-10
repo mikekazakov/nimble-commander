@@ -9,13 +9,13 @@
 #include <sys/stat.h>
 #include <Sparkle/Sparkle.h>
 #include "MainWindowFilePanelState+ContextMenu.h"
-#include "PanelAux.h"
-#include "LSUrls.h"
-#include "Operations/Delete/FileDeletionOperation.h"
+#include "../../../Files/PanelAux.h"
+#include "../../../Files/LSUrls.h"
+#include "../../../Files/Operations/Delete/FileDeletionOperation.h"
 #include "PanelController.h"
-#include "Operations/Compress/FileCompressOperation.h"
-#include "Operations/Copy/FileCopyOperation.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+#include "../../../Files/Operations/Compress/FileCompressOperation.h"
+#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 struct OpenWithHandler
 {

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../Core/ActionsShortcutsManager.h"
 #include "MainWindow.h"
-#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "MainWindowController.h"
 
 @implementation MainWindow

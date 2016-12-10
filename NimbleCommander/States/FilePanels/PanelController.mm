@@ -9,21 +9,21 @@
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include "Operations/Copy/FileCopyOperation.h"
+#include "../../../Files/Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
-#include "MainWindowController.h"
-#include "QuickPreview.h"
+#include "../MainWindowController.h"
+#include "../../../Files/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
-#include "PanelAux.h"
-#include "SharingService.h"
-#include "BriefSystemOverview.h"
-#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
-#include "../NimbleCommander/Core/SandboxManager.h"
-#include "ExtensionLowercaseComparison.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
-#include "../NimbleCommander/States/FilePanels/PanelDataPersistency.h"
-#include "AskForPasswordWindowController.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+#include "../../../Files/PanelAux.h"
+#include "../../../Files/SharingService.h"
+#include "../../../Files/BriefSystemOverview.h"
+#include "../../Core/ActionsShortcutsManager.h"
+#include "../../Core/SandboxManager.h"
+#include "../../../Files/ExtensionLowercaseComparison.h"
+#include "../../Bootstrap/Config.h"
+#include "PanelDataPersistency.h"
+#include "../../../Files/AskForPasswordWindowController.h"
+#include "../../Bootstrap/ActivationManager.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";

@@ -15,22 +15,22 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
-#include "States/Terminal/MainWindowTerminalState.h"
-#include "States/Terminal/TermShellTask.h"
-#include "States/Terminal/MainWindowExternalTerminalEditorState.h"
-#include "../NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h"
-#include "../NimbleCommander/Viewer/InternalViewerWindowController.h"
-#include "../NimbleCommander/GeneralUI/RegistrationInfoWindow.h"
+#include "../../Files/States/Terminal/MainWindowTerminalState.h"
+#include "../../Files/States/Terminal/TermShellTask.h"
+#include "../../Files/States/Terminal/MainWindowExternalTerminalEditorState.h"
+#include "InternalViewer/MainWindowInternalViewerState.h"
+#include "../Viewer/InternalViewerWindowController.h"
+#include "../GeneralUI/RegistrationInfoWindow.h"
 #include "Utility/SystemInformation.h"
 #include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
 #include "MainWindow.h"
-#include "../NimbleCommander/Bootstrap/AppDelegate.h"
-#include "QuickPreview.h"
-#include "MainWindowFilePanelState.h"
-#include "PanelController.h"
-#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+#include "../Bootstrap/AppDelegate.h"
+#include "../../Files/QuickPreview.h"
+#include "FilePanels/MainWindowFilePanelState.h"
+#include "FilePanels/PanelController.h"
+#include "../Core/ActionsShortcutsManager.h"
+#include "../Bootstrap/ActivationManager.h"
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";

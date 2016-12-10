@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "PanelController+DelayedSelection.h"
 #include "MainWindowFilePanelState.h"
+#include "PanelController+DelayedSelection.h"
 
 @implementation PanelController (DelayedSelection)
 

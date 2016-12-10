@@ -9,9 +9,9 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#import "3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
-#include "MainWindowStateProtocol.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
+#import "../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
+#include "../MainWindowStateProtocol.h"
+#include "../../Bootstrap/Config.h"
 //#include "rapidjson.h"
 
 class PanelData;

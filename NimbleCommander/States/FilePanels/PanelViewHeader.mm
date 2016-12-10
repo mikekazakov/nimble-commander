@@ -1,6 +1,6 @@
 #include <Utility/Layout.h>
 #include "PanelView.h"
-#include "../../../Files/PanelController.h"
+#include "PanelController.h"
 #include "PanelViewHeader.h"
 
 static NSString *SortLetter(PanelDataSortMode _mode)

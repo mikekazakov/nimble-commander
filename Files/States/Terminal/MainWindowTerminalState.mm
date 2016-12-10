@@ -7,7 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
-#include "../../MainWindowController.h"
+#include "../../NimbleCommander/States/MainWindowController.h"
 #include "../../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "../../GoogleAnalytics.h"
 #include "../../NimbleCommander/Bootstrap/Config.h"

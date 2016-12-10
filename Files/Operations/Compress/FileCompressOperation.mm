@@ -11,7 +11,7 @@
 #include "FileCompressOperationJob.h"
 
 // TODO: remove this dependency
-#include "../../PanelController.h"
+#include <NimbleCommander/States/FilePanels/PanelController.h>
 
 static NSString *OpTitle(unsigned _amount, NSString *_target)
 {

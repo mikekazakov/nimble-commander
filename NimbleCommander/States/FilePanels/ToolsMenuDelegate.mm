@@ -1,6 +1,6 @@
 #include "ToolsMenuDelegate.h"
-#include "../../Bootstrap/AppDelegate.h"
-#include "../../../Files/MainWindowFilePanelState+Menu.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include "MainWindowFilePanelState+Menu.h"
 
 @implementation ToolsMenuDelegateInfoWrapper
 {

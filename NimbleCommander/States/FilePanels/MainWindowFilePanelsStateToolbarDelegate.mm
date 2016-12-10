@@ -1,4 +1,4 @@
-#include "../../../Files/MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState.h"
 #include "../../../Files/Operations/OperationsSummaryViewController.h"
 #include "../../../Files/MainWndGoToButton.h"
 #include "../../Core/ActionsShortcutsManager.h"

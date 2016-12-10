@@ -10,7 +10,7 @@
 #include "GoogleAnalytics.h"
 #include "GoToFolderSheetController.h"
 #include "../NimbleCommander/Bootstrap/Config.h"
-#include "PanelController.h"
+#include <NimbleCommander/States/FilePanels/PanelController.h>
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 

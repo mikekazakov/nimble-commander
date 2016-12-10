@@ -7,7 +7,7 @@
 //
 
 // REMOVE THIS DEPENDENCY:
-#include "../../PanelController.h"
+#include <NimbleCommander/States/FilePanels/PanelController.h>
 
 #include "CreateDirectoryOperation.h"
 #include "CreateDirectoryOperationJob.h"

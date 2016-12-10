@@ -7,7 +7,8 @@
 //
 
 #pragma once
-#include "../../MainWindowStateProtocol.h"
+
+#include "../../../NimbleCommander/States/MainWindowStateProtocol.h"
 
 class TermShellTask;
 @interface MainWindowTerminalState : NSView<MainWindowStateProtocol>

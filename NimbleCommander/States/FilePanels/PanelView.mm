@@ -9,12 +9,12 @@
 #include <Utility/NSView+Sugar.h>
 #include "PanelView.h"
 //#include "PanelData.h"
-#include "../../../Files/PanelController.h"
+#include "PanelController.h"
 //#include "PanelViewPresentation.h"
 //#include "ModernPanelViewPresentation.h"
 //#include "ClassicPanelViewPresentation.h"
-#include "../../Bootstrap/AppDelegate.h"
-#include "../../Core/ActionsShortcutsManager.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 
 #include "PanelBriefView.h"
 #include "PanelListView.h"

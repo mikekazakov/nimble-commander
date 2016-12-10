@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "../../../Files/NetworkConnectionsManager.h"
 #include "PanelController.h"
-#include "NetworkConnectionsManager.h"
 
 @interface PanelController (Menu)
 

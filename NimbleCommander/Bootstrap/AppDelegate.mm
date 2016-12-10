@@ -26,12 +26,12 @@
 #include <VFS/NetSFTP.h>
 #include "../../Files/States/Terminal/MainWindowTerminalState.h"
 #include "AppDelegate.h"
-#include "../../Files/MainWindowController.h"
+#include "../States/MainWindowController.h"
 #include "../../Files/Operations/OperationsController.h"
 #include "../Preferences/Preferences.h"
 #include "../../Files/TemporaryNativeFileStorage.h"
 #include "../Core/ActionsShortcutsManager.h"
-#include "../../Files/MainWindowFilePanelState.h"
+#include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "../Core/SandboxManager.h"
 #include "../../Files/MASAppInstalledChecker.h"
 #include "../../Files/TrialWindowController.h"

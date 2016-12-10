@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../MainWindowController.h"
+#include "../../../NimbleCommander/States/MainWindowController.h"
 #include "TermSingleTask.h"
 #include "TermScreen.h"
 #include "TermParser.h"

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../MainWindowStateProtocol.h"
+#include "../../../NimbleCommander/States/MainWindowStateProtocol.h"
 
 @interface MainWindowExternalTerminalEditorState : NSView<MainWindowStateProtocol>
 

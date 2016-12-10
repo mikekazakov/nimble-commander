@@ -1,5 +1,5 @@
 #include "MainWindowFilePanelState.h"
-#include "../NimbleCommander/States/FilePanels/ExternalToolsSupport.h"
+#include "ExternalToolsSupport.h"
 @interface MainWindowFilePanelState (ToolsSupport)
 
 

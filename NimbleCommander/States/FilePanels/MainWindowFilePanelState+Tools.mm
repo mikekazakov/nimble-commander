@@ -9,7 +9,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "ExternalToolParameterValueSheetController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include "../../../Files/States/Terminal/TermTask.h"
+#include <NimbleCommander/States/Terminal/TermTask.h>
 
 static string EscapeSpaces(string _str)
 {

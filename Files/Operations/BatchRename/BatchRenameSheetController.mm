@@ -8,9 +8,9 @@
 
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../../3rd_party/NSFileManager+DirectoryLocations.h"
 #include "../../SimpleComboBoxPersistentDataSource.h"
-#include "../../GoogleAnalytics.h"
 #include "BatchRenameSheetController.h"
 #include "BatchRename.h"
 #include "BatchRenameSheetRangeSelectionPopoverController.h"

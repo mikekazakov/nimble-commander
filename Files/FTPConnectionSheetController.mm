@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "FTPConnectionSheetController.h"
 #include "NetworkConnectionsManager.h"
-#include "GoogleAnalytics.h"
 
 @implementation FTPConnectionSheetController
 {

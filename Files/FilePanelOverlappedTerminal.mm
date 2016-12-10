@@ -8,12 +8,12 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/FontCache.h>
-#include "States/Terminal/TermShellTask.h"
-#include "States/Terminal/TermScreen.h"
-#include "States/Terminal/TermParser.h"
-#include "States/Terminal/TermView.h"
-#include "States/Terminal/TermScrollView.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
+#include <NimbleCommander/States/Terminal/TermShellTask.h>
+#include <NimbleCommander/States/Terminal/TermScreen.h>
+#include <NimbleCommander/States/Terminal/TermParser.h>
+#include <NimbleCommander/States/Terminal/TermView.h>
+#include <NimbleCommander/States/Terminal/TermScrollView.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "FilePanelOverlappedTerminal.h"
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";

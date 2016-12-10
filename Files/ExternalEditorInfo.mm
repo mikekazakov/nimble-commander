@@ -7,10 +7,10 @@
 //
 
 #include "3rd_party/NSFileManager+DirectoryLocations.h"
-#include "States/Terminal/TermSingleTask.h"
-#include "../NimbleCommander/Core/FileMask.h"
+#include <NimbleCommander/States/Terminal/TermSingleTask.h>
+#include <NimbleCommander/Core/FileMask.h>
 #include "ExternalEditorInfo.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 static NSString *g_FileName = @"/externaleditors.bplist"; // bplist file name
 

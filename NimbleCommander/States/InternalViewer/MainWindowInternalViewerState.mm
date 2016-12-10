@@ -6,9 +6,9 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../MainWindowController.h"
 #include "../../Viewer/InternalViewerController.h"
-#include "../../Files/GoogleAnalytics.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 

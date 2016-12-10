@@ -9,8 +9,8 @@
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "DetailedVolumeInformationSheetController.h"
-#include "GoogleAnalytics.h"
 
 @interface DetailedVolumeInformationSheetController ()
 

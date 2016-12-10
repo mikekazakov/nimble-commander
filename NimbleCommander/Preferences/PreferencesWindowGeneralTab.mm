@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/SandboxManager.h"
 #include "../Bootstrap/AppDelegate.h"
-#include "../../Files/GoogleAnalytics.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowGeneralTab.h"
 

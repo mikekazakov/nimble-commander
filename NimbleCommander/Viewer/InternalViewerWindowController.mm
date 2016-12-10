@@ -7,7 +7,7 @@
 //
 
 #include "../Bootstrap/AppDelegate.h"
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "BigFileView.h"
 #include "InternalViewerController.h"
 #include "InternalViewerWindowController.h"

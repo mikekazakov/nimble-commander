@@ -4,7 +4,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "GoogleAnalytics.h"
 
 static const auto g_TrackingID =

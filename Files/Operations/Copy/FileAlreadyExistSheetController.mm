@@ -7,7 +7,7 @@
 //
 
 #include <Carbon/Carbon.h>
-#include "../../GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Operation.h"
 #include "DialogResults.h"
 #include "FileAlreadyExistSheetController.h"

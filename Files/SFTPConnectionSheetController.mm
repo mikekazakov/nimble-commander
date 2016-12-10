@@ -7,8 +7,8 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "SFTPConnectionSheetController.h"
-#include "GoogleAnalytics.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 

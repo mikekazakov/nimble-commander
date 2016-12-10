@@ -15,9 +15,9 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
-#include "../../Files/States/Terminal/MainWindowTerminalState.h"
-#include "../../Files/States/Terminal/TermShellTask.h"
-#include "../../Files/States/Terminal/MainWindowExternalTerminalEditorState.h"
+#include "Terminal/MainWindowTerminalState.h"
+#include "Terminal/TermShellTask.h"
+#include "Terminal/MainWindowExternalTerminalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
 #include "../Viewer/InternalViewerWindowController.h"
 #include "../GeneralUI/RegistrationInfoWindow.h"

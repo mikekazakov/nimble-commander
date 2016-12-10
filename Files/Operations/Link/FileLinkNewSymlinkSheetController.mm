@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "FileLinkNewSymlinkSheetController.h"
 
 @interface FileLinkNewSymlinkSheetController()

@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "SelectionWithMaskPopupViewController.h"
 #include "SimpleComboBoxPersistentDataSource.h"
-#include "GoogleAnalytics.h"
 
 static const auto                       g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
 static unordered_map<void*, NSString*>  g_InitialMask;

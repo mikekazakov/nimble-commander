@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <grp.h>
-#include "../../GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "FileSysEntryAttrSheetController.h"
 #include "FileSysAttrChangeOperationCommand.h"
 

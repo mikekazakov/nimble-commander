@@ -7,9 +7,9 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../../NimbleCommander/States/MainWindowController.h"
 #include "../../NimbleCommander/Core/ActionsShortcutsManager.h"
-#include "../../GoogleAnalytics.h"
 #include "../../NimbleCommander/Bootstrap/Config.h"
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"

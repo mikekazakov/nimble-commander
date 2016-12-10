@@ -6,9 +6,9 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "SimpleComboBoxPersistentDataSource.h"
 #include "SpotlightSearchPopupViewController.h"
-#include "GoogleAnalytics.h"
 
 static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.queries";
 

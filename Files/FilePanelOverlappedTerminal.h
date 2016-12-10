@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "States/Terminal/TermShellTask.h"
+#include <NimbleCommander/States/Terminal/TermShellTask.h>
 
 @interface FilePanelOverlappedTerminal : NSView
 

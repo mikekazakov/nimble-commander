@@ -8,7 +8,7 @@
 
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
-#include "../../OrthodoxMonospace.h"
+#include "../../../Files/OrthodoxMonospace.h"
 #include "TermParser.h"
 #include "TermScreen.h"
 

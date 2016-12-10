@@ -24,7 +24,7 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include "../../Files/States/Terminal/MainWindowTerminalState.h"
+#include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
 #include "AppDelegate.h"
 #include "../States/MainWindowController.h"
 #include "../../Files/Operations/OperationsController.h"
@@ -38,7 +38,7 @@
 #include "Config.h"
 #include "../../Files/AppDelegate+Migration.h"
 #include "ActivationManager.h"
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../States/FilePanels/ExternalToolsSupport.h"
 #include "../Viewer/InternalViewerController.h"
 #include "../Viewer/InternalViewerWindowController.h"

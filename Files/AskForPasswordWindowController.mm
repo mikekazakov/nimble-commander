@@ -6,8 +6,8 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "AskForPasswordWindowController.h"
-#include "GoogleAnalytics.h"
 
 @interface AskForPasswordWindowController ()
 - (IBAction)onOk:(id)sender;

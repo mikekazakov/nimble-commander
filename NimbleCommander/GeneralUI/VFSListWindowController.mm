@@ -6,7 +6,7 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/VFSInstanceManager.h"
 #include "VFSListWindowController.h"
 

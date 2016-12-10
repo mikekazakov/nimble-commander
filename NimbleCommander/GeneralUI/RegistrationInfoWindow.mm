@@ -5,7 +5,8 @@
 //  Created by Michael G. Kazakov on 9/14/16.
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
-#include "../../Files/GoogleAnalytics.h"
+
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "RegistrationInfoWindow.h"
 

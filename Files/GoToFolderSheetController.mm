@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "vfs/VFS.h"
-#include "GoogleAnalytics.h"
+#include <VFS/VFS.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "GoToFolderSheetController.h"
 #include "../NimbleCommander/Bootstrap/Config.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>

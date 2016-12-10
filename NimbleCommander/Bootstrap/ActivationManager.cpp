@@ -3,9 +3,9 @@
 #include <Utility/SystemInformation.h>
 #include <copyfile.h>
 #include <VFS/Native.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../../Files/MASAppInstalledChecker.h"
 #include "AppDelegateCPP.h"
-#include "../../Files/GoogleAnalytics.h"
 #include "../../Files/AppStoreHelper.h"
 #include "ActivationManager.h"
 

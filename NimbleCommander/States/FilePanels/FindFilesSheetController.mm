@@ -15,10 +15,10 @@
 #include "../../Viewer/InternalViewerWindowController.h"
 #include "../../Core/SearchForFiles.h"
 #include <Utility/ByteCountFormatter.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../../Files/PanelAux.h"
 #include "../../Bootstrap/Config.h"
 #include "../../Bootstrap/ActivationManager.h"
-#include "../../Files/GoogleAnalytics.h"
 #include "../../Bootstrap/AppDelegate.h"
 #include "../../Core/VFSInstanceManager.h"
 #include "FindFilesSheetController.h"

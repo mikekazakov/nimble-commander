@@ -90,30 +90,10 @@
 		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
-		CF46DB731C856F2F009E28B9 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
-		CF46DB791C856F2F009E28B9 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
-		CF46DB7A1C856F33009E28B9 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */; };
-		CF46DB7B1C856F33009E28B9 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */; };
-		CF46DB7C1C856F37009E28B9 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */; };
-		CF46DB7D1C856F38009E28B9 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */; };
-		CF46DB7E1C856F3C009E28B9 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */; };
-		CF46DB7F1C856F3C009E28B9 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */; };
-		CF46DB801C856F40009E28B9 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */; };
-		CF46DB811C856F41009E28B9 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */; };
-		CF46DB821C856F44009E28B9 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */; };
-		CF46DB831C856F45009E28B9 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */; };
-		CF46DB841C856F48009E28B9 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */; };
-		CF46DB851C856F48009E28B9 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */; };
-		CF46DB861C856F4C009E28B9 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A181C4F8D3200BFCB5C /* TermView.mm */; };
-		CF46DB871C856F4C009E28B9 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A181C4F8D3200BFCB5C /* TermView.mm */; };
 		CF46DB961C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */; };
 		CF46DB971C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2C0C11C2C2AFC00E5B9B5 /* AppDelegate+Migration.mm */; };
 		CF46DB981C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CF46DB991C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
-		CF46DB9A1C856FBB009E28B9 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */; };
-		CF46DB9B1C856FBC009E28B9 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */; };
-		CF46DB9C1C856FD3009E28B9 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */; };
-		CF46DB9D1C856FD4009E28B9 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
@@ -349,9 +329,6 @@
 		CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
-		CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
-		CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
 		CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CF6E445A1CC9E137009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
 		CF6E445B1CC9E138009F45B0 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */; };
@@ -531,18 +508,14 @@
 		CFA5395E1D433E2A00C562A7 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */; };
 		CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
 		CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
-		CFA539631D433E2A00C562A7 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A181C4F8D3200BFCB5C /* TermView.mm */; };
-		CFA539641D433E2A00C562A7 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
 		CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA5396E1D433E2A00C562A7 /* CreateDirectoryOperationVFSJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */; };
 		CFA5396F1D433E2A00C562A7 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; };
 		CFA539701D433E2A00C562A7 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
 		CFA539711D433E2A00C562A7 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC044DB1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFA539761D433E2A00C562A7 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
-		CFA539771D433E2A00C562A7 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */; };
 		CFA539791D433E2A00C562A7 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8B09CC16ED07DF0013B6A8 /* MainWndGoToButton.mm */; };
 		CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
-		CFA5397E1D433E2A00C562A7 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */; };
 		CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFA539811D433E2A00C562A7 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF39F4411C2EB198009CEFBB /* NetworkConnectionsManager.mm */; };
 		CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
@@ -550,7 +523,6 @@
 		CFA539871D433E2A00C562A7 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
 		CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CFA5398A1D433E2A00C562A7 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27415318046A6E006D6687 /* BriefSystemOverview.mm */; };
-		CFA5398B1D433E2A00C562A7 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */; };
 		CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
@@ -558,7 +530,6 @@
 		CFA539941D433E2A00C562A7 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
-		CFA5399A1D433E2A00C562A7 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */; };
 		CFA5399C1D433E2A00C562A7 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF14BE161931AD40008DDF6A /* WorkspaceIconsCache.mm */; };
 		CFA5399D1D433E2A00C562A7 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31207E1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm */; };
 		CFA539A01D433E2A00C562A7 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDA4CCC182A17C7006EC35C /* LSUrls.mm */; };
@@ -583,7 +554,6 @@
 		CFA539CE1D433E2A00C562A7 /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */; };
 		CFA539CF1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
 		CFA539D11D433E2A00C562A7 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
-		CFA539D21D433E2A00C562A7 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */; };
 		CFA539D51D433E2A00C562A7 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE3E84B19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm */; };
 		CFA539D61D433E2A00C562A7 /* OperationsSummaryViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */; };
 		CFA539D71D433E2A00C562A7 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
@@ -594,13 +564,10 @@
 		CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CFA539E41D433E2A00C562A7 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
 		CFA539E81D433E2A00C562A7 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA5C3CC175799CF00DFE2E4 /* DataBlockAnalysis.mm */; };
-		CFA539EA1D433E2A00C562A7 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */; };
-		CFA539EB1D433E2A00C562A7 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */; };
 		CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CFA539ED1D433E2A00C562A7 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF07DE3D1769754400757DE1 /* SearchInFile.cpp */; };
 		CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
 		CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
-		CFA539F21D433E2A00C562A7 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */; };
 		CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
 		CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
@@ -615,7 +582,6 @@
 		CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
 		CFA53A0E1D433E2A00C562A7 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7B206B1A277A27008F1492 /* TrialWindowController.mm */; };
-		CFA53A111D433E2A00C562A7 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */; };
 		CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */; };
 		CFA53A141D433E2A00C562A7 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A400E1B57E28C002A092B /* FilePanelOverlappedTerminal.mm */; };
 		CFA53A171D433E2A00C562A7 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27414817FF04EF006D6687 /* SharingService.mm */; };
@@ -827,6 +793,20 @@
 		CFDAC2711DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */; };
+		CFDAC2761DFBF6C10039A104 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
+		CFDAC28E1DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */; };
+		CFDAC28F1DFBF9260039A104 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */; };
+		CFDAC2901DFBF9260039A104 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27C1DFBF9260039A104 /* TermParser.mm */; };
+		CFDAC2911DFBF9260039A104 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */; };
+		CFDAC2921DFBF9260039A104 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */; };
+		CFDAC2951DFBF9260039A104 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2841DFBF9260039A104 /* TermScrollView.mm */; };
+		CFDAC2971DFBF9260039A104 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */; };
+		CFDAC2981DFBF9260039A104 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */; };
+		CFDAC2991DFBF9260039A104 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28A1DFBF9260039A104 /* TermTask.cpp */; };
+		CFDAC29A1DFBF9260039A104 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28D1DFBF9260039A104 /* TermView.mm */; };
+		CFDAC29B1DFBF93C0039A104 /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2851DFBF9260039A104 /* TermShellTask_Tests.mm */; };
+		CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2811DFBF9260039A104 /* TermScreenBufferTests.mm */; };
+		CFDAC29D1DFBF9850039A104 /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2821DFBF9260039A104 /* TermScreenTests.mm */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB40DE171181B3005AA897 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */; };
@@ -844,16 +824,6 @@
 		CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFEB204917FDAA2900E04563 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */; };
-		CFED5A191C4F8D3200BFCB5C /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */; };
-		CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */; };
-		CFED5A1B1C4F8D3200BFCB5C /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */; };
-		CFED5A1C1C4F8D3200BFCB5C /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */; };
-		CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */; };
-		CFED5A1E1C4F8D3200BFCB5C /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */; };
-		CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */; };
-		CFED5A201C4F8D3200BFCB5C /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A181C4F8D3200BFCB5C /* TermView.mm */; };
-		CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */; };
-		CFED5A261C4F8D7200BFCB5C /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */; };
 		CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */; };
 		CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */; };
@@ -1378,8 +1348,6 @@
 		CF9A7FF71DE1914100DEDF0B /* PanelDataSortMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSortMode.h; path = NimbleCommander/States/FilePanels/PanelDataSortMode.h; sourceTree = SOURCE_ROOT; };
 		CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSortMode.mm; path = NimbleCommander/States/FilePanels/PanelDataSortMode.mm; sourceTree = SOURCE_ROOT; };
 		CF9A80001DE19F7F00DEDF0B /* PanelViewHeaderSortPopup.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelViewHeaderSortPopup.xib; path = NimbleCommander/States/FilePanels/PanelViewHeaderSortPopup.xib; sourceTree = SOURCE_ROOT; };
-		CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAnalytics.h; sourceTree = "<group>"; };
-		CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleAnalytics.mm; sourceTree = "<group>"; };
 		CF9A9F181CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileChangesSentinel.cpp; sourceTree = "<group>"; };
 		CF9A9F191CB37A980094D6F7 /* TemporaryNativeFileChangesSentinel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileChangesSentinel.h; sourceTree = "<group>"; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoToFolderSheetController.h; sourceTree = "<group>"; };
@@ -1555,6 +1523,31 @@
 		CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MainWindowFilePanelState+TabsSupport.mm"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+TabsSupport.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC26C1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+Tools.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Tools.h"; sourceTree = SOURCE_ROOT; };
 		CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MainWindowFilePanelState+Tools.mm"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Tools.mm"; sourceTree = SOURCE_ROOT; };
+		CFDAC2741DFBF6C10039A104 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleAnalytics.h; path = NimbleCommander/Core/GoogleAnalytics.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleAnalytics.mm; path = NimbleCommander/Core/GoogleAnalytics.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2771DFBF9260039A104 /* MainWindowExternalTerminalEditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowExternalTerminalEditorState.h; path = NimbleCommander/States/Terminal/MainWindowExternalTerminalEditorState.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowExternalTerminalEditorState.mm; path = NimbleCommander/States/Terminal/MainWindowExternalTerminalEditorState.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2791DFBF9260039A104 /* MainWindowTerminalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowTerminalState.h; path = NimbleCommander/States/Terminal/MainWindowTerminalState.h; sourceTree = SOURCE_ROOT; };
+		CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowTerminalState.mm; path = NimbleCommander/States/Terminal/MainWindowTerminalState.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC27B1DFBF9260039A104 /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermParser.h; path = NimbleCommander/States/Terminal/TermParser.h; sourceTree = SOURCE_ROOT; };
+		CFDAC27C1DFBF9260039A104 /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermParser.mm; path = NimbleCommander/States/Terminal/TermParser.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermScreen.cpp; path = NimbleCommander/States/Terminal/TermScreen.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC27E1DFBF9260039A104 /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScreen.h; path = NimbleCommander/States/Terminal/TermScreen.h; sourceTree = SOURCE_ROOT; };
+		CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermScreenBuffer.cpp; path = NimbleCommander/States/Terminal/TermScreenBuffer.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC2801DFBF9260039A104 /* TermScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScreenBuffer.h; path = NimbleCommander/States/Terminal/TermScreenBuffer.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2811DFBF9260039A104 /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = NimbleCommander/States/Terminal/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2821DFBF9260039A104 /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = NimbleCommander/States/Terminal/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2831DFBF9260039A104 /* TermScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScrollView.h; path = NimbleCommander/States/Terminal/TermScrollView.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2841DFBF9260039A104 /* TermScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScrollView.mm; path = NimbleCommander/States/Terminal/TermScrollView.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2851DFBF9260039A104 /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = NimbleCommander/States/Terminal/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermShellTask.cpp; path = NimbleCommander/States/Terminal/TermShellTask.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC2871DFBF9260039A104 /* TermShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermShellTask.h; path = NimbleCommander/States/Terminal/TermShellTask.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2881DFBF9260039A104 /* TermSingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermSingleTask.h; path = NimbleCommander/States/Terminal/TermSingleTask.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermSingleTask.mm; path = NimbleCommander/States/Terminal/TermSingleTask.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC28A1DFBF9260039A104 /* TermTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermTask.cpp; path = NimbleCommander/States/Terminal/TermTask.cpp; sourceTree = SOURCE_ROOT; };
+		CFDAC28B1DFBF9260039A104 /* TermTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermTask.h; path = NimbleCommander/States/Terminal/TermTask.h; sourceTree = SOURCE_ROOT; };
+		CFDAC28C1DFBF9260039A104 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermView.h; path = NimbleCommander/States/Terminal/TermView.h; sourceTree = SOURCE_ROOT; };
+		CFDAC28D1DFBF9260039A104 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermView.mm; path = NimbleCommander/States/Terminal/TermView.mm; sourceTree = SOURCE_ROOT; };
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDB40DC171181B3005AA897 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
@@ -1571,33 +1564,11 @@
 		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetDisclosureViewController.xib; sourceTree = "<group>"; };
 		CFEB204717FDAA2900E04563 /* TemporaryNativeFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryNativeFileStorage.cpp; sourceTree = "<group>"; };
 		CFEB204817FDAA2900E04563 /* TemporaryNativeFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryNativeFileStorage.h; sourceTree = "<group>"; };
-		CFED5A091C4F8D3200BFCB5C /* TermParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermParser.h; path = States/Terminal/TermParser.h; sourceTree = "<group>"; };
-		CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermParser.mm; path = States/Terminal/TermParser.mm; sourceTree = "<group>"; };
-		CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermScreen.cpp; path = States/Terminal/TermScreen.cpp; sourceTree = "<group>"; };
-		CFED5A0C1C4F8D3200BFCB5C /* TermScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScreen.h; path = States/Terminal/TermScreen.h; sourceTree = "<group>"; };
-		CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermScreenBuffer.cpp; path = States/Terminal/TermScreenBuffer.cpp; sourceTree = "<group>"; };
-		CFED5A0E1C4F8D3200BFCB5C /* TermScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScreenBuffer.h; path = States/Terminal/TermScreenBuffer.h; sourceTree = "<group>"; };
-		CFED5A0F1C4F8D3200BFCB5C /* TermScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScrollView.h; path = States/Terminal/TermScrollView.h; sourceTree = "<group>"; };
-		CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScrollView.mm; path = States/Terminal/TermScrollView.mm; sourceTree = "<group>"; };
-		CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermShellTask.cpp; path = States/Terminal/TermShellTask.cpp; sourceTree = "<group>"; };
-		CFED5A121C4F8D3200BFCB5C /* TermShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermShellTask.h; path = States/Terminal/TermShellTask.h; sourceTree = "<group>"; };
-		CFED5A131C4F8D3200BFCB5C /* TermSingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermSingleTask.h; path = States/Terminal/TermSingleTask.h; sourceTree = "<group>"; };
-		CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermSingleTask.mm; path = States/Terminal/TermSingleTask.mm; sourceTree = "<group>"; };
-		CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermTask.cpp; path = States/Terminal/TermTask.cpp; sourceTree = "<group>"; };
-		CFED5A161C4F8D3200BFCB5C /* TermTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermTask.h; path = States/Terminal/TermTask.h; sourceTree = "<group>"; };
-		CFED5A171C4F8D3200BFCB5C /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermView.h; path = States/Terminal/TermView.h; sourceTree = "<group>"; };
-		CFED5A181C4F8D3200BFCB5C /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermView.mm; path = States/Terminal/TermView.mm; sourceTree = "<group>"; };
-		CFED5A211C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowExternalTerminalEditorState.h; path = States/Terminal/MainWindowExternalTerminalEditorState.h; sourceTree = "<group>"; };
-		CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowExternalTerminalEditorState.mm; path = States/Terminal/MainWindowExternalTerminalEditorState.mm; sourceTree = "<group>"; };
-		CFED5A241C4F8D7200BFCB5C /* MainWindowTerminalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowTerminalState.h; path = States/Terminal/MainWindowTerminalState.h; sourceTree = "<group>"; };
-		CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowTerminalState.mm; path = States/Terminal/MainWindowTerminalState.mm; sourceTree = "<group>"; };
 		CFED5A2A1C4F914000BFCB5C /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEditorInfo.h; sourceTree = "<group>"; };
 		CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
 		CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = Files/States/Terminal/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = Files/States/Terminal/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = Files/States/Terminal/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
-		CFED5A401C50EA0100BFCB5C /* MainWindowBigFileViewState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowBigFileViewState.h; path = States/Viewer/MainWindowBigFileViewState.h; sourceTree = "<group>"; };
-		CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowBigFileViewState.mm; path = States/Viewer/MainWindowBigFileViewState.mm; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
@@ -1902,22 +1873,6 @@
 		CF0A40091B57E138002A092B /* TerminalCore */ = {
 			isa = PBXGroup;
 			children = (
-				CFED5A091C4F8D3200BFCB5C /* TermParser.h */,
-				CFED5A0A1C4F8D3200BFCB5C /* TermParser.mm */,
-				CFED5A0B1C4F8D3200BFCB5C /* TermScreen.cpp */,
-				CFED5A0C1C4F8D3200BFCB5C /* TermScreen.h */,
-				CFED5A0D1C4F8D3200BFCB5C /* TermScreenBuffer.cpp */,
-				CFED5A0E1C4F8D3200BFCB5C /* TermScreenBuffer.h */,
-				CFED5A0F1C4F8D3200BFCB5C /* TermScrollView.h */,
-				CFED5A101C4F8D3200BFCB5C /* TermScrollView.mm */,
-				CFED5A111C4F8D3200BFCB5C /* TermShellTask.cpp */,
-				CFED5A121C4F8D3200BFCB5C /* TermShellTask.h */,
-				CFED5A131C4F8D3200BFCB5C /* TermSingleTask.h */,
-				CFED5A141C4F8D3200BFCB5C /* TermSingleTask.mm */,
-				CFED5A151C4F8D3200BFCB5C /* TermTask.cpp */,
-				CFED5A161C4F8D3200BFCB5C /* TermTask.h */,
-				CFED5A171C4F8D3200BFCB5C /* TermView.h */,
-				CFED5A181C4F8D3200BFCB5C /* TermView.mm */,
 			);
 			name = TerminalCore;
 			sourceTree = "<group>";
@@ -2053,8 +2008,6 @@
 		CF396AEB173FA89A00A20C42 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
-				CFED5A401C50EA0100BFCB5C /* MainWindowBigFileViewState.h */,
-				CFED5A411C50EA0100BFCB5C /* MainWindowBigFileViewState.mm */,
 				CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */,
 				CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */,
 				CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */,
@@ -2476,8 +2429,6 @@
 				CF4E56E81D50712C00452912 /* FileMask.h */,
 				CF396AEC173FA8AF00A20C42 /* FileWindow.cpp */,
 				CF396AED173FA8AF00A20C42 /* FileWindow.h */,
-				CF9A9EF61CAAC3020094D6F7 /* GoogleAnalytics.h */,
-				CF9A9EF71CAAC3020094D6F7 /* GoogleAnalytics.mm */,
 				CFDA4CCB182A17C7006EC35C /* LSUrls.h */,
 				CFDA4CCC182A17C7006EC35C /* LSUrls.mm */,
 				CF7B20631A2771D8008F1492 /* MASAppInstalledChecker.cpp */,
@@ -2505,8 +2456,29 @@
 		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
-				CFED5A241C4F8D7200BFCB5C /* MainWindowTerminalState.h */,
-				CFED5A251C4F8D7200BFCB5C /* MainWindowTerminalState.mm */,
+				CFDAC2771DFBF9260039A104 /* MainWindowExternalTerminalEditorState.h */,
+				CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */,
+				CFDAC2791DFBF9260039A104 /* MainWindowTerminalState.h */,
+				CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */,
+				CFDAC27B1DFBF9260039A104 /* TermParser.h */,
+				CFDAC27C1DFBF9260039A104 /* TermParser.mm */,
+				CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */,
+				CFDAC27E1DFBF9260039A104 /* TermScreen.h */,
+				CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */,
+				CFDAC2801DFBF9260039A104 /* TermScreenBuffer.h */,
+				CFDAC2811DFBF9260039A104 /* TermScreenBufferTests.mm */,
+				CFDAC2821DFBF9260039A104 /* TermScreenTests.mm */,
+				CFDAC2831DFBF9260039A104 /* TermScrollView.h */,
+				CFDAC2841DFBF9260039A104 /* TermScrollView.mm */,
+				CFDAC2851DFBF9260039A104 /* TermShellTask_Tests.mm */,
+				CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */,
+				CFDAC2871DFBF9260039A104 /* TermShellTask.h */,
+				CFDAC2881DFBF9260039A104 /* TermSingleTask.h */,
+				CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */,
+				CFDAC28A1DFBF9260039A104 /* TermTask.cpp */,
+				CFDAC28B1DFBF9260039A104 /* TermTask.h */,
+				CFDAC28C1DFBF9260039A104 /* TermView.h */,
+				CFDAC28D1DFBF9260039A104 /* TermView.mm */,
 			);
 			name = TerminalMainWindowState;
 			sourceTree = "<group>";
@@ -2538,6 +2510,8 @@
 		CFB66F9D1D863E5B0017D2A0 /* Marketing */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2741DFBF6C10039A104 /* GoogleAnalytics.h */,
+				CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */,
 				CF6E44771CCCCDE9009F45B0 /* AppStoreHelper.h */,
 				CF6E44781CCCCDE9009F45B0 /* AppStoreHelper.mm */,
 				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
@@ -2558,8 +2532,6 @@
 		CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
-				CFED5A211C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.h */,
-				CFED5A221C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm */,
 			);
 			name = ExternalEditorMainWindowState;
 			sourceTree = "<group>";
@@ -3316,16 +3288,19 @@
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */,
 				CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */,
+				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
 				CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
 				CFED5A321C4F966200BFCB5C /* TermShellTask_Tests.mm in Sources */,
+				CFDAC29B1DFBF93C0039A104 /* TermShellTask_Tests.mm in Sources */,
 				CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
 				CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */,
 				CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
+				CFDAC29D1DFBF9850039A104 /* TermScreenTests.mm in Sources */,
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
 				CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */,
 				CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */,
@@ -3341,7 +3316,6 @@
 				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
 				CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
-				CF46DB7F1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
 				CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
@@ -3350,7 +3324,6 @@
 				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF6D9C701966780D0077B146 /* FileWindow.cpp in Sources */,
 				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
-				CF46DB831C856F45009E28B9 /* TermSingleTask.mm in Sources */,
 				CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF6D9BDD196678000077B146 /* Common.mm in Sources */,
@@ -3363,11 +3336,8 @@
 				CF6D9BE3196678000077B146 /* DataBlockAnalysis.mm in Sources */,
 				CFC044E01B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
-				CF46DB9D1C856FD4009E28B9 /* MainWindowTerminalState.mm in Sources */,
 				CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
-				CF46DB871C856F4C009E28B9 /* TermView.mm in Sources */,
 				CF6D9BE4196678000077B146 /* SearchInFile.cpp in Sources */,
-				CF46DB811C856F41009E28B9 /* TermShellTask.cpp in Sources */,
 				CFD6DD191D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */,
 				CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
@@ -3389,7 +3359,6 @@
 				CF0A40101B57E28C002A092B /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF3120801A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
-				CF46DB791C856F2F009E28B9 /* TermParser.mm in Sources */,
 				CF7C920E1A07458900FAE649 /* MMTabBarStyle.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CF50B75E1A1607AA00E3D96D /* QLVFSThumbnailsCache.mm in Sources */,
@@ -3413,7 +3382,6 @@
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF6D9C48196678010077B146 /* PanelAux.mm in Sources */,
-				CF46DB7B1C856F33009E28B9 /* TermScreen.cpp in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CF7B20661A2771D8008F1492 /* MASAppInstalledChecker.cpp in Sources */,
@@ -3425,10 +3393,8 @@
 				CF6D9C51196678010077B146 /* FilePanelMainSplitView.mm in Sources */,
 				CF6D9C52196678010077B146 /* MainWndGoToButton.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
-				CF46DB9B1C856FBC009E28B9 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
-				CF46DB7D1C856F38009E28B9 /* TermScreenBuffer.cpp in Sources */,
 				CF39F4491C2EB1B0009CEFBB /* NetworkConnectionsManager.mm in Sources */,
 				CF50C45F1C0ADF65009DF611 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
@@ -3446,13 +3412,11 @@
 				CF46DB971C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
 				CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
-				CF6E44531CC9DEE1009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
-				CF46DB851C856F48009E28B9 /* TermTask.cpp in Sources */,
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
@@ -3473,8 +3437,6 @@
 				CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */,
 				CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */,
 				CF4E56D81D506B9800452912 /* FindFilesSheetController.mm in Sources */,
-				CFA539631D433E2A00C562A7 /* TermView.mm in Sources */,
-				CFA539641D433E2A00C562A7 /* TermParser.mm in Sources */,
 				CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFA5396E1D433E2A00C562A7 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFA5396F1D433E2A00C562A7 /* FileCopyOperation.mm in Sources */,
@@ -3482,11 +3444,9 @@
 				CFA539711D433E2A00C562A7 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFA539761D433E2A00C562A7 /* Job.cpp in Sources */,
 				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
-				CFA539771D433E2A00C562A7 /* TermScreenBuffer.cpp in Sources */,
 				CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFA539791D433E2A00C562A7 /* MainWndGoToButton.mm in Sources */,
 				CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */,
-				CFA5397E1D433E2A00C562A7 /* TermScreen.cpp in Sources */,
 				CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
 				CFA539811D433E2A00C562A7 /* NetworkConnectionsManager.mm in Sources */,
@@ -3496,7 +3456,6 @@
 				CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFA5398A1D433E2A00C562A7 /* BriefSystemOverview.mm in Sources */,
-				CFA5398B1D433E2A00C562A7 /* TermScrollView.mm in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
@@ -3507,7 +3466,6 @@
 				CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */,
 				CF662AE41D8A4E89008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */,
-				CFA5399A1D433E2A00C562A7 /* TermSingleTask.mm in Sources */,
 				CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFA5399C1D433E2A00C562A7 /* WorkspaceIconsCache.mm in Sources */,
 				CFA5399D1D433E2A00C562A7 /* ConnectionsMenuDelegate.mm in Sources */,
@@ -3543,7 +3501,6 @@
 				CFA539CE1D433E2A00C562A7 /* FileCompressOperation.mm in Sources */,
 				CFA539CF1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFA539D11D433E2A00C562A7 /* SFTPConnectionSheetController.mm in Sources */,
-				CFA539D21D433E2A00C562A7 /* GoogleAnalytics.mm in Sources */,
 				CFA539D51D433E2A00C562A7 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFA539D61D433E2A00C562A7 /* OperationsSummaryViewController.mm in Sources */,
@@ -3557,15 +3514,12 @@
 				CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CFA539E41D433E2A00C562A7 /* FileCompressOperationJob.cpp in Sources */,
 				CFA539E81D433E2A00C562A7 /* DataBlockAnalysis.mm in Sources */,
-				CFA539EA1D433E2A00C562A7 /* TermShellTask.cpp in Sources */,
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
-				CFA539EB1D433E2A00C562A7 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */,
 				CFA539ED1D433E2A00C562A7 /* SearchInFile.cpp in Sources */,
 				CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */,
 				CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CFA539F21D433E2A00C562A7 /* MainWindowTerminalState.mm in Sources */,
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
 				CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */,
@@ -3586,7 +3540,6 @@
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CFA53A0E1D433E2A00C562A7 /* TrialWindowController.mm in Sources */,
-				CFA53A111D433E2A00C562A7 /* TermTask.cpp in Sources */,
 				CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */,
 				CFA53A141D433E2A00C562A7 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
@@ -3610,30 +3563,30 @@
 				CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
-				CFED5A201C4F8D3200BFCB5C /* TermView.mm in Sources */,
+				CFDAC28F1DFBF9260039A104 /* MainWindowTerminalState.mm in Sources */,
 				CFDAC2361DFBDE560039A104 /* Application.mm in Sources */,
-				CFED5A191C4F8D3200BFCB5C /* TermParser.mm in Sources */,
+				CFDAC2761DFBF6C10039A104 /* GoogleAnalytics.mm in Sources */,
 				CF56C2CC1DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */,
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
+				CFDAC2951DFBF9260039A104 /* TermScrollView.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF56BEFE1D5C3CBB00A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */,
 				CF7D135C1BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CFDAC29A1DFBF9260039A104 /* TermView.mm in Sources */,
 				CF9069761BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CFDAC2311DFBDBCB0039A104 /* Config.mm in Sources */,
 				CF7D13941BF5E3A8001F53FD /* GenericOperationView.mm in Sources */,
 				CFC044DC1B2F2AB400969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */,
 				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
-				CFED5A1B1C4F8D3200BFCB5C /* TermScreenBuffer.cpp in Sources */,
 				CFD6DD251D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF8B09CD16ED07DF0013B6A8 /* MainWndGoToButton.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFDAC25C1DFBF0B30039A104 /* PanelController+DelayedSelection.mm in Sources */,
 				CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */,
-				CFED5A1A1C4F8D3200BFCB5C /* TermScreen.cpp in Sources */,
 				CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */,
@@ -3647,7 +3600,6 @@
 				CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */,
 				CF27415418046A6E006D6687 /* BriefSystemOverview.mm in Sources */,
 				CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */,
-				CFED5A1C1C4F8D3200BFCB5C /* TermScrollView.mm in Sources */,
 				CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
@@ -3655,19 +3607,21 @@
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069851BB54035000C3CBB /* Job.cpp in Sources */,
+				CFDAC2921DFBF9260039A104 /* TermScreenBuffer.cpp in Sources */,
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
 				CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFDAC2181DFBC2430039A104 /* rapidjson.cpp in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
-				CFED5A1E1C4F8D3200BFCB5C /* TermSingleTask.mm in Sources */,
 				CF9A7FF91DE1914100DEDF0B /* PanelDataSortMode.mm in Sources */,
 				CF14BE181931AD40008DDF6A /* WorkspaceIconsCache.mm in Sources */,
 				CF31207F1A4FFAAA0062185A /* ConnectionsMenuDelegate.mm in Sources */,
 				CFDAC21E1DFBC9080039A104 /* SandboxManager.mm in Sources */,
 				CFD6DD171D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
+				CFDAC2981DFBF9260039A104 /* TermSingleTask.mm in Sources */,
 				CFDA4CCD182A17C7006EC35C /* LSUrls.mm in Sources */,
 				CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFDAC28E1DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFDAC25D1DFBF0B30039A104 /* PanelController+DragAndDrop.mm in Sources */,
 				CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */,
@@ -3692,6 +3646,7 @@
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF27414C18000832006D6687 /* FilePanelMainSplitView.mm in Sources */,
+				CFDAC2911DFBF9260039A104 /* TermScreen.cpp in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
 				CF0519DC17E9C98A00590C74 /* PanelAux.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
@@ -3710,7 +3665,6 @@
 				CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */,
 				CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
-				CF6E44541CC9DEE2009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CFE3E84C19FFC0C9009ADE5E /* FilePanelsTabbedHolder.mm in Sources */,
 				CF876D291D51E04A009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF7D13951BF5E3A8001F53FD /* OperationsSummaryViewController.mm in Sources */,
@@ -3727,15 +3681,14 @@
 				CFA5C3CE175799CF00DFE2E4 /* DataBlockAnalysis.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
 				CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */,
-				CFED5A1D1C4F8D3200BFCB5C /* TermShellTask.cpp in Sources */,
+				CFDAC2901DFBF9260039A104 /* TermParser.mm in Sources */,
 				CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */,
-				CFED5A231C4F8D5F00BFCB5C /* MainWindowExternalTerminalEditorState.mm in Sources */,
+				CFDAC2971DFBF9260039A104 /* TermShellTask.cpp in Sources */,
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */,
 				CF07DE3F1769754400757DE1 /* SearchInFile.cpp in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CFED5A261C4F8D7200BFCB5C /* MainWindowTerminalState.mm in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
@@ -3764,9 +3717,9 @@
 				CF7B206D1A277A27008F1492 /* TrialWindowController.mm in Sources */,
 				CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */,
 				CFDAC2141DFBBD110039A104 /* PanelView.mm in Sources */,
+				CFDAC2991DFBF9260039A104 /* TermTask.cpp in Sources */,
 				CFDAC2271DFBD6910039A104 /* PanelData.mm in Sources */,
 				CF876D4C1D530F46009C0CCE /* InternalViewerController.mm in Sources */,
-				CFED5A1F1C4F8D3200BFCB5C /* TermTask.cpp in Sources */,
 				CFDAC25E1DFBF0B30039A104 /* PanelController+Menu.mm in Sources */,
 				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
@@ -3785,13 +3738,11 @@
 				CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */,
 				CF4E56D41D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */,
-				CF46DB7E1C856F3C009E28B9 /* TermScrollView.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CFF6F2591A13567C00011177 /* MainWndGoToButton.mm in Sources */,
-				CF46DB821C856F44009E28B9 /* TermSingleTask.mm in Sources */,
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
@@ -3800,10 +3751,7 @@
 				CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF50C4041C0ADE18009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
 				CFF6F2721A13567C00011177 /* QLThumbnailsCache.mm in Sources */,
-				CF46DB9C1C856FD3009E28B9 /* MainWindowTerminalState.mm in Sources */,
-				CF46DB861C856F4C009E28B9 /* TermView.mm in Sources */,
 				CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */,
-				CF46DB801C856F40009E28B9 /* TermShellTask.cpp in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CFC044E11B2F2AC300969A5E /* SimpleComboBoxPersistentDataSource.mm in Sources */,
@@ -3832,7 +3780,6 @@
 				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
-				CF46DB731C856F2F009E28B9 /* TermParser.mm in Sources */,
 				CFF6F29F1A13567C00011177 /* LSUrls.mm in Sources */,
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CFF6F2AC1A13567C00011177 /* OrthodoxMonospace.mm in Sources */,
@@ -3859,7 +3806,6 @@
 				CFF6F2E31A13567C00011177 /* Common.mm in Sources */,
 				CFF6F2E81A13567C00011177 /* ProcessSheetController.mm in Sources */,
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
-				CF46DB7A1C856F33009E28B9 /* TermScreen.cpp in Sources */,
 				CFF6F2EC1A13567C00011177 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFF6F2F01A13567C00011177 /* TemporaryNativeFileStorage.cpp in Sources */,
@@ -3869,11 +3815,9 @@
 				CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */,
-				CF46DB9A1C856FBB009E28B9 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFF6F2FD1A13567C00011177 /* DataBlockAnalysis.mm in Sources */,
 				CFF6F3051A13567C00011177 /* SearchInFile.cpp in Sources */,
-				CF46DB7C1C856F37009E28B9 /* TermScreenBuffer.cpp in Sources */,
 				CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF39F4481C2EB1AF009CEFBB /* NetworkConnectionsManager.mm in Sources */,
@@ -3891,13 +3835,11 @@
 				CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CF46DB961C856F86009E28B9 /* AppDelegate+Migration.mm in Sources */,
-				CF6E44521CC9DEE0009F45B0 /* GoogleAnalytics.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CF876D3D1D51E0AF009C0CCE /* BigFileViewText.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
-				CF46DB841C856F48009E28B9 /* TermTask.cpp in Sources */,
 				CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */,
 				CF876D531D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */,

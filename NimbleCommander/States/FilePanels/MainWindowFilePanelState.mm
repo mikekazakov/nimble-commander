@@ -30,9 +30,9 @@
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "../../../Files/FilePanelOverlappedTerminal.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include "../../../Files/GoogleAnalytics.h"
-#include <NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h>
-#include <NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include "MainWindowFilePanelsStateToolbarDelegate.h"
+#include "AskingForRatingOverlayView.h"
 #include <NimbleCommander/Core/FeedbackManager.h>
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";

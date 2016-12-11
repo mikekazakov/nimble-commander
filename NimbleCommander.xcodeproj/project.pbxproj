@@ -71,8 +71,6 @@
 		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
-		CF46DB981C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
-		CF46DB991C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
@@ -487,7 +485,6 @@
 		CFA539E21D433E2A00C562A7 /* OperationStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13891BF5E38B001F53FD /* OperationStats.mm */; };
 		CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CFA539E41D433E2A00C562A7 /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
-		CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
 		CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -745,6 +742,7 @@
 		CFDAC2F81DFD17520039A104 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F71DFD17520039A104 /* Common.mm */; };
 		CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CFDAC2FD1DFD1C120039A104 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDAC2FB1DFD1C120039A104 /* TrialWindowController.xib */; };
+		CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
@@ -756,7 +754,6 @@
 		CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
 		CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
-		CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */; };
 		CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */; };
 		CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */; };
 		CFED5A321C4F966200BFCB5C /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */; };
@@ -1222,8 +1219,8 @@
 		CF9A7FF71DE1914100DEDF0B /* PanelDataSortMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSortMode.h; path = NimbleCommander/States/FilePanels/PanelDataSortMode.h; sourceTree = SOURCE_ROOT; };
 		CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSortMode.mm; path = NimbleCommander/States/FilePanels/PanelDataSortMode.mm; sourceTree = SOURCE_ROOT; };
 		CF9A80001DE19F7F00DEDF0B /* PanelViewHeaderSortPopup.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelViewHeaderSortPopup.xib; path = NimbleCommander/States/FilePanels/PanelViewHeaderSortPopup.xib; sourceTree = SOURCE_ROOT; };
-		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoToFolderSheetController.h; sourceTree = "<group>"; };
-		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolderSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.h; sourceTree = "<group>"; };
+		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = GoToFolderSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
 		CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
 		CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
@@ -1465,6 +1462,8 @@
 		CFDAC2F91DFD1C120039A104 /* TrialWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrialWindowController.h; path = NimbleCommander/GeneralUI/TrialWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TrialWindowController.mm; path = NimbleCommander/GeneralUI/TrialWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2FB1DFD1C120039A104 /* TrialWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrialWindowController.xib; path = NimbleCommander/GeneralUI/TrialWindowController.xib; sourceTree = SOURCE_ROOT; };
+		CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfo.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfo.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalEditorInfo.mm; path = NimbleCommander/States/FilePanels/ExternalEditorInfo.mm; sourceTree = SOURCE_ROOT; };
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
@@ -1475,8 +1474,6 @@
 		CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = 3rd_party/DisclosureViewController/DisclosureViewController.h; sourceTree = "<group>"; };
 		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
 		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetDisclosureViewController.xib; sourceTree = "<group>"; };
-		CFED5A2A1C4F914000BFCB5C /* ExternalEditorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalEditorInfo.h; sourceTree = "<group>"; };
-		CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalEditorInfo.mm; sourceTree = "<group>"; };
 		CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = Files/States/Terminal/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = Files/States/Terminal/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = Files/States/Terminal/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -1488,8 +1485,8 @@
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Pro.entitlements"; path = "Resource/Files-Pro.entitlements"; sourceTree = "<group>"; };
 		CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskingForRatingOverlayView.h; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h; sourceTree = SOURCE_ROOT; };
 		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskingForRatingOverlayView.mm; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.mm; sourceTree = SOURCE_ROOT; };
-		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
-		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
+		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
+		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
 		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = Operations/OperationsSummaryViewController.h; sourceTree = "<group>"; };
 		CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-CI-Info.plist"; path = "Resource/NimbleCommander-CI-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1788,6 +1785,8 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
+				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
 				CFDAC2BF1DFD0DE40039A104 /* PanelAux.h */,
 				CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */,
 				CFDAC2C11DFD0DE40039A104 /* SharingService.h */,
@@ -1835,8 +1834,6 @@
 				CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */,
 				CF9A7FF71DE1914100DEDF0B /* PanelDataSortMode.h */,
 				CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */,
-				CFED5A2A1C4F914000BFCB5C /* ExternalEditorInfo.h */,
-				CFED5A2B1C4F914000BFCB5C /* ExternalEditorInfo.mm */,
 				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
 				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
@@ -2196,13 +2193,6 @@
 			name = States;
 			sourceTree = "<group>";
 		};
-		CF8B09CA16ECEE9C0013B6A8 /* MainWindow */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = MainWindow;
-			sourceTree = "<group>";
-		};
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2548,7 +2538,6 @@
 				CF876D161D51DFD0009C0CCE /* Bootstrap */,
 				B5A23000171E81AA00D9C1A6 /* Controls */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
-				CF8B09CA16ECEE9C0013B6A8 /* MainWindow */,
 				B528011916FCF347004E260D /* Operations */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
 				CF876D171D51E00B009C0CCE /* States */,
@@ -3282,7 +3271,6 @@
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
-				CF46DB991C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */,
 				CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */,
@@ -3373,7 +3361,6 @@
 				CFA539E41D433E2A00C562A7 /* FileCompressOperationJob.cpp in Sources */,
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
-				CFA539EC1D433E2A00C562A7 /* ExternalEditorInfo.mm in Sources */,
 				CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */,
 				CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
@@ -3465,6 +3452,7 @@
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
 				CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFDAC2181DFBC2430039A104 /* rapidjson.cpp in Sources */,
+				CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF9A7FF91DE1914100DEDF0B /* PanelDataSortMode.mm in Sources */,
@@ -3535,7 +3523,6 @@
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
 				CFDAC2D81DFD11970039A104 /* LSUrls.mm in Sources */,
-				CFED5A2C1C4F914000BFCB5C /* ExternalEditorInfo.mm in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,
 				CFDAC2F31DFD16550039A104 /* AppDelegate+Migration.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -3649,7 +3636,6 @@
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
-				CF46DB981C856F9F009E28B9 /* ExternalEditorInfo.mm in Sources */,
 				CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
@@ -3868,6 +3854,7 @@
 				CF8D0D0B1D964C9800ADFF14 /* ru */,
 			);
 			name = SpotlightSearchPopupViewController.xib;
+			path = ../NimbleCommander/States/FilePanels/Views;
 			sourceTree = "<group>";
 		};
 		CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */ = {
@@ -3950,6 +3937,7 @@
 				CFCCFC161A5E891600313845 /* ru */,
 			);
 			name = MainMenu.xib;
+			path = ../NimbleCommander/Bootstrap;
 			sourceTree = "<group>";
 		};
 		CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */ = {
@@ -3986,6 +3974,7 @@
 				CFCCFC121A5E891400313845 /* ru */,
 			);
 			name = GoToFolderSheetController.xib;
+			path = ../NimbleCommander/States/FilePanels/Views;
 			sourceTree = "<group>";
 		};
 		CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */ = {

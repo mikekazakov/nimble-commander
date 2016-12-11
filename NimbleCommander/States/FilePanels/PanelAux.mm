@@ -20,7 +20,7 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include "PanelAux.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include "../../../Files/ExternalEditorInfo.h"
+#include "ExternalEditorInfo.h"
 
 static const auto g_ConfigArchivesExtensionsWhieList    = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";

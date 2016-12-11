@@ -27,10 +27,10 @@
 #include "../../../Files/Operations/Attrs/FileSysAttrChangeOperation.h"
 #include "../../../Files/Operations/Attrs/FileSysEntryAttrSheetController.h"
 #include "../../../Files/Operations/Attrs/FileSysAttrChangeOperationCommand.h"
-#include "../../../Files/ExternalEditorInfo.h"
+#include "ExternalEditorInfo.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
-#include "../../../Files/GoToFolderSheetController.h"
+#include "Views/GoToFolderSheetController.h"
 #include "MainWindowFilePanelState.h"
 #include "../../../Files/DetailedVolumeInformationSheetController.h"
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
@@ -43,7 +43,7 @@
 //#include "PanelViewPresentation.h"
 #include "../../../Files/CalculateChecksumSheetController.h"
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
-#include "../../../Files/SpotlightSearchPopupViewController.h"
+#include "Views/SpotlightSearchPopupViewController.h"
 #include "PanelAux.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";

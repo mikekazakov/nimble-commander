@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/ExternalEditorInfo.h"
+#include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include "PreferencesWindowExternalEditorsTab.h"
 

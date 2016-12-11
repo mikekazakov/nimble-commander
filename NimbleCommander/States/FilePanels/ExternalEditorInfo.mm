@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <NimbleCommander/States/Terminal/TermSingleTask.h>
 #include <NimbleCommander/Core/FileMask.h>
 #include "ExternalEditorInfo.h"

@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
 
 @interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>
 

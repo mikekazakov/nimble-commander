@@ -7,8 +7,8 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "FTPConnectionSheetController.h"
-#include "NetworkConnectionsManager.h"
 
 @implementation FTPConnectionSheetController
 {

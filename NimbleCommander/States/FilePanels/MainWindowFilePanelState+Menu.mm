@@ -20,7 +20,7 @@
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include "../../../Files/PanelAux.h"
+#include "PanelAux.h"
 #include "../../../Files/FilePanelMainSplitView.h"
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>

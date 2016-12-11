@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <stdlib.h>
-#import "DataBlockAnalysis.h"
+#include <stdlib.h>
+#include <memory.h>
+#include "../include/Utility/DataBlockAnalysis.h"
 
 #ifndef Endian16_Swap
 #define Endian16_Swap(value) \

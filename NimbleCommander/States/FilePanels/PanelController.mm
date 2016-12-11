@@ -14,16 +14,16 @@
 #include "../MainWindowController.h"
 #include "../../../Files/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
-#include "../../../Files/PanelAux.h"
-#include "../../../Files/SharingService.h"
+#include "PanelAux.h"
+#include "SharingService.h"
 #include "../../../Files/BriefSystemOverview.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "../../Core/SandboxManager.h"
-#include "../../../Files/ExtensionLowercaseComparison.h"
-#include "../../Bootstrap/Config.h"
+#include <Utility/ExtensionLowercaseComparison.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "PanelDataPersistency.h"
 #include "../../../Files/AskForPasswordWindowController.h"
-#include "../../Bootstrap/ActivationManager.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";

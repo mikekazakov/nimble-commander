@@ -42,9 +42,9 @@
 #include "../../../Files/SelectionWithMaskPopupViewController.h"
 //#include "PanelViewPresentation.h"
 #include "../../../Files/CalculateChecksumSheetController.h"
-#include "../../../Files/ConnectionsMenuDelegate.h"
+#include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include "../../../Files/SpotlightSearchPopupViewController.h"
-#include "../../../Files/PanelAux.h"
+#include "PanelAux.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";

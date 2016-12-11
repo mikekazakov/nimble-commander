@@ -8,7 +8,7 @@
 
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
-#include "../../Files/DataBlockAnalysis.h"
+#include <Utility/DataBlockAnalysis.h>
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/Config.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>

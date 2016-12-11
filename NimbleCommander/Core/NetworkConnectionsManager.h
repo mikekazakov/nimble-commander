@@ -3,7 +3,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 #include <VFS/VFS.h>
-#include "../NimbleCommander/Bootstrap/Config.h"
+#include <NimbleCommander/Bootstrap/Config.h>
 
 class NetworkConnectionsManager
 {

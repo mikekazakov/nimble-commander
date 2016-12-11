@@ -11,11 +11,11 @@
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Core/Caches/QLThumbnailsCache.h>
+#include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
+#include <NimbleCommander/Core/Caches/WorkspaceIconsCache.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "IconsGenerator2.h"
-#include "../../../Files/QLThumbnailsCache.h"
-#include "../../../Files/QLVFSThumbnailsCache.h"
-#include "../../../Files/WorkspaceIconsCache.h"
-#include "../../Bootstrap/ActivationManager.h"
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones

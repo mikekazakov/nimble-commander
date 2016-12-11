@@ -4,9 +4,9 @@
 #include <copyfile.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "../../Files/MASAppInstalledChecker.h"
+#include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include "AppDelegateCPP.h"
-#include "../../Files/AppStoreHelper.h"
+#include <NimbleCommander/Core/AppStoreHelper.h>
 #include "ActivationManager.h"
 
 // trial non-mas version setup

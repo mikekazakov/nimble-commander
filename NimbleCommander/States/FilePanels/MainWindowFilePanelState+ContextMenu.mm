@@ -9,8 +9,8 @@
 #include <sys/stat.h>
 #include <Sparkle/Sparkle.h>
 #include "MainWindowFilePanelState+ContextMenu.h"
-#include "../../../Files/PanelAux.h"
-#include "../../../Files/LSUrls.h"
+#include "PanelAux.h"
+#include <NimbleCommander/Core/LSUrls.h>
 #include "../../../Files/Operations/Delete/FileDeletionOperation.h"
 #include "PanelController.h"
 #include "../../../Files/Operations/Compress/FileCompressOperation.h"

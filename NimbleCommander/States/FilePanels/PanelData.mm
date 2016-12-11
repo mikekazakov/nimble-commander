@@ -1,6 +1,6 @@
 #include <Habanero/algo.h>
+#include <Utility/ExtensionLowercaseComparison.h>
 #include "../../Core/FileMask.h"
-#include "../../../Files/ExtensionLowercaseComparison.h"
 #include "PanelData.h"
 
 static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);

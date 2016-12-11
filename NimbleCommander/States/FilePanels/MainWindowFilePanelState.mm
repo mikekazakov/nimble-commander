@@ -25,7 +25,7 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include "../../../Files/FilePanelMainSplitView.h"
 #include "../../../Files/BriefSystemOverview.h"
-#include "../../../Files/LSUrls.h"
+#include <NimbleCommander/Core/LSUrls.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "../../../Files/FilePanelOverlappedTerminal.h"

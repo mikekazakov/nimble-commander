@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "vfs/VFS.h"
+#include <VFS/VFS.h>
 
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 

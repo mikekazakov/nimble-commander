@@ -16,7 +16,7 @@
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include "../../../Files/PanelAux.h"
+#include "PanelAux.h"
 
 static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];
 static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;

@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "NetworkConnectionsManager.h"
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 
 @interface SFTPConnectionSheetController : SheetController
 @property (strong) NSString *title;

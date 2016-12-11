@@ -60,6 +60,10 @@
 		CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */; };
 		CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */; };
 		CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
+		CFDAC2B81DFD0BDC0039A104 /* DataBlockAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */; };
+		CFDAC2BA1DFD0BE30039A104 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */; };
+		CFDAC2BC1DFD0C980039A104 /* ExtensionLowercaseComparison.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */; };
+		CFDAC2BE1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,6 +121,10 @@
 		CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetWithHotkeys.mm; path = source/SheetWithHotkeys.mm; sourceTree = "<group>"; };
 		CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkingCaret.h; path = include/Utility/BlinkingCaret.h; sourceTree = "<group>"; };
 		CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BlinkingCaret.mm; path = source/BlinkingCaret.mm; sourceTree = "<group>"; };
+		CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataBlockAnalysis.h; path = include/Utility/DataBlockAnalysis.h; sourceTree = "<group>"; };
+		CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DataBlockAnalysis.mm; path = source/DataBlockAnalysis.mm; sourceTree = "<group>"; };
+		CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionLowercaseComparison.h; path = include/Utility/ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
+		CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionLowercaseComparison.cpp; path = source/ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +158,8 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
+				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
@@ -183,6 +193,8 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
+				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
@@ -222,6 +234,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
+				CFDAC2BC1DFD0C980039A104 /* ExtensionLowercaseComparison.h in Headers */,
 				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
 				CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */,
 				CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */,
@@ -237,6 +250,7 @@
 				CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,
+				CFDAC2B81DFD0BDC0039A104 /* DataBlockAnalysis.h in Headers */,
 				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
 				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
 				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
@@ -307,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */,
+				CFDAC2BE1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */,
 				CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */,
 				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
@@ -323,6 +338,7 @@
 				CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */,
+				CFDAC2BA1DFD0BE30039A104 /* DataBlockAnalysis.mm in Sources */,
 				CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */,
 				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
 				CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */,

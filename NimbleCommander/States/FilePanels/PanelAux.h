@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "vfs/VFS.h"
-#include "Operations/Copy/Options.h"
+#include <VFS/VFS.h>
+#include "../../../Files/Operations/Copy/Options.h"
 
 @class PanelController;
 @class ExternalEditorInfo;

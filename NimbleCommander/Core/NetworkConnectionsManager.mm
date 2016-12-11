@@ -4,9 +4,9 @@
 #include <Utility/KeychainServices.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include "../NimbleCommander/Bootstrap/AppDelegate.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "NetworkConnectionsManager.h"
-#include "AskForPasswordWindowController.h"
+#include "../../Files/AskForPasswordWindowController.h"
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";

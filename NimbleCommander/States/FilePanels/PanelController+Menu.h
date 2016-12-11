@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../../Files/NetworkConnectionsManager.h"
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "PanelController.h"
 
 @interface PanelController (Menu)

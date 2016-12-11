@@ -11,16 +11,16 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include <Utility/PathManip.h>
-#include "../../Viewer/BigFileViewSheet.h"
-#include "../../Viewer/InternalViewerWindowController.h"
-#include "../../Core/SearchForFiles.h"
+#include <NimbleCommander/Viewer/BigFileViewSheet.h>
+#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
+#include <NimbleCommander/Core/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "../../Files/PanelAux.h"
-#include "../../Bootstrap/Config.h"
-#include "../../Bootstrap/ActivationManager.h"
-#include "../../Bootstrap/AppDelegate.h"
-#include "../../Core/VFSInstanceManager.h"
+#include <NimbleCommander/States/FilePanels/PanelAux.h>
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "FindFilesSheetController.h"
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";

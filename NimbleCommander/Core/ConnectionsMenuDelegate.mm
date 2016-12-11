@@ -7,7 +7,7 @@
 //
 
 #include "ConnectionsMenuDelegate.h"
-#include "../NimbleCommander/States/FilePanels/PanelController.h"
+#include <NimbleCommander/States/FilePanels/PanelController.h>
 
 @interface ConnectionsMenuDelegateInfoWrapper()
 - (id) initWithConnection:(const NetworkConnectionsManager::Connection &)_conn;

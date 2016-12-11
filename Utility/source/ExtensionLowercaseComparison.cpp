@@ -1,5 +1,10 @@
+#include <experimental/string_view>
+#include <sys/param.h>
 #include <Habanero/CFStackAllocator.h>
-#include "ExtensionLowercaseComparison.h"
+#include "../include/Utility/ExtensionLowercaseComparison.h"
+
+using namespace std;
+using namespace std::experimental;
 
 ExtensionLowercaseComparison& ExtensionLowercaseComparison::Instance() noexcept
 {

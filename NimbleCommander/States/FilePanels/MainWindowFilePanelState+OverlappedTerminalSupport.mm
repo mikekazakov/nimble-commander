@@ -13,7 +13,7 @@
 #include "../../../Files/FilePanelMainSplitView.h"
 #include "PanelView.h"
 #include "PanelController.h"
-#include "../../../Files/PanelAux.h"
+#include "PanelAux.h"
 
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 

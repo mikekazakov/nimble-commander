@@ -1,8 +1,8 @@
 #include <Habanero/CFDefaultsCPP.h>
-#include "../NimbleCommander/GeneralUI/ProFeaturesWindowController.h"
-#include "../NimbleCommander/Core/FeedbackManager.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "GoogleAnalytics.h"
+#include <NimbleCommander/GeneralUI/ProFeaturesWindowController.h>
+#include <NimbleCommander/Core/FeedbackManager.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "AppStoreHelper.h"
 
 static const auto g_ProFeaturesInAppID  = @"com.magnumbytes.nimblecommander.paid_features";

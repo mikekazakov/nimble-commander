@@ -33,7 +33,7 @@
 #include "../Core/ActionsShortcutsManager.h"
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "../Core/SandboxManager.h"
-#include "../../Files/MASAppInstalledChecker.h"
+#include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include "../../Files/TrialWindowController.h"
 #include "Config.h"
 #include "../../Files/AppDelegate+Migration.h"
@@ -45,7 +45,7 @@
 #include "../GeneralUI/VFSListWindowController.h"
 #include "../Core/FeedbackManager.h"
 
-#include "../../Files/AppStoreHelper.h"
+#include <NimbleCommander/Core/AppStoreHelper.h>
 
 static SUUpdater *g_Sparkle = nil;
 

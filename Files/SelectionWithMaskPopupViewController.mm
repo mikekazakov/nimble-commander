@@ -7,8 +7,8 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SelectionWithMaskPopupViewController.h"
-#include "SimpleComboBoxPersistentDataSource.h"
 
 static const auto                       g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
 static unordered_map<void*, NSString*>  g_InitialMask;

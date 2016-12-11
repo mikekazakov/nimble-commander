@@ -7,7 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "SimpleComboBoxPersistentDataSource.h"
+#include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SpotlightSearchPopupViewController.h"
 
 static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.queries";

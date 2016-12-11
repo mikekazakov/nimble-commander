@@ -7,8 +7,8 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "PanelDataPersistency.h"
-#include "../../../Files/NetworkConnectionsManager.h"
 
 //type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
 // perhaps "archive" in the future, when more of them will come and some dedicated "ArchiveManager" will appear

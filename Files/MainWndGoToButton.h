@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "vfs/VFS.h"
-#include "NetworkConnectionsManager.h"
+#include <VFS/VFS.h>
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 
 @class MainWindowFilePanelState;
 

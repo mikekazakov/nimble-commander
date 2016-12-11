@@ -9,18 +9,18 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "Operations/Copy/FileCopyOperation.h"
-#include "Operations/OperationsController.h"
+#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include "../../../Files/Operations/OperationsController.h"
 #include <VFS/Native.h>
+#include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
-#include "ExtensionLowercaseComparison.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include "../NimbleCommander/States/MainWindowController.h"
+#include <NimbleCommander/States/MainWindowController.h>
 #include "PanelAux.h"
-#include "../NimbleCommander/Bootstrap/ActivationManager.h"
-#include "ExternalEditorInfo.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "../../../Files/ExternalEditorInfo.h"
 
 static const auto g_ConfigArchivesExtensionsWhieList    = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";

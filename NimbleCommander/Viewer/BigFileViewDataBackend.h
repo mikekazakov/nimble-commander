@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../Files/FileWindow.h"
+#include <NimbleCommander/Core/FileWindow.h>
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

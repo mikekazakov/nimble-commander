@@ -7,11 +7,11 @@
 //
 
 #include "FilePanelMainSplitView.h"
-#include "../NimbleCommander/States/FilePanels/PanelView.h"
+#include <NimbleCommander/States/FilePanels/PanelView.h>
 //#include "ModernPanelViewPresentation.h"
 //#include "ClassicPanelViewPresentation.h"
 #include "FilePanelsTabbedHolder.h"
-#include "../NimbleCommander/Core/ActionsShortcutsManager.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;

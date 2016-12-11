@@ -5,7 +5,7 @@
 #include "MainWindowFilePanelState+TabsSupport.h"
 #include "PanelView.h"
 #include "PanelController.h"
-#include "../../../Files/FilePanelMainSplitView.h"
+#include "Views/FilePanelMainSplitView.h"
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)

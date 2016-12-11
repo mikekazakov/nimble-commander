@@ -1,6 +1,6 @@
 #include "MainWindowFilePanelState.h"
 #include "../../../Files/Operations/OperationsSummaryViewController.h"
-#include "../../../Files/MainWndGoToButton.h"
+#include "Views/MainWndGoToButton.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 

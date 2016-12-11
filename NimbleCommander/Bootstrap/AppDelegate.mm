@@ -36,7 +36,7 @@
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include "../../Files/TrialWindowController.h"
 #include "Config.h"
-#include "../../Files/AppDelegate+Migration.h"
+#include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../States/FilePanels/ExternalToolsSupport.h"
@@ -190,8 +190,6 @@ static AppDelegate *g_Me = nil;
         
 //        [self reloadSkinSetting];
 //        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
-        
-        [self migrateViewerHistory_1_1_3_to_1_1_5];        
     }
     return self;
 }

@@ -1,6 +1,6 @@
 #import "MMTabBarStyle.h"
-#import "3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
-#import "3rd_party/MMTabBarView/MMTabBarView/NSView+MMTabBarViewExtensions.h"
+#import "../../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
+#import "../../../../Files/3rd_party/MMTabBarView/MMTabBarView/NSView+MMTabBarViewExtensions.h"
 
 static CGColorRef DividerColor(bool _wnd_active)
 {

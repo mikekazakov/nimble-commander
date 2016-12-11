@@ -9,8 +9,8 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
-#include "../../../Files/FilePanelOverlappedTerminal.h"
-#include "../../../Files/FilePanelMainSplitView.h"
+#include "Views/FilePanelOverlappedTerminal.h"
+#include "Views/FilePanelMainSplitView.h"
 #include "PanelView.h"
 #include "PanelController.h"
 #include "PanelAux.h"

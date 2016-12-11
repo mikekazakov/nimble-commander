@@ -1,7 +1,7 @@
 #include <VFS/VFS.h>
 #include "../../Files/ProcessSheetController.h"
-#include "../Bootstrap/Config.h"
-#include "../../Files/SearchInFile.h"
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>
 #include "InternalViewerHistory.h"
 #include "InternalViewerController.h"

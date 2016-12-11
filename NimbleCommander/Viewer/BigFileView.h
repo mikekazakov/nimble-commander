@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/Encodings.h>
-#include "../../Files/FileWindow.h"
+#include <NimbleCommander/Core/FileWindow.h>
 #include <NimbleCommander/Core/OrthodoxMonospace.h>
 
 enum class BigFileViewModes : int

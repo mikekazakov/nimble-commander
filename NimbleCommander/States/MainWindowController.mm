@@ -26,7 +26,6 @@
 #include "MainWindowController.h"
 #include "MainWindow.h"
 #include "../Bootstrap/AppDelegate.h"
-#include "../../Files/QuickPreview.h"
 #include "FilePanels/MainWindowFilePanelState.h"
 #include "FilePanels/PanelController.h"
 #include "../Core/ActionsShortcutsManager.h"

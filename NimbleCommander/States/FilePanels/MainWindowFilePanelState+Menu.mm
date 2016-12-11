@@ -21,7 +21,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include "PanelAux.h"
-#include "../../../Files/FilePanelMainSplitView.h"
+#include "Views/FilePanelMainSplitView.h"
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>

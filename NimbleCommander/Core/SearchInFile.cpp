@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "Utility/Encodings.h"
+#include <Utility/Encodings.h>
 #include "FileWindow.h"
 #include "SearchInFile.h"
 

@@ -7,8 +7,8 @@
 //
 
 #include <sys/stat.h>
-#include "../../Files/FileWindow.h"
-#include "../../Files/SearchInFile.h"
+#include "FileWindow.h"
+#include "SearchInFile.h"
 #include "SearchForFiles.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)

@@ -12,13 +12,13 @@
 #include "../../../Files/Operations/Copy/FileCopyOperation.h"
 #include "PanelController.h"
 #include "../MainWindowController.h"
-#include "../../../Files/QuickPreview.h"
+#include "Views/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
 #include "PanelAux.h"
 #include "SharingService.h"
-#include "../../../Files/BriefSystemOverview.h"
-#include "../../Core/ActionsShortcutsManager.h"
-#include "../../Core/SandboxManager.h"
+#include "Views/BriefSystemOverview.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Core/SandboxManager.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "PanelDataPersistency.h"

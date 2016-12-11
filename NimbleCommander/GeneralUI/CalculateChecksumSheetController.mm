@@ -8,9 +8,9 @@
 
 #include <Habanero/Hash.h>
 #include <Habanero/DispatchQueue.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "CalculateChecksumSheetController.h"
-#include "../NimbleCommander/Bootstrap/Config.h"
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static string g_SumsFilename = "checksums.txt";

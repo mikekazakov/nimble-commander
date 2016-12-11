@@ -1,5 +1,5 @@
 #include <VFS/VFS.h>
-#include "../../Files/ProcessSheetController.h"
+#include <NimbleCommander/GeneralUI/ProcessSheetController.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>

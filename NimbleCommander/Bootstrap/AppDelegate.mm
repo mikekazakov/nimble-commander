@@ -34,7 +34,7 @@
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "../Core/SandboxManager.h"
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
-#include "../../Files/TrialWindowController.h"
+#include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"

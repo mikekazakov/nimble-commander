@@ -22,7 +22,7 @@
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "PanelDataPersistency.h"
-#include "../../../Files/AskForPasswordWindowController.h"
+#include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";

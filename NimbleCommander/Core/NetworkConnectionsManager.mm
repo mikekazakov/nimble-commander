@@ -6,7 +6,7 @@
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "NetworkConnectionsManager.h"
-#include "../../Files/AskForPasswordWindowController.h"
+#include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";

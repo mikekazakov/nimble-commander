@@ -1,5 +1,5 @@
 #include "MainWindowFilePanelState.h"
-#include "../../../Files/Operations/OperationsSummaryViewController.h"
+#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
 #include "Views/MainWndGoToButton.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"

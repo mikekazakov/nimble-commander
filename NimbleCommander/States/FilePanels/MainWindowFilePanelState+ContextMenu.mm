@@ -11,10 +11,10 @@
 #include "MainWindowFilePanelState+ContextMenu.h"
 #include "PanelAux.h"
 #include <NimbleCommander/Core/LSUrls.h>
-#include "../../../Files/Operations/Delete/FileDeletionOperation.h"
+#include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
 #include "PanelController.h"
-#include "../../../Files/Operations/Compress/FileCompressOperation.h"
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 struct OpenWithHandler

@@ -9,8 +9,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
-#include "../../../Files/Operations/OperationsController.h"
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
+#include <NimbleCommander/Operations/OperationsController.h>
 #include <VFS/Native.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>

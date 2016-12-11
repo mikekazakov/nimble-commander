@@ -7,7 +7,7 @@
 //
 
 #include <VFS/VFS.h>
-#include "../../../Files/Operations/Copy/Options.h"
+#include <NimbleCommander/Operations/Copy/Options.h>
 
 @class PanelController;
 @class ExternalEditorInfo;

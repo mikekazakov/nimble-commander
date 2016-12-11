@@ -313,7 +313,6 @@
 		CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
-		CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */; };
 		CF7D137B1BF5E0FE001F53FD /* FileCompressOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */; };
 		CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */; };
 		CF7D138A1BF5E38B001F53FD /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
@@ -743,6 +742,7 @@
 		CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CFDAC2FD1DFD1C120039A104 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDAC2FB1DFD1C120039A104 /* TrialWindowController.xib */; };
 		CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
+		CFDAC3021DFD8B630039A104 /* FileSysAttrChangeOperation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
@@ -1088,66 +1088,66 @@
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7C924A1A0B97EC00FAE649 /* MMTabBarView_LIB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView_LIB.xcodeproj; path = 3rd_party/MMTabBarView/MMTabBarView_LIB.xcodeproj; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
-		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = Operations/Delete/DialogResults.h; sourceTree = "<group>"; };
-		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
-		CF7D13351BF1AFE0001F53FD /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = Operations/BatchRename/BatchRename.mm; sourceTree = "<group>"; };
-		CF7D13361BF1AFE0001F53FD /* BatchRenameOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperation.h; path = Operations/BatchRename/BatchRenameOperation.h; sourceTree = "<group>"; };
-		CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperation.mm; path = Operations/BatchRename/BatchRenameOperation.mm; sourceTree = "<group>"; };
-		CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperationJob.h; path = Operations/BatchRename/BatchRenameOperationJob.h; sourceTree = "<group>"; };
-		CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperationJob.mm; path = Operations/BatchRename/BatchRenameOperationJob.mm; sourceTree = "<group>"; };
-		CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetController.h; path = Operations/BatchRename/BatchRenameSheetController.h; sourceTree = "<group>"; };
-		CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetController.mm; path = Operations/BatchRename/BatchRenameSheetController.mm; sourceTree = "<group>"; };
-		CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetRangeSelectionPopoverController.h; path = Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
-		CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetRangeSelectionPopoverController.mm; path = Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
-		CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkAlterSymlinkSheetController.h; path = Operations/Link/FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkAlterSymlinkSheetController.mm; path = Operations/Link/FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewHardlinkSheetController.h; path = Operations/Link/FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewHardlinkSheetController.mm; path = Operations/Link/FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewSymlinkSheetController.h; path = Operations/Link/FileLinkNewSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewSymlinkSheetController.mm; path = Operations/Link/FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperation.h; path = Operations/Link/FileLinkOperation.h; sourceTree = "<group>"; };
-		CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperation.mm; path = Operations/Link/FileLinkOperation.mm; sourceTree = "<group>"; };
-		CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperationJob.h; path = Operations/Link/FileLinkOperationJob.h; sourceTree = "<group>"; };
-		CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperationJob.mm; path = Operations/Link/FileLinkOperationJob.mm; sourceTree = "<group>"; };
-		CF7D13521BF1B964001F53FD /* CreateDirectoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperation.h; path = Operations/CreateDirectory/CreateDirectoryOperation.h; sourceTree = "<group>"; };
-		CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperation.mm; path = Operations/CreateDirectory/CreateDirectoryOperation.mm; sourceTree = "<group>"; };
-		CF7D13541BF1B964001F53FD /* CreateDirectoryOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationJob.h; path = Operations/CreateDirectory/CreateDirectoryOperationJob.h; sourceTree = "<group>"; };
-		CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationJob.mm; path = Operations/CreateDirectory/CreateDirectoryOperationJob.mm; sourceTree = "<group>"; };
-		CF7D13561BF1B964001F53FD /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationVFSJob.h; path = Operations/CreateDirectory/CreateDirectoryOperationVFSJob.h; sourceTree = "<group>"; };
-		CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationVFSJob.mm; path = Operations/CreateDirectory/CreateDirectoryOperationVFSJob.mm; sourceTree = "<group>"; };
-		CF7D13581BF1B964001F53FD /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectorySheetController.h; path = Operations/CreateDirectory/CreateDirectorySheetController.h; sourceTree = "<group>"; };
-		CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectorySheetController.mm; path = Operations/CreateDirectory/CreateDirectorySheetController.mm; sourceTree = "<group>"; };
-		CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationCommand.h; path = Operations/Attrs/FileSysAttrChangeOperationCommand.h; sourceTree = "<group>"; };
-		CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperation.h; path = Operations/Attrs/FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
-		CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation.mm; path = Operations/Attrs/FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
-		CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationJob.h; path = Operations/Attrs/FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
-		CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperationJob.mm; path = Operations/Attrs/FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
-		CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysEntryAttrSheetController.h; path = Operations/Attrs/FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
-		CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysEntryAttrSheetController.mm; path = Operations/Attrs/FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
-		CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation_Tests.mm; path = Operations/Attrs/FileSysAttrChangeOperation_Tests.mm; sourceTree = "<group>"; };
-		CF7D13771BF5E0FE001F53FD /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperation.h; path = Operations/Compress/FileCompressOperation.h; sourceTree = "<group>"; };
-		CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCompressOperation.mm; path = Operations/Compress/FileCompressOperation.mm; sourceTree = "<group>"; };
-		CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCompressOperationJob.cpp; path = Operations/Compress/FileCompressOperationJob.cpp; sourceTree = "<group>"; };
-		CF7D137A1BF5E0FE001F53FD /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperationJob.h; path = Operations/Compress/FileCompressOperationJob.h; sourceTree = "<group>"; };
-		CF7D137D1BF5E38B001F53FD /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = Operations/Operation.h; sourceTree = "<group>"; };
-		CF7D137E1BF5E38B001F53FD /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = Operations/Operation.mm; sourceTree = "<group>"; };
-		CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogAlert.h; path = Operations/OperationDialogAlert.h; sourceTree = "<group>"; };
-		CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationDialogAlert.mm; path = Operations/OperationDialogAlert.mm; sourceTree = "<group>"; };
-		CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogProtocol.h; path = Operations/OperationDialogProtocol.h; sourceTree = "<group>"; };
-		CF7D13841BF5E38B001F53FD /* OperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationJob.cpp; path = Operations/OperationJob.cpp; sourceTree = "<group>"; };
-		CF7D13851BF5E38B001F53FD /* OperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationJob.h; path = Operations/OperationJob.h; sourceTree = "<group>"; };
-		CF7D13861BF5E38B001F53FD /* OperationsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsController.h; path = Operations/OperationsController.h; sourceTree = "<group>"; };
-		CF7D13871BF5E38B001F53FD /* OperationsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsController.mm; path = Operations/OperationsController.mm; sourceTree = "<group>"; };
-		CF7D13881BF5E38B001F53FD /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationStats.h; path = Operations/OperationStats.h; sourceTree = "<group>"; };
-		CF7D13891BF5E38B001F53FD /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationStats.mm; path = Operations/OperationStats.mm; sourceTree = "<group>"; };
-		CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericOperationView.h; path = Operations/GenericOperationView.h; sourceTree = "<group>"; };
-		CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericOperationView.mm; path = Operations/GenericOperationView.mm; sourceTree = "<group>"; };
-		CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsSummaryViewController.mm; path = Operations/OperationsSummaryViewController.mm; sourceTree = "<group>"; };
-		CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OperationsSummaryViewController.xib; path = Operations/OperationsSummaryViewController.xib; sourceTree = "<group>"; };
+		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Delete/DialogResults.h; sourceTree = SOURCE_ROOT; };
+		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = ../NimbleCommander/Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
+		CF7D13351BF1AFE0001F53FD /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRename.mm; sourceTree = "<group>"; };
+		CF7D13361BF1AFE0001F53FD /* BatchRenameOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperation.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperation.h; sourceTree = "<group>"; };
+		CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperation.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperation.mm; sourceTree = "<group>"; };
+		CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperationJob.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperationJob.h; sourceTree = "<group>"; };
+		CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperationJob.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperationJob.mm; sourceTree = "<group>"; };
+		CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetController.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h; sourceTree = "<group>"; };
+		CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetController.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetController.mm; sourceTree = "<group>"; };
+		CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetRangeSelectionPopoverController.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
+		CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetRangeSelectionPopoverController.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
+		CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkAlterSymlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkAlterSymlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewHardlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewHardlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewSymlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h; sourceTree = "<group>"; };
+		CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewSymlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
+		CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperation.h; path = ../NimbleCommander/Operations/Link/FileLinkOperation.h; sourceTree = "<group>"; };
+		CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperation.mm; path = ../NimbleCommander/Operations/Link/FileLinkOperation.mm; sourceTree = "<group>"; };
+		CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperationJob.h; path = ../NimbleCommander/Operations/Link/FileLinkOperationJob.h; sourceTree = "<group>"; };
+		CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperationJob.mm; path = ../NimbleCommander/Operations/Link/FileLinkOperationJob.mm; sourceTree = "<group>"; };
+		CF7D13521BF1B964001F53FD /* CreateDirectoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperation.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h; sourceTree = SOURCE_ROOT; };
+		CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperation.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13541BF1B964001F53FD /* CreateDirectoryOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationJob.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationJob.h; sourceTree = SOURCE_ROOT; };
+		CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationJob.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationJob.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13561BF1B964001F53FD /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationVFSJob.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationVFSJob.h; sourceTree = SOURCE_ROOT; };
+		CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationVFSJob.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationVFSJob.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13581BF1B964001F53FD /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectorySheetController.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h; sourceTree = SOURCE_ROOT; };
+		CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectorySheetController.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationCommand.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h; sourceTree = "<group>"; };
+		CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperation.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
+		CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
+		CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationJob.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
+		CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperationJob.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
+		CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysEntryAttrSheetController.h; path = ../NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
+		CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysEntryAttrSheetController.mm; path = ../NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
+		CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation_Tests.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation_Tests.mm; sourceTree = "<group>"; };
+		CF7D13771BF5E0FE001F53FD /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperation.h; path = NimbleCommander/Operations/Compress/FileCompressOperation.h; sourceTree = SOURCE_ROOT; };
+		CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCompressOperation.mm; path = NimbleCommander/Operations/Compress/FileCompressOperation.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCompressOperationJob.cpp; path = NimbleCommander/Operations/Compress/FileCompressOperationJob.cpp; sourceTree = SOURCE_ROOT; };
+		CF7D137A1BF5E0FE001F53FD /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperationJob.h; path = NimbleCommander/Operations/Compress/FileCompressOperationJob.h; sourceTree = SOURCE_ROOT; };
+		CF7D137D1BF5E38B001F53FD /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = NimbleCommander/Operations/Operation.h; sourceTree = SOURCE_ROOT; };
+		CF7D137E1BF5E38B001F53FD /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = NimbleCommander/Operations/Operation.mm; sourceTree = SOURCE_ROOT; };
+		CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogAlert.h; path = NimbleCommander/Operations/OperationDialogAlert.h; sourceTree = SOURCE_ROOT; };
+		CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationDialogAlert.mm; path = NimbleCommander/Operations/OperationDialogAlert.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogProtocol.h; path = NimbleCommander/Operations/OperationDialogProtocol.h; sourceTree = SOURCE_ROOT; };
+		CF7D13841BF5E38B001F53FD /* OperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationJob.cpp; path = NimbleCommander/Operations/OperationJob.cpp; sourceTree = SOURCE_ROOT; };
+		CF7D13851BF5E38B001F53FD /* OperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationJob.h; path = NimbleCommander/Operations/OperationJob.h; sourceTree = SOURCE_ROOT; };
+		CF7D13861BF5E38B001F53FD /* OperationsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsController.h; path = NimbleCommander/Operations/OperationsController.h; sourceTree = SOURCE_ROOT; };
+		CF7D13871BF5E38B001F53FD /* OperationsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsController.mm; path = NimbleCommander/Operations/OperationsController.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13881BF5E38B001F53FD /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationStats.h; path = NimbleCommander/Operations/OperationStats.h; sourceTree = SOURCE_ROOT; };
+		CF7D13891BF5E38B001F53FD /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationStats.mm; path = NimbleCommander/Operations/OperationStats.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericOperationView.h; path = NimbleCommander/Operations/GenericOperationView.h; sourceTree = SOURCE_ROOT; };
+		CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericOperationView.mm; path = NimbleCommander/Operations/GenericOperationView.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsSummaryViewController.mm; path = NimbleCommander/Operations/OperationsSummaryViewController.mm; sourceTree = SOURCE_ROOT; };
+		CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OperationsSummaryViewController.xib; path = NimbleCommander/Operations/OperationsSummaryViewController.xib; sourceTree = SOURCE_ROOT; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = Resource/Config.json; sourceTree = "<group>"; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
-		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = Operations/Copy/JobSourceItems.cpp; sourceTree = "<group>"; };
+		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = NimbleCommander/Operations/Copy/JobSourceItems.cpp; sourceTree = SOURCE_ROOT; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
 		CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeader.mm; path = NimbleCommander/States/FilePanels/PanelViewHeader.mm; sourceTree = SOURCE_ROOT; };
 		CF84C8F61DBB2AC300B4E888 /* PanelListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListView.h; path = NimbleCommander/States/FilePanels/PanelListView.h; sourceTree = SOURCE_ROOT; };
@@ -1198,18 +1198,18 @@
 		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
 		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
-		CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAlreadyExistSheetController.h; path = Operations/Copy/FileAlreadyExistSheetController.h; sourceTree = "<group>"; };
-		CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistSheetController.mm; path = Operations/Copy/FileAlreadyExistSheetController.mm; sourceTree = "<group>"; };
-		CF9069671BB54035000C3CBB /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperation.h; path = Operations/Copy/FileCopyOperation.h; sourceTree = "<group>"; };
-		CF9069681BB54035000C3CBB /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperation.mm; path = Operations/Copy/FileCopyOperation.mm; sourceTree = "<group>"; };
-		CF9069711BB54035000C3CBB /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = Operations/Copy/Job.cpp; sourceTree = "<group>"; };
-		CF9069721BB54035000C3CBB /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = Operations/Copy/Job.h; sourceTree = "<group>"; };
+		CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAlreadyExistSheetController.h; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.h; sourceTree = SOURCE_ROOT; };
+		CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistSheetController.mm; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF9069671BB54035000C3CBB /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperation.h; path = NimbleCommander/Operations/Copy/FileCopyOperation.h; sourceTree = SOURCE_ROOT; };
+		CF9069681BB54035000C3CBB /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperation.mm; path = NimbleCommander/Operations/Copy/FileCopyOperation.mm; sourceTree = SOURCE_ROOT; };
+		CF9069711BB54035000C3CBB /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = NimbleCommander/Operations/Copy/Job.cpp; sourceTree = SOURCE_ROOT; };
+		CF9069721BB54035000C3CBB /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = NimbleCommander/Operations/Copy/Job.h; sourceTree = SOURCE_ROOT; };
 		CF9069891BB54052000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileAlreadyExistSheetController.xib; sourceTree = "<group>"; };
-		CF90698D1BB54077000C3CBB /* MassCopySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MassCopySheetController.h; path = Operations/Copy/MassCopySheetController.h; sourceTree = "<group>"; };
-		CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MassCopySheetController.mm; path = Operations/Copy/MassCopySheetController.mm; sourceTree = "<group>"; };
+		CF90698D1BB54077000C3CBB /* MassCopySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MassCopySheetController.h; path = NimbleCommander/Operations/Copy/MassCopySheetController.h; sourceTree = SOURCE_ROOT; };
+		CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MassCopySheetController.mm; path = NimbleCommander/Operations/Copy/MassCopySheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF9069931BB54081000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MassCopySheetController.xib; sourceTree = "<group>"; };
-		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = Operations/Copy/DialogResults.h; sourceTree = "<group>"; };
-		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = Operations/Copy/Options.h; sourceTree = "<group>"; };
+		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Copy/DialogResults.h; sourceTree = SOURCE_ROOT; };
+		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Copy/Options.h; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -1229,7 +1229,7 @@
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = Operations/Delete/JobTrash.mm; sourceTree = "<group>"; };
+		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = NimbleCommander/Operations/Delete/JobTrash.mm; sourceTree = SOURCE_ROOT; };
 		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
@@ -1302,13 +1302,13 @@
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
-		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = Operations/Delete/FileDeletionOperation.h; sourceTree = "<group>"; };
-		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = Operations/Delete/FileDeletionOperation.mm; sourceTree = "<group>"; };
-		CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionSheetController.h; path = Operations/Delete/FileDeletionSheetController.h; sourceTree = "<group>"; };
-		CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionSheetController.mm; path = Operations/Delete/FileDeletionSheetController.mm; sourceTree = "<group>"; };
-		CFD6F9111BEBAADE00A1B046 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = Operations/Delete/Job.cpp; sourceTree = "<group>"; };
-		CFD6F9121BEBAADE00A1B046 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = Operations/Delete/Job.h; sourceTree = "<group>"; };
-		CFD6F9141BEBBF6E00A1B046 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = Operations/Delete/Options.h; sourceTree = "<group>"; };
+		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = NimbleCommander/Operations/Delete/FileDeletionOperation.h; sourceTree = SOURCE_ROOT; };
+		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = NimbleCommander/Operations/Delete/FileDeletionOperation.mm; sourceTree = SOURCE_ROOT; };
+		CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionSheetController.h; path = NimbleCommander/Operations/Delete/FileDeletionSheetController.h; sourceTree = SOURCE_ROOT; };
+		CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionSheetController.mm; path = NimbleCommander/Operations/Delete/FileDeletionSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CFD6F9111BEBAADE00A1B046 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = NimbleCommander/Operations/Delete/Job.cpp; sourceTree = SOURCE_ROOT; };
+		CFD6F9121BEBAADE00A1B046 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = NimbleCommander/Operations/Delete/Job.h; sourceTree = SOURCE_ROOT; };
+		CFD6F9141BEBBF6E00A1B046 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Delete/Options.h; sourceTree = SOURCE_ROOT; };
 		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -1473,7 +1473,7 @@
 		CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationItemsFooter.h; sourceTree = "<group>"; };
 		CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = 3rd_party/DisclosureViewController/DisclosureViewController.h; sourceTree = "<group>"; };
 		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
-		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MassCopySheetDisclosureViewController.xib; sourceTree = "<group>"; };
+		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MassCopySheetDisclosureViewController.xib; path = NimbleCommander/Operations/Copy/MassCopySheetDisclosureViewController.xib; sourceTree = SOURCE_ROOT; };
 		CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = Files/States/Terminal/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = Files/States/Terminal/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
 		CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = Files/States/Terminal/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -1487,7 +1487,7 @@
 		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskingForRatingOverlayView.mm; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.mm; sourceTree = SOURCE_ROOT; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
-		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = Operations/OperationsSummaryViewController.h; sourceTree = "<group>"; };
+		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = NimbleCommander/Operations/OperationsSummaryViewController.h; sourceTree = SOURCE_ROOT; };
 		CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-CI-Info.plist"; path = "Resource/NimbleCommander-CI-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1670,7 +1670,22 @@
 		B528011916FCF347004E260D /* Operations */ = {
 			isa = PBXGroup;
 			children = (
-				CFAC50D41715565E00A3E5C5 /* Core */,
+				CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */,
+				CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */,
+				CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */,
+				CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */,
+				CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */,
+				CF7D137D1BF5E38B001F53FD /* Operation.h */,
+				CF7D137E1BF5E38B001F53FD /* Operation.mm */,
+				CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */,
+				CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */,
+				CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */,
+				CF7D13841BF5E38B001F53FD /* OperationJob.cpp */,
+				CF7D13851BF5E38B001F53FD /* OperationJob.h */,
+				CF7D13861BF5E38B001F53FD /* OperationsController.h */,
+				CF7D13871BF5E38B001F53FD /* OperationsController.mm */,
+				CF7D13881BF5E38B001F53FD /* OperationStats.h */,
+				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* UnixAttr */,
@@ -1744,11 +1759,6 @@
 		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
 			isa = PBXGroup;
 			children = (
-				CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */,
-				CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */,
-				CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */,
-				CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */,
-				CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */,
 			);
 			name = SummaryView;
 			sourceTree = "<group>";
@@ -2246,24 +2256,6 @@
 				CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */,
 			);
 			name = Copy;
-			sourceTree = "<group>";
-		};
-		CFAC50D41715565E00A3E5C5 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D137D1BF5E38B001F53FD /* Operation.h */,
-				CF7D137E1BF5E38B001F53FD /* Operation.mm */,
-				CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */,
-				CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */,
-				CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */,
-				CF7D13841BF5E38B001F53FD /* OperationJob.cpp */,
-				CF7D13851BF5E38B001F53FD /* OperationJob.h */,
-				CF7D13861BF5E38B001F53FD /* OperationsController.h */,
-				CF7D13871BF5E38B001F53FD /* OperationsController.mm */,
-				CF7D13881BF5E38B001F53FD /* OperationStats.h */,
-				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
-			);
-			name = Core;
 			sourceTree = "<group>";
 		};
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
@@ -3172,6 +3164,7 @@
 				CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */,
 				CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */,
 				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
+				CFDAC3021DFD8B630039A104 /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */,
 				CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */,
@@ -3184,7 +3177,6 @@
 				CFDAC29B1DFBF93C0039A104 /* TermShellTask_Tests.mm in Sources */,
 				CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
 				CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */,
-				CF7D136D1BF5A730001F53FD /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
 				CFDAC29D1DFBF9850039A104 /* TermScreenTests.mm in Sources */,
@@ -3876,7 +3868,8 @@
 				CF50C4761C0EB52A009DF611 /* ru */,
 			);
 			name = FileAlreadyExistSheetController.xib;
-			sourceTree = "<group>";
+			path = NimbleCommander/Operations/Copy;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF9069921BB54081000C3CBB /* MassCopySheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -3885,7 +3878,8 @@
 				CF50C4771C0EB6A0009DF611 /* ru */,
 			);
 			name = MassCopySheetController.xib;
-			sourceTree = "<group>";
+			path = NimbleCommander/Operations/Copy;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */ = {
 			isa = PBXVariantGroup;
@@ -3894,6 +3888,7 @@
 				CFC044F31B303FAE00969A5E /* ru */,
 			);
 			name = BatchRenameSheetRangeSelectionPopoverController.xib;
+			path = ../NimbleCommander/Operations/BatchRename;
 			sourceTree = "<group>";
 		};
 		CFC044EB1B2F325A00969A5E /* BatchRenameSheetController.xib */ = {
@@ -3903,6 +3898,7 @@
 				CFC044EF1B303FAD00969A5E /* ru */,
 			);
 			name = BatchRenameSheetController.xib;
+			path = ../NimbleCommander/Operations/BatchRename;
 			sourceTree = "<group>";
 		};
 		CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */ = {
@@ -3999,6 +3995,7 @@
 				CFCCFC0A1A5E891200313845 /* ru */,
 			);
 			name = FileSysEntryAttrSheetController.xib;
+			path = ../NimbleCommander/Operations/Attrs;
 			sourceTree = "<group>";
 		};
 		CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */ = {
@@ -4008,6 +4005,7 @@
 				CFCCFC151A5E891600313845 /* ru */,
 			);
 			name = FileLinkNewSymlinkSheetController.xib;
+			path = ../NimbleCommander/Operations/Link;
 			sourceTree = "<group>";
 		};
 		CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */ = {
@@ -4017,6 +4015,7 @@
 				CFCCFC141A5E891600313845 /* ru */,
 			);
 			name = FileLinkAlterSymlinkSheetController.xib;
+			path = ../NimbleCommander/Operations/Link;
 			sourceTree = "<group>";
 		};
 		CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */ = {
@@ -4026,6 +4025,7 @@
 				CFCCFC111A5E891400313845 /* ru */,
 			);
 			name = FileLinkNewHardlinkSheetController.xib;
+			path = ../NimbleCommander/Operations/Link;
 			sourceTree = "<group>";
 		};
 		CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */ = {
@@ -4035,7 +4035,8 @@
 				CFCCFBFF1A5E7F7400313845 /* ru */,
 			);
 			name = CreateDirectorySheetController.xib;
-			sourceTree = "<group>";
+			path = NimbleCommander/Operations/CreateDirectory;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4044,7 +4045,8 @@
 				CFCCFC041A5E891100313845 /* ru */,
 			);
 			name = FileDeletionSheetController.xib;
-			sourceTree = "<group>";
+			path = NimbleCommander/Operations/Delete;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -4080,6 +4082,7 @@
 				CFD9F9531A62415C001B3F33 /* ru */,
 			);
 			name = Operations.strings;
+			path = ../NimbleCommander/Operations;
 			sourceTree = "<group>";
 		};
 		CFEF4E3B1A6BB409009A1524 /* Preferences.strings */ = {

@@ -10,9 +10,9 @@
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
 #include <VFS/Native.h>
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
-#include "../../../Files/Operations/OperationsController.h"
-#include "../../../Files/Operations/OperationsSummaryViewController.h"
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
+#include <NimbleCommander/Operations/OperationsController.h>
+#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
 #include "PanelController+DataAccess.h"

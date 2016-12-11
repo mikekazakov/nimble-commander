@@ -9,9 +9,9 @@
 #include <Utility/FontExtras.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include "../../../Files/Operations/Link/FileLinkOperation.h"
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
-#include "../../../Files/Operations/OperationsController.h"
+#include <NimbleCommander/Operations/Link/FileLinkOperation.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
+#include <NimbleCommander/Operations/OperationsController.h>
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/Bootstrap/Config.h>

@@ -9,7 +9,7 @@
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "PanelController.h"
 #include "../MainWindowController.h"
 #include "Views/QuickPreview.h"

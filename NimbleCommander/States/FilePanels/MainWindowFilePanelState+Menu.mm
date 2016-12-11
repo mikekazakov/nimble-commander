@@ -8,15 +8,15 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include "../../../Files/Operations/Link/FileLinkNewSymlinkSheetController.h"
-#include "../../../Files/Operations/Link/FileLinkAlterSymlinkSheetController.h"
-#include "../../../Files/Operations/Link/FileLinkNewHardlinkSheetController.h"
-#include "../../../Files/Operations/Link/FileLinkOperation.h"
-#include "../../../Files/Operations/Copy/FileCopyOperation.h"
-#include "../../../Files/Operations/Copy/MassCopySheetController.h"
-#include "../../../Files/Operations/Delete/FileDeletionOperation.h"
-#include "../../../Files/Operations/Compress/FileCompressOperation.h"
-#include "../../../Files/Operations/OperationsController.h"
+#include <NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h>
+#include <NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h>
+#include <NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h>
+#include <NimbleCommander/Operations/Link/FileLinkOperation.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
+#include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
+#include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
+#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
+#include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>

@@ -27,7 +27,7 @@
 #include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
 #include "AppDelegate.h"
 #include "../States/MainWindowController.h"
-#include "../../Files/Operations/OperationsController.h"
+#include <NimbleCommander/Operations/OperationsController.h>
 #include "../Preferences/Preferences.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include "../Core/ActionsShortcutsManager.h"

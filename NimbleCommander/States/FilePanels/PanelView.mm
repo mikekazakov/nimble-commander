@@ -1277,7 +1277,10 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         });
 }
 
-- (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index
+- (NSArray *)textView:(NSTextView *)textView
+          completions:(NSArray *)words
+  forPartialWordRange:(NSRange)charRange
+  indexOfSelectedItem:(NSInteger *)index
 {
     return nil;
 }

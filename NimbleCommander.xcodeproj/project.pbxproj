@@ -1657,10 +1657,6 @@
 				CF7D7A741C15AAC200ECEBA0 /* Config.json */,
 				CFD6295C1C2CE3AD0050EC68 /* State.json */,
 				CF3120C81A510F640062185A /* Localizable.strings */,
-				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
-				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
-				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
-				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
 				CFDF449F1D2B990A0062F7AD /* Media.xcassets */,
 			);
 			name = Resources;
@@ -1686,6 +1682,7 @@
 				CF7D13871BF5E38B001F53FD /* OperationsController.mm */,
 				CF7D13881BF5E38B001F53FD /* OperationStats.h */,
 				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
+				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
 				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* UnixAttr */,
@@ -1752,6 +1749,7 @@
 				CF4E563C1D5064FE00452912 /* PreferencesWindowViewerTab.h */,
 				CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */,
 				CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */,
+				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1955,6 +1953,8 @@
 		CF536C0D16C92EA200F37203 /* PanelMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
+				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
+				CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */,
 				CF11762818F5124D0069C59D /* Core */,
 				B52D9A81173D324600EC7154 /* Presentation */,
 				CF27414D1803E60D006D6687 /* Views */,
@@ -3659,6 +3659,7 @@
 				CF3120CC1A5115DA0062185A /* ru */,
 			);
 			name = Localizable.strings;
+			path = ../NimbleCommander/Resources;
 			sourceTree = "<group>";
 		};
 		CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */ = {
@@ -3908,6 +3909,7 @@
 				CF3120CA1A5115D90062185A /* ru */,
 			);
 			name = InfoPlist.strings;
+			path = ../NimbleCommander/Resources;
 			sourceTree = "<group>";
 		};
 		CFC5122316C4BD3D00D247EE /* Credits.rtf */ = {
@@ -3916,6 +3918,7 @@
 				CF3120B31A507BFC0062185A /* Base */,
 			);
 			name = Credits.rtf;
+			path = ../NimbleCommander/Resources;
 			sourceTree = "<group>";
 		};
 		CFC5122916C4BD3D00D247EE /* MainMenu.xib */ = {
@@ -4064,7 +4067,8 @@
 				CFCCFC591A5FAFFD00313845 /* ru */,
 			);
 			name = FilePanelsContextMenu.strings;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */ = {
 			isa = PBXVariantGroup;
@@ -4073,7 +4077,8 @@
 				CFCCFC631A5FBD9600313845 /* ru */,
 			);
 			name = FilePanelsQuickSearch.strings;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFD9F94D1A623E4E001B3F33 /* Operations.strings */ = {
 			isa = PBXVariantGroup;
@@ -4092,6 +4097,7 @@
 				CFD83AD81A6D62CC002EE49B /* ru */,
 			);
 			name = Preferences.strings;
+			path = ../NimbleCommander/Preferences;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

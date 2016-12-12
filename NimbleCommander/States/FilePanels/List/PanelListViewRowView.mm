@@ -1,6 +1,6 @@
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
-#include "../PanelListView.h"
+#include "PanelListView.h"
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
 

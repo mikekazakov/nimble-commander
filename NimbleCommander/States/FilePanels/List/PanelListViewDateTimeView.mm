@@ -1,4 +1,4 @@
-#include "../PanelListView.h"
+#include "PanelListView.h"
 //#include "PanelListViewDateFormatting.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"

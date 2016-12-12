@@ -1,6 +1,6 @@
 #include <Utility/FontExtras.h>
 #include "../PanelView.h"
-#include "../PanelBriefView.h"
+#include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"
 

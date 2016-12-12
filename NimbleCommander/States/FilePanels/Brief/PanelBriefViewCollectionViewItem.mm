@@ -1,6 +1,6 @@
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
-#include "../PanelBriefView.h"
+#include "PanelBriefView.h"
 #include "PanelBriefViewItemCarrier.h"
 #include "PanelBriefViewCollectionViewItem.h"
 

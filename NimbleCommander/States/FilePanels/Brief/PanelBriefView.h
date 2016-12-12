@@ -1,7 +1,7 @@
 #pragma once
 
-#include "PanelDataSortMode.h"
-#include "PanelViewImplementationProtocol.h"
+#include "../PanelDataSortMode.h"
+#include "../PanelViewImplementationProtocol.h"
 
 class PanelData;
 struct PanelViewPresentationItemsColoringRule;

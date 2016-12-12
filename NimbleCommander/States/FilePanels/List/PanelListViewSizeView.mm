@@ -1,5 +1,5 @@
 #include <Utility/ByteCountFormatter.h>
-#include "../PanelListView.h"
+#include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"

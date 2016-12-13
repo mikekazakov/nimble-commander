@@ -15,6 +15,7 @@
 @class GenericConfigObjC;
 @class AppStoreHelper;
 class ExternalToolsStorage;
+class PanelViewLayoutsStorage;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -72,6 +73,8 @@ class ExternalToolsStorage;
 @property (nonatomic, readonly) GenericConfigObjC *config;
 
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
+
+@property (nonatomic, readonly) PanelViewLayoutsStorage& panelLayouts;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 

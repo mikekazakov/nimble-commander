@@ -6,15 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 //#include <Utility/NSView+Sugar.h>
+#include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 //#include "PanelData.h"
 #include "PanelController.h"
 //#include "PanelViewPresentation.h"
 //#include "ModernPanelViewPresentation.h"
 //#include "ClassicPanelViewPresentation.h"
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
@@ -65,7 +66,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //    PanelViewState             m_State;
     PanelData                  *m_Data;
     int                         m_CursorPos;
-    PanelViewType               m_ViewType;
+//    PanelViewType               m_ViewType;
     
     unordered_map<size_t, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
@@ -98,7 +99,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 //        self.wantsLayer = true;
         m_Data = nullptr;
         m_CursorPos = -1;
-        m_ViewType = PanelViewType::Medium;
+//        m_ViewType = PanelViewType::Medium;
         
         __weak PanelView *weak_self = self;
         m_KeyboardModifierFlags = 0;
@@ -897,15 +898,19 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 }
 
 
-- (void) setupPresentationLayout:(const PanelViewLayout&)_pvl
+- (void) setLayout:(const PanelViewLayout&)_layout
 {
-    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_pvl.layout) ) {
+    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
         [self setupListPresentationWithLayout:*ll];
     }
-    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_pvl.layout) ) {
+    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
         [self setupBriefPresentationWithLayout:*bl];
     }
 }
+
+//- (void) setupPresentationLayout:(const PanelViewLayout&)_pvl
+//{
+//}
 
 PanelViewLayout L1()
 {
@@ -999,32 +1004,32 @@ PanelViewLayout L4()
     return ret;
 }
 
-- (void) setType:(PanelViewType)_type
-{
-    
-    if( _type == PanelViewType::Short )
-        [self setupPresentationLayout:L1()];
+//- (void) setType:(PanelViewType)_type
+//{
+//    
+//    if( _type == PanelViewType::Short )
+//        [self setLayout:L1()];
+//
+//    if( _type == PanelViewType::Medium )
+//        [self setLayout:L2()];
+//    
+//    if( _type == PanelViewType::Full )
+//        [self setLayout:L3()];
+//    
+//    if( _type == PanelViewType::Wide )
+//        [self setLayout:L4()];
+//    
+//    
+////    m_State.ViewType = _type;
+////    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
+////    [self commitFieldEditor];
+////    self.needsDisplay = true;
+//}
 
-    if( _type == PanelViewType::Medium )
-        [self setupPresentationLayout:L2()];
-    
-    if( _type == PanelViewType::Full )
-        [self setupPresentationLayout:L3()];
-    
-    if( _type == PanelViewType::Wide )
-        [self setupPresentationLayout:L4()];
-    
-    
-//    m_State.ViewType = _type;
-//    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
-//    [self commitFieldEditor];
-//    self.needsDisplay = true;
-}
-
-- (PanelViewType)type
-{
-    return m_ViewType;
-}
+//- (PanelViewType)type
+//{
+//    return m_ViewType;
+//}
 
 - (void) SavePathState
 {
@@ -1427,7 +1432,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     auto add_int = [&](const char*_name, int _v) {
         json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
     
-    add_int("viewMode", (int)self.type);
+//    add_int("viewMode", (int)self.type);
     return json;
 }
 
@@ -1436,14 +1441,14 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     if( !_state.IsObject() )
         return;
     
-    if( _state.HasMember("viewMode") && _state["viewMode"].IsInt() ) {
-        PanelViewType vt = (PanelViewType)_state["viewMode"].GetInt();
-        if( vt == PanelViewType::Short || // brutal validation
-            vt == PanelViewType::Medium ||
-            vt == PanelViewType::Full ||
-            vt == PanelViewType::Wide )
-            self.type = vt;
-    }
+//    if( _state.HasMember("viewMode") && _state["viewMode"].IsInt() ) {
+//        PanelViewType vt = (PanelViewType)_state["viewMode"].GetInt();
+//        if( vt == PanelViewType::Short || // brutal validation
+//            vt == PanelViewType::Medium ||
+//            vt == PanelViewType::Full ||
+//            vt == PanelViewType::Wide )
+//            self.type = vt;
+//    }
 }
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event

@@ -24,28 +24,28 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
-#include "AppDelegate.h"
-#include "../States/MainWindowController.h"
-#include <NimbleCommander/Operations/OperationsController.h>
-#include "../Preferences/Preferences.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
-#include "../Core/ActionsShortcutsManager.h"
-#include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
-#include "../Core/SandboxManager.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/FeedbackManager.h>
+#include <NimbleCommander/Core/AppStoreHelper.h>
+#include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
+#include <NimbleCommander/States/MainWindowController.h>
+#include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
+#include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
+#include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
+#include <NimbleCommander/Operations/OperationsController.h>
+#include <NimbleCommander/Preferences/Preferences.h>
+#include <NimbleCommander/Viewer/InternalViewerController.h>
+#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/GeneralUI/TrialWindowController.h>
+#include <NimbleCommander/GeneralUI/VFSListWindowController.h>
+#include "AppDelegate.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "../States/FilePanels/ExternalToolsSupport.h"
-#include "../Viewer/InternalViewerController.h"
-#include "../Viewer/InternalViewerWindowController.h"
-#include "../GeneralUI/VFSListWindowController.h"
-#include "../Core/FeedbackManager.h"
-
-#include <NimbleCommander/Core/AppStoreHelper.h>
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -700,6 +700,12 @@ static AppDelegate *g_Me = nil;
 - (ExternalToolsStorage&) externalTools
 {
     static ExternalToolsStorage* i = new ExternalToolsStorage(g_ConfigExternalToolsList);
+    return *i;
+}
+
+- (PanelViewLayoutsStorage&) panelLayouts
+{
+    static auto i = new PanelViewLayoutsStorage();
     return *i;
 }
 

@@ -149,6 +149,8 @@ namespace panel
     __weak MainWindowFilePanelState* m_FilePanelState;
     
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;
+    
+    int m_ViewLayoutIndex;
 }
 
 @property (nonatomic) MainWindowFilePanelState* state;
@@ -162,6 +164,7 @@ namespace panel
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
+@property (nonatomic) int layoutIndex;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;

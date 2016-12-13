@@ -291,10 +291,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     auto tag = item.tag;
 #define IF(a) else if(tag == a)
     if(false);
-    IF(tag_short_mode)      item.state = m_View.type == PanelViewType::Short;
-    IF(tag_medium_mode)     item.state = m_View.type == PanelViewType::Medium;
-    IF(tag_full_mode)       item.state = m_View.type == PanelViewType::Full;
-    IF(tag_wide_mode)       item.state = m_View.type == PanelViewType::Wide;
+    IF(tag_short_mode)      item.state = self.layoutIndex == 0;
+    IF(tag_medium_mode)     item.state = self.layoutIndex == 1;
+    IF(tag_full_mode)       item.state = self.layoutIndex == 2;
+    IF(tag_wide_mode)       item.state = self.layoutIndex == 3;
     IF(tag_sort_viewhidden) item.state = m_Data.HardFiltering().show_hidden;
     IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
     IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
@@ -801,21 +801,25 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self showPopoverUnderPathBarWithView:view andDelegate:view];
 }
 
-- (IBAction)OnEjectVolume:(id)sender {
+- (IBAction)OnEjectVolume:(id)sender
+{
     auto &nfsm = NativeFSManager::Instance();
     if(self.vfs->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.currentDirectoryPath))
         nfsm.EjectVolumeContainingPath(self.currentDirectoryPath);
 }
 
-- (IBAction)OnCopyCurrentFileName:(id)sender {
+- (IBAction)OnCopyCurrentFileName:(id)sender
+{
     WriteSingleStringToClipboard(self.currentFocusedEntryFilename);
 }
 
-- (IBAction)OnCopyCurrentFilePath:(id)sender {
+- (IBAction)OnCopyCurrentFilePath:(id)sender
+{
     WriteSingleStringToClipboard(self.currentFocusedEntryPath);
 }
 
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender {
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender
+{
     if(m_BriefSystemOverview) {
         [self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
@@ -838,23 +842,28 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self OnCursorChanged];
 }
 
-- (void)selectAll:(id)sender {
+- (void)selectAll:(id)sender
+{
     [self SelectAllEntries:true];
 }
 
-- (void)deselectAll:(id)sender {
+- (void)deselectAll:(id)sender
+{
     [self SelectAllEntries:false];
 }
 
-- (IBAction)OnMenuInvertSelection:(id)sender {
+- (IBAction)OnMenuInvertSelection:(id)sender
+{
     [self invertSelection];
 }
 
-- (IBAction)OnRefreshPanel:(id)sender {
+- (IBAction)OnRefreshPanel:(id)sender
+{
     [self RefreshDirectory];
 }
 
-- (IBAction)OnCalculateSizes:(id)sender {
+- (IBAction)OnCalculateSizes:(id)sender
+{
     // suboptimal - may have regular files inside (not dirs)
     [self CalculateSizes:self.selectedEntriesOrFocusedEntryWithDotDot];
 }
@@ -864,61 +873,91 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self CalculateSizes:DirectoriesWithoutDodDotInSortedOrder(self.data)];
 }
 
-- (IBAction)ToggleViewHiddenFiles:(id)sender{
+- (IBAction)ToggleViewHiddenFiles:(id)sender
+{
     auto filtering = m_Data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;
     [self ChangeHardFilteringTo:filtering];
     [self markRestorableStateAsInvalid];
     [m_View dataUpdated];
 }
-- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{
+
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender
+{
     auto mode = m_Data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
     [self changeSortingModeTo:mode];
 }
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender{
+
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender
+{
     auto mode = m_Data.SortMode();
     mode.case_sens = !mode.case_sens;
     [self changeSortingModeTo:mode];
 }
-- (IBAction)ToggleNumericComparison:(id)sender{
+
+- (IBAction)ToggleNumericComparison:(id)sender
+{
     auto mode = m_Data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
     [self changeSortingModeTo:mode];
 }
-- (IBAction)ToggleSortByName:(id)sender{
+
+- (IBAction)ToggleSortByName:(id)sender
+{
     [self MakeSortWith:PanelData::PanelSortMode::SortByName Rev:PanelData::PanelSortMode::SortByNameRev];
 }
-- (IBAction)ToggleSortByExt:(id)sender{
+
+- (IBAction)ToggleSortByExt:(id)sender
+{
     [self MakeSortWith:PanelData::PanelSortMode::SortByExt Rev:PanelData::PanelSortMode::SortByExtRev];
 }
-- (IBAction)ToggleSortByMTime:(id)sender{
+
+- (IBAction)ToggleSortByMTime:(id)sender
+{
     [self MakeSortWith:PanelData::PanelSortMode::SortByModTime Rev:PanelData::PanelSortMode::SortByModTimeRev];
 }
-- (IBAction)ToggleSortBySize:(id)sender{
+
+- (IBAction)ToggleSortBySize:(id)sender
+{
     [self MakeSortWith:PanelData::PanelSortMode::SortBySize Rev:PanelData::PanelSortMode::SortBySizeRev];
 }
-- (IBAction)ToggleSortByBTime:(id)sender{
+
+- (IBAction)ToggleSortByBTime:(id)sender
+{
     [self MakeSortWith:PanelData::PanelSortMode::SortByBirthTime Rev:PanelData::PanelSortMode::SortByBirthTimeRev];
 }
-- (IBAction)ToggleShortViewMode:(id)sender {
-    m_View.type = PanelViewType::Short;
-    [self markRestorableStateAsInvalid];
-}
-- (IBAction)ToggleMediumViewMode:(id)sender {
-    m_View.type = PanelViewType::Medium;
-    [self markRestorableStateAsInvalid];
-}
-- (IBAction)ToggleFullViewMode:(id)sender{
-    m_View.type = PanelViewType::Full;
-    [self markRestorableStateAsInvalid];
-}
-- (IBAction)ToggleWideViewMode:(id)sender{
-    m_View.type = PanelViewType::Wide;
-    [self markRestorableStateAsInvalid];
+
+- (IBAction)ToggleShortViewMode:(id)sender
+{
+//    m_View.type = PanelViewType::Short;
+//    [self markRestorableStateAsInvalid];
+    [self setLayoutIndex:0];
 }
 
-- (IBAction)OnOpenWithExternalEditor:(id)sender {
+- (IBAction)ToggleMediumViewMode:(id)sender
+{
+//    m_View.type = PanelViewType::Medium;
+//    [self markRestorableStateAsInvalid];
+    [self setLayoutIndex:1];
+}
+
+- (IBAction)ToggleFullViewMode:(id)sender
+{
+//    m_View.type = PanelViewType::Full;
+//    [self markRestorableStateAsInvalid];
+    [self setLayoutIndex:2];
+}
+
+- (IBAction)ToggleWideViewMode:(id)sender
+{
+//    m_View.type = PanelViewType::Wide;
+//    [self markRestorableStateAsInvalid];
+    [self setLayoutIndex:3];
+}
+
+- (IBAction)OnOpenWithExternalEditor:(id)sender
+{
     auto item = m_View.item;
     if( !item || item.IsDotDot() )
         return;

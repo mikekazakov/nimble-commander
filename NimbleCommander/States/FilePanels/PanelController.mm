@@ -21,9 +21,11 @@
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "PanelViewLayoutSupport.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -37,6 +39,7 @@ static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.qui
 static const auto g_RestorationDataKey = "data";
 static const auto g_RestorationSortingKey = "sorting";
 static const auto g_RestorationViewKey = "view";
+static const auto g_RestorationLayoutKey = "layout";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -129,6 +132,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 @synthesize data = m_Data;
 @synthesize lastNativeDirectoryPath = m_LastNativeDirectory;
 @synthesize history = m_History;
+@synthesize layoutIndex = m_ViewLayoutIndex;
 
 - (id) init
 {
@@ -143,6 +147,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
         m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirreloading");
         m_DragDrop.last_valid_items = -1;
+        m_ViewLayoutIndex = -1;
         
         __weak PanelController* weakself = self;
         auto on_change = [=]{
@@ -823,7 +828,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
 {
-    if( m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, self.ignoreDirectoriesOnSelectionByMask) )
+    const auto ignore_dirs = self.ignoreDirectoriesOnSelectionByMask;
+    if( m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs) )
         [m_View volatileDataChanged];
 }
 
@@ -852,8 +858,12 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     else
         return nullopt;
   
-    json.AddMember( rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator), m_Data.EncodeSortingOptions(), rapidjson::g_CrtAllocator );
-    json.AddMember( rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator), [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
+    json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
+                   m_Data.EncodeSortingOptions(), rapidjson::g_CrtAllocator );
+    json.AddMember(rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator),
+                   [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
+    json.AddMember(rapidjson::StandaloneValue(g_RestorationLayoutKey, rapidjson::g_CrtAllocator),
+                   rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
     
     return move(json);
 }
@@ -870,6 +880,10 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         
         if( _state.HasMember(g_RestorationViewKey) )
             [m_View loadRestorableState:_state[g_RestorationViewKey]];
+        
+        if( _state.HasMember(g_RestorationLayoutKey) )
+            if( _state[g_RestorationLayoutKey].IsNumber() )
+                self.layoutIndex = _state[g_RestorationLayoutKey].GetInt();
         
         if( _state.HasMember(g_RestorationDataKey) ) {
             auto data = make_shared<rapidjson::StandaloneValue>();
@@ -972,6 +986,19 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     dispatch_to_main_queue([=]{
         [self UpdateSpinningIndicator];
     });
+}
+
+//@property (nonatomic) int layoutIndex
+- (void) setLayoutIndex:(int)layoutIndex
+{
+    if( m_ViewLayoutIndex != layoutIndex ) {
+        if( auto l = AppDelegate.me.panelLayouts.GetLayout(layoutIndex) )
+            if( !l->is_disabled() ) {
+                m_ViewLayoutIndex = layoutIndex;
+                [m_View setLayout:*l];
+                [self markRestorableStateAsInvalid];                
+            }
+    }
 }
 
 @end

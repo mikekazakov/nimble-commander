@@ -11,9 +11,11 @@
 #include "../../Core/rapidjson.h"
 #include "PanelData.h"
 #include "PanelViewTypes.h"
+//#include "PanelViewLayoutSupport.h"
 
 //@class FPSLimitedDrawer;
 @class PanelView;
+struct PanelViewLayout;
 //class PanelViewPresentation;
 //struct PanelVolatileData;
 
@@ -35,19 +37,13 @@
 
 @end
 
-struct PanelViewLayout
-{
-    string name; // for the future
-    any layout; // perhaps switch to variant?
-};
-
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
 @property (nonatomic, readonly) const PanelData::VolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
-@property (nonatomic) PanelViewType type;
+//@property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 
@@ -101,6 +97,9 @@ struct PanelViewLayout
 - (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
 
 - (void) startFieldEditorRenaming;
+
+//PanelViewLayout
+- (void) setLayout:(const PanelViewLayout&)_layout;
 
 /*
  * PanelView implementation hooks.

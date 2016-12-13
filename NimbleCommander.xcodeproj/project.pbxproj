@@ -65,6 +65,7 @@
 		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF3120C61A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF31F66D1DFE6268005A1A40 /* PanelViewLayoutSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */; };
+		CF31F6701DFE644B005A1A40 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
 		CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
 		CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
@@ -970,6 +971,8 @@
 		CF3120CC1A5115DA0062185A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF31F66B1DFE6268005A1A40 /* PanelViewLayoutSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewLayoutSupport.h; path = NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h; sourceTree = SOURCE_ROOT; };
 		CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewLayoutSupport.mm; path = NimbleCommander/States/FilePanels/PanelViewLayoutSupport.mm; sourceTree = SOURCE_ROOT; };
+		CF31F66E1DFE644B005A1A40 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Brief/Layout.h; sourceTree = SOURCE_ROOT; };
+		CF31F66F1DFE644B005A1A40 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/Brief/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconsGenerator2.h; path = NimbleCommander/States/FilePanels/IconsGenerator2.h; sourceTree = SOURCE_ROOT; };
 		CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconsGenerator2.mm; path = NimbleCommander/States/FilePanels/IconsGenerator2.mm; sourceTree = SOURCE_ROOT; };
@@ -1990,6 +1993,8 @@
 		CF5D25E31DB604060073156F /* Brief */ = {
 			isa = PBXGroup;
 			children = (
+				CF31F66E1DFE644B005A1A40 /* Layout.h */,
+				CF31F66F1DFE644B005A1A40 /* Layout.mm */,
 				CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */,
 				CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */,
 				CF56C2C41DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.h */,
@@ -3393,6 +3398,7 @@
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
 				CFDAC28F1DFBF9260039A104 /* MainWindowTerminalState.mm in Sources */,
 				CFDAC2361DFBDE560039A104 /* Application.mm in Sources */,
+				CF31F6701DFE644B005A1A40 /* Layout.mm in Sources */,
 				CFDAC2C31DFD0DE40039A104 /* PanelAux.mm in Sources */,
 				CFDAC2761DFBF6C10039A104 /* GoogleAnalytics.mm in Sources */,
 				CFDAC2E31DFD142C0039A104 /* FileWindow.cpp in Sources */,

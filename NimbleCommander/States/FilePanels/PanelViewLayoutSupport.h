@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Habanero/Observable.h>
 #include "Brief/Layout.h"
 #include "List/Layout.h"
 
@@ -10,15 +11,29 @@ struct PanelViewDisabledLayout
 
 struct PanelViewLayout
 {
+    enum class Type : signed char
+    {
+        Disabled    = -1,
+        Brief       = 0,
+        List        = 1
+        /*Thumbs = 2 */
+    };
+    
     string name; // for the future
     any layout; // perhaps switch to variant?
     // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
     // PanelViewDisabledLayout at the moment.
     bool is_disabled() const;
+    Type type() const;
+    const PanelBriefViewColumnsLayout *brief() const;
+    const PanelListViewColumnsLayout *list() const;
+    
+    bool operator==(const PanelViewLayout&) const;
+    bool operator!=(const PanelViewLayout&) const;
 };
 
 // supposed to be thread-safe
-class PanelViewLayoutsStorage
+class PanelViewLayoutsStorage : public ObservableBase
 {
 public:
     PanelViewLayoutsStorage();
@@ -38,8 +53,18 @@ public:
      * Get all layouts this storage has.
      */
     vector<shared_ptr<const PanelViewLayout>>   GetAllLayouts() const;
+
+    /**
+     * Will ignore requests on invalid index.
+     */
+    void                                        ReplaceLayout(PanelViewLayout _layout,
+                                                              int _at_index);
     
-    const PanelViewLayout&                      LastResortLayout() const;
+    const shared_ptr<const PanelViewLayout>&    LastResortLayout() const;
+    
+    using ObservationTicket = ObservableBase::ObservationTicket;
+    ObservationTicket ObserveChanges( function<void()> _callback );
+    
 private:
     mutable spinlock                            m_LayoutsLock;
     vector<shared_ptr<const PanelViewLayout>>   m_Layouts;

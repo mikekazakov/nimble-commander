@@ -12,6 +12,7 @@
 #include "../../Bootstrap/Config.h"
 #include "PanelData.h"
 #include "PanelView.h"
+#include "PanelViewLayoutSupport.h"
 #include "PanelHistory.h"
 
 @class PanelController;
@@ -149,8 +150,10 @@ namespace panel
     __weak MainWindowFilePanelState* m_FilePanelState;
     
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;
-    
-    int m_ViewLayoutIndex;
+
+    int                                 m_ViewLayoutIndex;
+    shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
+    PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
 }
 
 @property (nonatomic) MainWindowFilePanelState* state;

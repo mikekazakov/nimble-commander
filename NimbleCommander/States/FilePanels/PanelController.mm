@@ -175,6 +175,11 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         add_observer(g_ConfigQuickSearchSoftFiltering,  [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
         add_observer(g_ConfigQuickSearchTypingView,     [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
         add_observer(g_ConfigQuickSearchKeyOption,      [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
+        
+        
+        m_LayoutsObservation = AppDelegate.me.panelLayouts.
+            ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
+        
 #pragma clang diagnostic pop
         
         // loading config via simulating it's change
@@ -995,9 +1000,24 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         if( auto l = AppDelegate.me.panelLayouts.GetLayout(layoutIndex) )
             if( !l->is_disabled() ) {
                 m_ViewLayoutIndex = layoutIndex;
+                m_AssignedViewLayout = l;
                 [m_View setLayout:*l];
                 [self markRestorableStateAsInvalid];                
             }
+    }
+}
+
+- (void) panelLayoutsChanged
+{
+    if( auto l = AppDelegate.me.panelLayouts.GetLayout(m_ViewLayoutIndex) ) {
+        if( !l->is_disabled() ) {
+            m_AssignedViewLayout = l;
+            [m_View setLayout:*l];
+        }
+        else {
+            m_AssignedViewLayout = AppDelegate.me.panelLayouts.LastResortLayout();
+            [m_View setLayout:*m_AssignedViewLayout]; // ???
+        }
     }
 }
 

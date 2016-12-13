@@ -1,5 +1,7 @@
 #include "Layout.h"
 
+static_assert( sizeof(PanelBriefViewColumnsLayout) == 10 );
+
 bool PanelBriefViewColumnsLayout::operator ==(const PanelBriefViewColumnsLayout& _rhs) const noexcept
 {
     return mode == _rhs.mode &&

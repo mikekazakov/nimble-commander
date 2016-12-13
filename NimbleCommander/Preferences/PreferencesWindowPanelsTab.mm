@@ -11,6 +11,8 @@
 #include "PreferencesWindowPanelsTab.h"
 //#include "../../Files/ClassicPanelViewPresentation.h"
 //#include "../../Files/ModernPanelViewPresentation.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/ByteCountFormatter.h>
 
@@ -83,6 +85,26 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 @property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
 @property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
+
+// layout bindings
+@property (strong) IBOutlet NSTableView *layoutsTable;
+@property bool anyLayoutSelected;
+@property (strong) IBOutlet NSTextField *layoutTitle;
+@property (strong) IBOutlet NSPopUpButton *layoutType;
+@property (strong) IBOutlet NSTabView  *layoutDetailsTabView;
+@property (strong) IBOutlet NSButton   *layoutsBriefFixedRadio;
+@property ()                bool        layoutsBriefFixedRadioChoosen;
+@property (strong) IBOutlet NSTextField*layoutsBriefFixedValueTextField;
+@property (strong) IBOutlet NSButton   *layoutsBriefAmountRadio;
+@property ()                bool        layoutsBriefAmountRadioChoosen;
+@property (strong) IBOutlet NSTextField*layoutsBriefAmountValueTextField;
+@property (strong) IBOutlet NSButton   *layoutsBriefDynamicRadio;
+@property ()                bool        layoutsBriefDynamicRadioChoosen;
+@property (strong) IBOutlet NSTextField*layoutsBriefDynamicMinValueTextField;
+@property (strong) IBOutlet NSTextField*layoutsBriefDynamicMaxValueTextField;
+@property (strong) IBOutlet NSButton   *layoutsBriefDynamicEqualCheckbox;
+
+
 @end
 
 @implementation PreferencesWindowPanelsTab
@@ -90,6 +112,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     NSFont *m_ClassicFont;
     vector<PanelViewPresentationItemsColoringRule> m_ModernColoringRules;
     vector<PanelViewPresentationItemsColoringRule> m_ClassicColoringRules;
+    PanelViewLayoutsStorage *m_LayoutsStorage;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -97,6 +120,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
+        m_LayoutsStorage = &AppDelegate.me.panelLayouts;
         
         auto mcr = GlobalConfig().Get(g_ConfigModernColoring);
         if( mcr.IsArray() )
@@ -232,6 +256,8 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
         return m_ClassicColoringRules.size();
     if( tableView == self.modernColoringRulesTable )
         return m_ModernColoringRules.size();
+    if( tableView == self.layoutsTable )
+        return m_LayoutsStorage->LayoutsCount();
     return 0;
 }
 
@@ -275,7 +301,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
             return bt;
         }
     }
-    if(tableView == self.modernColoringRulesTable) {
+    if( tableView == self.modernColoringRulesTable ) {
         assert(row < m_ModernColoringRules.size());
         auto &r = m_ModernColoringRules[row];
         if([tableColumn.identifier isEqualToString:@"name"]) {
@@ -312,10 +338,26 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
             return bt;
         }
     }
+    if( tableView == self.layoutsTable ) {
+        if( [tableColumn.identifier isEqualToString:@"name"] ) {
+            if( auto l = m_LayoutsStorage->GetLayout((int)row) ) {
+                NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+                tf.stringValue = l->name.empty() ?
+                [NSString stringWithFormat:@"Layout #%ld", row] :
+                [NSString stringWithUTF8StdString:l->name];
+                tf.bordered = false;
+                tf.editable = false;
+                tf.drawsBackground = false;
+                return tf;
+            }
+        }
+    }
     return nil;
 }
 
-- (void)tableView:(NSTableView *)tableView didAddRowView:(NSTableRowView *)rowView forRow:(NSInteger)row
+- (void)tableView:(NSTableView *)tableView
+    didAddRowView:(NSTableRowView *)rowView
+           forRow:(NSInteger)row
 {
     if(tableView == self.classicColoringRulesTable ||
        tableView == self.modernColoringRulesTable )
@@ -328,7 +370,9 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
         }
 }
 
-- (void)tableView:(NSTableView *)tableView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row
+- (void)tableView:(NSTableView *)tableView
+ didRemoveRowView:(NSTableRowView *)rowView
+           forRow:(NSInteger)row
 {
     if(tableView == self.classicColoringRulesTable ||
        tableView == self.modernColoringRulesTable ) {
@@ -542,5 +586,139 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     }
 }
 
+
+- (shared_ptr<const PanelViewLayout>) selectedLayout
+{
+    NSInteger row = self.layoutsTable.selectedRow;
+//    return row < m_Tools.size() ? m_Tools[row] : nullptr;
+    return m_LayoutsStorage->GetLayout((int)row);
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    if( notification.object == self.layoutsTable  ) {
+        const auto row = (int)self.layoutsTable.selectedRow;
+        self.anyLayoutSelected = row >= 0;
+        if( row >= 0 )
+            [self fillLayoutFields];
+        else
+            [self clearLayoutFields];
+    }
+    
+//    NSInteger row = self.toolsTable.selectedRow;
+}
+
+static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
+{
+    switch( _t ) {
+        case PanelViewLayout::Type::Brief:  return @"Brief";
+        case PanelViewLayout::Type::List:   return @"List";
+        default: return @"Disabled";
+    }
+}
+
+
+- (void) fillLayoutFields
+{
+    const auto l = self.selectedLayout;
+    assert(l);
+    self.layoutTitle.stringValue = [NSString stringWithUTF8StdString:l->name];
+//    self.layoutType.selectedTag = (int)l->type();
+    const auto t = l->type();
+    [self.layoutType selectItemWithTag:(int)t];
+    [self.layoutDetailsTabView selectTabViewItemWithIdentifier:
+     LayoutTypeToTabIdentifier(t)];
+
+    if( auto brief = l->brief() ) {
+        self.layoutsBriefFixedRadioChoosen =
+            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedWidth;
+        self.layoutsBriefAmountRadioChoosen =
+            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedAmount;
+        self.layoutsBriefDynamicRadioChoosen =
+            brief->mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+        self.layoutsBriefFixedValueTextField.intValue = brief->fixed_mode_width;
+        self.layoutsBriefAmountValueTextField.intValue = brief->fixed_amount_value;
+        self.layoutsBriefDynamicMinValueTextField.intValue = brief->dynamic_width_min;
+        self.layoutsBriefDynamicMaxValueTextField.intValue = brief->dynamic_width_max;
+        self.layoutsBriefDynamicEqualCheckbox.state = brief->dynamic_width_equal;
+    }
+    
+//    self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
+//    self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
+//    [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
+}
+
+- (void) clearLayoutFields
+{
+    self.layoutTitle.stringValue = @"";
+    [self.layoutType selectItemWithTag:(int)PanelViewLayout::Type::Disabled];
+    [self.layoutDetailsTabView selectTabViewItemWithIdentifier:
+     LayoutTypeToTabIdentifier(PanelViewLayout::Type::Disabled)];
+//    self.toolPath.stringValue = @"";
+//    self.toolParameters.stringValue = @"";
+//    [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
+}
+
+- (IBAction)onLayoutBriefModeClicked:(id)sender
+{
+    self.layoutsBriefFixedRadioChoosen = sender == self.layoutsBriefFixedRadio;
+    self.layoutsBriefAmountRadioChoosen = sender == self.layoutsBriefAmountRadio;
+    self.layoutsBriefDynamicRadioChoosen = sender == self.layoutsBriefDynamicRadio;
+    [self commitLayoutChanges];
+}
+
+- (IBAction)onLayoutBriefParamChanged:(id)sender
+{
+    [self commitLayoutChanges];
+}
+
+- (void) commitLayoutChanges
+{
+    if( auto l = self.selectedLayout ) {
+//        auto l = self.gatherBriefLayoutInfo
+        auto new_layout = *l;
+        new_layout.name = self.layoutTitle.stringValue.UTF8String;
+        
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief ) {
+            new_layout.layout = [self gatherBriefLayoutInfo];
+        }
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List ) {
+            
+            
+        }
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled ) {
+            new_layout.layout = PanelViewDisabledLayout{};
+        }
+        
+        
+        if( new_layout != *l ) {
+            const auto row = (int)self.layoutsTable.selectedRow;
+//            assert( row >= 0 );
+            
+//            m_ToolsStorage().ReplaceTool(_et, row);
+            m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
+        }
+    }
+}
+
+- (PanelBriefViewColumnsLayout) gatherBriefLayoutInfo
+{
+    PanelBriefViewColumnsLayout l;
+    
+    if( self.layoutsBriefFixedRadioChoosen )
+        l.mode = PanelBriefViewColumnsLayout::Mode::FixedWidth;
+    if( self.layoutsBriefAmountRadioChoosen )
+        l.mode = PanelBriefViewColumnsLayout::Mode::FixedAmount;
+    if( self.layoutsBriefDynamicRadioChoosen )
+        l.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+
+    l.fixed_mode_width =  self.layoutsBriefFixedValueTextField.intValue;
+    l.fixed_amount_value = self.layoutsBriefAmountValueTextField.intValue;
+    l.dynamic_width_min = self.layoutsBriefDynamicMinValueTextField.intValue;
+    l.dynamic_width_max = self.layoutsBriefDynamicMaxValueTextField.intValue;
+    l.dynamic_width_equal = self.layoutsBriefDynamicEqualCheckbox.state;
+
+    return l;
+}
 
 @end

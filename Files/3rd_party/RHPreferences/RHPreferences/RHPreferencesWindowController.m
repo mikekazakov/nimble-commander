@@ -482,7 +482,12 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
     // steal firstResponder away from text fields, to commit editing to bindings
     id curr = self.window.firstResponder;
     [self.window makeFirstResponder:self];
-    [self.window makeFirstResponder:curr];
+    
+    bool give_back = true;
+    if( [curr isKindOfClass:NSView.class] && ((NSView*)curr).window == nil )
+        give_back = false;
+    if( give_back )
+        [self.window makeFirstResponder:curr];
 }
 
 #pragma mark - NSToolbarDelegate

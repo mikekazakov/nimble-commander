@@ -10,6 +10,18 @@
             <connections>
                 <outlet property="classicColoringRulesTable" destination="ICM-ex-rxA" id="KJi-E0-LlZ"/>
                 <outlet property="fileSizeFormatCombo" destination="Z4N-q8-7Fi" id="1Kq-Ra-EsF"/>
+                <outlet property="layoutDetailsTabView" destination="v76-7c-4nM" id="7a8-5P-cx3"/>
+                <outlet property="layoutTitle" destination="ctm-6Y-FhQ" id="2cJ-LZ-Rcg"/>
+                <outlet property="layoutType" destination="gL4-bK-Y3o" id="LTe-Dl-yWN"/>
+                <outlet property="layoutsBriefAmountRadio" destination="irT-WU-Wxa" id="hG0-XV-goq"/>
+                <outlet property="layoutsBriefAmountValueTextField" destination="tq6-0D-4PV" id="LPD-od-jLv"/>
+                <outlet property="layoutsBriefDynamicEqualCheckbox" destination="zHx-Z8-kyT" id="RzD-Si-3jC"/>
+                <outlet property="layoutsBriefDynamicMaxValueTextField" destination="vlQ-vD-RS5" id="jdW-GS-FiF"/>
+                <outlet property="layoutsBriefDynamicMinValueTextField" destination="RhI-Ld-X9U" id="aR2-BE-Tu3"/>
+                <outlet property="layoutsBriefDynamicRadio" destination="ZU8-sh-eBC" id="KCb-W5-ufG"/>
+                <outlet property="layoutsBriefFixedRadio" destination="0db-SN-pRj" id="Xeg-UI-m9B"/>
+                <outlet property="layoutsBriefFixedValueTextField" destination="PqU-mE-7ld" id="nT9-zD-Zjb"/>
+                <outlet property="layoutsTable" destination="7Vi-TZ-WWx" id="YbV-Es-D6w"/>
                 <outlet property="modernColoringRulesTable" destination="vjI-ps-c9i" id="yie-nn-1y7"/>
                 <outlet property="selectionSizeFormatCombo" destination="EaD-ec-z3N" id="fw3-Uo-Eda"/>
                 <outlet property="view" destination="1" id="2"/>
@@ -175,17 +187,17 @@
                                         <rect key="frame" x="17" y="10" width="170" height="309"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <clipView key="contentView" ambiguous="YES" id="m9T-Or-9up">
-                                            <rect key="frame" x="1" y="23" width="168" height="285"/>
+                                            <rect key="frame" x="1" y="1" width="168" height="307"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="MaB-WW-IpX" viewBased="YES" id="7Vi-TZ-WWx">
-                                                    <rect key="frame" x="0.0" y="0.0" width="168" height="285"/>
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="7Vi-TZ-WWx">
+                                                    <rect key="frame" x="0.0" y="0.0" width="168" height="307"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn width="158" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
+                                                        <tableColumn identifier="name" width="158" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -219,26 +231,26 @@
                                                             </prototypeCellViews>
                                                         </tableColumn>
                                                     </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="-2" id="PHD-vx-F2x"/>
+                                                        <outlet property="delegate" destination="-2" id="SYr-Mt-nHX"/>
+                                                    </connections>
                                                 </tableView>
                                             </subviews>
                                         </clipView>
-                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="Gr7-D6-KIn">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Gr7-D6-KIn">
                                             <rect key="frame" x="1" y="292" width="168" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ABe-WH-9Ma">
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="ABe-WH-9Ma">
                                             <rect key="frame" x="224" y="17" width="15" height="102"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <tableHeaderView key="headerView" id="MaB-WW-IpX">
-                                            <rect key="frame" x="0.0" y="0.0" width="168" height="23"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableHeaderView>
                                     </scrollView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kdl-CL-b0y">
                                         <rect key="frame" x="209" y="302" width="82" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="0Zd-1e-wMf">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Title:" id="0Zd-1e-wMf">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -254,33 +266,198 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wpl-kA-k2v">
-                                        <rect key="frame" x="211" y="268" width="37" height="17"/>
+                                        <rect key="frame" x="211" y="268" width="97" height="17"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="TEV-1w-QXA">
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Layout type:" id="TEV-1w-QXA">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gL4-bK-Y3o">
-                                        <rect key="frame" x="260" y="263" width="144" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Bs6-RN-w2G" id="p2t-XZ-gZV">
-                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="Tcg-lA-tEp">
-                                                <items>
-                                                    <menuItem title="Item 1" state="on" id="Bs6-RN-w2G"/>
-                                                    <menuItem title="Item 2" id="zhB-wr-mOE"/>
-                                                    <menuItem title="Item 3" id="eFu-sc-5EO"/>
-                                                </items>
-                                            </menu>
-                                        </popUpButtonCell>
-                                    </popUpButton>
                                     <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PZ6-4f-Tz3">
                                         <rect key="frame" x="211" y="247" width="368" height="5"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     </box>
+                                    <tabView fixedFrame="YES" drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="v76-7c-4nM">
+                                        <rect key="frame" x="211" y="10" width="366" height="231"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                        <tabViewItems>
+                                            <tabViewItem label="Disabled" identifier="Disabled" id="Kz4-Ov-Je4">
+                                                <view key="view" id="O9Y-Ml-d47">
+                                                    <rect key="frame" x="0.0" y="0.0" width="366" height="231"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                            </tabViewItem>
+                                            <tabViewItem label="Brief" identifier="Brief" id="Mjg-Er-F9r">
+                                                <view key="view" ambiguous="YES" id="8bL-DB-GKD">
+                                                    <rect key="frame" x="0.0" y="0.0" width="366" height="231"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0db-SN-pRj">
+                                                            <rect key="frame" x="19" y="194" width="162" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="radio" title="Fixed column width" bezelStyle="regularSquare" imagePosition="left" alignment="left" continuous="YES" inset="2" id="z9U-uR-HFr">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                                <connections>
+                                                                    <binding destination="-2" name="value" keyPath="self.layoutsBriefFixedRadioChoosen" id="aUy-yb-uMI"/>
+                                                                </connections>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefModeClicked:" target="-2" id="MJu-aU-cfe"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZU8-sh-eBC">
+                                                            <rect key="frame" x="19" y="101" width="194" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="radio" title="Dynamic columns width" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Juz-t3-yHe">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefModeClicked:" target="-2" id="B4I-7w-XlR"/>
+                                                                <binding destination="-2" name="value" keyPath="self.layoutsBriefDynamicRadioChoosen" id="JIP-n3-r6p"/>
+                                                            </connections>
+                                                        </button>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ChI-Sp-8eg">
+                                                            <rect key="frame" x="37" y="170" width="54" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Width:" id="Vaj-Tw-t1u">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqU-mE-7ld">
+                                                            <rect key="frame" x="97" y="167" width="60" height="22"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="qON-ci-G7q">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefParamChanged:" target="-2" id="QBg-OV-KCV"/>
+                                                                <binding destination="-2" name="enabled" keyPath="self.layoutsBriefFixedRadioChoosen" id="z4S-Wy-WeW"/>
+                                                            </connections>
+                                                        </textField>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PPe-hV-kuO">
+                                                            <rect key="frame" x="39" y="126" width="65" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Amount:" id="ivk-MX-di5">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tq6-0D-4PV">
+                                                            <rect key="frame" x="110" y="123" width="60" height="22"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="5iL-Gj-X8f">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefParamChanged:" target="-2" id="zuG-gv-AJY"/>
+                                                                <binding destination="-2" name="enabled" keyPath="self.layoutsBriefAmountRadioChoosen" id="G8L-dN-jpp"/>
+                                                            </connections>
+                                                        </textField>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aGR-3Z-BWH">
+                                                            <rect key="frame" x="41" y="77" width="103" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Minimum width:" id="znP-f0-Vwu">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RhI-Ld-X9U">
+                                                            <rect key="frame" x="153" y="74" width="60" height="22"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="gd0-4V-IjV">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefParamChanged:" target="-2" id="fNf-Y4-bJs"/>
+                                                                <binding destination="-2" name="enabled" keyPath="self.layoutsBriefDynamicRadioChoosen" id="pAb-uh-yCI"/>
+                                                            </connections>
+                                                        </textField>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FMT-5L-HDp">
+                                                            <rect key="frame" x="41" y="52" width="103" height="17"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Maximum width:" id="rfE-oo-e8a">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vlQ-vD-RS5">
+                                                            <rect key="frame" x="153" y="49" width="60" height="22"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="G9t-m6-Mkg">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefParamChanged:" target="-2" id="kXn-6d-OlD"/>
+                                                                <binding destination="-2" name="enabled" keyPath="self.layoutsBriefDynamicRadioChoosen" id="b1G-pe-0Zs"/>
+                                                            </connections>
+                                                        </textField>
+                                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zHx-Z8-kyT">
+                                                            <rect key="frame" x="37" y="28" width="135" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="check" title="Equalize widths" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="StD-Qd-tVh">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefParamChanged:" target="-2" id="xWg-8X-afJ"/>
+                                                                <binding destination="-2" name="enabled" keyPath="self.layoutsBriefDynamicRadioChoosen" id="hL8-dp-qZS"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="irT-WU-Wxa">
+                                                            <rect key="frame" x="19" y="142" width="177" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                            <buttonCell key="cell" type="radio" title="Fixed columns amount" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="8Yf-B5-Zth">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefModeClicked:" target="-2" id="WhE-m1-Wfh"/>
+                                                                <binding destination="-2" name="value" keyPath="self.layoutsBriefAmountRadioChoosen" id="wRG-bz-lnf"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                </view>
+                                            </tabViewItem>
+                                            <tabViewItem label="List" identifier="List" id="Uqk-6S-tGK">
+                                                <view key="view" id="plK-dA-Rv1">
+                                                    <rect key="frame" x="0.0" y="0.0" width="366" height="231"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                            </tabViewItem>
+                                        </tabViewItems>
+                                    </tabView>
+                                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gL4-bK-Y3o">
+                                        <rect key="frame" x="324" y="263" width="144" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <popUpButtonCell key="cell" type="push" title="Brief" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Bs6-RN-w2G" id="p2t-XZ-gZV">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="Tcg-lA-tEp">
+                                                <items>
+                                                    <menuItem title="Brief" state="on" id="Bs6-RN-w2G"/>
+                                                    <menuItem title="List" tag="1" id="zhB-wr-mOE"/>
+                                                    <menuItem title="Disabled" tag="-1" id="eFu-sc-5EO"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                    </popUpButton>
                                 </subviews>
                             </view>
                         </tabViewItem>
@@ -1223,7 +1400,7 @@
                 <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="tIh-RM-Thd"/>
                 <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="12" symbolic="YES" id="wy0-Nt-R2A"/>
             </constraints>
-            <point key="canvasLocation" x="530" y="-26"/>
+            <point key="canvasLocation" x="685" y="-80"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
     </objects>

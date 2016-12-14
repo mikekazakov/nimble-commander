@@ -18,6 +18,7 @@
 
 #define MyPrivateTableViewDataTypeClassic @"PreferencesWindowPanelsTabPrivateTableViewDataTypeClassic"
 #define MyPrivateTableViewDataTypeModern @"PreferencesWindowPanelsTabPrivateTableViewDataTypeModern"
+static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTableViewDataColumns";
 
 static const auto g_ConfigClassicColoring   = "filePanel.classic.coloringRules_v1";
 static const auto g_ConfigModernColoring    = "filePanel.modern.coloringRules_v1";
@@ -103,6 +104,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 @property (strong) IBOutlet NSTextField*layoutsBriefDynamicMinValueTextField;
 @property (strong) IBOutlet NSTextField*layoutsBriefDynamicMaxValueTextField;
 @property (strong) IBOutlet NSButton   *layoutsBriefDynamicEqualCheckbox;
+@property (strong) IBOutlet NSTableView *layoutsListColumnsTable;
 
 
 @end
@@ -113,6 +115,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     vector<PanelViewPresentationItemsColoringRule> m_ModernColoringRules;
     vector<PanelViewPresentationItemsColoringRule> m_ClassicColoringRules;
     PanelViewLayoutsStorage *m_LayoutsStorage;
+    vector< pair<PanelListViewColumnsLayout::Column, bool> > m_LayoutListColumns;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -145,6 +148,8 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     self.modernColoringRulesTable.dataSource = self;
     self.modernColoringRulesTable.delegate = self;
     [self.modernColoringRulesTable registerForDraggedTypes:@[MyPrivateTableViewDataTypeModern]];
+    
+    [self.layoutsListColumnsTable registerForDraggedTypes:@[g_LayoutColumnsDDType]];
     
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"name"];
     column.width = 120;
@@ -258,7 +263,32 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
         return m_ModernColoringRules.size();
     if( tableView == self.layoutsTable )
         return m_LayoutsStorage->LayoutsCount();
+    if( tableView == self.layoutsListColumnsTable )
+//        return 5;
+        return m_LayoutListColumns.size();
     return 0;
+}
+
+//enum class PanelListViewColumns : signed char
+//{
+//    Empty           = 0,
+//    Filename        = 1,
+//    Size            = 2,
+//    DateCreated     = 3,
+//    DateAdded       = 4,
+//    DateModified    = 5
+//};
+
+static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
+{
+    switch( _c ) {
+        case PanelListViewColumns::Filename:    return @"Name";
+        case PanelListViewColumns::Size:        return @"Size";
+        case PanelListViewColumns::DateCreated: return @"Date Created";
+        case PanelListViewColumns::DateAdded:   return @"Date Added";
+        case PanelListViewColumns::DateModified:return @"Date Modified";
+        default:                                return @"";
+    }
 }
 
 - (NSView *)tableView:(NSTableView *)tableView
@@ -349,6 +379,33 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
                 tf.editable = false;
                 tf.drawsBackground = false;
                 return tf;
+            }
+        }
+    }
+    if( tableView == self.layoutsListColumnsTable ) {
+        if( auto layout = self.selectedLayout ) {
+            if( auto list = layout->list() ) {
+                if( row < m_LayoutListColumns.size() ) {
+                    auto &col = m_LayoutListColumns[row];
+                    
+                    if( [tableColumn.identifier isEqualToString:@"enabled"]  ) {
+                        NSButton *cb = [[NSButton alloc] initWithFrame:NSRect()];
+                        cb.enabled = row != 0;
+                        cb.buttonType = NSButtonTypeSwitch;
+                        cb.state = col.second;
+                        cb.target = self;
+                        cb.action = @selector(onLayoutListColumnEnabledClicked:);
+                        return cb;
+                    }
+                    if( [tableColumn.identifier isEqualToString:@"title"]  ) {
+                        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+                        tf.stringValue = PanelListColumnTypeToString(col.first.kind);
+                        tf.bordered = false;
+                        tf.editable = false;
+                        tf.drawsBackground = false;
+                        return tf;
+                    }
+                }
             }
         }
     }
@@ -486,7 +543,8 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 - (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
 {
     if(aTableView == self.classicColoringRulesTable ||
-       aTableView == self.modernColoringRulesTable)
+       aTableView == self.modernColoringRulesTable ||
+       aTableView == self.layoutsListColumnsTable )
         return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
     return NSDragOperationNone;
 }
@@ -501,6 +559,13 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
     if(aTableView == self.modernColoringRulesTable) {
         [pboard declareTypes:@[MyPrivateTableViewDataTypeModern] owner:self];
         [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:MyPrivateTableViewDataTypeModern];
+        return true;
+    }
+    if( aTableView == self.layoutsListColumnsTable ) {
+        if( rowIndexes.firstIndex == 0 )
+            return false;
+        [pboard declareTypes:@[g_LayoutColumnsDDType] owner:self];
+        [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:g_LayoutColumnsDDType];
         return true;
     }
     return false;
@@ -547,6 +612,25 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
             rotate( i + drag_to, i + drag_from, i + drag_from + 1 );
         [self.modernColoringRulesTable reloadData];
         [self writeModernFiltering];
+        return true;
+    }
+    else if( aTableView == self.layoutsListColumnsTable ) {
+        NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:[info.draggingPasteboard dataForType:g_LayoutColumnsDDType]];
+        NSInteger drag_from = inds.firstIndex;
+        
+        if(drag_to == drag_from || // same index, above
+           drag_to == drag_from + 1 || // same index, below
+           drag_to == 0 ) // first item should be filename
+            return false;
+        
+        assert( drag_from < m_LayoutListColumns.size() );
+        auto i = begin(m_LayoutListColumns);
+        if( drag_from < drag_to )
+            rotate( i + drag_from, i + drag_from + 1, i + drag_to );
+        else
+            rotate( i + drag_to, i + drag_from, i + drag_from + 1 );
+        [self.layoutsListColumnsTable reloadData];
+        [self commitLayoutChanges];
         return true;
     }
     return false;
@@ -643,6 +727,32 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         self.layoutsBriefDynamicEqualCheckbox.state = brief->dynamic_width_equal;
     }
     
+    if( auto list = l->list() ) {
+        static const auto columns_order = {
+            PanelListViewColumns::Filename,
+            PanelListViewColumns::Size,
+            PanelListViewColumns::DateCreated,
+            PanelListViewColumns::DateModified,
+            PanelListViewColumns::DateAdded
+        };
+        m_LayoutListColumns.clear();
+        for( auto c: list->columns )
+            m_LayoutListColumns.emplace_back(c, true);
+        for( auto c: columns_order )
+            if( !any_of(begin(m_LayoutListColumns),
+                        end(m_LayoutListColumns),
+                        [=](auto v){ return v.first.kind == c; }) ) {
+                PanelListViewColumnsLayout::Column dummy;
+                dummy.kind = c;
+                
+                m_LayoutListColumns.emplace_back(dummy, false);
+            }
+
+        [self.layoutsListColumnsTable reloadData];
+    }
+    
+//
+    
 //    self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
 //    self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
 //    [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
@@ -667,6 +777,15 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     [self commitLayoutChanges];
 }
 
+- (IBAction)onLayoutListColumnEnabledClicked:(id)sender
+{
+    int row = (int)[self.layoutsListColumnsTable rowForView:(NSView*)sender];
+    if( row >= 0 && row < m_LayoutListColumns.size() ) {
+        m_LayoutListColumns[row].second = ((NSButton*)sender).state == NSOnState;
+        [self commitLayoutChanges];
+    }
+}
+
 - (IBAction)onLayoutBriefParamChanged:(id)sender
 {
     [self commitLayoutChanges];
@@ -675,21 +794,15 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
 - (void) commitLayoutChanges
 {
     if( auto l = self.selectedLayout ) {
-//        auto l = self.gatherBriefLayoutInfo
         auto new_layout = *l;
         new_layout.name = self.layoutTitle.stringValue.UTF8String;
         
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief ) {
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief )
             new_layout.layout = [self gatherBriefLayoutInfo];
-        }
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List ) {
-            
-            
-        }
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled ) {
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List )
+            new_layout.layout = [self gatherListLayoutInfo];
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled )
             new_layout.layout = PanelViewDisabledLayout{};
-        }
-        
         
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
@@ -699,6 +812,18 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
             m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
         }
     }
+}
+
+- (PanelListViewColumnsLayout) gatherListLayoutInfo
+{
+    PanelListViewColumnsLayout l;
+    
+    for( auto &c: m_LayoutListColumns )
+        if( c.second ) {
+            l.columns.emplace_back( c.first );
+        }
+    
+    return l;
 }
 
 - (PanelBriefViewColumnsLayout) gatherBriefLayoutInfo

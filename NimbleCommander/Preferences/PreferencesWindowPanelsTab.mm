@@ -713,9 +713,19 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         l.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
 
     l.fixed_mode_width =  self.layoutsBriefFixedValueTextField.intValue;
+    if( l.fixed_mode_width < 40 )
+        l.fixed_mode_width = 40;
     l.fixed_amount_value = self.layoutsBriefAmountValueTextField.intValue;
+    if( l.fixed_amount_value < 1 )
+        l.fixed_amount_value = 1;
     l.dynamic_width_min = self.layoutsBriefDynamicMinValueTextField.intValue;
+    if( l.dynamic_width_min < 40 )
+        l.dynamic_width_min = 40;
     l.dynamic_width_max = self.layoutsBriefDynamicMaxValueTextField.intValue;
+    if( l.dynamic_width_max < 40 )
+        l.dynamic_width_max = 40;
+    if( l.dynamic_width_max < l.dynamic_width_min )
+        l.dynamic_width_max = l.dynamic_width_min;
     l.dynamic_width_equal = self.layoutsBriefDynamicEqualCheckbox.state;
 
     return l;

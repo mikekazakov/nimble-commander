@@ -165,22 +165,18 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         [self RegisterDragAndDropListeners];
         
         // wire up config changing notifications
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-        __weak PanelController *weak_self = self;
-        auto add_observer = [&](const char *_path, function<void()> _cb) { m_ConfigObservers.emplace_back( GlobalConfig().Observe(_path, move(_cb)) ); };
-        add_observer(g_ConfigShowDotDotEntry,           [=]{ [(PanelController *)weak_self configVFSFetchFlagsChanged]; });
-        add_observer(g_ConfigShowLocalizedFilenames,    [=]{ [(PanelController *)weak_self configVFSFetchFlagsChanged]; });
-        add_observer(g_ConfigQuickSearchWhereToFind,    [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
-        add_observer(g_ConfigQuickSearchSoftFiltering,  [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
-        add_observer(g_ConfigQuickSearchTypingView,     [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
-        add_observer(g_ConfigQuickSearchKeyOption,      [=]{ [(PanelController *)weak_self configQuickSearchSettingsChanged]; });
-        
+        auto add_co = [&](const char *_path, SEL _sel) { m_ConfigObservers.
+            emplace_back( GlobalConfig().Observe(_path, objc_callback(self, _sel)) );
+        };
+        add_co(g_ConfigShowDotDotEntry,         @selector(configVFSFetchFlagsChanged) );
+        add_co(g_ConfigShowLocalizedFilenames,  @selector(configVFSFetchFlagsChanged) );
+        add_co(g_ConfigQuickSearchWhereToFind,  @selector(configQuickSearchSettingsChanged) );
+        add_co(g_ConfigQuickSearchSoftFiltering,@selector(configQuickSearchSettingsChanged) );
+        add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
+        add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
         
         m_LayoutsObservation = AppDelegate.me.panelLayouts.
             ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
-        
-#pragma clang diagnostic pop
         
         // loading config via simulating it's change
         [self configVFSFetchFlagsChanged];
@@ -993,7 +989,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     });
 }
 
-//@property (nonatomic) int layoutIndex
 - (void) setLayoutIndex:(int)layoutIndex
 {
     if( m_ViewLayoutIndex != layoutIndex ) {

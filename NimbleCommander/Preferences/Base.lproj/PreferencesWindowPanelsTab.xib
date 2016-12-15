@@ -191,13 +191,13 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Ujz-1s-pz4" viewBased="YES" id="7Vi-TZ-WWx">
-                                                    <rect key="frame" x="0.0" y="0.0" width="169" height="274"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="168" height="274"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn identifier="name" editable="NO" width="166" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
+                                                        <tableColumn identifier="name" editable="NO" width="165" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Layouts">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -211,11 +211,11 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="vfI-BX-dSy">
-                                                                    <rect key="frame" x="1" y="1" width="166" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="165" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bMn-Fq-70k">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="166" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="165" height="17"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="g6Z-j4-frE">
                                                                                 <font key="font" metaFont="system"/>
@@ -241,7 +241,7 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="170" id="fyx-hA-fV6"/>
                                         </constraints>
-                                        <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="Gr7-D6-KIn">
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Gr7-D6-KIn">
                                             <rect key="frame" x="1" y="281" width="168" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -250,7 +250,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" id="Ujz-1s-pz4">
-                                            <rect key="frame" x="0.0" y="0.0" width="169" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="168" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
@@ -273,6 +273,7 @@
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <connections>
+                                            <action selector="onLayoutTitleChanged:" target="-2" id="HXK-BK-oN1"/>
                                             <binding destination="-2" name="enabled" keyPath="self.anyLayoutSelected" id="QdI-Vc-80c"/>
                                         </connections>
                                     </textField>
@@ -293,7 +294,7 @@
                                         <tabViewItems>
                                             <tabViewItem label="Disabled" identifier="Disabled" id="Kz4-Ov-Je4">
                                                 <view key="view" id="O9Y-Ml-d47">
-                                                    <rect key="frame" x="0.0" y="0.0" width="404" height="253"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="404" height="231"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 </view>
                                             </tabViewItem>
@@ -479,7 +480,7 @@
                                                             <rect key="frame" x="8" y="20" width="240" height="191"/>
                                                             <clipView key="contentView" id="Q5x-oK-mXN">
                                                                 <rect key="frame" x="1" y="0.0" width="238" height="190"/>
-                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="1CY-V7-OVc" viewBased="YES" id="LBn-0D-ZCF">
                                                                         <rect key="frame" x="0.0" y="0.0" width="261" height="167"/>
@@ -574,6 +575,7 @@
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
+                                            <action selector="onLayoutTypeChanged:" target="-2" id="YzM-lA-1HX"/>
                                             <binding destination="-2" name="enabled" keyPath="self.anyLayoutSelected" id="JM5-KX-BK5"/>
                                         </connections>
                                     </popUpButton>

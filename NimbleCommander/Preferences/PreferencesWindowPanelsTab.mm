@@ -692,6 +692,38 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
 //    NSInteger row = self.toolsTable.selectedRow;
 }
 
+- (IBAction)onLayoutTypeChanged:(id)sender
+{
+    if( auto l = self.selectedLayout ) {
+        auto new_layout = *l;
+        new_layout.name = self.layoutTitle.stringValue.UTF8String;
+        
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief ) {
+            PanelBriefViewColumnsLayout l1;
+            l1.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+            l1.dynamic_width_min = 140;
+            l1.dynamic_width_max = 250;
+            l1.dynamic_width_equal = false;
+            new_layout.layout = l1;
+        }
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List ) {
+            PanelListViewColumnsLayout l1;
+            PanelListViewColumnsLayout::Column col;
+            col.kind = PanelListViewColumns::Filename;
+            l1.columns.emplace_back(col);
+            new_layout.layout = l1;
+        }
+        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled )
+            new_layout.layout = PanelViewDisabledLayout{};
+
+        if( new_layout != *l ) {
+            const auto row = (int)self.layoutsTable.selectedRow;
+            m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
+            [self fillLayoutFields];
+        }
+    }
+}
+
 static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
 {
     switch( _t ) {
@@ -707,7 +739,6 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     const auto l = self.selectedLayout;
     assert(l);
     self.layoutTitle.stringValue = [NSString stringWithUTF8StdString:l->name];
-//    self.layoutType.selectedTag = (int)l->type();
     const auto t = l->type();
     [self.layoutType selectItemWithTag:(int)t];
     [self.layoutDetailsTabView selectTabViewItemWithIdentifier:
@@ -786,6 +817,14 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     }
 }
 
+- (IBAction)onLayoutTitleChanged:(id)sender
+{
+    [self commitLayoutChanges];
+    [self.layoutsTable reloadDataForRowIndexes:
+     [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_LayoutsStorage->LayoutsCount())]
+                                 columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+}
+
 - (IBAction)onLayoutBriefParamChanged:(id)sender
 {
     [self commitLayoutChanges];
@@ -806,9 +845,6 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
-//            assert( row >= 0 );
-            
-//            m_ToolsStorage().ReplaceTool(_et, row);
             m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
         }
     }

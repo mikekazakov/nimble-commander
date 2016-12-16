@@ -46,6 +46,7 @@ struct PanelViewLayout;
 //@property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
+@property (nonatomic, readonly) int headerBarHeight;
 
 /**
  * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,

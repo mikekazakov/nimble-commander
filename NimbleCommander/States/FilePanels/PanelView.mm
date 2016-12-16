@@ -1510,4 +1510,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     return objc_cast<PanelController>(m_Delegate);
 }
 
+- (int) headerBarHeight
+{
+    return 20;
+}
+
 @end

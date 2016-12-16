@@ -785,16 +785,20 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self DoQuickSelectByExtension:true];
 }
 
-- (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view andDelegate:(id<NSPopoverDelegate>)_delegate
+- (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view
+                                  andDelegate:(id<NSPopoverDelegate>)_delegate
 {
+    const auto bounds = self.view.bounds;
     NSPopover *popover = [NSPopover new];
     popover.contentViewController = _view;
     popover.behavior = NSPopoverBehaviorTransient;
     popover.delegate = _delegate;
-//    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, self.view.presentation->GetSingleItemHeight())
-    [popover showRelativeToRect:NSMakeRect(0, 0, self.view.bounds.size.width, 0)
+    [popover showRelativeToRect:NSMakeRect(0,
+                                           bounds.size.height - self.view.headerBarHeight,
+                                           bounds.size.width,
+                                           bounds.size.height)
                          ofView:self.view
-                  preferredEdge:NSMaxYEdge];
+                  preferredEdge:NSMinYEdge];
     return popover;
 }
 

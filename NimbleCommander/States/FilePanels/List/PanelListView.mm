@@ -667,4 +667,21 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return m_PanelView;
 }
 
+- (void) onPageUp:(NSEvent*)_event
+{
+    NSRect rect;
+    rect = m_TableView.visibleRect;
+    rect.origin.y -= rect.size.height - m_ScrollView.verticalPageScroll;
+    [m_TableView scrollRectToVisible:rect];
+}
+
+- (void) onPageDown:(NSEvent*)_event
+{
+    NSRect rect;
+    rect = m_TableView.visibleRect;
+    rect.origin.y += rect.size.height - m_ScrollView.verticalPageScroll;
+    [m_TableView scrollRectToVisible:rect];
+}
+
+
 @end

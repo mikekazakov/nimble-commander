@@ -409,7 +409,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self OnCursorPositionChanged];
 }
 
-- (void) HandlePrevPage
+/*- (void) HandlePrevPage
 {
     dispatch_assert_main_queue();
     
@@ -429,7 +429,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
     [self SelectUnselectInRange:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
-}
+}*/
 
 - (void) HandlePrevColumn
 {
@@ -616,10 +616,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self HandleFirstFile];
     else if( hk_last.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleLastFile];
-    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
-        [self HandleNextPage];
-    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
-        [self HandlePrevPage];
+//    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
+//        [self HandleNextPage];
+    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers) )
+        [m_ItemsView onPageDown:event];
+//    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
+//        [self HandlePrevPage];
+    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers) )
+        [m_ItemsView onPageUp:event];
     else if( hk_inv_and_move.IsKeyDown(unicode, keycode, modifiers) )
         [self onInvertCurrentItemSelectionAndMoveNext];
     else if( hk_inv.IsKeyDown(unicode, keycode, modifiers) )

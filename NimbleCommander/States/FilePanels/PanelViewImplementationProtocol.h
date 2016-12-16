@@ -17,6 +17,9 @@ struct PanelDataSortMode;
 
 - (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index;
 
+- (void) onPageUp:(NSEvent*)_event;
+- (void) onPageDown:(NSEvent*)_event;
+
 @end
 
 

@@ -492,5 +492,22 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     return objc_cast<PanelView>(self.superview);
 }
 
+- (void) onPageUp:(NSEvent*)_event
+{
+    NSRect rect;
+    rect =  m_CollectionView.visibleRect;
+    rect.origin.x -= rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void) onPageDown:(NSEvent*)_event
+{
+    auto a = m_ScrollView.horizontalPageScroll;
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x += rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
 @end
 

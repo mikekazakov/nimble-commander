@@ -61,10 +61,22 @@ static const vector<pair<string,int>> g_ActionsTags = {
     {"menu.view.swap_panels",                           13020},
     {"menu.view.sync_panels",                           13030},
     {"menu.view.refresh",                               13040},
-    {"menu.view.toggle_short_mode",                     13050},
-    {"menu.view.toggle_medium_mode",                    13060},
-    {"menu.view.toggle_full_mode",                      13070},
-    {"menu.view.toggle_wide_mode",                      13080},
+    
+    {"menu.view.toggle_layout_1",                       13050},
+    {"menu.view.toggle_layout_2",                       13051},
+    {"menu.view.toggle_layout_3",                       13052},
+    {"menu.view.toggle_layout_4",                       13053},
+    {"menu.view.toggle_layout_5",                       13054},
+    {"menu.view.toggle_layout_6",                       13055},
+    {"menu.view.toggle_layout_7",                       13056},
+    {"menu.view.toggle_layout_8",                       13057},
+    {"menu.view.toggle_layout_9",                       13058},
+    {"menu.view.toggle_layout_10",                      13059},
+    
+//    {"menu.view.toggle_short_mode",                     13050},
+//    {"menu.view.toggle_medium_mode",                    13060},
+//    {"menu.view.toggle_full_mode",                      13070},
+//    {"menu.view.toggle_wide_mode",                      13080},
     {"menu.view.sorting_by_name",                       13090},
     {"menu.view.sorting_by_extension",                  13100},
     {"menu.view.sorting_by_modify_time",                13110},
@@ -209,10 +221,22 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.view.swap_panels",                               u8"⌘u"      }, // cmd+u
         {"menu.view.sync_panels",                               u8"⌥⌘u"     }, // alt+cmd+u
         {"menu.view.refresh",                                   u8"⌘r"      }, // cmd+r
-        {"menu.view.toggle_short_mode",                         u8"^1"      }, // ctrl+1
-        {"menu.view.toggle_medium_mode",                        u8"^2"      }, // ctrl+2
-        {"menu.view.toggle_full_mode",                          u8"^3"      }, // ctrl+3
-        {"menu.view.toggle_wide_mode",                          u8"^4"      }, // ctrl+4
+//        {"menu.view.toggle_short_mode",                         u8"^1"      }, // ctrl+1
+//        {"menu.view.toggle_medium_mode",                        u8"^2"      }, // ctrl+2
+//        {"menu.view.toggle_full_mode",                          u8"^3"      }, // ctrl+3
+//        {"menu.view.toggle_wide_mode",                          u8"^4"      }, // ctrl+4
+        {"menu.view.toggle_layout_1",                       	u8"^1"},
+        {"menu.view.toggle_layout_2",                           u8"^2"},
+        {"menu.view.toggle_layout_3",                           u8"^3"},
+        {"menu.view.toggle_layout_4",                           u8"^4"},
+        {"menu.view.toggle_layout_5",                           u8"^5"},
+        {"menu.view.toggle_layout_6",                           u8"^6"},
+        {"menu.view.toggle_layout_7",                           u8"^7"},
+        {"menu.view.toggle_layout_8",                           u8"^8"},
+        {"menu.view.toggle_layout_9",                           u8"^9"},
+        {"menu.view.toggle_layout_10",                          u8"^0"},
+    
+    
         {"menu.view.sorting_by_name",                           u8"^⌘1"     }, // ctrl+cmd+1
         {"menu.view.sorting_by_extension",                      u8"^⌘2"     }, // ctrl+cmd+2
         {"menu.view.sorting_by_modify_time",                    u8"^⌘3"     }, // ctrl+cmd+3

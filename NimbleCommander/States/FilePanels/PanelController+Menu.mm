@@ -43,6 +43,7 @@
 //#include "PanelViewPresentation.h"
 #include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Views/SpotlightSearchPopupViewController.h"
 #include "PanelAux.h"
 
@@ -272,11 +273,25 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
         }
     };
     
+    auto update_layout_item = [&](int _index)->bool{
+        static auto &storage = AppDelegate.me.panelLayouts;
+        item.state = self.layoutIndex == _index;
+        if( auto l = storage.GetLayout(_index) )
+            return !l->is_disabled();
+        return false;
+    };
+    
 #define TAG(name, str) static const int name = ActionsShortcutsManager::Instance().TagFromAction(str)
-    TAG(tag_short_mode,         "menu.view.toggle_short_mode");
-    TAG(tag_medium_mode,        "menu.view.toggle_medium_mode");
-    TAG(tag_full_mode,          "menu.view.toggle_full_mode");
-    TAG(tag_wide_mode,          "menu.view.toggle_wide_mode");
+    TAG(tag_layout_1,           "menu.view.toggle_layout_1");
+    TAG(tag_layout_2,           "menu.view.toggle_layout_2");
+    TAG(tag_layout_3,           "menu.view.toggle_layout_3");
+    TAG(tag_layout_4,           "menu.view.toggle_layout_4");
+    TAG(tag_layout_5,           "menu.view.toggle_layout_5");
+    TAG(tag_layout_6,           "menu.view.toggle_layout_6");
+    TAG(tag_layout_7,           "menu.view.toggle_layout_7");
+    TAG(tag_layout_8,           "menu.view.toggle_layout_8");
+    TAG(tag_layout_9,           "menu.view.toggle_layout_9");
+    TAG(tag_layout_10,          "menu.view.toggle_layout_10");
     TAG(tag_sort_name,          "menu.view.sorting_by_name");
     TAG(tag_sort_ext,           "menu.view.sorting_by_extension");
     TAG(tag_sort_mod,           "menu.view.sorting_by_modify_time");
@@ -291,10 +306,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     auto tag = item.tag;
 #define IF(a) else if(tag == a)
     if(false);
-    IF(tag_short_mode)      item.state = self.layoutIndex == 0;
-    IF(tag_medium_mode)     item.state = self.layoutIndex == 1;
-    IF(tag_full_mode)       item.state = self.layoutIndex == 2;
-    IF(tag_wide_mode)       item.state = self.layoutIndex == 3;
+    IF(tag_layout_1)        return update_layout_item(0);
+    IF(tag_layout_2)        return update_layout_item(1);
+    IF(tag_layout_3)        return update_layout_item(2);
+    IF(tag_layout_4)        return update_layout_item(3);
+    IF(tag_layout_5)        return update_layout_item(4);
+    IF(tag_layout_6)        return update_layout_item(5);
+    IF(tag_layout_7)        return update_layout_item(6);
+    IF(tag_layout_8)        return update_layout_item(7);
+    IF(tag_layout_9)        return update_layout_item(8);
+    IF(tag_layout_10)       return update_layout_item(9);
     IF(tag_sort_viewhidden) item.state = m_Data.HardFiltering().show_hidden;
     IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
     IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
@@ -955,6 +976,18 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 //    [self markRestorableStateAsInvalid];
     [self setLayoutIndex:3];
 }
+
+- (IBAction)onToggleViewLayout1:(id)sender{}
+- (IBAction)onToggleViewLayout2:(id)sender{}
+- (IBAction)onToggleViewLayout3:(id)sender{}
+- (IBAction)onToggleViewLayout4:(id)sender{}
+- (IBAction)onToggleViewLayout5:(id)sender{}
+- (IBAction)onToggleViewLayout6:(id)sender{}
+- (IBAction)onToggleViewLayout7:(id)sender{}
+- (IBAction)onToggleViewLayout8:(id)sender{}
+- (IBAction)onToggleViewLayout9:(id)sender{}
+- (IBAction)onToggleViewLayout10:(id)sender{}
+
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender
 {

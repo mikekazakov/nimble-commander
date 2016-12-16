@@ -38,29 +38,30 @@ class PanelViewLayoutsStorage : public ObservableBase
 public:
     PanelViewLayoutsStorage();
     
-    
     /**
      * Will return total layouts count, including disabled onces (PanelViewDisabledLayout).
      */
-    int                                         LayoutsCount() const;
+    int LayoutsCount() const;
     
     /**
      * Will return nullptr on invalid index.
      */
-    shared_ptr<const PanelViewLayout>           GetLayout( int _index ) const;
+    shared_ptr<const PanelViewLayout> GetLayout( int _index ) const;
     
     /**
      * Get all layouts this storage has.
      */
-    vector<shared_ptr<const PanelViewLayout>>   GetAllLayouts() const;
+    vector<shared_ptr<const PanelViewLayout>> GetAllLayouts() const;
 
     /**
      * Will ignore requests on invalid index.
      */
-    void                                        ReplaceLayout(PanelViewLayout _layout,
-                                                              int _at_index);
+    void ReplaceLayout(PanelViewLayout _layout, int _at_index);
     
-    const shared_ptr<const PanelViewLayout>&    LastResortLayout() const;
+    /**
+     * Should be used when panel is forced to use a disabled layout.
+     */
+    const shared_ptr<const PanelViewLayout>& LastResortLayout() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges( function<void()> _callback );
@@ -69,6 +70,13 @@ private:
     mutable spinlock                            m_LayoutsLock;
     vector<shared_ptr<const PanelViewLayout>>   m_Layouts;
 };
+
+@interface PanelViewLayoutsMenuDelegate : NSObject<NSMenuDelegate>
+
+- (id) initWithStorage:(const PanelViewLayoutsStorage&)_storage;
+
+@end
+
 
 //// supposed to be thread-safe
 //class ExternalToolsStorage : public ObservableBase

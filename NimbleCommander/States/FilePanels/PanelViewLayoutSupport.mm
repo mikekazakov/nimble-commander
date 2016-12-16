@@ -146,13 +146,67 @@ static PanelViewLayout L4()
     return ret;
 }
 
+static PanelViewLayout L5()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout V";
+    return ret;
+}
+
+static PanelViewLayout L6()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout VI";
+    return ret;
+}
+
+static PanelViewLayout L7()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout VII";
+    return ret;
+}
+
+static PanelViewLayout L8()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout VIII";
+    return ret;
+}
+
+static PanelViewLayout L9()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout IX";
+    return ret;
+}
+
+static PanelViewLayout L10()
+{
+    PanelViewLayout ret;
+    ret.layout = PanelViewDisabledLayout{};
+    ret.name = "Custom Layout X";
+    return ret;
+}
+
+
 PanelViewLayoutsStorage::PanelViewLayoutsStorage()
 {
-    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L1()) );
-    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L2()) );
-    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L3()) );
-    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L4()) );
-    
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L1()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L2()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L3()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L4()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L5()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L6()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L7()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L8()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L9()));
+    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L10()));
 }
 
 int PanelViewLayoutsStorage::LayoutsCount() const
@@ -209,3 +263,32 @@ PanelViewLayoutsStorage::ObservationTicket PanelViewLayoutsStorage::ObserveChang
 {
     return AddObserver( move(_callback) );
 }
+
+@implementation PanelViewLayoutsMenuDelegate
+{
+    const PanelViewLayoutsStorage *m_Storage;
+}
+
+- (id) initWithStorage:(const PanelViewLayoutsStorage&)_storage;
+{
+    self = [super init];
+    if( self ) {
+        m_Storage = &_storage;
+    }
+    return self;
+}
+
+- (void)menuNeedsUpdate:(NSMenu*)menu
+{
+    int index = 0;
+    for( NSMenuItem *item in menu.itemArray ) {
+        if( auto l = m_Storage->GetLayout((int)index) ) {
+            item.title = l->name.empty() ?
+            [NSString stringWithFormat:@"Layout #%d", index+1] :
+            [NSString stringWithUTF8StdString:l->name];
+        }
+        index++;
+    }
+}
+
+@end

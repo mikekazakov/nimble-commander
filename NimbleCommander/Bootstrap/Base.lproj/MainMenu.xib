@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -357,28 +358,64 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View Mode" id="880">
                                     <items>
-                                        <menuItem title="Short View Mode" tag="13050" keyEquivalent="1" id="882">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="1" tag="13050" id="882">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleShortViewMode:" target="-1" id="888"/>
+                                                <action selector="onToggleViewLayout1:" target="-1" id="H6p-Lm-9Jk"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Medium View Mode" tag="13060" keyEquivalent="2" id="883">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="2" tag="13051" id="883">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleMediumViewMode:" target="-1" id="889"/>
+                                                <action selector="onToggleViewLayout2:" target="-1" id="6UE-wa-mQl"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Full View Mode" tag="13070" keyEquivalent="3" id="884">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="3" tag="13052" id="884">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleFullViewMode:" target="-1" id="887"/>
+                                                <action selector="onToggleViewLayout3:" target="-1" id="KJM-AE-mZB"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Wide View Mode" tag="13080" keyEquivalent="4" id="885">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="4" tag="13053" id="885">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleWideViewMode:" target="-1" id="886"/>
+                                                <action selector="onToggleViewLayout4:" target="-1" id="SrP-zd-M9V"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="5" tag="13054" id="0D4-mI-wvg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout5:" target="-1" id="dfy-U1-nn9"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="6" tag="13055" id="Dga-lH-RSh">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout6:" target="-1" id="HIi-mU-1Gd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="7" tag="13056" id="yBW-Py-y1e">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout7:" target="-1" id="a1p-8s-KTO"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="8" tag="13057" id="gWB-Ja-0bF">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout8:" target="-1" id="dJH-W2-Jpr"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="9" tag="13058" id="xWO-GF-P20">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout9:" target="-1" id="Xly-By-I5N"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="10" tag="13059" id="ARz-X0-fAA">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onToggleViewLayout10:" target="-1" id="eXq-X9-QCX"/>
                                             </connections>
                                         </menuItem>
                                     </items>

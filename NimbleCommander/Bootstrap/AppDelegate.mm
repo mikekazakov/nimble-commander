@@ -231,6 +231,13 @@ static AppDelegate *g_Me = nil;
     
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+    
+    // set up menu delegate for layouts list.
+    // doing this via DI so to reduce links to AppDelegate in whole codebase
+    static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc]
+                                    initWithStorage:self.panelLayouts];
+    [NSApp.mainMenu itemWithTagHierarchical:ActionsShortcutsManager::Instance().
+     TagFromAction("menu.view.toggle_layout_1")].menu.delegate = layouts_delegate;
   
     bool showed_modal_dialog = false;
     if( ActivationManager::Instance().Sandboxed() ) {
@@ -242,7 +249,6 @@ static AppDelegate *g_Me = nil;
                 [self AllocateNewMainWindow];
         }
     }
-    
     
     // if no option already set - ask user to provide anonymous usage statistics
     // ask him only on 5th startup or later

@@ -1,3 +1,4 @@
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "PanelViewLayoutSupport.h"
 
 //struct PanelViewLayout
@@ -48,6 +49,144 @@ bool PanelViewLayout::operator==(const PanelViewLayout& _rhs) const
 bool PanelViewLayout::operator!=(const PanelViewLayout& _rhs) const
 {
     return !(*this == _rhs);
+}
+
+static const auto g_TitleKey = "title";
+static const auto g_BriefKey = "brief";
+static const auto g_BriefModeKey = "mode";
+static const auto g_BriefFixedModeWidthKey = "fixed_mode_width";
+static const auto g_BriefFixedAmountValueKey = "fixed_amount_value";
+static const auto g_BriefDynamicWidthMinKey = "dynamic_width_min";
+static const auto g_BriefDynamicWidthMaxKey = "dynamic_width_max";
+static const auto g_BriefDynamicWidthEqualKey = "dynamic_width_equal";
+static const auto g_ListKey = "list";
+static const auto g_ListColumns = "columns";
+static const auto g_ListColumKind = "kind";
+static const auto g_ListColumWidth = "width";
+static const auto g_ListColumMaxWidth = "max_width";
+static const auto g_ListColumMinWidth = "min_width";
+static const auto g_DisabledKey = "disabled";
+
+static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
+{
+    using namespace rapidjson;
+    GenericConfig::ConfigValue v{kObjectType};
+    
+    v.AddMember( MakeStandaloneString(g_TitleKey), MakeStandaloneString(_l.name), g_CrtAllocator );
+    if( auto list = _l.list() ) {
+        GenericConfig::ConfigValue d{kObjectType};
+        GenericConfig::ConfigValue columns{ rapidjson::kArrayType };
+        for( auto &c: list->columns ) {
+            GenericConfig::ConfigValue col{kObjectType};
+            col.AddMember(MakeStandaloneString(g_ListColumKind),
+                          StandaloneValue((int)c.kind),
+                          g_CrtAllocator);
+            if( c.width >= 0 )
+                col.AddMember(MakeStandaloneString(g_ListColumWidth),
+                              StandaloneValue(c.width),
+                              g_CrtAllocator);
+            if( c.min_width >= 0 )
+                col.AddMember(MakeStandaloneString(g_ListColumMinWidth),
+                              StandaloneValue(c.min_width),
+                              g_CrtAllocator);
+            if( c.max_width >= 0 )
+                col.AddMember(MakeStandaloneString(g_ListColumMaxWidth),
+                              StandaloneValue(c.max_width),
+                              g_CrtAllocator);
+            columns.PushBack( move(col), g_CrtAllocator );
+        }
+        d.AddMember(MakeStandaloneString(g_ListColumns),
+                    move(columns),
+                    g_CrtAllocator);
+        v.AddMember( MakeStandaloneString(g_ListKey), move(d), g_CrtAllocator );
+    }
+    else if( auto brief = _l.brief() ) {
+        GenericConfig::ConfigValue d{kObjectType};
+        d.AddMember(MakeStandaloneString(g_BriefModeKey),
+                    StandaloneValue((int)brief->mode),
+                    g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefFixedModeWidthKey),
+                    StandaloneValue(brief->fixed_mode_width),
+                    g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefFixedAmountValueKey),
+                    StandaloneValue(brief->fixed_amount_value),
+                    g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefDynamicWidthMinKey),
+                    StandaloneValue(brief->dynamic_width_min),
+                    g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefDynamicWidthMaxKey),
+                    StandaloneValue(brief->dynamic_width_max),
+                    g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefDynamicWidthEqualKey),
+                    StandaloneValue(brief->dynamic_width_equal),
+                    g_CrtAllocator);
+        v.AddMember( MakeStandaloneString(g_BriefKey), move(d), g_CrtAllocator );
+    }
+    else if( _l.is_disabled() ) {
+        v.AddMember(MakeStandaloneString(g_DisabledKey),
+                    GenericConfig::ConfigValue{kNullType},
+                    g_CrtAllocator);
+    }
+    
+    return v;
+}
+
+static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _from )
+{
+    using namespace rapidjson;
+    if( !_from.IsObject() )
+        return nullopt;
+
+    PanelViewLayout l;
+    if( _from.HasMember(g_TitleKey) && _from[g_TitleKey].IsString() )
+        l.name = _from[g_TitleKey].GetString();
+    else
+        return nullopt;
+    
+    if( _from.HasMember(g_BriefKey) && _from[g_BriefKey].IsObject() ) {
+        auto &o = _from[g_BriefKey];
+        PanelBriefViewColumnsLayout brief;
+        if( o.HasMember(g_BriefModeKey) && o[g_BriefModeKey].IsNumber() )
+            brief.mode = (PanelBriefViewColumnsLayout::Mode)o[g_BriefModeKey].GetInt();
+        if( o.HasMember(g_BriefFixedModeWidthKey) && o[g_BriefFixedModeWidthKey].IsNumber())
+            brief.fixed_mode_width = o[g_BriefFixedModeWidthKey].GetInt();
+        if( o.HasMember(g_BriefFixedAmountValueKey) && o[g_BriefFixedAmountValueKey].IsNumber())
+            brief.fixed_amount_value = o[g_BriefFixedAmountValueKey].GetInt();
+        if( o.HasMember(g_BriefDynamicWidthMinKey) && o[g_BriefDynamicWidthMinKey].IsNumber())
+            brief.dynamic_width_min = o[g_BriefDynamicWidthMinKey].GetInt();
+        if( o.HasMember(g_BriefDynamicWidthMaxKey) && o[g_BriefDynamicWidthMaxKey].IsNumber())
+            brief.dynamic_width_max = o[g_BriefDynamicWidthMaxKey].GetInt();
+        if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool())
+            brief.dynamic_width_equal = o[g_BriefDynamicWidthEqualKey].GetBool();
+        l.layout = brief;
+    }
+    else if( _from.HasMember(g_ListKey) && _from[g_ListKey].IsObject() ) {
+        auto &o = _from[g_ListKey];
+        PanelListViewColumnsLayout list;
+        if( !o.HasMember(g_ListColumns) || !o[g_ListColumns].IsArray() )
+            return nullopt;
+        for( auto i = o[g_ListColumns].Begin(), e = o[g_ListColumns].End(); i != e; ++i ) {
+            if( !i->IsObject()  )
+                return nullopt;
+            PanelListViewColumnsLayout::Column col;
+            if( i->HasMember(g_ListColumKind) && (*i)[g_ListColumKind].IsNumber() )
+                col.kind = (PanelListViewColumns)(*i)[g_ListColumKind].GetInt();
+            if( i->HasMember(g_ListColumWidth) && (*i)[g_ListColumWidth].IsNumber() )
+                col.width = (*i)[g_ListColumWidth].GetInt();
+            if( i->HasMember(g_ListColumMinWidth) && (*i)[g_ListColumMinWidth].IsNumber() )
+                col.min_width = (*i)[g_ListColumMinWidth].GetInt();
+            if( i->HasMember(g_ListColumMaxWidth) && (*i)[g_ListColumMaxWidth].IsNumber() )
+                col.max_width = (*i)[g_ListColumMaxWidth].GetInt();
+            list.columns.emplace_back(col);
+        }
+        l.layout = list;
+    }
+    else if( _from.HasMember(g_DisabledKey) )
+        l.layout = PanelViewDisabledLayout{};
+    else
+        return nullopt;
+    
+    return l;
 }
 
 static PanelViewLayout L1()
@@ -195,9 +334,10 @@ static PanelViewLayout L10()
 }
 
 
-PanelViewLayoutsStorage::PanelViewLayoutsStorage()
+PanelViewLayoutsStorage::PanelViewLayoutsStorage(const char*_config_path):
+    m_ConfigPath( _config_path )
 {
-    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L1()));
+/*    m_Layouts.emplace_back( make_shared<PanelViewLayout>(L1()));
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L2()));
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L3()));
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L4()));
@@ -207,6 +347,9 @@ PanelViewLayoutsStorage::PanelViewLayoutsStorage()
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L8()));
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L9()));
     m_Layouts.emplace_back( make_shared<PanelViewLayout>(L10()));
+  */
+
+    LoadLayoutsFromConfig();
 }
 
 int PanelViewLayoutsStorage::LayoutsCount() const
@@ -237,15 +380,6 @@ const shared_ptr<const PanelViewLayout>& PanelViewLayoutsStorage::LastResortLayo
 
 void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_index )
 {
-//    LOCK_GUARD(m_ToolsLock) {
-//        if( _at_index >= m_Tools.size() )
-//            return;
-//        if( *m_Tools[_at_index] == _tool )
-//            return; // do nothing if _tool is equal
-//        m_Tools[_at_index] = make_shared<ExternalTool>( move(_tool) );
-//    }
-//    CommitChanges();
-
     LOCK_GUARD(m_LayoutsLock) {
         if( _at_index < 0 || _at_index >= m_Layouts.size() )
             return;
@@ -254,14 +388,46 @@ void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_in
         m_Layouts[_at_index] = make_shared<PanelViewLayout>( move(_layout) );
     }
     
-    FireObservers();
-    
-    // notify and commit
+    CommitChanges();
 }
 
 PanelViewLayoutsStorage::ObservationTicket PanelViewLayoutsStorage::ObserveChanges( function<void()> _callback )
 {
     return AddObserver( move(_callback) );
+}
+
+void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
+{
+    auto layouts = GlobalConfig().Get(m_ConfigPath);
+    if( !layouts.IsArray())
+        return;
+    
+    LOCK_GUARD(m_LayoutsLock) {
+        m_Layouts.clear();
+        for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
+            if( auto l = LoadLayout( *i ) )
+                m_Layouts.emplace_back( make_shared<PanelViewLayout>(move(*l)) );
+            else
+                m_Layouts.emplace_back( LastResortLayout() );
+    }
+}
+
+void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
+{
+    vector<shared_ptr<const PanelViewLayout>> layouts;
+    LOCK_GUARD(m_LayoutsLock)
+        layouts = m_Layouts;
+    
+    GenericConfig::ConfigValue json_layouts{ rapidjson::kArrayType };
+    for( auto &l: layouts )
+        json_layouts.PushBack( SaveLayout(*l), rapidjson::g_CrtAllocator );
+    GlobalConfig().Set( m_ConfigPath, json_layouts );
+}
+
+void PanelViewLayoutsStorage::CommitChanges()
+{
+    FireObservers();
+    dispatch_to_background([=]{ WriteLayoutsToConfig(); });
 }
 
 @implementation PanelViewLayoutsMenuDelegate

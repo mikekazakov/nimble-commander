@@ -59,6 +59,7 @@ static const auto g_ConfigGeneralSkin = "general.skin";
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
+static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -711,7 +712,7 @@ static AppDelegate *g_Me = nil;
 
 - (PanelViewLayoutsStorage&) panelLayouts
 {
-    static auto i = new PanelViewLayoutsStorage();
+    static auto i = new PanelViewLayoutsStorage(g_ConfigLayoutsList);
     return *i;
 }
 

@@ -977,17 +977,55 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     [self setLayoutIndex:3];
 }
 
-- (IBAction)onToggleViewLayout1:(id)sender{}
-- (IBAction)onToggleViewLayout2:(id)sender{}
-- (IBAction)onToggleViewLayout3:(id)sender{}
-- (IBAction)onToggleViewLayout4:(id)sender{}
-- (IBAction)onToggleViewLayout5:(id)sender{}
-- (IBAction)onToggleViewLayout6:(id)sender{}
-- (IBAction)onToggleViewLayout7:(id)sender{}
-- (IBAction)onToggleViewLayout8:(id)sender{}
-- (IBAction)onToggleViewLayout9:(id)sender{}
-- (IBAction)onToggleViewLayout10:(id)sender{}
+- (IBAction)onToggleViewLayout1:(id)sender
+{
+    [self setLayoutIndex:0];
+}
 
+- (IBAction)onToggleViewLayout2:(id)sender
+{
+    [self setLayoutIndex:1];
+}
+
+- (IBAction)onToggleViewLayout3:(id)sender
+{
+    [self setLayoutIndex:2];
+}
+
+- (IBAction)onToggleViewLayout4:(id)sender
+{
+    [self setLayoutIndex:3];
+}
+
+- (IBAction)onToggleViewLayout5:(id)sender
+{
+    [self setLayoutIndex:4];
+}
+
+- (IBAction)onToggleViewLayout6:(id)sender
+{
+    [self setLayoutIndex:5];
+}
+
+- (IBAction)onToggleViewLayout7:(id)sender
+{
+    [self setLayoutIndex:6];
+}
+
+- (IBAction)onToggleViewLayout8:(id)sender
+{
+    [self setLayoutIndex:7];
+}
+
+- (IBAction)onToggleViewLayout9:(id)sender
+{
+    [self setLayoutIndex:8];
+}
+
+- (IBAction)onToggleViewLayout10:(id)sender
+{
+    [self setLayoutIndex:9];
+}
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender
 {

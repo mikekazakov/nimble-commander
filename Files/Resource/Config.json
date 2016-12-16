@@ -317,6 +317,82 @@
                                     "focused": "#FF0000"
                                  }
             ]
+        },
+        "layout": {
+            "layouts_v1": [
+                            {
+                                "title": "Short",
+                                "brief": {
+                                    "mode": 1,
+                                    "fixed_amount_value": 3
+                                }
+                            },
+                            {
+                                "title": "Medium",
+                                "brief": {
+                                    "mode": 2
+                                }
+                            },
+                            {
+                                "title": "Full",
+                                "list": {
+                                    "columns": [
+                                                {
+                                                    "kind": 1
+                                                },
+                                                {
+                                                    "kind": 2
+                                                },
+                                                {
+                                                    "kind": 3
+                                                },
+                                                {
+                                                    "kind": 5
+                                                },
+                                                {
+                                                    "kind": 4
+                                                }
+                                    ]
+                                }
+                           },
+                           {
+                                "title": "Wide",
+                                "list": {
+                                    "columns": [
+                                                {
+                                                    "kind": 1
+                                                },
+                                                {
+                                                    "kind": 2
+                                                }
+                                       ]
+                                }
+                           },
+                           {
+                                "title": "Custom Layout V",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VI",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VII",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VIII",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout IX",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout X",
+                                "disabled": null
+                           }
+            ]
         }
     },
     

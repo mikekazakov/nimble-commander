@@ -36,7 +36,7 @@ struct PanelViewLayout
 class PanelViewLayoutsStorage : public ObservableBase
 {
 public:
-    PanelViewLayoutsStorage();
+    PanelViewLayoutsStorage( const char*_config_path );
     
     /**
      * Will return total layouts count, including disabled onces (PanelViewDisabledLayout).
@@ -67,8 +67,13 @@ public:
     ObservationTicket ObserveChanges( function<void()> _callback );
     
 private:
+    void LoadLayoutsFromConfig();
+    void WriteLayoutsToConfig() const;
+    void CommitChanges();
+        
     mutable spinlock                            m_LayoutsLock;
     vector<shared_ptr<const PanelViewLayout>>   m_Layouts;
+    const char*                                 m_ConfigPath;    
 };
 
 @interface PanelViewLayoutsMenuDelegate : NSObject<NSMenuDelegate>
@@ -76,33 +81,3 @@ private:
 - (id) initWithStorage:(const PanelViewLayoutsStorage&)_storage;
 
 @end
-
-
-//// supposed to be thread-safe
-//class ExternalToolsStorage : public ObservableBase
-//{
-//public:
-//    ExternalToolsStorage(const char*_config_path);
-//    
-//    size_t                                  ToolsCount() const;
-//    shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
-//    vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
-//    
-//    void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
-//    void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
-//    void                                    RemoveTool( size_t _at_index );
-//    void                                    MoveTool( size_t _at_index, size_t _to_index );
-//    
-//    using ObservationTicket = ObservableBase::ObservationTicket;
-//    ObservationTicket ObserveChanges( function<void()> _callback );
-//    
-//private:
-//    void LoadToolsFromConfig();
-//    void WriteToolsToConfig() const;
-//    void CommitChanges();
-//    
-//    mutable spinlock                                m_ToolsLock;
-//    vector<shared_ptr<const ExternalTool>>          m_Tools;
-//    const char*                                     m_ConfigPath;
-//    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
-//};

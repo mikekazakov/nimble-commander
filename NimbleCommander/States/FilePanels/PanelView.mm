@@ -1332,9 +1332,18 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     
 }
 
-- (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
 {
-    return -1;
+    
+    assert(dispatch_is_main_queue());
+    auto pos = [m_ItemsView sortedItemPosAtPoint:_window_point hitTestOption:_options];
+    return pos;
+    
+    
+//    if(pos < 0)
+//    return -1;
+    
+    //return -1;
 //    assert(dispatch_is_main_queue());
 //    int pos = m_Presentation->GetItemIndexByPointInView(_point, _options);
 //    if(pos < 0)
@@ -1496,6 +1505,11 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 {
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
         [self.delegate PanelViewDoubleClick:self atElement:_sorted_index];
+}
+
+- (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event
+{
+    [self.delegate panelView:self wantsToDragItemNo:_sorted_index byEvent:_event];
 }
 
 - (void) dataSortingHasChanged

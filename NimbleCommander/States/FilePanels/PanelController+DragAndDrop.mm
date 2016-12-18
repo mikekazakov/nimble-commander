@@ -365,6 +365,12 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
 
 @implementation PanelController (DragAndDrop)
 
+
++ (NSArray*) acceptedDragAndDropTypes
+{
+    return @[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI];
+}
+
 + (NSString*) dragAndDropPrivateUTI
 {
     return g_PrivateDragUTI;
@@ -372,7 +378,7 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
 
 - (void) RegisterDragAndDropListeners
 {
-    [m_View registerForDraggedTypes:@[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI]];
+    [m_View registerForDraggedTypes:PanelController.acceptedDragAndDropTypes];
 }
 
 - (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
@@ -475,7 +481,8 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
 // may return {nullptr, ""} if dragging into non-uniform listing
 - (VFSPath) composeDestinationForDrag:(id <NSDraggingInfo>)sender
 {
-    const auto dragging_mouse_pos = [m_View convertPoint:sender.draggingLocation fromView:nil];
+//    const auto dragging_mouse_pos = [m_View convertPoint:sender.draggingLocation fromView:nil];
+    const auto dragging_mouse_pos = sender.draggingLocation;
     const int dragging_over_item_no = [m_View sortedItemPosAtPoint:dragging_mouse_pos hitTestOption:PanelViewHitTest::FilenameFact];
     
     
@@ -509,8 +516,9 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
 - (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
 {
     int valid_items = 0;
-    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
-                                            hitTestOption:PanelViewHitTest::FilenameFact];
+//    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
+    int dragging_over_item_no = [m_View sortedItemPosAtPoint:sender.draggingLocation
+                                               hitTestOption:PanelViewHitTest::FilenameFact];
     auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
     bool dragging_over_dir = dragging_over_item && dragging_over_item.IsDir() && DraggingIntoFoldersAllowed();
     auto destination = [self composeDestinationForDrag:sender];

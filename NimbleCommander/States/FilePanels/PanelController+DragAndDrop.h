@@ -12,5 +12,6 @@
 
 - (void) RegisterDragAndDropListeners;
 + (NSString*) dragAndDropPrivateUTI;
++ (NSArray*) acceptedDragAndDropTypes;
 
 @end

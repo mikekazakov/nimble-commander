@@ -683,5 +683,21 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView scrollRectToVisible:rect];
 }
 
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
+{
+    const auto local_point = [m_TableView convertPoint:_window_point fromView:nil];
+    const auto visible_rect = m_ScrollView.documentVisibleRect;
+    if( !NSPointInRect(local_point, visible_rect) )
+        return -1;
+    
+    const auto row_index = [m_TableView rowAtPoint:local_point];
+    if( row_index < 0 )
+        return -1;
+    
+    if( PanelListViewRowView *rv = [m_TableView rowViewAtRow:row_index makeIfNecessary:false] )
+        return rv.itemIndex;
+
+    return -1;
+}
 
 @end

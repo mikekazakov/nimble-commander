@@ -95,7 +95,7 @@ struct PanelViewLayout;
  * return a number of item at specified point.
  * options currently unsupported.
  */
-- (int) sortedItemPosAtPoint:(NSPoint)_point hitTestOption:(PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
 
 - (void) startFieldEditorRenaming;
 
@@ -107,8 +107,10 @@ struct PanelViewLayout;
  * Later: add hit-test info flags here
  */
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event;
+- (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event;
+
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event;
 
 @end

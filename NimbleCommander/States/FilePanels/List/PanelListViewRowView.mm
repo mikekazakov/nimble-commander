@@ -1,5 +1,6 @@
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
+#include "../PanelController+DragAndDrop.h"
 #include "PanelListView.h"
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
@@ -38,6 +39,7 @@
 //        self.wantsLayer = true;
 //        self.canDrawSubviewsIntoLayer = true;
 //        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
+        [self registerForDraggedTypes:PanelController.acceptedDragAndDropTypes];
     }
     return self;
 }
@@ -246,13 +248,27 @@
     return objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
 }
 
+static bool     g_RowReadyToDrag = false;
+static void*    g_MouseDownRow = nullptr;
+static NSPoint  g_LastMouseDownPos = {};
+//m_LButtonDownPos
+
 - (void) mouseDown:(NSEvent *)event
 {
     const auto my_index = m_ItemIndex;
     if( my_index < 0 )
         return;
-    
+
     [self.listView.panelView panelItem:my_index mouseDown:event];
+    
+    const auto lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+    const auto local_point = [self convertPoint:event.locationInWindow fromView:nil];
+    
+    if( lb_pressed ) {
+        g_RowReadyToDrag = true;
+        g_MouseDownRow = (__bridge void*)self;
+        g_LastMouseDownPos = local_point;
+    }
 }
 
 - (void)mouseUp:(NSEvent *)event
@@ -264,6 +280,36 @@
     // Handle double-or-four-etc clicks as double-click
     if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 )
         [self.listView.panelView panelItem:my_index dblClick:event];
+    
+    g_RowReadyToDrag = false;
+    g_MouseDownRow = nullptr;
+    g_LastMouseDownPos = {};
+}
+
+- (void) mouseDragged:(NSEvent *)event
+{
+    const auto max_drag_dist = 5.;
+    if( g_RowReadyToDrag &&  g_MouseDownRow == (__bridge void*)self ) {
+        const auto lp = [self convertPoint:event.locationInWindow fromView:nil];
+        if( hypot(lp.x - g_LastMouseDownPos.x, lp.y - g_LastMouseDownPos.y) > max_drag_dist ) {
+//            const int clicked_pos = m_Presentation->GetItemIndexByPointInView(m_LButtonDownPos, PanelViewHitTest::FullArea);
+//            if( clicked_pos == -1 )
+//                return;
+            const auto my_index = m_ItemIndex;
+            if( my_index < 0 )
+                return;
+            
+//            NSLog(@"Drag");
+            
+//            [self.delegate panelView:self wantsToDragItemNo:clicked_pos byEvent:_event];
+            
+            [self.listView.panelView panelItem:my_index mouseDragged:event];
+            
+            g_RowReadyToDrag = false;
+            g_MouseDownRow = nullptr;
+            g_LastMouseDownPos = {};
+        }
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
@@ -273,6 +319,23 @@
         return nil;
     
     return [self.listView.panelView panelItem:my_index menuForForEvent:_event];
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    cout << "draggingEntered" << endl;
+    return NSDragOperationNone;
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    cout << "draggingUpdated" << endl;
+    return NSDragOperationNone;
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
+{
+    cout << "draggingExited" << endl;
 }
 
 @end

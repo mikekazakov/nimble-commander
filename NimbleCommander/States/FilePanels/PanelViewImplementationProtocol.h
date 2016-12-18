@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PanelViewTypes.h"
+
 class PanelData;
 struct PanelDataSortMode;
 
@@ -19,6 +21,8 @@ struct PanelDataSortMode;
 
 - (void) onPageUp:(NSEvent*)_event;
 - (void) onPageDown:(NSEvent*)_event;
+
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
 
 @end
 

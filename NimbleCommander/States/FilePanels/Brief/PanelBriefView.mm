@@ -509,5 +509,11 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     [m_CollectionView scrollRectToVisible:rect];
 }
 
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
+{
+    return -1;
+}
+
+
 @end
 

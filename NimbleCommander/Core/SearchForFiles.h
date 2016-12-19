@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include <Utility/Encodings.h>
 #include <VFS/VFS.h>
 #include "FileMask.h"
@@ -122,7 +122,7 @@ private:
     bool FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r);
     bool FilterByFilename(const char* _filename);
     
-    SerialQueue                 m_Queue = SerialQueueT::Make();
+    SerialQueue                 m_Queue;
     optional<FilterName>        m_FilterName;
     optional<FileMask>          m_FilterNameMask;
     optional<FilterContent>     m_FilterContent;

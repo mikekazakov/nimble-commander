@@ -529,7 +529,7 @@ void GenericConfig::RunOverwritesDumping()
     }
     
     string path = m_OverwritesPath;
-    m_IOQueue->Run([=]{
+    m_IOQueue.Run([=]{
         WriteOverwrites(*d, path);
         m_OverwritesTime = ModificationTime(path);
     });
@@ -548,7 +548,7 @@ void GenericConfig::Commit()
 {
     if( m_WriteScheduled.test_and_set() ) {
         RunOverwritesDumping();
-        m_IOQueue->Wait();
+        m_IOQueue.Wait();
     }
     m_WriteScheduled.clear();
 }
@@ -558,7 +558,7 @@ void GenericConfig::OnOverwritesFileDirChanged()
     if( !m_ReadScheduled.test_and_set() )
         dispatch_to_main_queue_after(g_ReadDelay, [=]{
             string path = m_OverwritesPath;
-            m_IOQueue->Run([=]{
+            m_IOQueue.Run([=]{
                 auto ov_tm = ModificationTime(path);
                 if( ov_tm == m_OverwritesTime)
                     return;

@@ -72,7 +72,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
     
     if(self = [super initWithWindow:window]) {
-        m_BigFileViewLoadingQ = SerialQueueT::Make(ActivationManager::Instance().BundleID() + ".bigfileviewloading");
         self.shouldCascadeWindows = NO;
         window.delegate = self;
         
@@ -366,10 +365,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
     dispatch_assert_main_queue();
-    if(!m_BigFileViewLoadingQ->Empty())
+    if( !m_BigFileViewLoadingQ.Empty() )
         return;
     
-    m_BigFileViewLoadingQ->Run([=]{
+    m_BigFileViewLoadingQ.Run([=]{
         
         if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a state
             if( !m_Viewer )

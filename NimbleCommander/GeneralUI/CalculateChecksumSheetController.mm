@@ -7,7 +7,7 @@
 //
 
 #include <Habanero/Hash.h>
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "CalculateChecksumSheetController.h"
@@ -55,17 +55,16 @@ const static vector<pair<NSString*,int>> g_Algos = {
         m_Checksums.resize(m_Filenames.size());
         m_Errors.resize(m_Filenames.size());
         m_Path = path;
-        m_WorkQue = SerialQueueT::Make("CalculateChecksumSheetController");
         self.isWorking = false;
         self.sumsAvailable = false;
         self.didSaved = false;
-        m_WorkQue->OnWet(^{
+        m_WorkQue.SetOnWet([=]{
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.isWorking = true;
                 self.sumsAvailable = false;
             });
         });
-        m_WorkQue->OnDry(^{
+        m_WorkQue.SetOnDry([=]{
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.isWorking = false;
                 self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i){return !i.empty();}) > 0;
@@ -77,7 +76,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
 
 - (IBAction)OnCalc:(id)sender
 {
-    if(!m_WorkQue->Empty())
+    if( !m_WorkQue.Empty() )
         return;
 
     GlobalConfig().Set(g_ConfigAlgo, self.HashMethod.titleOfSelectedItem.UTF8String);
@@ -87,15 +86,16 @@ const static vector<pair<NSString*,int>> g_Algos = {
     int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
     self.Progress.doubleValue = 0;
     
-    m_WorkQue->Run([=](auto &_q) {
+//    m_WorkQue->Run([=](auto &_q) {
+    m_WorkQue.Run([=]{
         auto buf = make_unique<uint8_t[]>(chunk_sz);
         uint64_t total_fed = 0;
         for(auto &i:m_Filenames) {
-            if(_q->IsStopped())
+            if( m_WorkQue.IsStopped() )
                 break;
             
             VFSFilePtr file;
-            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(), file, ^{ return _q->IsStopped(); } );
+            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(), file, ^{ return m_WorkQue.IsStopped(); } );
             if(rc != 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
@@ -104,7 +104,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
             }
             
             rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache,
-                            ^{ return _q->IsStopped(); } );
+                            ^{ return m_WorkQue.IsStopped(); } );
             if(rc != 0) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
@@ -116,7 +116,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
             
             ssize_t rn = 0;
             while( (rn = file->Read(buf.get(), chunk_sz)) > 0) {
-                if(_q->IsStopped())
+                if(m_WorkQue.IsStopped())
                     break;
                 h.Feed(buf.get(), rn);
                 total_fed += rn;
@@ -179,8 +179,8 @@ const static vector<pair<NSString*,int>> g_Algos = {
 
 - (IBAction)OnClose:(id)sender
 {
-    m_WorkQue->Stop();
-    m_WorkQue->Wait();
+    m_WorkQue.Stop();
+    m_WorkQue.Wait();
     [self endSheet:NSModalResponseCancel];
 }
 

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include "../../Bootstrap/Config.h"
 #include "PanelData.h"
 #include "PanelView.h"

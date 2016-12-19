@@ -474,7 +474,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
                                                info.port
                                                );
         dispatch_to_main_queue([=]{
-            m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
             [self GoToDir:info.path vfs:host select_entry:"" async:true];
         });
         
@@ -507,7 +507,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
         string password = sheet.password ? sheet.password.UTF8String : "";
         NetworkConnectionsManager::Instance().InsertConnection(connection);
         NetworkConnectionsManager::Instance().SetPassword(connection, password);
-        m_DirectoryLoadingQ->Run([=]{
+        m_DirectoryLoadingQ.Run([=]{
             [self GoToFTPWithConnection:connection password:password];
         });
     }];
@@ -532,7 +532,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
                                                 info.port
                                                 );
         dispatch_to_main_queue([=]{
-            m_DirectoryLoadingQ->Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
             [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
         });
         
@@ -565,7 +565,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
         string password = sheet.password ? sheet.password.UTF8String : "";
         NetworkConnectionsManager::Instance().InsertConnection(connection);
         NetworkConnectionsManager::Instance().SetPassword(connection, password);
-        m_DirectoryLoadingQ->Run([=]{
+        m_DirectoryLoadingQ.Run([=]{
             [self GoToSFTPWithConnection:connection password:password];
         });
     }];
@@ -590,12 +590,12 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     auto epilog = [=](bool _success) { if(_success && should_save_passwd ) NetworkConnectionsManager::Instance().SetPassword(connection, passwd); };
     
     if( connection.IsType<NetworkConnectionsManager::FTPConnection>() )
-        m_DirectoryLoadingQ->Run([=]{
+        m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToFTPWithConnection:connection password:passwd];
             epilog(success);
         });
     else if( connection.IsType<NetworkConnectionsManager::SFTPConnection>() )
-        m_DirectoryLoadingQ->Run([=]{
+        m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToSFTPWithConnection:connection password:passwd];
             epilog(success);
         });
@@ -726,10 +726,10 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     sheet.path = self.currentDirectoryPath;
     sheet.onPanelize = [=](const map<VFSPath, vector<string>> &_dir_to_filenames) {
         auto host = sheet.host;
-        m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
+        m_DirectoryLoadingQ.Run([=]{
             auto l = FetchSearchResultsAsListing(_dir_to_filenames,
                                                  m_VFSFetchingFlags,
-                                                 [=]{ return  _queue->IsStopped(); }
+                                                 [=]{ return m_DirectoryLoadingQ.IsStopped(); }
                                                  );
             if( l )
                 dispatch_to_main_queue([=]{
@@ -811,11 +811,11 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 {
     SpotlightSearchPopupViewController *view = [[SpotlightSearchPopupViewController alloc] init];
     view.handler = [=](const string& _query){
-        m_DirectoryLoadingQ->Run([=](const shared_ptr<SerialQueueT> &_queue){
+        m_DirectoryLoadingQ.Run([=]{
             if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
                                                      VFSNativeHost::SharedHost(),
                                                      m_VFSFetchingFlags,
-                                                     [=]{ return  _queue->IsStopped(); }
+                                                     [=]{ return m_DirectoryLoadingQ.IsStopped(); }
                                                      ) )
                 dispatch_to_main_queue([=]{
                     [self loadNonUniformListing:l];

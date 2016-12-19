@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
@@ -247,7 +248,6 @@ private:
         m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory);
         m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         
-        m_BatchQueue = SerialQueueT::Make();
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
@@ -365,7 +365,7 @@ private:
     m_StatGroup.Wait();
 
     [self UpdateByTimer:m_BatchDrainTimer];
-    m_BatchQueue->Wait();
+    m_BatchQueue.Wait();
     
     dispatch_to_main_queue([=]{
         [m_BatchDrainTimer invalidate];
@@ -474,7 +474,7 @@ private:
                                                   it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
                                                   
                                                   FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
-                                                  m_BatchQueue->Run([self, item]{
+                                                  m_BatchQueue.Run([self, item]{
                                                       // dumping result entry into batch array in BatchQueue
                                                       [m_FoundItemsBatch addObject:item];
                                                   });
@@ -546,7 +546,7 @@ private:
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    m_BatchQueue->Run([=]{
+    m_BatchQueue.Run([=]{
         if( m_FoundItemsBatch.count == 0 )
             return; // nothing to add
         

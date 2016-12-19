@@ -143,9 +143,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
-        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirsizecounting");
-        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
-        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirreloading");
+//        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirsizecounting");
+//        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
+//        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirreloading");
         m_DragDrop.last_valid_items = -1;
         m_ViewLayoutIndex = -1;
         
@@ -155,9 +155,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                 [(PanelController*)weakself UpdateSpinningIndicator];
             });
         };
-        m_DirectorySizeCountingQ->OnChange(on_change);
-        m_DirectoryReLoadingQ->OnChange(on_change);
-        m_DirectoryLoadingQ->OnChange(on_change);
+        m_DirectorySizeCountingQ.SetOnChange(on_change);
+        m_DirectoryReLoadingQ.SetOnChange(on_change);
+        m_DirectoryLoadingQ.SetOnChange(on_change);
         
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
@@ -359,14 +359,14 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     // will actually go async for archives
     else if( ActivationManager::Instance().HasArchivesBrowsing() ) {
         if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) ) {
-            m_DirectoryLoadingQ->Run([=](const std::shared_ptr<SerialQueueT> &_q){
+            m_DirectoryLoadingQ.Run([=]{
                 // background
                 auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
                 
                 auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(),
                                                                  entry.Host(),
                                                                  pwd_ask,
-                                                                 [=]{ return _q->IsStopped(); }
+                                                                 [=]{ return m_DirectoryLoadingQ.IsStopped(); }
                                                                  );
                 
                 if( arhost )
@@ -432,7 +432,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         return; // guard agains calls from init process
     
     // going async here
-    if(!m_DirectoryLoadingQ->Empty())
+    if(!m_DirectoryLoadingQ.Empty())
         return; //reducing overhead
 
     // later: maybe check PanelType somehow
@@ -440,9 +440,14 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     if( self.isUniform ) {
         string dirpath = m_Data.DirectoryPathWithTrailingSlash();
         auto vfs = self.vfs;
-        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+//        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+        m_DirectoryReLoadingQ.Run([=]{
             VFSListingPtr listing;
-            int ret = vfs->FetchFlexibleListing(dirpath.c_str(), listing, m_VFSFetchingFlags, [&]{ return _q->IsStopped(); });
+            int ret = vfs->FetchFlexibleListing(dirpath.c_str(),
+                                                listing,
+                                                m_VFSFetchingFlags,
+                                                [&]{ return m_DirectoryReLoadingQ.IsStopped(); }
+                                                );
             if(ret >= 0)
                 dispatch_to_main_queue( [=]{
                     [self ReLoadRefreshedListing:listing];
@@ -454,8 +459,11 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         });
     }
     else {
-        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
-            auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing( m_Data.Listing(), [&]{ return _q->IsStopped(); } );
+        m_DirectoryReLoadingQ.Run([=]{
+            auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing(
+                m_Data.Listing(),
+                [&]{ return m_DirectoryReLoadingQ.IsStopped(); }
+                );
             if( listing )
                 dispatch_to_main_queue( [=]{
                     [self ReLoadRefreshedListing:listing];
@@ -557,13 +565,14 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) CalculateSizes:(const vector<VFSListingItem>&) _items
 {
-    m_DirectorySizeCountingQ->Run([=](const SerialQueue &_q){
+    m_DirectorySizeCountingQ.Run([=]{
         for(auto &i:_items) {
-            if( _q->IsStopped() )
+            if( m_DirectorySizeCountingQ.IsStopped() )
                 return;
-            auto result = i.Host()->CalculateDirectorySize(!i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
-                                                           [=]{ return _q->IsStopped(); }
-                                                           );
+            auto result = i.Host()->CalculateDirectorySize(
+                !i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
+                [=]{ return m_DirectorySizeCountingQ.IsStopped(); }
+                );
             if( result >= 0 )
                 dispatch_to_main_queue([=]{
                     panel::GenericCursorPersistance pers(m_View, m_Data);
@@ -602,9 +611,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void) CancelBackgroundOperations
 {
-    m_DirectorySizeCountingQ->Stop();
-    m_DirectoryLoadingQ->Stop();
-    m_DirectoryReLoadingQ->Stop();    
+    m_DirectorySizeCountingQ.Stop();
+    m_DirectoryLoadingQ.Stop();
+    m_DirectoryReLoadingQ.Stop();
 }
 
 - (void) UpdateSpinningIndicator
@@ -612,9 +621,9 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     dispatch_assert_main_queue();
     
     size_t ext_activities_no = call_locked(m_ActivitiesTicketsLock, [&]{ return m_ActivitiesTickets.size(); });
-    bool is_anything_working = !m_DirectorySizeCountingQ->Empty() ||
-                               !m_DirectoryLoadingQ->Empty() ||
-                               !m_DirectoryReLoadingQ->Empty() ||
+    bool is_anything_working = !m_DirectorySizeCountingQ.Empty() ||
+                               !m_DirectoryLoadingQ.Empty() ||
+                               !m_DirectoryReLoadingQ.Empty() ||
                                 ext_activities_no > 0;
     
     if(is_anything_working == m_IsAnythingWorksInBackground)
@@ -889,7 +898,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         if( _state.HasMember(g_RestorationDataKey) ) {
             auto data = make_shared<rapidjson::StandaloneValue>();
             data->CopyFrom(_state[g_RestorationDataKey], rapidjson::g_CrtAllocator);
-            m_DirectoryLoadingQ->Run([=]{
+            m_DirectoryLoadingQ.Run([=]{
                 VFSHostPtr host;
                 if( PanelDataPersisency::CreateVFSFromState(*data, host) == VFSError::Ok ) {
                     string path = PanelDataPersisency::GetPathFromState(*data);

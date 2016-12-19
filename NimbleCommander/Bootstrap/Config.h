@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 //#include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
 //#include "3rd_party/rapidjson/include/rapidjson/document.h"
 #include "../Core/rapidjson.h"
@@ -100,7 +100,7 @@ private:
     string                                                              m_DefaultsPath;
     string                                                              m_OverwritesPath;
     atomic_ullong                                                       m_ObservationTicket{ 1 };
-    SerialQueue                                                         m_IOQueue = SerialQueueT::Make("GenericConfig input/output queue");
+    SerialQueue                                                         m_IOQueue{"GenericConfig input/output queue"};
     atomic_flag                                                         m_WriteScheduled{ false };
     atomic_flag                                                         m_ReadScheduled{ false };
     time_t                                                              m_OverwritesTime = 0;

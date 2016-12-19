@@ -9,7 +9,8 @@
 #pragma once
 
 #include <Habanero/algo.h>
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
+#include <Habanero/DispatchGroup.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/VFS.h>
 #include <NimbleCommander/Operations/OperationJob.h>

@@ -8,7 +8,8 @@
 
 #include <sys/stat.h>
 #include <sys/dirent.h>
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
+#include <Habanero/DispatchGroup.h>
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 

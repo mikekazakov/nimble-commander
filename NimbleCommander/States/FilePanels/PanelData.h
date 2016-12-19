@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
+#include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
 #include "PanelDataSortMode.h"

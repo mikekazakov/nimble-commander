@@ -14,11 +14,12 @@
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
 {
-    m_DirectoryLoadingQ->Run([=](const SerialQueue &_q){
+//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_q){
+    m_DirectoryLoadingQ.Run([=](){
         VFSHostPtr host;
         try {
             host = VFSInstanceManager::Instance().RetrieveVFS(_promise,
-                                                              [&]{ return _q->IsStopped(); }
+                                                              [&]{ return m_DirectoryLoadingQ.IsStopped(); }
                                                               );
         } catch (VFSErrorException &e) {
             return; // TODO: something
@@ -73,15 +74,15 @@ loadPreviousState:(bool)_load_state
     
     if(c->PerformAsynchronous == false) {
         assert(dispatch_is_main_queue());
-        m_DirectoryLoadingQ->Stop();
-        m_DirectoryLoadingQ->Wait();
+        m_DirectoryLoadingQ.Stop();
+        m_DirectoryLoadingQ.Wait();
     }
     else {
-        if(!m_DirectoryLoadingQ->Empty())
+        if(!m_DirectoryLoadingQ.Empty())
             return 0;
     }
     
-    auto workblock = [=](const SerialQueue &_q) {
+    auto workblock = [=]() {
         if(!c->VFS->IsDirectory(c->RequestedDirectory.c_str(), 0, 0)) {
             c->LoadingResultCode = VFSError::FromErrno(ENOTDIR);
             if( c->LoadingResultCallback )
@@ -94,7 +95,7 @@ loadPreviousState:(bool)_load_state
                                                                     listing,
                                                                     m_VFSFetchingFlags,
                                                                     [&] {
-                                                                        return _q->IsStopped();
+                                                                        return m_DirectoryLoadingQ.IsStopped();
                                                                     });
         if( c->LoadingResultCallback )
             c->LoadingResultCallback( c->LoadingResultCode );
@@ -114,12 +115,13 @@ loadPreviousState:(bool)_load_state
         });
     };
     
-    if(c->PerformAsynchronous == false) {
-        m_DirectoryLoadingQ->RunSyncHere(workblock);
+    if( c->PerformAsynchronous == false ) {
+        //m_DirectoryLoadingQ->RunSyncHere(workblock);
+        workblock();
         return c->LoadingResultCode;
     }
     else {
-        m_DirectoryLoadingQ->Run(workblock);
+        m_DirectoryLoadingQ.Run(workblock);
         return 0;
     }
 }
@@ -140,7 +142,8 @@ loadPreviousState:(bool)_load_state
 {
     path initial_path = self.currentDirectoryPath;
     auto initial_vfs = self.vfs;
-    m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
+//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
+    m_DirectoryLoadingQ.Run([=]{
         // 1st - try to locate a valid dir in current host
         path path = initial_path;
         auto vfs = initial_vfs;

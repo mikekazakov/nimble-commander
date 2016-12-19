@@ -1,4 +1,4 @@
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
 #include "PanelViewFooterVolumeInfoFetcher.h"

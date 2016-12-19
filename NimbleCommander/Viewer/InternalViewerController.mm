@@ -87,9 +87,10 @@ static int InvertBitFlag( int _value, int _flag )
 {
     self = [super init];
     if( self ) {
-        m_SearchInFileQueue = make_shared<SerialQueueT>();
         __weak InternalViewerController* weak_self = self;
-        m_SearchInFileQueue->OnChange([=]{ [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged]; });
+        m_SearchInFileQueue.SetOnChange([=]{
+            [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
+        });
         
         NSNib *mynib = [[NSNib alloc] initWithNibNamed:@"InternalViewerController" bundle:nil];
         [mynib instantiateWithOwner:self topLevelObjects:nil];
@@ -106,8 +107,8 @@ static int InvertBitFlag( int _value, int _flag )
 - (void) clear
 {
     dispatch_assert_main_queue();
-    m_SearchInFileQueue->Stop();
-    m_SearchInFileQueue->Wait();
+    m_SearchInFileQueue.Stop();
+    m_SearchInFileQueue.Wait();
     
     [m_View detachFromFile];
     m_SearchInFile.reset();
@@ -398,7 +399,7 @@ static int InvertBitFlag( int _value, int _flag )
 {
     NSString *str = m_SearchField.stringValue;
     if( str.length == 0 ) {
-        m_SearchInFileQueue->Stop(); // we should stop current search if any
+        m_SearchInFileQueue.Stop(); // we should stop current search if any
         m_View.selectionInFile = CFRangeMake(-1, 0);
         return;
     }
@@ -412,26 +413,26 @@ static int InvertBitFlag( int _value, int _flag )
         uint64_t view_offset = m_View.verticalPositionInBytes;
         int encoding = m_View.encoding;
         
-        m_SearchInFileQueue->Stop(); // we should stop current search if any
-        m_SearchInFileQueue->Wait();
-        m_SearchInFileQueue->Run([=]{
+        m_SearchInFileQueue.Stop(); // we should stop current search if any
+        m_SearchInFileQueue.Wait();
+        m_SearchInFileQueue.Run([=]{
             m_SearchInFile->MoveCurrentPosition(view_offset);
             m_SearchInFile->ToggleTextSearch((__bridge CFStringRef)str, encoding);
         });
     }
     else {
         // request is the same
-        if(!m_SearchInFileQueue->Empty())
+        if(!m_SearchInFileQueue.Empty())
             return; // we're already performing this request now, nothing to do
     }
     
-    m_SearchInFileQueue->Run([=]{
+    m_SearchInFileQueue.Run([=]{
         uint64_t offset, len;
         
         if( m_SearchInFile->IsEOF() )
             m_SearchInFile->MoveCurrentPosition(0);
         
-        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_SearchInFileQueue->IsStopped();});
+        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_SearchInFileQueue.IsStopped();});
         
         if(result == SearchInFile::Result::Found)
             dispatch_to_main_queue( [=]{
@@ -443,13 +444,13 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void) onSearchInFileQueueStateChanged
 {
-    if( m_SearchInFileQueue->Empty() )
+    if( m_SearchInFileQueue.Empty() )
         dispatch_to_main_queue([=]{
             [m_SearchProgressIndicator stopAnimation:self];
         });
     else
         dispatch_to_main_queue_after(100ms, [=]{ // should be 100 ms of workload before user will get spinning indicator
-            if( !m_SearchInFileQueue->Empty() ) // need to check if task was already done
+            if( !m_SearchInFileQueue.Empty() ) // need to check if task was already done
                 [m_SearchProgressIndicator startAnimation:self];
         });
 }
@@ -592,7 +593,7 @@ static int InvertBitFlag( int _value, int _flag )
 {
     dispatch_assert_main_queue();
     
-    m_SearchInFileQueue->Stop(); // we should stop current search if any
+    m_SearchInFileQueue.Stop(); // we should stop current search if any
     
     self.view.selectionInFile = _selection;
     [self.view ScrollToSelection];

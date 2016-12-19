@@ -23,7 +23,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 
 SearchForFiles::SearchForFiles()
 {
-    m_Queue->OnDry([=]{
+    m_Queue.SetOnDry([=]{
         m_Callback = nullptr;
         m_LookingInCallback = nullptr;
         m_SpawnArchiveCallback = nullptr;
@@ -100,7 +100,7 @@ bool SearchForFiles::Go(const string &_from_path,
     m_SearchOptions = _options;
     m_DirsFIFO = {};
     
-    m_Queue->Run([=]{
+    m_Queue.Run([=]{
         AsyncProc( _from_path.c_str(), *_in_host );
     });
     
@@ -109,17 +109,17 @@ bool SearchForFiles::Go(const string &_from_path,
 
 void SearchForFiles::Stop()
 {
-    m_Queue->Stop();
+    m_Queue.Stop();
 }
 
 bool SearchForFiles::IsStopped()
 {
-    return m_Queue->IsStopped();
+    return m_Queue.IsStopped();
 }
 
 void SearchForFiles::Wait()
 {
-    m_Queue->Wait();
+    m_Queue.Wait();
 }
 
 void SearchForFiles::NotifyLookingIn(const char* _path) const
@@ -133,7 +133,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
     m_DirsFIFO.emplace(_in_host.SharedPtr(), _from_path);
     
     while( !m_DirsFIFO.empty() ) {
-        if( m_Queue->IsStopped() )
+        if( m_Queue.IsStopped() )
             break;
         
         auto path = move( m_DirsFIFO.front() );
@@ -144,7 +144,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
         path.Host()->IterateDirectoryListing(path.Path().c_str(),
                                       [&](const VFSDirEnt &_dirent)
                                       {
-                                          if(m_Queue->IsStopped())
+                                          if(m_Queue.IsStopped())
                                               return false;
                                           
                                           string full_path = path.Path();
@@ -252,7 +252,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     uint64_t found_len;
     auto result = sif.Search(&found_pos,
                              &found_len,
-                             [=]{ return m_Queue->IsStopped(); }
+                             [=]{ return m_Queue.IsStopped(); }
                              );
     if(result == SearchInFile::Result::Found) {
         _r = CFRangeMake(found_pos, found_len);
@@ -278,5 +278,5 @@ void SearchForFiles::ProcessValidEntry(const char* _full_path,
 
 bool SearchForFiles::IsRunning() const noexcept
 {
-    return m_Queue->Empty() == false;
+    return m_Queue.Empty() == false;
 }

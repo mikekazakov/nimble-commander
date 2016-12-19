@@ -721,12 +721,12 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
     {
         CFRange orig_sel = [m_View SelectionWithinWindow];        
         uint64_t window_size = m_Data->RawSize();
-        int first_byte = clip(ByteIndexFromHitTest(first_down), 0, (int)window_size);
+        int first_byte = clamp(ByteIndexFromHitTest(first_down), 0, (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_byte = clip(ByteIndexFromHitTest(loc), 0, (int)window_size);
+            int curr_byte = clamp(ByteIndexFromHitTest(loc), 0, (int)window_size);
 
             int base_byte = first_byte;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -755,12 +755,12 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
     else if(hit_part == HitPart::Text)
     {
         CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
-        int first_char = clip(CharIndexFromHitTest(first_down), 0, (int)m_Data->UniCharsSize());
+        int first_char = clamp(CharIndexFromHitTest(first_down), 0, (int)m_Data->UniCharsSize());
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = clip(CharIndexFromHitTest(loc), 0, (int)m_Data->UniCharsSize());
+            int curr_char = clamp(CharIndexFromHitTest(loc), 0, (int)m_Data->UniCharsSize());
             
             int base_char = first_char;
             if(modifying_existing_selection && orig_sel.length > 0)

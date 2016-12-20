@@ -79,9 +79,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     __weak id<PanelViewDelegate> m_Delegate;
 //    nanoseconds                 m_ActivationTime; // time when view did became a first responder
     
-    bool                        m_DraggingOver;
-    int                         m_DraggingOverItemAtPosition;
-    
 //    PanelBriefView             *m_ItemsView;
 //    PanelListView              *m_ItemsView;
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
@@ -105,9 +102,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
 //        m_FieldRenamingRequestTicket = 0;
-//        m_LastPotentialRenamingLBDown = -1;
-        m_DraggingOver = false;
-        m_DraggingOverItemAtPosition = -1;
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -912,129 +906,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
 }
 
-//- (void) setupPresentationLayout:(const PanelViewLayout&)_pvl
-//{
-//}
-
-PanelViewLayout L1()
-{
-    
-    //    struct PanelBriefViewColumnsLayout
-    //    {
-    //        enum class Mode : short {
-    //            FixedWidth      = 0,
-    //            FixedAmount     = 1,
-    //            DynamicWidth    = 2
-    //        };
-    //        Mode    mode                = Mode::FixedAmount;
-    //        short   fixed_mode_width    = 150;
-    //        short   fixed_amount_value  = 3;
-    //        short   dynamic_width_min   = 100;
-    //        short   dynamic_width_max   = 300;
-    //        bool    dynamic_width_equal = false;
-    
-    PanelBriefViewColumnsLayout cl;
-    cl.mode = PanelBriefViewColumnsLayout::Mode::FixedAmount;
-    cl.fixed_amount_value = 3;
-    
-    PanelViewLayout ret;
-    ret.layout = cl;
-    return ret;
-}
-
-PanelViewLayout L2()
-{
-    
-    //    struct PanelBriefViewColumnsLayout
-    //    {
-    //        enum class Mode : short {
-    //            FixedWidth      = 0,
-    //            FixedAmount     = 1,
-    //            DynamicWidth    = 2
-    //        };
-    //        Mode    mode                = Mode::FixedAmount;
-    //        short   fixed_mode_width    = 150;
-    //        short   fixed_amount_value  = 3;
-    //        short   dynamic_width_min   = 100;
-    //        short   dynamic_width_max   = 300;
-    //        bool    dynamic_width_equal = false;
-    
-    PanelBriefViewColumnsLayout cl;
-    cl.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
-    
-    PanelViewLayout ret;
-    ret.layout = cl;
-    return ret;
-}
-
-PanelViewLayout L3()
-{
-    PanelListViewColumnsLayout l;
-    
-    PanelListViewColumnsLayout::Column c;
-    c.kind = PanelListViewColumns::Filename;
-    l.columns.emplace_back(c);
-    
-    c.kind = PanelListViewColumns::Size;
-    l.columns.emplace_back(c);
-    
-    c.kind = PanelListViewColumns::DateCreated;
-    l.columns.emplace_back(c);
-    
-    c.kind = PanelListViewColumns::DateModified;
-    l.columns.emplace_back(c);
-    
-    c.kind = PanelListViewColumns::DateAdded;
-    l.columns.emplace_back(c);
-    
-    PanelViewLayout ret;
-    ret.layout = l;
-    return ret;
-}
-
-PanelViewLayout L4()
-{
-    PanelListViewColumnsLayout l;
-    
-    PanelListViewColumnsLayout::Column c;
-    c.kind = PanelListViewColumns::Filename;
-    l.columns.emplace_back(c);
-    
-    c.kind = PanelListViewColumns::Size;
-    l.columns.emplace_back(c);
-    
-    PanelViewLayout ret;
-    ret.layout = l;
-    return ret;
-}
-
-//- (void) setType:(PanelViewType)_type
-//{
-//    
-//    if( _type == PanelViewType::Short )
-//        [self setLayout:L1()];
-//
-//    if( _type == PanelViewType::Medium )
-//        [self setLayout:L2()];
-//    
-//    if( _type == PanelViewType::Full )
-//        [self setLayout:L3()];
-//    
-//    if( _type == PanelViewType::Wide )
-//        [self setLayout:L4()];
-//    
-//    
-////    m_State.ViewType = _type;
-////    if (m_Presentation) m_Presentation->EnsureCursorIsVisible();
-////    [self commitFieldEditor];
-////    self.needsDisplay = true;
-//}
-
-//- (PanelViewType)type
-//{
-//    return m_ViewType;
-//}
-
 - (void) SavePathState
 {
     assert( dispatch_is_main_queue() );
@@ -1115,45 +986,6 @@ PanelViewLayout L4()
     [self discardFieldEditor];
     [self setHeaderTitle:self.headerTitleForPanel];
 //    m_Presentation->OnDirectoryChanged();
-}
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-    NSDragOperation result = NSDragOperationNone;
-    if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewDraggingEntered:sender:)])
-            result = [del PanelViewDraggingEntered:self sender:sender];
-    return result;
-}
-
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
-{
-    NSDragOperation result = NSDragOperationNone;
-    if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewDraggingUpdated:sender:)])
-            result = [del PanelViewDraggingUpdated:self sender:sender];
-    return result;
-}
-
-- (void)draggingExited:(id <NSDraggingInfo>)sender
-{
-    if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewDraggingExited:sender:)])
-            [del PanelViewDraggingExited:self sender:sender];
-}
-
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
-{
-    // possibly add some checking stage here later
-    return YES;
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-    if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewPerformDragOperation:sender:)])
-            return [del PanelViewPerformDragOperation:self sender:sender];
-    return NO;
 }
 
 static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )
@@ -1355,34 +1187,6 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 //    return pos;
 }
 
-- (int) draggingOverItemAtPosition
-{
-    return m_DraggingOverItemAtPosition;
-}
-
-- (void) setDraggingOverItemAtPosition:(int)draggingOverItemAtPosition
-{
-    if(m_DraggingOverItemAtPosition != draggingOverItemAtPosition) {
-        m_DraggingOverItemAtPosition = draggingOverItemAtPosition;
-        self.needsDisplay = true;
-    }
-}
-
-- (bool) draggingOver
-{
-    return m_DraggingOver;
-}
-
-- (void) setDraggingOver:(bool)draggingOver
-{
-    if(m_DraggingOver != draggingOver)
-    {
-        m_DraggingOverItemAtPosition = -1;
-        m_DraggingOver = draggingOver;
-        self.needsDisplay = true;
-    }
-}
-
 - (void) appWillResignActive
 {
     [self commitFieldEditor];
@@ -1527,6 +1331,22 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 - (int) headerBarHeight
 {
     return 20;
+}
+
++ (NSArray*) acceptedDragAndDropTypes
+{
+    return PanelController.acceptedDragAndDropTypes;
+}
+
+- (NSDragOperation)panelItem:(int)_sorted_index operationForDragging:(id <NSDraggingInfo>)_dragging
+{
+    return [self.controller validateDraggingOperation:_dragging
+                                         forPanelItem:_sorted_index];
+}
+
+- (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging
+{
+    return [self.controller performDragOperation:_dragging forPanelItem:_sorted_index];
 }
 
 @end

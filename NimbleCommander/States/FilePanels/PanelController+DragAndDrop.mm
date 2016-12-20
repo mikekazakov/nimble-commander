@@ -365,22 +365,16 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
 
 @implementation PanelController (DragAndDrop)
 
-
-+ (NSArray*) acceptedDragAndDropTypes
-{
-    return @[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI];
-}
-
 + (NSString*) dragAndDropPrivateUTI
 {
     return g_PrivateDragUTI;
 }
 
-- (void) RegisterDragAndDropListeners
-{
-    [m_View registerForDraggedTypes:PanelController.acceptedDragAndDropTypes];
-}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                              Drag Source Section
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
 - (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
 {
     const auto dragged_item = m_Data.EntryAtSortPosition(_sort_pos);
@@ -442,57 +436,39 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
     }
 }
 
-- (int) countAcceptableDraggingItemsExt:(id <NSDraggingInfo>)sender forType:(NSString *)type
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                              Drop Target Section
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
++ (NSArray*) acceptedDragAndDropTypes
+{
+    return @[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI];
+}
+
+static int CountAcceptableDraggingItemsExt(id<NSDraggingInfo> sender, NSString *type)
 {
     __block int urls_amount = 0;
-    [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
-                                      forView:self.view
+//    [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
+    [sender enumerateDraggingItemsWithOptions:0
+                                      forView:/*self.view*/nil
                                       classes:@[NSPasteboardItem.class]
                                 searchOptions:@{}
                                    usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-                                       if( [((NSPasteboardItem*)draggingItem.item).types containsObject:type] )
-                                           urls_amount++;
+                                       if( auto pbitem = objc_cast<NSPasteboardItem>(draggingItem.item) )
+                                           if( [pbitem.types containsObject:type] )
+                                               urls_amount++;
                                    }];
     return urls_amount;
 }
 
-#if 0
-- (path) __composeDestinationForDragOld:(id <NSDraggingInfo>)sender
-{
-    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
-                                               hitTestOption:PanelViewHitTest::FilenameFact];
-    auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
-    bool dragging_over_dir = dragging_over_item && dragging_over_item.IsDir() && DraggingIntoFoldersAllowed();
-    path destination_dir = self.currentDirectoryPath;
-    destination_dir.remove_filename();
-    if(destination_dir.empty())
-        destination_dir = "/";
-    if(dragging_over_dir) { // alter destination regarding to where drag is currently placed
-        if(!dragging_over_item.IsDotDot())
-            destination_dir /= dragging_over_item.Name();
-        else
-            destination_dir = destination_dir.parent_path();
-    }
-    destination_dir /= "/";
-    return destination_dir;
-}
-#endif
-
-// may return {nullptr, ""} if dragging into non-uniform listing
 - (VFSPath) composeDestinationForDrag:(id <NSDraggingInfo>)sender
+                        overPanelItem:(const VFSListingItem&)_item // may be nullptr
 {
-//    const auto dragging_mouse_pos = [m_View convertPoint:sender.draggingLocation fromView:nil];
-    const auto dragging_mouse_pos = sender.draggingLocation;
-    const int dragging_over_item_no = [m_View sortedItemPosAtPoint:dragging_mouse_pos hitTestOption:PanelViewHitTest::FilenameFact];
-    
-    
-    const auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
-    const bool dragging_over_dir = dragging_over_item &&
-                                    dragging_over_item.IsDir() &&
-                                    DraggingIntoFoldersAllowed();
+    const auto dragging_over_dir = _item && _item.IsDir();
     
     if( dragging_over_dir ) {
-        if( dragging_over_item.IsDotDot() ) {
+        if( _item.IsDotDot() ) {
             if( !self.isUniform )
                 return {};
             path p = self.currentDirectoryPath;
@@ -502,8 +478,8 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
             return {self.vfs, (p.parent_path() / "/").native()};
         }
         else {
-            auto p = path(dragging_over_item.Directory()) / dragging_over_item.Filename() / "/";
-            return {dragging_over_item.Host(), p.native()};
+            auto p = path(_item.Directory()) / _item.Filename() / "/";
+            return {_item.Host(), p.native()};
         }
     }
     else {
@@ -513,55 +489,87 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
     }
 }
 
-- (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
+static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
+                                   int _valid_number,
+                                   NSDragOperation _operation )
 {
+    // prevent setting of a same value to DraggingInfo, since it causes weird blinking
+    static __weak id last_updated = nil;
+    static int last_set = 0;
+    
+    if( last_updated == _dragging ) {
+        if( last_set != _valid_number ) {
+            last_set = _valid_number;
+            if( _operation != NSDragOperationNone )
+                _dragging.numberOfValidItemsForDrop = last_set;
+        }
+    }
+    else {
+        last_updated = _dragging;
+        last_set = _valid_number;
+        if( _operation != NSDragOperationNone )
+            _dragging.numberOfValidItemsForDrop = last_set;
+    }
+}
+
+- (NSDragOperation) validateDraggingOperation:(id <NSDraggingInfo>)_dragging
+                                 forPanelItem:(int)_sorted_index // -1 means "whole" panel
+{
+
+    const auto dragging_over_item = m_Data.EntryAtSortPosition(_sorted_index);
+    const auto dragging_over_dir = dragging_over_item && dragging_over_item.IsDir();
+    if( dragging_over_item ) {
+        if( dragging_over_dir && !DraggingIntoFoldersAllowed() ) // <-- optimize this !!
+            return NSDragOperationNone;
+        if( !dragging_over_dir )
+            return NSDragOperationNone;
+    }
+    
+    const auto destination = [self composeDestinationForDrag:_dragging
+                                               overPanelItem:dragging_over_item];
     int valid_items = 0;
-//    int dragging_over_item_no = [m_View sortedItemPosAtPoint:[m_View convertPoint:sender.draggingLocation fromView:nil]
-    int dragging_over_item_no = [m_View sortedItemPosAtPoint:sender.draggingLocation
-                                               hitTestOption:PanelViewHitTest::FilenameFact];
-    auto dragging_over_item = m_Data.EntryAtSortPosition(dragging_over_item_no);
-    bool dragging_over_dir = dragging_over_item && dragging_over_item.IsDir() && DraggingIntoFoldersAllowed();
-    auto destination = [self composeDestinationForDrag:sender];
-    
-    
     NSDragOperation result = NSDragOperationNone;
+    
     if( destination && destination.Host()->IsWriteable()) {
-        if( auto source = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
+        if( auto source = objc_cast<PanelControllerDragSourceBroker>(_dragging.draggingSource) ) {
             // drag is from some other panel
             valid_items = (int)source.items.size();
             if( source.controller == self && !dragging_over_dir )
                 result = NSDragOperationNone; // we can't drag into the same dir on the same panel
             else // complex logic with keyboard modifiers
                 result = BuildOperationMaskForLocal(source, destination);
-
+            
             // check that we dont drag an item to the same folder in other panel
             if( any_of(begin(source.items), end(source.items), [&](auto &_i) {
-                return _i.item.Directory() == destination.Path() && _i.item.Host() == destination.Host(); }) )
+                return _i.item.Directory() == destination.Path() &&
+                       _i.item.Host() == destination.Host();
+                }) )
                 result = NSDragOperationNone;
             
-            // TODO: why do we use sender.draggingPasteboard here insead of source.items?
-            // check that we dont drag a folder into itself
-            if( dragging_over_dir )
-                for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
-                                                                                        options:nil])
+            if( dragging_over_dir ) {
+                // check that we dont drag a folder into itself
+                // filenames are stored without trailing slashes, so have to add it
+                for(PanelDraggingItem *item: source.items)
                     if( item.item.Host() == destination.Host() &&
                         item.item.IsDir() &&
-                        destination.Path() == item.item.Path()+"/" ) { // filenames are stored without trailing slashes, so have to add it
+                        destination.Path() == item.item.Path()+"/" ) {
                         result = NSDragOperationNone;
                         break;
                     }
+            }
         }
-        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI]) {
+        else if( [_dragging.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI] ) {
             // drag is from some other application
-            valid_items = [self countAcceptableDraggingItemsExt:sender forType:g_PasteboardFileURLUTI];
-            NSDragOperation mask = sender.draggingSourceOperationMask;
-            if(mask & NSDragOperationCopy)
+            valid_items = CountAcceptableDraggingItemsExt(_dragging,g_PasteboardFileURLUTI);
+            NSDragOperation mask = _dragging.draggingSourceOperationMask;
+            if( mask & NSDragOperationCopy )
                 result = NSDragOperationCopy;
         }
-        else if([sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && destination.Host()->IsNativeFS() ) {
+        else if( [_dragging.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI]
+                 && destination.Host()->IsNativeFS() ) {
             // tell we can accept file promises drags
-            valid_items = [self countAcceptableDraggingItemsExt:sender forType:g_PasteboardFileURLPromiseUTI];
-            NSDragOperation mask = sender.draggingSourceOperationMask;
+            valid_items = CountAcceptableDraggingItemsExt(_dragging, g_PasteboardFileURLPromiseUTI);
+            NSDragOperation mask = _dragging.draggingSourceOperationMask;
             if( mask & NSDragOperationMove )
                 result = NSDragOperationMove;
             else if( mask & NSDragOperationCopy )
@@ -569,65 +577,45 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
         }
     }
     
-    if(valid_items == 0) // regardless of a previous logic - we can't accept an unacceptable drags
+    
+    if( valid_items == 0 ) {
+        // regardless of a previous logic - we can't accept an unacceptable drags
         result = NSDragOperationNone;
-    else if(result == NSDragOperationNone) // inverse - we can't drag here anything - amount of draggable items is zero
+    }
+    else if( result == NSDragOperationNone ) {
+        // inverse - we can't drag here anything - amount of draggable items should be zero
         valid_items = 0;
-    
-    if(valid_items != m_DragDrop.last_valid_items) {
-        m_DragDrop.last_valid_items = valid_items;
-        sender.numberOfValidItemsForDrop = valid_items;
     }
     
-    if(result != NSDragOperationNone) {
-        m_View.draggingOver = true;
-        m_View.draggingOverItemAtPosition = dragging_over_dir ? dragging_over_item_no : -1;
-    }
-    else {
-        m_View.draggingOver = false;
-        m_View.draggingOverItemAtPosition = -1;
-    }
-    
-    sender.draggingFormation = NSDraggingFormationList;
+    UpdateValidDropNumber( _dragging, valid_items, result );
+    _dragging.draggingFormation = NSDraggingFormationList;
     
     return result;
 }
 
-- (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
+- (bool) performDragOperation:(id<NSDraggingInfo>)_dragging
+                 forPanelItem:(int)_sorted_index
 {
-    return [self PanelViewDraggingEntered:_view sender:sender];
-}
-
-- (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
-{
-    m_DragDrop.last_valid_items = -1;
-    m_View.draggingOver = false;
-    m_View.draggingOverItemAtPosition = -1;
-}
-
-- (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender
-{
-    // clear UI from dropping information
-    m_DragDrop.last_valid_items = -1;
-    m_View.draggingOver = false;
-    m_View.draggingOverItemAtPosition = -1;
-    
-    const auto destination = [self composeDestinationForDrag:sender];
+    const auto dragging_over_item = m_Data.EntryAtSortPosition(_sorted_index);
+    auto destination = [self composeDestinationForDrag:_dragging
+                                         overPanelItem:dragging_over_item];
     if( !destination )
         return false;
+
+    const auto pasteboard = _dragging.draggingPasteboard;
+    const auto dest_writeable = destination.Host()->IsWriteable();
+    const auto dest_native = destination.Host()->IsNativeFS();
     
-    if( auto source = objc_cast<PanelControllerDragSourceBroker>(sender.draggingSource) ) {
-        // we're dragging something here from another PanelView, lets understand what actually
+    if( auto source = objc_cast<PanelControllerDragSourceBroker>(_dragging.draggingSource) ) {
         
-        vector<VFSListingItem> files;
-        for(PanelDraggingItem *item in [sender.draggingPasteboard readObjectsForClasses:@[PanelDraggingItem.class]
-                                                                                options:nil])
-            files.emplace_back( item.item );
-        
-        if( files.empty() )
+        if( !dest_writeable )
             return false;
         
-        if( !destination.Host()->IsWriteable()  )
+        // we're dragging something here from another PanelView, lets understand what actually
+        vector<VFSListingItem> files;
+        for( PanelDraggingItem *item: source.items )
+            files.emplace_back( item.item );
+        if( files.empty() )
             return false;
         
         const auto operation = BuildOperationMaskForLocal(source, destination);
@@ -665,9 +653,9 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
             return true;
         }
         else if( operation == NSDragOperationLink &&
-                 files.size() == 1 &&
-                 source.areAllHostsNative &&
-                 destination.Host()->IsNativeFS() ) {
+                files.size() == 1 &&
+                source.areAllHostsNative &&
+                destination.Host()->IsNativeFS() ) {
             path source_path = files.front().Path();
             path dest_path = path(destination.Path()) / files.front().Filename();
             auto op = [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
@@ -676,20 +664,21 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
             return true;
         }
     }
-    else if( [sender.draggingPasteboard.types containsObject:g_PasteboardFileURLUTI] && destination.Host()->IsWriteable() ) {
-        auto fileURLs = [sender.draggingPasteboard
-                         readObjectsForClasses:@[NSURL.class]
-                         options:@{NSPasteboardURLReadingFileURLsOnlyKey:@YES}
-                         ];
-
+    else if( [pasteboard.types containsObject:g_PasteboardFileURLUTI] && dest_writeable ) {
+        static const auto read_opts = @{NSPasteboardURLReadingFileURLsOnlyKey:@YES};
+        auto fileURLs = [pasteboard readObjectsForClasses:@[NSURL.class]
+                                                  options:read_opts];
+        
         // currently fetching listings synchronously, which is BAAAD
-        auto source_items = FetchVFSListingsItemsFromDirectories(LayoutArraysOfURLsByDirectories(fileURLs),
-                                                                 *VFSNativeHost::SharedHost());
-  
+        auto source_items = FetchVFSListingsItemsFromDirectories(
+            LayoutArraysOfURLsByDirectories(fileURLs),
+            *VFSNativeHost::SharedHost());
+        
         if( source_items.empty() )
             return false; // errors on fetching listings?
         
-        FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions(); // TODO: support move from other apps someday?
+        // TODO: support move from other apps someday?
+        FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
         auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                            destinationPath:destination.Path()
                                            destinationHost:destination.Host()
@@ -704,15 +693,16 @@ static NSDragOperation BuildOperationMaskForLocal(PanelControllerDragSourceBroke
         [self.state.OperationsController AddOperation:op];
         return true;
     }
-    else if( [sender.draggingPasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && destination.Host()->IsNativeFS() ) {
+    else if( [pasteboard.types containsObject:g_PasteboardFileURLPromiseUTI] && dest_native ) {
         // accept file promises drags
-        NSURL *drop_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:destination.Path()]];
-        [sender namesOfPromisedFilesDroppedAtDestination:drop_url];
+        const auto drop_url = [NSURL fileURLWithFileSystemRepresentation:destination.Path().c_str()
+                                                             isDirectory:true
+                                                           relativeToURL:nil];
+        [_dragging namesOfPromisedFilesDroppedAtDestination:drop_url];
         return true;
     }
     
     return false;
 }
-
 
 @end

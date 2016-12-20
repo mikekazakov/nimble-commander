@@ -26,9 +26,6 @@ struct PanelViewLayout;
 - (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
 - (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event;
-- (NSDragOperation)PanelViewDraggingEntered:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
-- (NSDragOperation)PanelViewDraggingUpdated:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
-- (void)PanelViewDraggingExited:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)_event;
 
@@ -53,14 +50,14 @@ struct PanelViewLayout;
  * otherwise draw focus ring in specified item.
  * No KVO support here.
  */
-@property (nonatomic) bool draggingOver;
+//@property (nonatomic) bool draggingOver;
 
 /**
  * Tell PanelView to draw a focus ring over item at specified position.
  * draggingOver should be true, otherwise value ignored.
  * No KVO support here.
  */
-@property (nonatomic) int draggingOverItemAtPosition;
+//@property (nonatomic) int draggingOverItemAtPosition;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
@@ -110,7 +107,11 @@ struct PanelViewLayout;
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event;
+- (NSDragOperation)panelItem:(int)_sorted_index operationForDragging:(id<NSDraggingInfo>)_dragging;
+- (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging;
 
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event;
+
++ (NSArray*) acceptedDragAndDropTypes;
 
 @end

@@ -10,8 +10,13 @@
 
 @interface PanelController (DragAndDrop)
 
-- (void) RegisterDragAndDropListeners;
 + (NSString*) dragAndDropPrivateUTI;
 + (NSArray*) acceptedDragAndDropTypes;
+
+- (NSDragOperation) validateDraggingOperation:(id <NSDraggingInfo>)_dragging
+                                 forPanelItem:(int)_sorted_index; // -1 means "whole" panel
+
+- (bool) performDragOperation:(id<NSDraggingInfo>)_dragging
+                 forPanelItem:(int)_sorted_index; // -1 means "whole" panel
 
 @end

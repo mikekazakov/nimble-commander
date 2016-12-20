@@ -119,11 +119,6 @@ namespace panel
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
-    // drag & drop support, caching
-    struct {
-        int                 last_valid_items;
-    } m_DragDrop;
-    
     NSButton            *m_ShareButton;
     
     string              m_LastNativeDirectory;

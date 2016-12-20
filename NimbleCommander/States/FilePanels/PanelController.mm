@@ -143,10 +143,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
-//        m_DirectorySizeCountingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirsizecounting");
-//        m_DirectoryLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirloading");
-//        m_DirectoryReLoadingQ = SerialQueueT::Make(ActivationManager::BundleID() + ".paneldirreloading");
-        m_DragDrop.last_valid_items = -1;
         m_ViewLayoutIndex = -1;
         
         __weak PanelController* weakself = self;
@@ -162,7 +158,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_View.delegate = self;
         m_View.data = &m_Data;
-        [self RegisterDragAndDropListeners];
         
         // wire up config changing notifications
         auto add_co = [&](const char *_path, SEL _sel) { m_ConfigObservers.

@@ -66,6 +66,18 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     return self;
 }
 
+- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
 - (BOOL) isOpaque
 {
     return true;

@@ -30,6 +30,18 @@
         CFRelease( m_Line );
 }
 
+- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
 - (BOOL) isOpaque
 {
     return true;

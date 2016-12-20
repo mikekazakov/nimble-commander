@@ -252,6 +252,18 @@
     return objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
 }
 
+- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
 static bool     g_RowReadyToDrag = false;
 static void*    g_MouseDownRow = nullptr;
 static NSPoint  g_LastMouseDownPos = {};

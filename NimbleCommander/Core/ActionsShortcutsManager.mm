@@ -82,6 +82,7 @@ static const vector<pair<string,int>> g_ActionsTags = {
     {"menu.view.sorting_by_modify_time",                13110},
     {"menu.view.sorting_by_size",                       13120},
     {"menu.view.sorting_by_creation_time",              13130},
+    {"menu.view.sorting_by_added_time",                 13131},
     {"menu.view.sorting_view_hidden",                   13140},
     {"menu.view.sorting_separate_folders",              13150},
     {"menu.view.sorting_case_sensitive",                13160},
@@ -242,6 +243,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.view.sorting_by_modify_time",                    u8"^⌘3"     }, // ctrl+cmd+3
         {"menu.view.sorting_by_size",                           u8"^⌘4"     }, // ctrl+cmd+4
         {"menu.view.sorting_by_creation_time",                  u8"^⌘5"     }, // ctrl+cmd+5
+        {"menu.view.sorting_by_added_time",                     u8"^⌘6"     }, // ctrl+cmd+6
         {"menu.view.sorting_view_hidden",                       u8"⇧⌥⌘i"    }, // shift+alt+cmd+i
         {"menu.view.sorting_separate_folders",                  u8""        },
         {"menu.view.sorting_case_sensitive",                    u8""        },

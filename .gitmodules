@@ -2,5 +2,5 @@
 	path = 3rd_Party/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
 [submodule "habanero"]
-	path = habanero
+	path = Habanero
 	url = https://github.com/mikekazakov/habanero.git

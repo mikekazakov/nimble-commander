@@ -425,34 +425,40 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Sorting" id="862">
                                     <items>
-                                        <menuItem title="Sort by Name" tag="13090" keyEquivalent="" id="864">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="Sort by Name" tag="13090" id="864">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortByName:" target="-1" id="871"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Extention" tag="13100" keyEquivalent="" id="865">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="Sort by Extention" tag="13100" id="865">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortByExt:" target="-1" id="873"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Modified Time" tag="13110" keyEquivalent="" id="866">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="Sort by Modified Time" tag="13110" id="866">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortByMTime:" target="-1" id="876"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Size" tag="13120" keyEquivalent="" id="867">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="Sort by Size" tag="13120" id="867">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortBySize:" target="-1" id="877"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Creation Time" tag="13130" keyEquivalent="" id="868">
-                                            <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                        <menuItem title="Sort by Creation Time" tag="13130" id="868">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortByBTime:" target="-1" id="875"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Sort by Added Time" tag="13131" id="v7Z-Jf-aho">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="ToggleSortByATime:" target="-1" id="qsA-MF-KaY"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="878"/>

@@ -330,22 +330,34 @@ static NSPoint  g_LastMouseDownPos = {};
     return [self.listView.panelView panelItem:my_index menuForForEvent:_event];
 }
 
+- (bool) validateDropHitTest:(id <NSDraggingInfo>)sender
+{
+    const auto sv_position = [self.superview convertPoint:sender.draggingLocation fromView:nil];
+    if( id v = [self hitTest:sv_position] )
+        if( [v respondsToSelector:@selector(dragAndDropHitTest:)] ) {
+            const auto v_position = [v convertPoint:sender.draggingLocation fromView:nil];
+            return [v dragAndDropHitTest:v_position];
+        }
+    return true;
+}
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
     const auto my_index = m_ItemIndex;
     if( my_index < 0 )
         return NSDragOperationNone;
-    
-    auto op = [self.listView.panelView panelItem:my_index operationForDragging:sender];
-    if( op != NSDragOperationNone ) {
-        self.isDropTarget = true;
+
+    if( [self validateDropHitTest:sender] ) {
+        const auto op = [self.listView.panelView panelItem:my_index operationForDragging:sender];
+        if( op != NSDragOperationNone ) {
+            self.isDropTarget = true;
+            [self.superview draggingExited:sender];
+            return op;
+        }
     }
-    else {
-        return [self.superview draggingEntered:sender];
-    }
-    
-    return op;
+
+    self.isDropTarget = false;
+    return [self.superview draggingEntered:sender];
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
@@ -393,7 +405,7 @@ static NSPoint  g_LastMouseDownPos = {};
     if( m_IsDropTarget != isDropTarget ) {
         m_IsDropTarget = isDropTarget;
         if( m_IsDropTarget )
-            self.layer.borderWidth = 5;
+            self.layer.borderWidth = 1;
         else
             self.layer.borderWidth = 0;
     }

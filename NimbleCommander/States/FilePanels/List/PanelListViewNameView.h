@@ -10,4 +10,6 @@
 
 - (void) setupFieldEditor:(NSScrollView*)_editor;
 
+- (bool) dragAndDropHitTest:(NSPoint)_position; // local coordinates
+
 @end

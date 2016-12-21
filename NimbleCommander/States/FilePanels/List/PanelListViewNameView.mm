@@ -235,4 +235,21 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     m_PermitFieldRenaming = false;
 }
 
+- (bool) dragAndDropHitTest:(NSPoint)_position
+{
+    const auto bounds = self.bounds;
+    const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
+    const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
+                                      geometry.TextBaseLine(),
+                                      bounds.size.width - 2 * geometry.LeftInset() -
+                                        geometry.IconSize() - geometry.RightInset(),
+                                      0);
+    
+    const auto rc =  [m_AttrString boundingRectWithSize:text_rect.size
+                                                options:0
+                                                context:nil];
+
+    return _position.x <= max(rc.size.width, 32.) + text_rect.origin.x;
+}
+
 @end

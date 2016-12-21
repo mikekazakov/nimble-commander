@@ -583,13 +583,13 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     });
 }
 
-- (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
+/*- (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
 {
     [m_View modifierFlagsChanged:_flags];
 
     if(m_QuickSearchIsSoftFiltering)
         [self QuickSearchClearFiltering];
-}
+}*/
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator share:(NSButton*)_share
 {
@@ -825,10 +825,10 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     [self.state AddOperation:op];
 }
 
-- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view
+- (void) panelViewDidBecomeFirstResponder
 {
     [self.state activePanelChangedTo:self];
-    [self ModifierFlagsChanged:[NSEvent modifierFlags]];
+//    [self ModifierFlagsChanged:[NSEvent modifierFlags]];
 }
 
 - (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select

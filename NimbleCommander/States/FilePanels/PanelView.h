@@ -21,7 +21,7 @@ struct PanelViewLayout;
 
 @protocol PanelViewDelegate<NSObject>
 @optional
-- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view;
+//- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view;
 - (void) PanelViewCursorChanged:(PanelView*)_view;
 - (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
@@ -46,20 +46,6 @@ struct PanelViewLayout;
 @property (nonatomic, readonly) int headerBarHeight;
 
 /**
- * Set to true to tell PanelView to drag focus ring. If draggingOverItemAtPosition<0 - draw focus ring in view bounds,
- * otherwise draw focus ring in specified item.
- * No KVO support here.
- */
-//@property (nonatomic) bool draggingOver;
-
-/**
- * Tell PanelView to draw a focus ring over item at specified position.
- * draggingOver should be true, otherwise value ignored.
- * No KVO support here.
- */
-//@property (nonatomic) int draggingOverItemAtPosition;
-
-/**
  * called by controlled when a directory has been entirely changed in PanelData.
  * possibly focusing some file, may be "".
  */
@@ -75,7 +61,7 @@ struct PanelViewLayout;
 
 - (void) volatileDataChanged;
 
-- (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
+//- (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
 - (rapidjson::StandaloneValue) encodeRestorableState;
 - (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;

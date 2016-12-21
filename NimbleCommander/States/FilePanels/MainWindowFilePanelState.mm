@@ -503,11 +503,11 @@ static void SetupRatingOverlay(NSView *_background_view)
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-- (void)flagsChanged:(NSEvent *)event
+/*- (void)flagsChanged:(NSEvent *)event
 {
     for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
     for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
-}
+}*/
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState
 {
@@ -593,10 +593,10 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (void) didBecomeKeyWindow
 {
-    // update key modifiers state for views
+/*    // update key modifiers state for views
     unsigned long flags = [NSEvent modifierFlags];
     for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:flags];
-    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:flags];
+    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:flags];*/
 }
 
 - (void)WindowDidResize

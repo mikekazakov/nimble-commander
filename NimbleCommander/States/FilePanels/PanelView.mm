@@ -50,6 +50,26 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return hash<string>()(full);
 }
 
+struct NSEventModifierFlagsHolder
+{
+    uint8_t flags;
+    inline NSEventModifierFlagsHolder() : flags(0) {}
+    inline NSEventModifierFlagsHolder( NSEventModifierFlags _flags ) :
+        flags( ((_flags & NSEventModifierFlagDeviceIndependentFlagsMask) >> 16) & 0xFF ) {}
+    inline bool is_capslock()   const { return flags & (NSEventModifierFlagCapsLock     >> 16); }
+    inline bool is_shift()      const { return flags & (NSEventModifierFlagShift        >> 16); }
+    inline bool is_control()    const { return flags & (NSEventModifierFlagControl      >> 16); }
+    inline bool is_option()     const { return flags & (NSEventModifierFlagOption       >> 16); }
+    inline bool is_command()    const { return flags & (NSEventModifierFlagCommand      >> 16); }
+    inline bool is_numpad()     const { return flags & (NSEventModifierFlagNumericPad   >> 16); }
+    inline bool is_help()       const { return flags & (NSEventModifierFlagHelp         >> 16); }
+    inline bool is_func()       const { return flags & (NSEventModifierFlagFunction     >> 16); }
+    
+    bool operator==(const NSEventModifierFlagsHolder&_rhs) const { return flags == _rhs.flags; }
+    bool operator!=(const NSEventModifierFlagsHolder&_rhs) const { return flags != _rhs.flags; }
+    operator NSEventModifierFlags() const { return ((uint64_t)flags) << 16; }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface PanelView()
@@ -60,57 +80,49 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 @implementation PanelView
 {
-    unsigned long               m_KeyboardModifierFlags;
-    CursorSelectionType         m_CursorSelectionType;
-//    unique_ptr<PanelViewPresentation> m_Presentation;
-//    PanelViewState             m_State;
     PanelData                  *m_Data;
-    int                         m_CursorPos;
-//    PanelViewType               m_ViewType;
     
-    unordered_map<size_t, PanelViewStateStorage> m_States;
+    unordered_map<size_t, PanelViewStateStorage> m_States; // TODO: change no something simplier
     NSString                   *m_HeaderTitle;
-    
     NSScrollView               *m_RenamingEditor; // NSTextView inside
     string                      m_RenamingOriginalName;
-    
-    bool                        m_ReadyToDrag;
-    
+
     __weak id<PanelViewDelegate> m_Delegate;
-//    nanoseconds                 m_ActivationTime; // time when view did became a first responder
-    
-//    PanelBriefView             *m_ItemsView;
-//    PanelListView              *m_ItemsView;
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
-    
     PanelViewHeader            *m_HeaderView;
     PanelViewFooter            *m_FooterView;
     
     IconsGenerator2             m_IconsGenerator;
+    
+    int                         m_CursorPos;
+    NSEventModifierFlagsHolder  m_KeyboardModifierFlags;
+    CursorSelectionType         m_KeyboardCursorSelectionType;
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-//        self.wantsLayer = true;
         m_Data = nullptr;
         m_CursorPos = -1;
-//        m_ViewType = PanelViewType::Medium;
         
         __weak PanelView *weak_self = self;
         m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
 //        m_FieldRenamingRequestTicket = 0;
         
-        [NSNotificationCenter.defaultCenter addObserver:self
+/*        [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
-                                                 object:self];
+                                                 object:self];*/
+/*        
+ MB write own field editor, which will listen to this notification himself?
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(appWillResignActive)
                                                    name:NSApplicationWillResignActiveNotification
                                                  object:[NSApplication sharedApplication]];
+ 
+ */
 //        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
         
 //        auto skin = AppDelegate.me.skin;
@@ -196,7 +208,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
 //    m_ActivationTime = machtime();
 //    self.needsDisplay = true;
-//    [self.delegate PanelViewDidBecomeFirstResponder:self];
+    [self.controller panelViewDidBecomeFirstResponder];
 //    m_ReadyToDrag = false;
 //    m_LastPotentialRenamingLBDown = -1;
 //    
@@ -261,51 +273,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return false;
 }
 
-//- (void)drawRect:(NSRect)dirtyRect
+//- (void)frameDidChange
 //{
-//    if (!m_State.Data || !m_Presentation) return;
-//    m_Presentation->Draw(dirtyRect);
-//    
-//    if(m_RenamingEditor) {
-//        [NSGraphicsContext saveGraphicsState];
-//        NSSetFocusRingStyle(NSFocusRingOnly);
-//        [[NSBezierPath bezierPathWithRect:m_RenamingEditor.frame] fill];
-//        [NSGraphicsContext restoreGraphicsState];
-//    }
-//    
-//    if( m_DraggingOver ) {
-//        if( m_DraggingOverItemAtPosition >= 0 && m_Presentation->IsItemVisible(m_DraggingOverItemAtPosition) ) {
-//            NSRect rc = m_Presentation->ItemRect(m_DraggingOverItemAtPosition);
-//            [NSGraphicsContext saveGraphicsState];
-//            NSSetFocusRingStyle(NSFocusRingOnly);
-//            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
-//            [NSGraphicsContext restoreGraphicsState];
-//        }
-//        else {
-//            [NSGraphicsContext saveGraphicsState];
-//            NSSetFocusRingStyle(NSFocusRingOnly);
-//            [[NSBezierPath bezierPathWithRect:NSInsetRect(self.bounds,2,2)] fill];
-//            [NSGraphicsContext restoreGraphicsState];
-//        }
-//    }
-//  
-//    for( auto n: m_ContextMenuHighlights ) {
-//        if( m_Presentation->IsItemVisible(n) ) {
-//            NSRect rc = m_Presentation->ItemRect(n);
-//            [NSGraphicsContext saveGraphicsState];
-//            NSSetFocusRingStyle(NSFocusRingOnly);
-//            [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
-//            [NSGraphicsContext restoreGraphicsState];
-//        }
-//    }
-//}
-
-- (void)frameDidChange
-{
 //    if (m_Presentation)
 //        m_Presentation->OnFrameChanged([self frame]);
-    [self commitFieldEditor];
-}
+//    [self commitFieldEditor];
+//}
 
 - (PanelData*) data
 {
@@ -314,7 +287,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void) setData:(PanelData *)data
 {
-    self.needsDisplay = true;
+//    self.needsDisplay = true;
     m_Data = data;
     
 //    if( data )
@@ -342,20 +315,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
 }
 
-//- (void) setPresentation:(unique_ptr<PanelViewPresentation>)_presentation
-//{
-//    m_Presentation = move(_presentation);
-//    if (m_Presentation) {
-//        [self frameDidChange];
-//        self.needsDisplay = true;
-//    }
-//}
-
-//- (PanelViewPresentation*) presentation
-//{
-//    return m_Presentation.get();
-//}
-
 - (void) HandlePrevFile
 {
     dispatch_assert_main_queue();
@@ -368,7 +327,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     if( m_CursorPos < 0 )
         return;
     
-    [self SelectUnselectInRange:origpos last_included:origpos];
+    [self performKeyboardSelection:origpos last_included:origpos];
 
     if( m_CursorPos == 0 )
         return;
@@ -393,7 +352,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    if(m_State->Data->SortedDirectoryEntries().empty()) return;
 //
-    [self SelectUnselectInRange:origpos last_included:origpos];
+    [self performKeyboardSelection:origpos last_included:origpos];
     if( m_CursorPos + 1 >= m_Data->SortedDirectoryEntries().size() )
         return;
 
@@ -440,7 +399,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
     m_CursorPos = new_pos;
     
-    [self SelectUnselectInRange:orig_pos last_included:m_CursorPos];
+    [self performKeyboardSelection:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -461,7 +420,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     m_CursorPos = new_pos;
 
-    [self SelectUnselectInRange:orig_pos last_included:m_CursorPos];
+    [self performKeyboardSelection:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -479,7 +438,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    m_Presentation->MoveCursorToFirstItem();
 
-    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
+    [self performKeyboardSelection:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -497,7 +456,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 //    m_Presentation->MoveCursorToLastItem();
 
-    [self SelectUnselectInRange:origpos last_included: m_CursorPos];
+    [self performKeyboardSelection:origpos last_included: m_CursorPos];
     [self OnCursorPositionChanged];
 }
 
@@ -634,31 +593,31 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     // flags have changed, need to update selection logic
     m_KeyboardModifierFlags = _current_flags;
     
-    if( (m_KeyboardModifierFlags & NSShiftKeyMask) == 0 ) {
+    if( !m_KeyboardModifierFlags.is_shift() ) {
         // clear selection type when user releases SHIFT button
-        m_CursorSelectionType = CursorSelectionType::No;
+        m_KeyboardCursorSelectionType = CursorSelectionType::No;
     }
-    else if( m_CursorSelectionType == CursorSelectionType::No ) {
+    else if( m_KeyboardCursorSelectionType == CursorSelectionType::No ) {
         // lets decide if we need to select or unselect files when user will use navigation arrows
         if( auto item = self.item ) {
             if( !item.IsDotDot() ) { // regular case
-                m_CursorSelectionType = self.item_vd.is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                m_KeyboardCursorSelectionType = self.item_vd.is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
             }
             else {
                 // need to look at a first file (next to dotdot) for current representation if any.
                 if( auto next_item = m_Data->EntryAtSortPosition(1) )
-                    m_CursorSelectionType = m_Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
+                    m_KeyboardCursorSelectionType = m_Data->VolatileDataAtSortPosition(1).is_selected() ? CursorSelectionType::Unselection : CursorSelectionType::Selection;
                 else // singular case - selection doesn't matter - nothing to select
-                    m_CursorSelectionType = CursorSelectionType::Selection;
+                    m_KeyboardCursorSelectionType = CursorSelectionType::Selection;
             }
         }
     }
 }
 
-- (void)modifierFlagsChanged:(unsigned long)_flags
+/*- (void)modifierFlagsChanged:(unsigned long)_flags
 {
     [self checkKeyboardModifierFlags:_flags];
-}
+}*/
 
 - (void)flagsChanged:(NSEvent *)event
 {
@@ -666,115 +625,12 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [super flagsChanged:event];
 }
 
-//- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
-//{
-//    /* really always??? */
-//    return true;
-//}
-//
-//- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
-//{
-//    /* really always??? */
-//    return true;
-//}
-
-//- (void) mouseDown:(NSEvent *)_event
-//{
-//    m_LastPotentialRenamingLBDown = -1;
-//    
-//    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-//    const int current_cursor_pos = m_State.CursorPos;
-//    const bool window_focused = self.window.isKeyWindow;
-//    
-//    const int clicked_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-//    if( clicked_pos == -1 )
-//        return;
-//
-//    const auto click_entry_vd = m_State.Data->VolatileDataAtSortPosition(clicked_pos);
-//    const bool lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-//    const bool lb_cooldown = machtime() - m_ActivationTime < 300ms;
-//    
-//    // any cursor movements or selection changes should be performed only in active window
-//    if( window_focused ) {
-//        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-//        
-//        // Select range of items with shift+click.
-//        // If clicked item is selected, then deselect the range instead.
-//        if(modifier_flags & NSShiftKeyMask)
-//            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
-//                          last_included:clicked_pos
-//                                 select:!click_entry_vd.is_selected()];
-//        else if(modifier_flags & NSCommandKeyMask) // Select or deselect a single item with cmd+click.
-//            [self SelectUnselectInRange:clicked_pos
-//                          last_included:clicked_pos
-//                                 select:!click_entry_vd.is_selected()];
-//        
-//        m_Presentation->SetCursorPos(clicked_pos);
-//        
-//        if( current_cursor_pos != clicked_pos )
-//            [self OnCursorPositionChanged];
-//        else if(lb_pressed && !lb_cooldown)
-//            m_LastPotentialRenamingLBDown = clicked_pos; // need more complex logic here (?)
-//
-//    }
-//    
-//    if( lb_pressed ) {
-//        m_ReadyToDrag = true;
-//        m_LButtonDownPos = local_point;
-//    }
-//}
-
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event
 {
     if( _sorted_index >= 0 )
         return [self.delegate panelView:self requestsContextMenuForItemNo:_sorted_index];    
     return nil;
 }
-
-//- (void) mouseDragged:(NSEvent *)_event
-//{
-//    const auto max_drag_dist = 5.;
-//    if( m_ReadyToDrag ) {
-//        NSPoint lp = [self convertPoint:_event.locationInWindow fromView:nil];
-//        if( hypot(lp.x - m_LButtonDownPos.x, lp.y - m_LButtonDownPos.y) > max_drag_dist ) {
-//            const int clicked_pos = m_Presentation->GetItemIndexByPointInView(m_LButtonDownPos, PanelViewHitTest::FullArea);
-//            if( clicked_pos == -1 )
-//                return;
-//            
-//            [self.delegate panelView:self wantsToDragItemNo:clicked_pos byEvent:_event];
-//            
-//            m_ReadyToDrag = false;
-//            m_LastPotentialRenamingLBDown = -1;
-//        }
-//    }
-//}
-
-//- (void) mouseUp:(NSEvent *)_event
-//{
-//    int click_count = (int)_event.clickCount;
-//    NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
-//    int cursor_pos = m_Presentation->GetItemIndexByPointInView(local_point, PanelViewHitTest::FullArea);
-//
-//    if( click_count <= 1 ) {
-//        if( m_LastPotentialRenamingLBDown >= 0 && m_LastPotentialRenamingLBDown == cursor_pos ) {
-//            static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
-//            uint64_t renaming_ticket = ++m_FieldRenamingRequestTicket;
-//            dispatch_to_main_queue_after(delay,[=]{
-//                               if(renaming_ticket == m_FieldRenamingRequestTicket)
-//                                   [self startFieldEditorRenamingByEvent:_event];
-//                           });
-//        }
-//    }
-//    else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
-//        // Handle double-or-four-etc clicks as double-click
-//        ++m_FieldRenamingRequestTicket; // to abort field editing
-//        if(cursor_pos >= 0 && cursor_pos == m_State.CursorPos)
-//            [self.delegate PanelViewDoubleClick:self atElement:cursor_pos];
-//    }
-//
-//    m_ReadyToDrag = false;
-//    m_LastPotentialRenamingLBDown = -1;
-//}
 
 - (VFSListingItem)item
 {
@@ -814,14 +670,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self volatileDataChanged];
 }
 
-- (void) SelectUnselectInRange:(int)_start last_included:(int)_end
+- (void)performKeyboardSelection:(int)_start last_included:(int)_end
 {
     assert( dispatch_is_main_queue() );
-    if(m_CursorSelectionType == CursorSelectionType::No)
+    if( m_KeyboardCursorSelectionType == CursorSelectionType::No )
         return;
     [self SelectUnselectInRange:_start
                   last_included:_end
-                         select:m_CursorSelectionType == CursorSelectionType::Selection];
+                         select:m_KeyboardCursorSelectionType == CursorSelectionType::Selection];
 }
 
 - (void) setupBriefPresentationWithLayout:(PanelBriefViewColumnsLayout)_layout
@@ -1187,10 +1043,10 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 //    return pos;
 }
 
-- (void) appWillResignActive
+/*- (void) appWillResignActive
 {
     [self commitFieldEditor];
-}
+}*/
 
 - (void) windowDidBecomeKey
 {

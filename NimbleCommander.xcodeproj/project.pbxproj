@@ -57,6 +57,7 @@
 		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
+		CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
@@ -956,6 +957,8 @@
 		CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewItemCarrier.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.mm; sourceTree = SOURCE_ROOT; };
 		CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooter.h; path = NimbleCommander/States/FilePanels/PanelViewFooter.h; sourceTree = SOURCE_ROOT; };
 		CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooter.mm; path = NimbleCommander/States/FilePanels/PanelViewFooter.mm; sourceTree = SOURCE_ROOT; };
+		CF282AC81E0A2D6300EC7F33 /* PanelBriefViewCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewCollectionView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.h; sourceTree = SOURCE_ROOT; };
+		CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.mm; sourceTree = SOURCE_ROOT; };
 		CF29312E17D79BA100648A90 /* IconsGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconsGenerator.mm; sourceTree = "<group>"; };
 		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
 		CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
@@ -1995,16 +1998,18 @@
 			children = (
 				CF31F66E1DFE644B005A1A40 /* Layout.h */,
 				CF31F66F1DFE644B005A1A40 /* Layout.mm */,
-				CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */,
-				CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */,
+				CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */,
+				CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */,
+				CF282AC81E0A2D6300EC7F33 /* PanelBriefViewCollectionView.h */,
+				CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */,
 				CF56C2C41DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.h */,
 				CF56C2C51DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm */,
 				CF56C2C61DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.h */,
 				CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */,
 				CF56C2C81DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.h */,
 				CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */,
-				CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */,
-				CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */,
+				CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */,
+				CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */,
 			);
 			name = Brief;
 			sourceTree = "<group>";
@@ -3477,6 +3482,7 @@
 				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
+				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFDAC2911DFBF9260039A104 /* TermScreen.cpp in Sources */,

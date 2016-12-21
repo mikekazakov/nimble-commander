@@ -8,6 +8,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../IconsGenerator2.h"
 #include "PanelBriefView.h"
+#include "PanelBriefViewCollectionView.h"
 #include "PanelBriefViewCollectionViewLayout.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
@@ -16,45 +17,6 @@ static const auto g_ConfigColoring              = "filePanel.modern.coloringRule
 vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
 
 static auto g_ItemsCount = 0;
-
-@interface PanelBriefViewCollectionView : NSCollectionView
-@end
-
-@implementation PanelBriefViewCollectionView
-
-- (id) initWithFrame:(NSRect)frameRect
-{
-    self = [super initWithFrame:frameRect];
-    if( self ) {
-        self.selectable = true;
-    }
-    return self;
-}
-
-- (BOOL)acceptsFirstResponder
-{
-    return false;
-}
-
-- (void)keyDown:(NSEvent *)event
-{
-    NSView *sv = self.superview;
-    while( sv != nil && objc_cast<PanelView>(sv) == nil )
-        sv = sv.superview;
-    
-    if( auto pv = objc_cast<PanelView>(sv) )
-        [pv keyDown:event];
-}
-
-- (void)mouseDown:(NSEvent *)event
-{
-}
-
-- (void)mouseUp:(NSEvent *)event
-{
-}
-
-@end
 
 static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* double icon size*/ )
 {

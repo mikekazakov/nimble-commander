@@ -46,6 +46,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     pair<int16_t, int16_t>              m_QSHighlight;
     bool                                m_Highlighted;
     bool                                m_PermitFieldRenaming;
+    bool                                m_IsDropTarget;
 }
 
 @synthesize background = m_Background;
@@ -67,6 +68,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         m_QSHighlight = {0, 0};
         m_PermitFieldRenaming = false;
         [self buildTextAttributes];
+        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];        
     }
     return self;
 }
@@ -138,6 +140,22 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
 }
 
+- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+{
+    /* really always??? */
+    return true;
+}
+
+static bool     g_RowReadyToDrag = false;
+static void*    g_MouseDownCarrier = nullptr;
+static NSPoint  g_LastMouseDownPos = {};
+
 - (void) mouseDown:(NSEvent *)event
 {
     m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive;
@@ -147,6 +165,15 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         return;
     
     [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
+    
+    const auto lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
+    const auto local_point = [self convertPoint:event.locationInWindow fromView:nil];
+    
+    if( lb_pressed ) {
+        g_RowReadyToDrag = true;
+        g_MouseDownCarrier = (__bridge void*)self;
+        g_LastMouseDownPos = local_point;
+    }
 }
 
 - (void)mouseUp:(NSEvent *)event
@@ -174,6 +201,28 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
     
     m_PermitFieldRenaming = false;
+    g_RowReadyToDrag = false;
+    g_MouseDownCarrier = nullptr;
+    g_LastMouseDownPos = {};
+}
+
+- (void) mouseDragged:(NSEvent *)event
+{
+    const auto max_drag_dist = 5.;
+    if( g_RowReadyToDrag &&  g_MouseDownCarrier == (__bridge void*)self ) {
+        const auto lp = [self convertPoint:event.locationInWindow fromView:nil];
+        const auto dist = hypot(lp.x - g_LastMouseDownPos.x, lp.y - g_LastMouseDownPos.y);
+        if( dist > max_drag_dist ) {
+            const auto my_index = m_Controller.itemIndex;
+            if( my_index < 0 )
+                return;
+            
+            [m_Controller.briefView.panelView panelItem:my_index mouseDragged:event];
+            g_RowReadyToDrag = false;
+            g_MouseDownCarrier = nullptr;
+            g_LastMouseDownPos = {};
+        }
+    }
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)_event
@@ -277,6 +326,88 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     if( m_Highlighted != highlighted ) {
         m_Highlighted = highlighted;
         [self setNeedsDisplay:true];
+    }
+}
+
+- (bool) validateDropHitTest:(id <NSDraggingInfo>)sender
+{
+    const auto bounds = self.bounds;
+    const auto text_rect = NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
+                                      m_LayoutConstants.font_baseline,
+                                      bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
+                                      0);
+    const auto rc = [m_AttrString boundingRectWithSize:text_rect.size options:0 context:nil];
+    const auto position = [self convertPoint:sender.draggingLocation fromView:nil];
+    return position.x < text_rect.origin.x + max( rc.size.width, 32. );
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return NSDragOperationNone;
+    
+    if( [self validateDropHitTest:sender] ) {
+        const auto op = [m_Controller.briefView.panelView panelItem:my_index operationForDragging:sender];
+        if( op != NSDragOperationNone ) {
+            self.isDropTarget = true;
+            [self.superview draggingExited:sender];
+            return op;
+        }
+    }
+    
+    self.isDropTarget = false;
+    return [self.superview draggingEntered:sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    return [self draggingEntered:sender];
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
+{
+    if( self.isDropTarget ) {
+        self.isDropTarget = false;
+    }
+    else {
+        [self.superview draggingExited:sender];
+    }
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+    // possibly add some checking stage here later
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    const auto my_index = m_Controller.itemIndex;
+    if( my_index < 0 )
+        return false;
+    
+    if( self.isDropTarget ) {
+        self.isDropTarget = false;
+        return [m_Controller.briefView.panelView panelItem:my_index performDragOperation:sender];
+    }
+    else
+        return [self.superview performDragOperation:sender];
+}
+
+- (bool) isDropTarget
+{
+    return m_IsDropTarget;
+}
+
+- (void) setIsDropTarget:(bool)isDropTarget
+{
+    if( m_IsDropTarget != isDropTarget ) {
+        m_IsDropTarget = isDropTarget;
+        if( m_IsDropTarget )
+            self.layer.borderWidth = 1;
+        else
+            self.layer.borderWidth = 0;
     }
 }
 

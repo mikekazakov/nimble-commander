@@ -6,6 +6,7 @@
 #include "PanelView.h"
 #include "PanelController.h"
 #include "Views/FilePanelMainSplitView.h"
+#include "FilesDraggingSource.h"
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)
@@ -150,7 +151,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (NSArray *)allowedDraggedTypesForTabView:(NSTabView *)aTabView
 {
-    return @[PanelController.dragAndDropPrivateUTI];
+    return @[FilesDraggingSource.privateDragUTI];
 }
 
 - (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)tabView

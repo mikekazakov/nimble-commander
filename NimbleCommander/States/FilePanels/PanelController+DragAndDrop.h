@@ -10,7 +10,6 @@
 
 @interface PanelController (DragAndDrop)
 
-+ (NSString*) dragAndDropPrivateUTI;
 + (NSArray*) acceptedDragAndDropTypes;
 
 - (NSDragOperation) validateDraggingOperation:(id <NSDraggingInfo>)_dragging

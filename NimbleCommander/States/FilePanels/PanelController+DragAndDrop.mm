@@ -44,24 +44,6 @@ Check table:
 
 *///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-// VLC: NSFilenamesPboardType
-//NSDragOperationGeneric
-/*static NSString *g_PrivateDragUTI = [NSString stringWithUTF8StdString:ActivationManager::BundleID() + ".filepanelsdraganddrop"];
-static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
-static NSString *g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
-static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
-*/
-
-/*
-NSString* UTIFromPboardType(NSString* type) {
-    return [base::mac::CFToNSCast(UTTypeCreatePreferredIdentifierForTag(
-                                                                        kUTTagClassNSPboardType, base::mac::NSToCFCast(type), kUTTypeData))
-            autorelease];
-}*/
-
-//NSString *abra = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilesPromisePboardType, kUTTypeData));
-
 static bool DraggingIntoFoldersAllowed()
 {
     return GlobalConfig().GetBool( "filePanel.general.allowDraggingIntoFolders" );
@@ -202,37 +184,40 @@ static NSDragOperation BuildOperationMaskForLocal(FilesDraggingSource *_source, 
 
 @implementation PanelController (DragAndDrop)
 
-/*+ (NSString*) dragAndDropPrivateUTI
-{
-    return g_PrivateDragUTI;
-}*/
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //                              Drag Source Section
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-- (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
+static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const PanelData &_data )
 {
-    const auto dragged_item = m_Data.EntryAtSortPosition(_sort_pos);
+    const auto dragged_item = _data.EntryAtSortPosition(_sorted_pos);
     if( !dragged_item || dragged_item.IsDotDot() )
-        return;
+        return {};
     
-    const auto dragged_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
+    const auto dragged_item_vd = _data.VolatileDataAtSortPosition(_sorted_pos);
     
-    FilesDraggingSource *broker = [[FilesDraggingSource alloc] initWithSourceController:self];
-
-    
-    NSMutableArray *drag_items = [NSMutableArray new];
-    
-    vector<VFSListingItem> vfs_items;
+    vector<VFSListingItem> items;
     
     if( dragged_item_vd.is_selected() == false)
-        vfs_items.emplace_back(dragged_item); // drag only clicked item
+        items.emplace_back(dragged_item); // drag only clicked item
     else
-        vfs_items = m_Data.SelectedEntries(); // drag all selected items
+        items = _data.SelectedEntries(); // drag all selected items
+
+    return items;
+}
+
+- (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
+{
+    const auto vfs_items = ComposeItemsForDragging(_sort_pos, m_Data);
+    if( vfs_items.empty() )
+        return;
     
-    const bool all_items_native = all_of(begin(vfs_items), end(vfs_items), [](auto &i){ return i.Host()->IsNativeFS(); });
+    const auto all_items_native = all_of(begin(vfs_items), end(vfs_items), [](auto &i){
+        return i.Host()->IsNativeFS();
+    });
+    auto dragging_source = [[FilesDraggingSource alloc] initWithSourceController:self];
+    auto drag_items = [[NSMutableArray alloc] initWithCapacity:vfs_items.size()];
     
     NSPoint dragPosition = [_view convertPoint:_event.locationInWindow fromView:nil];
     dragPosition.x -= 16;
@@ -246,76 +231,27 @@ static NSDragOperation BuildOperationMaskForLocal(FilesDraggingSource *_source, 
         @[FilesDraggingSource.fileURLsPromiseDragUTI,
           FilesDraggingSource.privateDragUTI];
 
+    for( auto &i: vfs_items ) {
+        // dragging item itself
+        auto pb_item = [[PanelDraggingItem alloc] initWithItem:i];
+        [pb_item setDataProvider:dragging_source forTypes:pasteboard_types];
+        [dragging_source addItem:pb_item];
     
-//    @[abra, g_PasteboardFileURLPromiseUTI];
-    
-//    @[g_PasteboardFileURLUTI, g_PasteboardFilenamesUTI, g_PasteboardFileURLPromiseUTI, abra, NSPasteboardTypeTIFF, g_PrivateDragUTI];
-    
-//    @[NSPasteboardTypeTIFF] :
-//    @[g_PasteboardFileURLPromiseUTI, g_PrivateDragUTI];
-    
-//    @[g_PasteboardFileURLUTI];
-    
-//    @[@"public.jpeg"];
-    
-    
-    
-  //[pbItem setDataProvider:self forTypes:[NSArray arrayWithObjects:NSPasteboardTypeTIFF, NSPasteboardTypePDF, kPrivateDragUTI, nil]];
-    
-    
-    /* Commander One:
-    <__NSArrayM 0x600000247320>(
-                                com.eltima.tcx.fsitem,
-                                public.file-url,
-                                CorePasteboardFlavorType 0x6675726C,
-                                dyn.ah62d4rv4gu8y6y4grf0gn5xbrzw1gydcr7u1e3cytf2gn,
-                                NSFilenamesPboardType,
-                                dyn.ah62d4rv4gu8yc6durvwwaznwmuuha2pxsvw0e55bsmwca7d3sbwu,
-                                Apple URL pasteboard type
-                                )
-    */
-    
-    /* Mine:
-    <__NSArrayI 0x6180006508f0>(
-                                public.file-url,
-                                dyn.ah62d4rv4gu8y6y4grf0gn5xbrzw1gydcr7u1e3cytf2gn,
-                                com.apple.pasteboard.promised-file-url,
-                                info.filesmanager.Files.filepanelsdraganddrop
-                                )
-                                public.file-url,
-                                dyn.ah62d4rv4gu8y6y4grf0gn5xbrzw1gydcr7u1e3cytf2gn,
-                                com.apple.pasteboard.promised-file-url,
-                                dyn.ah62d4rv4gu8yc6durvwwa3xmrvw1gkdusm1044pxqyuha2pxsvw0e55bsmwca7d3sbwu,
-                                public.tiff,
-                                info.filesmanager.Files.filepanelsdraganddrop
+        // visual appearance of a dragging item
+        auto drag_item = [[NSDraggingItem alloc] initWithPasteboardWriter:pb_item];
+        drag_item.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
 
-     */
-    
-    
-
-    
-    for(auto &i: vfs_items) {
-        PanelDraggingItem *pb_item = [[PanelDraggingItem alloc] initWithItem:i];
-        [pb_item setDataProvider:broker forTypes:pasteboard_types];
-    
-        // visual appearance of a drag
-        NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter:pb_item];
-        dragItem.draggingFrame = NSMakeRect(dragPosition.x, dragPosition.y, 32, 32);
-
-        __weak PanelDraggingItem *weak_drag_item = pb_item;
-        dragItem.imageComponentsProvider = ^{
-            return BuildImageComponentsForItem((PanelDraggingItem *)weak_drag_item);
+        __weak PanelDraggingItem *weak_pb_item = pb_item;
+        drag_item.imageComponentsProvider = ^{
+            return BuildImageComponentsForItem((PanelDraggingItem *)weak_pb_item);
         };
         
-        [drag_items addObject:dragItem];
+        [drag_items addObject:drag_item];
         dragPosition.y -= 16;
-        
-        [broker addItem:pb_item];
     }
-    if(drag_items.count > 0) {
-        [_view beginDraggingSessionWithItems:drag_items event:_event source:broker];
-        [NSApp preventWindowOrdering];
-    }
+    
+    [_view beginDraggingSessionWithItems:drag_items event:_event source:dragging_source];
+    [NSApp preventWindowOrdering];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

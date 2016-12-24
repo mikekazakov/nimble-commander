@@ -135,13 +135,16 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const map<st
     return source_items;
 }
 
-static NSDragOperation BuildOperationMaskForLocal(FilesDraggingSource *_source, const VFSPath &_destination)
+static NSDragOperation BuildOperationMaskForLocal( FilesDraggingSource *_source,
+                                                   const VFSPath &_destination )
 {
     const auto kbd = NSEvent.modifierFlags;
-    if( _destination.Host()->IsNativeFS() && _source.areAllHostsNative ) { // special treatment for native fs'es
-        const auto v1 = NativeFSManager::Instance().VolumeFromPathFast( _destination.Path() );
-        const auto v2 = NativeFSManager::Instance().VolumeFromPathFast( _source.items.front().item.Directory() );
-        const bool same_native_fs = (v1 != nullptr && v1 == v2);
+    if( _destination.Host()->IsNativeFS() && _source.areAllHostsNative ) {
+        // special treatment for native fs'es
+        const auto &fs_man = NativeFSManager::Instance();
+        const auto v1 = fs_man.VolumeFromPathFast( _destination.Path() );
+        const auto v2 = fs_man.VolumeFromPathFast( _source.items.front().item.Directory() );
+        const auto same_native_fs = (v1 != nullptr && v1 == v2);
         if( same_native_fs ) {
             if( kbd & NSCommandKeyMask )
                 return NSDragOperationMove;
@@ -163,7 +166,8 @@ static NSDragOperation BuildOperationMaskForLocal(FilesDraggingSource *_source, 
                 return NSDragOperationCopy;
         }
     }
-    else { // if src or dst is on VFS
+    else {
+        // if src or dst is on VFS
         if( _source.commonHost == _destination.Host() ) {
             if( kbd & NSAlternateKeyMask )
                 return NSDragOperationCopy;
@@ -175,7 +179,6 @@ static NSDragOperation BuildOperationMaskForLocal(FilesDraggingSource *_source, 
                 return _source.areAllHostsWriteable ? NSDragOperationMove : NSDragOperationCopy;
             else
                 return NSDragOperationCopy;
-            
         }
     }
     return NSDragOperationNone;

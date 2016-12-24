@@ -1169,7 +1169,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event
 {
-    [self.delegate panelView:self wantsToDragItemNo:_sorted_index byEvent:_event];
+    [self.controller initiateDragFromView:self itemNo:_sorted_index byEvent:_event];
 }
 
 - (void) dataSortingHasChanged

@@ -41,7 +41,6 @@ Check table:
  VLC.app                  +                      -
  Finder.app               +                      +
  
-
 *///////////////////////////////////////////////////////////////////////////////////////////////////
 
 static bool DraggingIntoFoldersAllowed()
@@ -207,7 +206,7 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const Pa
     return items;
 }
 
-- (void) panelView:(PanelView*)_view wantsToDragItemNo:(int)_sort_pos byEvent:(NSEvent *)_event
+- (void) initiateDragFromView:(NSView*)_view itemNo:(int)_sort_pos byEvent:(NSEvent *)_event
 {
     const auto vfs_items = ComposeItemsForDragging(_sort_pos, m_Data);
     if( vfs_items.empty() )
@@ -261,27 +260,24 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const Pa
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 + (NSArray*) acceptedDragAndDropTypes
 {
-//    return @[g_PrivateDragUTI, g_PasteboardFileURLUTI, g_PasteboardFileURLPromiseUTI];
     // why don't we support filenames pasteboard?
-    
     return @[FilesDraggingSource.fileURLsPromiseDragUTI,
              FilesDraggingSource.fileURLsDragUTI,
              FilesDraggingSource.privateDragUTI];
 }
 
-static int CountAcceptableDraggingItemsExt(id<NSDraggingInfo> sender, NSString *type)
+static int CountAcceptableDraggingItemsExt( id<NSDraggingInfo> _sender, NSString *_type )
 {
     __block int urls_amount = 0;
-//    [sender enumerateDraggingItemsWithOptions:NSDraggingItemEnumerationClearNonenumeratedImages
-    [sender enumerateDraggingItemsWithOptions:0
-                                      forView:/*self.view*/nil
-                                      classes:@[NSPasteboardItem.class]
-                                searchOptions:@{}
-                                   usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-                                       if( auto pbitem = objc_cast<NSPasteboardItem>(draggingItem.item) )
-                                           if( [pbitem.types containsObject:type] )
-                                               urls_amount++;
-                                   }];
+    [_sender enumerateDraggingItemsWithOptions:0
+                                       forView:nil
+                                       classes:@[NSPasteboardItem.class]
+                                 searchOptions:@{}
+                                    usingBlock:^(NSDraggingItem *draggingItem, NSInteger, BOOL *) {
+                                        if( auto i = objc_cast<NSPasteboardItem>(draggingItem.item))
+                                            if( [i.types containsObject:_type] )
+                                                urls_amount++;
+                                    }];
     return urls_amount;
 }
 
@@ -427,8 +423,8 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
     static const auto url_uti = FilesDraggingSource.fileURLsDragUTI;
 
     const auto dragging_over_item = m_Data.EntryAtSortPosition(_sorted_index);
-    auto destination = [self composeDestinationForDrag:_dragging
-                                         overPanelItem:dragging_over_item];
+    const auto destination = [self composeDestinationForDrag:_dragging
+                                               overPanelItem:dragging_over_item];
     if( !destination )
         return false;
 

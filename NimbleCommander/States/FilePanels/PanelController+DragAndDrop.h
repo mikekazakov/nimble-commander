@@ -10,8 +10,11 @@
 
 @interface PanelController (DragAndDrop)
 
+// drag source
 + (NSArray*) acceptedDragAndDropTypes;
+- (void) initiateDragFromView:(NSView*)_view itemNo:(int)_sort_pos byEvent:(NSEvent *)_event;
 
+// drag target
 - (NSDragOperation) validateDraggingOperation:(id <NSDraggingInfo>)_dragging
                                  forPanelItem:(int)_sorted_index; // -1 means "whole" panel
 

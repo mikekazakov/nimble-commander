@@ -362,27 +362,49 @@ struct NSEventModifierFlagsHolder
     [self OnCursorPositionChanged];
 }
 
-/*- (void) HandlePrevPage
+- (void) HandlePrevPage
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_CursorPos;
-//    m_Presentation->MoveCursorToPrevPage();
+    const auto orig_pos = m_CursorPos;
 
-    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
+    
+    const auto total_items = (int)m_Data->SortedDirectoryEntries().size();
+    if( !total_items )
+        return;
+    
+    const auto items_per_screen = m_ItemsView.maxNumberOfVisibleItems;
+    const auto new_pos = max( orig_pos - items_per_screen, 0 );
+    
+    if( new_pos == orig_pos )
+        return;
+    
+    m_CursorPos = new_pos;
+    
+    [self performKeyboardSelection:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
+    
 }
 
 - (void) HandleNextPage
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_CursorPos;
-//    m_Presentation->MoveCursorToNextPage();
-
-    [self SelectUnselectInRange:origpos last_included:m_CursorPos];
+    const auto total_items = (int)m_Data->SortedDirectoryEntries().size();
+    if( !total_items )
+        return;
+    const auto orig_pos = m_CursorPos;
+    const auto items_per_screen = m_ItemsView.maxNumberOfVisibleItems;
+    const auto new_pos = min( orig_pos + items_per_screen, total_items - 1 );
+    
+    if( new_pos == orig_pos )
+        return;
+    
+    m_CursorPos = new_pos;
+    
+    [self performKeyboardSelection:orig_pos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
-}*/
+}
 
 - (void) HandlePrevColumn
 {
@@ -550,10 +572,16 @@ struct NSEventModifierFlagsHolder
     
     [self checkKeyboardModifierFlags:modifiers];
     
-    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last, hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv;
+    static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last,
+    hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup, &hk_inv_and_move, &hk_inv},
-       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first", "panel.move_last", "panel.move_next_page", "panel.move_prev_page", "panel.move_next_and_invert_selection", "panel.invert_item_selection"}
+       {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup,
+           &hk_inv_and_move, &hk_inv, &hk_scrdown, &hk_scrup},
+       {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first",
+           "panel.move_last", "panel.move_next_page", "panel.move_prev_page",
+           "panel.move_next_and_invert_selection", "panel.invert_item_selection",
+           "panel.scroll_next_page", "panel.scroll_prev_page"
+       }
       );
     hotkeys_updater.CheckAndUpdate();
 
@@ -569,13 +597,13 @@ struct NSEventModifierFlagsHolder
         [self HandleFirstFile];
     else if( hk_last.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandleLastFile];
-//    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
-//        [self HandleNextPage];
-    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_pgdown.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
+        [self HandleNextPage];
+    else if( hk_scrdown.IsKeyDown(unicode, keycode, modifiers) )
         [m_ItemsView onPageDown:event];
-//    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
-//        [self HandlePrevPage];
-    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers) )
+    else if( hk_pgup.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
+        [self HandlePrevPage];
+    else if( hk_scrup.IsKeyDown(unicode, keycode, modifiers) )
         [m_ItemsView onPageUp:event];
     else if( hk_inv_and_move.IsKeyDown(unicode, keycode, modifiers) )
         [self onInvertCurrentItemSelectionAndMoveNext];

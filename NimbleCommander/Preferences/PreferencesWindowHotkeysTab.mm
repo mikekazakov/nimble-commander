@@ -33,19 +33,21 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 {
     static const vector< pair<const char *, NSString *> > titles = {
-        {"panel.move_up",                       @"File Panels ▶ Move Up"},
-        {"panel.move_down",                     @"File Panels ▶ Move Down"},
-        {"panel.move_left",                     @"File Panels ▶ Move Left"},
-        {"panel.move_right",                    @"File Panels ▶ Move Right"},
-        {"panel.move_first",                    @"File Panels ▶ Move to the First Element"},
-        {"panel.move_last",                     @"File Panels ▶ Move to the Last Element"},
-        {"panel.move_next_page",                @"File Panels ▶ Move to the Next Page"},
-        {"panel.move_prev_page",                @"File Panels ▶ Move to the Previous Page"},
-        {"panel.move_next_and_invert_selection",@"File Panels ▶ Invert Selection and Move Next"},
-        {"panel.invert_item_selection",         @"File Panels ▶ Invert Selection"},
-        {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"},
-        {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"},
-        {"panel.show_preview",                  @"File Panels ▶ Show Preview"},
+        {"panel.move_up",                       @"File Panels ▶ Move Up"                        },
+        {"panel.move_down",                     @"File Panels ▶ Move Down"                      },
+        {"panel.move_left",                     @"File Panels ▶ Move Left"                      },
+        {"panel.move_right",                    @"File Panels ▶ Move Right"                     },
+        {"panel.move_first",                    @"File Panels ▶ Move to the First Element"      },
+        {"panel.move_last",                     @"File Panels ▶ Move to the Last Element"       },
+        {"panel.move_next_page",                @"File Panels ▶ Move to the Next Page"          },
+        {"panel.scroll_next_page",              @"File Panels ▶ Scroll to the Next Page"        },
+        {"panel.move_prev_page",                @"File Panels ▶ Move to the Previous Page"      },
+        {"panel.scroll_prev_page",              @"File Panels ▶ Scroll to the Previous Page"    },
+        {"panel.move_next_and_invert_selection",@"File Panels ▶ Invert Selection and Move Next" },
+        {"panel.invert_item_selection",         @"File Panels ▶ Invert Selection"               },
+        {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"         },
+        {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"         },
+        {"panel.show_preview",                  @"File Panels ▶ Show Preview"                   },
     };
     
     for( auto &i: titles )

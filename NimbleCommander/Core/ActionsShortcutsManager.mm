@@ -159,7 +159,9 @@ static const vector<pair<string,int>> g_ActionsTags = {
     {"panel.move_first",                                100'040},
     {"panel.move_last",                                 100'050},
     {"panel.move_next_page",                            100'060},
+    {"panel.scroll_next_page",                          100'061},
     {"panel.move_prev_page",                            100'070},
+    {"panel.scroll_prev_page",                          100'071},
     {"panel.move_next_and_invert_selection",            100'080},
     {"panel.invert_item_selection",                     100'081},
     {"panel.go_root",                                   100'090},
@@ -313,8 +315,17 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.move_right",                                    u8"\uF703"  }, // right
         {"panel.move_first",                                    u8"\uF729"  }, // home
         {"panel.move_last",                                     u8"\uF72B"  }, // end
-        {"panel.move_next_page",                                u8"\uF72D"  }, // page up
-        {"panel.move_prev_page",                                u8"\uF72C"  }, // page down
+        {"panel.move_next_page",                                u8"\uF72D"  }, // page down
+        {"panel.scroll_next_page",                              u8"⌥\uF72D"  }, // alt+page down
+        {"panel.move_prev_page",                                u8"\uF72C"  }, // page up
+        {"panel.scroll_prev_page",                                u8"⌥\uF72C"  }, // alt+page up
+
+/*    {"panel.move_next_page",                            100'060},
+        {"panel.scroll_next_page",                          100'061},
+            {"panel.move_prev_page",                            100'070},
+                {"panel.scroll_prev_page",                          100'071},*/
+    
+    
         {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
         {"panel.invert_item_selection",                         u8""        },
         {"panel.go_root",                                       u8"/"       }, // slash

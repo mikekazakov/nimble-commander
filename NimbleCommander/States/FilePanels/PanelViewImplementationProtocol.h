@@ -9,6 +9,7 @@ struct PanelDataSortMode;
 @required
 
 @property (nonatomic, readonly) int itemsInColumn;
+@property (nonatomic, readonly) int maxNumberOfVisibleItems;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) PanelDataSortMode sortMode;
 

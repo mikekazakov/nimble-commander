@@ -256,7 +256,9 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     switch( m_ColumnsLayout.mode ) {
         case PanelBriefViewColumnsLayout::Mode::DynamicWidth: {
             assert( index < m_FilenamesPxWidths.size() );
-            short width = m_ColumnsLayout.dynamic_width_equal ? m_MaxFilenamePxWidth : m_FilenamesPxWidths[index];
+            short width = m_ColumnsLayout.dynamic_width_equal ?
+                m_MaxFilenamePxWidth :
+                m_FilenamesPxWidths[index];
             width += 2*layout.inset_left + layout.icon_size + layout.inset_right;
             width = clamp( width, m_ColumnsLayout.dynamic_width_min, m_ColumnsLayout.dynamic_width_max );
             return NSMakeSize( width, layout.item_height );
@@ -471,11 +473,40 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point
+               hitTestOption:(PanelViewHitTest::Options)_options
 {
+    // TODO:
     return -1;
 }
 
+- (int) maxNumberOfVisibleItems
+{
+    const auto cur_pos = self.cursorPosition;
+    if( cur_pos < 0 ) {
+        return m_Layout.rowsCount;
+    }
+    else {
+        const auto items_per_column = m_Layout.rowsCount;
+        const auto prob_vis_items = ( NSArray<PanelBriefViewItem*> *) m_CollectionView.visibleItems;
+        const auto vis_rect = m_ScrollView.documentVisibleRect;
+        vector<int> visible_item_columns;
+        
+        for( PanelBriefViewItem* i in prob_vis_items ) {
+            const auto item_rect = i.view.frame;
+            if( NSContainsRect(vis_rect, item_rect) ) {
+                visible_item_columns.emplace_back( i.itemIndex / items_per_column);
+            }
+        }
+
+        if( visible_item_columns.empty() )
+            return items_per_column;
+        
+        const auto mm = minmax_element( begin(visible_item_columns), end(visible_item_columns) );
+        const auto delta = *mm.second - *mm.first;
+        return (delta + 1) * items_per_column;
+     }
+}
 
 @end
 

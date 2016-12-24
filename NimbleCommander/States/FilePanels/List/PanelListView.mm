@@ -424,6 +424,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 //    return 0;
 }
 
+- (int) maxNumberOfVisibleItems
+{
+    return [self itemsInColumn];
+}
+
 - (void)setCursorPosition:(int)cursorPosition
 {
     if( cursorPosition >= 0 ) {

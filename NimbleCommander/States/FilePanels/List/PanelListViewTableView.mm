@@ -115,8 +115,10 @@
 {
     if( m_IsDropTarget != isDropTarget ) {
         m_IsDropTarget = isDropTarget;
-        if( m_IsDropTarget )
+        if( m_IsDropTarget ) {
             self.layer.borderWidth = 1;
+            self.layer.borderColor = NSColor.blueColor.CGColor;
+        }
         else
             self.layer.borderWidth = 0;
     }

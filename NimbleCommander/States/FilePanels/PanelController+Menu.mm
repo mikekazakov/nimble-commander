@@ -46,6 +46,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Views/SpotlightSearchPopupViewController.h"
 #include "PanelAux.h"
+#include "Actions/CopyFilePaths.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -170,13 +171,6 @@ static vector<string> FetchSpotlightResults(const string& _query)
     result.erase( unique(begin(result), end(result)), result.end() );
     
     return result;
-}
-
-static void WriteSingleStringToClipboard(const string &_s)
-{
-    NSPasteboard *pb = NSPasteboard.generalPasteboard;
-    [pb declareTypes:@[NSStringPboardType] owner:nil];
-    [pb setString:[NSString stringWithUTF8StdString:_s] forType:NSStringPboardType];
 }
 
 static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
@@ -376,8 +370,10 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
-    IF_MENU_TAG("menu.command.copy_file_name")          return m_View.item;
-    IF_MENU_TAG("menu.command.copy_file_path")          return m_View.item;
+    IF_MENU_TAG("menu.command.copy_file_name")
+        return panels::actions::CopyFileName::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.copy_file_path")
+        return panels::actions::CopyFilePath::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
@@ -872,12 +868,12 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnCopyCurrentFileName:(id)sender
 {
-    WriteSingleStringToClipboard(self.currentFocusedEntryFilename);
+    panels::actions::CopyFileName::Perform(self, sender);
 }
 
 - (IBAction)OnCopyCurrentFilePath:(id)sender
 {
-    WriteSingleStringToClipboard(self.currentFocusedEntryPath);
+    panels::actions::CopyFilePath::Perform(self, sender);
 }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender

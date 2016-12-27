@@ -131,7 +131,12 @@
              */
             "maxFPS": 60,
   
-            "bottomGapForOverlappedTerminal": 0
+            "bottomGapForOverlappedTerminal": 0,
+            
+            /**
+             * Separator between filenames/filepaths for copying in pasteboard.
+             */
+            "separatorForCopyingMultipleFilenames": "\n"
         },
         
         /**

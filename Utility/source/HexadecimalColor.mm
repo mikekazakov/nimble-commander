@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include <Utility/HexadecimalColor.h>
 
 //In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in memory such that R is at the lowest address,
@@ -86,6 +87,73 @@ void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept
     }
 }
 
+static const std::unordered_map< std::string, NSColor * > g_SystemColors = {
+    { "@blackColor",                             NSColor.blackColor                               },
+    { "@darkGrayColor",                          NSColor.darkGrayColor                            },
+    { "@lightGrayColor",                         NSColor.lightGrayColor                           },
+    { "@whiteColor",                             NSColor.whiteColor                               },
+    { "@grayColor",                              NSColor.grayColor                                },
+    { "@redColor",                               NSColor.redColor                                 },
+    { "@greenColor",                             NSColor.greenColor                               },
+    { "@blueColor",                              NSColor.blueColor                                },
+    { "@cyanColor",                              NSColor.cyanColor                                },
+    { "@yellowColor",                            NSColor.yellowColor                              },
+    { "@magentaColor",                           NSColor.magentaColor                             },
+    { "@orangeColor",                            NSColor.orangeColor                              },
+    { "@brownColor",                             NSColor.brownColor                               },
+    { "@clearColor",                             NSColor.clearColor                               },
+    { "@controlShadowColor",                     NSColor.controlShadowColor                       },
+    { "@controlDarkShadowColor",                 NSColor.controlDarkShadowColor                   },
+    { "@controlColor",                           NSColor.controlColor                             },
+    { "@controlHighlightColor",                  NSColor.controlHighlightColor                    },
+    { "@controlLightHighlightColor",             NSColor.controlLightHighlightColor               },
+    { "@controlTextColor",                       NSColor.controlTextColor                         },
+    { "@controlBackgroundColor",                 NSColor.controlBackgroundColor                   },
+    { "@selectedControlColor",                   NSColor.selectedControlColor                     },
+    { "@secondarySelectedControlColor",          NSColor.secondarySelectedControlColor            },
+    { "@selectedControlTextColor",               NSColor.selectedControlTextColor                 },
+    { "@disabledControlTextColor",               NSColor.disabledControlTextColor                 },
+    { "@textColor",                              NSColor.textColor                                },
+    { "@textBackgroundColor",                    NSColor.textBackgroundColor                      },
+    { "@selectedTextColor",                      NSColor.selectedTextColor                        },
+    { "@selectedTextBackgroundColor",            NSColor.selectedTextBackgroundColor              },
+    { "@gridColor",                              NSColor.gridColor                                },
+    { "@keyboardFocusIndicatorColor",            NSColor.keyboardFocusIndicatorColor              },
+    { "@windowBackgroundColor",                  NSColor.windowBackgroundColor                    },
+    { "@underPageBackgroundColor",               NSColor.underPageBackgroundColor                 },
+    { "@labelColor",                             NSColor.labelColor                               },
+    { "@secondaryLabelColor",                    NSColor.secondaryLabelColor                      },
+    { "@tertiaryLabelColor",                     NSColor.tertiaryLabelColor                       },
+    { "@quaternaryLabelColor",                   NSColor.quaternaryLabelColor                     },
+    { "@scrollBarColor",                         NSColor.scrollBarColor                           },
+    { "@knobColor",                              NSColor.knobColor                                },
+    { "@selectedKnobColor",                      NSColor.selectedKnobColor                        },
+    { "@windowFrameColor",                       NSColor.windowFrameColor                         },
+    { "@windowFrameTextColor",                   NSColor.windowFrameTextColor                     },
+    { "@selectedMenuItemColor",                  NSColor.selectedMenuItemColor                    },
+    { "@selectedMenuItemTextColor",              NSColor.selectedMenuItemTextColor                },
+    { "@highlightColor",                         NSColor.highlightColor                           },
+    { "@shadowColor",                            NSColor.shadowColor                              },
+    { "@headerColor",                            NSColor.headerColor                              },
+    { "@headerTextColor",                        NSColor.headerTextColor                          },
+    { "@alternateSelectedControlColor",          NSColor.alternateSelectedControlColor            },
+    { "@controlAlternatingRowBackgroundColors0", NSColor.controlAlternatingRowBackgroundColors[0] },
+    { "@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1] }
+};
+
+static NSColor *DecodeSystemColor( const string &_color )
+{
+    if( _color.empty() || _color.front() != '@' )
+        return nil;
+    
+    auto it = g_SystemColors.find(_color);
+    if( it != g_SystemColors.end() )
+        return it->second;
+    return nil;
+}
+
+
+
 @implementation NSColor (HexColorInterface)
 
 + (NSColor*)colorWithRGBA:(uint32_t)_rgba
@@ -99,18 +167,25 @@ void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept
 
 + (NSColor*)colorWithHexString:(const char*)_hex
 {
-    return [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(_hex ? _hex : "")];
+    if( auto sc = DecodeSystemColor(_hex ? _hex : "") )
+        return sc;
+    else
+        return [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(_hex ? _hex : "")];
 }
 
 + (NSColor*)colorWithHexStdString:(const string&)_hex
 {
-    return [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(_hex)];
+    if( auto sc = DecodeSystemColor(_hex) )
+        return sc;
+    else
+        return [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(_hex)];
 }
 
 - (uint32_t)toRGBA
 {
     double r, g, b, a;
-    if( self.colorSpace == NSColorSpace.genericRGBColorSpace  )
+     if(![self.colorSpaceName isEqualToString:@"NSNamedColorSpace"] &&
+         self.colorSpace == NSColorSpace.genericRGBColorSpace )
         [self getRed:&r green:&g blue:&b alpha:&a];
     else
         [[self colorUsingColorSpace:NSColorSpace.genericRGBColorSpace] getRed:&r green:&g blue:&b alpha:&a];

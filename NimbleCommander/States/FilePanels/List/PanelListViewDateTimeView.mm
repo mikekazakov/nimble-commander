@@ -123,9 +123,8 @@
             const auto geometry = lv.geometry;
             
             const auto context = NSGraphicsContext.currentContext.CGContext;
-            rv.rowBackgroundDoubleColor.Set( context );
-//            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
-            CGContextFillRect(context, NSRectToCGRect(self.bounds));
+            [rv.rowBackgroundColor set];
+            NSRectFill(self.bounds);
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),

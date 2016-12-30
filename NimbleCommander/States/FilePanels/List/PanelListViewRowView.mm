@@ -1,3 +1,4 @@
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
 #include "PanelListView.h"
@@ -124,9 +125,17 @@
 - (void) updateColors
 {
     if( self.selected )
-        m_RowColor = m_PanelActive ? NSColor.blueColor : NSColor.lightGrayColor;
+        m_RowColor = m_PanelActive ?
+            CurrentTheme().FilePanelsListSelectedActiveRowBackgroundColor() :
+            CurrentTheme().FilePanelsListSelectedInactiveRowBackgroundColor();
     else
-        m_RowColor = m_ItemIndex % 2 ? NSColor.controlAlternatingRowBackgroundColors[1] : NSColor.controlAlternatingRowBackgroundColors[0];
+        m_RowColor = m_ItemIndex % 2 ?
+            CurrentTheme().FilePanelsListRegularOddRowBackgroundColor() :
+            CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
+    
+//    m_RowColor = NSColor.blueColor;
+    
+    
     m_RowDoubleColor = DoubleColor(m_RowColor);
     
 //    NSColor *backgroundColor;
@@ -155,8 +164,6 @@
 - (void)updateLayer
 {
     self.layer.backgroundColor = m_RowColor.CGColor;
-//    self.layer.backgroundColor = NSColor.yellowColor.CGColor;
-    
 }
 
 - (BOOL)wantsUpdateLayer {
@@ -182,11 +189,7 @@
 }
 
 - (void) drawRect:(NSRect)dirtyRect
-{
-//    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-//    CGContextSetFillColorWithColor(context, m_RowColor.CGColor);
-//    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
-}
+{}
 
 //- (void)display {}
 //- (void)displayIfNeeded{}
@@ -406,7 +409,7 @@ static NSPoint  g_LastMouseDownPos = {};
         m_IsDropTarget = isDropTarget;
         if( m_IsDropTarget ) {
             self.layer.borderWidth = 1;
-            self.layer.borderColor = NSColor.blueColor.CGColor;
+            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
         }
         else
             self.layer.borderWidth = 0;

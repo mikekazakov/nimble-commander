@@ -95,11 +95,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
             const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
             
-            const auto context = NSGraphicsContext.currentContext.CGContext;
-            rv.rowBackgroundDoubleColor.Set( context );
-//            CGContextSetFillColorWithColor(context, rv.rowBackgroundColor.CGColor);
-//            CGContextSetRGBFillColor
-            CGContextFillRect(context, NSRectToCGRect(self.bounds));
+            [rv.rowBackgroundColor set];
+            NSRectFill(self.bounds);
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),

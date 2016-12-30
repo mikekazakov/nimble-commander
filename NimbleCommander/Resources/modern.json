@@ -1,0 +1,32 @@
+{
+
+  "filePanelsColoringRules_v1": [
+                                 {
+                                 "name": "selected",
+                                    "regular": "#FF0000",
+                                    "focused": "#FF0000",
+                                    "filter": {
+                                        "selected": true
+                                    }
+                                 },
+                                 {
+                                    "name": "hidden",
+                                    "regular": "#666666",
+                                    "focused": "#999999",
+                                    "filter": {
+                                        "hidden": true
+                                    }
+                                 },
+                                 {
+                                    "name": "other",
+                                    "regular": "#000000",
+                                    "focused": "#FFFFFF"
+                                 }
+    ],
+    "filePanelsGeneralDropBorderColor": "@blueColor",
+    "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
+    "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
+    "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1"
+}
+

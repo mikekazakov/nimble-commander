@@ -15,6 +15,7 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "Terminal/MainWindowTerminalState.h"
 #include "Terminal/TermShellTask.h"
 #include "Terminal/MainWindowExternalTerminalEditorState.h"
@@ -55,8 +56,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
 - (id)init {
+    static const auto flags = NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|
+    NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask/*|NSWindowStyleMaskFullSizeContentView*/;
     MainWindow* window = [[MainWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
-                                                       styleMask:NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask
+                                                       styleMask:flags
                                                          backing:NSBackingStoreBuffered
                                                            defer:false];
     window.minSize = NSMakeSize(640, 480);
@@ -67,9 +70,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     window.title = @"";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
         [window center];
+//titlebarAppearsTransparent
+
+//    self.window.titlebarAppearsTransparent = true;
 
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
+    /*window.contentView.wantsLayer = YES;
+    window.appearance = CurrentTheme().Appearance();
+    [window invalidateShadow];*/
     
     if(self = [super initWithWindow:window]) {
         self.shouldCascadeWindows = NO;

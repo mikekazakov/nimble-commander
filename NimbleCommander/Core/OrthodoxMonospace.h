@@ -40,7 +40,7 @@ struct DoubleColor
         return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:a];
     }
 #endif
-    void Set(CGContextRef _context) const {
+    [[deprecated]] void Set(CGContextRef _context) const {
         CGContextSetRGBFillColor(_context, r, g, b, a);
     };
     inline bool operator==(const DoubleColor& _r) const {

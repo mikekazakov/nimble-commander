@@ -93,12 +93,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
     
     if( auto v = objc_cast<PanelListViewRowView>(self.superview) ) {
-        const auto context = NSGraphicsContext.currentContext.CGContext;
-        v.rowBackgroundDoubleColor.Set( context );
-//        if( auto c = v.rowBackgroundColor  ) {
-//            CGContextSetFillColorWithColor(context, c.CGColor);
-            CGContextFillRect(context, NSRectToCGRect(self.bounds));
-//        }
+        [v.rowBackgroundColor set];
+        NSRectFill(self.bounds);
     }
     
     const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),

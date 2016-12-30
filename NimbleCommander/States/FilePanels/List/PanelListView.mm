@@ -1,5 +1,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
-#include "../PanelViewPresentationItemsColoringFilter.h"
+#include <NimbleCommander/Core/Theming/Theme.h>
+//#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include "../IconsGenerator2.h"
@@ -12,7 +13,7 @@
 #include "PanelListViewDateFormatting.h"
 #include "PanelListView.h"
 
-static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
+//static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 static const auto g_MaxStashedRows              = 50;
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
 static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
@@ -80,11 +81,12 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
-        m_ScrollView.layer.drawsAsynchronously = true;
+        m_ScrollView.layer.drawsAsynchronously = false;
         m_ScrollView.contentView.copiesOnScroll = true;
         m_ScrollView.hasVerticalScroller = true;
         m_ScrollView.hasHorizontalScroller = true;
         m_ScrollView.borderType = NSNoBorder;
+        m_ScrollView.drawsBackground = false;
         [self addSubview:m_ScrollView];
     
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
@@ -460,7 +462,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (const vector<PanelViewPresentationItemsColoringRule>&) coloringRules
 {
 //    return g_ColoringRules;
-    static vector<PanelViewPresentationItemsColoringRule> rules;
+/*    static vector<PanelViewPresentationItemsColoringRule> rules;
     static once_flag once;
     call_once(once,[]{
         auto cr = GlobalConfig().Get(g_ConfigColoring);
@@ -469,7 +471,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 rules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
         rules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     });
-    return rules;
+    return rules;*/
+    return CurrentTheme().FilePanelsItemsColoringRules();
 }
 
 - (const PanelListViewGeometry&) geometry
@@ -479,7 +482,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (NSFont*) font
 {
-    return [NSFont systemFontOfSize:13];
+//    return [NSFont systemFontOfSize:13];
+    return CurrentTheme().FilePanelsListFont();
 }
 
 - (void) onIconUpdated:(uint16_t)_icon_no image:(NSImageRep*)_image

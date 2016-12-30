@@ -1,0 +1,60 @@
+{
+
+     "filePanelsColoringRules_v1": [
+                                 {
+                                    "name": "selected",
+                                    "regular": "#FFFF00",
+                                    "focused": "#FFFF00",
+                                    "filter": {
+                                        "selected": true
+                                    }
+                                 },
+                                 {
+                                    "name": "hidden",
+                                    "regular": "#008080",
+                                    "focused": "#808080",
+                                    "filter": {
+                                        "hidden": true
+                                    }
+                                 },
+                                 {
+                                    "name": "regular files",
+                                    "regular": "#00FFFF",
+                                    "focused": "#000000",
+                                    "filter": {
+                                        "reg": true
+                                    }
+                                 },
+                                 {
+                                    "name": "directories",
+                                    "regular": "#FFFFFF",
+                                    "focused": "#FFFFFF",
+                                    "filter": {
+                                        "directory": true
+                                    }
+                                 },
+                                 {
+                                    "name": "other",
+                                    "regular": "#FF0000",
+                                    "focused": "#FF0000"
+                                 }
+    ],
+    "filePanelsGeneralDropBorderColor": "@blueColor",
+    "filePanelsListSelectedActiveRowBackgroundColor": "#008080",
+    "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
+    "filePanelsListRegularEvenRowBackgroundColor": "#000080",
+    "filePanelsListRegularOddRowBackgroundColor" : "#000080"
+}
+
+/*
+            "regularBackground": "#000080",
+            
+            "cursorBackground": "#008080",
+            
+            "textColor": "#00FFFF",
+            
+            "activeTextColor": "#000000",
+            
+            "highlightTextColor": "#FFFF00",
+
+*/

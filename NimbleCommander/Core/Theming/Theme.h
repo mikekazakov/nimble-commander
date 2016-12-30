@@ -18,12 +18,21 @@ public:
     ThemeAppearance AppearanceType() const;
     NSAppearance *Appearance() const;
 
-    // File Panels --> General appearance
+    // File Panels --> General appearance //////////////////////////////////////////////////////////
     const vector<PanelViewPresentationItemsColoringRule>& FilePanelsItemsColoringRules() const;
     NSColor *FilePanelsGeneralDropBorderColor() const;
     
-    // File Panels --> List presentation
+    // File Panels --> Footer settings /////////////////////////////////////////////////////////////
+    NSFont  *FilePanelsFooterFont() const;
+    NSColor *FilePanelsFooterTextColor() const;
+    NSColor *FilePanelsFooterActiveTextColor() const;
+    NSColor *FilePanelsFooterSeparatorsColor() const;
+    NSColor *FilePanelsFooterActiveBackgroundColor() const;
+    NSColor *FilePanelsFooterInactiveBackgroundColor() const;
+    
+    // File Panels --> List presentation ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsListFont() const;
+    NSColor *FilePanelsListGridColor() const;
     NSColor *FilePanelsListSelectedActiveRowBackgroundColor() const;
     NSColor *FilePanelsListSelectedInactiveRowBackgroundColor() const;
     NSColor *FilePanelsListRegularEvenRowBackgroundColor() const;    
@@ -33,11 +42,20 @@ public:
 private:
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
+    
+    NSFont  *m_FilePanelsFooterFont;
+    NSColor *m_FilePanelsFooterTextColor;
+    NSColor *m_FilePanelsFooterActiveTextColor;
+    NSColor *m_FilePanelsFooterSeparatorsColor;
+    NSColor *m_FilePanelsFooterActiveBackgroundColor;
+    NSColor *m_FilePanelsFooterInactiveBackgroundColor;
+    
+    NSFont  *m_FilePanelsListFont;
+    NSColor *m_FilePanelsListGridColor;
     NSColor *m_FilePanelsListSelectedActiveRowBackgroundColor;
     NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
-    
 };
 
 const Theme &CurrentTheme();

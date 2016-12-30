@@ -1,8 +1,34 @@
 #include <Utility/ByteCountFormatter.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelView.h"
 #include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"
+
+@interface ColoredSeparatorLine : NSBox
+@end
+
+@implementation ColoredSeparatorLine
+
+- (void)drawRect:(NSRect)rect
+{
+    if( self.borderColor ) {
+        const auto b = self.bounds;
+        const auto rc = b.size.width > b.size.height ?
+            NSMakeRect(0, floor(b.size.height / 2), b.size.width, 1) :
+            NSMakeRect( floor(b.size.width / 2), 0, 1, b.size.height);
+        
+        [self.borderColor set];        
+        if( self.borderColor.alphaComponent == 1. )
+            NSRectFill(rc);
+        else
+            NSRectFillUsingOperation(rc, NSCompositingOperationSourceAtop);
+    }
+    else
+        [super drawRect:rect];
+}
+
+@end
 
 static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::VolatileData &_vd, ByteCountFormatter::Type _format)
 {
@@ -71,9 +97,10 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
 @implementation PanelViewFooter
 {
     NSColor             *m_Background;
-    NSBox               *m_SeparatorLine;
-    NSBox               *m_VSeparatorLine1;
-    NSBox               *m_VSeparatorLine2;
+    NSColor             *m_TextColor;
+    ColoredSeparatorLine               *m_SeparatorLine;
+    ColoredSeparatorLine               *m_VSeparatorLine1;
+    ColoredSeparatorLine               *m_VSeparatorLine2;
     NSTextField         *m_FilenameLabel;
     NSTextField         *m_SizeLabel;
     NSTextField         *m_ModTime;
@@ -93,7 +120,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
     self = [super initWithFrame:frameRect];
     if( self ) {
 
-        m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
+        m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
         [self addSubview:m_SeparatorLine];
@@ -175,13 +202,13 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         [m_VolumeLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_VolumeLabel];
         
-        m_VSeparatorLine1 = [[NSBox alloc] initWithFrame:NSRect()];
+        m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
         m_VSeparatorLine1.boxType = NSBoxSeparator;
         [m_VSeparatorLine1 setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_VSeparatorLine1];
 
-        m_VSeparatorLine2 = [[NSBox alloc] initWithFrame:NSRect()];
+        m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
         m_VSeparatorLine2.boxType = NSBoxSeparator;
         [m_VSeparatorLine2 setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
@@ -236,6 +263,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
                 [strong_self updateVolumeInfo];
         });
         [self updateVolumeInfo];
+        [self setupLabelColors];
     }
     return self;
 }
@@ -291,6 +319,29 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     }
 }
 
+- (void) setupLabelColors
+{
+    auto f = CurrentTheme().FilePanelsFooterFont();
+    m_FilenameLabel.font = f;
+    m_SizeLabel.font = f;
+    m_ModTime.font = f;
+    m_ItemsLabel.font = f;
+    m_VolumeLabel.font = f;
+    m_SelectionLabel.font = f;
+
+    m_FilenameLabel.textColor = m_TextColor;
+    m_SizeLabel.textColor = m_TextColor;
+    m_ModTime.textColor = m_TextColor;
+    m_ItemsLabel.textColor = m_TextColor;
+    m_VolumeLabel.textColor = m_TextColor;
+    m_SelectionLabel.textColor = m_TextColor;
+    
+    auto s = CurrentTheme().FilePanelsFooterSeparatorsColor();
+    m_SeparatorLine.borderColor = s;
+    m_VSeparatorLine1.borderColor = s;
+    m_VSeparatorLine2.borderColor = s;
+}
+
 - (void)viewDidMoveToSuperview
 {
     if( auto pv = objc_cast<PanelView>(self.superview) ) {
@@ -318,7 +369,13 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     if( [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
-        m_Background = active ? NSColor.controlAlternatingRowBackgroundColors[0] : nil;
+        m_Background = active ?
+            CurrentTheme().FilePanelsFooterActiveBackgroundColor() :
+            CurrentTheme().FilePanelsFooterInactiveBackgroundColor();
+        m_TextColor = active ?
+            CurrentTheme().FilePanelsFooterActiveTextColor() :
+            CurrentTheme().FilePanelsFooterTextColor();
+        [self setupLabelColors];
         [self setNeedsDisplay:true];
     }
 }

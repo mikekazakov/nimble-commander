@@ -25,6 +25,25 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 // D - Date added
 // E - Date modified
 
+void DrawTableVerticalSeparatorForView(NSView *v)
+{
+    if( auto t = objc_cast<NSTableView>(v.superview.superview) ) {
+        if( t.gridStyleMask & NSTableViewSolidVerticalGridLineMask ) {
+            if( t.gridColor && t.gridColor != NSColor.clearColor ) {
+                const auto bounds = v.bounds;
+                const auto rc = NSMakeRect(bounds.size.width-1, 0, 1, bounds.size.height);
+                
+                // don't draw vertical line near table view's edge
+                const auto trc = [t convertRect:rc fromView:v];
+                if( trc.origin.x < t.bounds.size.width - 1 ) {
+                    [t.gridColor set];
+                    NSRectFill(rc); // support alpha?
+                }
+            }
+        }
+    }
+}
+
 @interface PanelListView()
 
 @property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
@@ -104,6 +123,8 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
         m_TableView.rowHeight = m_Geometry.LineHeight();
         m_TableView.intercellSpacing = NSMakeSize(0, 0);
         m_TableView.columnAutoresizingStyle = NSTableViewFirstColumnOnlyAutoresizingStyle;
+        m_TableView.gridStyleMask = NSTableViewSolidVerticalGridLineMask;
+        m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
         [self setupColumns];
 
         

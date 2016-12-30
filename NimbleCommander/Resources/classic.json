@@ -39,22 +39,18 @@
                                     "focused": "#FF0000"
                                  }
     ],
-    "filePanelsGeneralDropBorderColor": "@blueColor",
+    "filePanelsGeneralDropBorderColor": "@yellowColor",
+    "filePanelsListFont": "Menlo-Regular, 13",
+    "filePanelsListGridColor": "#00FFFF",    
     "filePanelsListSelectedActiveRowBackgroundColor": "#008080",
     "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
     "filePanelsListRegularEvenRowBackgroundColor": "#000080",
-    "filePanelsListRegularOddRowBackgroundColor" : "#000080"
+    "filePanelsListRegularOddRowBackgroundColor" : "#000080",
+    "filePanelsFooterFont": "Menlo-Regular, 13",
+    "filePanelsFooterTextColor" : "#00FFFF",
+    "filePanelsFooterActiveTextColor" : "@whiteColor",
+    "filePanelsFooterSeparatorsColor": "#00FFFF",
+    "filePanelsFooterActiveBackgroundColor": "#000080",
+    "filePanelsFooterInactiveBackgroundColor": "#000080"
+    
 }
-
-/*
-            "regularBackground": "#000080",
-            
-            "cursorBackground": "#008080",
-            
-            "textColor": "#00FFFF",
-            
-            "activeTextColor": "#000000",
-            
-            "highlightTextColor": "#FFFF00",
-
-*/

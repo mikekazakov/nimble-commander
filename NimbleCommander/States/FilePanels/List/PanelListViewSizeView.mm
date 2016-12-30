@@ -92,11 +92,20 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {    
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
         if( auto lv = rv.listView ) {
+        
+        
+        
+        
+        
             const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
             
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
+            DrawTableVerticalSeparatorForView(self);            
+            
+            
+            
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),

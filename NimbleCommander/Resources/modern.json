@@ -24,9 +24,17 @@
                                  }
     ],
     "filePanelsGeneralDropBorderColor": "@blueColor",
+    "filePanelsListFont": "@systemFont, 13",
+    "filePanelsListGridColor": "@clearColor",
     "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
     "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
     "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1"
+    "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+    "filePanelsFooterFont": "@labelFont, 13",
+    "filePanelsFooterTextColor" : "@labelColor",
+    "filePanelsFooterActiveTextColor" : "@labelColor",
+    "filePanelsFooterSeparatorsColor": "#8080806B",
+    "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsFooterInactiveBackgroundColor": "@clearColor"
 }
 

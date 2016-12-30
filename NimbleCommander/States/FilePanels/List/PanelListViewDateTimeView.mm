@@ -125,6 +125,7 @@
             const auto context = NSGraphicsContext.currentContext.CGContext;
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
+            DrawTableVerticalSeparatorForView(self);            
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),

@@ -1,4 +1,5 @@
-#include "Utility/HexadecimalColor.h"
+#include <Utility/HexadecimalColor.h>
+#include <Utility/FontExtras.h>
 #include <fstream>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
@@ -65,6 +66,18 @@ static NSColor *ExtractColor( const rapidjson::Document &_doc, const char *_path
     return [NSColor colorWithHexStdString:cr->value.GetString()];
 }
 
+static NSFont *ExtractFont( const rapidjson::Document &_doc, const char *_path)
+{
+    auto cr = _doc.FindMember(_path);
+    if( cr == _doc.MemberEnd() )
+        return nil;
+    
+    if( !cr->value.IsString() )
+        return nil;
+
+    return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
+}
+
 Theme::Theme()
 {
     const auto doc = GetDocument();
@@ -80,6 +93,11 @@ Theme::Theme()
     
     m_FilePanelsGeneralDropBorderColor =
         ExtractColor(doc, "filePanelsGeneralDropBorderColor");
+    
+    m_FilePanelsListFont =
+        ExtractFont(doc, "filePanelsListFont");
+    m_FilePanelsListGridColor =
+        ExtractColor(doc, "filePanelsListGridColor");    
     m_FilePanelsListSelectedActiveRowBackgroundColor =
         ExtractColor(doc, "filePanelsListSelectedActiveRowBackgroundColor");
     m_FilePanelsListSelectedInactiveRowBackgroundColor =
@@ -88,6 +106,19 @@ Theme::Theme()
         ExtractColor(doc, "filePanelsListRegularEvenRowBackgroundColor");
     m_FilePanelsListRegularOddRowBackgroundColor =
         ExtractColor(doc, "filePanelsListRegularOddRowBackgroundColor");
+
+    m_FilePanelsFooterFont =
+        ExtractFont(doc, "filePanelsFooterFont");
+    m_FilePanelsFooterTextColor =
+        ExtractColor(doc, "filePanelsFooterTextColor");
+    m_FilePanelsFooterActiveTextColor =
+        ExtractColor(doc, "filePanelsFooterActiveTextColor");
+    m_FilePanelsFooterSeparatorsColor =
+        ExtractColor(doc, "filePanelsFooterSeparatorsColor");
+    m_FilePanelsFooterActiveBackgroundColor =
+        ExtractColor(doc, "filePanelsFooterActiveBackgroundColor");
+    m_FilePanelsFooterInactiveBackgroundColor =
+        ExtractColor(doc, "filePanelsFooterInactiveBackgroundColor");
 }
 
 ThemeAppearance Theme::AppearanceType() const
@@ -107,40 +138,70 @@ NSAppearance *Theme::Appearance() const
 
 NSFont *Theme::FilePanelsListFont() const
 {
-    return [NSFont systemFontOfSize:13];
+    return m_FilePanelsListFont;
 }
 
 NSColor *Theme::FilePanelsListSelectedActiveRowBackgroundColor() const
 {
-//    return NSColor.blueColor;
     return m_FilePanelsListSelectedActiveRowBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsListSelectedInactiveRowBackgroundColor() const
 {
-//    return NSColor.lightGrayColor;
     return m_FilePanelsListSelectedInactiveRowBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsListRegularEvenRowBackgroundColor() const
 {
-//    return NSColor.controlAlternatingRowBackgroundColors[0];
     return m_FilePanelsListRegularEvenRowBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsListRegularOddRowBackgroundColor() const
 {
-//    return NSColor.controlAlternatingRowBackgroundColors[1];
     return m_FilePanelsListRegularOddRowBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsGeneralDropBorderColor() const
 {
-//    return NSColor.blueColor;
     return m_FilePanelsGeneralDropBorderColor;
 }
 
 const vector<PanelViewPresentationItemsColoringRule>& Theme::FilePanelsItemsColoringRules() const
 {
     return m_ColoringRules;
+}
+
+NSColor *Theme::FilePanelsFooterActiveBackgroundColor() const
+{
+    return m_FilePanelsFooterActiveBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsFooterInactiveBackgroundColor() const
+{
+    return m_FilePanelsFooterInactiveBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsFooterTextColor() const
+{
+    return m_FilePanelsFooterTextColor;
+}
+
+NSColor *Theme::FilePanelsFooterSeparatorsColor() const
+{
+    return m_FilePanelsFooterSeparatorsColor;
+}
+
+NSColor *Theme::FilePanelsListGridColor() const
+{
+    return m_FilePanelsListGridColor;
+}
+
+NSColor *Theme::FilePanelsFooterActiveTextColor() const
+{
+    return m_FilePanelsFooterActiveTextColor;
+}
+
+NSFont  *Theme::FilePanelsFooterFont() const
+{
+    return m_FilePanelsFooterFont;
 }

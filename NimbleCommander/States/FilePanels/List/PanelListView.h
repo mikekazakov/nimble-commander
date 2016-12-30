@@ -34,3 +34,5 @@ class IconsGenerator2;
 @property (nonatomic) PanelListViewColumnsLayout columnsLayout;
 
 @end
+
+void DrawTableVerticalSeparatorForView(NSView *v);

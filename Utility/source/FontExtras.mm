@@ -16,7 +16,34 @@ using namespace std;
     
     NSString *family = arr[0];
     NSString *size = [arr[1] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
-    return [NSFont fontWithName:family size:size.intValue];
+    const auto sz = size.intValue;
+    if( family.length == 0 || [family characterAtIndex:0] != '@' ) {
+        // regular "family,size" syntax
+        return [NSFont fontWithName:family size:sz];
+    }
+    else {
+        if( [family isEqualToString:@"@systemFont"] )
+            return [NSFont systemFontOfSize:sz];
+        if( [family isEqualToString:@"@boldSystemFont"] )
+            return [NSFont boldSystemFontOfSize:sz];
+        if( [family isEqualToString:@"@labelFont"] )
+            return [NSFont labelFontOfSize:sz];
+        if( [family isEqualToString:@"@titleBarFont"] )
+            return [NSFont titleBarFontOfSize:sz];
+        if( [family isEqualToString:@"@menuFont"] )
+            return [NSFont menuFontOfSize:sz];
+        if( [family isEqualToString:@"@menuBarFont"] )
+            return [NSFont menuBarFontOfSize:sz];
+        if( [family isEqualToString:@"@messageFont"] )
+            return [NSFont messageFontOfSize:sz];
+        if( [family isEqualToString:@"@paletteFont"] )
+            return [NSFont paletteFontOfSize:sz];
+        if( [family isEqualToString:@"@toolTipsFont"] )
+            return [NSFont toolTipsFontOfSize:sz];
+        if( [family isEqualToString:@"@controlContentFont"] )
+            return [NSFont controlContentFontOfSize:sz];
+        return nil;
+    }
 }
 
 - (NSString*) toStringDescription

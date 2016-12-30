@@ -96,6 +96,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         [v.rowBackgroundColor set];
         NSRectFill(self.bounds);
     }
+    DrawTableVerticalSeparatorForView(self);
     
     const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
                                       geometry.TextBaseLine(),

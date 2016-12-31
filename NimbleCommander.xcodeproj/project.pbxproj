@@ -253,6 +253,8 @@
 		CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CF5FE8061E14CB8F00CD83B4 /* modern.json in Resources */ = {isa = PBXBuildFile; fileRef = CF5FE8051E14CB8F00CD83B4 /* modern.json */; };
 		CF5FE8081E14E37600CD83B4 /* classic.json in Resources */ = {isa = PBXBuildFile; fileRef = CF5FE8071E14E37600CD83B4 /* classic.json */; };
+		CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
+		CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
 		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -1083,6 +1085,10 @@
 		CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemesManager.mm; path = NimbleCommander/Core/Theming/ThemesManager.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE8051E14CB8F00CD83B4 /* modern.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = modern.json; path = NimbleCommander/Resources/modern.json; sourceTree = SOURCE_ROOT; };
 		CF5FE8071E14E37600CD83B4 /* classic.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = classic.json; path = NimbleCommander/Resources/classic.json; sourceTree = SOURCE_ROOT; };
+		CF5FE8091E163DD200CD83B4 /* PanelListViewTableHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderCell.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.h; sourceTree = SOURCE_ROOT; };
+		CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderCell.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderCell.mm; sourceTree = SOURCE_ROOT; };
+		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
+		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
 		CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManager.cpp; path = NimbleCommander/Bootstrap/ActivationManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManager.h; path = NimbleCommander/Bootstrap/ActivationManager.h; sourceTree = SOURCE_ROOT; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
@@ -2131,12 +2137,12 @@
 			children = (
 				CF94CF921DD4418000EEA420 /* Layout.h */,
 				CF94CF931DD4418000EEA420 /* Layout.mm */,
+				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
+				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
 				CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */,
 				CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */,
 				CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */,
 				CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */,
-				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
-				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
 				CF56C2C11DC1A33300F0DF0F /* PanelListViewGeometry.h */,
 				CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */,
 				CF56C2B21DC1934C00F0DF0F /* PanelListViewNameView.h */,
@@ -2145,6 +2151,10 @@
 				CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */,
 				CF56C2CD1DC35E8B00F0DF0F /* PanelListViewSizeView.h */,
 				CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */,
+				CF5FE8091E163DD200CD83B4 /* PanelListViewTableHeaderCell.h */,
+				CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */,
+				CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */,
+				CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */,
 				CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */,
 				CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */,
 			);
@@ -3481,6 +3491,7 @@
 				CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */,
+				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */,
 				CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */,
@@ -3531,6 +3542,7 @@
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFDAC2911DFBF9260039A104 /* TermScreen.cpp in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
+				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
 				CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,

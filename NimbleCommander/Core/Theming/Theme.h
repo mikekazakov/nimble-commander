@@ -33,6 +33,9 @@ public:
     // File Panels --> List presentation ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsListFont() const;
     NSColor *FilePanelsListGridColor() const;
+    NSFont  *FilePanelsListHeaderFont() const;
+    NSColor *FilePanelsListHeaderBackgroundColor() const;
+    NSColor *FilePanelsListHeaderTextColor() const;
     NSColor *FilePanelsListSelectedActiveRowBackgroundColor() const;
     NSColor *FilePanelsListSelectedInactiveRowBackgroundColor() const;
     NSColor *FilePanelsListRegularEvenRowBackgroundColor() const;    
@@ -52,6 +55,9 @@ private:
     
     NSFont  *m_FilePanelsListFont;
     NSColor *m_FilePanelsListGridColor;
+    NSFont  *m_FilePanelsListHeaderFont;
+    NSColor *m_FilePanelsListHeaderBackgroundColor;
+    NSColor *m_FilePanelsListHeaderTextColor;
     NSColor *m_FilePanelsListSelectedActiveRowBackgroundColor;
     NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;

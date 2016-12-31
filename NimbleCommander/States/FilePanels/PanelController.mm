@@ -880,6 +880,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         if( _state.HasMember(g_RestorationSortingKey) ) {
             panel::GenericCursorPersistance pers(m_View, m_Data);
             m_Data.DecodeSortingOptions( _state[g_RestorationSortingKey] );
+            [m_View dataUpdated];
             pers.Restore();
         }
         

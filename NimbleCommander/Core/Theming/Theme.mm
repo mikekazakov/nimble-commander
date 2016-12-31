@@ -97,7 +97,14 @@ Theme::Theme()
     m_FilePanelsListFont =
         ExtractFont(doc, "filePanelsListFont");
     m_FilePanelsListGridColor =
-        ExtractColor(doc, "filePanelsListGridColor");    
+        ExtractColor(doc, "filePanelsListGridColor");
+    
+    m_FilePanelsListHeaderFont =
+        ExtractFont(doc, "filePanelsListHeaderFont");
+    m_FilePanelsListHeaderBackgroundColor =
+        ExtractColor(doc, "filePanelsListHeaderBackgroundColor");
+    m_FilePanelsListHeaderTextColor =
+        ExtractColor(doc, "filePanelsListHeaderTextColor");
     m_FilePanelsListSelectedActiveRowBackgroundColor =
         ExtractColor(doc, "filePanelsListSelectedActiveRowBackgroundColor");
     m_FilePanelsListSelectedInactiveRowBackgroundColor =
@@ -204,4 +211,19 @@ NSColor *Theme::FilePanelsFooterActiveTextColor() const
 NSFont  *Theme::FilePanelsFooterFont() const
 {
     return m_FilePanelsFooterFont;
+}
+
+NSColor *Theme::FilePanelsListHeaderBackgroundColor() const
+{
+    return m_FilePanelsListHeaderBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsListHeaderTextColor() const
+{
+    return m_FilePanelsListHeaderTextColor;
+}
+
+NSFont  *Theme::FilePanelsListHeaderFont() const
+{
+    return m_FilePanelsListHeaderFont;
 }

@@ -667,6 +667,7 @@ struct NSEventModifierFlagsHolder
 
 - (const PanelData::VolatileData &)item_vd
 {
+    assert( dispatch_is_main_queue() );
     static const PanelData::VolatileData stub{};
     int indx = m_Data->RawIndexForSortIndex( m_CursorPos );
     if( indx < 0 )

@@ -7,6 +7,8 @@
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
+#include "PanelListViewTableHeaderView.h"
+#include "PanelListViewTableHeaderCell.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewSizeView.h"
 #include "PanelListViewDateTimeView.h"
@@ -125,6 +127,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_TableView.columnAutoresizingStyle = NSTableViewFirstColumnOnlyAutoresizingStyle;
         m_TableView.gridStyleMask = NSTableViewSolidVerticalGridLineMask;
         m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
+        m_TableView.headerView = [[PanelListViewTableHeaderView alloc] init];
         [self setupColumns];
 
         
@@ -147,6 +150,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 - (void) setupColumns
 {
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
+        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];    
         col.title = @"Name";
         col.width = 200;
         col.minWidth = 100;
@@ -155,6 +159,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_NameColumn = col;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
+        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
         col.title = @"Size";
         col.width = 90;
         col.minWidth = 75;
@@ -165,6 +170,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_SizeColumn = col;
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
+        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
         col.title = @"Date Created";
         col.width = 90;
         col.minWidth = 75;
@@ -176,6 +182,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"D"] ) {
+        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
         col.title = @"Date Added";
         col.width = 90;
         col.minWidth = 75;
@@ -187,11 +194,12 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"E"] ) {
+        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
         col.title = @"Date Modified";
         col.width = 90;
         col.minWidth = 75;
         col.maxWidth = 300;
-        col.resizingMask = NSTableColumnUserResizingMask;        
+        col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
         m_DateModifiedColumn = col;
         [col addObserver:self forKeyPath:@"width" options:0 context:NULL];

@@ -1,4 +1,5 @@
 #include <Utility/Layout.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelView.h"
 #include "PanelController.h"
 #include "PanelViewHeader.h"
@@ -57,7 +58,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_PathTextField.lineBreakMode = NSLineBreakByTruncatingHead;
         m_PathTextField.usesSingleLineMode = true;
         m_PathTextField.alignment = NSTextAlignmentCenter;
-        m_PathTextField.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
+        m_PathTextField.font = CurrentTheme().FilePanelsHeaderFont();
         [self addSubview:m_PathTextField];
         
         m_SearchTextField= [[NSSearchField alloc] initWithFrame:NSRect()];
@@ -70,7 +71,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SearchTextField.bezeled = true;
         m_SearchTextField.editable = true;
         m_SearchTextField.drawsBackground = false;
-        m_SearchTextField.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
+        m_SearchTextField.font = CurrentTheme().FilePanelsHeaderFont();
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.target = self;
@@ -99,6 +100,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SortButton.title = @"N";
         m_SortButton.bordered = false;
         m_SortButton.buttonType = NSMomentaryLightButton;
+        m_SortButton.font = CurrentTheme().FilePanelsHeaderFont();
         m_SortButton.action = @selector(onSortButtonAction:);
         m_SortButton.target = self;
         m_SortButton.enabled = true;
@@ -196,7 +198,9 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 {
     if( [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
-        m_Background = active ? NSColor.controlAlternatingRowBackgroundColors[0] : nil;
+        m_Background = active ?
+            CurrentTheme().FilePanelsHeaderActiveBackgroundColor() :
+            CurrentTheme().FilePanelsHeaderInactiveBackgroundColor();
         [self setNeedsDisplay:true];
     }
 }

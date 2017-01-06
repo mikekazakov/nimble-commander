@@ -22,6 +22,11 @@ public:
     const vector<PanelViewPresentationItemsColoringRule>& FilePanelsItemsColoringRules() const;
     NSColor *FilePanelsGeneralDropBorderColor() const;
     
+    // File Panels --> Header settings /////////////////////////////////////////////////////////////
+    NSFont  *FilePanelsHeaderFont() const;
+    NSColor *FilePanelsHeaderActiveBackgroundColor() const;
+    NSColor *FilePanelsHeaderInactiveBackgroundColor() const;
+    
     // File Panels --> Footer settings /////////////////////////////////////////////////////////////
     NSFont  *FilePanelsFooterFont() const;
     NSColor *FilePanelsFooterTextColor() const;
@@ -45,6 +50,10 @@ public:
 private:
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
+    
+    NSFont  *m_FilePanelsHeaderFont;
+    NSColor *m_FilePanelsHeaderActiveBackgroundColor;
+    NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     
     NSFont  *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;

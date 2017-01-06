@@ -19,7 +19,7 @@
                                  },
                                  {
                                     "name": "other",
-                                    "regular": "#000000",
+                                    "regular": "#777777",
                                     "focused": "#FFFFFF"
                                  }
     ],
@@ -30,17 +30,16 @@
     "filePanelsListHeaderBackgroundColor": "@headerColor",
     "filePanelsListHeaderTextColor": "@headerTextColor",
     "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
-    "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
+    "filePanelsListSelectedInactiveRowBackgroundColor": "@darkGrayColor",
     "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
     "filePanelsFooterFont": "@labelFont, 13",
-    "filePanelsFooterTextColor" : "@labelColor",
+    "filePanelsFooterTextColor" : "#777777",
     "filePanelsFooterActiveTextColor" : "@labelColor",
-    "filePanelsFooterSeparatorsColor": "#8080806B",
+    "filePanelsFooterSeparatorsColor": "#282828",
     "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsFooterInactiveBackgroundColor": "@clearColor",
-    "filePanelsHeaderFont": "@labelFont, 13",
+    "filePanelsFooterInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsHeaderInactiveBackgroundColor": "@clearColor"    
+    "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0"
 }
 

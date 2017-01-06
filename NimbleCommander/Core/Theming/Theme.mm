@@ -41,6 +41,7 @@ static string Load(const string &_filepath)
 static rapidjson::Document GetDocument()
 {
 //    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
     string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
@@ -98,6 +99,14 @@ Theme::Theme()
         ExtractFont(doc, "filePanelsListFont");
     m_FilePanelsListGridColor =
         ExtractColor(doc, "filePanelsListGridColor");
+    
+    m_FilePanelsHeaderFont =
+        ExtractFont(doc, "filePanelsHeaderFont");
+    m_FilePanelsHeaderActiveBackgroundColor =
+        ExtractColor(doc, "filePanelsHeaderActiveBackgroundColor");
+    m_FilePanelsHeaderInactiveBackgroundColor =
+        ExtractColor(doc, "filePanelsHeaderInactiveBackgroundColor");
+    
     
     m_FilePanelsListHeaderFont =
         ExtractFont(doc, "filePanelsListHeaderFont");
@@ -226,4 +235,19 @@ NSColor *Theme::FilePanelsListHeaderTextColor() const
 NSFont  *Theme::FilePanelsListHeaderFont() const
 {
     return m_FilePanelsListHeaderFont;
+}
+
+NSColor *Theme::FilePanelsHeaderActiveBackgroundColor() const
+{
+    return m_FilePanelsHeaderActiveBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsHeaderInactiveBackgroundColor() const
+{
+    return m_FilePanelsHeaderInactiveBackgroundColor;
+}
+
+NSFont  *Theme::FilePanelsHeaderFont() const
+{
+    return m_FilePanelsHeaderFont;
 }

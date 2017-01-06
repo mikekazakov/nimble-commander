@@ -3,6 +3,4 @@
 
 @interface PanelListViewTableHeaderCell : NSTableHeaderCell
 
-- (void) updateAppearance;
-
 @end

@@ -54,6 +54,8 @@
     "filePanelsFooterActiveTextColor" : "@whiteColor",
     "filePanelsFooterSeparatorsColor": "#00FFFF",
     "filePanelsFooterActiveBackgroundColor": "#000080",
-    "filePanelsFooterInactiveBackgroundColor": "#000080"
-    
+    "filePanelsFooterInactiveBackgroundColor": "#000080",
+    "filePanelsHeaderFont": "Menlo-Regular, 13",
+    "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsHeaderInactiveBackgroundColor": "@clearColor"
 }

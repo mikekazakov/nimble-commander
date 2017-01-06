@@ -1,4 +1,4 @@
-#include <NimbleCommander/Core/Theming/Theme.h>
+    #include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelListViewTableHeaderCell.h"
 
 @implementation PanelListViewTableHeaderCell
@@ -7,19 +7,45 @@
 {
     self = [super init];
     if(self){
-        [self updateAppearance];
     }
     return self;
 }
 
-- (void) updateAppearance
+/*
+default attributes:
+    NSColor = "NSNamedColorSpace System headerTextColor";
+ NSColor = "NSNamedColorSpace System headerTextColor";
+    NSFont = "\".AppleSystemUIFont 11.00 pt. P [] (0x600000046ea0) fobj=0x101710160, spc=3.17\"";
+    NSOriginalFont = "\".AppleSystemUIFont 11.00 pt. P [] (0x600000046ea0) fobj=0x101710160, spc=3.17\"";
+    NSParagraphStyle = "Alignment 0,
+                        LineSpacing 0,
+                        ParagraphSpacing 0,
+                        ParagraphSpacingBefore 0,
+                        HeadIndent 0,
+                        TailIndent 0,
+                        FirstLineHeadIndent 0,
+                        LineHeight 0/0,
+                        LineHeightMultiple 0,
+                        LineBreakMode 4,
+                        Tabs (\n    28L,\n    56L,\n    84L,\n    112L,\n    140L,\n    168L,\n    196L,\n    224L,\n    252L,\n    280L,\n    308L,\n    336L\n),
+                        DefaultTabInterval 0,
+                        Blocks (\n),
+                        Lists (\n),
+                        BaseWritingDirection -1,
+                        HyphenationFactor 0,
+                        TighteningForTruncation NO,
+                        HeaderLevel 0";
+*/
+- (void) setStringValue:(NSString *)stringValue
 {
-//@property (nullable, strong) NSFont *font;
-//    self.font = CurrentTheme().FilePanelsListHeaderFont();
-//    self.textColor = CurrentTheme().FilePanelsListHeaderTextColor();
-//    self.backgroundColor = CurrentTheme().FilePanelsListHeaderBackgroundColor();
-//    self.drawsBackground = true;
-//    NSLog(@"%@", self.backgroundColor);
+    [super setStringValue:stringValue];
+    
+ self.attributedStringValue = [[NSAttributedString alloc] initWithString:self.stringValue
+    attributes:@{NSFontAttributeName: CurrentTheme().FilePanelsListHeaderFont(),
+    
+    NSForegroundColorAttributeName: CurrentTheme().FilePanelsListHeaderTextColor()
+    }];
+
 }
 
 - (void) drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
@@ -33,14 +59,17 @@
 //    auto v = self.attributedStringValue;
 //    NSLog(@"%@", self.stringValue);
 
-    self.attributedStringValue = [[NSAttributedString alloc] initWithString:self.stringValue
-    attributes:@{NSFontAttributeName: CurrentTheme().FilePanelsListHeaderFont(),
+   //    auto v = self.attributedStringValue;
+   
+//   self.backgroundColor = NSColor.yellowColor;
     
-    NSForegroundColorAttributeName: CurrentTheme().FilePanelsListHeaderTextColor()
-    }];
-//    auto v = self.attributedStringValue;
+    
     
     [super drawWithFrame:cellFrame inView:controlView];
+    
+    
+    
+    
 /*
     NSColor = "NSNamedColorSpace System headerTextColor";
  NSColor = "NSNamedColorSpace System headerTextColor";
@@ -69,11 +98,6 @@
 
 
 //    [self drawInteriorWithFrame:cellFrame inView:controlView];
-}
-
-- (void)highlight:(BOOL)flag withFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-int a = 10;
 }
 
 /*

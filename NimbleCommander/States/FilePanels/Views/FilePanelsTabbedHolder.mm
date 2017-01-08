@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "../../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
-#import "../../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMTabBarItem.h"
+#import <MMTabBarView/MMTabBarView.h>
+#import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include "MMTabBarStyle.h"
+#include "TabBarStyle.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 
@@ -44,6 +45,7 @@
     static once_flag once;
     call_once(once, []{
         [MMTabBarView registerTabStyleClass:MMTabBarStyle.class];
+        [MMTabBarView registerTabStyleClass:TabBarStyle.class];
     });
     
     self = [super initWithFrame:frameRect];
@@ -83,7 +85,8 @@
         m_TabBar.buttonMinWidth = 100;
         m_TabBar.buttonMaxWidth = 2000;
         m_TabBar.buttonOptimumWidth = 2000;
-        [m_TabBar setStyleNamed:@"Files"];
+//        [m_TabBar setStyleNamed:@"Files"];
+        [m_TabBar setStyleNamed:@"NC"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth
                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual

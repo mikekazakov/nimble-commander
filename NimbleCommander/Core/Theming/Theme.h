@@ -13,6 +13,7 @@ class Theme
 {
 public:
     Theme();
+    ~Theme();
 
     
     ThemeAppearance AppearanceType() const;
@@ -34,6 +35,17 @@ public:
     NSColor *FilePanelsFooterSeparatorsColor() const;
     NSColor *FilePanelsFooterActiveBackgroundColor() const;
     NSColor *FilePanelsFooterInactiveBackgroundColor() const;
+    
+    // File Panels --> Tabs presentation ///////////////////////////////////////////////////////////    
+    NSFont  *FilePanelsTabsFont() const;
+    NSColor *FilePanelsTabsTextColor() const;
+    NSColor *FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const;
+    NSColor *FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const;
+    NSColor *FilePanelsTabsSelectedNotKeyWndBackgroundColor() const;    
+    NSColor *FilePanelsTabsRegularKeyWndHoverBackgroundColor() const;
+    NSColor *FilePanelsTabsRegularKeyWndRegularBackgroundColor() const;
+    NSColor *FilePanelsTabsRegularNotKeyWndBackgroundColor() const;
+    NSColor *FilePanelsTabsSeparatorColor() const;
     
     // File Panels --> List presentation ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsListFont() const;
@@ -61,6 +73,16 @@ private:
     NSColor *m_FilePanelsFooterSeparatorsColor;
     NSColor *m_FilePanelsFooterActiveBackgroundColor;
     NSColor *m_FilePanelsFooterInactiveBackgroundColor;
+    
+    NSFont  *m_FilePanelsTabsFont;
+    NSColor *m_FilePanelsTabsTextColor;
+    NSColor *m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
+    NSColor *m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor;
+    NSColor *m_FilePanelsTabsSelectedNotKeyWndBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularKeyWndHoverBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
+    NSColor *m_FilePanelsTabsSeparatorColor;
     
     NSFont  *m_FilePanelsListFont;
     NSColor *m_FilePanelsListGridColor;

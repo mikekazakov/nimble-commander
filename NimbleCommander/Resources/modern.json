@@ -41,6 +41,49 @@
     "filePanelsFooterInactiveBackgroundColor": "@clearColor",
     "filePanelsHeaderFont": "@labelFont, 13",
     "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsHeaderInactiveBackgroundColor": "@clearColor"    
+    "filePanelsHeaderInactiveBackgroundColor": "@clearColor",
+    
+    /* File Panels -> tabs settings */
+    "filePanelsTabsFont": "@systemFont, 11",
+    "filePanelsTabsTextColor": "@controlTextColor",
+    "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#FFFFFF",
+    "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "@clearColor",
+    "filePanelsTabsSelectedNotKeyWndBackgroundColor": "@clearColor",
+    "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#A5A5A5",
+    "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#B9B9B9",
+    "filePanelsTabsRegularNotKeyWndBackgroundColor": "@clearColor",
+    "filePanelsTabsSeparatorColor": "#8080806B"
+    
 }
 
+/*
+if(tab_selected) {
+        if(wnd_active) {
+            if(tab_isfr) {
+                static CGColorRef bg = CGColorCreateGenericRGB(256./256., 256./256., 256./256., 1);
+                CGContextSetFillColorWithColor(context, bg);
+                CGContextFillRect(context, frame);
+            }
+            else
+                NSDrawWindowBackground(frame);
+        }
+        else
+            NSDrawWindowBackground(frame);
+    }
+    else {
+        if(wnd_active) {
+            if(!button_hovered) {
+                static CGColorRef bg = CGColorCreateGenericRGB(185./256., 185./256., 185./256., 1);
+                CGContextSetFillColorWithColor(context, bg);
+                CGContextFillRect(context, frame);
+            }
+            else {
+                static CGColorRef bg = CGColorCreateGenericRGB(165./256., 165./256., 165./256., 1);
+                CGContextSetFillColorWithColor(context, bg);
+                CGContextFillRect(context, frame);
+            }
+        }
+        else
+            NSDrawWindowBackground(frame);
+    }
+*/

@@ -40,9 +40,9 @@ static string Load(const string &_filepath)
 
 static rapidjson::Document GetDocument()
 {
-//    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
+    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
 //    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
@@ -91,7 +91,6 @@ Theme::Theme()
         }
     m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     
-    
     m_FilePanelsGeneralDropBorderColor =
         ExtractColor(doc, "filePanelsGeneralDropBorderColor");
     
@@ -135,6 +134,29 @@ Theme::Theme()
         ExtractColor(doc, "filePanelsFooterActiveBackgroundColor");
     m_FilePanelsFooterInactiveBackgroundColor =
         ExtractColor(doc, "filePanelsFooterInactiveBackgroundColor");
+    
+    m_FilePanelsTabsFont =
+        ExtractFont(doc, "filePanelsTabsFont");
+    m_FilePanelsTabsTextColor =
+        ExtractColor(doc, "filePanelsTabsTextColor");
+    m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsSelectedKeyWndActiveBackgroundColor");
+    m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsSelectedKeyWndInactiveBackgroundColor");
+    m_FilePanelsTabsSelectedNotKeyWndBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsSelectedNotKeyWndBackgroundColor");
+    m_FilePanelsTabsRegularKeyWndHoverBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsRegularKeyWndHoverBackgroundColor");
+    m_FilePanelsTabsRegularKeyWndRegularBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsRegularKeyWndRegularBackgroundColor");
+    m_FilePanelsTabsRegularNotKeyWndBackgroundColor =
+        ExtractColor(doc, "filePanelsTabsRegularNotKeyWndBackgroundColor");
+    m_FilePanelsTabsSeparatorColor =
+        ExtractColor(doc, "filePanelsTabsSeparatorColor");
+}
+
+Theme::~Theme()
+{
 }
 
 ThemeAppearance Theme::AppearanceType() const
@@ -250,4 +272,49 @@ NSColor *Theme::FilePanelsHeaderInactiveBackgroundColor() const
 NSFont  *Theme::FilePanelsHeaderFont() const
 {
     return m_FilePanelsHeaderFont;
+}
+
+NSColor *Theme::FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const
+{
+    return m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const
+{
+    return m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsSelectedNotKeyWndBackgroundColor() const
+{
+    return m_FilePanelsTabsSelectedNotKeyWndBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsRegularKeyWndHoverBackgroundColor() const
+{
+    return m_FilePanelsTabsRegularKeyWndHoverBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsRegularKeyWndRegularBackgroundColor() const
+{
+    return m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsRegularNotKeyWndBackgroundColor() const
+{
+    return m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsTabsSeparatorColor() const
+{
+    return m_FilePanelsTabsSeparatorColor;
+}
+
+NSFont  *Theme::FilePanelsTabsFont() const
+{
+    return m_FilePanelsTabsFont;
+}
+
+NSColor *Theme::FilePanelsTabsTextColor() const
+{
+    return m_FilePanelsTabsTextColor;
 }

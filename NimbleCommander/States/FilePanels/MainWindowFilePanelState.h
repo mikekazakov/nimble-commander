@@ -9,7 +9,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#import "../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMTabBarView.h"
+#import <MMTabBarView/MMTabBarView.h>
 #include "../MainWindowStateProtocol.h"
 #include "../../Bootstrap/Config.h"
 //#include "rapidjson.h"

@@ -263,6 +263,17 @@ static void SetupRatingOverlay(NSView *_background_view)
 {
     if( m_LastResponder ) {
         // if we already were active and have some focused view - restore it
+        
+/*        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SeparatorLine
+                                                         attribute:NSLayoutAttributeTop
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self.window.contentLayoutGuide
+                                                         attribute:NSLayoutAttributeTop
+                                                        multiplier:1
+                                                          constant:0]];
+        [self layoutSubtreeIfNeeded];*/
+        
+        
         [self.window makeFirstResponder:m_LastResponder];
         m_LastResponder = nil;
     }

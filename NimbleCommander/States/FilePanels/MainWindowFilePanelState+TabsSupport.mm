@@ -1,4 +1,4 @@
-#import "../../../Files/3rd_party/MMTabBarView/MMTabBarView/MMAttachedTabBarButton.h"
+#import <MMTabBarView/MMAttachedTabBarButton.h>
 #include <Habanero/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <VFS/Native.h>

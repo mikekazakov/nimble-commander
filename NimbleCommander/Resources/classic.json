@@ -44,7 +44,8 @@
     "filePanelsListGridColor": "#00FFFF",
     "filePanelsListHeaderFont": "Menlo-Regular, 13",
     "filePanelsListHeaderBackgroundColor": "#000080",
-    "filePanelsListHeaderTextColor": "@headerTextColor",
+    "filePanelsListHeaderTextColor": "@yellowColor",
+    "filePanelsListHeaderSeparatorColor": "#00FFFF",
     "filePanelsListSelectedActiveRowBackgroundColor": "#008080",
     "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
     "filePanelsListRegularEvenRowBackgroundColor": "#000080",
@@ -64,6 +65,7 @@
     "filePanelsHeaderActiveTextColor": "@whiteColor",
     "filePanelsHeaderActiveBackgroundColor": "#000080",
     "filePanelsHeaderInactiveBackgroundColor": "#000080",
+    "filePanelsHeaderSeparatorColor": "#00FFFF",
     
     /* File Panels -> tabs settings */
     "filePanelsTabsFont": "Menlo-Regular, 11",

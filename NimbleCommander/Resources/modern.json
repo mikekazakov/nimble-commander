@@ -24,15 +24,18 @@
                                  }
     ],
     "filePanelsGeneralDropBorderColor": "@blueColor",
+    
     "filePanelsListFont": "@systemFont, 13",
     "filePanelsListGridColor": "@clearColor",
     "filePanelsListHeaderFont": "@systemFont, 11",
-    "filePanelsListHeaderBackgroundColor": "@headerColor",
+    "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
     "filePanelsListHeaderTextColor": "@headerTextColor",
+    "filePanelsListHeaderSeparatorColor": "#8080806B",
     "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
     "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
     "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+    
     "filePanelsFooterFont": "@labelFont, 13",
     "filePanelsFooterTextColor" : "@labelColor",
     "filePanelsFooterActiveTextColor" : "@labelColor",
@@ -44,6 +47,7 @@
     "filePanelsHeaderActiveTextColor": "@labelColor",
     "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsHeaderInactiveBackgroundColor": "@clearColor",
+    "filePanelsHeaderSeparatorColor": "#8080806B",
     
     /* File Panels -> tabs settings */
     "filePanelsTabsFont": "@systemFont, 11",

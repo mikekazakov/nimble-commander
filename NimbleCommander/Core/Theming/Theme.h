@@ -29,6 +29,7 @@ public:
     NSColor *FilePanelsHeaderActiveTextColor() const;
     NSColor *FilePanelsHeaderActiveBackgroundColor() const;
     NSColor *FilePanelsHeaderInactiveBackgroundColor() const;
+    NSColor *FilePanelsHeaderSeparatorColor() const;
     
     // File Panels --> Footer settings /////////////////////////////////////////////////////////////
     NSFont  *FilePanelsFooterFont() const;
@@ -38,7 +39,7 @@ public:
     NSColor *FilePanelsFooterActiveBackgroundColor() const;
     NSColor *FilePanelsFooterInactiveBackgroundColor() const;
     
-    // File Panels --> Tabs presentation ///////////////////////////////////////////////////////////    
+    // File Panels --> Tabs ////////////////////////////////////////////////////////////////////////
     NSFont  *FilePanelsTabsFont() const;
     NSColor *FilePanelsTabsTextColor() const;
     NSColor *FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const;
@@ -56,6 +57,7 @@ public:
     NSFont  *FilePanelsListHeaderFont() const;
     NSColor *FilePanelsListHeaderBackgroundColor() const;
     NSColor *FilePanelsListHeaderTextColor() const;
+    NSColor *FilePanelsListHeaderSeparatorColor() const;
     NSColor *FilePanelsListSelectedActiveRowBackgroundColor() const;
     NSColor *FilePanelsListSelectedInactiveRowBackgroundColor() const;
     NSColor *FilePanelsListRegularEvenRowBackgroundColor() const;    
@@ -70,6 +72,7 @@ private:
     NSColor *m_FilePanelsHeaderActiveTextColor;
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
+    NSColor *m_FilePanelsHeaderSeparatorColor;
     
     NSFont  *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
@@ -94,6 +97,7 @@ private:
     NSFont  *m_FilePanelsListHeaderFont;
     NSColor *m_FilePanelsListHeaderBackgroundColor;
     NSColor *m_FilePanelsListHeaderTextColor;
+    NSColor *m_FilePanelsListHeaderSeparatorColor;
     NSColor *m_FilePanelsListSelectedActiveRowBackgroundColor;
     NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;

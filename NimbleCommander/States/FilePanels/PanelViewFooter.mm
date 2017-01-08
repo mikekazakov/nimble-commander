@@ -1,34 +1,10 @@
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/ColoredSeparatorLine.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelView.h"
 #include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"
-
-@interface ColoredSeparatorLine : NSBox
-@end
-
-@implementation ColoredSeparatorLine
-
-- (void)drawRect:(NSRect)rect
-{
-    if( self.borderColor ) {
-        const auto b = self.bounds;
-        const auto rc = b.size.width > b.size.height ?
-            NSMakeRect(0, floor(b.size.height / 2), b.size.width, 1) :
-            NSMakeRect( floor(b.size.width / 2), 0, 1, b.size.height);
-        
-        [self.borderColor set];        
-        if( self.borderColor.alphaComponent == 1. )
-            NSRectFill(rc);
-        else
-            NSRectFillUsingOperation(rc, NSCompositingOperationSourceAtop);
-    }
-    else
-        [super drawRect:rect];
-}
-
-@end
 
 static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::VolatileData &_vd, ByteCountFormatter::Type _format)
 {

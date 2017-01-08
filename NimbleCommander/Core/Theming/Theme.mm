@@ -40,9 +40,9 @@ static string Load(const string &_filepath)
 
 static rapidjson::Document GetDocument()
 {
-//    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
+    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
 //    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
@@ -109,6 +109,8 @@ Theme::Theme()
         ExtractColor(doc, "filePanelsHeaderActiveBackgroundColor");
     m_FilePanelsHeaderInactiveBackgroundColor =
         ExtractColor(doc, "filePanelsHeaderInactiveBackgroundColor");
+    m_FilePanelsHeaderSeparatorColor =
+        ExtractColor(doc, "filePanelsHeaderSeparatorColor");
     
     
     m_FilePanelsListHeaderFont =
@@ -117,6 +119,8 @@ Theme::Theme()
         ExtractColor(doc, "filePanelsListHeaderBackgroundColor");
     m_FilePanelsListHeaderTextColor =
         ExtractColor(doc, "filePanelsListHeaderTextColor");
+    m_FilePanelsListHeaderSeparatorColor =
+        ExtractColor(doc, "filePanelsListHeaderSeparatorColor");
     m_FilePanelsListSelectedActiveRowBackgroundColor =
         ExtractColor(doc, "filePanelsListSelectedActiveRowBackgroundColor");
     m_FilePanelsListSelectedInactiveRowBackgroundColor =
@@ -338,4 +342,14 @@ NSColor *Theme::FilePanelsHeaderTextColor() const
 NSColor *Theme::FilePanelsHeaderActiveTextColor() const
 {
     return m_FilePanelsHeaderActiveTextColor;
+}
+
+NSColor *Theme::FilePanelsListHeaderSeparatorColor() const
+{
+    return m_FilePanelsListHeaderSeparatorColor;
+}
+
+NSColor *Theme::FilePanelsHeaderSeparatorColor() const
+{
+    return m_FilePanelsHeaderSeparatorColor;
 }

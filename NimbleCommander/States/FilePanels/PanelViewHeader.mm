@@ -1,4 +1,5 @@
 #include <Utility/Layout.h>
+#include <Utility/ColoredSeparatorLine.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelView.h"
 #include "PanelController.h"
@@ -32,7 +33,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     NSTextField         *m_PathTextField;
     NSSearchField       *m_SearchTextField;
     NSTextField         *m_SearchMatchesField;
-    NSBox               *m_SeparatorLine;
+    ColoredSeparatorLine*m_SeparatorLine;
     NSColor             *m_Background;
     NSString            *m_SearchPrompt;
     NSButton            *m_SortButton;
@@ -90,9 +91,10 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SearchMatchesField.textColor = [NSColor disabledControlTextColor];
         [self addSubview:m_SearchMatchesField];
         
-        m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
+        m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
+        m_SeparatorLine.borderColor = Theme().FilePanelsHeaderSeparatorColor();
         [self addSubview:m_SeparatorLine];
    
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];

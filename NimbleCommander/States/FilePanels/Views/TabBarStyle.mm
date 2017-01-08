@@ -21,6 +21,140 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static const auto g_TabCloseSize = NSMakeSize(12, 12);
+static const auto g_TabCloseFreeImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [Theme().FilePanelsTabsPictogramColor() set];
+        NSBezierPath *bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(2.5,2.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,9.5)];
+        [bezier moveToPoint:NSMakePoint(2.5,9.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,2.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:g_TabCloseSize
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
+static const auto g_TabCloseHoverImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
+                                                               xRadius:2
+                                                               yRadius:2];
+        [bezier fill];
+    
+        [Theme().FilePanelsTabsPictogramColor() set];
+        bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(2.5,2.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,9.5)];
+        [bezier moveToPoint:NSMakePoint(2.5,9.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,2.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:g_TabCloseSize
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
+static const auto g_TabClosePressedImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
+                                                               xRadius:2
+                                                               yRadius:2];
+        [bezier fill];
+    
+        [Theme().FilePanelsTabsPictogramColor() set];
+        bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(2.5,2.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,9.5)];
+        [bezier moveToPoint:NSMakePoint(2.5,9.5)];
+        [bezier lineToPoint:NSMakePoint(9.5,2.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:g_TabCloseSize
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
+static const auto g_TabAddFreeImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [Theme().FilePanelsTabsPictogramColor() set];
+        NSBezierPath *bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(8.5,3)];
+        [bezier lineToPoint:NSMakePoint(8.5,14)];
+        [bezier moveToPoint:NSMakePoint(3,8.5)];
+        [bezier lineToPoint:NSMakePoint(14,8.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:NSMakeSize(17, 17)
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
+static const auto g_TabAddHoverImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
+                                                               xRadius:2
+                                                               yRadius:2];
+        [bezier fill];
+    
+        [Theme().FilePanelsTabsPictogramColor() set];
+        bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(8.5,3)];
+        [bezier lineToPoint:NSMakePoint(8.5,14)];
+        [bezier moveToPoint:NSMakePoint(3,8.5)];
+        [bezier lineToPoint:NSMakePoint(14,8.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:NSMakeSize(17, 17)
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
+static const auto g_TabAddPressedImage = []
+{
+    auto handler = [](NSRect rc)->BOOL {
+        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
+                                                               xRadius:2
+                                                               yRadius:2];
+        [bezier fill];
+    
+    
+        [Theme().FilePanelsTabsPictogramColor() set];
+        bezier = [NSBezierPath bezierPath];
+        [bezier moveToPoint:NSMakePoint(8.5,3)];
+        [bezier lineToPoint:NSMakePoint(8.5,14)];
+        [bezier moveToPoint:NSMakePoint(3,8.5)];
+        [bezier lineToPoint:NSMakePoint(14,8.5)];
+        [bezier stroke];
+        return true;
+    };
+
+    return [NSImage imageWithSize:NSMakeSize(17, 17)
+                          flipped:false
+                   drawingHandler:handler];
+}();
+
 @implementation TabBarStyle
 
 StaticImage(YosemiteTabClose_Front)
@@ -59,7 +193,7 @@ StaticImage(YosemiteTabNewPressed)
 
 - (NSSize)intrinsicContentSizeOfTabBarView:(MMTabBarView *)tabBarView
 {
-    return NSMakeSize(-1/* NSViewNoInstrinsicMetric */, 24);
+    return NSMakeSize(NSViewNoInstrinsicMetric, 24);
 }
 
 - (CGFloat)leftMarginForTabBarView:(MMTabBarView *)tabBarView {
@@ -90,7 +224,7 @@ StaticImage(YosemiteTabNewPressed)
 }
 
 - (NSSize)addTabButtonSizeForTabBarView:(MMTabBarView *)tabBarView {
-    return NSMakeSize(18, [self heightOfTabBarButtonsForTabBarView:tabBarView]);
+    return NSMakeSize(21, 23);
 }
 
 - (BOOL)supportsOrientation:(MMTabBarOrientation)orientation forTabBarView:(MMTabBarView *)tabBarView {
@@ -117,9 +251,9 @@ StaticImage(YosemiteTabNewPressed)
 
 - (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView {
     
-    [aButton setImage:_staticYosemiteTabNewImage()];
-    [aButton setAlternateImage:_staticYosemiteTabNewPressedImage()];
-    [aButton setRolloverImage:_staticYosemiteTabNewImage()];
+    [aButton setImage:g_TabAddFreeImage];
+    [aButton setAlternateImage:g_TabAddPressedImage];
+    [aButton setRolloverImage:g_TabAddHoverImage];
 }
 
 #pragma mark -
@@ -129,11 +263,14 @@ StaticImage(YosemiteTabNewPressed)
 {
     switch (type) {
         case MMCloseButtonImageTypeStandard:
-            return _staticYosemiteTabClose_FrontImage();
+//            return _staticYosemiteTabClose_FrontImage();
+            return g_TabCloseFreeImage;
         case MMCloseButtonImageTypeRollover:
-            return _staticYosemiteTabClose_Front_RolloverImage();
+//            return _staticYosemiteTabClose_Front_RolloverImage();
+            return g_TabCloseHoverImage;
         case MMCloseButtonImageTypePressed:
-            return _staticYosemiteTabClose_Front_PressedImage();
+//            return _staticYosemiteTabClose_Front_PressedImage();
+            return g_TabClosePressedImage;
             
         case MMCloseButtonImageTypeDirty:
             return _staticYosemiteTabCloseDirty_FrontImage();
@@ -154,7 +291,7 @@ StaticImage(YosemiteTabNewPressed)
 - (NSAttributedString *)attributedStringValueForTabCell:(MMTabBarButtonCell *)cell
 {
     static const auto paragraph_style = []()-> NSParagraphStyle* {
-        NSMutableParagraphStyle *ps = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        NSMutableParagraphStyle *ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
 		ps.lineBreakMode = NSLineBreakByTruncatingTail;
 		ps.alignment = NSCenterTextAlignment;
         return ps;

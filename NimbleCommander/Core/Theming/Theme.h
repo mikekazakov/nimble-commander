@@ -46,6 +46,7 @@ public:
     NSColor *FilePanelsTabsRegularKeyWndRegularBackgroundColor() const;
     NSColor *FilePanelsTabsRegularNotKeyWndBackgroundColor() const;
     NSColor *FilePanelsTabsSeparatorColor() const;
+    NSColor *FilePanelsTabsPictogramColor() const;
     
     // File Panels --> List presentation ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsListFont() const;
@@ -58,7 +59,6 @@ public:
     NSColor *FilePanelsListRegularEvenRowBackgroundColor() const;    
     NSColor *FilePanelsListRegularOddRowBackgroundColor() const;
     
-
 private:
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
@@ -83,6 +83,7 @@ private:
     NSColor *m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
     NSColor *m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
     NSColor *m_FilePanelsTabsSeparatorColor;
+    NSColor *m_FilePanelsTabsPictogramColor;
     
     NSFont  *m_FilePanelsListFont;
     NSColor *m_FilePanelsListGridColor;

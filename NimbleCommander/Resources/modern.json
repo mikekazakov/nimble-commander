@@ -52,8 +52,8 @@
     "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#A5A5A5",
     "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#B9B9B9",
     "filePanelsTabsRegularNotKeyWndBackgroundColor": "@clearColor",
-    "filePanelsTabsSeparatorColor": "#8080806B"
-    
+    "filePanelsTabsSeparatorColor": "#8080806B",
+    "filePanelsTabsPictogramColor": "#303030"
 }
 
 /*

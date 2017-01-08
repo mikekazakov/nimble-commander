@@ -153,6 +153,8 @@ Theme::Theme()
         ExtractColor(doc, "filePanelsTabsRegularNotKeyWndBackgroundColor");
     m_FilePanelsTabsSeparatorColor =
         ExtractColor(doc, "filePanelsTabsSeparatorColor");
+    m_FilePanelsTabsPictogramColor =
+        ExtractColor(doc, "filePanelsTabsPictogramColor");
 }
 
 Theme::~Theme()
@@ -317,4 +319,9 @@ NSFont  *Theme::FilePanelsTabsFont() const
 NSColor *Theme::FilePanelsTabsTextColor() const
 {
     return m_FilePanelsTabsTextColor;
+}
+
+NSColor *Theme::FilePanelsTabsPictogramColor() const
+{
+    return m_FilePanelsTabsPictogramColor;
 }

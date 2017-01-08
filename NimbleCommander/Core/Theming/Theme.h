@@ -25,6 +25,8 @@ public:
     
     // File Panels --> Header settings /////////////////////////////////////////////////////////////
     NSFont  *FilePanelsHeaderFont() const;
+    NSColor *FilePanelsHeaderTextColor() const;
+    NSColor *FilePanelsHeaderActiveTextColor() const;
     NSColor *FilePanelsHeaderActiveBackgroundColor() const;
     NSColor *FilePanelsHeaderInactiveBackgroundColor() const;
     
@@ -64,6 +66,8 @@ private:
     NSColor *m_FilePanelsGeneralDropBorderColor;
     
     NSFont  *m_FilePanelsHeaderFont;
+    NSColor *m_FilePanelsHeaderTextColor;
+    NSColor *m_FilePanelsHeaderActiveTextColor;
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     

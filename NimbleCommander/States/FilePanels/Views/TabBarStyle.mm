@@ -305,9 +305,40 @@ StaticImage(YosemiteTabNewPressed)
                                            attributes:attrs];
 }
 
+- (void)drawTitleOfTabCell:(MMTabBarButtonCell *)cell withFrame:(NSRect)frame inView:(NSView *)controlView
+{
+    NSRect rect = [cell titleRectForBounds:frame];
+
+    const MMAttachedTabBarButton *button = (MMAttachedTabBarButton *)controlView;
+    const MMTabBarView *tabBarView = [controlView enclosingTabBarView];
+    const bool wnd_active = [tabBarView isWindowActive];
+
+    // draw title
+    if( wnd_active ) {
+        [cell.attributedStringValue drawInRect:rect];
+    }
+    else {
+        // fiddle a bit with alpha
+        NSMutableAttributedString *s = [[NSMutableAttributedString alloc]
+          initWithAttributedString:cell.attributedStringValue];
+        [s addAttribute:NSForegroundColorAttributeName
+                  value:[Theme().FilePanelsTabsTextColor() colorWithAlphaComponent:0.75]
+                  range:NSMakeRange(0, s.length)];
+        [s drawInRect:rect];
+    }
+}
+
 - (void)drawBezelOfTabBarView:(MMTabBarView *)tabBarView inRect:(NSRect)rect
 {
-    NSDrawWindowBackground(rect);
+    const NSColor *bg_color = Theme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
+    if( bg_color && bg_color != NSColor.clearColor ) {
+        [bg_color set];
+        NSRectFill(rect);
+    }
+    else {
+        NSDrawWindowBackground(rect);
+    }
+    
     [Theme().FilePanelsTabsSeparatorColor() set];
     NSBezierPath *bezier = [NSBezierPath bezierPath];
     [bezier moveToPoint:NSMakePoint(rect.origin.x,
@@ -363,12 +394,12 @@ StaticImage(YosemiteTabNewPressed)
     [Theme().FilePanelsTabsSeparatorColor() set];
     NSBezierPath *bezier = [NSBezierPath bezierPath];
     if( button.shouldDisplayLeftDivider ) {
-        [bezier moveToPoint:NSMakePoint(NSMinX(frame), NSMinY(frame))];
-        [bezier lineToPoint:NSMakePoint(NSMinX(frame), NSMaxY(frame))];
+        [bezier moveToPoint:NSMakePoint(NSMinX(frame)-0.5, NSMinY(frame))];
+        [bezier lineToPoint:NSMakePoint(NSMinX(frame)-0.5, NSMaxY(frame))];
     }
     if( button.shouldDisplayRightDivider ) {
-        [bezier moveToPoint:NSMakePoint(NSMaxX(frame), NSMinY(frame))];
-        [bezier lineToPoint:NSMakePoint(NSMaxX(frame), NSMaxY(frame))];
+        [bezier moveToPoint:NSMakePoint(NSMaxX(frame)-0.5, NSMinY(frame))];
+        [bezier lineToPoint:NSMakePoint(NSMaxX(frame)-0.5, NSMaxY(frame))];
     }
     [bezier stroke];
 }

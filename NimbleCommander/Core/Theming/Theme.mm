@@ -40,9 +40,9 @@ static string Load(const string &_filepath)
 
 static rapidjson::Document GetDocument()
 {
-    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
 //    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
+    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
@@ -101,6 +101,10 @@ Theme::Theme()
     
     m_FilePanelsHeaderFont =
         ExtractFont(doc, "filePanelsHeaderFont");
+    m_FilePanelsHeaderTextColor =
+        ExtractColor(doc, "filePanelsHeaderTextColor");
+    m_FilePanelsHeaderActiveTextColor =
+        ExtractColor(doc, "filePanelsHeaderActiveTextColor");
     m_FilePanelsHeaderActiveBackgroundColor =
         ExtractColor(doc, "filePanelsHeaderActiveBackgroundColor");
     m_FilePanelsHeaderInactiveBackgroundColor =
@@ -324,4 +328,14 @@ NSColor *Theme::FilePanelsTabsTextColor() const
 NSColor *Theme::FilePanelsTabsPictogramColor() const
 {
     return m_FilePanelsTabsPictogramColor;
+}
+
+NSColor *Theme::FilePanelsHeaderTextColor() const
+{
+    return m_FilePanelsHeaderTextColor;
+}
+
+NSColor *Theme::FilePanelsHeaderActiveTextColor() const
+{
+    return m_FilePanelsHeaderActiveTextColor;
 }

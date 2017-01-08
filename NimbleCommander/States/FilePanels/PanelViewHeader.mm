@@ -202,6 +202,19 @@ static NSString *SortLetter(PanelDataSortMode _mode)
             CurrentTheme().FilePanelsHeaderActiveBackgroundColor() :
             CurrentTheme().FilePanelsHeaderInactiveBackgroundColor();
         [self setNeedsDisplay:true];
+        
+        NSColor *text_color = active ?
+            CurrentTheme().FilePanelsHeaderActiveTextColor() :
+            CurrentTheme().FilePanelsHeaderTextColor();
+        m_PathTextField.textColor = text_color;
+//        m_SearchTextField.textColor = text_color;
+        
+        NSMutableAttributedString *sort_title =
+          [[NSMutableAttributedString alloc] initWithAttributedString:m_SortButton.attributedTitle];
+        [sort_title addAttribute:NSForegroundColorAttributeName
+                           value:text_color
+                           range:NSMakeRange(0, sort_title.length)];
+        m_SortButton.attributedTitle = sort_title;
     }
 }
 

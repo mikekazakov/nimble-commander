@@ -49,13 +49,31 @@
     "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
     "filePanelsListRegularEvenRowBackgroundColor": "#000080",
     "filePanelsListRegularOddRowBackgroundColor" : "#000080",
+    
+    /* File Panels -> footer settings */    
     "filePanelsFooterFont": "Menlo-Regular, 13",
     "filePanelsFooterTextColor" : "#00FFFF",
     "filePanelsFooterActiveTextColor" : "@whiteColor",
     "filePanelsFooterSeparatorsColor": "#00FFFF",
     "filePanelsFooterActiveBackgroundColor": "#000080",
     "filePanelsFooterInactiveBackgroundColor": "#000080",
+    
+    /* File Panels -> header settings */
     "filePanelsHeaderFont": "Menlo-Regular, 13",
-    "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsHeaderInactiveBackgroundColor": "@clearColor"
+    "filePanelsHeaderTextColor": "#00FFFF",
+    "filePanelsHeaderActiveTextColor": "@whiteColor",
+    "filePanelsHeaderActiveBackgroundColor": "#000080",
+    "filePanelsHeaderInactiveBackgroundColor": "#000080",
+    
+    /* File Panels -> tabs settings */
+    "filePanelsTabsFont": "Menlo-Regular, 11",
+    "filePanelsTabsTextColor": "#E5E5E5",
+    "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#008080",
+    "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "#000080",
+    "filePanelsTabsSelectedNotKeyWndBackgroundColor": "#000080",
+    "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#000080",
+    "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#000080",
+    "filePanelsTabsRegularNotKeyWndBackgroundColor": "#000080",
+    "filePanelsTabsSeparatorColor": "#00FFFF",
+    "filePanelsTabsPictogramColor": "#E5E5E5"
 }

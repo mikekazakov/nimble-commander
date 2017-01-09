@@ -6,15 +6,13 @@
 #include "../PanelView.h"
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../IconsGenerator2.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionView.h"
 #include "PanelBriefViewCollectionViewLayout.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
-
-static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
-vector<PanelViewPresentationItemsColoringRule> g_ColoringRules;
 
 static auto g_ItemsCount = 0;
 
@@ -82,16 +80,12 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     vector<short>                       m_FilenamesPxWidths;
     short                               m_MaxFilenamePxWidth;
     IconsGenerator2                    *m_IconsGenerator;
-    NSFont                             *m_Font;
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
     PanelDataSortMode                   m_SortMode;
 }
 
-@synthesize font = m_Font;
-@synthesize regularBackgroundColor;
-@synthesize alternateBackgroundColor;
 @synthesize columnsLayout = m_ColumnsLayout;
 @synthesize sortMode = m_SortMode;
 
@@ -105,21 +99,6 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-        static once_flag once;
-        call_once(once,[]{
-            g_ColoringRules.clear();
-            auto cr = GlobalConfig().Get(g_ConfigColoring);
-            if( cr.IsArray() )
-                for( auto i = cr.Begin(), e = cr.End(); i != e; ++i )
-                    g_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
-            g_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
-        });
-        
-        self.regularBackgroundColor = NSColor.controlAlternatingRowBackgroundColors[0];
-        self.alternateBackgroundColor = NSColor.controlAlternatingRowBackgroundColors[1];
-        
-        //m_Font = [NSFont labelFontOfSize:13];
-        m_Font = [NSFont systemFontOfSize:13];
         [self calculateItemLayout];
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
@@ -243,7 +222,10 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     vector<CFStringRef> strings(count);
     for( auto i = 0; i < count; ++i )
         strings[i] = m_Data->EntryAtSortPosition(i).CFDisplayName();
-    m_FilenamesPxWidths = FontGeometryInfo::CalculateStringsWidths(strings, m_Font);
+    m_FilenamesPxWidths = FontGeometryInfo::CalculateStringsWidths(
+        strings,
+        CurrentTheme().FilePanelsBriefFont()
+    );
     auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );
     m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : 50;
 }
@@ -279,7 +261,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (void) calculateItemLayout
 {
-    m_ItemLayout = BuildItemsLayout(m_Font);
+    m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont());
 }
 
 - (void) dataChanged
@@ -370,11 +352,6 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             const auto index = (int)index_path.item;
             [i setVD:m_Data->VolatileDataAtSortPosition(index)];
         }
-}
-
-- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules
-{
-    return g_ColoringRules;
 }
 
 - (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths

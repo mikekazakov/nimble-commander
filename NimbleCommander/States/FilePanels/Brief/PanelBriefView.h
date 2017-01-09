@@ -32,14 +32,9 @@ struct PanelBriefViewItemLayoutConstants
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) PanelDataSortMode sortMode;
-@property (nonatomic) NSFont *font;
-
-@property (nonatomic) NSColor *regularBackgroundColor;
-@property (nonatomic) NSColor *alternateBackgroundColor;
 
 @property (nonatomic) PanelBriefViewColumnsLayout columnsLayout;
 
-- (vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
 
 - (PanelBriefViewItemLayoutConstants) layoutConstants;
 

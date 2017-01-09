@@ -7,8 +7,6 @@ struct PanelBriefViewItemLayoutConstants;
 
 @property (nonatomic, weak) PanelBriefViewItem                 *controller;
 @property (nonatomic)       NSColor                            *background;
-@property (nonatomic)       NSColor                            *regularBackgroundColor;
-@property (nonatomic)       NSColor                            *alternateBackgroundColor;
 @property (nonatomic)       NSString                           *filename;
 @property (nonatomic)       NSColor                            *filenameColor;
 @property (nonatomic)       NSImageRep                         *icon;

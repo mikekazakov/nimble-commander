@@ -18,7 +18,7 @@ const Theme &CurrentTheme()
 // get ThemesManager instance
 // ask for current theme
 // return it
-    static Theme t;
+    static Theme t(nullptr);
     return t;
 
 }
@@ -40,9 +40,9 @@ static string Load(const string &_filepath)
 
 static rapidjson::Document GetDocument()
 {
-    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
 //    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
+    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
@@ -79,7 +79,56 @@ static NSFont *ExtractFont( const rapidjson::Document &_doc, const char *_path)
     return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
 }
 
-Theme::Theme()
+struct Theme::Internals
+{
+    vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
+    NSColor *m_FilePanelsGeneralDropBorderColor;
+    
+    NSFont  *m_FilePanelsHeaderFont;
+    NSColor *m_FilePanelsHeaderTextColor;
+    NSColor *m_FilePanelsHeaderActiveTextColor;
+    NSColor *m_FilePanelsHeaderActiveBackgroundColor;
+    NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
+    NSColor *m_FilePanelsHeaderSeparatorColor;
+    
+    NSFont  *m_FilePanelsFooterFont;
+    NSColor *m_FilePanelsFooterTextColor;
+    NSColor *m_FilePanelsFooterActiveTextColor;
+    NSColor *m_FilePanelsFooterSeparatorsColor;
+    NSColor *m_FilePanelsFooterActiveBackgroundColor;
+    NSColor *m_FilePanelsFooterInactiveBackgroundColor;
+    
+    NSFont  *m_FilePanelsTabsFont;
+    NSColor *m_FilePanelsTabsTextColor;
+    NSColor *m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
+    NSColor *m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor;
+    NSColor *m_FilePanelsTabsSelectedNotKeyWndBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularKeyWndHoverBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
+    NSColor *m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
+    NSColor *m_FilePanelsTabsSeparatorColor;
+    NSColor *m_FilePanelsTabsPictogramColor;
+    
+    NSFont  *m_FilePanelsListFont;
+    NSColor *m_FilePanelsListGridColor;
+    NSFont  *m_FilePanelsListHeaderFont;
+    NSColor *m_FilePanelsListHeaderBackgroundColor;
+    NSColor *m_FilePanelsListHeaderTextColor;
+    NSColor *m_FilePanelsListHeaderSeparatorColor;
+    NSColor *m_FilePanelsListSelectedActiveRowBackgroundColor;
+    NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
+    NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
+    NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
+    
+    NSFont  *m_FilePanelsBriefFont;
+    NSColor *m_FilePanelsBriefRegularEvenRowBackgroundColor;
+    NSColor *m_FilePanelsBriefRegularOddRowBackgroundColor;
+    NSColor *m_FilePanelsBriefSelectedActiveItemBackgroundColor;
+    NSColor *m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
+};
+
+Theme::Theme(void*_dont_call_me_exclamation_mark):
+    I( make_unique<Internals>() )
 {
     const auto doc = GetDocument();
 
@@ -87,94 +136,105 @@ Theme::Theme()
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
-            m_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(v) );
+            I->m_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(v) );
         }
-    m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
+    I->m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     
-    m_FilePanelsGeneralDropBorderColor =
+    I->m_FilePanelsGeneralDropBorderColor =
         ExtractColor(doc, "filePanelsGeneralDropBorderColor");
     
-    m_FilePanelsListFont =
+    I->m_FilePanelsListFont =
         ExtractFont(doc, "filePanelsListFont");
-    m_FilePanelsListGridColor =
+    I->m_FilePanelsListGridColor =
         ExtractColor(doc, "filePanelsListGridColor");
     
-    m_FilePanelsHeaderFont =
+    I->m_FilePanelsHeaderFont =
         ExtractFont(doc, "filePanelsHeaderFont");
-    m_FilePanelsHeaderTextColor =
+    I->m_FilePanelsHeaderTextColor =
         ExtractColor(doc, "filePanelsHeaderTextColor");
-    m_FilePanelsHeaderActiveTextColor =
+    I->m_FilePanelsHeaderActiveTextColor =
         ExtractColor(doc, "filePanelsHeaderActiveTextColor");
-    m_FilePanelsHeaderActiveBackgroundColor =
+    I->m_FilePanelsHeaderActiveBackgroundColor =
         ExtractColor(doc, "filePanelsHeaderActiveBackgroundColor");
-    m_FilePanelsHeaderInactiveBackgroundColor =
+    I->m_FilePanelsHeaderInactiveBackgroundColor =
         ExtractColor(doc, "filePanelsHeaderInactiveBackgroundColor");
-    m_FilePanelsHeaderSeparatorColor =
+    I->m_FilePanelsHeaderSeparatorColor =
         ExtractColor(doc, "filePanelsHeaderSeparatorColor");
     
     
-    m_FilePanelsListHeaderFont =
+    I->m_FilePanelsListHeaderFont =
         ExtractFont(doc, "filePanelsListHeaderFont");
-    m_FilePanelsListHeaderBackgroundColor =
+    I->m_FilePanelsListHeaderBackgroundColor =
         ExtractColor(doc, "filePanelsListHeaderBackgroundColor");
-    m_FilePanelsListHeaderTextColor =
+    I->m_FilePanelsListHeaderTextColor =
         ExtractColor(doc, "filePanelsListHeaderTextColor");
-    m_FilePanelsListHeaderSeparatorColor =
+    I->m_FilePanelsListHeaderSeparatorColor =
         ExtractColor(doc, "filePanelsListHeaderSeparatorColor");
-    m_FilePanelsListSelectedActiveRowBackgroundColor =
+    I->m_FilePanelsListSelectedActiveRowBackgroundColor =
         ExtractColor(doc, "filePanelsListSelectedActiveRowBackgroundColor");
-    m_FilePanelsListSelectedInactiveRowBackgroundColor =
+    I->m_FilePanelsListSelectedInactiveRowBackgroundColor =
         ExtractColor(doc, "filePanelsListSelectedInactiveRowBackgroundColor");
-    m_FilePanelsListRegularEvenRowBackgroundColor =
+    I->m_FilePanelsListRegularEvenRowBackgroundColor =
         ExtractColor(doc, "filePanelsListRegularEvenRowBackgroundColor");
-    m_FilePanelsListRegularOddRowBackgroundColor =
+    I->m_FilePanelsListRegularOddRowBackgroundColor =
         ExtractColor(doc, "filePanelsListRegularOddRowBackgroundColor");
 
-    m_FilePanelsFooterFont =
+    I->m_FilePanelsFooterFont =
         ExtractFont(doc, "filePanelsFooterFont");
-    m_FilePanelsFooterTextColor =
+    I->m_FilePanelsFooterTextColor =
         ExtractColor(doc, "filePanelsFooterTextColor");
-    m_FilePanelsFooterActiveTextColor =
+    I->m_FilePanelsFooterActiveTextColor =
         ExtractColor(doc, "filePanelsFooterActiveTextColor");
-    m_FilePanelsFooterSeparatorsColor =
+    I->m_FilePanelsFooterSeparatorsColor =
         ExtractColor(doc, "filePanelsFooterSeparatorsColor");
-    m_FilePanelsFooterActiveBackgroundColor =
+    I->m_FilePanelsFooterActiveBackgroundColor =
         ExtractColor(doc, "filePanelsFooterActiveBackgroundColor");
-    m_FilePanelsFooterInactiveBackgroundColor =
+    I->m_FilePanelsFooterInactiveBackgroundColor =
         ExtractColor(doc, "filePanelsFooterInactiveBackgroundColor");
     
-    m_FilePanelsTabsFont =
+    I->m_FilePanelsTabsFont =
         ExtractFont(doc, "filePanelsTabsFont");
-    m_FilePanelsTabsTextColor =
+    I->m_FilePanelsTabsTextColor =
         ExtractColor(doc, "filePanelsTabsTextColor");
-    m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor =
+    I->m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor =
         ExtractColor(doc, "filePanelsTabsSelectedKeyWndActiveBackgroundColor");
-    m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor =
+    I->m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor =
         ExtractColor(doc, "filePanelsTabsSelectedKeyWndInactiveBackgroundColor");
-    m_FilePanelsTabsSelectedNotKeyWndBackgroundColor =
+    I->m_FilePanelsTabsSelectedNotKeyWndBackgroundColor =
         ExtractColor(doc, "filePanelsTabsSelectedNotKeyWndBackgroundColor");
-    m_FilePanelsTabsRegularKeyWndHoverBackgroundColor =
+    I->m_FilePanelsTabsRegularKeyWndHoverBackgroundColor =
         ExtractColor(doc, "filePanelsTabsRegularKeyWndHoverBackgroundColor");
-    m_FilePanelsTabsRegularKeyWndRegularBackgroundColor =
+    I->m_FilePanelsTabsRegularKeyWndRegularBackgroundColor =
         ExtractColor(doc, "filePanelsTabsRegularKeyWndRegularBackgroundColor");
-    m_FilePanelsTabsRegularNotKeyWndBackgroundColor =
+    I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor =
         ExtractColor(doc, "filePanelsTabsRegularNotKeyWndBackgroundColor");
-    m_FilePanelsTabsSeparatorColor =
+    I->m_FilePanelsTabsSeparatorColor =
         ExtractColor(doc, "filePanelsTabsSeparatorColor");
-    m_FilePanelsTabsPictogramColor =
+    I->m_FilePanelsTabsPictogramColor =
         ExtractColor(doc, "filePanelsTabsPictogramColor");
+    
+    I->m_FilePanelsBriefFont =
+        ExtractFont(doc, "filePanelsBriefFont");
+    I->m_FilePanelsBriefRegularEvenRowBackgroundColor =
+        ExtractColor(doc, "filePanelsBriefRegularEvenRowBackgroundColor");
+    I->m_FilePanelsBriefRegularOddRowBackgroundColor =
+        ExtractColor(doc, "filePanelsBriefRegularOddRowBackgroundColor");
+    I->m_FilePanelsBriefSelectedActiveItemBackgroundColor =
+        ExtractColor(doc, "filePanelsBriefSelectedActiveItemBackgroundColor");
+    I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor =
+        ExtractColor(doc, "filePanelsBriefSelectedInactiveItemBackgroundColor");
 }
 
 Theme::~Theme()
 {
 }
 
-ThemeAppearance Theme::AppearanceType() const
+ThemeAppearance Theme::AppearanceType() const noexcept
 {
     return ThemeAppearance::Light;
 }
 
-NSAppearance *Theme::Appearance() const
+NSAppearance *Theme::Appearance() const noexcept
 {
      switch( AppearanceType() ) {
         case ThemeAppearance::Light:
@@ -184,172 +244,198 @@ NSAppearance *Theme::Appearance() const
      }
 }
 
-NSFont *Theme::FilePanelsListFont() const
+NSFont *Theme::FilePanelsListFont() const noexcept
 {
-    return m_FilePanelsListFont;
+    return I->m_FilePanelsListFont;
 }
 
-NSColor *Theme::FilePanelsListSelectedActiveRowBackgroundColor() const
+NSColor *Theme::FilePanelsListSelectedActiveRowBackgroundColor() const noexcept
 {
-    return m_FilePanelsListSelectedActiveRowBackgroundColor;
+    return I->m_FilePanelsListSelectedActiveRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsListSelectedInactiveRowBackgroundColor() const
+NSColor *Theme::FilePanelsListSelectedInactiveRowBackgroundColor() const noexcept
 {
-    return m_FilePanelsListSelectedInactiveRowBackgroundColor;
+    return I->m_FilePanelsListSelectedInactiveRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsListRegularEvenRowBackgroundColor() const
+NSColor *Theme::FilePanelsListRegularEvenRowBackgroundColor() const noexcept
 {
-    return m_FilePanelsListRegularEvenRowBackgroundColor;
+    return I->m_FilePanelsListRegularEvenRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsListRegularOddRowBackgroundColor() const
+NSColor *Theme::FilePanelsListRegularOddRowBackgroundColor() const noexcept
 {
-    return m_FilePanelsListRegularOddRowBackgroundColor;
+    return I->m_FilePanelsListRegularOddRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsGeneralDropBorderColor() const
+NSColor *Theme::FilePanelsGeneralDropBorderColor() const noexcept
 {
-    return m_FilePanelsGeneralDropBorderColor;
+    return I->m_FilePanelsGeneralDropBorderColor;
 }
 
-const vector<PanelViewPresentationItemsColoringRule>& Theme::FilePanelsItemsColoringRules() const
+const vector<PanelViewPresentationItemsColoringRule>& Theme::FilePanelsItemsColoringRules()
+const noexcept
 {
-    return m_ColoringRules;
+    return I->m_ColoringRules;
 }
 
-NSColor *Theme::FilePanelsFooterActiveBackgroundColor() const
+NSColor *Theme::FilePanelsFooterActiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsFooterActiveBackgroundColor;
+    return I->m_FilePanelsFooterActiveBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsFooterInactiveBackgroundColor() const
+NSColor *Theme::FilePanelsFooterInactiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsFooterInactiveBackgroundColor;
+    return I->m_FilePanelsFooterInactiveBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsFooterTextColor() const
+NSColor *Theme::FilePanelsFooterTextColor() const noexcept
 {
-    return m_FilePanelsFooterTextColor;
+    return I->m_FilePanelsFooterTextColor;
 }
 
-NSColor *Theme::FilePanelsFooterSeparatorsColor() const
+NSColor *Theme::FilePanelsFooterSeparatorsColor() const noexcept
 {
-    return m_FilePanelsFooterSeparatorsColor;
+    return I->m_FilePanelsFooterSeparatorsColor;
 }
 
-NSColor *Theme::FilePanelsListGridColor() const
+NSColor *Theme::FilePanelsListGridColor() const noexcept
 {
-    return m_FilePanelsListGridColor;
+    return I->m_FilePanelsListGridColor;
 }
 
-NSColor *Theme::FilePanelsFooterActiveTextColor() const
+NSColor *Theme::FilePanelsFooterActiveTextColor() const noexcept
 {
-    return m_FilePanelsFooterActiveTextColor;
+    return I->m_FilePanelsFooterActiveTextColor;
 }
 
-NSFont  *Theme::FilePanelsFooterFont() const
+NSFont  *Theme::FilePanelsFooterFont() const noexcept
 {
-    return m_FilePanelsFooterFont;
+    return I->m_FilePanelsFooterFont;
 }
 
-NSColor *Theme::FilePanelsListHeaderBackgroundColor() const
+NSColor *Theme::FilePanelsListHeaderBackgroundColor() const noexcept
 {
-    return m_FilePanelsListHeaderBackgroundColor;
+    return I->m_FilePanelsListHeaderBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsListHeaderTextColor() const
+NSColor *Theme::FilePanelsListHeaderTextColor() const noexcept
 {
-    return m_FilePanelsListHeaderTextColor;
+    return I->m_FilePanelsListHeaderTextColor;
 }
 
-NSFont  *Theme::FilePanelsListHeaderFont() const
+NSFont  *Theme::FilePanelsListHeaderFont() const noexcept
 {
-    return m_FilePanelsListHeaderFont;
+    return I->m_FilePanelsListHeaderFont;
 }
 
-NSColor *Theme::FilePanelsHeaderActiveBackgroundColor() const
+NSColor *Theme::FilePanelsHeaderActiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsHeaderActiveBackgroundColor;
+    return I->m_FilePanelsHeaderActiveBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsHeaderInactiveBackgroundColor() const
+NSColor *Theme::FilePanelsHeaderInactiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsHeaderInactiveBackgroundColor;
+    return I->m_FilePanelsHeaderInactiveBackgroundColor;
 }
 
-NSFont  *Theme::FilePanelsHeaderFont() const
+NSFont  *Theme::FilePanelsHeaderFont() const noexcept
 {
-    return m_FilePanelsHeaderFont;
+    return I->m_FilePanelsHeaderFont;
 }
 
-NSColor *Theme::FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const
+NSColor *Theme::FilePanelsTabsSelectedKeyWndActiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
+    return I->m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const
+NSColor *Theme::FilePanelsTabsSelectedKeyWndInactiveBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor;
+    return I->m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsSelectedNotKeyWndBackgroundColor() const
+NSColor *Theme::FilePanelsTabsSelectedNotKeyWndBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsSelectedNotKeyWndBackgroundColor;
+    return I->m_FilePanelsTabsSelectedNotKeyWndBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsRegularKeyWndHoverBackgroundColor() const
+NSColor *Theme::FilePanelsTabsRegularKeyWndHoverBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsRegularKeyWndHoverBackgroundColor;
+    return I->m_FilePanelsTabsRegularKeyWndHoverBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsRegularKeyWndRegularBackgroundColor() const
+NSColor *Theme::FilePanelsTabsRegularKeyWndRegularBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
+    return I->m_FilePanelsTabsRegularKeyWndRegularBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsRegularNotKeyWndBackgroundColor() const
+NSColor *Theme::FilePanelsTabsRegularNotKeyWndBackgroundColor() const noexcept
 {
-    return m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
+    return I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsTabsSeparatorColor() const
+NSColor *Theme::FilePanelsTabsSeparatorColor() const noexcept
 {
-    return m_FilePanelsTabsSeparatorColor;
+    return I->m_FilePanelsTabsSeparatorColor;
 }
 
-NSFont  *Theme::FilePanelsTabsFont() const
+NSFont  *Theme::FilePanelsTabsFont() const noexcept
 {
-    return m_FilePanelsTabsFont;
+    return I->m_FilePanelsTabsFont;
 }
 
-NSColor *Theme::FilePanelsTabsTextColor() const
+NSColor *Theme::FilePanelsTabsTextColor() const noexcept
 {
-    return m_FilePanelsTabsTextColor;
+    return I->m_FilePanelsTabsTextColor;
 }
 
-NSColor *Theme::FilePanelsTabsPictogramColor() const
+NSColor *Theme::FilePanelsTabsPictogramColor() const noexcept
 {
-    return m_FilePanelsTabsPictogramColor;
+    return I->m_FilePanelsTabsPictogramColor;
 }
 
-NSColor *Theme::FilePanelsHeaderTextColor() const
+NSColor *Theme::FilePanelsHeaderTextColor() const noexcept
 {
-    return m_FilePanelsHeaderTextColor;
+    return I->m_FilePanelsHeaderTextColor;
 }
 
-NSColor *Theme::FilePanelsHeaderActiveTextColor() const
+NSColor *Theme::FilePanelsHeaderActiveTextColor() const noexcept
 {
-    return m_FilePanelsHeaderActiveTextColor;
+    return I->m_FilePanelsHeaderActiveTextColor;
 }
 
-NSColor *Theme::FilePanelsListHeaderSeparatorColor() const
+NSColor *Theme::FilePanelsListHeaderSeparatorColor() const noexcept
 {
-    return m_FilePanelsListHeaderSeparatorColor;
+    return I->m_FilePanelsListHeaderSeparatorColor;
 }
 
-NSColor *Theme::FilePanelsHeaderSeparatorColor() const
+NSColor *Theme::FilePanelsHeaderSeparatorColor() const noexcept
 {
-    return m_FilePanelsHeaderSeparatorColor;
+    return I->m_FilePanelsHeaderSeparatorColor;
+}
+
+NSFont  *Theme::FilePanelsBriefFont() const noexcept
+{
+    return I->m_FilePanelsBriefFont;
+}
+
+NSColor *Theme::FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsBriefRegularEvenRowBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsBriefRegularOddRowBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsBriefRegularOddRowBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsBriefSelectedActiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
 }

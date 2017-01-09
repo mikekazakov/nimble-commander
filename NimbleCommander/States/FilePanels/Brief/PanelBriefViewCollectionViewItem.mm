@@ -1,3 +1,4 @@
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
 #include "PanelBriefView.h"
@@ -43,8 +44,6 @@
     m_Item = _item;
     self.carrier.filename = m_Item.NSDisplayName();
     self.carrier.layoutConstants = self.briefView.layoutConstants;
-    self.carrier.regularBackgroundColor  = self.briefView.regularBackgroundColor;
-    self.carrier.alternateBackgroundColor  = self.briefView.alternateBackgroundColor;
     [self.carrier setNeedsDisplay:true];
 }
 
@@ -76,9 +75,9 @@
 - (NSColor*) selectedBackgroundColor
 {
     if( m_PanelActive )
-        return NSColor.blueColor;
+        return CurrentTheme().FilePanelsBriefSelectedActiveItemBackgroundColor() /*NSColor.blueColor*/  ;
     else
-        return NSColor.lightGrayColor;
+        return CurrentTheme().FilePanelsBriefSelectedInactiveItemBackgroundColor() /*NSColor.lightGrayColor*/;
 }
 
 - (PanelBriefView*)briefView
@@ -98,7 +97,7 @@
 {
     assert( m_Item );
     if( self.briefView ) {
-        const auto &rules = [self.briefView coloringRules];
+        const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();
         const bool focus = self.selected && m_PanelActive;
         for( const auto &i: rules )
             if( i.filter.Filter(m_Item, m_VD) ) {

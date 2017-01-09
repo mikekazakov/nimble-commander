@@ -86,21 +86,21 @@ static void FillRect( NSRect rc, NSColor *c )
 //    [super drawWithFrame:cellFrame inView:controlView];
 //    return;
 
-    [Theme().FilePanelsListHeaderBackgroundColor() set];
+    [CurrentTheme().FilePanelsListHeaderBackgroundColor() set];
     NSRectFill(cellFrame);
 
     FillRect(NSMakeRect(cellFrame.origin.x,
                         NSMaxY(cellFrame)-1,
                         cellFrame.size.width,
                         1),
-             Theme().FilePanelsListHeaderSeparatorColor()
+             CurrentTheme().FilePanelsListHeaderSeparatorColor()
              );
     if( NSMaxX(cellFrame) < controlView.bounds.size.width )
         FillRect(NSMakeRect(NSMaxX(cellFrame)-1,
                             NSMinY(cellFrame)+3,
                             1,
                             cellFrame.size.height-6),
-                 Theme().FilePanelsListHeaderSeparatorColor()
+                 CurrentTheme().FilePanelsListHeaderSeparatorColor()
                  );
 
     // this may be really bad - to set attributes on every call.

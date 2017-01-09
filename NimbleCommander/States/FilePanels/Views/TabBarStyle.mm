@@ -25,7 +25,7 @@ static const auto g_TabCloseSize = NSMakeSize(12, 12);
 static const auto g_TabCloseFreeImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         NSBezierPath *bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(2.5,2.5)];
         [bezier lineToPoint:NSMakePoint(9.5,9.5)];
@@ -43,13 +43,13 @@ static const auto g_TabCloseFreeImage = []
 static const auto g_TabCloseHoverImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
+        [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
         NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
                                                                xRadius:2
                                                                yRadius:2];
         [bezier fill];
     
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(2.5,2.5)];
         [bezier lineToPoint:NSMakePoint(9.5,9.5)];
@@ -67,13 +67,13 @@ static const auto g_TabCloseHoverImage = []
 static const auto g_TabClosePressedImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
+        [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
         NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
                                                                xRadius:2
                                                                yRadius:2];
         [bezier fill];
     
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(2.5,2.5)];
         [bezier lineToPoint:NSMakePoint(9.5,9.5)];
@@ -91,7 +91,7 @@ static const auto g_TabClosePressedImage = []
 static const auto g_TabAddFreeImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         NSBezierPath *bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(8.5,3)];
         [bezier lineToPoint:NSMakePoint(8.5,14)];
@@ -109,13 +109,13 @@ static const auto g_TabAddFreeImage = []
 static const auto g_TabAddHoverImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
+        [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
         NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
                                                                xRadius:2
                                                                yRadius:2];
         [bezier fill];
     
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(8.5,3)];
         [bezier lineToPoint:NSMakePoint(8.5,14)];
@@ -133,14 +133,14 @@ static const auto g_TabAddHoverImage = []
 static const auto g_TabAddPressedImage = []
 {
     auto handler = [](NSRect rc)->BOOL {
-        [[Theme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
+        [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
         NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
                                                                xRadius:2
                                                                yRadius:2];
         [bezier fill];
     
     
-        [Theme().FilePanelsTabsPictogramColor() set];
+        [CurrentTheme().FilePanelsTabsPictogramColor() set];
         bezier = [NSBezierPath bezierPath];
         [bezier moveToPoint:NSMakePoint(8.5,3)];
         [bezier lineToPoint:NSMakePoint(8.5,14)];
@@ -297,8 +297,8 @@ StaticImage(YosemiteTabNewPressed)
         return ps;
     }();
 
-    const auto attrs = @{NSFontAttributeName: Theme().FilePanelsTabsFont(),
-                         NSForegroundColorAttributeName: Theme().FilePanelsTabsTextColor(),
+    const auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsTabsFont(),
+                         NSForegroundColorAttributeName: CurrentTheme().FilePanelsTabsTextColor(),
                          NSParagraphStyleAttributeName: paragraph_style
                          };
     return [[NSAttributedString alloc] initWithString:cell.title
@@ -322,7 +322,7 @@ StaticImage(YosemiteTabNewPressed)
         NSMutableAttributedString *s = [[NSMutableAttributedString alloc]
           initWithAttributedString:cell.attributedStringValue];
         [s addAttribute:NSForegroundColorAttributeName
-                  value:[Theme().FilePanelsTabsTextColor() colorWithAlphaComponent:0.75]
+                  value:[CurrentTheme().FilePanelsTabsTextColor() colorWithAlphaComponent:0.75]
                   range:NSMakeRange(0, s.length)];
         [s drawInRect:rect];
     }
@@ -330,7 +330,7 @@ StaticImage(YosemiteTabNewPressed)
 
 - (void)drawBezelOfTabBarView:(MMTabBarView *)tabBarView inRect:(NSRect)rect
 {
-    const NSColor *bg_color = Theme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
+    const NSColor *bg_color = CurrentTheme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
     if( bg_color && bg_color != NSColor.clearColor ) {
         [bg_color set];
         NSRectFill(rect);
@@ -339,7 +339,7 @@ StaticImage(YosemiteTabNewPressed)
         NSDrawWindowBackground(rect);
     }
     
-    [Theme().FilePanelsTabsSeparatorColor() set];
+    [CurrentTheme().FilePanelsTabsSeparatorColor() set];
     NSBezierPath *bezier = [NSBezierPath bezierPath];
     [bezier moveToPoint:NSMakePoint(rect.origin.x,
                                     tabBarView.bounds.size.height - 0.5)];
@@ -368,19 +368,19 @@ StaticImage(YosemiteTabNewPressed)
         if( tab_selected ) {
             if( wnd_active ) {
                 if( tab_isfr )
-                    return Theme().FilePanelsTabsSelectedKeyWndActiveBackgroundColor();
+                    return CurrentTheme().FilePanelsTabsSelectedKeyWndActiveBackgroundColor();
                 else
-                    return Theme().FilePanelsTabsSelectedKeyWndInactiveBackgroundColor(); }
+                    return CurrentTheme().FilePanelsTabsSelectedKeyWndInactiveBackgroundColor(); }
             else
-                return Theme().FilePanelsTabsSelectedNotKeyWndBackgroundColor(); }
+                return CurrentTheme().FilePanelsTabsSelectedNotKeyWndBackgroundColor(); }
         else {
             if( wnd_active ) {
                 if( button_hovered )
-                    return Theme().FilePanelsTabsRegularKeyWndHoverBackgroundColor();
+                    return CurrentTheme().FilePanelsTabsRegularKeyWndHoverBackgroundColor();
                 else
-                    return Theme().FilePanelsTabsRegularKeyWndRegularBackgroundColor(); }
+                    return CurrentTheme().FilePanelsTabsRegularKeyWndRegularBackgroundColor(); }
             else
-                return Theme().FilePanelsTabsRegularNotKeyWndBackgroundColor(); }
+                return CurrentTheme().FilePanelsTabsRegularNotKeyWndBackgroundColor(); }
     }();
   
     if( bg_color && bg_color != NSColor.clearColor ) {
@@ -391,7 +391,7 @@ StaticImage(YosemiteTabNewPressed)
         NSDrawWindowBackground(frame);
     }
     
-    [Theme().FilePanelsTabsSeparatorColor() set];
+    [CurrentTheme().FilePanelsTabsSeparatorColor() set];
     NSBezierPath *bezier = [NSBezierPath bezierPath];
     if( button.shouldDisplayLeftDivider ) {
         [bezier moveToPoint:NSMakePoint(NSMinX(frame)-0.5, NSMinY(frame))];

@@ -185,7 +185,13 @@ struct NSEventModifierFlagsHolder
 
 - (PanelListView*) spawnListView
 {
-    return [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+   PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+    __weak PanelView *weak_self = self;
+    v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
+        if( PanelView *strong_self = weak_self )
+            [strong_self.controller changeSortingModeTo:_sm];
+    };
+    return v;
 }
 
 - (PanelBriefView*) spawnBriefView
@@ -294,6 +300,7 @@ struct NSEventModifierFlagsHolder
 
     if( data ) {
         [m_ItemsView setData:data];
+        m_ItemsView.sortMode = data->SortMode();
         m_HeaderView.sortMode = data->SortMode();
     }
     
@@ -767,12 +774,6 @@ struct NSEventModifierFlagsHolder
             [m_ItemsView setCursorPosition:m_CursorPos];
         
         m_ItemsView.sortMode = m_Data->SortMode();
-        
-        __weak PanelView *weak_self = self;
-        v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
-            if( PanelView *strong_self = weak_self )
-                [strong_self.controller changeSortingModeTo:_sm];
-        };
     }
     
     if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {

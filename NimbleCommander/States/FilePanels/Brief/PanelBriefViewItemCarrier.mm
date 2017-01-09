@@ -1,4 +1,5 @@
 #include <Utility/FontExtras.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewItem.h"
@@ -39,7 +40,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     NSColor                            *m_TextColor;
     NSString                           *m_Filename;
     NSImageRep                         *m_Icon;
-    NSFont                             *m_Font;
     NSMutableAttributedString          *m_AttrString;
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
@@ -50,8 +50,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 }
 
 @synthesize background = m_Background;
-@synthesize regularBackgroundColor;
-@synthesize alternateBackgroundColor;
 @synthesize filename = m_Filename;
 @synthesize layoutConstants = m_LayoutConstants;
 @synthesize controller = m_Controller;
@@ -63,7 +61,6 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_TextColor = NSColor.blackColor;
-        m_Font = [NSFont systemFontOfSize:13];
         m_Filename = @"";
         m_QSHighlight = {0, 0};
         m_PermitFieldRenaming = false;
@@ -106,8 +103,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         CGContextFillRect(context, NSRectToCGRect(bounds));
     }
     else {
-        bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
-        CGContextSetFillColorWithColor(context, is_odd ? self.alternateBackgroundColor.CGColor : self.regularBackgroundColor.CGColor);
+        const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
+        auto c = is_odd ?
+            CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor() :
+            CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+        CGContextSetFillColorWithColor(context, c.CGColor);
         CGContextFillRect(context, NSRectToCGRect(bounds));
     }
     
@@ -270,7 +270,7 @@ static NSPoint  g_LastMouseDownPos = {};
 
 - (void) buildTextAttributes
 {
-    NSDictionary *attrs = @{NSFontAttributeName: m_Font,
+    NSDictionary *attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsBriefFont(),
                             NSForegroundColorAttributeName: m_TextColor,
                             NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
     
@@ -303,7 +303,7 @@ static NSPoint  g_LastMouseDownPos = {};
                             bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
                             bounds.size.height);
     
-    auto fi = FontGeometryInfo(m_Font);
+    auto fi = FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
     
     rc.size.height = fi.LineHeight();
     rc.origin.y += 1;
@@ -312,7 +312,7 @@ static NSPoint  g_LastMouseDownPos = {};
     _editor.frame = rc;
     
     NSTextView *tv = _editor.documentView;
-    tv.font = m_Font;
+    tv.font = CurrentTheme().FilePanelsBriefFont();
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
     auto aa = tv.textContainerOrigin;
@@ -406,7 +406,7 @@ static NSPoint  g_LastMouseDownPos = {};
         m_IsDropTarget = isDropTarget;
         if( m_IsDropTarget ) {
             self.layer.borderWidth = 1;
-            self.layer.borderColor = NSColor.blueColor.CGColor;
+            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
         }
         else
             self.layer.borderWidth = 0;

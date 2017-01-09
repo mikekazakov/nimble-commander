@@ -1,3 +1,4 @@
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
 #include "PanelBriefViewCollectionView.h"
 
@@ -89,7 +90,7 @@
         m_IsDropTarget = isDropTarget;
         if( m_IsDropTarget ) {
             self.layer.borderWidth = 1;
-            self.layer.borderColor = NSColor.blueColor.CGColor;
+            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
         }
         else
             self.layer.borderWidth = 0;

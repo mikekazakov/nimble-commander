@@ -94,7 +94,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
-        m_SeparatorLine.borderColor = Theme().FilePanelsHeaderSeparatorColor();
+        m_SeparatorLine.borderColor = CurrentTheme().FilePanelsHeaderSeparatorColor();
         [self addSubview:m_SeparatorLine];
    
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];

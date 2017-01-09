@@ -286,12 +286,25 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     }
 }
 
+- (BOOL) canDrawSubviewsIntoLayer
+{
+    return true;
+}
+
+- (BOOL) isOpaque
+{
+    return true;
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
-    if( m_Background  ) {
+    if( m_Background && m_Background != NSColor.clearColor  ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    }
+   else {
+        NSDrawWindowBackground(dirtyRect);
     }
 }
 

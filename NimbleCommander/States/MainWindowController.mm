@@ -57,7 +57,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (id)init {
     static const auto flags = NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|
-    NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask/*|NSWindowStyleMaskFullSizeContentView*/;
+    NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask|NSWindowStyleMaskFullSizeContentView;
     MainWindow* window = [[MainWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
                                                        styleMask:flags
                                                          backing:NSBackingStoreBuffered
@@ -76,9 +76,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
-    /*window.contentView.wantsLayer = YES;
+    window.contentView.wantsLayer = YES;
     window.appearance = CurrentTheme().Appearance();
-    [window invalidateShadow];*/
+    [window invalidateShadow];
     
     if(self = [super initWithWindow:window]) {
         self.shouldCascadeWindows = NO;
@@ -362,8 +362,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     self.window.contentView = self.topmostState.windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
+    NSLog(@"assigned called");
     if([self.topmostState respondsToSelector:@selector(Assigned)])
         [self.topmostState Assigned];
+    NSLog(@"assigned finished");            
 }
 
 - (OperationsController*) OperationsController
@@ -374,6 +376,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
     dispatch_assert_main_queue();
+    
+    NSLog(@"file view request");
+    
     if( !m_BigFileViewLoadingQ.Empty() )
         return;
     
@@ -383,11 +388,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             if( !m_Viewer )
             dispatch_sync(dispatch_get_main_queue(),[&]{
                 m_Viewer = [[MainWindowInternalViewerState alloc] init];
+                NSLog(@"file view allocated");
             });
-            if( [m_Viewer openFile:_filepath atVFS:_host] )
+            if( [m_Viewer openFile:_filepath atVFS:_host] ) {
+                NSLog(@"file openFile: finished");
                 dispatch_to_main_queue([=]{
                     [self PushNewWindowState:m_Viewer];
+                    NSLog(@"pushed new state");
                 });
+            }
         }
         else { // as a window
             if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:_filepath onVFS:_host] ) {

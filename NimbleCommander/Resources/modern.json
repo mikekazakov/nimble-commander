@@ -24,6 +24,7 @@
                                  }
     ],
     "filePanelsGeneralDropBorderColor": "@blueColor",
+    "filePanelsGeneralOverlayColor": "@whiteColor",    
     
     /* File Panels -> tabs settings */
     "filePanelsTabsFont": "@systemFont, 11",
@@ -51,7 +52,7 @@
     "filePanelsFooterActiveTextColor" : "@labelColor",
     "filePanelsFooterSeparatorsColor": "#8080806B",
     "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsFooterInactiveBackgroundColor": "@clearColor",
+    "filePanelsFooterInactiveBackgroundColor": "#E8E8E8",
     
     /* File Panels -> List settings */
     "filePanelsListFont": "@systemFont, 13",

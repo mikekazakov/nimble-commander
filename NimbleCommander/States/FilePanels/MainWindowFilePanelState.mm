@@ -31,6 +31,7 @@
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
 #include <NimbleCommander/Core/FeedbackManager.h>
@@ -163,6 +164,13 @@ static void SetupRatingOverlay(NSView *_background_view)
 - (BOOL)acceptsFirstResponder { return true; }
 - (NSToolbar*)toolbar { return m_ToolbarDelegate.toolbar; }
 - (NSView*) windowContentView { return self; }
+- (BOOL) isOpaque { return true; }
+- (BOOL) wantsUpdateLayer { return true; }
+
+- (void) updateLayer
+{
+    self.layer.backgroundColor = CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
+}
 
 - (void) loadInitialPanelData
 {
@@ -225,7 +233,7 @@ static void SetupRatingOverlay(NSView *_background_view)
     m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];
     
     NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
     m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:m_MainSplitView
@@ -244,8 +252,8 @@ static void SetupRatingOverlay(NSView *_background_view)
         [self addSubview:m_OverlappedTerminal->terminal positioned:NSWindowBelow relativeTo:nil];
         
         auto terminal = m_OverlappedTerminal->terminal;
-        views = NSDictionaryOfVariableBindings(terminal);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
+        views = NSDictionaryOfVariableBindings(terminal, m_SeparatorLine);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine]-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
     }
     else {
@@ -261,19 +269,18 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (void) Assigned
 {
-    if( m_LastResponder ) {
-        // if we already were active and have some focused view - restore it
-        
-/*        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SeparatorLine
+    NSLayoutConstraint *c = [NSLayoutConstraint constraintWithItem:m_SeparatorLine
                                                          attribute:NSLayoutAttributeTop
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:self.window.contentLayoutGuide
                                                          attribute:NSLayoutAttributeTop
                                                         multiplier:1
-                                                          constant:0]];
-        [self layoutSubtreeIfNeeded];*/
-        
-        
+                                                          constant:0];
+    c.active = true;
+    [self layoutSubtreeIfNeeded];
+
+    if( m_LastResponder ) {
+        // if we already were active and have some focused view - restore it
         [self.window makeFirstResponder:m_LastResponder];
         m_LastResponder = nil;
     }

@@ -160,14 +160,26 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 //    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) canDrawSubviewsIntoLayer
+{
+    return true;
+}
 
 - (void)drawRect:(NSRect)dirtyRect
 {
 //    const auto bounds = self.bounds;
-    if( m_Background  ) {
+    if( m_Background && m_Background != NSColor.clearColor ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    }
+    else {
+        NSDrawWindowBackground(dirtyRect);
     }
 }
 

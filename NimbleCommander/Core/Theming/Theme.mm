@@ -41,8 +41,8 @@ static string Load(const string &_filepath)
 static rapidjson::Document GetDocument()
 {
 //    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
-//    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
+    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
+//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
         fileSystemRepresentationSafe);
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
@@ -83,6 +83,7 @@ struct Theme::Internals
 {
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
+    NSColor *m_FilePanelsGeneralOverlayColor;
     
     NSFont  *m_FilePanelsHeaderFont;
     NSColor *m_FilePanelsHeaderTextColor;
@@ -142,6 +143,8 @@ Theme::Theme(void*_dont_call_me_exclamation_mark):
     
     I->m_FilePanelsGeneralDropBorderColor =
         ExtractColor(doc, "filePanelsGeneralDropBorderColor");
+    I->m_FilePanelsGeneralOverlayColor =
+        ExtractColor(doc, "filePanelsGeneralOverlayColor");
     
     I->m_FilePanelsListFont =
         ExtractFont(doc, "filePanelsListFont");
@@ -231,14 +234,14 @@ Theme::~Theme()
 
 ThemeAppearance Theme::AppearanceType() const noexcept
 {
-    return ThemeAppearance::Light;
+    return ThemeAppearance::Dark;
 }
 
 NSAppearance *Theme::Appearance() const noexcept
 {
      switch( AppearanceType() ) {
         case ThemeAppearance::Light:
-            return [NSAppearance appearanceNamed:NSAppearanceNameVibrantLight];
+            return [NSAppearance appearanceNamed:NSAppearanceNameAqua];
         case ThemeAppearance::Dark:
             return [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
      }
@@ -438,4 +441,9 @@ NSColor *Theme::FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcep
 NSColor *Theme::FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexcept
 {
     return I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsGeneralOverlayColor() const noexcept
+{
+    return I->m_FilePanelsGeneralOverlayColor;
 }

@@ -24,22 +24,54 @@
                                  }
     ],
     "filePanelsGeneralDropBorderColor": "@blueColor",
-    "filePanelsListFont": "@systemFont, 13",
-    "filePanelsListGridColor": "@clearColor",
-    "filePanelsListHeaderFont": "@systemFont, 11",
-    "filePanelsListHeaderBackgroundColor": "@headerColor",
-    "filePanelsListHeaderTextColor": "@headerTextColor",
-    "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
-    "filePanelsListSelectedInactiveRowBackgroundColor": "@darkGrayColor",
-    "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+    "filePanelsGeneralOverlayColor": "@blackColor",
+
+    /* File Panels -> tabs settings */
+    "filePanelsTabsFont": "@systemFont, 11",
+    "filePanelsTabsTextColor": "@controlTextColor",
+    "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#323232",
+    "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "#181818",
+    "filePanelsTabsSelectedNotKeyWndBackgroundColor": "#101010",
+    "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#3A3A3A",
+    "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#000000",
+    "filePanelsTabsRegularNotKeyWndBackgroundColor": "#000000",
+    "filePanelsTabsSeparatorColor": "#8080806B",
+    "filePanelsTabsPictogramColor": "@controlTextColor",
+    
+    /* File Panels -> header settings */
+    "filePanelsHeaderFont": "@labelFont, 13",
+    "filePanelsHeaderTextColor": "#777777",
+    "filePanelsHeaderActiveTextColor": "@labelColor",
+    "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsHeaderSeparatorColor": "#8080806B",
+    
+    /* File Panels -> footer settings */
     "filePanelsFooterFont": "@labelFont, 13",
     "filePanelsFooterTextColor" : "#777777",
     "filePanelsFooterActiveTextColor" : "@labelColor",
     "filePanelsFooterSeparatorsColor": "#282828",
     "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsFooterInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0"
+    
+    /* File Panels -> List settings */
+    "filePanelsListFont": "@systemFont, 13",
+    "filePanelsListGridColor": "@clearColor",
+    "filePanelsListHeaderFont": "@systemFont, 11",
+    "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
+    "filePanelsListHeaderTextColor": "#777777",
+    "filePanelsListHeaderSeparatorColor": "#8080806B",
+    "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
+    "filePanelsListSelectedInactiveRowBackgroundColor": "@darkGrayColor",
+    "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+    
+    /* File Panels -> Brief settings */
+    "filePanelsBriefFont": "@systemFont, 13",
+    "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+    "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
+    "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
+    "filePanelsBriefSelectedInactiveItemBackgroundColor": "@darkGrayColor"
+    
 }
 

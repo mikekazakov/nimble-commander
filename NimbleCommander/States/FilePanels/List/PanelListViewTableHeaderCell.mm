@@ -102,17 +102,16 @@ static void FillRect( NSRect rc, NSColor *c )
                             cellFrame.size.height-6),
                  Theme().FilePanelsListHeaderSeparatorColor()
                  );
-    
-//self.font = CurrentTheme().FilePanelsListHeaderFont();
 
-//    NSParagraphStyle
-
+    // this may be really bad - to set attributes on every call.
+    // might need to figure out a better way to customize header cells
     auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsListHeaderFont(),
                    NSForegroundColorAttributeName: CurrentTheme().FilePanelsListHeaderTextColor(),
                    NSParagraphStyleAttributeName: [&]()->NSParagraphStyle*{
                        NSMutableParagraphStyle *ps = NSParagraphStyle.
                         defaultParagraphStyle.mutableCopy;
                        ps.alignment = self.alignment;
+                       ps.lineBreakMode = NSLineBreakByClipping;
                        return ps;
                    }()
                    };
@@ -121,9 +120,15 @@ static void FillRect( NSRect rc, NSColor *c )
     
     auto trc = [self drawingRectForBounds:cellFrame];
     if( self.alignment & NSTextAlignmentRight )
-        trc = NSInsetRect(trc, 4, 4);
+        trc = NSMakeRect(trc.origin.x,
+                         trc.origin.y + 4,
+                         trc.size.width - 4,
+                         trc.size.height - 8);
     else
-        trc = NSInsetRect(trc, 2, 4);
+        trc = NSMakeRect(trc.origin.x,
+                         trc.origin.y + 4,
+                         trc.size.width,
+                         trc.size.height - 8);
     [self drawInteriorWithFrame:trc inView:controlView];
 }
 

@@ -75,9 +75,9 @@
 - (NSColor*) selectedBackgroundColor
 {
     if( m_PanelActive )
-        return CurrentTheme().FilePanelsBriefSelectedActiveItemBackgroundColor() /*NSColor.blueColor*/  ;
+        return CurrentTheme().FilePanelsBriefSelectedActiveItemBackgroundColor();
     else
-        return CurrentTheme().FilePanelsBriefSelectedInactiveItemBackgroundColor() /*NSColor.lightGrayColor*/;
+        return CurrentTheme().FilePanelsBriefSelectedInactiveItemBackgroundColor();
 }
 
 - (PanelBriefView*)briefView

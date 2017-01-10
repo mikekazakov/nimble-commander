@@ -1156,20 +1156,19 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event
 {
-    if( _sorted_index < 0 )
-        return;
-    
-    const int current_cursor_pos = m_CursorPos;
-    const bool window_focused = self.window.isKeyWindow;
-    const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);
-    
     // any cursor movements or selection changes should be performed only in active window
+    const bool window_focused = self.window.isKeyWindow;
     if( window_focused ) {
-        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-        
         if( !self.active )
             [self.window makeFirstResponder:self];
         
+        if( _sorted_index < 0 )
+            return;
+
+        const int current_cursor_pos = m_CursorPos;
+        const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);
+        const auto modifier_flags = _event.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    
         // Select range of items with shift+click.
         // If clicked item is selected, then deselect the range instead.
         if( modifier_flags & NSShiftKeyMask )

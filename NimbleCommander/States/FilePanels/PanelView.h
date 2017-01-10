@@ -86,7 +86,8 @@ struct PanelViewLayout;
 
 /*
  * PanelView implementation hooks.
- * Later: add hit-test info flags here
+ * Later: add hit-test info flags here.
+ * _sorted_index==-1 means no specific item, i.e. free view area.
  */
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event;
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event;

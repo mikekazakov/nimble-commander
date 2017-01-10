@@ -49,8 +49,14 @@
         [pv keyDown:event];
 }
 
+- (BOOL)acceptsFirstMouse:(nullable NSEvent *)event
+{
+    return false;
+}
+
 - (void)mouseDown:(NSEvent *)event
 {
+    [self.panelView panelItem:-1 mouseDown:event];
 }
 
 - (void)mouseUp:(NSEvent *)event

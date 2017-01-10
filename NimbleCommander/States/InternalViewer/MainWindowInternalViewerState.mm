@@ -89,7 +89,7 @@
 
 - (void) Assigned
 {
-    const auto v = [self view];
+    const auto v = self.view;
     m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:self.embeddedFileView
                                                          attribute:NSLayoutAttributeTop
                                                          relatedBy:NSLayoutRelationEqual
@@ -105,6 +105,7 @@
     
     [m_Controller show];
     v.window.title = m_Controller.verboseTitle;
+    [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView];
 //    [self.window makeFirstResponder:m_View];
 //    [self UpdateTitle];
     GoogleAnalytics::Instance().PostScreenView("File Viewer State");

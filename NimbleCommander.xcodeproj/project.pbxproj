@@ -574,6 +574,7 @@
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
 		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
+		CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
@@ -746,7 +747,6 @@
 		CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
 		CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
 		CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
-		CFDAC2F01DFD152C0039A104 /* MMTabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EC1DFD152C0039A104 /* MMTabBarStyle.mm */; };
 		CFDAC2F31DFD16550039A104 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
 		CFDAC2F61DFD16DF0039A104 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */; };
 		CFDAC2F81DFD17520039A104 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F71DFD17520039A104 /* Common.mm */; };
@@ -771,8 +771,6 @@
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
-		CFF695691E2094B90069EEA4 /* MMTabBarView.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFF695621E2093B30069EEA4 /* MMTabBarView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CFF6956D1E2096780069EEA4 /* MMTabBarView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF695621E2093B30069EEA4 /* MMTabBarView.framework */; };
 		CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
 		CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
@@ -850,26 +848,19 @@
 			remoteGlobalIDString = CFA539591D433E2A00C562A7;
 			remoteInfo = "NimbleCommander NonMAS CI";
 		};
+		CFACF9D01E24AAD800FD6AB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFACF9BA1E24AAB800FD6AB6;
+			remoteInfo = MMTabBarViewLib;
+		};
 		CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CFD62B721C99C19A0021EE7F;
 			remoteInfo = Habanero;
-		};
-		CFF695611E2093B30069EEA4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFF6955D1E2093B30069EEA4 /* MMTabBarView.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 06DB23A61609F5830071BDA0;
-			remoteInfo = MMTabBarView;
-		};
-		CFF6956A1E2094B90069EEA4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFF6955D1E2093B30069EEA4 /* MMTabBarView.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 06DB23A51609F5820071BDA0;
-			remoteInfo = MMTabBarView;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -881,7 +872,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */,
-				CFF695691E2094B90069EEA4 /* MMTabBarView.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1273,6 +1263,7 @@
 		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
+		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
@@ -1494,8 +1485,6 @@
 		CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilePanelOverlappedTerminal.mm; path = NimbleCommander/States/FilePanels/Views/FilePanelOverlappedTerminal.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2E91DFD152C0039A104 /* FilePanelsTabbedHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilePanelsTabbedHolder.h; path = NimbleCommander/States/FilePanels/Views/FilePanelsTabbedHolder.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilePanelsTabbedHolder.mm; path = NimbleCommander/States/FilePanels/Views/FilePanelsTabbedHolder.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2EB1DFD152C0039A104 /* MMTabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/MMTabBarStyle.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2EC1DFD152C0039A104 /* MMTabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MMTabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/MMTabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+Migration.h"; path = "NimbleCommander/Bootstrap/AppDelegate+Migration.h"; sourceTree = SOURCE_ROOT; };
 		CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+Migration.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+Migration.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC2F41DFD16DF0039A104 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWndGoToButton.h; path = NimbleCommander/States/FilePanels/Views/MainWndGoToButton.h; sourceTree = SOURCE_ROOT; };
@@ -1522,7 +1511,6 @@
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
-		CFF6955D1E2093B30069EEA4 /* MMTabBarView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarView.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarView.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
 		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1622,7 +1610,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF6956D1E2096780069EEA4 /* MMTabBarView.framework in Frameworks */,
 				CFB8CDBD1D82BFAD007B1142 /* libssh2.a in Frameworks */,
 				CF811A921D8262BE001F9E7F /* libcrypto.a in Frameworks */,
 				CF811A931D8262BE001F9E7F /* libssl.a in Frameworks */,
@@ -1633,6 +1620,7 @@
 				CF69CFAA1DA201B000992B84 /* libRoutedIO.a in Frameworks */,
 				CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */,
 				CFD62BBA1C99C40F0021EE7F /* libHabanero.a in Frameworks */,
+				CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */,
 				CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */,
 				CF9066C119AB78FB001DC687 /* libcurl.a in Frameworks */,
 				CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */,
@@ -1922,8 +1910,6 @@
 				CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */,
 				CFDAC2E91DFD152C0039A104 /* FilePanelsTabbedHolder.h */,
 				CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */,
-				CFDAC2EB1DFD152C0039A104 /* MMTabBarStyle.h */,
-				CFDAC2EC1DFD152C0039A104 /* MMTabBarStyle.mm */,
 				CFDAC2DC1DFD137F0039A104 /* QuickPreview.h */,
 				CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */,
 				CFDAC2D91DFD12EF0039A104 /* BriefSystemOverview.h */,
@@ -2378,6 +2364,14 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		CFACF9CD1E24AAD800FD6AB6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
 			isa = PBXGroup;
 			children = (
@@ -2625,7 +2619,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
-				CFF6955D1E2093B30069EEA4 /* MMTabBarView.xcodeproj */,
+				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */,
 				CFB517F91BDF53C1000AAE89 /* LLVM */,
 				CFA3D7C319625F63006A30A1 /* gtm */,
@@ -2674,14 +2668,6 @@
 				CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */,
 			);
 			name = DisclosureViewController;
-			sourceTree = "<group>";
-		};
-		CFF6955E1E2093B30069EEA4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CFF695621E2093B30069EEA4 /* MMTabBarView.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CFF6F3A31A1356F700011177 /* NC Pro MAS */ = {
@@ -2767,7 +2753,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFF6956B1E2094B90069EEA4 /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander NonMAS";
 			productName = Directories;
@@ -2851,8 +2836,8 @@
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
 				{
-					ProductGroup = CFF6955E1E2093B30069EEA4 /* Products */;
-					ProjectRef = CFF6955D1E2093B30069EEA4 /* MMTabBarView.xcodeproj */;
+					ProductGroup = CFACF9CD1E24AAD800FD6AB6 /* Products */;
+					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
 				{
 					ProductGroup = CF69CF971DA2003C00992B84 /* Products */;
@@ -2907,18 +2892,18 @@
 			remoteRef = CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMMTabBarViewLib.a;
+			remoteRef = CFACF9D01E24AAD800FD6AB6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CFD62B831C99C1CA0021EE7F /* libHabanero.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libHabanero.a;
 			remoteRef = CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CFF695621E2093B30069EEA4 /* MMTabBarView.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = MMTabBarView.framework;
-			remoteRef = CFF695611E2093B30069EEA4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -3632,7 +3617,6 @@
 				CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */,
 				CF1E3D2A1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
-				CFDAC2F01DFD152C0039A104 /* MMTabBarStyle.mm in Sources */,
 				CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */,
 				CFDAC2141DFBBD110039A104 /* PanelView.mm in Sources */,
 				CFDAC2991DFBF9260039A104 /* TermTask.cpp in Sources */,
@@ -3746,11 +3730,6 @@
 			isa = PBXTargetDependency;
 			target = CFA539591D433E2A00C562A7 /* NimbleCommander NonMAS CI */;
 			targetProxy = CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */;
-		};
-		CFF6956B1E2094B90069EEA4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = MMTabBarView;
-			targetProxy = CFF6956A1E2094B90069EEA4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

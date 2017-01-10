@@ -11,7 +11,6 @@
 #include "FilePanelsTabbedHolder.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
-#include "MMTabBarStyle.h"
 #include "TabBarStyle.h"
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
@@ -44,7 +43,6 @@
 {
     static once_flag once;
     call_once(once, []{
-        [MMTabBarView registerTabStyleClass:MMTabBarStyle.class];
         [MMTabBarView registerTabStyleClass:TabBarStyle.class];
     });
     
@@ -85,7 +83,6 @@
         m_TabBar.buttonMinWidth = 100;
         m_TabBar.buttonMaxWidth = 2000;
         m_TabBar.buttonOptimumWidth = 2000;
-//        [m_TabBar setStyleNamed:@"Files"];
         [m_TabBar setStyleNamed:@"NC"];
         [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
                                                              attribute:NSLayoutAttributeWidth

@@ -8,6 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../../NimbleCommander/States/MainWindowController.h"
 #include "../../NimbleCommander/Core/ActionsShortcutsManager.h"
 #include "../../NimbleCommander/Bootstrap/Config.h"
@@ -60,6 +61,27 @@ static const auto g_CustomPath = "terminal.customShellPath";
     return self;
 }
 
+- (BOOL) canDrawSubviewsIntoLayer
+{
+    return true;
+}
+
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) wantsUpdateLayer
+{
+    return true;
+}
+
+- (void) updateLayer
+{
+    // TODO: change this to some separate value:
+    self.layer.backgroundColor = CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
+}
+
 - (NSView*) windowContentView
 {
     return self;
@@ -94,13 +116,6 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_TopLayoutConstraint.active = true;
     [self layoutSubtreeIfNeeded];
 
-    // need right CWD here
-    if( m_Task->State() == TermShellTask::TaskState::Inactive ||
-        m_Task->State() == TermShellTask::TaskState::Dead ) {
-        m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
-        m_Task->Launch( m_InitalWD.c_str() );
-    }
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
     
@@ -131,6 +146,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
     });
     
 #pragma clang diagnostic pop
+    
+    // need right CWD here
+    if( m_Task->State() == TermShellTask::TaskState::Inactive ||
+        m_Task->State() == TermShellTask::TaskState::Dead ) {
+        m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
+        m_Task->Launch( m_InitalWD.c_str() );
+    }
+
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self UpdateTitle];

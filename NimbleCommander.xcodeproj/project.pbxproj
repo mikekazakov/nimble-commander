@@ -1805,13 +1805,6 @@
 			name = RHPreferences;
 			sourceTree = "<group>";
 		};
-		CF0A40091B57E138002A092B /* TerminalCore */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = TerminalCore;
-			sourceTree = "<group>";
-		};
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -2578,7 +2571,6 @@
 				CFDAC3011DFD20810039A104 /* GeneralUI */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
 				CF876D171D51E00B009C0CCE /* States */,
-				CF0A40091B57E138002A092B /* TerminalCore */,
 				CF876D151D51DFAE009C0CCE /* Viewer */,
 			);
 			name = Source;

@@ -9,10 +9,6 @@
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "Theme.h"
 
-//#include "../PanelViewPresentationItemsColoringFilter.h"
-
-static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
-
 const Theme &CurrentTheme()
 {
 // get ThemesManager instance
@@ -40,10 +36,14 @@ static string Load(const string &_filepath)
 
 static rapidjson::Document GetDocument()
 {
-//    string json = Load([NSBundle.mainBundle pathForResource:@"modern" ofType:@"json"].
-    string json = Load([NSBundle.mainBundle pathForResource:@"dark" ofType:@"json"].
-//    string json = Load([NSBundle.mainBundle pathForResource:@"classic" ofType:@"json"].
-        fileSystemRepresentationSafe);
+    const auto theme = GlobalConfig().GetString("general.theme").value_or("modern");
+    const auto path = [NSBundle.mainBundle pathForResource:[NSString stringWithUTF8StdString:theme]
+                                                    ofType:@"json"];
+    // todo: add option to look in Application Support
+
+    const string json = Load(path.fileSystemRepresentationSafe);
+
+    
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
     
@@ -81,6 +81,9 @@ static NSFont *ExtractFont( const rapidjson::Document &_doc, const char *_path)
 
 struct Theme::Internals
 {
+    ThemeAppearance m_ThemeAppearanceType;
+    NSAppearance *m_Appearance;
+
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
     NSColor *m_FilePanelsGeneralOverlayColor;
@@ -132,6 +135,25 @@ Theme::Theme(void*_dont_call_me_exclamation_mark):
     I( make_unique<Internals>() )
 {
     const auto doc = GetDocument();
+    
+    I->m_ThemeAppearanceType = [&]{
+        auto cr = doc.FindMember("themeAppearance");
+        if( cr == doc.MemberEnd() )
+            return ThemeAppearance::Light;
+        
+        if( !cr->value.IsString() )
+            return ThemeAppearance::Light;
+        
+        if( "aqua"s == cr->value.GetString() )
+            return ThemeAppearance::Light;
+        if( "dark"s == cr->value.GetString() )
+            return ThemeAppearance::Dark;
+    
+        return ThemeAppearance::Light;
+    }();
+    I->m_Appearance = I->m_ThemeAppearanceType == ThemeAppearance::Light ?
+        [NSAppearance appearanceNamed:NSAppearanceNameAqua] :
+        [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
 
     auto cr = &doc.FindMember("filePanelsColoringRules_v1")->value;
     if( cr->IsArray() )
@@ -234,17 +256,12 @@ Theme::~Theme()
 
 ThemeAppearance Theme::AppearanceType() const noexcept
 {
-    return ThemeAppearance::Dark;
+    return I->m_ThemeAppearanceType;
 }
 
 NSAppearance *Theme::Appearance() const noexcept
 {
-     switch( AppearanceType() ) {
-        case ThemeAppearance::Light:
-            return [NSAppearance appearanceNamed:NSAppearanceNameAqua];
-        case ThemeAppearance::Dark:
-            return [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
-     }
+    return I->m_Appearance;
 }
 
 NSFont *Theme::FilePanelsListFont() const noexcept
@@ -277,8 +294,7 @@ NSColor *Theme::FilePanelsGeneralDropBorderColor() const noexcept
     return I->m_FilePanelsGeneralDropBorderColor;
 }
 
-const vector<PanelViewPresentationItemsColoringRule>& Theme::FilePanelsItemsColoringRules()
-const noexcept
+const vector<Theme::ColoringRules>& Theme::FilePanelsItemsColoringRules() const noexcept
 {
     return I->m_ColoringRules;
 }

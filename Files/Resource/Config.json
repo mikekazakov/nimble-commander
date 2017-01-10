@@ -11,6 +11,11 @@
         "skin": 1,
         
         /**
+        * Very temporarily! classic, modern, dark.
+        */
+        "theme": "dark",
+        
+        /**
          * Show/hide toolbar
          */
         "showToolbar": true,

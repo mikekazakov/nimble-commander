@@ -1,6 +1,6 @@
 {
-
-  "filePanelsColoringRules_v1": [
+    "themeAppearance": "aqua",
+    "filePanelsColoringRules_v1": [
                                  {
                                  "name": "selected",
                                     "regular": "#FF0000",

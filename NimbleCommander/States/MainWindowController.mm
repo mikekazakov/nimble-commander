@@ -70,9 +70,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     window.title = @"";
     if(![window setFrameUsingName:NSStringFromClass(self.class)])
         [window center];
-//titlebarAppearsTransparent
-
-//    self.window.titlebarAppearsTransparent = true;
+    if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
+        window.tabbingMode = NSWindowTabbingModeDisallowed;
 
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];

@@ -253,7 +253,7 @@ static void SetupRatingOverlay(NSView *_background_view)
         
         auto terminal = m_OverlappedTerminal->terminal;
         views = NSDictionaryOfVariableBindings(terminal, m_SeparatorLine);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine]-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(0)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
     }
     else {

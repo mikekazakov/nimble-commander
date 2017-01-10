@@ -12,6 +12,11 @@
 
 @implementation MainWindow
 
++ (BOOL) allowsAutomaticWindowTabbing
+{
+    return false;
+}
+
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     auto tag = item.tag;

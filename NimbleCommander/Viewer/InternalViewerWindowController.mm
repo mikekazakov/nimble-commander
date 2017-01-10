@@ -7,6 +7,7 @@
 //
 
 #include "../Bootstrap/AppDelegate.h"
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "BigFileView.h"
 #include "InternalViewerController.h"
@@ -61,6 +62,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     self.window.toolbar = self.internalViewerToolbar;
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.internalViewerToolbarSearchField;

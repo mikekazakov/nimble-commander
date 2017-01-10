@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
 #include "VFSListWindowController.h"
 
@@ -33,6 +34,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     __weak VFSListWindowController *weak_self = self;
     auto cb = [=]{

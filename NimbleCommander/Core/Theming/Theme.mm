@@ -43,17 +43,9 @@ static rapidjson::Document GetDocument()
                  ofType:@"json"
     ];
     const auto supp_path = AppDelegate.me.supportDirectory + theme + ".json";
-    
     const string json = access(supp_path.c_str(), R_OK) == 0 ?
         Load(supp_path) :
         Load(bundle_path.fileSystemRepresentationSafe);
-    
-    // todo: add option to look in Application Support
-    
-//@property (nonatomic, readonly) const string& supportDirectory;
-
-//    const string json = Load(path.fileSystemRepresentationSafe);
-
     
     rapidjson::Document doc;
     rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );

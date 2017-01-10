@@ -27,6 +27,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     unique_ptr<TermShellTask>   m_Task;
     unique_ptr<TermParser>      m_Parser;
     string                      m_InitalWD;
+    NSLayoutConstraint         *m_TopLayoutConstraint;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -40,7 +41,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
 
         m_Task = make_unique<TermShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
@@ -83,6 +84,16 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (void) Assigned
 {
+    m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:m_TermScrollView
+                                                         attribute:NSLayoutAttributeTop
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self.window.contentLayoutGuide
+                                                         attribute:NSLayoutAttributeTop
+                                                        multiplier:1
+                                                          constant:0];
+    m_TopLayoutConstraint.active = true;
+    [self layoutSubtreeIfNeeded];
+
     // need right CWD here
     if( m_Task->State() == TermShellTask::TaskState::Inactive ||
         m_Task->State() == TermShellTask::TaskState::Dead ) {
@@ -126,6 +137,10 @@ static const auto g_CustomPath = "terminal.customShellPath";
     GoogleAnalytics::Instance().PostScreenView("Terminal State");
 }
 
+- (void)Resigned
+{
+    m_TopLayoutConstraint.active = false;
+}
 
 - (void) UpdateTitle
 {

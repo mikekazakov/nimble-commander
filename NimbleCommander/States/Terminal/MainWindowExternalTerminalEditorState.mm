@@ -23,6 +23,7 @@
     path                        m_BinaryPath;
     string                      m_Params;
     string                      m_FileTitle;
+    NSLayoutConstraint         *m_TopLayoutConstraint;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
@@ -40,7 +41,7 @@
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         
         
         
@@ -99,10 +100,25 @@
 
 - (void) Assigned
 {
+    m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:m_TermScrollView
+                                                         attribute:NSLayoutAttributeTop
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self.window.contentLayoutGuide
+                                                         attribute:NSLayoutAttributeTop
+                                                        multiplier:1
+                                                          constant:0];
+    m_TopLayoutConstraint.active = true;
+    [self layoutSubtreeIfNeeded];
+
     m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];
+}
+
+- (void)Resigned
+{
+    m_TopLayoutConstraint.active = false;
 }
 
 - (void) updateTitle

@@ -79,7 +79,10 @@ BigFileViewHex::BigFileViewHex(BigFileViewDataBackend* _data, BigFileView* _view
     m_LeftInset = 5;
     
     GrabFontGeometry();
+    
+//    NSLog(@"OnBufferDecoded() started");
     OnBufferDecoded();
+//    NSLog(@"OnBufferDecoded() finished");
     
     m_RowsOffset = 0;
     

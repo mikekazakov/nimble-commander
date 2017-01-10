@@ -243,6 +243,7 @@ const static double g_BorderWidth = 1.0;
         if(stat.likely_utf16_le)        encoding = encodings::ENCODING_UTF16LE;
         else if(stat.likely_utf16_be)   encoding = encodings::ENCODING_UTF16BE;
         else if(stat.can_be_utf8)       encoding = encodings::ENCODING_UTF8;
+        else                            encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
     }
     
     BigFileViewModes mode = stat.is_binary ? BigFileViewModes::Hex : BigFileViewModes::Text;
@@ -255,7 +256,9 @@ const static double g_BorderWidth = 1.0;
     assert(_encoding != encodings::ENCODING_INVALID);
     
     m_File = _file;
+//    NSLog(@"make_unique<BigFileViewDataBackend>(*m_File, _encoding) started");
     m_Data = make_unique<BigFileViewDataBackend>(*m_File, _encoding);
+//    NSLog(@"make_unique<BigFileViewDataBackend>(*m_File, _encoding) finished");
     BigFileView* __weak weak_self = self;
     m_Data->SetOnDecoded(^{
         if(BigFileView *sself = weak_self) {
@@ -264,7 +267,12 @@ const static double g_BorderWidth = 1.0;
         }
     });
     
+//    NSLog(@"self.mode = _mode started");
     self.mode = _mode;
+//    NSLog(@"self.mode = _mode finished");
+    
+    [self willChangeValueForKey:@"encoding"];
+    [self didChangeValueForKey:@"encoding"];
 }
 
 - (void) detachFromFile
@@ -490,10 +498,14 @@ const static double g_BorderWidth = 1.0;
     switch (_mode)
     {
         case BigFileViewModes::Text:
+//            NSLog( @"m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self) started" );
             m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
+//            NSLog( @"m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self) finished" );
             break;
         case BigFileViewModes::Hex:
+//            NSLog( @"m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self) started" );
             m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
+//            NSLog( @"m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self) finished" );
             break;
         case BigFileViewModes::Preview:
         {

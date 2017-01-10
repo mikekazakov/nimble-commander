@@ -128,7 +128,8 @@ static int CountDirEntries( const int _dir_fd )
 }
 
 // will not set .filename field
-static int ReadSingleEntryAttributesByPath(const char *_path,
+static int ReadSingleEntryAttributesByPath(PosixIOInterface &_io,
+                                           const char *_path,
                                            const function<void(const EntryAttributesCallbackParams &_params)> &_cb_param)
 {
     struct Attrs {
@@ -168,7 +169,14 @@ static int ReadSingleEntryAttributesByPath(const char *_path,
     attr_list.fileattr    = ATTR_FILE_TOTALSIZE;
     
 
-    if( getattrlist( _path, &attr_list, &attrs, sizeof(attrs), 0) != 0 )
+    const int fd = _io.open(_path, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+    if( fd < 0 )
+        return errno;
+    auto close_fd = at_scope_end([fd]{
+        close(fd);
+    });
+
+    if( fgetattrlist( fd, &attr_list, &attrs, sizeof(attrs), 0) != 0 )
         return errno;
     
     EntryAttributesCallbackParams params;
@@ -223,9 +231,67 @@ static int ReadSingleEntryAttributesByPath(const char *_path,
     return 0;
 }
 
-static int ReadDirAttributesBulk(const int _dir_fd,
-                                 const function<void(int _fetched_now)> &_cb_fetch,
-                                 const function<void(const EntryAttributesCallbackParams &_params)> &_cb_param)
+// assuming this will be called when Admin Mode is on
+static int ReadDirAttributesStat(
+    const int _dir_fd,
+    const char *_dir_path,
+    const function<void(int _fetched_now)> &_cb_fetch,
+    const function<void(const EntryAttributesCallbackParams &_params)> &_cb_param)
+{
+    // initial directory lookup
+    vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
+    if( auto dirp = fdopendir( dup(_dir_fd) ) ) {
+        auto close_dir = at_scope_end([=]{ closedir(dirp); });
+        static const auto dirents_reserve_amount = 64;
+        dirents.reserve( dirents_reserve_amount );
+        while( auto entp = ::_readdir_unlocked(dirp, 1) ) {
+            if(entp->d_ino == 0 ||          // apple's documentation suggest to skip such files
+               strisdot(entp->d_name) ||    // do not process self entry
+               strisdotdot(entp->d_name) )  // do not process parent entry
+                continue;
+            
+            dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
+        }
+    }
+    else
+        return errno;
+
+    // call stat() for every directory entry
+    auto &io = RoutedIO::Default;
+    for( auto &e: dirents ) {
+        // need absolute paths
+        const string entry_path = _dir_path + get<0>(e);
+        
+        // stat the file
+        struct stat stat_buffer;
+        if( io.lstat(entry_path.c_str(), &stat_buffer) == 0 ) {
+            EntryAttributesCallbackParams params;
+            params.filename = get<0>(e).c_str();
+            params.crt_time = stat_buffer.st_birthtimespec.tv_sec;
+            params.mod_time = stat_buffer.st_mtimespec.tv_sec;
+            params.chg_time = stat_buffer.st_mtimespec.tv_sec;
+            params.acc_time = stat_buffer.st_ctimespec.tv_sec;
+            params.add_time = -1;
+            params.uid      = stat_buffer.st_uid;
+            params.gid      = stat_buffer.st_gid;
+            params.mode     = stat_buffer.st_mode;
+            params.dev      = stat_buffer.st_dev;
+            params.inode    = stat_buffer.st_ino;
+            params.flags    = stat_buffer.st_flags;
+            params.size     = stat_buffer.st_size;
+            
+            _cb_fetch(1);
+            _cb_param(params);
+        }
+    }
+    
+    return 0;
+}
+
+static int ReadDirAttributesBulk(
+    const int _dir_fd,
+    const function<void(int _fetched_now)> &_cb_fetch,
+    const function<void(const EntryAttributesCallbackParams &_params)> &_cb_param)
 {
     struct Attrs {
         uint32_t          length;
@@ -272,7 +338,11 @@ static int ReadDirAttributesBulk(const int _dir_fd,
     char attr_buf[65536];
     EntryAttributesCallbackParams params;
     while( true ) {
-        const int retcount = getattrlistbulk( _dir_fd, &attr_list, &attr_buf[0], sizeof(attr_buf), 0 );
+        const int retcount = getattrlistbulk(_dir_fd,
+                                             &attr_list,
+                                             &attr_buf[0],
+                                             sizeof(attr_buf),
+                                             0);
         if( retcount < 0 )
             return errno;
         else if (retcount == 0)
@@ -394,6 +464,7 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) &&
                                      strcmp(_path, "/") != 0;
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
+    const bool is_native_io = !io.isrouted();
     const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
         return VFSError::FromErrno();
@@ -424,7 +495,6 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     listing_source.symlinks.reset( variable_container<>::type::sparse );
     listing_source.display_filenames.reset( variable_container<>::type::sparse );
     
-    
     auto resize_dense = [&](int _sz) {
         listing_source.filenames.resize( _sz );
         listing_source.inodes.resize( _sz );
@@ -443,12 +513,12 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     auto fill = [&]( int _n, const EntryAttributesCallbackParams &_params ) {
         listing_source.filenames[_n]     = _params.filename;
         listing_source.inodes[_n]        = _params.inode;
-        listing_source.unix_types[_n]    = IFTODT(_params.mode); /// !!!
+        listing_source.unix_types[_n]    = IFTODT(_params.mode);
         listing_source.atimes[_n]        = _params.acc_time;
         listing_source.mtimes[_n]        = _params.mod_time;
         listing_source.ctimes[_n]        = _params.chg_time;
         listing_source.btimes[_n]        = _params.crt_time;
-        listing_source.unix_modes[_n]    = _params.mode; // !!!
+        listing_source.unix_modes[_n]    = _params.mode;
         listing_source.unix_flags[_n]    = _params.flags;
         listing_source.uids[_n]          = _params.uid;
         listing_source.gids[_n]          = _params.gid;
@@ -468,40 +538,48 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     
     resize_dense( approx_entries_count );
     
-    
-//    static int ReadSingleEntryAttributesByPath(const char *_path,
-//                                               const function<void(const EntryAttributesCallbackParams &_params)> &_cb_param)
-    int index = 0;
+    int next_entry_index = 0;
     auto cb_param = [&](const EntryAttributesCallbackParams &_params){
-        fill(index++, _params);
+        fill(next_entry_index++, _params);
     };
     
     if( need_to_add_dot_dot ) {
-//        index++;
-        
-        ReadSingleEntryAttributesByPath( _path, cb_param );
+        ReadSingleEntryAttributesByPath( io, _path, cb_param );
         listing_source.filenames[0] = "..";
     }
     
     auto cb_fetch = [&](int _fetched_now){
-        if( index + _fetched_now > approx_entries_count ) // check if final entries count is more than approximate
-            resize_dense( index + _fetched_now );
+        // check if final entries count is more than previous approximate
+        if( next_entry_index + _fetched_now > approx_entries_count )
+            resize_dense( next_entry_index + _fetched_now );
     };
-    
-    const int ret = ReadDirAttributesBulk( fd, cb_fetch, cb_param );
+
+    // when Admin Mode is on - we use different fetch route
+    const int ret = is_native_io ?
+        ReadDirAttributesBulk( fd, cb_fetch, cb_param ) :
+        ReadDirAttributesStat( fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
     if( ret != 0 )
         return VFSError::FromErrno(ret);
     
-    // check if final entries count is less than approximate
-    if( index < approx_entries_count )
-        resize_dense( index );
+    if( _cancel_checker && _cancel_checker() ) VFSError::Cancelled;
     
-    // a little more work with symlinks, if any
-    // also fetching DisplayNames if necessary
-    for( int n = 0; n < index; ++n ){
+    // check if final entries count is less than approximate
+    if( next_entry_index < approx_entries_count )
+        resize_dense( next_entry_index );
+    
+    // a little more work with symlinks, if there are any
+    for( int n = 0; n < next_entry_index; ++n )
         if( listing_source.unix_types[n] == DT_LNK ) {
+            // read an actual link path
             char linkpath[MAXPATHLEN];
-            ssize_t sz = readlinkat(fd, listing_source.filenames[n].c_str(), linkpath, MAXPATHLEN);
+            const ssize_t sz = is_native_io ?
+                readlinkat(fd,
+                           listing_source.filenames[n].c_str(),
+                           linkpath,
+                           MAXPATHLEN) :
+                io.readlink((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
+                            linkpath,
+                            MAXPATHLEN);
             if( sz != -1 ) {
                 linkpath[sz] = 0;
                 listing_source.symlinks.insert(n, linkpath);
@@ -509,7 +587,14 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
             
             // stat the target file
             struct stat stat_buffer;
-            if( fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0) == 0 ) {
+            const auto stat_ret = is_native_io ?
+                fstatat(fd,
+                        listing_source.filenames[n].c_str(),
+                        &stat_buffer,
+                        0) :
+                io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
+                        &stat_buffer);
+            if( stat_ret == 0 ) {
                 listing_source.unix_modes[n]    = stat_buffer.st_mode;
                 listing_source.unix_flags[n]    = stat_buffer.st_flags;
                 listing_source.uids[n]          = stat_buffer.st_uid;
@@ -517,10 +602,6 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
                 listing_source.sizes[n]         = stat_buffer.st_size;
             }
         }
-
-        
-    
-    }
 
     _target = VFSListing::Build(move(listing_source));
     
@@ -819,7 +900,7 @@ cleanup:
 
 
 ssize_t VFSNativeHost::CalculateDirectorySize(const char *_path,
-                                              VFSCancelChecker _cancel_checker                                              )
+                                              VFSCancelChecker _cancel_checker)
 {
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;

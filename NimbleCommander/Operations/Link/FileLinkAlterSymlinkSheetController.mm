@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FileLinkAlterSymlinkSheetController.h"
 
 @interface FileLinkAlterSymlinkSheetController ()
@@ -30,6 +31,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     self.Text.stringValue = [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", [NSString stringWithUTF8StdString:m_LinkPath]];
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];

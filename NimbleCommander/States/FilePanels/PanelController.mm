@@ -881,6 +881,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
             panel::GenericCursorPersistance pers(m_View, m_Data);
             m_Data.DecodeSortingOptions( _state[g_RestorationSortingKey] );
             [m_View dataUpdated];
+            [m_View dataSortingHasChanged];
             pers.Restore();
         }
         

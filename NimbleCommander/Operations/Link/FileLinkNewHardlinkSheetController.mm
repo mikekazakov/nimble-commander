@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FileLinkNewHardlinkSheetController.h"
 
 @interface FileLinkNewHardlinkSheetController ()
@@ -30,7 +31,8 @@
 
 - (void)windowDidLoad
 {
-    [super windowDidLoad];    
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
     [self.window makeFirstResponder:self.LinkName];
     GoogleAnalytics::Instance().PostScreenView("Hardlink Create");

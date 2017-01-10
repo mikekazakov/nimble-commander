@@ -573,6 +573,7 @@
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
+		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
@@ -1270,6 +1271,8 @@
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = NimbleCommander/Operations/Delete/JobTrash.mm; sourceTree = SOURCE_ROOT; };
 		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
+		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
+		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
@@ -2085,6 +2088,8 @@
 		CF5FE7FE1E149FF700CD83B4 /* Theming */ = {
 			isa = PBXGroup;
 			children = (
+				CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */,
+				CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */,
 				CF5FE8021E14A08500CD83B4 /* ThemesManager.h */,
 				CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */,
 				CF5FE7FF1E14A00C00CD83B4 /* Theme.h */,
@@ -3466,6 +3471,7 @@
 				CF56C2DE1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm in Sources */,
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
 				CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */,
+				CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */,
 				CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
 				CFDAC28F1DFBF9260039A104 /* MainWindowTerminalState.mm in Sources */,

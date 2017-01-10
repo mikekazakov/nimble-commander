@@ -10,6 +10,7 @@
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "CalculateChecksumSheetController.h"
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
@@ -143,6 +144,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     for(auto &i:g_Algos)
         [self.HashMethod addItemWithTitle:i.first];

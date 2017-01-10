@@ -10,6 +10,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "GoToFolderSheetController.h"
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
@@ -72,6 +73,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     if( auto last = StateConfig().GetString(g_StateGoToKey) )
         self.Text.stringValue = [NSString stringWithUTF8StdString:*last];

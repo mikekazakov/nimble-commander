@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FileLinkNewSymlinkSheetController.h"
 
 @interface FileLinkNewSymlinkSheetController()
@@ -31,6 +32,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     self.LinkPath.stringValue = [NSString stringWithUTF8StdString:m_LinkPath];
     [self.window makeFirstResponder:self.LinkPath];

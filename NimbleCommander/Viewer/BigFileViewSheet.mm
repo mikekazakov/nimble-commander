@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BigFileViewSheet.h"
 #include "InternalViewerController.h"
 
@@ -61,6 +62,9 @@
 
 - (void)windowDidLoad
 {
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+
     self.view.hasBorder = true;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 

@@ -9,6 +9,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../../../Files/3rd_party/DisclosureViewController/DisclosureViewController.h"
 #include "../../../NimbleCommander/Bootstrap/ActivationManager.h"
 #include "MassCopySheetController.h"
@@ -102,6 +103,7 @@ static string MakeCanonicPath(string _input)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     [self.DisclosedViewController toggleDisclosure:self];
     [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
     [self.StackView insertView:self.DisclosedViewController.view atIndex:0 inGravity:NSStackViewGravityBottom];

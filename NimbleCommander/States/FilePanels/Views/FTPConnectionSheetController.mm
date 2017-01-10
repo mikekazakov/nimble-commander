@@ -8,6 +8,7 @@
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FTPConnectionSheetController.h"
 
 @implementation FTPConnectionSheetController
@@ -19,6 +20,8 @@
 
 - (void) windowDidLoad
 {
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Connections = NetworkConnectionsManager::Instance().FTPConnectionsByMRU();
     
     if( !m_Connections.empty() ) {

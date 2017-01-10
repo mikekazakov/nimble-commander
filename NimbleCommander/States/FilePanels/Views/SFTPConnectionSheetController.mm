@@ -8,6 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "SFTPConnectionSheetController.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
@@ -38,6 +39,9 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 - (void) windowDidLoad
 {
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+
     if(!m_Connections.empty()) {
         self.saved.autoenablesItems = false;
         

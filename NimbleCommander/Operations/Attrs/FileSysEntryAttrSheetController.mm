@@ -12,6 +12,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FileSysEntryAttrSheetController.h"
 #include "FileSysAttrChangeOperationCommand.h"
 
@@ -373,6 +374,7 @@ static vector<group_info> LoadGroupsWithOD()
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     [self.StackView addView:self.StackViewTop inGravity:NSStackViewGravityTop];
     [self.StackView addView:self.StackViewMiddle inGravity:NSStackViewGravityCenter];

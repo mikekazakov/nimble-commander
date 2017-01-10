@@ -6,6 +6,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "Theme.h"
 
@@ -37,11 +38,21 @@ static string Load(const string &_filepath)
 static rapidjson::Document GetDocument()
 {
     const auto theme = GlobalConfig().GetString("general.theme").value_or("modern");
-    const auto path = [NSBundle.mainBundle pathForResource:[NSString stringWithUTF8StdString:theme]
-                                                    ofType:@"json"];
+    const auto bundle_path = [NSBundle.mainBundle
+        pathForResource:[NSString stringWithUTF8StdString:theme]
+                 ofType:@"json"
+    ];
+    const auto supp_path = AppDelegate.me.supportDirectory + theme + ".json";
+    
+    const string json = access(supp_path.c_str(), R_OK) == 0 ?
+        Load(supp_path) :
+        Load(bundle_path.fileSystemRepresentationSafe);
+    
     // todo: add option to look in Application Support
+    
+//@property (nonatomic, readonly) const string& supportDirectory;
 
-    const string json = Load(path.fileSystemRepresentationSafe);
+//    const string json = Load(path.fileSystemRepresentationSafe);
 
     
     rapidjson::Document doc;

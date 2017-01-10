@@ -22,6 +22,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FindFilesSheetController.h"
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
@@ -259,6 +260,8 @@ private:
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
     

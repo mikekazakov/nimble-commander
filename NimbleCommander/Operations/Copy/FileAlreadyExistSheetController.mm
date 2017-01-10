@@ -8,6 +8,7 @@
 
 #include <Carbon/Carbon.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <NimbleCommander/Operations/Operation.h>
 #include "DialogResults.h"
 #include "FileAlreadyExistSheetController.h"
@@ -100,6 +101,7 @@ static bool IsShiftPressed()
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     
     self.TargetFilename.stringValue = [NSString stringWithUTF8StdString:m_DestPath];
     

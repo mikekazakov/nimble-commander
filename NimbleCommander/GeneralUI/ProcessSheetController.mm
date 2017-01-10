@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "ProcessSheetController.h"
 
 static const nanoseconds g_ShowDelay = 150ms;
@@ -43,6 +44,13 @@ static const nanoseconds g_ShowDelay = 150ms;
     }
     return self;    
 }
+
+- (void) windowDidLoad
+{
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+}
+
 
 - (IBAction)OnCancel:(id)sender
 {

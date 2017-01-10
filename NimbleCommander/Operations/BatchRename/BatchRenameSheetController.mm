@@ -11,6 +11,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BatchRenameSheetController.h"
 #include "BatchRename.h"
 #include "BatchRenameSheetRangeSelectionPopoverController.h"
@@ -163,6 +164,8 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 }
 - (void)windowDidLoad {
     [super windowDidLoad];
+    
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     [self InsertStringIntoMask:@"[N].[E]"];
@@ -369,8 +372,11 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 - (IBAction)OnInsertMenu:(id)sender
 {
-    NSRect r = [self.window convertRectToScreen:self.InsertPlaceholderMenuButton.frame];
-    [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil atLocation:NSMakePoint(NSMaxX(r), NSMaxY(r)) inView:nil];
+    const auto r = self.InsertPlaceholderMenuButton.bounds;
+    [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil
+                                              atLocation:NSMakePoint(NSMaxX(r), NSMinY(r))
+                                                  inView:self.InsertPlaceholderMenuButton
+     ];
 }
 
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender

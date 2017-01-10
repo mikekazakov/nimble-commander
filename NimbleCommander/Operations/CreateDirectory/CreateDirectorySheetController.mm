@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "CreateDirectorySheetController.h"
 
 @interface CreateDirectorySheetController()
@@ -29,6 +30,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     [self.window makeFirstResponder:self.TextField];
     GoogleAnalytics::Instance().PostScreenView("Create Directory");
 }

@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FileDeletionSheetController.h"
 
 @interface FileDeletionSheetController()
@@ -46,6 +47,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     if( m_DefaultType == FileDeletionOperationType::MoveToTrash ) {
         self.primaryActionButton.title = NSLocalizedString(@"Move to Trash", "Menu item title in file deletion sheet");

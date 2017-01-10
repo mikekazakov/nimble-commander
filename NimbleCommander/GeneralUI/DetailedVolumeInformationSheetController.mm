@@ -10,6 +10,7 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "DetailedVolumeInformationSheetController.h"
 
 @interface DetailedVolumeInformationSheetController ()
@@ -61,6 +62,7 @@ static NSString* Bool2ToString(const bool b[2])
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     [self PopulateControls];
     

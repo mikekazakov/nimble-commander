@@ -431,7 +431,7 @@ DQ
                                                 <action selector="ToggleSortByName:" target="-1" id="871"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Sort by Extention" tag="13100" id="865">
+                                        <menuItem title="Sort by Extension" tag="13100" id="865">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="ToggleSortByExt:" target="-1" id="873"/>

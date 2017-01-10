@@ -190,7 +190,7 @@
 /* Class = "NSMenuItem"; title = "Sort by Name"; ObjectID = "864"; */
 "864.title" = "Сортировать по имени";
 
-/* Class = "NSMenuItem"; title = "Sort by Extention"; ObjectID = "865"; */
+/* Class = "NSMenuItem"; title = "Sort by Extension"; ObjectID = "865"; */
 "865.title" = "Сортировать по расширению";
 
 /* Class = "NSMenuItem"; title = "Sort by Modified Time"; ObjectID = "866"; */

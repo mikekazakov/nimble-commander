@@ -492,7 +492,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         if(_req.generation != m_Generation)
             return nullopt;
         
-        // 2nd - if we haven't built a real thumbnail - try an extention instead
+        // 2nd - if we haven't built a real thumbnail - try an extension instead
         if(_req.thumbnail == nil &&
            m_IconsMode >= IconMode::Icons &&
            CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.

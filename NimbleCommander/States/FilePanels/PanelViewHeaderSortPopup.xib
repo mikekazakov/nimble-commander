@@ -29,13 +29,13 @@
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="Kt3-AH-hEx"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Extention ↑" tag="3" indentationLevel="1" id="tzp-Uh-dub">
+                <menuItem title="Extension ↑" tag="3" indentationLevel="1" id="tzp-Uh-dub">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="nab-3h-kD5"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Extention ↓" tag="4" indentationLevel="1" id="eaf-hX-ZwB">
+                <menuItem title="Extension ↓" tag="4" indentationLevel="1" id="eaf-hX-ZwB">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="2Jm-oI-T92"/>

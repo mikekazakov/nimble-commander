@@ -112,6 +112,12 @@
     "terminalAnsiColorC": "#0000FF", // bright blue
     "terminalAnsiColorD": "#E500E5", // bright magenta
     "terminalAnsiColorE": "#00E5E5", // bright cyan
-    "terminalAnsiColorF": "#E5E5E5"  // bright white
+    "terminalAnsiColorF": "#E5E5E5", // bright white
+
+    /* Viewer Emulator */
+    "viewerFont": "Menlo-Regular, 13",
+    "viewerTextColor": "#000000",
+    "viewerSelectionColor": "#B4D6FC",
+    "viewerBackgroundColor": "#FFFFFF"
     
 }

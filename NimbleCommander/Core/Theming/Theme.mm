@@ -149,6 +149,10 @@ struct Theme::Internals
     NSColor *m_TerminalAnsiColorD;
     NSColor *m_TerminalAnsiColorE;
     NSColor *m_TerminalAnsiColorF;
+    NSFont  *m_ViewerFont;
+    NSColor *m_ViewerTextColor;
+    NSColor *m_ViewerSelectionColor;
+    NSColor *m_ViewerBackgroundColor;
 };
 
 Theme::Theme(void*_dont_call_me_exclamation_mark):
@@ -313,6 +317,15 @@ Theme::Theme(void*_dont_call_me_exclamation_mark):
         ExtractColor(doc, "terminalAnsiColorE");
     I->m_TerminalAnsiColorF =
         ExtractColor(doc, "terminalAnsiColorF");
+    
+    I->m_ViewerFont =
+        ExtractFont(doc, "viewerFont");
+    I->m_ViewerTextColor =
+        ExtractColor(doc, "viewerTextColor");
+    I->m_ViewerSelectionColor =
+        ExtractColor(doc, "viewerSelectionColor");
+    I->m_ViewerBackgroundColor =
+        ExtractColor(doc, "viewerBackgroundColor");
 }
 
 Theme::~Theme()
@@ -637,4 +650,24 @@ NSColor *Theme::TerminalAnsiColorE() const noexcept
 NSColor *Theme::TerminalAnsiColorF() const noexcept
 {
     return I->m_TerminalAnsiColorF;
+}
+
+NSFont  *Theme::ViewerFont() const noexcept
+{
+    return I->m_ViewerFont;
+}
+
+NSColor *Theme::ViewerTextColor() const noexcept
+{
+    return I->m_ViewerTextColor;
+}
+
+NSColor *Theme::ViewerSelectionColor() const noexcept
+{
+    return I->m_ViewerSelectionColor;
+}
+
+NSColor *Theme::ViewerBackgroundColor() const noexcept
+{
+    return I->m_ViewerBackgroundColor;
 }

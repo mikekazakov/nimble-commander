@@ -316,12 +316,13 @@ int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
 
 void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 {
-    [m_View BackgroundFillColor].Set(_context);
+//    [m_View BackgroundFillColor].Set(_context);
+    CGContextSetFillColorWithColor(_context, m_View.BackgroundFillColor);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
-    CGContextSetShouldSmoothFonts(_context, [m_View ShouldSmoothFonts]);
-    CGContextSetShouldAntialias(_context, [m_View ShouldAntialias]);
+    CGContextSetShouldSmoothFonts(_context, true);
+    CGContextSetShouldAntialias(_context, true);
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     CFRange bselection = [m_View SelectionWithinWindow];
@@ -360,7 +361,8 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
-                [m_View SelectionBkFillColor].Set(_context);
+                //[m_View SelectionBkFillColor].Set(_context);
+                CGContextSetFillColorWithColor(_context, m_View.SelectionBkFillColor);
                 CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontInfo.LineHeight()));
                 CGContextRestoreGState(_context);
             }
@@ -397,7 +399,8 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
             {
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
-                [m_View SelectionBkFillColor].Set(_context);
+                //[m_View SelectionBkFillColor].Set(_context);
+                CGContextSetFillColorWithColor(_context, m_View.SelectionBkFillColor);
                 CGContextFillRect(_context, CGRectMake(pos.x + x1, pos.y, x2 - x1, m_FontInfo.LineHeight()));
                 CGContextRestoreGState(_context);
             }

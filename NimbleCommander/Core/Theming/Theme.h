@@ -81,7 +81,7 @@ public:
 //  Terminal Emulator section
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // File Panels --> General appearance //////////////////////////////////////////////////////////
+    // Terminal --> General appearance /////////////////////////////////////////////////////////////
     NSFont  *TerminalFont() const noexcept;
     NSColor *TerminalForegroundColor() const noexcept;
     NSColor *TerminalBoldForegroundColor() const noexcept;
@@ -104,6 +104,16 @@ public:
     NSColor *TerminalAnsiColorD() const noexcept;
     NSColor *TerminalAnsiColorE() const noexcept;
     NSColor *TerminalAnsiColorF() const noexcept;
+    
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Internal Viewer section
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Viewer --> General appearance ///////////////////////////////////////////////////////////////
+    NSFont  *ViewerFont() const noexcept;
+    NSColor *ViewerTextColor() const noexcept;
+    NSColor *ViewerSelectionColor() const noexcept;
+    NSColor *ViewerBackgroundColor() const noexcept;
     
 private:
     struct Internals;

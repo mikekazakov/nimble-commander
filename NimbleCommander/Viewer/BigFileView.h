@@ -34,10 +34,8 @@ enum class BigFileViewModes : int
 // appearance section
 - (CTFontRef)   TextFont;
 - (CGColorRef)  TextForegroundColor;
-- (DoubleColor) SelectionBkFillColor;
-- (DoubleColor) BackgroundFillColor;
-- (bool)        ShouldAntialias;
-- (bool)        ShouldSmoothFonts;
+- (CGColorRef) SelectionBkFillColor;
+- (CGColorRef) BackgroundFillColor;
 
 /**
  * Specify if view should draw a border.

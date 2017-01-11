@@ -24,7 +24,8 @@ InternalViewerViewPreviewMode::~InternalViewerViewPreviewMode()
 
 void InternalViewerViewPreviewMode::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 {
-    [m_View BackgroundFillColor].Set(_context);
+//    [m_View BackgroundFillColor].Set(_context);
+    CGContextSetFillColorWithColor(_context, m_View.BackgroundFillColor);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
 }
 

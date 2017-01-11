@@ -71,5 +71,29 @@
     "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
     "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
     "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
-    "filePanelsBriefSelectedInactiveItemBackgroundColor": "@lightGrayColor"
+    "filePanelsBriefSelectedInactiveItemBackgroundColor": "@lightGrayColor",
+    
+    /* Terminal Emulator */
+    "terminalFont": "Menlo-Regular, 13",
+    "terminalForegroundColor": "#BFBFBF",
+    "terminalBoldForegroundColor": "#E5E5E5",
+    "terminalBackgroundColor": "#000000",
+    "terminalSelectionColor": "#E5E5E5",
+    "terminalCursorColor": "#666666",
+    "terminalAnsiColor0": "#000000", // black
+    "terminalAnsiColor1": "#990000", // red
+    "terminalAnsiColor2": "#00A600", // green
+    "terminalAnsiColor3": "#999900", // yellow
+    "terminalAnsiColor4": "#0000B2", // blue
+    "terminalAnsiColor5": "#B200B2", // magenta
+    "terminalAnsiColor6": "#00A6B2", // cyan
+    "terminalAnsiColor7": "#BFBFBF", // white
+    "terminalAnsiColor8": "#666666", // bright black
+    "terminalAnsiColor9": "#E50000", // bright red
+    "terminalAnsiColorA": "#00D900", // bright green
+    "terminalAnsiColorB": "#E5E500", // bright yellow
+    "terminalAnsiColorC": "#0000FF", // bright blue
+    "terminalAnsiColorD": "#E500E5", // bright magenta
+    "terminalAnsiColorE": "#00E5E5", // bright cyan
+    "terminalAnsiColorF": "#E5E5E5"  // bright white
 }

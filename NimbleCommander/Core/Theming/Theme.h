@@ -20,6 +20,10 @@ public:
     ThemeAppearance AppearanceType() const noexcept;
     NSAppearance *Appearance() const noexcept;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  File Panels section
+////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     // File Panels --> General appearance //////////////////////////////////////////////////////////
     using ColoringRules = PanelViewPresentationItemsColoringRule;
     const vector<ColoringRules>& FilePanelsItemsColoringRules() const noexcept;
@@ -72,6 +76,34 @@ public:
     NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexcept;
+    
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  Terminal Emulator section
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // File Panels --> General appearance //////////////////////////////////////////////////////////
+    NSFont  *TerminalFont() const noexcept;
+    NSColor *TerminalForegroundColor() const noexcept;
+    NSColor *TerminalBoldForegroundColor() const noexcept;
+    NSColor *TerminalBackgroundColor() const noexcept;
+    NSColor *TerminalSelectionColor() const noexcept;
+    NSColor *TerminalCursorColor() const noexcept;
+    NSColor *TerminalAnsiColor0() const noexcept;
+    NSColor *TerminalAnsiColor1() const noexcept;
+    NSColor *TerminalAnsiColor2() const noexcept;
+    NSColor *TerminalAnsiColor3() const noexcept;
+    NSColor *TerminalAnsiColor4() const noexcept;
+    NSColor *TerminalAnsiColor5() const noexcept;
+    NSColor *TerminalAnsiColor6() const noexcept;
+    NSColor *TerminalAnsiColor7() const noexcept;
+    NSColor *TerminalAnsiColor8() const noexcept;
+    NSColor *TerminalAnsiColor9() const noexcept;
+    NSColor *TerminalAnsiColorA() const noexcept;
+    NSColor *TerminalAnsiColorB() const noexcept;
+    NSColor *TerminalAnsiColorC() const noexcept;
+    NSColor *TerminalAnsiColorD() const noexcept;
+    NSColor *TerminalAnsiColorE() const noexcept;
+    NSColor *TerminalAnsiColorF() const noexcept;
     
 private:
     struct Internals;

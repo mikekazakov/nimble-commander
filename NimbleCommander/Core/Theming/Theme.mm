@@ -90,21 +90,18 @@ struct Theme::Internals
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
     NSColor *m_FilePanelsGeneralOverlayColor;
-    
     NSFont  *m_FilePanelsHeaderFont;
     NSColor *m_FilePanelsHeaderTextColor;
     NSColor *m_FilePanelsHeaderActiveTextColor;
     NSColor *m_FilePanelsHeaderActiveBackgroundColor;
     NSColor *m_FilePanelsHeaderInactiveBackgroundColor;
     NSColor *m_FilePanelsHeaderSeparatorColor;
-    
     NSFont  *m_FilePanelsFooterFont;
     NSColor *m_FilePanelsFooterTextColor;
     NSColor *m_FilePanelsFooterActiveTextColor;
     NSColor *m_FilePanelsFooterSeparatorsColor;
     NSColor *m_FilePanelsFooterActiveBackgroundColor;
     NSColor *m_FilePanelsFooterInactiveBackgroundColor;
-    
     NSFont  *m_FilePanelsTabsFont;
     NSColor *m_FilePanelsTabsTextColor;
     NSColor *m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor;
@@ -115,7 +112,6 @@ struct Theme::Internals
     NSColor *m_FilePanelsTabsRegularNotKeyWndBackgroundColor;
     NSColor *m_FilePanelsTabsSeparatorColor;
     NSColor *m_FilePanelsTabsPictogramColor;
-    
     NSFont  *m_FilePanelsListFont;
     NSColor *m_FilePanelsListGridColor;
     NSFont  *m_FilePanelsListHeaderFont;
@@ -126,12 +122,33 @@ struct Theme::Internals
     NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
-    
     NSFont  *m_FilePanelsBriefFont;
     NSColor *m_FilePanelsBriefRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsBriefRegularOddRowBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedActiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
+    NSFont  *m_TerminalFont;
+    NSColor *m_TerminalForegroundColor;
+    NSColor *m_TerminalBoldForegroundColor;
+    NSColor *m_TerminalBackgroundColor;
+    NSColor *m_TerminalSelectionColor;
+    NSColor *m_TerminalCursorColor;
+    NSColor *m_TerminalAnsiColor0;
+    NSColor *m_TerminalAnsiColor1;
+    NSColor *m_TerminalAnsiColor2;
+    NSColor *m_TerminalAnsiColor3;
+    NSColor *m_TerminalAnsiColor4;
+    NSColor *m_TerminalAnsiColor5;
+    NSColor *m_TerminalAnsiColor6;
+    NSColor *m_TerminalAnsiColor7;
+    NSColor *m_TerminalAnsiColor8;
+    NSColor *m_TerminalAnsiColor9;
+    NSColor *m_TerminalAnsiColorA;
+    NSColor *m_TerminalAnsiColorB;
+    NSColor *m_TerminalAnsiColorC;
+    NSColor *m_TerminalAnsiColorD;
+    NSColor *m_TerminalAnsiColorE;
+    NSColor *m_TerminalAnsiColorF;
 };
 
 Theme::Theme(void*_dont_call_me_exclamation_mark):
@@ -251,6 +268,51 @@ Theme::Theme(void*_dont_call_me_exclamation_mark):
         ExtractColor(doc, "filePanelsBriefSelectedActiveItemBackgroundColor");
     I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor =
         ExtractColor(doc, "filePanelsBriefSelectedInactiveItemBackgroundColor");
+    
+    I->m_TerminalFont =
+        ExtractFont(doc, "terminalFont");
+    I->m_TerminalForegroundColor =
+        ExtractColor(doc, "terminalForegroundColor");
+    I->m_TerminalBoldForegroundColor =
+        ExtractColor(doc, "terminalBoldForegroundColor");
+    I->m_TerminalBackgroundColor =
+        ExtractColor(doc, "terminalBackgroundColor");
+    I->m_TerminalSelectionColor =
+        ExtractColor(doc, "terminalSelectionColor");
+    I->m_TerminalCursorColor =
+        ExtractColor(doc, "terminalCursorColor");
+    I->m_TerminalAnsiColor0 =
+        ExtractColor(doc, "terminalAnsiColor0");
+    I->m_TerminalAnsiColor1 =
+        ExtractColor(doc, "terminalAnsiColor1");
+    I->m_TerminalAnsiColor2 =
+        ExtractColor(doc, "terminalAnsiColor2");
+    I->m_TerminalAnsiColor3 =
+        ExtractColor(doc, "terminalAnsiColor3");
+    I->m_TerminalAnsiColor4 =
+        ExtractColor(doc, "terminalAnsiColor4");
+    I->m_TerminalAnsiColor5 =
+        ExtractColor(doc, "terminalAnsiColor5");
+    I->m_TerminalAnsiColor6 =
+        ExtractColor(doc, "terminalAnsiColor6");
+    I->m_TerminalAnsiColor7 =
+        ExtractColor(doc, "terminalAnsiColor7");
+    I->m_TerminalAnsiColor8 =
+        ExtractColor(doc, "terminalAnsiColor8");
+    I->m_TerminalAnsiColor9 =
+        ExtractColor(doc, "terminalAnsiColor9");
+    I->m_TerminalAnsiColorA =
+        ExtractColor(doc, "terminalAnsiColorA");
+    I->m_TerminalAnsiColorB =
+        ExtractColor(doc, "terminalAnsiColorB");
+    I->m_TerminalAnsiColorC =
+        ExtractColor(doc, "terminalAnsiColorC");
+    I->m_TerminalAnsiColorD =
+        ExtractColor(doc, "terminalAnsiColorD");
+    I->m_TerminalAnsiColorE =
+        ExtractColor(doc, "terminalAnsiColorE");
+    I->m_TerminalAnsiColorF =
+        ExtractColor(doc, "terminalAnsiColorF");
 }
 
 Theme::~Theme()
@@ -465,4 +527,114 @@ NSColor *Theme::FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexc
 NSColor *Theme::FilePanelsGeneralOverlayColor() const noexcept
 {
     return I->m_FilePanelsGeneralOverlayColor;
+}
+
+NSFont  *Theme::TerminalFont() const noexcept
+{
+    return I->m_TerminalFont;
+}
+
+NSColor *Theme::TerminalForegroundColor() const noexcept
+{
+    return I->m_TerminalForegroundColor;
+}
+
+NSColor *Theme::TerminalBoldForegroundColor() const noexcept
+{
+    return I->m_TerminalBoldForegroundColor;
+}
+
+NSColor *Theme::TerminalBackgroundColor() const noexcept
+{
+    return I->m_TerminalBackgroundColor;
+}
+
+NSColor *Theme::TerminalSelectionColor() const noexcept
+{
+    return I->m_TerminalSelectionColor;
+}
+
+NSColor *Theme::TerminalCursorColor() const noexcept
+{
+    return I->m_TerminalCursorColor;
+}
+
+NSColor *Theme::TerminalAnsiColor0() const noexcept
+{
+    return I->m_TerminalAnsiColor0;
+}
+
+NSColor *Theme::TerminalAnsiColor1() const noexcept
+{
+    return I->m_TerminalAnsiColor1;
+}
+
+NSColor *Theme::TerminalAnsiColor2() const noexcept
+{
+    return I->m_TerminalAnsiColor2;
+}
+
+NSColor *Theme::TerminalAnsiColor3() const noexcept
+{
+    return I->m_TerminalAnsiColor3;
+}
+
+NSColor *Theme::TerminalAnsiColor4() const noexcept
+{
+    return I->m_TerminalAnsiColor4;
+}
+
+NSColor *Theme::TerminalAnsiColor5() const noexcept
+{
+    return I->m_TerminalAnsiColor5;
+}
+
+NSColor *Theme::TerminalAnsiColor6() const noexcept
+{
+    return I->m_TerminalAnsiColor6;
+}
+
+NSColor *Theme::TerminalAnsiColor7() const noexcept
+{
+    return I->m_TerminalAnsiColor7;
+}
+
+NSColor *Theme::TerminalAnsiColor8() const noexcept
+{
+    return I->m_TerminalAnsiColor8;
+}
+
+NSColor *Theme::TerminalAnsiColor9() const noexcept
+{
+    return I->m_TerminalAnsiColor9;
+}
+
+NSColor *Theme::TerminalAnsiColorA() const noexcept
+{
+    return I->m_TerminalAnsiColorA;
+}
+
+NSColor *Theme::TerminalAnsiColorB() const noexcept
+{
+    return I->m_TerminalAnsiColorB;
+}
+
+NSColor *Theme::TerminalAnsiColorC() const noexcept
+{
+    return I->m_TerminalAnsiColorC;
+}
+
+NSColor *Theme::TerminalAnsiColorD() const noexcept
+{
+    return I->m_TerminalAnsiColorD;
+}
+
+NSColor *Theme::TerminalAnsiColorE() const noexcept
+{
+    return I->m_TerminalAnsiColorE;
+}
+
+NSColor *Theme::TerminalAnsiColorF() const noexcept
+{
+    return I->m_TerminalAnsiColorF;
 }

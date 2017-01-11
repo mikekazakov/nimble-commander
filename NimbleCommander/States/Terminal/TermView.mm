@@ -12,6 +12,7 @@
 #include <Utility/BlinkingCaret.h>
 #include <Habanero/algo.h>
 #include <NimbleCommander/Core/OrthodoxMonospace.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "TermView.h"
 #include "TermScreen.h"
@@ -19,7 +20,7 @@
 
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
-static const auto g_ConfigFont = "terminal.font";
+/*static const auto g_ConfigFont = "terminal.font";
 static const auto g_ConfigForegroundColor       = "terminal.textColor";
 static const auto g_ConfigBoldForegroundColor   = "terminal.boldTextColor";
 static const auto g_ConfigBackgroundColor       = "terminal.backgroundColor";
@@ -40,7 +41,7 @@ static const auto g_ConfigAnsi11 = "terminal.AnsiColor11";
 static const auto g_ConfigAnsi12 = "terminal.AnsiColor12";
 static const auto g_ConfigAnsi13 = "terminal.AnsiColor13";
 static const auto g_ConfigAnsi14 = "terminal.AnsiColor14";
-static const auto g_ConfigAnsi15 = "terminal.AnsiColor15";
+static const auto g_ConfigAnsi15 = "terminal.AnsiColor15";*/
 
 static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
@@ -51,7 +52,7 @@ static uint32_t ConfigColor(const char *_path)
     return HexadecimalColorStringToRGBA(GlobalConfig().GetString(_path).value_or(""));
 }
 
-struct AnsiColors : array<DoubleColor, 16>
+/*struct AnsiColors : array<DoubleColor, 16>
 {
     AnsiColors() : array{{
         ConfigColor(g_ConfigAnsi0), // Black
@@ -71,7 +72,7 @@ struct AnsiColors : array<DoubleColor, 16>
         ConfigColor(g_ConfigAnsi14),// Bright Cyan
         ConfigColor(g_ConfigAnsi15) // Bright White
     }}{}
-};
+};*/
 
 static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
@@ -85,18 +86,12 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     TermParser     *m_Parser;
     
     int             m_LastScreenFullHeight;
-    
     bool            m_HasSelection;
     bool            m_ReportsSizeByOccupiedContent;
+    TermViewCursor  m_CursorType;
     SelPoint        m_SelStart;
     SelPoint        m_SelEnd;
-    AnsiColors      m_AnsiColors;
-    DoubleColor     m_ForegroundColor;
-    DoubleColor     m_BoldForegroundColor;
-    DoubleColor     m_BackgroundColor;
-    DoubleColor     m_SelectionColor;
-    DoubleColor     m_CursorColor;
-    TermViewCursor  m_CursorType;
+    
     FPSLimitedDrawer *m_FPS;
     NSSize          m_IntrinsicSize;
     unique_ptr<BlinkingCaret> m_BlinkingCaret;
@@ -125,7 +120,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                                    [=]{ [(TermView*)weak_self reloadAppearance]; },
                                    initializer_list<const char*>{
                                        g_ConfigCursorMode,
-                                       g_ConfigForegroundColor,
+                                       /*g_ConfigForegroundColor,
                                        g_ConfigBoldForegroundColor,
                                        g_ConfigBackgroundColor,
                                        g_ConfigSelectionColor,
@@ -145,7 +140,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                                        g_ConfigAnsi12,
                                        g_ConfigAnsi13,
                                        g_ConfigAnsi14,
-                                       g_ConfigAnsi15
+                                       g_ConfigAnsi15*/
                                    });
     }
     return self;
@@ -215,22 +210,23 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) reloadAppearance
 {
-    m_ForegroundColor       = ConfigColor(g_ConfigForegroundColor);
+/*    m_ForegroundColor       = ConfigColor(g_ConfigForegroundColor);
     m_BoldForegroundColor   = ConfigColor(g_ConfigBoldForegroundColor);
     m_BackgroundColor       = ConfigColor(g_ConfigBackgroundColor);
     m_SelectionColor        = ConfigColor(g_ConfigSelectionColor);
-    m_CursorColor           = ConfigColor(g_ConfigCursorColor);
+    m_CursorColor           = ConfigColor(g_ConfigCursorColor);*/
     m_CursorType            = (TermViewCursor)GlobalConfig().GetInt(g_ConfigCursorMode);
-    m_AnsiColors            = AnsiColors();
+//    m_AnsiColors            = AnsiColors();
     [self setNeedsDisplay:true];
 }
 
 - (void) reloadGeometry
 {
-    NSFont *font = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont).value_or("")]];
+/*    NSFont *font = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont).value_or("")]];
     if(!font)
         font = [NSFont fontWithName:@"Menlo-Regular" size:13];
-    m_FontCache             = FontCache::FontCacheFromFont((__bridge CTFontRef)font);
+    m_FontCache             = FontCache::FontCacheFromFont((__bridge CTFontRef)font);*/
+    m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)CurrentTheme().TerminalFont() );
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -317,18 +313,55 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
 }
 
+static array<CGColor*, 16> ANSIColors()
+{
+    array<CGColor*, 16> a;
+    a[0] = CurrentTheme().TerminalAnsiColor0().CGColor;
+    a[1] = CurrentTheme().TerminalAnsiColor1().CGColor;
+    a[2] = CurrentTheme().TerminalAnsiColor2().CGColor;
+    a[3] = CurrentTheme().TerminalAnsiColor3().CGColor;
+    a[4] = CurrentTheme().TerminalAnsiColor4().CGColor;
+    a[5] = CurrentTheme().TerminalAnsiColor5().CGColor;
+    a[6] = CurrentTheme().TerminalAnsiColor6().CGColor;
+    a[7] = CurrentTheme().TerminalAnsiColor7().CGColor;
+    a[8] = CurrentTheme().TerminalAnsiColor8().CGColor;
+    a[9] = CurrentTheme().TerminalAnsiColor9().CGColor;
+    a[10] = CurrentTheme().TerminalAnsiColorA().CGColor;
+    a[11] = CurrentTheme().TerminalAnsiColorB().CGColor;
+    a[12] = CurrentTheme().TerminalAnsiColorC().CGColor;
+    a[13] = CurrentTheme().TerminalAnsiColorD().CGColor;
+    a[14] = CurrentTheme().TerminalAnsiColorE().CGColor;
+    a[15] = CurrentTheme().TerminalAnsiColorF().CGColor;
+    return a;
+}
+
+namespace {
+struct DrawColors
+{
+    CGColor* selection_color = CurrentTheme().TerminalSelectionColor().CGColor;
+    CGColor* foreground_color = CurrentTheme().TerminalForegroundColor().CGColor;
+    CGColor* bold_foreground_color = CurrentTheme().TerminalBoldForegroundColor().CGColor;
+    CGColor* background_color = CurrentTheme().TerminalBackgroundColor().CGColor;
+    array<CGColor*, 16> ansi_colors = ANSIColors();
+};
+
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
 	[super drawRect:dirtyRect];
 	
+    const auto draw_colors = DrawColors{};
+    
     // Drawing code here.
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     CGContextSaveGState(context);
     auto restore_gstate = at_scope_end([=]{ CGContextRestoreGState(context); });
-    oms::SetFillColor(context, m_BackgroundColor);
-    CGContextFillRect(context, NSRectToCGRect(self.bounds));
+//    oms::SetFillColor(context, m_BackgroundColor);
+    CGContextSetFillColorWithColor( context, draw_colors.background_color );
+    CGContextFillRect( context, NSRectToCGRect(self.bounds) );
     
-    if(!m_Screen)
+    if( !m_Screen )
         return;
     
 /*    static uint64_t last_redraw = GetTimeInNanoseconds();
@@ -369,7 +402,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                           at_y:i
                          sel_y:i - bsl
                        context:context
-                     cursor_at:-1];
+                     cursor_at:-1
+                        colors:draw_colors];
         }
         else { // real screen
             if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
@@ -377,7 +411,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                           at_y:i
                          sel_y:i - bsl
                        context:context
-                     cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
+                     cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()
+                        colors:draw_colors];
         }
     }
     
@@ -400,24 +435,39 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     CGContextFillRect(_context, rc);
 }
 
+static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (void) DrawLine:(TermScreenBuffer::RangePair<const TermScreenBuffer::Space>)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
         cursor_at:(int)_cur_x
+           colors:(const DrawColors&)_colors
 {
     // draw backgrounds
-    DoubleColor curr_c = {-1, -1, -1, -1};
+    //CGColorEqualToColor
+    
+//    DoubleColor curr_c = {-1, -1, -1, -1};
+    auto current_color = g_ClearCGColor;
+    
     int x = 0;
 
     for( auto char_space: _line ) {
-        const DoubleColor fg_fill_color = char_space.reverse ?
-            ( char_space.foreground != TermScreenColors::Default ? m_AnsiColors[char_space.foreground] : m_ForegroundColor ):
-            ( char_space.background != TermScreenColors::Default ? m_AnsiColors[char_space.background] : m_BackgroundColor );
+        const auto fg_fill_color = char_space.reverse ?
+            ( char_space.foreground != TermScreenColors::Default ?
+                _colors.ansi_colors[char_space.foreground] :
+                _colors.foreground_color ) :
+            ( char_space.background != TermScreenColors::Default ?
+                _colors.ansi_colors[char_space.background] :
+                _colors.background_color );
         
-        if( fg_fill_color != m_BackgroundColor ) {
-            if( fg_fill_color != curr_c )
-                oms::SetFillColor(_context, curr_c = fg_fill_color);
+//        if( fg_fill_color != m_BackgroundColor ) {
+        if( !CGColorEqualToColor(fg_fill_color, _colors.background_color) ) {
+//            if( fg_fill_color != curr_c )
+//                oms::SetFillColor(_context, curr_c = fg_fill_color);
+            if( !CGColorEqualToColor(fg_fill_color, current_color) )  {
+                current_color = fg_fill_color;
+                CGContextSetFillColorWithColor(_context, current_color );
+            }
             
             CGContextFillRect(_context,
                               CGRectMake(x * m_FontCache->Width(),
@@ -452,10 +502,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                             m_SelEnd.x * m_FontCache->Width(),
                             m_FontCache->Height());
         
-        if(rc.origin.x >= 0)
-        {
-            oms::SetFillColor(_context, m_SelectionColor);
-            CGContextFillRect(_context, rc);
+        if( rc.origin.x >= 0 ) {
+//            oms::SetFillColor(_context, m_SelectionColor);
+            CGContextSetFillColorWithColor( _context, _colors.selection_color );
+            CGContextFillRect( _context, rc );
         }
         
     }
@@ -470,36 +520,42 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     // draw glyphs
     x = 0;
-    curr_c = {-1, -1, -1, -1};
+//    curr_c = {-1, -1, -1, -1};
+    current_color = g_ClearCGColor;
     CGContextSetShouldAntialias(_context, true);
     
 //    for(TermScreen::Space char_space: _line.chars)
-    for(auto char_space: _line)
-    {
-        DoubleColor c = m_ForegroundColor;
-        if(char_space.reverse) {
+
+    for( const auto char_space: _line ) {
+//        DoubleColor c = m_ForegroundColor;
+        auto c = _colors.foreground_color;
+
+        if( char_space.reverse ) {
             c = char_space.background != TermScreenColors::Default ?
-                m_AnsiColors[char_space.background] :
-                m_BackgroundColor;
+                _colors.ansi_colors[char_space.background] :
+                _colors.background_color;
         } else {
             int foreground = char_space.foreground;
-            if(foreground != TermScreenColors::Default){
-                if(char_space.intensity)
+            if( foreground != TermScreenColors::Default ){
+                if( char_space.intensity )
                     foreground += 8;
-                c = m_AnsiColors[foreground];
+                c = _colors.ansi_colors[foreground];
             } else {
-                if(char_space.intensity)
-                    c = m_BoldForegroundColor;
+                if( char_space.intensity )
+                    c = _colors.bold_foreground_color;
             }
         }
         
         if(char_space.l != 0 &&
            char_space.l != 32 &&
            char_space.l != TermScreen::MultiCellGlyph
-           )
-        {
-            if(c != curr_c)
-                oms::SetFillColor(_context, curr_c = c);
+           ) {
+//            if(c != curr_c)
+//                oms::SetFillColor(_context, curr_c = c);
+            if( !CGColorEqualToColor(c, current_color) )  {
+                current_color = c;
+                CGContextSetFillColorWithColor(_context, current_color );
+            }
             
             bool pop = false;
             if( IsBoxDrawingCharacter(char_space.l) ) {
@@ -544,7 +600,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if( is_wnd_active && is_first_responder ) {
         m_BlinkingCaret->ScheduleNextRedraw(); // be sure not to call Shedule... when view is not active
         if( m_BlinkingCaret->Visible() ) {
-            oms::SetFillColor(_context, m_CursorColor);
+//            oms::SetFillColor(_context, m_CursorColor);
+            CGContextSetFillColorWithColor(_context, CurrentTheme().TerminalCursorColor().CGColor );
             switch (m_CursorType) {
                 case TermViewCursor::Block:
                     CGContextFillRect(_context, NSRectToCGRect(_char_rect));
@@ -567,7 +624,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         }
     }
     else {
-        oms::SetStrokeColor(_context, m_CursorColor);
+//        oms::SetStrokeColor(_context, m_CursorColor);
+        CGContextSetStrokeColorWithColor(_context, CurrentTheme().TerminalCursorColor().CGColor );
         CGContextSetLineWidth(_context, 1);
         CGContextSetShouldAntialias(_context, false);
         _char_rect.origin.y += 1;
@@ -785,14 +843,9 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return (__bridge NSFont*) m_FontCache->BaseFont();
 }
 
-- (NSColor*) ANSIColorForNo:(int)_number
-{
-    return (_number < 0 || _number >= m_AnsiColors.size()) ? nil : m_AnsiColors[_number].ToNSColor();
-}
-
 - (NSColor*) backgroundColor
 {
-    return m_BackgroundColor.ToNSColor();
+    return CurrentTheme().TerminalBackgroundColor();
 }
 
 @end

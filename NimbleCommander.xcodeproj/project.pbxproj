@@ -1937,6 +1937,33 @@
 		CF396AEB173FA89A00A20C42 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				CF876D181D51E04A009C0CCE /* BigFileView.h */,
+				CF876D191D51E04A009C0CCE /* BigFileView.mm */,
+				CF876D1A1D51E04A009C0CCE /* BigFileViewDataBackend.h */,
+				CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */,
+				CF876D1C1D51E04A009C0CCE /* BigFileViewHex.h */,
+				CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */,
+				CF876D1E1D51E04A009C0CCE /* BigFileViewHistory.h */,
+				CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */,
+				CF876D201D51E04A009C0CCE /* BigFileViewProtocol.h */,
+				CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */,
+				CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */,
+				CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */,
+				CF876D231D51E04A009C0CCE /* BigFileViewText.h */,
+				CF876D241D51E04A009C0CCE /* BigFileViewText.mm */,
+				CF876D4A1D530F46009C0CCE /* InternalViewerController.h */,
+				CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */,
+				CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */,
+				CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */,
+				CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */,
+				CF8D0CF71D963E1000ADFF14 /* InternalViewerToolbar.xib */,
+				CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */,
+				CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */,
+				CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */,
+				CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */,
+				CF876D4D1D53296C009C0CCE /* InternalViewerWindowController.h */,
+				CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */,
+				CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */,
 				CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */,
 				CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */,
 				CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */,
@@ -2157,40 +2184,6 @@
 				CF8629241B956B7A00B33CFD /* SUVersionComparisonProtocol.h */,
 			);
 			name = SparkleEmbedded;
-			sourceTree = "<group>";
-		};
-		CF876D151D51DFAE009C0CCE /* Viewer */ = {
-			isa = PBXGroup;
-			children = (
-				CF876D181D51E04A009C0CCE /* BigFileView.h */,
-				CF876D191D51E04A009C0CCE /* BigFileView.mm */,
-				CF876D1A1D51E04A009C0CCE /* BigFileViewDataBackend.h */,
-				CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */,
-				CF876D1C1D51E04A009C0CCE /* BigFileViewHex.h */,
-				CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */,
-				CF876D1E1D51E04A009C0CCE /* BigFileViewHistory.h */,
-				CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */,
-				CF876D201D51E04A009C0CCE /* BigFileViewProtocol.h */,
-				CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */,
-				CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */,
-				CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */,
-				CF876D231D51E04A009C0CCE /* BigFileViewText.h */,
-				CF876D241D51E04A009C0CCE /* BigFileViewText.mm */,
-				CF876D4A1D530F46009C0CCE /* InternalViewerController.h */,
-				CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */,
-				CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */,
-				CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */,
-				CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */,
-				CF8D0CF71D963E1000ADFF14 /* InternalViewerToolbar.xib */,
-				CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */,
-				CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */,
-				CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */,
-				CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */,
-				CF876D4D1D53296C009C0CCE /* InternalViewerWindowController.h */,
-				CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */,
-				CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */,
-			);
-			name = Viewer;
 			sourceTree = "<group>";
 		};
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
@@ -2571,7 +2564,6 @@
 				CFDAC3011DFD20810039A104 /* GeneralUI */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
 				CF876D171D51E00B009C0CCE /* States */,
-				CF876D151D51DFAE009C0CCE /* Viewer */,
 			);
 			name = Source;
 			path = Files;

@@ -14,7 +14,7 @@ class TermScreen;
 class TermParser;
 class FontCache;
 
-enum class TermViewCursor
+enum class TermViewCursor : int8_t
 {
     Block       = 0,
     Underline   = 1,
@@ -37,8 +37,6 @@ enum class TermViewCursor
 
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;
-
-- (NSColor*) ANSIColorForNo:(int)_number;
 
 /**
  * Decrease _sz in dimensions of View insets.

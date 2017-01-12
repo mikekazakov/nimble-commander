@@ -84,6 +84,6 @@ All rights reserved.</string>
 		<string>identifier info.filesmanager.Files.PrivilegedIOHelperV2 and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
 	</dict>
 	<key>SUFeedURL</key>
-	<string>http://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
+	<string>https://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
 </dict>
 </plist>

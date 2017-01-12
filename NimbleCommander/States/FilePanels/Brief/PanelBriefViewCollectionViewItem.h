@@ -12,6 +12,7 @@
  */
 - (int) itemIndex;
 
+- (VFSListingItem)item;
 - (void) setItem:(VFSListingItem)_item;
 - (void) setVD:(PanelDataItemVolatileData)_vd;
 - (void) setIcon:(NSImageRep*)_icon;

@@ -5,6 +5,8 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"
 
+static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
+
 static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     static NSParagraphStyle *styles[3];
@@ -129,6 +131,17 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
               fraction:1.0
         respectFlipped:false
                  hints:nil];
+    
+    // Draw symlink arrow over an icon
+    const auto is_symlink = m_Controller && m_Controller.item.IsSymlink();
+    if( is_symlink )
+        [g_SymlinkArrowImage drawInRect:icon_rect
+                               fromRect:NSZeroRect
+                              operation:NSCompositeSourceOver
+                               fraction:1.0
+                         respectFlipped:false
+                                  hints:nil];
+    
     
     if( m_Highlighted ) {
         // TODO: need to implement something like in Finder - draw rect with a color regaring current background color

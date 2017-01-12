@@ -39,6 +39,11 @@
     return (PanelBriefViewItemCarrier*)self.view;
 }
 
+- (VFSListingItem)item
+{
+    return m_Item;
+}
+
 - (void) setItem:(VFSListingItem)_item
 {
     m_Item = _item;

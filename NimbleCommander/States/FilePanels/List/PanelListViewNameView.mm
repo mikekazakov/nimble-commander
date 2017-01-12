@@ -5,6 +5,8 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewNameView.h"
 
+static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
+
 static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     static NSParagraphStyle *styles[3];
@@ -91,6 +93,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     
     const auto bounds = self.bounds;
     const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
+    const auto is_symlink = ((PanelListViewRowView*)self.superview).item.IsSymlink();
     
     if( auto v = objc_cast<PanelListViewRowView>(self.superview) ) {
         [v.rowBackgroundColor set];
@@ -116,6 +119,15 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
               fraction:1.0
         respectFlipped:false
                  hints:nil];
+    
+    // Draw symlink arrow over an icon
+    if( is_symlink )
+        [g_SymlinkArrowImage drawInRect:icon_rect
+                               fromRect:NSZeroRect
+                              operation:NSCompositeSourceOver
+                               fraction:1.0
+                         respectFlipped:false
+                                  hints:nil];
     
 //    [m_Filename drawWithRect:self.bounds
 //                     options:0

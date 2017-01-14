@@ -14,8 +14,6 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
 
-static auto g_ItemsCount = 0;
-
 // font_size, double_icon, icon_size, line_height, text_baseline
 static const array< tuple<int8_t, bool, int8_t, int8_t, int8_t>, 14> g_FixedLayoutData = {
     make_tuple(10, false, 16, 17, 5),
@@ -59,6 +57,8 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
         text_baseline = get<4>(*pit);
     }
     else {
+        // todo: handle double-sized icons
+    
         // try to calculate something by ourselves
         auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
         line_height = font_info.LineHeight() + insets[1] + insets[3];
@@ -118,6 +118,25 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     lc.item_height = line_height /*20*/;
     
     return lc;
+}
+
+bool PanelBriefViewItemLayoutConstants::operator ==(const PanelBriefViewItemLayoutConstants &_rhs)
+const noexcept
+{
+    return
+    inset_left == _rhs.inset_left       &&
+    inset_top == _rhs.inset_top         &&
+    inset_right == _rhs.inset_right     &&
+    inset_bottom == _rhs.inset_bottom   &&
+    icon_size == _rhs.icon_size         &&
+    font_baseline == _rhs.font_baseline &&
+    item_height == _rhs.item_height;
+}
+
+bool PanelBriefViewItemLayoutConstants::operator !=(const PanelBriefViewItemLayoutConstants &_rhs)
+const noexcept
+{
+    return !(*this == _rhs);
 }
 
 @implementation PanelBriefView
@@ -314,6 +333,17 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
 {
     m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
     m_IconsGenerator->SetIconSize( m_ItemLayout.icon_size );
+
+    if( m_Background )
+        m_Background.rowHeight = m_ItemLayout.item_height;
+    
+    if( m_Layout )
+        m_Layout.itemSize = NSMakeSize(100, m_ItemLayout.item_height);
+    
+    if( m_CollectionView )
+        for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
+            [i updateItemLayout];
+    
 }
 
 - (void) dataChanged

@@ -22,5 +22,6 @@
 
 - (void) setupFieldEditor:(NSScrollView*)_editor;
 
+- (void) updateItemLayout;
 
 @end

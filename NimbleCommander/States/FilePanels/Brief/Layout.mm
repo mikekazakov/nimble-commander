@@ -9,7 +9,7 @@ _::PanelBriefViewColumnsLayout()  noexcept:
     dynamic_width_min(100),
     dynamic_width_max(300),
     dynamic_width_equal(false),
-    double_sized_icon(true),
+    double_sized_icon(false),
     mode(Mode::FixedAmount)
 {
 }

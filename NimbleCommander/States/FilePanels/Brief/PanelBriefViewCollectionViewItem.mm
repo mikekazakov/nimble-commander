@@ -48,10 +48,14 @@
 {
     m_Item = _item;
     self.carrier.filename = m_Item.NSDisplayName();
-    self.carrier.layoutConstants = self.briefView.layoutConstants;
-    [self.carrier setNeedsDisplay:true];
+    [self updateItemLayout];
 }
 
+- (void) updateItemLayout
+{
+    if( auto *bv = self.briefView )
+        self.carrier.layoutConstants = bv.layoutConstants;
+}
 
 - (void) setPanelActive:(bool)_active
 {

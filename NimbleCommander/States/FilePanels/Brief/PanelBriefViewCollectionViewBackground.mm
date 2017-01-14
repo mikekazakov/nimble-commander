@@ -35,15 +35,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-//    auto aa = [self layer];
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-//
-//    CGContextSetFillColorWithColor(context, NSColor.yellowColor.CGColor);
-//    CGContextFillRect(context,
-////                      NSRectToCGRect(dirtyRect)
-//                      NSRectToCGRect(self.bounds)
-//                      );
-//
     
     for( int y = dirtyRect.origin.y; y < (int)(dirtyRect.origin.y + dirtyRect.size.height); y += m_RowHeight - ( y % m_RowHeight ) ) {
         auto c = (y / m_RowHeight) % 2 ?
@@ -60,7 +52,7 @@
 {
     if( rowHeight != m_RowHeight ) {
         m_RowHeight = rowHeight;
-        [self setNeedsLayout:true];
+        [self setNeedsDisplay:true];
     }
 }
 

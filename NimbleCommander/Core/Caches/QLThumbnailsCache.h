@@ -32,11 +32,11 @@ private:
     
     struct Key
     {
-        Key(const string& _p, int _s): path(_p), px_size(_s){};
-        bool operator<(const Key& _rhs) const {
+        Key(const string& _p, int _s) noexcept : path(_p), px_size(_s){};
+        bool operator<(const Key& _rhs) const noexcept {
             return path < _rhs.path ? true : (px_size < _rhs.px_size);
         }
-        bool operator==(const Key& _rhs) const {
+        bool operator==(const Key& _rhs) const noexcept {
             return path == _rhs.path && px_size == _rhs.px_size;
         }
         string path;

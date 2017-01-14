@@ -426,4 +426,12 @@ static NSPoint  g_LastMouseDownPos = {};
     }
 }
 
+- (void) setLayoutConstants:(PanelBriefViewItemLayoutConstants)layoutConstants
+{
+    if( m_LayoutConstants != layoutConstants ) {
+        m_LayoutConstants = layoutConstants;
+        [self setNeedsDisplay:true];
+    }
+}
+
 @end

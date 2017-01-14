@@ -21,7 +21,8 @@ bool _::operator ==(const _& _rhs) const noexcept
     fixed_amount_value == _rhs.fixed_amount_value &&
     dynamic_width_min == _rhs.dynamic_width_min &&
     dynamic_width_max == _rhs.dynamic_width_max &&
-    dynamic_width_equal == _rhs.dynamic_width_equal;
+    dynamic_width_equal == _rhs.dynamic_width_equal &&
+    double_sized_icon == _rhs.double_sized_icon;
 }
 
 bool _::operator !=(const _& _rhs) const noexcept

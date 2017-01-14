@@ -250,10 +250,12 @@ struct NSEventModifierFlagsHolder
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-    if(_wnd == nil && self.active == true)
+    if( _wnd == nil && self.active == true )
         [self resignFirstResponder];
     
-    if(_wnd) {
+    if( _wnd ) {
+        m_IconsGenerator.SetHiDPI( _wnd.backingScaleFactor > 1.0 );
+    
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(windowDidBecomeKey)
                                                    name:NSWindowDidBecomeKeyNotification
@@ -789,6 +791,7 @@ struct NSEventModifierFlagsHolder
     }
     else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
         [self setupBriefPresentationWithLayout:*bl];
+        
     }
 }
 

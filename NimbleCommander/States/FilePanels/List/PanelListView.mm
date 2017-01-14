@@ -135,7 +135,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         
         __weak PanelListView* weak_self = self;
         m_IconsGenerator = &_ic;
-        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
+        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
@@ -348,7 +348,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::VolatileData&)_vd
 {
-    NSImageRep* icon = m_IconsGenerator->ImageFor(_item, _vd);
+    NSImage* icon = m_IconsGenerator->ImageFor(_item, _vd);
     [_view setFilename:_item.NSDisplayName()];
     [_view setIcon:icon];
 }
@@ -515,7 +515,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return CurrentTheme().FilePanelsListFont();
 }
 
-- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImageRep*)_image
+- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImage*)_image
 {
     dispatch_assert_main_queue();
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {

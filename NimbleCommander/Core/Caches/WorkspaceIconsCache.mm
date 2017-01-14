@@ -15,7 +15,7 @@ WorkspaceIconsCache& WorkspaceIconsCache::Instance()
     return *inst;
 }
 
-NSImageRep *WorkspaceIconsCache::IconIfHas(const string &_filename)
+NSImage *WorkspaceIconsCache::IconIfHas(const string &_filename)
 {
     shared_lock<shared_timed_mutex> lock(m_ItemsLock);
     
@@ -25,25 +25,20 @@ NSImageRep *WorkspaceIconsCache::IconIfHas(const string &_filename)
     return nil;
 }
 
-NSImageRep *WorkspaceIconsCache::BuildRep(const string &_filename, CGSize _size)
+static NSImage *BuildRep(const string &_filename)
 {
-    NSImageRep *result = nil;
+    NSImage *result = nil;
     CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_filename);
-    NSImage *image = [NSWorkspace.sharedWorkspace iconForFile: (__bridge NSString*)item_path];
-    if(image)
-        result = [image bestRepresentationForRect:NSMakeRect(0, 0, _size.width, _size.height)
-                                          context:nil
-                                            hints:nil];
-    
+    result = [NSWorkspace.sharedWorkspace iconForFile: (__bridge NSString*)item_path];
     CFRelease(item_path);
     return result;
 }
 
-NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _size)
+NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
 {
     m_ItemsLock.lock_shared();
     
-    NSImageRep *result = nil;
+    NSImage *result = nil;
     
     auto i = m_Items.find(_filename);
     if(i != end(m_Items))
@@ -53,16 +48,13 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
         // check if cache is up-to-date
         bool is_uptodate = false;
         struct stat st;
-        if(stat(_filename.c_str(), &st) == 0)
-        {
+        if(stat(_filename.c_str(), &st) == 0) {
             if( i->second.file_size == st.st_size &&
                i->second.mtime == st.st_mtime &&
-               i->second.mode == st.st_mode)
-            {
+               i->second.mode == st.st_mode) {
                 is_uptodate = true;
             }
-            else if(NSImageRep *img = BuildRep(_filename, _size))
-            {
+            else if( NSImage *img = BuildRep(_filename) ) {
                 info.image = img;
                 info.file_size = st.st_size;
                 info.mtime = st.st_mtime;
@@ -71,8 +63,7 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
             }
         }
         
-        if(is_uptodate)
-        {
+        if(is_uptodate) {
             result = info.image;
             m_ItemsLock.unlock_shared();
             
@@ -81,8 +72,7 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
             m_MRU.erase(find(begin(m_MRU), end(m_MRU), i));
             m_MRU.emplace_back(i);
         }
-        else
-        {
+        else {
             m_ItemsLock.unlock_shared();
         }
     }
@@ -90,7 +80,7 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
     { // build from scratch
         m_ItemsLock.unlock_shared();
         
-        result = BuildRep(_filename, _size); // img may be nil - it's ok
+        result = BuildRep( _filename ); // img may be nil - it's ok
         
         struct stat st;
         if(stat(_filename.c_str(), &st) == 0) // but file should exist and be accessible
@@ -114,7 +104,6 @@ NSImageRep *WorkspaceIconsCache::ProduceIcon(const string &_filename, CGSize _si
                 info.file_size = st.st_size;
                 info.mtime = st.st_mtime;
                 info.mode = st.st_mode;
-                info.image_size = _size;
                 
                 m_MRU.emplace_back(it);
             }

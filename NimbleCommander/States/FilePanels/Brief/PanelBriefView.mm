@@ -16,17 +16,67 @@
 
 static auto g_ItemsCount = 0;
 
-static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* double icon size*/ )
+// font_size, double_icon, icon_size, line_height, text_baseline
+static const array< tuple<int8_t, bool, int8_t, int8_t, int8_t>, 14> g_FixedLayoutData = {
+    make_tuple(10, false, 16, 17, 5),
+    make_tuple(10, true,  32, 35, 14),
+    make_tuple(11, false, 16, 17, 5),
+    make_tuple(11, true,  32, 35, 14),
+    make_tuple(12, false, 16, 19, 5),
+    make_tuple(12, true,  32, 35, 13),
+    make_tuple(13, false, 16, 19, 4),
+    make_tuple(13, true,  32, 35, 12),
+    make_tuple(14, false, 16, 19, 4),
+    make_tuple(14, true,  32, 35, 12),
+    make_tuple(15, false, 16, 21, 6),
+    make_tuple(15, true,  32, 35, 12),
+    make_tuple(16, false, 16, 22, 6),
+    make_tuple(16, true,  32, 35, 12)
+};
+
+static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
+                                                          PanelBriefViewColumnsLayout _layout)
 {
     assert( _font );
     static const int insets[4] = {7, 1, 5, 1};
 
     // TODO: generic case for custom font (not SF)
-    
-    // hardcoded stuff to mimic Finder's layout
+
     int icon_size = 16;
     int line_height = 20;
     int text_baseline = 4;
+    const int font_size = (int)floor(_font.pointSize+0.5);
+    
+    // check predefined values
+    auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {
+        return get<0>(l) == font_size && get<1>(l) == _layout.double_sized_icon;
+    });
+    
+    if( pit != end(g_FixedLayoutData) ) {
+        // use hardcoded stuff to mimic Finder's layout
+        icon_size = get<2>(*pit);
+        line_height = get<3>(*pit);
+        text_baseline = get<4>(*pit);
+    }
+    else {
+        // try to calculate something by ourselves
+        auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
+        line_height = font_info.LineHeight() + insets[1] + insets[3];
+        text_baseline = insets[1] + font_info.Ascent();
+        icon_size = font_info.LineHeight();
+    }
+    
+    
+ /*   for( auto &l: g_FixedLayoutData ) {
+        if( get<0>(l) == font_size &&
+            get<1>(l) == _layout.double_sized_icon ) {
+            
+            
+            break;
+        }
+    }
+    
+  
     switch ( (int)floor(_font.pointSize+0.5) ) {
         case 10:
         case 11:
@@ -56,7 +106,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             text_baseline = insets[1] + font_info.Ascent();
             icon_size = font_info.LineHeight();
         }
-    }
+    }*/
 
     PanelBriefViewItemLayoutConstants lc;
     lc.inset_left = insets[0]/*7*/;
@@ -99,6 +149,8 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_IconsGenerator = &_ic;
+        
         [self calculateItemLayout];
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
@@ -128,8 +180,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
         m_ScrollView.documentView = m_CollectionView;
         
         __weak PanelBriefView* weak_self = self;
-        m_IconsGenerator = &_ic;
-        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImageRep* _icon){
+        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
@@ -188,7 +239,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
             
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             
-            NSImageRep*icon = m_IconsGenerator->ImageFor(vfs_item, vd);
+            NSImage *icon = m_IconsGenerator->ImageFor(vfs_item, vd);
             
             [item setVD:vd];
             [item setIcon:icon];
@@ -261,7 +312,8 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 
 - (void) calculateItemLayout
 {
-    m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont());
+    m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
+    m_IconsGenerator->SetIconSize( m_ItemLayout.icon_size );
 }
 
 - (void) dataChanged
@@ -365,7 +417,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
     return m_ItemLayout;
 }
 
-- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImageRep*)_image
+- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImage*)_image
 {
     dispatch_assert_main_queue();
     for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
@@ -423,7 +475,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout( NSFont *_font /* doub
 {
     if( columnsLayout != m_ColumnsLayout ) {
         m_ColumnsLayout = columnsLayout;
-        
+        [self calculateItemLayout];
         [m_CollectionView.collectionViewLayout invalidateLayout];
     }
 }

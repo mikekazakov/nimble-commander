@@ -16,8 +16,8 @@ public:
     static QLVFSThumbnailsCache &Instance() noexcept;
     
     /** return pair: <did found?, value> */
-    pair<bool, NSImageRep*> Get(const string& _path, const VFSHostPtr &_host);
-    void        Put(const string& _path, const VFSHostPtr &_host, NSImageRep *_img);
+    pair<bool, NSImage*> Get(const string& _path, const VFSHostPtr &_host);
+    void        Put(const string& _path, const VFSHostPtr &_host, NSImage *_img);
     
 private:
     void Purge();
@@ -25,7 +25,7 @@ private:
     {
         VFSHost                 *host_raw;
         weak_ptr<VFSHost>        host_weak;
-        map<string, NSImageRep*> images;
+        map<string, NSImage*>    images;
     };
     
     list<Cache> m_Caches;

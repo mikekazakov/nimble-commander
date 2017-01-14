@@ -122,7 +122,7 @@
     self.carrier.highlighted = _vd.is_highlighted();
 }
 
-- (void) setIcon:(NSImageRep*)_icon
+- (void) setIcon:(NSImage*)_icon
 {
     self.carrier.icon = _icon;
 }

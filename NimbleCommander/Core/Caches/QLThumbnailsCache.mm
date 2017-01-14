@@ -18,13 +18,45 @@ QLThumbnailsCache &QLThumbnailsCache::Instance()
     return *inst;
 }
 
-NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize _size)
+static NSImage *BuildRep( const string &_filename, int _px_size )
+{
+    CFStackAllocator allocator;
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(allocator.Alloc(),
+                                                           (const UInt8 *)_filename.c_str(),
+                                                           _filename.length(),
+                                                           false);
+    if( url ) {
+        static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
+        static void *values[] = {(void*)kCFBooleanTrue};
+        static auto dict = CFDictionaryCreate(0,
+                                              (const void**)keys,
+                                              (const void**)values,
+                                              1,
+                                              0,
+                                              0);
+        NSImage *result = nil;
+        const auto sz = NSMakeSize(_px_size, _px_size);
+        if( auto thumbnail = QLThumbnailImageCreate(allocator.Alloc(),
+                                                    url,
+                                                    sz,
+                                                    dict) ) {
+            result = [[NSImage alloc] initWithCGImage:thumbnail
+                                                 size:sz];
+            CGImageRelease(thumbnail);
+        }
+        CFRelease(url);
+        return result;
+    }
+    return nil;
+}
+
+NSImage *QLThumbnailsCache::ProduceThumbnail(const string &_filename, int _px_size)
 {
     m_ItemsLock.lock_shared();
     
-    NSImageRep *result = nil;
+    NSImage *result = nil;
     
-    auto i = m_Items.find(_filename);
+    auto i = m_Items.find( {_filename, _px_size} );
     if(i != end(m_Items)) {
         // check what do we have in a cache
         Info &info = *i->second;
@@ -40,7 +72,7 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             else {
                 if( !info.is_in_work.test_and_set() ) { // we're first to take control of this item
                     auto clear_lock = at_scope_end([&]{ info.is_in_work.clear(); });
-                    if( auto img = BuildRep(_filename, _size) ) {
+                    if( auto img = BuildRep(_filename, _px_size) ) {
                         info.image = img;
                         info.file_size = st.st_size;
                         info.mtime = st.st_mtime;
@@ -58,11 +90,12 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             m_ItemsLock.unlock_shared();
             
             // make this item MRU
-            lock_guard<mutex> mru_lock(m_MRULock);
-            auto mru_it = find(begin(m_MRU), end(m_MRU), i);
-            assert( mru_it != end(m_MRU) ); // <-- is this happens we're deep in shit, since cache is not well-synchronized and we gonna fuck up soon anyway
-            m_MRU.erase(mru_it);
-            m_MRU.emplace_back(i);
+            LOCK_GUARD( m_MRULock ) {
+                auto mru_it = find(begin(m_MRU), end(m_MRU), i);
+                assert( mru_it != end(m_MRU) ); // <-- is this happens we're deep in shit, since cache is not well-synchronized and we gonna fuck up soon anyway
+                m_MRU.erase(mru_it);
+                m_MRU.emplace_back(i);
+            }
         }
         else {
             m_ItemsLock.unlock_shared();
@@ -79,7 +112,6 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             auto info = make_shared<Info>();
             info->file_size = st.st_size;
             info->mtime = st.st_mtime;
-            info->image_size = _size;
             info->image = nil;
             info->is_in_work.test_and_set();
             auto clear_lock = at_scope_end([&]{ info->is_in_work.clear(); });
@@ -87,47 +119,32 @@ NSImageRep *QLThumbnailsCache::ProduceThumbnail(const string &_filename, CGSize 
             {
                 // put in a cache
                 lock_guard<shared_timed_mutex> items_lock(m_ItemsLock); // make sure no one else access items for writing
-                auto it = m_Items.emplace( _filename, info ).first;
-                lock_guard<mutex> mru_lock(m_MRULock); // make sure no one else access MRU for writing
-                while( m_MRU.size() >= m_CacheSize ) {
-                    // wipe out old ones if cache is too fat
-                    m_Items.erase(m_MRU.front());
-                    m_MRU.pop_front();
+                auto it = m_Items.emplace( Key{_filename, _px_size}, info ).first;
+                // make sure no one else access MRU for writing
+                LOCK_GUARD( m_MRULock ) {
+                    while( m_MRU.size() >= m_CacheSize ) {
+                        // wipe out old ones if cache is too fat
+                        m_Items.erase(m_MRU.front());
+                        m_MRU.pop_front();
+                    }
+                    m_MRU.emplace_back( it );
                 }
-                m_MRU.emplace_back( it );
             }
             
             // this operation may be long, not blocking anything for it
-            result = BuildRep(_filename, _size); // img may be nil - it's ok
+            result = BuildRep(_filename, _px_size); // img may be nil - it's ok
             info->image = result;
         }
     }
     return result;
 }
 
-NSImageRep *QLThumbnailsCache::ThumbnailIfHas(const string &_filename)
+NSImage *QLThumbnailsCache::ThumbnailIfHas(const string &_filename, int _px_size)
 {
     shared_lock<shared_timed_mutex> lock(m_ItemsLock);
     
-    auto i = m_Items.find(_filename);
+    auto i = m_Items.find( {_filename, _px_size} );
     if(i != end(m_Items))
         return (*i).second->image;
     return nil;
-}
-
-NSImageRep *QLThumbnailsCache::BuildRep(const string &_filename, CGSize _size)
-{
-    CFStackAllocator allocator;
-    NSBitmapImageRep *result = nil;
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(allocator.Alloc(), (const UInt8 *)_filename.c_str(), _filename.length(), false);
-    static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-    static void *values[] = {(void*)kCFBooleanTrue};
-    static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-    if( auto thumbnail = QLThumbnailImageCreate(allocator.Alloc(), url, _size, dict) ) {
-        result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
-        CGImageRelease(thumbnail);
-    }
-    CFRelease(url);
-    
-    return result;
 }

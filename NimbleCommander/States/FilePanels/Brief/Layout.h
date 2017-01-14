@@ -15,12 +15,14 @@ struct PanelBriefViewColumnsLayout
         FixedAmount     = 1,
         DynamicWidth    = 2
     };
-    short   fixed_mode_width    = 150;
-    short   fixed_amount_value  = 3;
-    short   dynamic_width_min   = 100;
-    short   dynamic_width_max   = 300;
-    bool    dynamic_width_equal = false;
-    Mode    mode                = Mode::FixedAmount;
+    short   fixed_mode_width;
+    short   fixed_amount_value;
+    short   dynamic_width_min;
+    short   dynamic_width_max;
+    bool    dynamic_width_equal:1;
+    bool    double_sized_icon:1;
+    Mode    mode;
+    PanelBriefViewColumnsLayout() noexcept;
     bool operator ==(const PanelBriefViewColumnsLayout& _rhs) const noexcept;
     bool operator !=(const PanelBriefViewColumnsLayout& _rhs) const noexcept;
 };

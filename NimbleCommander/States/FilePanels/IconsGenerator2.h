@@ -10,30 +10,27 @@
 
 #include <Habanero/SerialQueue.h>
 #include <VFS/VFS.h>
-#include "PanelData.h"
+
+struct PanelDataItemVolatileData;
+class PanelData;
 
 class IconsGenerator2
 {
 public:
-    enum class IconMode
-    {
-        Generic         = 0,
-        Icons           = 1,
-        Thumbnails      = 2,
-        IconModesCount  = 3
-    };
-        
     IconsGenerator2();
     ~IconsGenerator2();
     
-    void SetUpdateCallback( function<void(uint16_t, NSImageRep*)> _callback ); // callback will be executed in main thread
-    void SetIconMode(IconMode _mode);
-    IconMode GetIconMode() const noexcept { return m_IconsMode; };
+    // callback will be executed in main thread
+    void SetUpdateCallback( function<void(uint16_t, NSImage*)> _callback );
 
-    void SetIconSize(int _size);
-    int IconSize() const { return m_IconSize; }
+    int IconSize() const noexcept;
+    void SetIconSize( int _size );
     
-    NSImageRep *ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd);
+    bool HiDPI() const noexcept;
+    void SetHiDPI( bool _is_hi_dpi );
+    
+    // do not rely on .size of this image, it may not respect scale factor.
+    NSImage *ImageFor( const VFSListingItem &_item, PanelDataItemVolatileData &_item_vd );
 
     void SyncDiscardedAndOutdated( PanelData &_pd );
     
@@ -48,10 +45,10 @@ private:
     {
         uint64_t    file_size;
         time_t      mtime;
-        NSImageRep *generic;   // just folder or document icon
-        NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
-        NSImageRep *thumbnail; // the best - thumbnail generated from file's content
-        NSImageRep *Any() const;
+        NSImage    *generic;   // just folder or document icon
+        NSImage    *filetype;  // icon generated from file's extension or taken from a bundle
+        NSImage    *thumbnail; // the best - thumbnail generated from file's content
+        NSImage    *Any() const;
     };
     
     struct BuildRequest
@@ -63,22 +60,24 @@ private:
         string      extension;
         string      relative_path;
         VFSHostPtr  host;
-        NSImageRep *filetype;  // icon generated from file's extension or taken from a bundle
-        NSImageRep *thumbnail; // the best - thumbnail generated from file's content
+        NSImage    *filetype;  // icon generated from file's extension or taken from a bundle
+        NSImage    *thumbnail; // the best - thumbnail generated from file's content
         unsigned short icon_number;
     };
     
     struct BuildResult
     {
-        NSImageRep *filetype;
-        NSImageRep *thumbnail;
+        NSImage *filetype;
+        NSImage *thumbnail;
     };
     
-    NSImageRep *GetGenericIcon( const VFSListingItem &_item ) const;
-    NSImageRep *GetCachedExtensionIcon( const VFSListingItem &_item ) const;
+    NSImage *GetGenericIcon( const VFSListingItem &_item ) const;
+    NSImage *GetCachedExtensionIcon( const VFSListingItem &_item ) const;
     unsigned short GetSuitablePositionForNewIcon();
     bool IsFull() const;
     bool IsRequestsStashFull() const;
+    int IconSizeInPixels() const noexcept;
+    
     
     void BuildGenericIcons();
     
@@ -93,19 +92,11 @@ private:
     int                     m_IconsHoles = 0;
     
     int                     m_IconSize = 16;
-    IconMode                m_IconsMode = IconMode::Thumbnails;
+    bool                    m_HiDPI = true;
 
     atomic_ulong            m_Generation{0};
     DispatchGroup           m_WorkGroup{DispatchGroup::Low};
-    function<void(uint16_t, NSImageRep*)>m_UpdateCallback;
-    
-    NSImageRep             *m_GenericFileIcon;
-    NSImageRep             *m_GenericFolderIcon;
-    NSBitmapImageRep       *m_GenericFileIconBitmap;
-    NSBitmapImageRep       *m_GenericFolderIconBitmap;
-
-    mutable spinlock        m_ExtensionIconsCacheLock;
-    map<string,NSImageRep*> m_ExtensionIconsCache;
+    function<void(uint16_t, NSImage*)>m_UpdateCallback;
     
     mutable spinlock        m_RequestsStashLock;
     queue<BuildRequest>     m_RequestsStash;

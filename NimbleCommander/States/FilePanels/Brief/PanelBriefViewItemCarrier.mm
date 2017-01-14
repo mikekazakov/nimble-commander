@@ -41,7 +41,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     NSColor                            *m_Background;
     NSColor                            *m_TextColor;
     NSString                           *m_Filename;
-    NSImageRep                         *m_Icon;
+    NSImage                            *m_Icon;
     NSMutableAttributedString          *m_AttrString;
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
@@ -247,7 +247,7 @@ static NSPoint  g_LastMouseDownPos = {};
     return [m_Controller.briefView.panelView panelItem:my_index menuForForEvent:_event];    
 }
 
-- (void) setIcon:(NSImageRep *)icon
+- (void) setIcon:(NSImage *)icon
 {
     if( m_Icon != icon ) {
         m_Icon = icon;

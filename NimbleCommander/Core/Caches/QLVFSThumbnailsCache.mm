@@ -16,7 +16,7 @@ QLVFSThumbnailsCache &QLVFSThumbnailsCache::Instance() noexcept
     return *inst;
 }
 
-pair<bool, NSImageRep*> QLVFSThumbnailsCache::Get(const string& _path, const VFSHostPtr &_host)
+pair<bool, NSImage*> QLVFSThumbnailsCache::Get(const string& _path, const VFSHostPtr &_host)
 {
     lock_guard<mutex> lock(m_Lock);
     
@@ -31,7 +31,7 @@ pair<bool, NSImageRep*> QLVFSThumbnailsCache::Get(const string& _path, const VFS
     return make_pair(true, img->second);
 }
 
-void QLVFSThumbnailsCache::Put(const string& _path, const VFSHostPtr &_host, NSImageRep *_img)
+void QLVFSThumbnailsCache::Put(const string& _path, const VFSHostPtr &_host, NSImage *_img)
 {
     lock_guard<mutex> lock(m_Lock);
     

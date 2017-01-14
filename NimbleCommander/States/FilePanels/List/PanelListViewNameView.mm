@@ -39,7 +39,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 @implementation PanelListViewNameView
 {
     NSString                   *m_Filename;
-    NSImageRep                 *m_Icon;
+    NSImage                    *m_Icon;
     NSMutableAttributedString  *m_AttrString;
     bool                        m_PermitFieldRenaming;
 }
@@ -157,7 +157,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 }
 
 //@property (nonatomic) NSImageRep *icon;
-- (void) setIcon:(NSImageRep *)icon
+- (void) setIcon:(NSImage *)icon
 {
     if( m_Icon != icon ) {
         m_Icon = icon;
@@ -166,7 +166,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
 }
 
-- (NSImageRep*)icon
+- (NSImage*)icon
 {
     return m_Icon;
 }

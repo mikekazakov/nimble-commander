@@ -23,6 +23,7 @@
 		CF04DDD81E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDDA1E2775D80047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
+		CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
 		CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */; };
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
@@ -946,6 +947,8 @@
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = "<group>"; };
 		CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHPreferencesWindowController.m; path = 3rd_party/RHPreferences/RHPreferences/RHPreferencesWindowController.m; sourceTree = "<group>"; };
 		CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AliasBadgeIcon.icns; path = NimbleCommander/Resources/AliasBadgeIcon.icns; sourceTree = SOURCE_ROOT; };
+		CF04DDDB1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h; sourceTree = SOURCE_ROOT; };
+		CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCache.mm; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.mm; sourceTree = SOURCE_ROOT; };
 		CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolsSupport.h; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.h; sourceTree = SOURCE_ROOT; };
 		CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -2625,6 +2628,8 @@
 		CFDAC2C51DFD0F370039A104 /* Caches */ = {
 			isa = PBXGroup;
 			children = (
+				CF04DDDB1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.h */,
+				CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */,
 				CFDAC2C61DFD0F840039A104 /* QLThumbnailsCache.h */,
 				CFDAC2C71DFD0F840039A104 /* QLThumbnailsCache.mm */,
 				CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */,
@@ -3499,6 +3504,7 @@
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
 				CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */,
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
+				CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069851BB54035000C3CBB /* Job.cpp in Sources */,
 				CFDAC2921DFBF9260039A104 /* TermScreenBuffer.cpp in Sources */,

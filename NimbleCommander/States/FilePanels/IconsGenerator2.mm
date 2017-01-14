@@ -14,8 +14,11 @@
 #include <NimbleCommander/Core/Caches/QLThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceIconsCache.h>
+#include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "PanelData.h"
 #include "IconsGenerator2.h"
+
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -49,12 +52,12 @@ static bool IsImageRepEqual(NSImageRep *_img1, NSBitmapImageRep *_img2)
     return IsImageRepEqual(img1, _img2);
 }
 
-static NSImageRep *ProduceThumbnailForVFS(const string &_path,
+static NSImage *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
                                    const VFSHostPtr &_host,
                                    CGSize _sz)
 {
-    NSImageRep *result = 0;
+    NSImage *result = 0;
     VFSFilePtr vfs_file;
     string filename_ext;
     if(_host->CreateFile(_path.c_str(), vfs_file, 0) < 0)
@@ -92,16 +95,14 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
     fd = -1;
 
     filename_ext = string(pattern_buf) + "." + _ext;
-    if(rename(pattern_buf, filename_ext.c_str()) == 0)
-    {
+    if( rename(pattern_buf, filename_ext.c_str()) == 0 ) {
         CFStringRef item_path = (CFStringRef) CFBridgingRetain([NSString stringWithUTF8StdStringNoCopy:filename_ext]);
         CFURLRef url = CFURLCreateWithFileSystemPath(0, item_path, kCFURLPOSIXPathStyle, false);
         static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
         static void *values[] = {(void*)kCFBooleanTrue};
         static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-        if(CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _sz, dict))
-        {
-            result = [[NSBitmapImageRep alloc] initWithCGImage:thumbnail];
+        if( CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _sz, dict) ) {
+            result = [[NSImage alloc] initWithCGImage:thumbnail size:_sz];
             CGImageRelease(thumbnail);
         }
 
@@ -109,14 +110,12 @@ static NSImageRep *ProduceThumbnailForVFS(const string &_path,
         CFRelease(item_path);
         unlink(filename_ext.c_str());
     }
-    else
-    {
+    else {
         unlink(pattern_buf);
     }
     
 cleanup:
-    if(fd >= 0)
-    {
+    if( fd >= 0 ) {
         close(fd);
         unlink(pattern_buf);
     }
@@ -124,10 +123,10 @@ cleanup:
     return result;
 }
 
-static NSImageRep *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)
+static NSImage *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)
 {
     // for immutable vfs we can cache generated thumbnails for some time
-    pair<bool, NSImageRep *> thumbnail = {false, nil}; // found -> value
+    pair<bool, NSImage *> thumbnail = {false, nil}; // found -> value
     
     if( _host->IsImmutableFS() )
         thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
@@ -172,7 +171,7 @@ static NSImage *ReadImageFromVFSFile(const char *_path, const VFSHostPtr &_host)
     return [[NSImage alloc] initWithData:data];
 }
 
-static NSImageRep *ProduceBundleThumbnailForVFS(const string &_path, const VFSHostPtr &_host, NSRect _rc)
+static NSImage *ProduceBundleThumbnailForVFS(const string &_path, const VFSHostPtr &_host)
 {
     NSDictionary *plist = ReadDictionaryFromVFSFile((path(_path) / "Contents/Info.plist").c_str(), _host);
     if(!plist)
@@ -189,19 +188,19 @@ static NSImageRep *ProduceBundleThumbnailForVFS(const string &_path, const VFSHo
     if(!image)
         return 0;
     
-    return [image bestRepresentationForRect:_rc context:nil hints:nil];
+    return image;
 }
 
-static NSImageRep *ProduceBundleThumbnailForVFS_Cached(const string &_path, const VFSHostPtr &_host, NSRect _rc)
+static NSImage *ProduceBundleThumbnailForVFS_Cached(const string &_path, const VFSHostPtr &_host)
 {
     // for immutable vfs we can cache generated thumbnails for some time
-    pair<bool, NSImageRep *> thumbnail = {false, nil}; // found -> value
+    pair<bool, NSImage*> thumbnail = {false, nil}; // found -> value
     
     if( _host->IsImmutableFS() )
         thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
     
     if( !thumbnail.first ) {
-        thumbnail.second = ProduceBundleThumbnailForVFS(_path, _host, _rc);
+        thumbnail.second = ProduceBundleThumbnailForVFS(_path, _host);
         if( _host->IsImmutableFS() )
             QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
     }
@@ -214,7 +213,7 @@ inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
     return _host->IsNativeFS() ? 64 : 6;
 }
 
-inline NSImageRep *IconsGenerator2::IconStorage::Any() const
+inline NSImage *IconsGenerator2::IconStorage::Any() const
 {
     if(thumbnail)
         return thumbnail;
@@ -243,15 +242,6 @@ IconsGenerator2::~IconsGenerator2()
 
 void IconsGenerator2::BuildGenericIcons()
 {
-    // Load predefined directory icon.
-    static NSImage *folder_image = [NSImage imageNamed:NSImageNameFolder];
-    m_GenericFolderIcon = [folder_image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
-    m_GenericFolderIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFolderIcon CGImageForProposedRect:0 context:0 hints:0]];
-    
-    // Load predefined generic document file icon.
-    static NSImage *image_file = [[NSWorkspace sharedWorkspace] iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-    m_GenericFileIcon = [image_file bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
-    m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
 unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
@@ -274,26 +264,27 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
     }
 }
 
-NSImageRep *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
+NSImage *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
 {
-    return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+//    return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
+    return _item.IsDir() ?
+        WorkspaceExtensionIconsCache::Instance().GenericFolderIcon():
+        WorkspaceExtensionIconsCache::Instance().GenericFileIcon();
 }
 
-NSImageRep *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
+NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
 {
-    if( m_IconsMode < IconMode::Icons )
-        return nil;
-    
     if( !_item.HasExtension() )
         return nil;
 
-    LOCK_GUARD( m_ExtensionIconsCacheLock ) {
+/*    LOCK_GUARD( m_ExtensionIconsCacheLock ) {
         auto it = m_ExtensionIconsCache.find( _item.Extension() );
         if( it != end(m_ExtensionIconsCache) )
             return it->second;
     }
     
-    return nil;
+    return nil; */
+    return WorkspaceExtensionIconsCache::Instance().CachedIconForExtension( _item.Extension() );
 }
 
 bool IconsGenerator2::IsFull() const
@@ -310,7 +301,7 @@ bool IconsGenerator2::IsRequestsStashFull() const
     return amount >= MaxStashedRequests;
 }
 
-NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd)
+NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelDataItemVolatileData &_item_vd)
 {
     dispatch_assert_main_queue(); // STA api design
     assert( m_UpdateCallback );
@@ -356,14 +347,14 @@ NSImageRep *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelData::Vo
     bool is_native_fs = _item.Host()->IsNativeFS();
     
     // check if we already have thumbnail built
-    if(m_IconsMode == IconMode::Thumbnails && is_native_fs)
-        if(NSImageRep *th = QLThumbnailsCache::Instance().ThumbnailIfHas(rel_path))
+    if( is_native_fs )
+        if( auto th = QLThumbnailsCache::Instance().ThumbnailIfHas(rel_path, IconSizeInPixels()) )
             is.thumbnail = th;
  
     // check if we already have icon built
-    if(m_IconsMode >= IconMode::Icons && is_native_fs)
-        if(NSImageRep *th = WorkspaceIconsCache::Instance().IconIfHas(rel_path))
-            is.filetype = th;
+    if( is_native_fs )
+        if( auto img = WorkspaceIconsCache::Instance().IconIfHas(rel_path) )
+                is.filetype = img;
         
     _item_vd.icon = is_no+1;
     
@@ -456,36 +447,21 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         // playing inside a real FS, that can be reached via QL framework
         
         // zero - if we haven't image for this extension - produce it
-        if( !_req.extension.empty() ) {
-            m_ExtensionIconsCacheLock.lock();
-            auto it = m_ExtensionIconsCache.find(_req.extension);
-            m_ExtensionIconsCacheLock.unlock();
-            
-            if( it == end(m_ExtensionIconsCache) ) {
-                m_ExtensionIconsCacheLock.lock();
-                auto &new_icon = *m_ExtensionIconsCache.emplace(_req.extension, nil).first; // to exclude parallel image building
-                m_ExtensionIconsCacheLock.unlock();
-                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]])
-                { // don't know anything about this extension - ok, ask system
-                    auto rep = [image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
-                    if(!IsImageRepEqual(rep, m_GenericFileIconBitmap))
-                        new_icon.second = rep;
-                }
-            }
-        }
+        if( !_req.extension.empty() )
+            WorkspaceExtensionIconsCache::Instance().IconForExtension( _req.extension );
         
         if(_req.generation != m_Generation)
             return nullopt;
         
         // 1st - try to built a real thumbnail
-        if(m_IconsMode == IconMode::Thumbnails &&
-           (_req.unix_mode & S_IFMT) != S_IFDIR &&
+        if((_req.unix_mode & S_IFMT) != S_IFDIR &&
            _req.file_size > 0 &&
            _req.file_size <= MaxFileSizeForThumbnailNative &&
            CheckFileIsOK(_req.relative_path.c_str())
            ) {
-            NSImageRep *tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path,  NSMakeSize(m_IconSize, m_IconSize));
-            if(tn != nil && tn != _req.thumbnail)
+            auto tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path,
+                                                                     IconSizeInPixels());
+            if( tn )
                 result.thumbnail = tn;
         }
         
@@ -494,62 +470,39 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         
         // 2nd - if we haven't built a real thumbnail - try an extension instead
         if(_req.thumbnail == nil &&
-           m_IconsMode >= IconMode::Icons &&
            CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.
            ) {
-            NSImageRep *icon = WorkspaceIconsCache::Instance().ProduceIcon(_req.relative_path, NSMakeSize(m_IconSize, m_IconSize));
+            auto icon = WorkspaceIconsCache::Instance().ProduceIcon( _req.relative_path );
             if(icon != nil && icon != _req.filetype)
                 result.filetype = icon;
         }
     }
     else {
         // special case for for bundles
-        if(m_IconsMode == IconMode::Thumbnails &&
-           _req.extension == "app" &&
-           _req.host->ShouldProduceThumbnails())
-            result.thumbnail = ProduceBundleThumbnailForVFS_Cached(_req.relative_path, _req.host, NSMakeRect(0, 0, m_IconSize, m_IconSize));
+        if( _req.extension == "app" && _req.host->ShouldProduceThumbnails() )
+            result.thumbnail = ProduceBundleThumbnailForVFS_Cached( _req.relative_path, _req.host );
         
-        if(// false &&
-           _req.thumbnail == 0 &&
-           m_IconsMode == IconMode::Thumbnails &&
+        // produce QL icon for file
+        if(_req.thumbnail == nil &&
            (_req.unix_mode & S_IFMT) != S_IFDIR &&
            _req.file_size > 0 &&
            _req.file_size <= MaxFileSizeForThumbnailNonNative &&
            _req.host->ShouldProduceThumbnails() &&
-           !_req.extension.empty() )
-            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path, _req.extension, _req.host, NSMakeSize(m_IconSize, m_IconSize));
-        
-        if(!_req.thumbnail && !_req.filetype && !_req.extension.empty()) {
-            // check if have some information in cache
-            m_ExtensionIconsCacheLock.lock();
-            auto it = m_ExtensionIconsCache.find(_req.extension);
-            m_ExtensionIconsCacheLock.unlock();
-            
-            if( it != m_ExtensionIconsCache.end() )
-                result.filetype = it->second; // ok, just use it. NB! this map can contain zero pointer for the cases when icon is dummy
-            else { // don't know anything - ok, ask system
-                m_ExtensionIconsCacheLock.lock();
-                auto &new_icon = *m_ExtensionIconsCache.emplace(_req.extension, nil).first; // to exclude parallel image building
-                m_ExtensionIconsCacheLock.unlock();
-                if(NSImage *image = [NSWorkspace.sharedWorkspace iconForFileType:[NSString stringWithUTF8StdStringNoCopy:_req.extension]]) {
-                    NSImageRep *rep = [image bestRepresentationForRect:NSMakeRect(0, 0, m_IconSize, m_IconSize) context:nil hints:nil];
-                    if(!IsImageRepEqual(rep, m_GenericFileIconBitmap)) {
-                        new_icon.second = rep;
-                        result.filetype = rep;
-                    }
-                }
-            }
+           !_req.extension.empty() ) {
+            const auto sz = NSMakeSize(IconSizeInPixels(), IconSizeInPixels());
+            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path,
+                                                             _req.extension,
+                                                             _req.host,
+                                                             sz);
         }
+        
+        // produce extension icon for file
+        if( !_req.thumbnail && !_req.filetype && !_req.extension.empty() )
+            if( auto i = WorkspaceExtensionIconsCache::Instance().IconForExtension(_req.extension) )
+                result.filetype = i;
     }
     
     return result;
-}
-
-void IconsGenerator2::SetIconMode(IconMode _mode)
-{
-    assert(dispatch_is_main_queue()); // STA api design
-    if( _mode >= IconMode::Generic && _mode < IconMode::IconModesCount )
-        m_IconsMode = _mode;
 }
 
 void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
@@ -602,16 +555,36 @@ void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
 void IconsGenerator2::SetIconSize(int _size)
 {
     assert(dispatch_is_main_queue()); // STA api design
-    if(m_IconSize == _size) return;
+    if( m_IconSize == _size )
+        return;
     m_IconSize = _size;
     BuildGenericIcons();
-    LOCK_GUARD(m_ExtensionIconsCacheLock) {
-        m_ExtensionIconsCache.clear();
-    }
 }
 
-void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImageRep*)> _cb)
+void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImage*)> _cb)
 {
     assert(dispatch_is_main_queue()); // STA api design
     m_UpdateCallback = move(_cb);
+}
+
+int IconsGenerator2::IconSizeInPixels() const noexcept
+{
+    return m_HiDPI ? m_IconSize * 2 : m_IconSize;
+}
+
+bool IconsGenerator2::HiDPI() const noexcept
+{
+    return m_HiDPI;
+}
+
+void IconsGenerator2::SetHiDPI( bool _is_hi_dpi )
+{
+    if( m_HiDPI == _is_hi_dpi )
+        return;
+    m_HiDPI = _is_hi_dpi;
+}
+
+int IconsGenerator2::IconSize() const noexcept
+{
+    return m_IconSize;
 }

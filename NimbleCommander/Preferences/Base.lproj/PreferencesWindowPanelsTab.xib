@@ -21,6 +21,7 @@
                 <outlet property="layoutsBriefDynamicRadio" destination="ZU8-sh-eBC" id="KCb-W5-ufG"/>
                 <outlet property="layoutsBriefFixedRadio" destination="0db-SN-pRj" id="Xeg-UI-m9B"/>
                 <outlet property="layoutsBriefFixedValueTextField" destination="PqU-mE-7ld" id="nT9-zD-Zjb"/>
+                <outlet property="layoutsBriefIcon0x" destination="0wa-Ej-tYf" id="Fy2-TX-xzA"/>
                 <outlet property="layoutsBriefIcon1x" destination="x2q-RC-vR7" id="0Do-AU-T9I"/>
                 <outlet property="layoutsBriefIcon2x" destination="DI1-o1-4Gm" id="43m-FC-Pke"/>
                 <outlet property="layoutsListColumnsTable" destination="LBn-0D-ZCF" id="8qd-ee-3vE"/>
@@ -452,7 +453,7 @@
                                                             </textFieldCell>
                                                         </textField>
                                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="x2q-RC-vR7">
-                                                            <rect key="frame" x="72" y="7" width="22" height="18"/>
+                                                            <rect key="frame" x="151" y="6" width="22" height="18"/>
                                                             <buttonCell key="cell" type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="yrp-qa-1qd">
                                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
@@ -461,8 +462,18 @@
                                                                 <action selector="onLayoutBriefIcon1xClicked:" target="-2" id="Eua-mm-FWl"/>
                                                             </connections>
                                                         </button>
+                                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="DI1-o1-4Gm">
+                                                            <rect key="frame" x="194" y="6" width="22" height="18"/>
+                                                            <buttonCell key="cell" type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="PSC-2E-h7J">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <action selector="onLayoutBriefIcon2xClicked:" target="-2" id="pfs-rz-oWO"/>
+                                                            </connections>
+                                                        </button>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="btm-ym-p0N">
-                                                            <rect key="frame" x="92" y="8" width="16" height="16"/>
+                                                            <rect key="frame" x="171" y="7" width="16" height="16"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="16" id="FSD-B9-3Et"/>
                                                                 <constraint firstAttribute="height" constant="16" id="Sfk-7I-J39"/>
@@ -476,7 +487,7 @@
                                                             </connections>
                                                         </button>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hqT-ct-5Jt">
-                                                            <rect key="frame" x="135" y="0.0" width="32" height="32"/>
+                                                            <rect key="frame" x="214" y="-1" width="32" height="32"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="32" id="7CU-Dw-2ky"/>
                                                                 <constraint firstAttribute="width" constant="32" id="7oe-fv-5py"/>
@@ -489,24 +500,25 @@
                                                                 <action selector="onLayoutBriefIcon2xClicked:" target="-2" id="3Ol-ng-DkG"/>
                                                             </connections>
                                                         </button>
-                                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="DI1-o1-4Gm">
-                                                            <rect key="frame" x="115" y="7" width="22" height="18"/>
-                                                            <buttonCell key="cell" type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="PSC-2E-h7J">
+                                                        <button translatesAutoresizingMaskIntoConstraints="NO" id="0wa-Ej-tYf">
+                                                            <rect key="frame" x="72" y="6" width="74" height="18"/>
+                                                            <buttonCell key="cell" type="radio" title="disabled" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="fec-5s-Cwn">
                                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <action selector="onLayoutBriefIcon2xClicked:" target="-2" id="pfs-rz-oWO"/>
+                                                                <action selector="onLayoutBriefIcon0xClicked:" target="-2" id="FQC-GV-B6n"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
                                                     <constraints>
+                                                        <constraint firstItem="x2q-RC-vR7" firstAttribute="leading" secondItem="0wa-Ej-tYf" secondAttribute="trailing" constant="8" symbolic="YES" id="0AG-Qp-cOa"/>
                                                         <constraint firstItem="irT-WU-Wxa" firstAttribute="top" secondItem="PqU-mE-7ld" secondAttribute="bottom" constant="8" symbolic="YES" id="0aR-6m-rTp"/>
                                                         <constraint firstItem="PPe-hV-kuO" firstAttribute="leading" secondItem="irT-WU-Wxa" secondAttribute="leading" constant="24" id="1Tl-Wk-DPz"/>
-                                                        <constraint firstItem="x2q-RC-vR7" firstAttribute="leading" secondItem="ycK-xd-I0Q" secondAttribute="trailing" constant="6" symbolic="YES" id="4TZ-mh-HL8"/>
                                                         <constraint firstItem="ycK-xd-I0Q" firstAttribute="leading" secondItem="ZU8-sh-eBC" secondAttribute="leading" id="4qq-0M-lcj"/>
                                                         <constraint firstItem="btm-ym-p0N" firstAttribute="leading" secondItem="x2q-RC-vR7" secondAttribute="trailing" id="5Cx-e2-XKE"/>
                                                         <constraint firstItem="btm-ym-p0N" firstAttribute="centerY" secondItem="x2q-RC-vR7" secondAttribute="centerY" id="5sm-Wc-TCX"/>
+                                                        <constraint firstItem="DI1-o1-4Gm" firstAttribute="centerY" secondItem="x2q-RC-vR7" secondAttribute="centerY" id="6Mu-VR-hLT"/>
                                                         <constraint firstItem="vlQ-vD-RS5" firstAttribute="leading" secondItem="RhI-Ld-X9U" secondAttribute="leading" id="77M-38-tZW"/>
                                                         <constraint firstItem="aGR-3Z-BWH" firstAttribute="leading" secondItem="ZU8-sh-eBC" secondAttribute="leading" constant="24" id="77X-6Q-Ay4"/>
                                                         <constraint firstItem="RhI-Ld-X9U" firstAttribute="leading" secondItem="aGR-3Z-BWH" secondAttribute="trailing" constant="8" symbolic="YES" id="7AY-gr-Qcy"/>
@@ -518,8 +530,11 @@
                                                         <constraint firstItem="ZU8-sh-eBC" firstAttribute="top" secondItem="PPe-hV-kuO" secondAttribute="bottom" constant="8" symbolic="YES" id="QkH-GY-Eiy"/>
                                                         <constraint firstItem="irT-WU-Wxa" firstAttribute="leading" secondItem="0db-SN-pRj" secondAttribute="leading" id="ROJ-gk-itJ"/>
                                                         <constraint firstItem="vlQ-vD-RS5" firstAttribute="leading" secondItem="FMT-5L-HDp" secondAttribute="trailing" constant="8" symbolic="YES" id="RXn-l7-E4G"/>
+                                                        <constraint firstItem="0wa-Ej-tYf" firstAttribute="baseline" secondItem="ycK-xd-I0Q" secondAttribute="baseline" id="Tho-WM-Rxe"/>
                                                         <constraint firstItem="FMT-5L-HDp" firstAttribute="top" secondItem="aGR-3Z-BWH" secondAttribute="bottom" constant="6" id="TzH-Cc-HjA"/>
+                                                        <constraint firstItem="0wa-Ej-tYf" firstAttribute="leading" secondItem="ycK-xd-I0Q" secondAttribute="trailing" constant="6" symbolic="YES" id="UBp-gM-dbv"/>
                                                         <constraint firstItem="aGR-3Z-BWH" firstAttribute="top" secondItem="ZU8-sh-eBC" secondAttribute="bottom" constant="6" id="dsr-K7-6Ok"/>
+                                                        <constraint firstItem="x2q-RC-vR7" firstAttribute="centerY" secondItem="0wa-Ej-tYf" secondAttribute="centerY" id="elb-4k-YZf"/>
                                                         <constraint firstItem="PqU-mE-7ld" firstAttribute="leading" secondItem="ChI-Sp-8eg" secondAttribute="trailing" constant="8" symbolic="YES" id="fdo-mU-3RE"/>
                                                         <constraint firstItem="ycK-xd-I0Q" firstAttribute="top" secondItem="zHx-Z8-kyT" secondAttribute="bottom" constant="8" symbolic="YES" id="gxs-i5-LI9"/>
                                                         <constraint firstItem="tq6-0D-4PV" firstAttribute="baseline" secondItem="PPe-hV-kuO" secondAttribute="baseline" id="iBe-gd-rF6"/>
@@ -527,11 +542,9 @@
                                                         <constraint firstItem="FMT-5L-HDp" firstAttribute="leading" secondItem="aGR-3Z-BWH" secondAttribute="leading" id="iEQ-jY-uLh"/>
                                                         <constraint firstItem="ChI-Sp-8eg" firstAttribute="leading" secondItem="0db-SN-pRj" secondAttribute="leading" constant="24" id="iaQ-B8-2Z5"/>
                                                         <constraint firstItem="0db-SN-pRj" firstAttribute="leading" secondItem="8bL-DB-GKD" secondAttribute="leading" constant="8" id="jHl-yc-cbY"/>
-                                                        <constraint firstItem="DI1-o1-4Gm" firstAttribute="centerY" secondItem="ycK-xd-I0Q" secondAttribute="centerY" id="kpF-8f-jXA"/>
                                                         <constraint firstItem="hqT-ct-5Jt" firstAttribute="centerY" secondItem="DI1-o1-4Gm" secondAttribute="centerY" id="oH8-me-pyd"/>
                                                         <constraint firstItem="PPe-hV-kuO" firstAttribute="top" secondItem="irT-WU-Wxa" secondAttribute="bottom" constant="6" id="rXc-VQ-yXT"/>
                                                         <constraint firstItem="vlQ-vD-RS5" firstAttribute="baseline" secondItem="FMT-5L-HDp" secondAttribute="baseline" id="sZE-Tw-aAV"/>
-                                                        <constraint firstItem="x2q-RC-vR7" firstAttribute="centerY" secondItem="ycK-xd-I0Q" secondAttribute="centerY" id="t3O-Sj-Wgc"/>
                                                         <constraint firstItem="ZU8-sh-eBC" firstAttribute="leading" secondItem="0db-SN-pRj" secondAttribute="leading" id="tzz-cb-c1w"/>
                                                         <constraint firstItem="RhI-Ld-X9U" firstAttribute="baseline" secondItem="aGR-3Z-BWH" secondAttribute="baseline" id="usG-rw-9be"/>
                                                         <constraint firstItem="0db-SN-pRj" firstAttribute="top" secondItem="8bL-DB-GKD" secondAttribute="top" constant="20" symbolic="YES" id="usq-3y-bZ8"/>

@@ -19,6 +19,7 @@
 #include "PanelData.h"
 #include "IconsGenerator2.h"
 
+static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -305,6 +306,9 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelDataItemVol
 {
     dispatch_assert_main_queue(); // STA api design
     assert( m_UpdateCallback );
+    
+    if( m_IconSize == 0 )
+        return g_DummyImage;
     
     if( _item_vd.icon > 0 ) {
         // short path - we have an already produced icon

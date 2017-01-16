@@ -94,6 +94,16 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     [self setNeedsDisplay:true];
 }
 
+- (NSRect) calculateTextSegmentFromBounds:(NSRect)bounds
+{
+    const int origin = m_LayoutConstants.icon_size ?
+        2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size :
+        m_LayoutConstants.inset_left;
+    const int width = bounds.size.width - origin - m_LayoutConstants.inset_right;
+
+    return NSMakeRect(origin, 0, width, bounds.size.height);
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
     const auto bounds = self.bounds;
@@ -113,11 +123,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
         CGContextFillRect(context, NSRectToCGRect(bounds));
     }
     
-    const auto text_rect = NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
                                       m_LayoutConstants.font_baseline,
-                                      bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
+                                      text_segment_rect.size.width,
                                       0);
-    
     [m_AttrString drawWithRect:text_rect
                        options:0];
     
@@ -311,18 +321,15 @@ static NSPoint  g_LastMouseDownPos = {};
     const auto line_padding = 2.;
     
     const auto bounds = self.bounds;
-    NSRect rc =  NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
-                            0,
-                            bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
-                            bounds.size.height);
+    auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
     
     auto fi = FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
     
-    rc.size.height = fi.LineHeight();
-    rc.origin.y += 1;
-    rc.origin.x -= line_padding;
+    text_segment_rect.size.height = fi.LineHeight();
+    text_segment_rect.origin.y += 1;
+    text_segment_rect.origin.x -= line_padding;
     
-    _editor.frame = rc;
+    _editor.frame = text_segment_rect;
     
     NSTextView *tv = _editor.documentView;
     tv.font = CurrentTheme().FilePanelsBriefFont();
@@ -345,9 +352,10 @@ static NSPoint  g_LastMouseDownPos = {};
 - (bool) validateDropHitTest:(id <NSDraggingInfo>)sender
 {
     const auto bounds = self.bounds;
-    const auto text_rect = NSMakeRect(2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size,
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
                                       m_LayoutConstants.font_baseline,
-                                      bounds.size.width - 2 * m_LayoutConstants.inset_left - m_LayoutConstants.icon_size - m_LayoutConstants.inset_right,
+                                      text_segment_rect.size.width,
                                       0);
     const auto rc = [m_AttrString boundingRectWithSize:text_rect.size options:0 context:nil];
     const auto position = [self convertPoint:sender.draggingLocation fromView:nil];

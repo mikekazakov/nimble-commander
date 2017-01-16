@@ -59,14 +59,14 @@ static const auto g_BriefFixedAmountValueKey = "fixed_amount_value";
 static const auto g_BriefDynamicWidthMinKey = "dynamic_width_min";
 static const auto g_BriefDynamicWidthMaxKey = "dynamic_width_max";
 static const auto g_BriefDynamicWidthEqualKey = "dynamic_width_equal";
-static const auto g_BriefDoubleIconSize = "double_icon_size";
+static const auto g_BriefIconScale = "icon_scale";
 static const auto g_ListKey = "list";
 static const auto g_ListColumns = "columns";
 static const auto g_ListColumKind = "kind";
 static const auto g_ListColumWidth = "width";
 static const auto g_ListColumMaxWidth = "max_width";
 static const auto g_ListColumMinWidth = "min_width";
-static const auto g_ListDoubleIconSize = "double_icon_size";
+static const auto g_ListIconScale = "icon_scale";
 static const auto g_DisabledKey = "disabled";
 
 static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
@@ -122,8 +122,8 @@ static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
         d.AddMember(MakeStandaloneString(g_BriefDynamicWidthEqualKey),
                     StandaloneValue(brief->dynamic_width_equal),
                     g_CrtAllocator);
-        d.AddMember(MakeStandaloneString(g_BriefDoubleIconSize),
-                    StandaloneValue(brief->double_sized_icon),
+        d.AddMember(MakeStandaloneString(g_BriefIconScale),
+                    StandaloneValue(brief->icon_scale),
                     g_CrtAllocator);
         v.AddMember( MakeStandaloneString(g_BriefKey), move(d), g_CrtAllocator );
     }
@@ -163,8 +163,8 @@ static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _
             brief.dynamic_width_max = o[g_BriefDynamicWidthMaxKey].GetInt();
         if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool())
             brief.dynamic_width_equal = o[g_BriefDynamicWidthEqualKey].GetBool();
-        if( o.HasMember(g_BriefDoubleIconSize) && o[g_BriefDoubleIconSize].IsBool())
-            brief.double_sized_icon = o[g_BriefDoubleIconSize].GetBool();
+        if( o.HasMember(g_BriefIconScale) && o[g_BriefIconScale].IsInt())
+            brief.icon_scale = o[g_BriefIconScale].GetInt();
         l.layout = brief;
     }
     else if( _from.HasMember(g_ListKey) && _from[g_ListKey].IsObject() ) {

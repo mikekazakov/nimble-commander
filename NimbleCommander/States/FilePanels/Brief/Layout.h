@@ -20,7 +20,7 @@ struct PanelBriefViewColumnsLayout
     short   dynamic_width_min;
     short   dynamic_width_max;
     bool    dynamic_width_equal:1;
-    bool    double_sized_icon:1;
+    unsigned char icon_scale:2;
     Mode    mode;
     PanelBriefViewColumnsLayout() noexcept;
     bool operator ==(const PanelBriefViewColumnsLayout& _rhs) const noexcept;

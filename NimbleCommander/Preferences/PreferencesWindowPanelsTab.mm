@@ -104,6 +104,7 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 @property (strong) IBOutlet NSTextField*layoutsBriefDynamicMinValueTextField;
 @property (strong) IBOutlet NSTextField*layoutsBriefDynamicMaxValueTextField;
 @property (strong) IBOutlet NSButton   *layoutsBriefDynamicEqualCheckbox;
+@property (strong) IBOutlet NSButton   *layoutsBriefIcon0x;
 @property (strong) IBOutlet NSButton   *layoutsBriefIcon1x;
 @property (strong) IBOutlet NSButton   *layoutsBriefIcon2x;
 @property (strong) IBOutlet NSTableView *layoutsListColumnsTable;
@@ -766,8 +767,9 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         self.layoutsBriefDynamicMinValueTextField.intValue = brief->dynamic_width_min;
         self.layoutsBriefDynamicMaxValueTextField.intValue = brief->dynamic_width_max;
         self.layoutsBriefDynamicEqualCheckbox.state = brief->dynamic_width_equal;
-        self.layoutsBriefIcon1x.state = !brief->double_sized_icon;
-        self.layoutsBriefIcon2x.state = brief->double_sized_icon;
+        self.layoutsBriefIcon0x.state = brief->icon_scale == 0;
+        self.layoutsBriefIcon1x.state = brief->icon_scale == 1;
+        self.layoutsBriefIcon2x.state = brief->icon_scale == 2;
     }
     
     if( auto list = l->list() ) {
@@ -836,8 +838,18 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
      [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_LayoutsStorage->LayoutsCount())]
                                  columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
+
+- (IBAction)onLayoutBriefIcon0xClicked:(id)sender
+{
+    self.layoutsBriefIcon0x.state = true;
+    self.layoutsBriefIcon1x.state = false;
+    self.layoutsBriefIcon2x.state = false;
+    [self commitLayoutChanges];
+}
+
 - (IBAction)onLayoutBriefIcon1xClicked:(id)sender
 {
+    self.layoutsBriefIcon0x.state = false;
     self.layoutsBriefIcon1x.state = true;
     self.layoutsBriefIcon2x.state = false;
     [self commitLayoutChanges];
@@ -845,6 +857,7 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
 
 - (IBAction)onLayoutBriefIcon2xClicked:(id)sender
 {
+    self.layoutsBriefIcon0x.state = false;
     self.layoutsBriefIcon1x.state = false;
     self.layoutsBriefIcon2x.state = true;
     [self commitLayoutChanges];
@@ -913,7 +926,11 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     if( l.dynamic_width_max < l.dynamic_width_min )
         l.dynamic_width_max = l.dynamic_width_min;
     l.dynamic_width_equal = self.layoutsBriefDynamicEqualCheckbox.state;
-    l.double_sized_icon = self.layoutsBriefIcon2x.state;
+    l.icon_scale = [&]{
+        if( self.layoutsBriefIcon2x.state ) return 2;
+        if( self.layoutsBriefIcon1x.state ) return 1;
+        return 0;
+    }();
 
     return l;
 }

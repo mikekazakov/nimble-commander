@@ -9,7 +9,7 @@ _::PanelBriefViewColumnsLayout()  noexcept:
     dynamic_width_min(100),
     dynamic_width_max(300),
     dynamic_width_equal(false),
-    double_sized_icon(false),
+    icon_scale(1),
     mode(Mode::FixedAmount)
 {
 }
@@ -22,7 +22,7 @@ bool _::operator ==(const _& _rhs) const noexcept
     dynamic_width_min == _rhs.dynamic_width_min &&
     dynamic_width_max == _rhs.dynamic_width_max &&
     dynamic_width_equal == _rhs.dynamic_width_equal &&
-    double_sized_icon == _rhs.double_sized_icon;
+    icon_scale == _rhs.icon_scale;
 }
 
 bool _::operator !=(const _& _rhs) const noexcept

@@ -107,7 +107,10 @@ static const auto g_ConfigClassicFont       = "filePanel.classic.font";
 @property (strong) IBOutlet NSButton   *layoutsBriefIcon0x;
 @property (strong) IBOutlet NSButton   *layoutsBriefIcon1x;
 @property (strong) IBOutlet NSButton   *layoutsBriefIcon2x;
-@property (strong) IBOutlet NSTableView *layoutsListColumnsTable;
+@property (strong) IBOutlet NSTableView*layoutsListColumnsTable;
+@property (strong) IBOutlet NSButton   *layoutsListIcon0x;
+@property (strong) IBOutlet NSButton   *layoutsListIcon1x;
+@property (strong) IBOutlet NSButton   *layoutsListIcon2x;
 
 
 @end
@@ -792,8 +795,11 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
                 
                 m_LayoutListColumns.emplace_back(dummy, false);
             }
-
         [self.layoutsListColumnsTable reloadData];
+        self.layoutsListIcon0x.state = list->icon_scale == 0;
+        self.layoutsListIcon1x.state = list->icon_scale == 1;
+        self.layoutsListIcon2x.state = list->icon_scale == 2;
+        
     }
     
 //
@@ -829,6 +835,14 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         m_LayoutListColumns[row].second = ((NSButton*)sender).state == NSOnState;
         [self commitLayoutChanges];
     }
+}
+
+- (IBAction)onLayoutListIconScaleClicked:(id)sender
+{
+    self.layoutsListIcon0x.state = sender == self.layoutsListIcon0x;
+    self.layoutsListIcon1x.state = sender == self.layoutsListIcon1x;
+    self.layoutsListIcon2x.state = sender == self.layoutsListIcon2x;
+    [self commitLayoutChanges];
 }
 
 - (IBAction)onLayoutTitleChanged:(id)sender
@@ -896,6 +910,11 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         if( c.second ) {
             l.columns.emplace_back( c.first );
         }
+    l.icon_scale = [&]{
+        if( self.layoutsListIcon2x.state ) return 2;
+        if( self.layoutsListIcon1x.state ) return 1;
+        return 0;
+    }();
     
     return l;
 }

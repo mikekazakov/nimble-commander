@@ -84,6 +84,16 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     [self buildPresentation];
 }
 
+- (NSRect) calculateTextSegmentFromBounds:(NSRect)bounds andGeometry:(const PanelListViewGeometry&)g
+{
+    const int origin = g.IconSize() ?
+        2 * g.LeftInset() + g.IconSize() :
+        g.LeftInset();
+    const int width = bounds.size.width - origin - g.RightInset();
+
+    return NSMakeRect(origin, 0, width, bounds.size.height);
+}
+
 - (void) drawRect:(NSRect)dirtyRect
 {
 //    auto layer = self.layer;
@@ -101,9 +111,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     }
     DrawTableVerticalSeparatorForView(self);
     
-    const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds
+                                                            andGeometry:geometry];
+    const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
                                       geometry.TextBaseLine(),
-                                      bounds.size.width - 2 * geometry.LeftInset() - geometry.IconSize() - geometry.RightInset(),
+                                      text_segment_rect.size.width,
                                       0);
     
     [m_AttrString drawWithRect:text_rect
@@ -189,10 +201,13 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     const auto geometry = self.row.listView.geometry;
     const auto font = self.row.listView.font;
     
-    NSRect rc =  NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
-                            0,
-                            bounds.size.width - 2 * geometry.LeftInset() - geometry.IconSize() - geometry.RightInset(),
-                            bounds.size.height);
+    
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds
+                                                            andGeometry:geometry];
+    auto rc = NSMakeRect(text_segment_rect.origin.x,
+                         0,
+                         text_segment_rect.size.width,
+                         bounds.size.height);
     
     auto fi = FontGeometryInfo(font);
     rc.size.height = fi.LineHeight();
@@ -248,12 +263,8 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 {
     const auto bounds = self.bounds;
     const auto geometry = ((PanelListViewRowView*)self.superview).listView.geometry;
-    const auto text_rect = NSMakeRect(2 * geometry.LeftInset() + geometry.IconSize(),
-                                      geometry.TextBaseLine(),
-                                      bounds.size.width - 2 * geometry.LeftInset() -
-                                        geometry.IconSize() - geometry.RightInset(),
-                                      0);
-    
+    const auto text_rect = [self calculateTextSegmentFromBounds:bounds
+                                                    andGeometry:geometry];
     const auto rc =  [m_AttrString boundingRectWithSize:text_rect.size
                                                 options:0
                                                 context:nil];

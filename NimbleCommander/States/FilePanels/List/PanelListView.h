@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../PanelDataSortMode.h"
 #include "../PanelViewImplementationProtocol.h"
-#include "Layout.h"
 
 class PanelData;
+struct PanelDataSortMode;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
 class IconsGenerator2;
+struct PanelListViewColumnsLayout;
 
 @interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
 

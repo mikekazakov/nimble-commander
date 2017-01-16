@@ -100,6 +100,9 @@ static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
         d.AddMember(MakeStandaloneString(g_ListColumns),
                     move(columns),
                     g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_ListIconScale),
+                    StandaloneValue(list->icon_scale),
+                    g_CrtAllocator);
         v.AddMember( MakeStandaloneString(g_ListKey), move(d), g_CrtAllocator );
     }
     else if( auto brief = _l.brief() ) {
@@ -186,6 +189,8 @@ static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _
                 col.max_width = (*i)[g_ListColumMaxWidth].GetInt();
             list.columns.emplace_back(col);
         }
+        if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt())
+            list.icon_scale = o[g_ListIconScale].GetInt();
         l.layout = list;
     }
     else if( _from.HasMember(g_DisabledKey) )

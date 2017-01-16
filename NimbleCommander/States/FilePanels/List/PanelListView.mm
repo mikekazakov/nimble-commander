@@ -2,8 +2,10 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 //#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelData.h"
+#include "../PanelDataSortMode.h"
 #include "../PanelView.h"
 #include "../IconsGenerator2.h"
+#include "Layout.h"
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
@@ -80,7 +82,9 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     stack<PanelListViewRowView*>        m_RowsStash;
     
     PanelDataSortMode                   m_SortMode;
-    function<void(PanelDataSortMode)> m_SortModeChangeCallback;    
+    function<void(PanelDataSortMode)>   m_SortModeChangeCallback;
+    
+    PanelListViewColumnsLayout          m_Layout;
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
@@ -93,11 +97,12 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_IconsGenerator = &_ic;
         m_BatchUpdateGroup = dispatch_group_create();
         m_BatchUpdateQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
         m_IsBatchUpdate = false;
         
-        m_Geometry = PanelListViewGeometry( [NSFont systemFontOfSize:13] );
+        [self calculateItemLayout];
         
         m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -134,7 +139,6 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_ScrollView.documentView = m_TableView;
         
         __weak PanelListView* weak_self = self;
-        m_IconsGenerator = &_ic;
         m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
@@ -247,6 +251,17 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     return m_Data ? m_Data->SortedEntriesCount() : 0;
+}
+
+- (void) calculateItemLayout
+{
+    m_Geometry = PanelListViewGeometry( CurrentTheme().FilePanelsListFont(),
+                                        m_Layout.icon_scale );
+
+    m_IconsGenerator->SetIconSize( m_Geometry.IconSize() );
+    
+    if( m_TableView )
+        m_TableView.rowHeight = m_Geometry.LineHeight();
 }
 
 template <typename View>
@@ -519,27 +534,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     dispatch_assert_main_queue();
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-//        rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
         const auto index = (int)row;
         auto &vd = m_Data->VolatileDataAtSortPosition(index);
-        if( vd.icon == _icon_no ) {
-//                        [i setIcon:_image];
+        if( vd.icon == _icon_no )
             rowView.nameView.icon = _image;
-//            break;
-        }
-        
     }];
-    
-    
-//    for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
-//        if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
-//            const auto index = (int)index_path.item;
-//            auto &vd = m_Data->VolatileDataAtSortPosition(index);
-//            if( vd.icon == _icon_no ) {
-//                [i setIcon:_image];
-//                break;
-//            }
-//        }
 }
 
 //- (PanelListViewDateFormatting::Style) dateCreatedFormattingStyle
@@ -634,6 +633,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
     }
     [m_TableView sizeToFit];
+    
+    m_Layout = columnsLayout;
+    [self calculateItemLayout];
 }
 
 - (void) setSortMode:(PanelDataSortMode)_mode

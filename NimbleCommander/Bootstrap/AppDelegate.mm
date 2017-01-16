@@ -529,7 +529,9 @@ static AppDelegate *g_Me = nil;
                 return;
             }
             
-            paths.emplace_back( fs );
+            // WTF Cocoa??
+            if( ![pathstring isEqualToString:@"YES"] )
+                paths.emplace_back( fs );
         }
     
     if( !paths.empty() )
@@ -574,41 +576,46 @@ static AppDelegate *g_Me = nil;
     [m_AppStoreHelper askUserToRestorePurchases];
 }
 
-- (void) doRevealNativeItems:(const vector<string>&)_path
+- (void) doRevealNativeItems:(const vector<string>&)_paths
 {
     // TODO: need to implement handling muliple directory paths in the future
     // grab first common directory and all corresponding items in it.
     string directory;
     vector<string> filenames;
-    for( auto &i:_path ) {
-        if( directory.empty() )
-            directory = path(i).parent_path().native();
+    for( auto &i:_paths ) {
+        path p = i;
+        
+        if( directory.empty() ) {
+            directory = p.filename() == "." ?
+                p.parent_path().parent_path().native() : // .../abra/cadabra/ -> .../abra/cadabra
+                p.parent_path().native();                // .../abra/cadabra  -> .../abra
+        }
         
         if( !i.empty() &&
             i.front() == '/' &&
+            i.back() != '/' &&
             i != "/"
            )
             filenames.emplace_back( path(i).filename().native() );
     }
     
-    if( filenames.empty() )
+    if( filenames.empty() && directory.empty() )
         return;
 
     // find window to ask
     NSWindow *target_window = nil;
     for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
-        if(wnd != nil &&
-           objc_cast<MainWindowController>(wnd.windowController) != nil) {
+        if( objc_cast<MainWindowController>(wnd.windowController) ) {
             target_window = wnd;
             break;
         }
     
-    if(!target_window) {
+    if( !target_window ) {
         [self AllocateNewMainWindow];
         target_window = [m_MainWindows.back() window];
     }
 
-    if(target_window) {
+    if( target_window ) {
         [target_window makeKeyAndOrderFront:self];
         MainWindowController *contr = (MainWindowController*)[target_window windowController];
         [contr.filePanelsState revealEntries:filenames inDirectory:directory];

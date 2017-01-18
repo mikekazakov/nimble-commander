@@ -16,7 +16,6 @@
 #include <Utility/FunctionKeysPass.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Files/3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
 #include <VFS/ArcUnRAR.h>
@@ -31,6 +30,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
@@ -60,6 +60,8 @@ static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLas
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
+static const auto g_ConfigSelectedThemes = "general.theme";
+static const auto g_ConfigThemesList = "themes.themes_v1";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -227,6 +229,7 @@ static AppDelegate *g_Me = nil;
     
     NativeFSManager::Instance();
     FeedbackManager::Instance();
+    [self themesManager];
     
     [self updateMainMenuFeaturesByVersionAndState];
     
@@ -644,20 +647,7 @@ static AppDelegate *g_Me = nil;
 
 - (void)OnPreferencesCommand:(id)sender
 {
-    static auto preferences = [=]{
-        auto tools_storage = [=]()->ExternalToolsStorage&{return self.externalTools;};
-        auto tabs = @[[PreferencesWindowGeneralTab new],
-                      [PreferencesWindowPanelsTab new],
-                      [PreferencesWindowViewerTab new],
-                      [PreferencesWindowExternalEditorsTab new],
-                      [PreferencesWindowTerminalTab new],
-                      [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],
-                      [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]];
-        return [[RHPreferencesWindowController alloc] initWithViewControllers:tabs andTitle:@"Preferences"];
-    }();
-    
-    [preferences showWindow:self];
-    GoogleAnalytics::Instance().PostScreenView("Preferences Window");
+    ShowPreferencesWindow();
 }
 
 - (IBAction)OnShowHelp:(id)sender
@@ -720,6 +710,12 @@ static AppDelegate *g_Me = nil;
 - (PanelViewLayoutsStorage&) panelLayouts
 {
     static auto i = new PanelViewLayoutsStorage(g_ConfigLayoutsList);
+    return *i;
+}
+
+- (ThemesManager&) themesManager
+{
+    static auto i = new ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
     return *i;
 }
 

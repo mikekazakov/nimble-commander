@@ -24,6 +24,22 @@
 		CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDDA1E2775D80047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
+		CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
+		CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
+		CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
+		CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
+		CF04DDEA1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */; };
+		CF04DDEB1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */; };
+		CF04DDEC1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */; };
+		CF04DDED1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */; };
+		CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
+		CF04DDF61E2DBF1D0047B1F9 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
+		CF04DDF71E2DBF1D0047B1F9 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
+		CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */; };
+		CF04DDFB1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
+		CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
+		CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
+		CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
 		CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */; };
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
@@ -949,6 +965,12 @@
 		CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AliasBadgeIcon.icns; path = NimbleCommander/Resources/AliasBadgeIcon.icns; sourceTree = SOURCE_ROOT; };
 		CF04DDDB1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h; sourceTree = SOURCE_ROOT; };
 		CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCache.mm; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.mm; sourceTree = SOURCE_ROOT; };
+		CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTab.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.h; sourceTree = SOURCE_ROOT; };
+		CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTab.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.mm; sourceTree = SOURCE_ROOT; };
+		CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PreferencesWindowThemesTab.xib; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.xib; sourceTree = SOURCE_ROOT; };
+		CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Preferences.mm; path = NimbleCommander/Preferences/Preferences.mm; sourceTree = SOURCE_ROOT; };
+		CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesControls.h; path = NimbleCommander/Preferences/PreferencesWindowThemesControls.h; sourceTree = SOURCE_ROOT; };
+		CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesControls.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesControls.mm; sourceTree = SOURCE_ROOT; };
 		CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolsSupport.h; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.h; sourceTree = SOURCE_ROOT; };
 		CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -1763,6 +1785,7 @@
 		B52EB78B172277C5004ABC2E /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */,
 				CF4E569D1D50687A00452912 /* Preferences.h */,
 				CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */,
 				CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */,
@@ -1792,6 +1815,11 @@
 				CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */,
 				CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */,
 				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
+				CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */,
+				CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */,
+				CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */,
+				CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */,
+				CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -2928,6 +2956,7 @@
 				CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
+				CF04DDEC1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */,
 				CF4E56C71D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF4E56B41D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
@@ -3021,6 +3050,7 @@
 				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF8D0CFF1D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CFA53A571D433E2A00C562A7 /* Operations.strings in Resources */,
+				CF04DDEB1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
 				CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CF1E3D201D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
@@ -3080,6 +3110,7 @@
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
+				CF04DDEA1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
@@ -3151,6 +3182,7 @@
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,
 				CFA7FA741C1D6E06000D039F /* Config.json in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
+				CF04DDED1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
@@ -3289,10 +3321,12 @@
 				CF4E56B81D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF9069861BB54035000C3CBB /* Job.cpp in Sources */,
+				CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFDAC2B61DFD0B7D0039A104 /* AppStoreHelper.mm in Sources */,
 				CF50C42B1C0ADE88009DF611 /* OperationsSummaryViewController.mm in Sources */,
 				CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */,
 				CF50C45C1C0ADF51009DF611 /* JobTrash.mm in Sources */,
+				CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
@@ -3324,6 +3358,7 @@
 				CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
+				CF04DDF71E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
@@ -3430,12 +3465,15 @@
 				CF876D491D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
 				CFA53A071D433E2A00C562A7 /* OperationJob.cpp in Sources */,
 				CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */,
+				CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */,
 				CF56BEFB1D5C26B000A08D2B /* InternalViewerController.mm in Sources */,
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CF04DDF61E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */,
 				CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */,
+				CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3541,6 +3579,7 @@
 				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
+				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
@@ -3550,6 +3589,7 @@
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
 				CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */,
+				CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
 				CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */,
 				CF7D135B1BF1B964001F53FD /* CreateDirectoryOperationJob.mm in Sources */,
@@ -3576,6 +3616,7 @@
 				CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */,
 				CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */,
+				CF04DDFB1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFDAC2A91DFD093E0039A104 /* ToolsMenuDelegate.mm in Sources */,
 				CFDAC2AF1DFD096E0039A104 /* NetworkConnectionsManager.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
@@ -3644,6 +3685,7 @@
 				CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
+				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
@@ -3664,6 +3706,7 @@
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
+				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
@@ -3682,6 +3725,7 @@
 				CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF876D381D51E0AF009C0CCE /* BigFileView.mm in Sources */,
 				CF50C4261C0ADE7F009DF611 /* OperationStats.mm in Sources */,
+				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,

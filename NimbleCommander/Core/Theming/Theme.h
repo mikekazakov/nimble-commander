@@ -1,5 +1,6 @@
 #pragma once
 
+class Theme;
 class ThemesManager;
 struct PanelViewPresentationItemsColoringRule;
 
@@ -9,11 +10,17 @@ enum class ThemeAppearance : int8_t
     Dark    =   1   // NSAppearanceNameVibrantDark
 };
 
+/**
+ * Thread-safe.
+ * Returned reference should not be stored.
+ */
+const Theme &CurrentTheme() noexcept;
+
 class Theme
 {
 public:
-    // foolproof constructor against accidental calling Theme() instead of CurrentTheme()  
-    Theme(void*_dont_call_me_exclamation_mark);
+    // workaround to exclude rapidjson from header
+    Theme(const /*rapidjson::StandaloneValue*/void *_dont_call_me_exclamation_mark);
     ~Theme();
 
     // General appearance settings /////////////////////////////////////////////////////////////////
@@ -119,5 +126,3 @@ private:
     struct Internals;
     unique_ptr<Internals> I;
 };
-
-const Theme &CurrentTheme();

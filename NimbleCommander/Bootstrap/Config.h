@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Habanero/SerialQueue.h>
-//#include "3rd_party/rapidjson/include/rapidjson/rapidjson.h"
-//#include "3rd_party/rapidjson/include/rapidjson/document.h"
 #include "../Core/rapidjson.h"
 
 class GenericConfig;

@@ -199,6 +199,14 @@ static NSColor *DecodeSystemColor( const string &_color )
 
 - (NSString*)toHexString
 {
+    if( [self.colorSpaceName isEqualToString:NSNamedColorSpace] ) {
+        auto i = find_if( begin(g_SystemColors), end(g_SystemColors), [&](auto &v) {
+            return v.second == self;
+        });
+        if( i != end(g_SystemColors) )
+            return [NSString stringWithUTF8String:i->first.c_str()];
+    }
+    
     char buf[16];
     HexadecimalColorRGBAToString( [self toRGBA], buf );
     return [NSString stringWithUTF8String:buf];
@@ -206,6 +214,14 @@ static NSColor *DecodeSystemColor( const string &_color )
 
 - (string)toHexStdString
 {
+    if( [self.colorSpaceName isEqualToString:NSNamedColorSpace] ) {
+        auto i = find_if( begin(g_SystemColors), end(g_SystemColors), [&](auto &v) {
+            return v.second == self;
+        });
+        if( i != end(g_SystemColors) )
+            return i->first;
+    }
+
     char buf[16];
     HexadecimalColorRGBAToString( [self toRGBA], buf );
     return string(buf);

@@ -16,6 +16,7 @@
 @class AppStoreHelper;
 class ExternalToolsStorage;
 class PanelViewLayoutsStorage;
+class ThemesManager;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -75,6 +76,8 @@ class PanelViewLayoutsStorage;
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 
 @property (nonatomic, readonly) PanelViewLayoutsStorage& panelLayouts;
+
+@property (nonatomic, readonly) ThemesManager& themesManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 

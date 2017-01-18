@@ -1,15 +1,17 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
-#include <fstream>
-#include <rapidjson/error/en.h>
-#include <rapidjson/memorystream.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/prettywriter.h>
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
+//#include <fstream>
+//#include <rapidjson/error/en.h>
+//#include <rapidjson/memorystream.h>
+//#include <rapidjson/stringbuffer.h>
+//#include <rapidjson/prettywriter.h>
+#include <NimbleCommander/Core/rapidjson.h>
+//#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "Theme.h"
+//#include "ThemesManager.h"
 
+/*
 const Theme &CurrentTheme()
 {
 // get ThemesManager instance
@@ -42,6 +44,8 @@ static rapidjson::Document GetDocument()
         pathForResource:[NSString stringWithUTF8StdString:theme]
                  ofType:@"json"
     ];
+    if( !bundle_path )
+        return rapidjson::Document{};
     const auto supp_path = AppDelegate.me.supportDirectory + theme + ".json";
     const string json = access(supp_path.c_str(), R_OK) == 0 ?
         Load(supp_path) :
@@ -56,9 +60,9 @@ static rapidjson::Document GetDocument()
         exit(EXIT_FAILURE);
     }
     return doc;
-}
+} */
 
-static NSColor *ExtractColor( const rapidjson::Document &_doc, const char *_path)
+static NSColor *ExtractColor( const rapidjson::StandaloneValue &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
@@ -70,7 +74,7 @@ static NSColor *ExtractColor( const rapidjson::Document &_doc, const char *_path
     return [NSColor colorWithHexStdString:cr->value.GetString()];
 }
 
-static NSFont *ExtractFont( const rapidjson::Document &_doc, const char *_path)
+static NSFont *ExtractFont( const rapidjson::StandaloneValue &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
@@ -155,10 +159,11 @@ struct Theme::Internals
     NSColor *m_ViewerBackgroundColor;
 };
 
-Theme::Theme(void*_dont_call_me_exclamation_mark):
+Theme::Theme( const void *_theme_data ):
     I( make_unique<Internals>() )
 {
-    const auto doc = GetDocument();
+    assert( _theme_data );
+    const auto &doc = *(const rapidjson::StandaloneValue*)_theme_data;
     
     I->m_ThemeAppearanceType = [&]{
         auto cr = doc.FindMember("themeAppearance");

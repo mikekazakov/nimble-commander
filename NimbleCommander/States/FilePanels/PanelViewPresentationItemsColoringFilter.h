@@ -46,6 +46,9 @@ struct PanelViewPresentationItemsColoringFilter
      * Persistance support - build filter from a dictionary.
      */
     static PanelViewPresentationItemsColoringFilter FromJSON(const GenericConfig::ConfigValue& _v);
+    
+    bool operator==(const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept;
+    bool operator!=(const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept;
 };
 
 struct PanelViewPresentationItemsColoringRule
@@ -57,4 +60,6 @@ struct PanelViewPresentationItemsColoringRule
     
     GenericConfig::ConfigValue ToJSON() const;
     static PanelViewPresentationItemsColoringRule FromJSON(const GenericConfig::ConfigValue& _v);
+    bool operator==(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
+    bool operator!=(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
 };

@@ -1,0 +1,27 @@
+#pragma once
+
+#include <NimbleCommander/Core/rapidjson.h>
+#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+
+#include "Theme.h"
+
+struct ThemePersistence
+{
+    using v = const rapidjson::StandaloneValue &;
+    
+    static NSColor *ExtractColor( v _doc, const char *_path );
+    static rapidjson::StandaloneValue EncodeColor( NSColor *_color );
+    
+    static NSFont *ExtractFont( v _doc, const char *_path );
+    static rapidjson::StandaloneValue EncodeFont( NSFont *_font );
+    
+    static vector<PanelViewPresentationItemsColoringRule> ExtractRules( v _doc, const char *_path );
+    static rapidjson::StandaloneValue EncodeRules(
+        const vector<PanelViewPresentationItemsColoringRule> &_rules );
+    
+    static ThemeAppearance ExtractAppearance( v _doc, const char *_path  );
+    static rapidjson::StandaloneValue EncodeAppearance(
+        ThemeAppearance _appearance );
+    
+};
+

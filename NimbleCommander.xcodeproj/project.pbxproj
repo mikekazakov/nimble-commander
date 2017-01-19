@@ -40,6 +40,14 @@
 		CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
 		CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
 		CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */; };
+		CF04DE001E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */; };
+		CF04DE011E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */; };
+		CF04DE021E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */; };
+		CF04DE031E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */; };
+		CF04DE061E3086E90047B1F9 /* ThemePersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */; };
+		CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */; };
+		CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */; };
+		CF04DE091E3086E90047B1F9 /* ThemePersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */; };
 		CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */; };
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
@@ -971,6 +979,9 @@
 		CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Preferences.mm; path = NimbleCommander/Preferences/Preferences.mm; sourceTree = SOURCE_ROOT; };
 		CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesControls.h; path = NimbleCommander/Preferences/PreferencesWindowThemesControls.h; sourceTree = SOURCE_ROOT; };
 		CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesControls.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesControls.mm; sourceTree = SOURCE_ROOT; };
+		CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PreferencesWindowThemesTabColoringRulesControl.xib; path = NimbleCommander/Preferences/PreferencesWindowThemesTabColoringRulesControl.xib; sourceTree = SOURCE_ROOT; };
+		CF04DE041E3086DE0047B1F9 /* ThemePersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemePersistence.h; path = NimbleCommander/Core/Theming/ThemePersistence.h; sourceTree = SOURCE_ROOT; };
+		CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemePersistence.mm; path = NimbleCommander/Core/Theming/ThemePersistence.mm; sourceTree = SOURCE_ROOT; };
 		CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolsSupport.h; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.h; sourceTree = SOURCE_ROOT; };
 		CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -1820,6 +1831,7 @@
 				CF04DDE51E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib */,
 				CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */,
 				CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */,
+				CF04DDFF1E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -2133,10 +2145,12 @@
 			children = (
 				CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */,
 				CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */,
-				CF5FE8021E14A08500CD83B4 /* ThemesManager.h */,
-				CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */,
 				CF5FE7FF1E14A00C00CD83B4 /* Theme.h */,
 				CF5FE8001E14A00C00CD83B4 /* Theme.mm */,
+				CF04DE041E3086DE0047B1F9 /* ThemePersistence.h */,
+				CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */,
+				CF5FE8021E14A08500CD83B4 /* ThemesManager.h */,
+				CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */,
 			);
 			name = Theming;
 			sourceTree = "<group>";
@@ -2957,6 +2971,7 @@
 				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CF04DDEC1E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.xib in Resources */,
+				CF04DE021E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF4E56C71D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF4E56B41D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
@@ -3038,6 +3053,7 @@
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
 				CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
+				CF04DE011E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CFA53A4D1D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */,
 				CFA53A4F1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.xib in Resources */,
@@ -3116,6 +3132,7 @@
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF7D13961BF5E3A8001F53FD /* OperationsSummaryViewController.xib in Resources */,
+				CF04DE001E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CF1E3D1F1D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
@@ -3170,6 +3187,7 @@
 				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF9A80041DE19F7F00DEDF0B /* PanelViewHeaderSortPopup.xib in Resources */,
+				CF04DE031E306EB10047B1F9 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF8D0D011D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
@@ -3350,6 +3368,7 @@
 				CF876D431D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
 				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
+				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
@@ -3410,6 +3429,7 @@
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
 				CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -3593,6 +3613,7 @@
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
 				CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */,
 				CF7D135B1BF1B964001F53FD /* CreateDirectoryOperationJob.mm in Sources */,
+				CF04DE061E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF876D501D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFDAC2601DFBF0B30039A104 /* PanelController+NavigationMenu.mm in Sources */,
@@ -3720,6 +3741,7 @@
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */,
 				CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */,
+				CF04DE091E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */,

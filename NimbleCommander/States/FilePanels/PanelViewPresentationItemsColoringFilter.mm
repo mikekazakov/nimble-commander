@@ -131,6 +131,24 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
     return f;
 }
 
+bool PanelViewPresentationItemsColoringFilter::operator==
+    (const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept
+{
+    return mask != _rhs.mask &&
+        executable != _rhs.executable &&
+        hidden != _rhs.hidden &&
+        directory != _rhs.directory &&
+        symlink != _rhs.symlink &&
+        reg != _rhs.reg &&
+        selected != _rhs.selected;
+}
+
+bool PanelViewPresentationItemsColoringFilter::operator!=
+    (const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept
+{
+    return !(*this == _rhs);
+}
+
 GenericConfig::ConfigValue PanelViewPresentationItemsColoringRule::ToJSON() const
 {
     GenericConfig::ConfigValue v( rapidjson::kObjectType );
@@ -156,4 +174,19 @@ PanelViewPresentationItemsColoringRule PanelViewPresentationItemsColoringRule::F
     if( _v.HasMember("focused") ) f.focused = ColorFromJSON( _v["focused"] );
     
     return f;
+}
+
+bool PanelViewPresentationItemsColoringRule::operator==
+    (const PanelViewPresentationItemsColoringRule&_rhs) const noexcept
+{
+    return name == _rhs.name &&
+        regular == _rhs.regular &&
+        focused == _rhs.focused &&
+        filter == _rhs.filter;
+}
+
+bool PanelViewPresentationItemsColoringRule::operator!=
+    (const PanelViewPresentationItemsColoringRule&_rhs) const noexcept
+{
+    return !(*this == _rhs);
 }

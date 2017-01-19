@@ -1,5 +1,7 @@
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
+#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+#include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "PreferencesWindowThemesControls.h"
 
 @interface AlphaColorWell : NSColorWell
@@ -38,6 +40,8 @@
         m_ColorWell = [[AlphaColorWell alloc] initWithFrame:NSRect()];
         m_ColorWell.translatesAutoresizingMaskIntoConstraints = false;
         m_ColorWell.color = m_Color;
+        m_ColorWell.target = self;
+        m_ColorWell.action = @selector(colorChanged:);
         [self addSubview:m_ColorWell];
         
         m_Description = [[NSTextField alloc] initWithFrame:NSRect()];
@@ -66,12 +70,15 @@
     return self;
 }
 
-- (void) viewDidMoveToSuperview
+- (void)colorChanged:(id)sender
 {
-    if( self.superview )
-        [m_ColorWell addObserver:self forKeyPath:@"color" options:0 context:NULL];
-    else
-        [m_ColorWell removeObserver:self forKeyPath:@"color"];
+    if( NSColorWell *cw = objc_cast<NSColorWell>(sender) ) {
+            if( cw.color != m_Color ) {
+                m_Color = cw.color;
+                m_Description.stringValue = [m_Color toHexString];
+                [self sendAction:self.action to:self.target];
+            }
+        }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -251,3 +258,315 @@
 }
 
 @end
+
+@interface PreferencesWindowThemesTabColoringRulesControl()
+@property (strong) IBOutlet NSView *carrier;
+@property (strong) IBOutlet NSTableView *table;
+@property (strong) IBOutlet NSSegmentedControl *plusMinus;
+
+
+@end
+
+static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
+    @"PreferencesWindowThemesTabColoringRulesControlDataType";
+
+@implementation PreferencesWindowThemesTabColoringRulesControl
+{
+    vector<PanelViewPresentationItemsColoringRule> m_Rules;
+
+}
+
+- (id) initWithFrame:(NSRect)frameRect
+{
+    if( self = [super initWithFrame:frameRect] ) {
+    
+        NSNib *nib = [[NSNib alloc] initWithNibNamed:
+                      @"PreferencesWindowThemesTabColoringRulesControl" bundle:nil];
+        [nib instantiateWithOwner:self topLevelObjects:nil];
+//        int a = 10;
+        
+        auto v = self.carrier;
+        v.translatesAutoresizingMaskIntoConstraints = false;
+        [self addSubview:self.carrier];
+        
+        auto views = NSDictionaryOfVariableBindings(v);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[v]|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[v]|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        
+        [self.table registerForDraggedTypes:
+            @[g_PreferencesWindowThemesTabColoringRulesControlDataType]];
+    }
+    return self;
+    
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return m_Rules.size();
+}
+
+- (void) setRules:(vector<PanelViewPresentationItemsColoringRule>)rules
+{
+    if( m_Rules != rules ) {
+        m_Rules = rules;
+        [self.table reloadData];
+    }
+}
+
+- (vector<PanelViewPresentationItemsColoringRule>)rules
+{
+    return m_Rules;
+}
+
+- (void)onColorChanged:(id)sender
+{
+    if( NSColorWell *cw = objc_cast<NSColorWell>(sender) )
+        if( auto rv = objc_cast<NSTableRowView>(cw.superview) )
+            if( rv.superview == self.table ) {
+                long row_no = [self.table rowForView:rv];
+                if( row_no >= 0 ) {
+                    auto new_color = cw.color;
+                    if( cw == [rv viewAtColumn:1] && m_Rules.at(row_no).regular != new_color ) {
+                        m_Rules.at(row_no).regular = new_color;
+                        [self commit];
+                    }
+                    if( cw == [rv viewAtColumn:2] && m_Rules.at(row_no).focused != new_color ) {
+                        m_Rules.at(row_no).focused = new_color;
+                        [self commit];
+                    }
+                }
+            }
+}
+
+- (NSView *)tableView:(NSTableView *)tableView
+   viewForTableColumn:(NSTableColumn *)tableColumn
+                  row:(NSInteger)row
+{
+    if( row >= m_Rules.size() )
+        return nil;
+    auto &r = m_Rules[row];
+    if([tableColumn.identifier isEqualToString:@"name"]) {
+        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+        tf.stringValue = [NSString stringWithUTF8StdString:r.name];
+        tf.bordered = false;
+        tf.editable = true;
+        tf.drawsBackground = false;
+        tf.delegate = self;
+        return tf;
+    }
+    if([tableColumn.identifier isEqualToString:@"unfocused"]) {
+        NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
+        cw.color = r.regular;
+        cw.target = self;
+        cw.action = @selector(onColorChanged:);
+        return cw;
+    }
+    if([tableColumn.identifier isEqualToString:@"focused"]) {
+        NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
+        cw.color = r.focused;
+        cw.target = self;
+        cw.action = @selector(onColorChanged:);
+        return cw;
+    }
+    if([tableColumn.identifier isEqualToString:@"filter"]) {
+        NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
+        bt.title = NSLocalizedStringFromTable(@"edit",
+                                              @"Preferences",
+                                              "Coloring rules edit button title");
+        bt.buttonType = NSButtonTypeMomentaryLight;
+        bt.bezelStyle = NSBezelStyleRecessed;
+        ((NSButtonCell*)bt.cell).controlSize = NSMiniControlSize;
+        bt.target = self;
+        bt.action = @selector(onColoringFilterClicked:);
+        return bt;
+    }
+    return nil;
+}
+
+- (void)tableView:(NSTableView *)tableView
+    didAddRowView:(NSTableRowView *)rowView
+           forRow:(NSInteger)row
+{
+    for( int i = 1; i <= 2; ++i ) {
+        NSView *v = [rowView viewAtColumn:i];
+        NSRect rc = v.frame;
+        rc.size.width = 40;
+        rc.origin.x += (v.frame.size.width - rc.size.width) / 2.;
+        v.frame = rc;
+    }
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)obj
+{
+    NSTextField *tf = obj.object;
+    if( !tf )
+        return;
+    if( auto rv = objc_cast<NSTableRowView>(tf.superview) ) {
+        if( rv.superview == self.table ) {
+            long row_no = [self.table rowForView:rv];
+            if( row_no >= 0 ) {
+                auto new_value = tf.stringValue ? tf.stringValue.UTF8String : "";
+                if( m_Rules[row_no].name != new_value ) {
+                    m_Rules[row_no].name = new_value;
+                    [self commit];
+                }
+            }
+        }
+    }
+}
+
+- (void) onColoringFilterClicked:(id)sender
+{
+    if( auto button = objc_cast<NSButton>(sender) )
+        if( auto rv = objc_cast<NSTableRowView>(button.superview) ) {
+            long row_no = [((NSTableView*)rv.superview) rowForView:rv];
+            auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc]
+                initWithFilter:m_Rules.at(row_no).filter];
+            [sheet beginSheetForWindow:self.window
+                     completionHandler:^(NSModalResponse returnCode) {
+                         if( returnCode != NSModalResponseOK )
+                             return;
+                         if( sheet.filter != m_Rules.at(row_no).filter ) {
+                            m_Rules.at(row_no).filter = sheet.filter;
+                            [self commit];
+                         }
+                     }];
+        }
+}
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView
+                validateDrop:(id < NSDraggingInfo >)info
+                 proposedRow:(NSInteger)row
+       proposedDropOperation:(NSTableViewDropOperation)operation
+{
+    return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+     toPasteboard:(NSPasteboard *)pboard
+{
+    [pboard declareTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType]
+                   owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes]
+            forType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
+    return true;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView
+       acceptDrop:(id<NSDraggingInfo>)info
+              row:(NSInteger)drag_to
+    dropOperation:(NSTableViewDropOperation)operation
+{
+    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:[info.draggingPasteboard
+        dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType]];
+    NSInteger drag_from = inds.firstIndex;
+    
+    if(drag_to == drag_from || // same index, above
+       drag_to == drag_from + 1) // same index, below
+    return false;
+    
+    assert(drag_from < m_Rules.size());
+    
+    auto i = begin(m_Rules);
+    if( drag_from < drag_to )
+        rotate( i + drag_from, i + drag_from + 1, i + drag_to );
+    else
+        rotate( i + drag_to, i + drag_from, i + drag_from + 1 );
+    [self.table reloadData];
+    [self commit];
+    return true;
+}
+
+- (IBAction)onPlusMinusButton:(id)sender
+{
+    const auto segment = self.plusMinus.selectedSegment;
+    if( segment == 0 ) {
+        m_Rules.emplace_back();
+        [self.table reloadData];
+        [self commit];
+    }
+    else if( segment == 1 ) {
+        const auto row = self.table.selectedRow;
+        if( row < 0 )
+            return;
+        m_Rules.erase( begin(m_Rules) + row );
+        [self.table reloadData];
+        [self commit];
+    }
+}
+
+- (void) commit
+{
+    [self sendAction:self.action to:self.target];
+}
+
+@end
+
+@implementation PreferencesWindowThemesAppearanceControl
+{
+    NSPopUpButton *m_Button;
+    ThemeAppearance m_ThemeAppearance;
+}
+
+- (id) initWithFrame:(NSRect)frameRect
+{
+    if( self = [super initWithFrame:frameRect] ) {
+        m_ThemeAppearance = ThemeAppearance::Light;
+        m_Button = [[NSPopUpButton alloc] initWithFrame:NSRect()];
+        m_Button.translatesAutoresizingMaskIntoConstraints = false;
+        ((NSPopUpButtonCell*)m_Button.cell).controlSize = NSControlSizeSmall;
+        [m_Button addItemWithTitle:@"Aqua"];
+        m_Button.lastItem.tag = (int)ThemeAppearance::Light;
+        [m_Button addItemWithTitle:@"Dark"];
+        m_Button.lastItem.tag = (int)ThemeAppearance::Dark;
+        [m_Button selectItemWithTag:(int)m_ThemeAppearance];
+        m_Button.target = self;
+        m_Button.action = @selector(onSelectionChanged:);
+        [self addSubview:m_Button];
+        
+        auto views = NSDictionaryOfVariableBindings(m_Button);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[m_Button(>=80)]"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Button
+                                                         attribute:NSLayoutAttributeCenterY
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:self
+                                                         attribute:NSLayoutAttributeCenterY
+                                                        multiplier:1 constant:0]];
+    }
+    return self;
+}
+
+- (void)onSelectionChanged:(id)sender
+{
+    auto new_value = (ThemeAppearance)m_Button.selectedTag;
+    if( new_value != m_ThemeAppearance ) {
+        m_ThemeAppearance = new_value;
+        [self sendAction:self.action to:self.target];
+    }
+}
+
+- (void)setThemeAppearance:(ThemeAppearance)themeAppearance
+{
+    if( m_ThemeAppearance != themeAppearance ) {
+        m_ThemeAppearance = themeAppearance;
+        [m_Button selectItemWithTag:(int)m_ThemeAppearance];
+    }
+}
+
+- (ThemeAppearance)themeAppearance
+{
+    return m_ThemeAppearance;
+}
+
+@end
+

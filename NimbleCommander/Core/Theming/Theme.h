@@ -6,7 +6,7 @@ struct PanelViewPresentationItemsColoringRule;
 
 enum class ThemeAppearance : int8_t
 {
-    Light   =   0,  // NSAppearanceNameVibrantLight
+    Light   =   0,  // NSAppearanceNameAqua
     Dark    =   1   // NSAppearanceNameVibrantDark
 };
 

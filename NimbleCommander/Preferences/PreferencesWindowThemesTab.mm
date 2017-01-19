@@ -11,11 +11,11 @@
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
-#include <Utility/HexadecimalColor.h>
-#include <Utility/FontExtras.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <NimbleCommander/Core/Theming/ThemePersistence.h>
+#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
 
@@ -23,7 +23,8 @@ enum class PreferencesWindowThemesTabItemType
 {
     Color,
     Font,
-    ColoringRule
+    ColoringRules,
+    Appearance
     // bool?
 };
 
@@ -145,41 +146,6 @@ static rapidjson::Document GetDocument()
     return doc;
 }*/
 
-static NSColor *ExtractColor( const rapidjson::StandaloneValue &_doc, const char *_path)
-{
-    auto cr = _doc.FindMember(_path);
-    if( cr == _doc.MemberEnd() )
-        return nil;
-    
-    if( !cr->value.IsString() )
-        return nil;
-
-    return [NSColor colorWithHexStdString:cr->value.GetString()];
-}
-
-static NSFont *ExtractFont( const rapidjson::StandaloneValue &_doc, const char *_path)
-{
-    auto cr = _doc.FindMember(_path);
-    if( cr == _doc.MemberEnd() )
-        return nil;
-    
-    if( !cr->value.IsString() )
-        return nil;
-
-    return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
-}
-
-static rapidjson::StandaloneValue EncodeColor( NSColor *_color )
-{
-    return rapidjson::StandaloneValue([_color toHexStdString].c_str(),
-                                      rapidjson::g_CrtAllocator);
-}
-
-static rapidjson::StandaloneValue EncodeFont( NSFont *_font )
-{
-    return rapidjson::StandaloneValue([_font toStringDescription].UTF8String,
-                                      rapidjson::g_CrtAllocator);
-}
 
 static PreferencesWindowThemesTabItemNode* SpawnColorNode(NSString *_description,
                                                           const string& _entry)
@@ -199,6 +165,24 @@ static PreferencesWindowThemesTabItemNode* SpawnFontNode(NSString *_description,
             ofType:PreferencesWindowThemesTabItemType::Font];
 }
 
+static PreferencesWindowThemesTabItemNode* SpawnColoringRulesNode(NSString *_description,
+                                                                  const string& _entry)
+{
+    return [[PreferencesWindowThemesTabItemNode alloc]
+            initWithTitle:_description
+            forEntry:_entry
+            ofType:PreferencesWindowThemesTabItemType::ColoringRules];
+}
+
+static PreferencesWindowThemesTabItemNode* SpawnAppearanceNode(NSString *_description,
+                                                               const string& _entry)
+{
+    return [[PreferencesWindowThemesTabItemNode alloc]
+            initWithTitle:_description
+            forEntry:_entry
+            ofType:PreferencesWindowThemesTabItemType::Appearance];
+}
+
 static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_description,
                                                           NSArray *_children)
 {
@@ -213,48 +197,127 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
 
 @implementation PreferencesWindowThemesTab
 {
-    NSMutableArray *m_Nodes;
+    NSArray *m_Nodes;
     rapidjson::StandaloneDocument m_Doc;
     ThemesManager *m_Manager;
 }
-/*
-    "filePanelsBriefFont": "@systemFont, 13",
-    "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-    "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
-    "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
-    "filePanelsBriefSelectedInactiveItemBackgroundColor": "@darkGrayColor",
-*/
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
-        //m_Doc = GetDocument();
         m_Manager = &AppDelegate.me.themesManager;
         m_Doc.CopyFrom( *m_Manager->SelectedThemeData(), rapidjson::g_CrtAllocator );
-
-        auto fp_brief_nodes = @[
-        SpawnFontNode(@"Text font",
-            "filePanelsBriefFont"),
-        SpawnColorNode(@"Even row background",
-            "filePanelsBriefRegularEvenRowBackgroundColor"),
-        SpawnColorNode(@"Odd row background",
-            "filePanelsBriefRegularOddRowBackgroundColor"),
-        SpawnColorNode(@"Selected active item background",
-            "filePanelsBriefSelectedActiveItemBackgroundColor"),
-        SpawnColorNode(@"Selected inactive item background",
-            "filePanelsBriefSelectedInactiveItemBackgroundColor")
-        ];
-        auto fp_brief_group = SpawnGroupNode(@"Brief mode", fp_brief_nodes);
-        
-        
-        auto fp_group = SpawnGroupNode(@"File panels", @[fp_brief_group]);
-    
-        m_Nodes = [[NSMutableArray alloc] init];
-        [m_Nodes addObject:fp_group];
+        [self setupSettingsNodes];
     }
     
     return self;
+}
+
+- (void) setupSettingsNodes
+{
+    auto fp_general_nodes = @[
+    SpawnAppearanceNode(@"UI Appearance", "themeAppearance"),
+    SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
+    SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
+    SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor")
+    ];
+    
+    auto fp_tabs_nodes = @[
+    SpawnFontNode(@"Text font", "filePanelsTabsFont"),
+    SpawnColorNode(@"Text color", "filePanelsTabsTextColor"),
+    SpawnColorNode(@"Selected & key window & active", "filePanelsTabsSelectedKeyWndActiveBackgroundColor"),
+    SpawnColorNode(@"Selected & key window", "filePanelsTabsSelectedKeyWndInactiveBackgroundColor"),
+    SpawnColorNode(@"Selected", "filePanelsTabsSelectedNotKeyWndBackgroundColor"),
+    SpawnColorNode(@"Regular & key window & hover", "filePanelsTabsRegularKeyWndHoverBackgroundColor"),
+    SpawnColorNode(@"Regular & key window", "filePanelsTabsRegularKeyWndRegularBackgroundColor"),
+    SpawnColorNode(@"Regular", "filePanelsTabsRegularNotKeyWndBackgroundColor"),
+    SpawnColorNode(@"Separator", "filePanelsTabsSeparatorColor"),
+    SpawnColorNode(@"Pictogram", "filePanelsTabsPictogramColor")
+    ];
+    
+    auto fp_header_nodes = @[
+    SpawnFontNode(@"Text font", "filePanelsHeaderFont"),
+    SpawnColorNode(@"Regular text color", "filePanelsHeaderTextColor"),
+    SpawnColorNode(@"Active text color", "filePanelsHeaderActiveTextColor"),
+    SpawnColorNode(@"Active background", "filePanelsHeaderActiveBackgroundColor"),
+    SpawnColorNode(@"Inactive background", "filePanelsHeaderInactiveBackgroundColor"),
+    SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor")
+    ];
+    
+    auto fp_footer_nodes = @[
+    SpawnFontNode(@"Text font", "filePanelsFooterFont"),
+    SpawnColorNode(@"Regular text color", "filePanelsFooterTextColor"),
+    SpawnColorNode(@"Active text color", "filePanelsFooterActiveTextColor"),
+    SpawnColorNode(@"Active background", "filePanelsFooterActiveBackgroundColor"),
+    SpawnColorNode(@"Inactive background", "filePanelsFooterInactiveBackgroundColor"),
+    SpawnColorNode(@"Separator", "filePanelsFooterSeparatorsColor")
+    ];
+    
+    auto fp_brief_nodes = @[
+    SpawnFontNode(@"Text font", "filePanelsBriefFont"),
+    SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
+    SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
+    SpawnColorNode(@"Selected & active item background", "filePanelsBriefSelectedActiveItemBackgroundColor"),
+    SpawnColorNode(@"Selected & inactive item background", "filePanelsBriefSelectedInactiveItemBackgroundColor")
+    ];
+    
+    auto fp_list_nodes = @[
+    SpawnFontNode(@"Text font", "filePanelsListFont"),
+    SpawnColorNode(@"Grid color", "filePanelsListGridColor"),
+    SpawnFontNode(@"Header font", "filePanelsListHeaderFont"),
+    SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),
+    SpawnColorNode(@"Header text color", "filePanelsListHeaderTextColor"),
+    SpawnColorNode(@"Header separator", "filePanelsListHeaderSeparatorColor"),
+    SpawnColorNode(@"Selected & active row background", "filePanelsListSelectedActiveRowBackgroundColor"),
+    SpawnColorNode(@"Selected & inactive row background", "filePanelsListSelectedInactiveRowBackgroundColor"),
+    SpawnColorNode(@"Even row background", "filePanelsListRegularEvenRowBackgroundColor"),
+    SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
+    ];
+    
+    auto fp_group = SpawnGroupNode(@"File panels", @[SpawnGroupNode(@"General", fp_general_nodes),
+                                                     SpawnGroupNode(@"Tabs", fp_tabs_nodes),
+                                                     SpawnGroupNode(@"Header", fp_header_nodes),
+                                                     SpawnGroupNode(@"Footer", fp_footer_nodes),
+                                                     SpawnGroupNode(@"Brief mode", fp_brief_nodes),
+                                                     SpawnGroupNode(@"List mode", fp_list_nodes)]);
+
+    auto viewer_nodes = @[
+    SpawnFontNode(@"Text font", "viewerFont"),
+    SpawnColorNode(@"Foreground color", "viewerTextColor"),
+    SpawnColorNode(@"Selection color", "viewerSelectionColor"),
+    SpawnColorNode(@"Background color", "viewerBackgroundColor")
+    ];
+
+    auto term_nodes = @[
+    SpawnFontNode(@"Text font", "terminalFont"),
+    SpawnColorNode(@"Foreground color", "terminalForegroundColor"),
+    SpawnColorNode(@"Foreground bold color", "terminalBoldForegroundColor"),
+    SpawnColorNode(@"Background", "terminalBackgroundColor"),
+    SpawnColorNode(@"Selection", "terminalSelectionColor"),
+    SpawnColorNode(@"Cursor color", "terminalCursorColor"),
+    SpawnColorNode(@"ANSI color 0 (black)", "terminalAnsiColor0"),
+    SpawnColorNode(@"ANSI color 1 (red)", "terminalAnsiColor1"),
+    SpawnColorNode(@"ANSI color 2 (green)", "terminalAnsiColor2"),
+    SpawnColorNode(@"ANSI color 3 (yellow)", "terminalAnsiColor3"),
+    SpawnColorNode(@"ANSI color 4 (blue)", "terminalAnsiColor4"),
+    SpawnColorNode(@"ANSI color 5 (magenta)", "terminalAnsiColor5"),
+    SpawnColorNode(@"ANSI color 6 (cyan)", "terminalAnsiColor6"),
+    SpawnColorNode(@"ANSI color 7 (white)", "terminalAnsiColor7"),
+    SpawnColorNode(@"ANSI color 8 (bright black)", "terminalAnsiColor8"),
+    SpawnColorNode(@"ANSI color 9 (bright red)", "terminalAnsiColor9"),
+    SpawnColorNode(@"ANSI color 10 (bright green)", "terminalAnsiColorA"),
+    SpawnColorNode(@"ANSI color 11 (bright yellow)", "terminalAnsiColorB"),
+    SpawnColorNode(@"ANSI color 12 (bright blue)", "terminalAnsiColorC"),
+    SpawnColorNode(@"ANSI color 13 (bright magenta)", "terminalAnsiColorD"),
+    SpawnColorNode(@"ANSI color 14 (bright cyan)", "terminalAnsiColorE"),
+    SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
+    ];
+
+    m_Nodes = @[fp_group,
+                SpawnGroupNode(@"Viewer", viewer_nodes),
+                SpawnGroupNode(@"Terminal", term_nodes)];
 }
 
 - (void)viewDidLoad
@@ -265,7 +328,7 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     
     
     
-    
+    [self.outlineView expandItem:nil expandChildren:YES];
 }
 
 -(NSString*)identifier
@@ -328,19 +391,37 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
         if( [tableColumn.identifier isEqualToString:@"value"] ) {
             if( i.type == PreferencesWindowThemesTabItemType::Color ) {
                 auto v = [[PreferencesWindowThemesTabColorControl alloc] initWithFrame:NSRect{}];
-                v.color = ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
+                v.color = ThemePersistence::ExtractColor(self.selectedThemeFrontend,
+                                                         i.entry.c_str());
                 v.action = @selector(onColorChanged:);
                 v.target = self;
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::Font ) {
                 auto v = [[PreferencesWindowThemesTabFontControl alloc] initWithFrame:NSRect{}];
-                v.font = ExtractFont(self.selectedThemeFrontend, i.entry.c_str());
+                v.font = ThemePersistence::ExtractFont(self.selectedThemeFrontend,
+                                                       i.entry.c_str());
                 v.action = @selector(onFontChanged:);
                 v.target = self;
                 return v;
-                
-            
+            }
+            if( i.type == PreferencesWindowThemesTabItemType::ColoringRules ) {
+                auto v = [[PreferencesWindowThemesTabColoringRulesControl alloc]
+                          initWithFrame:NSRect{}];
+                v.rules = ThemePersistence::ExtractRules(self.selectedThemeFrontend,
+                                                       i.entry.c_str());
+                v.action = @selector(onColoringRulesChanged:);
+                v.target = self;
+                return v;
+            }
+            if( i.type == PreferencesWindowThemesTabItemType::Appearance ) {
+                auto v = [[PreferencesWindowThemesAppearanceControl alloc]
+                          initWithFrame:NSRect{}];
+                v.themeAppearance = ThemePersistence::ExtractAppearance(self.selectedThemeFrontend,
+                                                                        i.entry.c_str());
+                v.action = @selector(onAppearanceChanged:);
+                v.target = self;
+                return v;
             }
         }
     
@@ -355,13 +436,35 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     return nil;
 }
 
+- (void)onAppearanceChanged:(id)sender
+{
+    if( const auto v = objc_cast<PreferencesWindowThemesAppearanceControl>(sender) ) {
+        const auto row = [self.outlineView rowForView:v];
+        const id item = [self.outlineView itemAtRow:row];
+        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+            [self commitChangedValue:ThemePersistence::EncodeAppearance(v.themeAppearance)
+                              forKey:node.entry];
+    }
+}
+
+- (void)onColoringRulesChanged:(id)sender
+{
+    if( const auto v = objc_cast<PreferencesWindowThemesTabColoringRulesControl>(sender) ) {
+        const auto row = [self.outlineView rowForView:v];
+        const id item = [self.outlineView itemAtRow:row];
+        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+            [self commitChangedValue:ThemePersistence::EncodeRules(v.rules)
+                              forKey:node.entry];
+    }
+}
+
 - (void)onColorChanged:(id)sender
 {
     if( const auto v = objc_cast<PreferencesWindowThemesTabColorControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:EncodeColor(v.color)
+            [self commitChangedValue:ThemePersistence::EncodeColor(v.color)
                               forKey:node.entry];
     }
 }
@@ -372,7 +475,7 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:EncodeFont(v.font)
+            [self commitChangedValue:ThemePersistence::EncodeFont(v.font)
                               forKey:node.entry];
     }
 
@@ -389,6 +492,15 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     m_Manager->SetThemeValue(m_Manager->SelectedThemeName(),
                              _key,
                              _value);
+}
+
+- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
+{
+    if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+        if( i.type == PreferencesWindowThemesTabItemType::ColoringRules )
+            return 140;
+
+    return 18;
 }
 
 

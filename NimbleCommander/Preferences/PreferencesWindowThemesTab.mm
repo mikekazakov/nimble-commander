@@ -12,6 +12,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include <Utility/HexadecimalColor.h>
+#include <Utility/FontExtras.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -156,9 +157,27 @@ static NSColor *ExtractColor( const rapidjson::StandaloneValue &_doc, const char
     return [NSColor colorWithHexStdString:cr->value.GetString()];
 }
 
+static NSFont *ExtractFont( const rapidjson::StandaloneValue &_doc, const char *_path)
+{
+    auto cr = _doc.FindMember(_path);
+    if( cr == _doc.MemberEnd() )
+        return nil;
+    
+    if( !cr->value.IsString() )
+        return nil;
+
+    return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
+}
+
 static rapidjson::StandaloneValue EncodeColor( NSColor *_color )
 {
     return rapidjson::StandaloneValue([_color toHexStdString].c_str(),
+                                      rapidjson::g_CrtAllocator);
+}
+
+static rapidjson::StandaloneValue EncodeFont( NSFont *_font )
+{
+    return rapidjson::StandaloneValue([_font toStringDescription].UTF8String,
                                       rapidjson::g_CrtAllocator);
 }
 
@@ -169,6 +188,15 @@ static PreferencesWindowThemesTabItemNode* SpawnColorNode(NSString *_description
             initWithTitle:_description
             forEntry:_entry
             ofType:PreferencesWindowThemesTabItemType::Color];
+}
+
+static PreferencesWindowThemesTabItemNode* SpawnFontNode(NSString *_description,
+                                                          const string& _entry)
+{
+    return [[PreferencesWindowThemesTabItemNode alloc]
+            initWithTitle:_description
+            forEntry:_entry
+            ofType:PreferencesWindowThemesTabItemType::Font];
 }
 
 static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_description,
@@ -204,8 +232,10 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
         //m_Doc = GetDocument();
         m_Manager = &AppDelegate.me.themesManager;
         m_Doc.CopyFrom( *m_Manager->SelectedThemeData(), rapidjson::g_CrtAllocator );
-    
+
         auto fp_brief_nodes = @[
+        SpawnFontNode(@"Text font",
+            "filePanelsBriefFont"),
         SpawnColorNode(@"Even row background",
             "filePanelsBriefRegularEvenRowBackgroundColor"),
         SpawnColorNode(@"Odd row background",
@@ -303,6 +333,15 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
                 v.target = self;
                 return v;
             }
+            if( i.type == PreferencesWindowThemesTabItemType::Font ) {
+                auto v = [[PreferencesWindowThemesTabFontControl alloc] initWithFrame:NSRect{}];
+                v.font = ExtractFont(self.selectedThemeFrontend, i.entry.c_str());
+                v.action = @selector(onFontChanged:);
+                v.target = self;
+                return v;
+                
+            
+            }
         }
     
     
@@ -327,10 +366,23 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     }
 }
 
+- (void)onFontChanged:(id)sender
+{
+    if( const auto v = objc_cast<PreferencesWindowThemesTabFontControl>(sender) ) {
+        const auto row = [self.outlineView rowForView:v];
+        const id item = [self.outlineView itemAtRow:row];
+        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+            [self commitChangedValue:EncodeFont(v.font)
+                              forKey:node.entry];
+    }
+
+}
+
 - (const rapidjson::StandaloneDocument &) selectedThemeFrontend
 {
     return m_Doc; // possibly some more logic here
 }
+/* also theme backend if any */
 
 - (void) commitChangedValue:(const rapidjson::StandaloneValue&)_value forKey:(const string&)_key
 {
@@ -339,6 +391,5 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
                              _value);
 }
 
-/* also theme backend if any */
 
 @end

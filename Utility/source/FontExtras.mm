@@ -1,4 +1,5 @@
 #include <string>
+#include <array>
 #include <Utility/FontExtras.h>
 
 using namespace std;
@@ -46,12 +47,30 @@ using namespace std;
     }
 }
 
+static bool IsSystemFont( NSFont *_font )
+{
+    static const auto max_sz = 100;
+    static std::array<NSString*, max_sz> descriptions;
+    const auto pt = (int)floor(_font.pointSize + 0.5);
+    if( pt < 0 || pt >= max_sz )
+        return false;
+    
+    const auto std_desc = [&]{
+        if( !descriptions[pt] )
+            descriptions[pt] = [NSFont systemFontOfSize:pt].fontName;
+        return descriptions[pt];
+    }();
+
+    return [std_desc isEqualToString:_font.fontName];
+}
+
 - (NSString*) toStringDescription
 {
-    return [NSString stringWithFormat:@"%@, %s",
-            self.fontName,
-            to_string(int(floor(self.pointSize + 0.5))).c_str()
-            ];
+    const auto pt = (int)floor(self.pointSize + 0.5);
+    if( IsSystemFont(self) )
+        return [NSString stringWithFormat:@"%@, %s", @"@systemFont", to_string(pt).c_str()];
+    /* check for another system fonts flavours */
+    return [NSString stringWithFormat:@"%@, %s", self.fontName, to_string(pt).c_str()];
 }
 
 @end

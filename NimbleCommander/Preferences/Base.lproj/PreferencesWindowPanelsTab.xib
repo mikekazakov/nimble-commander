@@ -1537,7 +1537,7 @@
                                         <rect key="frame" x="20" y="35" width="554" height="187"/>
                                         <clipView key="contentView" id="TdT-Uw-soe">
                                             <rect key="frame" x="1" y="0.0" width="552" height="186"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Sdc-Nl-SkA" id="vjI-ps-c9i">
                                                     <rect key="frame" x="0.0" y="0.0" width="552" height="163"/>

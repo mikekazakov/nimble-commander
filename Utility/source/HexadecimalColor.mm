@@ -137,6 +137,7 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors = {
     { "@headerColor",                            NSColor.headerColor                              },
     { "@headerTextColor",                        NSColor.headerTextColor                          },
     { "@alternateSelectedControlColor",          NSColor.alternateSelectedControlColor            },
+    { "@alternateSelectedControlTextColor",      NSColor.alternateSelectedControlTextColor        },    
     { "@controlAlternatingRowBackgroundColors0", NSColor.controlAlternatingRowBackgroundColors[0] },
     { "@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1] }
 };
@@ -205,6 +206,7 @@ static NSColor *DecodeSystemColor( const string &_color )
         });
         if( i != end(g_SystemColors) )
             return [NSString stringWithUTF8String:i->first.c_str()];
+//        NSLog(@"%@", self);
     }
     
     char buf[16];

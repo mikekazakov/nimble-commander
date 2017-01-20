@@ -11,7 +11,7 @@ ThemesManager::ThemesManager( const char *_current_theme_path, const char *_them
     m_ThemesStoragePath(_themes_storage_path)
 {
     LoadThemes();
-    m_SelectedThemeName = GlobalConfig().GetString(m_CurrentThemePath).value_or("modern");
+    m_SelectedThemeName = GlobalConfig().GetString(m_CurrentThemePath).value_or("Modern");
     
     UpdateCurrentTheme();
     
@@ -39,6 +39,7 @@ void ThemesManager::LoadThemes()
         doc.CopyFrom(*i, rapidjson::g_CrtAllocator);
         
         m_Themes.emplace( name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+        m_OrderedThemeNames.emplace_back( name );
     }
 }
 
@@ -87,6 +88,9 @@ void ThemesManager::SetThemeValue(const string &_theme_name,
         // if this is a selected theme
         if( _theme_name == m_SelectedThemeName )
             UpdateCurrentTheme();
+        
+        // TODO: move to background thread, delay execution
+        WriteThemes();
     }
 }
 
@@ -110,4 +114,44 @@ const Theme &CurrentTheme() noexcept
 {
     assert( g_CurrentTheme != nullptr );
     return *g_CurrentTheme;
+}
+
+vector<string> ThemesManager::ThemeNames() const
+{
+    return m_OrderedThemeNames;
+}
+
+// todo: move to background, need to be thread-safe
+void ThemesManager::WriteThemes() const
+{
+    GenericConfig::ConfigValue json_themes{ rapidjson::kArrayType };
+    for( auto &tn: m_OrderedThemeNames ) {
+        auto i = m_Themes.find(tn);
+        assert( i != end(m_Themes) );
+        
+        GenericConfig::ConfigValue theme{ rapidjson::kObjectType };
+        theme.CopyFrom( *i->second, rapidjson::g_CrtAllocator );
+        json_themes.PushBack( move(theme), rapidjson::g_CrtAllocator);
+    }
+    GlobalConfig().Set( m_ThemesStoragePath, json_themes );
+}
+
+bool ThemesManager::SelectTheme( const string &_theme_name )
+{
+    if( m_SelectedThemeName == _theme_name )
+        return true;
+    
+    auto i = m_Themes.find(_theme_name);
+    if( i == end(m_Themes) )
+        return false;
+    
+    m_SelectedThemeName = _theme_name;
+    GlobalConfig().Set( m_CurrentThemePath, m_SelectedThemeName );
+    
+    
+    UpdateCurrentTheme();
+    // figure out what has changed
+    // do some magic stuff to notify everybody about changes
+    
+    return true;
 }

@@ -18,67 +18,7 @@
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
-
-enum class PreferencesWindowThemesTabItemType
-{
-    Color,
-    Font,
-    ColoringRules,
-    Appearance
-    // bool?
-};
-
-
-@interface PreferencesWindowThemesTabItemNode : NSObject
-@property (nonatomic, readonly) NSString *title;
-@property (nonatomic, readonly) const string &entry;
-@property (nonatomic, readonly) PreferencesWindowThemesTabItemType type;
-
-- (instancetype) initWithTitle:(NSString*)title
-                      forEntry:(const string&)entry
-                        ofType:(PreferencesWindowThemesTabItemType)type;
-
-@end
-
-@implementation PreferencesWindowThemesTabItemNode
-{
-    string m_Entry;
-}
-
-@synthesize entry = m_Entry;
-
-- (instancetype) initWithTitle:(NSString*)title
-                      forEntry:(const string&)entry
-                        ofType:(PreferencesWindowThemesTabItemType)type
-{
-    if( self = [super init] ) {
-        m_Entry = entry;
-        _title = title;
-        _type = type;
-    }
-    return self;
-}
-
-@end
-
-
-@interface PreferencesWindowThemesTabGroupNode : NSObject
-@property (nonatomic, readonly) NSString *title;
-@property (nonatomic, readonly) NSArray *children;
-- (instancetype) initWithTitle:(NSString*)title andChildren:(NSArray*)children;
-@end
-@implementation PreferencesWindowThemesTabGroupNode
-
-- (instancetype) initWithTitle:(NSString*)title andChildren:(NSArray*)children
-{
-    if( self = [super init] ) {
-        _title = title;
-        _children = children;
-    }
-    return self;
-}
-
-@end
+#include "PreferencesWindowThemesTabModel.h"
 
 static NSTextField *SpawnSectionTitle( NSString *_title )
 {
@@ -103,95 +43,9 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     return tf;
 }
 
-
-
-
-// temporary!!!
-/*
-static string Load(const string &_filepath)
-{
-    ifstream i(_filepath, ios::in | ios::binary);
-    if( i ) {
-        string contents;
-        i.seekg( 0, ios::end );
-        contents.resize( i.tellg() );
-        i.seekg( 0, ios::beg );
-        i.read( &contents[0], contents.size() );
-        i.close();
-        return contents;
-    }
-    return "";
-}
-
-static rapidjson::Document GetDocument()
-{
-    const auto theme = GlobalConfig().GetString("general.theme").value_or("modern");
-    const auto bundle_path = [NSBundle.mainBundle
-        pathForResource:[NSString stringWithUTF8StdString:theme]
-                 ofType:@"json"
-    ];
-    const auto supp_path = AppDelegate.me.supportDirectory + theme + ".json";
-    const string json = access(supp_path.c_str(), R_OK) == 0 ?
-        Load(supp_path) :
-        Load(bundle_path.fileSystemRepresentationSafe);
-    
-    rapidjson::Document doc;
-    rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
-    
-    if (!ok) {
-        fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)",
-            rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-        exit(EXIT_FAILURE);
-    }
-    return doc;
-}*/
-
-
-static PreferencesWindowThemesTabItemNode* SpawnColorNode(NSString *_description,
-                                                          const string& _entry)
-{
-    return [[PreferencesWindowThemesTabItemNode alloc]
-            initWithTitle:_description
-            forEntry:_entry
-            ofType:PreferencesWindowThemesTabItemType::Color];
-}
-
-static PreferencesWindowThemesTabItemNode* SpawnFontNode(NSString *_description,
-                                                          const string& _entry)
-{
-    return [[PreferencesWindowThemesTabItemNode alloc]
-            initWithTitle:_description
-            forEntry:_entry
-            ofType:PreferencesWindowThemesTabItemType::Font];
-}
-
-static PreferencesWindowThemesTabItemNode* SpawnColoringRulesNode(NSString *_description,
-                                                                  const string& _entry)
-{
-    return [[PreferencesWindowThemesTabItemNode alloc]
-            initWithTitle:_description
-            forEntry:_entry
-            ofType:PreferencesWindowThemesTabItemType::ColoringRules];
-}
-
-static PreferencesWindowThemesTabItemNode* SpawnAppearanceNode(NSString *_description,
-                                                               const string& _entry)
-{
-    return [[PreferencesWindowThemesTabItemNode alloc]
-            initWithTitle:_description
-            forEntry:_entry
-            ofType:PreferencesWindowThemesTabItemType::Appearance];
-}
-
-static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_description,
-                                                          NSArray *_children)
-{
-    return [[PreferencesWindowThemesTabGroupNode alloc] initWithTitle:_description
-                                                          andChildren:_children];
-}
-
 @interface PreferencesWindowThemesTab ()
 @property (strong) IBOutlet NSOutlineView *outlineView;
+@property (strong) IBOutlet NSPopUpButton *themesPopUp;
 
 @end
 
@@ -200,6 +54,9 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     NSArray *m_Nodes;
     rapidjson::StandaloneDocument m_Doc;
     ThemesManager *m_Manager;
+    vector<string> m_ThemeNames;
+    int m_SelectedTheme;
+    
 }
 
 
@@ -208,126 +65,49 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         m_Manager = &AppDelegate.me.themesManager;
-        m_Doc.CopyFrom( *m_Manager->SelectedThemeData(), rapidjson::g_CrtAllocator );
-        [self setupSettingsNodes];
+        m_ThemeNames = m_Manager->ThemeNames();
+        m_SelectedTheme = 0; // what if there's no themes?
+        auto it = find(begin(m_ThemeNames), end(m_ThemeNames), m_Manager->SelectedThemeName());
+        if( it != end(m_ThemeNames) )
+            m_SelectedTheme = (int)distance( begin(m_ThemeNames), it );
+        
+        [self loadSelectedDocument];
+        
+        m_Nodes = BuildThemeSettingsNodesTree();
     }
     
     return self;
 }
 
-- (void) setupSettingsNodes
+- (void) buildThemeNamesPopup
 {
-    auto fp_general_nodes = @[
-    SpawnAppearanceNode(@"UI Appearance", "themeAppearance"),
-    SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
-    SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
-    SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor")
-    ];
+    [self.themesPopUp removeAllItems];
+    for( int i = 0, e = (int)m_ThemeNames.size(); i != e; ++i ) {
+        auto &name = m_ThemeNames[i];
+        [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
+        self.themesPopUp.lastItem.tag = i;
+    }
     
-    auto fp_tabs_nodes = @[
-    SpawnFontNode(@"Text font", "filePanelsTabsFont"),
-    SpawnColorNode(@"Text color", "filePanelsTabsTextColor"),
-    SpawnColorNode(@"Selected & key window & active", "filePanelsTabsSelectedKeyWndActiveBackgroundColor"),
-    SpawnColorNode(@"Selected & key window", "filePanelsTabsSelectedKeyWndInactiveBackgroundColor"),
-    SpawnColorNode(@"Selected", "filePanelsTabsSelectedNotKeyWndBackgroundColor"),
-    SpawnColorNode(@"Regular & key window & hover", "filePanelsTabsRegularKeyWndHoverBackgroundColor"),
-    SpawnColorNode(@"Regular & key window", "filePanelsTabsRegularKeyWndRegularBackgroundColor"),
-    SpawnColorNode(@"Regular", "filePanelsTabsRegularNotKeyWndBackgroundColor"),
-    SpawnColorNode(@"Separator", "filePanelsTabsSeparatorColor"),
-    SpawnColorNode(@"Pictogram", "filePanelsTabsPictogramColor")
-    ];
-    
-    auto fp_header_nodes = @[
-    SpawnFontNode(@"Text font", "filePanelsHeaderFont"),
-    SpawnColorNode(@"Regular text color", "filePanelsHeaderTextColor"),
-    SpawnColorNode(@"Active text color", "filePanelsHeaderActiveTextColor"),
-    SpawnColorNode(@"Active background", "filePanelsHeaderActiveBackgroundColor"),
-    SpawnColorNode(@"Inactive background", "filePanelsHeaderInactiveBackgroundColor"),
-    SpawnColorNode(@"Separator", "filePanelsHeaderSeparatorColor")
-    ];
-    
-    auto fp_footer_nodes = @[
-    SpawnFontNode(@"Text font", "filePanelsFooterFont"),
-    SpawnColorNode(@"Regular text color", "filePanelsFooterTextColor"),
-    SpawnColorNode(@"Active text color", "filePanelsFooterActiveTextColor"),
-    SpawnColorNode(@"Active background", "filePanelsFooterActiveBackgroundColor"),
-    SpawnColorNode(@"Inactive background", "filePanelsFooterInactiveBackgroundColor"),
-    SpawnColorNode(@"Separator", "filePanelsFooterSeparatorsColor")
-    ];
-    
-    auto fp_brief_nodes = @[
-    SpawnFontNode(@"Text font", "filePanelsBriefFont"),
-    SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
-    SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
-    SpawnColorNode(@"Selected & active item background", "filePanelsBriefSelectedActiveItemBackgroundColor"),
-    SpawnColorNode(@"Selected & inactive item background", "filePanelsBriefSelectedInactiveItemBackgroundColor")
-    ];
-    
-    auto fp_list_nodes = @[
-    SpawnFontNode(@"Text font", "filePanelsListFont"),
-    SpawnColorNode(@"Grid color", "filePanelsListGridColor"),
-    SpawnFontNode(@"Header font", "filePanelsListHeaderFont"),
-    SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),
-    SpawnColorNode(@"Header text color", "filePanelsListHeaderTextColor"),
-    SpawnColorNode(@"Header separator", "filePanelsListHeaderSeparatorColor"),
-    SpawnColorNode(@"Selected & active row background", "filePanelsListSelectedActiveRowBackgroundColor"),
-    SpawnColorNode(@"Selected & inactive row background", "filePanelsListSelectedInactiveRowBackgroundColor"),
-    SpawnColorNode(@"Even row background", "filePanelsListRegularEvenRowBackgroundColor"),
-    SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
-    ];
-    
-    auto fp_group = SpawnGroupNode(@"File panels", @[SpawnGroupNode(@"General", fp_general_nodes),
-                                                     SpawnGroupNode(@"Tabs", fp_tabs_nodes),
-                                                     SpawnGroupNode(@"Header", fp_header_nodes),
-                                                     SpawnGroupNode(@"Footer", fp_footer_nodes),
-                                                     SpawnGroupNode(@"Brief mode", fp_brief_nodes),
-                                                     SpawnGroupNode(@"List mode", fp_list_nodes)]);
-
-    auto viewer_nodes = @[
-    SpawnFontNode(@"Text font", "viewerFont"),
-    SpawnColorNode(@"Foreground color", "viewerTextColor"),
-    SpawnColorNode(@"Selection color", "viewerSelectionColor"),
-    SpawnColorNode(@"Background color", "viewerBackgroundColor")
-    ];
-
-    auto term_nodes = @[
-    SpawnFontNode(@"Text font", "terminalFont"),
-    SpawnColorNode(@"Foreground color", "terminalForegroundColor"),
-    SpawnColorNode(@"Foreground bold color", "terminalBoldForegroundColor"),
-    SpawnColorNode(@"Background", "terminalBackgroundColor"),
-    SpawnColorNode(@"Selection", "terminalSelectionColor"),
-    SpawnColorNode(@"Cursor color", "terminalCursorColor"),
-    SpawnColorNode(@"ANSI color 0 (black)", "terminalAnsiColor0"),
-    SpawnColorNode(@"ANSI color 1 (red)", "terminalAnsiColor1"),
-    SpawnColorNode(@"ANSI color 2 (green)", "terminalAnsiColor2"),
-    SpawnColorNode(@"ANSI color 3 (yellow)", "terminalAnsiColor3"),
-    SpawnColorNode(@"ANSI color 4 (blue)", "terminalAnsiColor4"),
-    SpawnColorNode(@"ANSI color 5 (magenta)", "terminalAnsiColor5"),
-    SpawnColorNode(@"ANSI color 6 (cyan)", "terminalAnsiColor6"),
-    SpawnColorNode(@"ANSI color 7 (white)", "terminalAnsiColor7"),
-    SpawnColorNode(@"ANSI color 8 (bright black)", "terminalAnsiColor8"),
-    SpawnColorNode(@"ANSI color 9 (bright red)", "terminalAnsiColor9"),
-    SpawnColorNode(@"ANSI color 10 (bright green)", "terminalAnsiColorA"),
-    SpawnColorNode(@"ANSI color 11 (bright yellow)", "terminalAnsiColorB"),
-    SpawnColorNode(@"ANSI color 12 (bright blue)", "terminalAnsiColorC"),
-    SpawnColorNode(@"ANSI color 13 (bright magenta)", "terminalAnsiColorD"),
-    SpawnColorNode(@"ANSI color 14 (bright cyan)", "terminalAnsiColorE"),
-    SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
-    ];
-
-    m_Nodes = @[fp_group,
-                SpawnGroupNode(@"Viewer", viewer_nodes),
-                SpawnGroupNode(@"Terminal", term_nodes)];
+    [self.themesPopUp.menu addItem:[]{
+        auto i = NSMenuItem.separatorItem;
+        i.tag = -1;
+        return i;
+    }()];
+    [self.themesPopUp.menu addItem:[]{
+        auto i = [[NSMenuItem alloc] init];
+        i.title = @"Manage Themes...";
+        i.tag = -1;
+        return i;
+    }()];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do view setup here.
-    //self.outlineView.rowHeight = 25;
-    
-    
-    
+        
+    [self buildThemeNamesPopup];
+    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
     [self.outlineView expandItem:nil expandChildren:YES];
 }
 
@@ -415,8 +195,7 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::Appearance ) {
-                auto v = [[PreferencesWindowThemesAppearanceControl alloc]
-                          initWithFrame:NSRect{}];
+                auto v = [[PreferencesWindowThemesAppearanceControl alloc] initWithFrame:NSRect{}];
                 v.themeAppearance = ThemePersistence::ExtractAppearance(self.selectedThemeFrontend,
                                                                         i.entry.c_str());
                 v.action = @selector(onAppearanceChanged:);
@@ -424,15 +203,8 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
                 return v;
             }
         }
-    
-    
-    
     }
     
-
-    //SpawnSectionTitle
-
-
     return nil;
 }
 
@@ -478,7 +250,6 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
             [self commitChangedValue:ThemePersistence::EncodeFont(v.font)
                               forKey:node.entry];
     }
-
 }
 
 - (const rapidjson::StandaloneDocument &) selectedThemeFrontend
@@ -489,9 +260,9 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
 
 - (void) commitChangedValue:(const rapidjson::StandaloneValue&)_value forKey:(const string&)_key
 {
-    m_Manager->SetThemeValue(m_Manager->SelectedThemeName(),
-                             _key,
-                             _value);
+    // CHECKS!!!
+    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
+    m_Manager->SetThemeValue( theme_name, _key, _value );
 }
 
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
@@ -503,5 +274,22 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
     return 18;
 }
 
+- (IBAction)onThemesPopupChange:(id)sender
+{
+    int selected_ind = (int)self.themesPopUp.selectedTag;
+    if( selected_ind >= 0 && selected_ind < m_ThemeNames.size() )
+        if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
+            m_SelectedTheme = selected_ind;
+            [self loadSelectedDocument];
+            [self.outlineView reloadData];
+        }
+}
+
+- (void) loadSelectedDocument
+{
+    // CHECKS!!!
+    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
+    m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), rapidjson::g_CrtAllocator );
+}
 
 @end

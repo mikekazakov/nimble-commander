@@ -13,7 +13,7 @@
         /**
         * Very temporarily! classic, modern, dark.
         */
-        "theme": "modern",
+        "theme": "Modern",
         
         /**
          * Show/hide toolbar
@@ -558,7 +558,7 @@
     "themes": {
         "themes_v1": [
                       {
-                      "themeName": "modern",
+                      "themeName": "Modern",
                       "themeAppearance": "aqua",
                       "filePanelsColoringRules_v1": [
                                                      {
@@ -664,7 +664,7 @@
                       "viewerBackgroundColor": "#FFFFFF"
                       },
                       {
-                      "themeName": "classic",
+                      "themeName": "Classic",
                       "themeAppearance": "aqua",
                       
                       "filePanelsColoringRules_v1": [
@@ -788,7 +788,7 @@
                       
                       },
                       {
-                      "themeName": "dark",
+                      "themeName": "Dark",
                       "themeAppearance": "dark",
                       
                       "filePanelsColoringRules_v1": [

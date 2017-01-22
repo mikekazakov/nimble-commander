@@ -1,5 +1,7 @@
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 //#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelData.h"
 #include "../PanelDataSortMode.h"
@@ -85,6 +87,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     function<void(PanelDataSortMode)>   m_SortModeChangeCallback;
     
     PanelListViewColumnsLayout          m_Layout;
+    ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
@@ -143,6 +146,19 @@ void DrawTableVerticalSeparatorForView(NSView *v)
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsList |
+            ThemesManager::Notifications::FilePanelsGeneral, [weak_self]{
+            if( auto strong_self = weak_self ) {
+                auto cp = strong_self.cursorPosition;
+                [strong_self calculateItemLayout];
+                [strong_self->m_TableView reloadData];
+                strong_self.cursorPosition = cp;
+                strong_self->m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
+            }
+        });
+        
+        
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
@@ -473,6 +489,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (int) maxNumberOfVisibleItems
 {
     return [self itemsInColumn];
+}
+
+- (int) cursorPosition
+{
+    return (int)m_TableView.selectedRow;
 }
 
 - (void)setCursorPosition:(int)cursorPosition

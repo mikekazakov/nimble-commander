@@ -80,7 +80,6 @@ static PreferencesWindowThemesTabGroupNode* SpawnGroupNode(NSString *_descriptio
 NSArray* BuildThemeSettingsNodesTree()
 {
     auto fp_general_nodes = @[
-    SpawnAppearanceNode(@"UI Appearance", "themeAppearance"),
     SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
     SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
     SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor")
@@ -177,7 +176,8 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
     ];
 
-    return @[fp_group,
+    return @[SpawnGroupNode(@"General", @[SpawnAppearanceNode(@"UI Appearance", "themeAppearance")]),
+             fp_group,
              SpawnGroupNode(@"Viewer", viewer_nodes),
              SpawnGroupNode(@"Terminal", term_nodes)];
 }

@@ -20,6 +20,8 @@
     m_Item = VFSListingItem{};
     m_VD = PanelData::VolatileData{};
     m_PanelActive = false;
+    [super setSelected:false];
+    self.carrier.background = nil;    
 }
 
 - (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil

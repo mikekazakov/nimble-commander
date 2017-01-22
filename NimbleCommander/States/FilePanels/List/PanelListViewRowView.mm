@@ -244,6 +244,11 @@
     }
 }
 
+- (void) forceSubviewsToRebuildPresentation
+{
+    [self notifySubviewsToRebuildPresentation];
+}
+
 - (void)didAddSubview:(NSView *)subview
 {
     if( [subview respondsToSelector:@selector(buildPresentation)] )

@@ -6,6 +6,92 @@ static const auto g_NameKey = "themeName";
 
 static shared_ptr<Theme> g_CurrentTheme;
 
+static unordered_map<string, uint64_t> g_EntryToNotificationMapping = {
+{"filePanelsColoringRules_v1",          ThemesManager::Notifications::FilePanelsGeneral },
+{"filePanelsGeneralDropBorderColor",    ThemesManager::Notifications::FilePanelsGeneral },
+{"filePanelsGeneralOverlayColor",       ThemesManager::Notifications::FilePanelsGeneral },
+{"filePanelsTabsFont",                                  ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsTextColor",                             ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsSelectedKeyWndActiveBackgroundColor",   ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsSelectedKeyWndInactiveBackgroundColor", ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsSelectedNotKeyWndBackgroundColor",      ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsRegularKeyWndHoverBackgroundColor",     ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsRegularKeyWndRegularBackgroundColor",   ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsRegularNotKeyWndBackgroundColor",       ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsSeparatorColor",                        ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsTabsPictogramColor",                        ThemesManager::Notifications::FilePanelsTabs },
+{"filePanelsHeaderFont",                    ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsHeaderTextColor",               ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsHeaderActiveTextColor",         ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsHeaderActiveBackgroundColor",   ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsHeaderInactiveBackgroundColor", ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsHeaderSeparatorColor",          ThemesManager::Notifications::FilePanelsHeader },
+{"filePanelsFooterFont",                    ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsFooterTextColor",               ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsFooterActiveTextColor",         ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsFooterSeparatorsColor",         ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsFooterActiveBackgroundColor",   ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsFooterInactiveBackgroundColor", ThemesManager::Notifications::FilePanelsFooter },
+{"filePanelsListFont",                                  ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListGridColor",                             ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListHeaderFont",                            ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListHeaderBackgroundColor",                 ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListHeaderTextColor",                       ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListHeaderSeparatorColor",                  ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListSelectedActiveRowBackgroundColor",      ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListSelectedInactiveRowBackgroundColor",    ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListRegularEvenRowBackgroundColor",         ThemesManager::Notifications::FilePanelsList },
+{"filePanelsListRegularOddRowBackgroundColor",          ThemesManager::Notifications::FilePanelsList },
+{"filePanelsBriefFont",                                 ThemesManager::Notifications::FilePanelsBrief },
+{"filePanelsBriefRegularEvenRowBackgroundColor",        ThemesManager::Notifications::FilePanelsBrief },
+{"filePanelsBriefRegularOddRowBackgroundColor",         ThemesManager::Notifications::FilePanelsBrief },
+{"filePanelsBriefSelectedActiveItemBackgroundColor",    ThemesManager::Notifications::FilePanelsBrief },
+{"filePanelsBriefSelectedInactiveItemBackgroundColor",  ThemesManager::Notifications::FilePanelsBrief },
+};
+
+#if 0
+{
+                      "themeName": "Modern",
+                      "themeAppearance": "aqua",
+
+                      /* File Panels -> List settings */
+
+                      
+                      /* File Panels -> Brief settings */
+    
+                      
+                      /* Terminal Emulator */
+                      "terminalFont": "Menlo-Regular, 13",
+                      "terminalForegroundColor": "#BFBFBF",
+                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalBackgroundColor": "#000000",
+                      "terminalSelectionColor": "#E5E5E5",
+                      "terminalCursorColor": "#666666",
+                      "terminalAnsiColor0": "#000000", // black
+                      "terminalAnsiColor1": "#990000", // red
+                      "terminalAnsiColor2": "#00A600", // green
+                      "terminalAnsiColor3": "#999900", // yellow
+                      "terminalAnsiColor4": "#0000B2", // blue
+                      "terminalAnsiColor5": "#B200B2", // magenta
+                      "terminalAnsiColor6": "#00A6B2", // cyan
+                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor8": "#666666", // bright black
+                      "terminalAnsiColor9": "#E50000", // bright red
+                      "terminalAnsiColorA": "#00D900", // bright green
+                      "terminalAnsiColorB": "#E5E500", // bright yellow
+                      "terminalAnsiColorC": "#0000FF", // bright blue
+                      "terminalAnsiColorD": "#E500E5", // bright magenta
+                      "terminalAnsiColorE": "#00E5E5", // bright cyan
+                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      
+                      /* Viewer Emulator */
+                      "viewerFont": "Menlo-Regular, 13",
+                      "viewerTextColor": "#000000",
+                      "viewerSelectionColor": "#B4D6FC",
+                      "viewerBackgroundColor": "#FFFFFF"
+                      },
+#endif
+
 ThemesManager::ThemesManager( const char *_current_theme_path, const char *_themes_storage_path ):
     m_CurrentThemePath(_current_theme_path),
     m_ThemesStoragePath(_themes_storage_path)
@@ -64,6 +150,12 @@ shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
     return dummy;
 }
 
+static uint64_t NotificationMaskForKey( const string &_key )
+{
+    const auto it = g_EntryToNotificationMapping.find( _key );
+    return it != end(g_EntryToNotificationMapping) ? it->second : 0;
+}
+
 void ThemesManager::SetThemeValue(const string &_theme_name,
                                   const string &_key,
                                   const rapidjson::StandaloneValue &_value)
@@ -91,6 +183,8 @@ void ThemesManager::SetThemeValue(const string &_theme_name,
         
         // TODO: move to background thread, delay execution
         WriteThemes();
+        
+        FireObservers( NotificationMaskForKey(_key) );
     }
 }
 
@@ -153,5 +247,13 @@ bool ThemesManager::SelectTheme( const string &_theme_name )
     // figure out what has changed
     // do some magic stuff to notify everybody about changes
     
+    FireObservers(); // temporary overkill solution - just rebuild everything 
+    
     return true;
+}
+
+ThemesManager::ObservationTicket ThemesManager::
+    ObserveChanges( uint64_t _notification_mask, function<void()> _callback )
+{
+    return AddObserver( move(_callback), _notification_mask );
 }

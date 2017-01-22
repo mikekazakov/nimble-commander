@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <VFS/VFS.h>
-
 @class MainWindowController;
 @class InternalViewerWindowController;
 @class GenericConfigObjC;
@@ -17,6 +15,7 @@
 class ExternalToolsStorage;
 class PanelViewLayoutsStorage;
 class ThemesManager;
+class VFSHost;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -26,7 +25,8 @@ class ThemesManager;
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
-- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path onVFS:(const VFSHostPtr&)_vfs;
+- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path
+                                                              onVFS:(const shared_ptr<VFSHost>&)_vfs;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.

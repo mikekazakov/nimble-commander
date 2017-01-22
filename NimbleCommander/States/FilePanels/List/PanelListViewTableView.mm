@@ -1,4 +1,7 @@
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include "../PanelView.h"
 #include "PanelListViewTableView.h"
@@ -13,6 +16,7 @@
 @implementation PanelListViewTableView
 {
     bool m_IsDropTarget;
+    ThemesManager::ObservationTicket    m_ThemeObservation;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -20,10 +24,23 @@
     self = [super initWithFrame:frameRect];
     if( self ) {
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
-        self.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
-        self.alternateBackgroundColor = CurrentTheme().FilePanelsListRegularOddRowBackgroundColor();
+        [self setupColors];
+        
+        __weak PanelListViewTableView* weak_self = self;
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsList, [weak_self]{
+            if( auto strong_self = weak_self )
+                [strong_self setupColors];
+        });
     }
     return self;
+}
+
+- (void) setupColors
+{
+    self.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
+    self.alternateBackgroundColor = CurrentTheme().FilePanelsListRegularOddRowBackgroundColor();
+    self.needsDisplay = true;
 }
 
 - (BOOL)acceptsFirstResponder

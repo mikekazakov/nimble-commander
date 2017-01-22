@@ -17,12 +17,15 @@
 #import <MMTabBarView/MMTabBarView.Private.h>
 
 
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 static const auto g_TabCloseSize = NSMakeSize(12, 12);
-static const auto g_TabCloseFreeImage = []
+
+static NSImage *MakeTabCloseFreeImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [CurrentTheme().FilePanelsTabsPictogramColor() set];
@@ -34,13 +37,13 @@ static const auto g_TabCloseFreeImage = []
         [bezier stroke];
         return true;
     };
-
     return [NSImage imageWithSize:g_TabCloseSize
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabCloseFreeImage = MakeTabCloseFreeImage();
 
-static const auto g_TabCloseHoverImage = []
+static NSImage *MakeTabCloseHoverImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
@@ -58,13 +61,13 @@ static const auto g_TabCloseHoverImage = []
         [bezier stroke];
         return true;
     };
-
     return [NSImage imageWithSize:g_TabCloseSize
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabCloseHoverImage = MakeTabCloseHoverImage();
 
-static const auto g_TabClosePressedImage = []
+static NSImage *MakeTabClosePressedImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
@@ -86,9 +89,10 @@ static const auto g_TabClosePressedImage = []
     return [NSImage imageWithSize:g_TabCloseSize
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabClosePressedImage = MakeTabClosePressedImage();
 
-static const auto g_TabAddFreeImage = []
+static NSImage *MakeTabAddFreeImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [CurrentTheme().FilePanelsTabsPictogramColor() set];
@@ -100,13 +104,13 @@ static const auto g_TabAddFreeImage = []
         [bezier stroke];
         return true;
     };
-
     return [NSImage imageWithSize:NSMakeSize(17, 17)
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabAddFreeImage = MakeTabAddFreeImage();
 
-static const auto g_TabAddHoverImage = []
+static NSImage *MakeTabAddHoverImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
@@ -128,9 +132,10 @@ static const auto g_TabAddHoverImage = []
     return [NSImage imageWithSize:NSMakeSize(17, 17)
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabAddHoverImage = MakeTabAddHoverImage();
 
-static const auto g_TabAddPressedImage = []
+static NSImage *MakeTabAddPressedImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
@@ -149,22 +154,16 @@ static const auto g_TabAddPressedImage = []
         [bezier stroke];
         return true;
     };
-
     return [NSImage imageWithSize:NSMakeSize(17, 17)
                           flipped:false
                    drawingHandler:handler];
-}();
+}
+static auto g_TabAddPressedImage = MakeTabAddPressedImage();
 
 @implementation TabBarStyle
-
-StaticImage(YosemiteTabClose_Front)
-StaticImage(YosemiteTabClose_Front_Pressed)
-StaticImage(YosemiteTabClose_Front_Rollover)
-StaticImageWithFilename(YosemiteTabCloseDirty_Front, AquaTabCloseDirty_Front)
-StaticImageWithFilename(YosemiteTabCloseDirty_Front_Pressed, AquaTabCloseDirty_Front_Pressed)
-StaticImageWithFilename(YosemiteTabCloseDirty_Front_Rollover, AquaTabCloseDirty_Front_Rollover)
-StaticImage(YosemiteTabNew)
-StaticImage(YosemiteTabNewPressed)
+{
+    ThemesManager::ObservationTicket m_Observation;
+}
 
 + (NSString *)name {
     return @"NC";
@@ -191,8 +190,34 @@ StaticImage(YosemiteTabNewPressed)
     return true;
 }
 
+static nanoseconds g_LastImagesRebuildTime = 0ns;
 - (NSSize)intrinsicContentSizeOfTabBarView:(MMTabBarView *)tabBarView
 {
+    if( !m_Observation ) {
+        auto &tm = AppDelegate.me.themesManager;
+        __weak MMTabBarView *v = tabBarView;
+        m_Observation = tm.ObserveChanges(ThemesManager::Notifications::FilePanelsTabs, [v]{
+            if( g_LastImagesRebuildTime + 200ms < machtime() ) {
+                // make sure images will be rebuilt only by one object, not by all of them.
+                g_TabCloseFreeImage = MakeTabCloseFreeImage();
+                g_TabCloseHoverImage = MakeTabCloseHoverImage();
+                g_TabClosePressedImage = MakeTabClosePressedImage();
+                g_TabAddFreeImage = MakeTabAddFreeImage();
+                g_TabAddPressedImage = MakeTabAddPressedImage();
+                g_LastImagesRebuildTime = machtime();
+            }
+            
+            if( MMTabBarView *sv = v ) {
+                [sv windowStatusDidChange:[[NSNotification alloc] initWithName:@""
+                                                                        object:nil
+                                                                      userInfo:nil]];
+            
+                for( NSView *b in sv.subviews )
+                    [b setNeedsDisplay:true];
+            }
+        });
+    }
+
     return NSMakeSize(NSViewNoInstrinsicMetric, 24);
 }
 
@@ -273,11 +298,14 @@ StaticImage(YosemiteTabNewPressed)
             return g_TabClosePressedImage;
             
         case MMCloseButtonImageTypeDirty:
-            return _staticYosemiteTabCloseDirty_FrontImage();
+//            return _staticYosemiteTabCloseDirty_FrontImage();
+            return g_TabCloseFreeImage;
         case MMCloseButtonImageTypeDirtyRollover:
-            return _staticYosemiteTabCloseDirty_Front_RolloverImage();
+//            return _staticYosemiteTabCloseDirty_Front_RolloverImage();
+            return g_TabCloseHoverImage;
         case MMCloseButtonImageTypeDirtyPressed:
-            return _staticYosemiteTabCloseDirty_Front_PressedImage();
+//            return _staticYosemiteTabCloseDirty_Front_PressedImage();
+            return g_TabClosePressedImage;
             
         default:
             break;

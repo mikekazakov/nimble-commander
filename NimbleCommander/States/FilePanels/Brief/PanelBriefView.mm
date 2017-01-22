@@ -5,8 +5,10 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include "../PanelViewPresentationItemsColoringFilter.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "../IconsGenerator2.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionView.h"
@@ -160,6 +162,7 @@ const noexcept
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
     PanelDataSortMode                   m_SortMode;
+    ThemesManager::ObservationTicket    m_ThemeObservation;
 }
 
 @synthesize columnsLayout = m_ColumnsLayout;
@@ -209,6 +212,17 @@ const noexcept
         m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
+        });
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsBrief|
+            ThemesManager::Notifications::FilePanelsGeneral, [weak_self]{
+            if( auto strong_self = weak_self ) {
+                auto cp = strong_self.cursorPosition;
+                [strong_self calculateItemLayout];
+                [strong_self->m_CollectionView reloadData];
+                strong_self.cursorPosition = cp;
+                strong_self->m_Background.needsDisplay = true;
+            }
         });
         
         [NSNotificationCenter.defaultCenter addObserver:self
@@ -279,8 +293,6 @@ const noexcept
 //    mtb.ResetMicro("setting up PanelBriefViewItem ");
     
     return item;
-    
-    return nil;
 }
 
 - (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section

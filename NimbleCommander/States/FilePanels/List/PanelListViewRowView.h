@@ -23,4 +23,6 @@
 @property (nonatomic, readonly) PanelListViewNameView *nameView;
 //@property (nonatomic, readonly) NSDictionary *dateTimeViewTextAttributes;
 
+- (void) forceSubviewsToRebuildPresentation;
+
 @end

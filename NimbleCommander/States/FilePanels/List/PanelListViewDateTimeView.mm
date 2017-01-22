@@ -3,6 +3,7 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewDateTimeView.h"
+#include <NimbleCommander/Core/Theming/Theme.h>
 
 @implementation PanelListViewDateTimeView
 {
@@ -79,10 +80,6 @@
         m_String = PanelListViewDateFormatting::Format(m_Style, m_Time);
     else
         m_String = @"--";
-    if( m_Line ) {
-        CFRelease( m_Line );
-        m_Line = nullptr;
-    }
     [self buildLine];
     if( dispatch_is_main_queue() )
         [self setNeedsDisplay:true];
@@ -94,18 +91,16 @@
 
 - (void) buildLine
 {
-    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
-        if( auto lv = rv.listView ) {
-            if( m_Line  )
-                CFRelease( m_Line );
-            
-            NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
-                                                                     attributes:@{NSFontAttributeName: lv.font,
-                                                                                  (NSString*)kCTForegroundColorFromContextAttributeName: @YES}
-                                      ];
-            m_Line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as);
-        }
-    }
+    // may be on background thread
+    const auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsListFont(),
+                         (NSString*)kCTForegroundColorFromContextAttributeName: @YES};
+    NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
+                                                             attributes:attrs];
+    auto line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as);
+    auto old = m_Line;
+    m_Line = line;
+    if( old )
+        CFRelease( old );
 }
 
 - (time_t) time
@@ -115,8 +110,6 @@
 
 - (void) drawRect:(NSRect)dirtyRect
 {
-    //CTLineRef
-    //CGContextShowText
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
         if( auto lv = rv.listView ) {
             const auto bounds = self.bounds;
@@ -131,39 +124,20 @@
                                               geometry.TextBaseLine(),
                                               bounds.size.width -  geometry.LeftInset() - geometry.RightInset(),
                                               0);
-//            [m_String drawAtPoint:<#(NSPoint)#> withAttributes:<#(nullable NSDictionary<NSString *,id> *)#>
-            
-            
-/*            NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
-                                                                     attributes:@{NSFontAttributeName: lv.font,
-                                                                                  (NSString*)kCTForegroundColorFromContextAttributeName:@YES
-                                                                                  }];*/
-//            kCTFontAttributeName
-//            NSFontAttributeName: list_view.font,
-            
-//            CTLineRef line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as);
-            //CGContextSetFillColorWithColor(context, NSColor.yellowColor.CGColor);
-            //CGContextSetStrokeColorWithColor(context, NSColor.yellowColor.CGColor);
-            
-            if( m_Line == nullptr )
-                [self buildLine];
-            
-            rv.rowTextDoubleColor.Set( context );
-            CGContextSetTextPosition( context, geometry.LeftInset(), geometry.TextBaseLine() );
-            CGContextSetTextDrawingMode( context, kCGTextFill );
-            CTLineDraw(m_Line, context);
-  //          CFRelease(line);
-            
-            /*[m_String drawWithRect:text_rect
-                           options:0
-                        attributes:rv.dateTimeViewTextAttributes
-                           context:nil];*/
+
+            if( m_Line ) {
+                CGContextSetFillColorWithColor( context, rv.rowTextColor.CGColor );
+                CGContextSetTextPosition( context, geometry.LeftInset(), geometry.TextBaseLine() );
+                CGContextSetTextDrawingMode( context, kCGTextFill );
+                CTLineDraw(m_Line, context);
+            }
         }
     }
 }
 
 - (void) buildPresentation
 {
+    [self buildLine];
     [self setNeedsDisplay:true];
 }
 

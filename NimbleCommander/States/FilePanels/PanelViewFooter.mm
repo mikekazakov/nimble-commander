@@ -1,6 +1,8 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
 #include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
@@ -89,6 +91,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
     
     PanelDataStatistics m_Stats;
     PanelViewFooterVolumeInfoFetcher m_VolumeInfoFetcher;
+    ThemesManager::ObservationTicket    m_ThemeObservation;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -234,10 +237,17 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         
         __weak PanelViewFooter *weak_self = self;
         m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &_st) {
-//            cout << _st.avail_bytes << " " << _st.volume_name << endl;
             if( PanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsFooter, [weak_self]{
+            if( auto strong_self = weak_self ) {
+                [strong_self setupLabelColors];
+                [strong_self observeValueForKeyPath:@"active" ofObject:nil change:nil context:nil];
+            }
+        });
+        
         [self updateVolumeInfo];
         [self setupLabelColors];
     }
@@ -337,25 +347,16 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         m_PanelView = pv;
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
-        
-//        [m_FilenameLabel bind:@"hidden" toObject:m_SelectionLabel withKeyPath:@"self.text.length" options:nil];
-        
-        
-//        [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
-//        [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
-//        [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
     }
     else {
         [m_PanelView removeObserver:self forKeyPath:@"active"];
-//        [m_SearchTextField unbind:@"hidden"];
-//        [m_SearchMatchesField unbind:@"hidden"];
-//        [m_PathTextField unbind:@"hidden"];
-//        [m_SortButton unbind:@"hidden"];
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if( !m_PanelView )
+        return;
     if( [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
         m_Background = active ?

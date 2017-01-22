@@ -1,6 +1,8 @@
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
 #include "PanelController.h"
 #include "PanelViewHeader.h"
@@ -40,6 +42,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     __weak PanelView    *m_PanelView;
     PanelDataSortMode    m_SortMode;
     function<void(PanelDataSortMode)> m_SortModeChangeCallback;
+    ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
 @synthesize sortMode = m_SortMode;
@@ -59,7 +62,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_PathTextField.lineBreakMode = NSLineBreakByTruncatingHead;
         m_PathTextField.usesSingleLineMode = true;
         m_PathTextField.alignment = NSTextAlignmentCenter;
-        m_PathTextField.font = CurrentTheme().FilePanelsHeaderFont();
         [self addSubview:m_PathTextField];
         
         m_SearchTextField= [[NSSearchField alloc] initWithFrame:NSRect()];
@@ -72,7 +74,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SearchTextField.bezeled = true;
         m_SearchTextField.editable = true;
         m_SearchTextField.drawsBackground = false;
-        m_SearchTextField.font = CurrentTheme().FilePanelsHeaderFont();
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.target = self;
@@ -94,7 +95,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
-        m_SeparatorLine.borderColor = CurrentTheme().FilePanelsHeaderSeparatorColor();
         [self addSubview:m_SeparatorLine];
    
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -102,16 +102,33 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SortButton.title = @"N";
         m_SortButton.bordered = false;
         m_SortButton.buttonType = NSMomentaryLightButton;
-        m_SortButton.font = CurrentTheme().FilePanelsHeaderFont();
         m_SortButton.action = @selector(onSortButtonAction:);
         m_SortButton.target = self;
         m_SortButton.enabled = true;
         [self addSubview:m_SortButton];
         
-        
+        [self setupAppearance];
         [self setupLayout];
+        
+        __weak PanelViewHeader* weak_self = self;
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsHeader, [weak_self]{
+            if( auto strong_self = weak_self ) {
+                [strong_self setupAppearance];
+                [strong_self observeValueForKeyPath:@"active" ofObject:nil change:nil context:nil];
+            }
+        });
     }
     return self;
+}
+
+- (void) setupAppearance
+{
+    m_PathTextField.font = CurrentTheme().FilePanelsHeaderFont();
+    m_SearchTextField.font = CurrentTheme().FilePanelsHeaderFont();
+    m_SeparatorLine.borderColor = CurrentTheme().FilePanelsHeaderSeparatorColor();
+    m_SortButton.font = CurrentTheme().FilePanelsHeaderFont();
+    self.needsDisplay = true;
 }
 
 - (void) setupLayout
@@ -210,6 +227,8 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    if( !m_PanelView )
+        return;
     if( [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
         m_Background = active ?
@@ -221,7 +240,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
             CurrentTheme().FilePanelsHeaderActiveTextColor() :
             CurrentTheme().FilePanelsHeaderTextColor();
         m_PathTextField.textColor = text_color;
-//        m_SearchTextField.textColor = text_color;
         
         NSMutableAttributedString *sort_title =
           [[NSMutableAttributedString alloc] initWithAttributedString:m_SortButton.attributedTitle];

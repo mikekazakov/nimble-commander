@@ -132,6 +132,7 @@ struct Theme::Internals
     NSColor *m_FilePanelsBriefSelectedActiveItemBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
     NSFont  *m_TerminalFont;
+    NSColor *m_TerminalOverlayColor;
     NSColor *m_TerminalForegroundColor;
     NSColor *m_TerminalBoldForegroundColor;
     NSColor *m_TerminalBackgroundColor;
@@ -154,6 +155,7 @@ struct Theme::Internals
     NSColor *m_TerminalAnsiColorE;
     NSColor *m_TerminalAnsiColorF;
     NSFont  *m_ViewerFont;
+    NSColor *m_ViewerOverlayColor;
     NSColor *m_ViewerTextColor;
     NSColor *m_ViewerSelectionColor;
     NSColor *m_ViewerBackgroundColor;
@@ -280,6 +282,8 @@ Theme::Theme( const void *_theme_data ):
     
     I->m_TerminalFont =
         ExtractFont(doc, "terminalFont");
+    I->m_TerminalOverlayColor =
+        ExtractColor(doc, "terminalOverlayColor");
     I->m_TerminalForegroundColor =
         ExtractColor(doc, "terminalForegroundColor");
     I->m_TerminalBoldForegroundColor =
@@ -325,6 +329,8 @@ Theme::Theme( const void *_theme_data ):
     
     I->m_ViewerFont =
         ExtractFont(doc, "viewerFont");
+    I->m_ViewerOverlayColor =
+        ExtractColor(doc, "viewerOverlayColor");
     I->m_ViewerTextColor =
         ExtractColor(doc, "viewerTextColor");
     I->m_ViewerSelectionColor =
@@ -675,4 +681,14 @@ NSColor *Theme::ViewerSelectionColor() const noexcept
 NSColor *Theme::ViewerBackgroundColor() const noexcept
 {
     return I->m_ViewerBackgroundColor;
+}
+
+NSColor *Theme::TerminalOverlayColor() const noexcept
+{
+    return I->m_TerminalOverlayColor;
+}
+
+NSColor *Theme::ViewerOverlayColor() const noexcept
+{
+    return I->m_ViewerOverlayColor;
 }

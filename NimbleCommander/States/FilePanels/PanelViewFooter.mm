@@ -309,7 +309,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 - (void)drawRect:(NSRect)dirtyRect
 {
     if( m_Background && m_Background != NSColor.clearColor  ) {
-        CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+        auto context = NSGraphicsContext.currentContext.CGContext;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, NSRectToCGRect(dirtyRect));
     }

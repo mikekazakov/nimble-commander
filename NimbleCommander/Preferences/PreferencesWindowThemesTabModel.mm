@@ -146,6 +146,7 @@ NSArray* BuildThemeSettingsNodesTree()
 
     auto viewer_nodes = @[
     SpawnFontNode(@"Text font", "viewerFont"),
+    SpawnColorNode(@"Overlay color", "viewerOverlayColor"),
     SpawnColorNode(@"Foreground color", "viewerTextColor"),
     SpawnColorNode(@"Selection color", "viewerSelectionColor"),
     SpawnColorNode(@"Background color", "viewerBackgroundColor")
@@ -153,6 +154,7 @@ NSArray* BuildThemeSettingsNodesTree()
 
     auto term_nodes = @[
     SpawnFontNode(@"Text font", "terminalFont"),
+    SpawnColorNode(@"Overlay color", "terminalOverlayColor"),
     SpawnColorNode(@"Foreground color", "terminalForegroundColor"),
     SpawnColorNode(@"Foreground bold color", "terminalBoldForegroundColor"),
     SpawnColorNode(@"Background", "terminalBackgroundColor"),

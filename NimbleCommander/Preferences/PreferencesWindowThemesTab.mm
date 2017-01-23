@@ -292,4 +292,13 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), rapidjson::g_CrtAllocator );
 }
 
+- (IBAction)onRevertClicked:(id)sender
+{
+    if( m_Manager->DiscardThemeChanges(m_ThemeNames[m_SelectedTheme]) ) {
+        [self loadSelectedDocument];
+        [self.outlineView reloadData];
+    }
+}
+
+
 @end

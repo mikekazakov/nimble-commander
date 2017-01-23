@@ -30,6 +30,8 @@ public:
     
     vector<string> ThemeNames() const;
     
+    bool HasDefaultSettings( const string &_theme_name ) const;
+    
     /**
      * Effectively returns ThemeData( SelectedThemeName() ).
      */
@@ -43,6 +45,8 @@ public:
     void SetThemeValue(const string &_theme_name,
                        const string &_key,
                        const rapidjson::StandaloneValue &_value);
+    
+    bool DiscardThemeChanges( const string &_theme_name );
 
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges( uint64_t _notification_mask, function<void()> _callback );
@@ -52,10 +56,12 @@ private:
     const char * const m_ThemesStoragePath;
 
     void LoadThemes();
+    void LoadDefaultThemes();
     void WriteThemes() const;
     void UpdateCurrentTheme();
 
     string m_SelectedThemeName;
     unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_Themes;
     vector<string> m_OrderedThemeNames;
+    unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_DefaultThemes;    
 };

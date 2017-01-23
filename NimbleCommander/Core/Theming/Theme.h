@@ -90,6 +90,7 @@ public:
 
     // Terminal --> General appearance /////////////////////////////////////////////////////////////
     NSFont  *TerminalFont() const noexcept;
+    NSColor *TerminalOverlayColor() const noexcept;
     NSColor *TerminalForegroundColor() const noexcept;
     NSColor *TerminalBoldForegroundColor() const noexcept;
     NSColor *TerminalBackgroundColor() const noexcept;
@@ -118,6 +119,7 @@ public:
 
     // Viewer --> General appearance ///////////////////////////////////////////////////////////////
     NSFont  *ViewerFont() const noexcept;
+    NSColor *ViewerOverlayColor() const noexcept;
     NSColor *ViewerTextColor() const noexcept;
     NSColor *ViewerSelectionColor() const noexcept;
     NSColor *ViewerBackgroundColor() const noexcept;

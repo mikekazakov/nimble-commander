@@ -218,6 +218,16 @@ GenericConfig::ConfigValue GenericConfig::Get(const char *_path) const
     return GetInternal( _path );
 }
 
+GenericConfig::ConfigValue GenericConfig::GetDefault(const string &_path) const
+{
+    return GetInternalDefault( _path );
+}
+
+GenericConfig::ConfigValue GenericConfig::GetDefault(const char *_path) const
+{
+    return GetInternalDefault( _path );
+}
+
 optional<string> GenericConfig::GetString(const char *_path) const
 {
     auto v = GetInternal(_path);
@@ -253,9 +263,9 @@ bool GenericConfig::Has(const char *_path) const
     return FindUnlocked(_path) != nullptr;
 }
 
-const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
+static const rapidjson::Value *FindNode(string_view _path,
+                                        const rapidjson::Value *_st)
 {
-    const rapidjson::Value *st = &m_Current;
     string_view path = _path;
     size_t p;
     
@@ -264,12 +274,12 @@ const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
         copy( begin(path), begin(path) + p, begin(sub) );
         sub[p] = 0;
         
-        auto submb = st->FindMember(sub);
-        if( submb == st->MemberEnd() )
+        auto submb = _st->FindMember(sub);
+        if( submb == _st->MemberEnd() )
             return nullptr;
         
-        st = &(*submb).value;
-        if( st->GetType() != rapidjson::kObjectType )
+        _st = &(*submb).value;
+        if( _st->GetType() != rapidjson::kObjectType )
             return nullptr;
         
         path = p+1 < path.length() ? path.substr( p+1 ) : string_view();
@@ -279,17 +289,36 @@ const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
     copy( begin(path), end(path), begin(sub) );
     sub[path.length()] = 0;
     
-    auto it = st->FindMember(sub);
-    if( it == st->MemberEnd() )
+    auto it = _st->FindMember(sub);
+    if( it == _st->MemberEnd() )
         return nullptr;
     
     return &(*it).value;
+}
+
+const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
+{
+    return FindNode(_path, &m_Current);
+}
+
+const rapidjson::Value *GenericConfig::FindDefaultUnlocked(string_view _path) const
+{
+    return FindNode(_path, &m_Defaults);
 }
 
 GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 {
     lock_guard<mutex> lock(m_DocumentLock);
     auto v = FindUnlocked(_path);
+    if( !v )
+        return ConfigValue( rapidjson::kNullType );
+    return ConfigValue( *v, g_CrtAllocator );
+}
+
+GenericConfig::ConfigValue GenericConfig::GetInternalDefault(string_view _path) const
+{
+    // no need for locking, since m_Defaults is read-only
+    auto v = FindDefaultUnlocked(_path);
     if( !v )
         return ConfigValue( rapidjson::kNullType );
     return ConfigValue( *v, g_CrtAllocator );

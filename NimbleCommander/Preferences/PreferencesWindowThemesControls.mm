@@ -103,6 +103,8 @@
 
 - (void) setColor:(NSColor *)color
 {
+    if( !color )
+        return;
     if( m_Color != color ) {
         m_Color = color;
         m_ColorWell.color = m_Color;
@@ -200,6 +202,8 @@
 
 - (void) setFont:(NSFont *)font
 {
+    if( !font )
+        return;
     if( m_Font != font ) {
         m_Font = font;
         m_Description.stringValue = [m_Font toStringDescription];

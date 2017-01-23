@@ -57,6 +57,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             task_ptr->ResizeWindow(sx, sy);
         });
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        self.wantsLayer = true;
     }
     return self;
 }
@@ -71,15 +72,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
     return true;
 }
 
-- (BOOL) wantsUpdateLayer
+- (void)drawRect:(NSRect)dirtyRect
 {
-    return true;
-}
-
-- (void) updateLayer
-{
-    // TODO: change this to some separate value:
-    self.layer.backgroundColor = CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
+    // can't use updateLayer, as canDrawSubviewsIntoLayer=true, so use drawRect
+    [CurrentTheme().TerminalOverlayColor() set];
+    NSRectFill(dirtyRect);
 }
 
 - (NSView*) windowContentView

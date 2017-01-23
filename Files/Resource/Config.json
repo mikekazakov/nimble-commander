@@ -635,6 +635,7 @@
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@whiteColor",
                       "terminalForegroundColor": "#BFBFBF",
                       "terminalBoldForegroundColor": "#E5E5E5",
                       "terminalBackgroundColor": "#000000",
@@ -659,6 +660,7 @@
                       
                       /* Viewer Emulator */
                       "viewerFont": "Menlo-Regular, 13",
+                      "viewerOverlayColor": "@whiteColor",
                       "viewerTextColor": "#000000",
                       "viewerSelectionColor": "#B4D6FC",
                       "viewerBackgroundColor": "#FFFFFF"
@@ -758,6 +760,7 @@
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@whiteColor",
                       "terminalForegroundColor": "#BFBFBF",
                       "terminalBoldForegroundColor": "#E5E5E5",
                       "terminalBackgroundColor": "#000000",
@@ -782,10 +785,10 @@
                       
                       /* Viewer Emulator */
                       "viewerFont": "Menlo-Regular, 13",
-                      "viewerTextColor": "#000000",
-                      "viewerSelectionColor": "#B4D6FC",
-                      "viewerBackgroundColor": "#FFFFFF"
-                      
+                      "viewerOverlayColor": "@whiteColor",
+                      "viewerTextColor": "#00FFFF",
+                      "viewerSelectionColor": "#008080",
+                      "viewerBackgroundColor": "#000080"
                       },
                       {
                       "themeName": "Dark",
@@ -866,6 +869,7 @@
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@blackColor",
                       "terminalForegroundColor": "#BFBFBF",
                       "terminalBoldForegroundColor": "#E5E5E5",
                       "terminalBackgroundColor": "#000000",
@@ -890,10 +894,10 @@
                       
                       /* Viewer Emulator */
                       "viewerFont": "Menlo-Regular, 13",
+                      "viewerOverlayColor": "@blackColor",
                       "viewerTextColor": "#000000",
                       "viewerSelectionColor": "#B4D6FC",
                       "viewerBackgroundColor": "#FFFFFF"
-                      
                       }
                       
         

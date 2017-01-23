@@ -7,14 +7,16 @@
 //
 
 #include <Utility/FontCache.h>
-#include "../../../NimbleCommander/Bootstrap/Config.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "TermParser.h"
 #include "TermView.h"
 #include "TermScreen.h"
 #include "TermScrollView.h"
 
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
-static const auto g_ConfigFont = "terminal.font";
 
 @interface TermScrollViewFlippableDocumentHolder : NSView
 - (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
@@ -72,7 +74,7 @@ static const auto g_ConfigFont = "terminal.font";
     TermView                               *m_View;
     TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
     unique_ptr<TermScreen>                  m_Screen;
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;    
+    ThemesManager::ObservationTicket    m_ThemeObservation;        
 }
 
 @synthesize view = m_View;
@@ -93,30 +95,8 @@ static const auto g_ConfigFont = "terminal.font";
         self.contentView.copiesOnScroll = false;
         self.contentView.canDrawConcurrently = false;
         self.contentView.drawsBackground = true;
-        self.contentView.backgroundColor = m_View.backgroundColor;
-        
-        
+        self.contentView.backgroundColor = CurrentTheme().TerminalBackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
-
-//        
-//        [myScrollView setVerticalLineScroll: 0.0];
-//        [myScrollView setVerticalPageScroll: 0.0];
-        
-//        NSEdgeInsets inset = {0,0,0,0};
-//        inset.left = 50;
-//        inset.top = 50;
-//        self.contentInsets = inset;
-
-        //NSEdgeInsetsZero
-        
-//#define NSEDGEINSETS_DEFINED 1
-//        typedef struct NSEdgeInsets {
-//            CGFloat top;
-//            CGFloat left;
-//            CGFloat bottom;
-//            CGFloat right;
-//        } NSEdgeInsets;
-        
         
         m_Screen = make_unique<TermScreen>(floor(rc.size.width / m_View.fontCache.Width()),
                                            floor(rc.size.height / m_View.fontCache.Height()));
@@ -125,18 +105,9 @@ static const auto g_ConfigFont = "terminal.font";
         
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
-//         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-50-[m_ViewHolder(>=100)]-50-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
-//        [self addConstraint:
-//         [NSLayoutConstraint constraintWithItem:m_View
-//                                      attribute:NSLayoutAttributeHeight
-//                                      relatedBy:NSLayoutRelationGreaterThanOrEqual
-//                                         toItem:self.contentView
-//                                      attribute:NSLayoutAttributeHeight
-//                                     multiplier:1
-//                                       constant:0]];
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -144,7 +115,14 @@ static const auto g_ConfigFont = "terminal.font";
                                                  object:self];
         
         __weak TermScrollView* weak_self = self;
-        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigFont, [=]{ [(TermScrollView*)weak_self onFontChanged]; }) );
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::Terminal, [weak_self]{
+            if( auto strong_self = weak_self ) {
+                [strong_self onFontChanged];
+                strong_self.contentView.backgroundColor = CurrentTheme().TerminalBackgroundColor();
+            }
+        });
+        
         
         [self frameDidChange];
         

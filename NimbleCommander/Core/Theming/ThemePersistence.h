@@ -9,9 +9,15 @@ struct ThemePersistence
 {
     using v = const rapidjson::StandaloneValue &;
     
+    /**
+    * May return nil;
+    */
     static NSColor *ExtractColor( v _doc, const char *_path );
     static rapidjson::StandaloneValue EncodeColor( NSColor *_color );
-    
+
+    /**
+    * May return nil;
+    */
     static NSFont *ExtractFont( v _doc, const char *_path );
     static rapidjson::StandaloneValue EncodeFont( NSFont *_font );
     

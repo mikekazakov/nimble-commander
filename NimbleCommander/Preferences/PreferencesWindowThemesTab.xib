@@ -143,6 +143,19 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SYN-29-2Ch">
+                    <rect key="frame" x="422" y="352" width="92" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Wbj-4x-93D"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Revert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="b8c-6i-eUM">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onRevertClicked:" target="-2" id="WXm-qh-uYR"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="top" secondItem="9jG-uy-qcQ" secondAttribute="bottom" constant="8" symbolic="YES" id="BIW-38-egz"/>
@@ -150,6 +163,8 @@
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="Er7-ID-ct0"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="baseline" secondItem="UWu-1O-w6e" secondAttribute="baseline" id="L7S-e2-jbg"/>
                 <constraint firstAttribute="trailing" secondItem="0oI-YO-0HY" secondAttribute="trailing" constant="20" symbolic="YES" id="OLT-i1-KyI"/>
+                <constraint firstItem="SYN-29-2Ch" firstAttribute="leading" secondItem="9jG-uy-qcQ" secondAttribute="trailing" constant="8" symbolic="YES" id="PKX-sa-e6U"/>
+                <constraint firstItem="SYN-29-2Ch" firstAttribute="baseline" secondItem="9jG-uy-qcQ" secondAttribute="baseline" id="SGM-qW-qk0"/>
                 <constraint firstAttribute="bottom" secondItem="0oI-YO-0HY" secondAttribute="bottom" constant="20" symbolic="YES" id="dGY-ci-hjg"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="hgr-o5-zvb"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="vM3-Jc-qX9"/>

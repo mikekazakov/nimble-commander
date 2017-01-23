@@ -36,6 +36,8 @@ public:
     bool Has(const char *_path) const;
     ConfigValue Get(const string &_path) const;
     ConfigValue Get(const char *_path) const;
+    ConfigValue GetDefault(const string &_path) const;
+    ConfigValue GetDefault(const char *_path) const;
     optional<string> GetString(const char *_path) const;
 
     /**
@@ -81,7 +83,9 @@ private:
     void        FireObservers(const string& _path) const;
     void        StopObserving(unsigned long _ticket);
     ConfigValue GetInternal(string_view _path) const;
+    ConfigValue GetInternalDefault(string_view _path) const;
     const rapidjson::Value *FindUnlocked(string_view _path) const;
+    const rapidjson::Value *FindDefaultUnlocked(string_view _path) const;
     bool        SetInternal(const char *_path, const ConfigValue &_value);
     void        RunOverwritesDumping();
     void        MarkDirty();

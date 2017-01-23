@@ -12,7 +12,9 @@
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/Config.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
@@ -58,6 +60,7 @@ const static double g_BorderWidth = 1.0;
     CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                                  // updated when windows moves, regarding current selection in bytes
 //    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
+    ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -118,6 +121,13 @@ const static double g_BorderWidth = 1.0;
                                    g_ConfigModernBackgroundColor   }
                                );
                                */
+    
+    __weak BigFileView* weak_self = self;
+    m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        ThemesManager::Notifications::Viewer, [weak_self]{
+            if( auto strong_self = weak_self )
+                [strong_self reloadAppearance];
+        });
 }
 
 - (void) dealloc
@@ -172,7 +182,8 @@ const static double g_BorderWidth = 1.0;
 //        if(m_Font) CFRelease(m_Font);
 //        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
 //    }
-    m_ViewImpl->OnFontSettingsChanged();
+    if( m_ViewImpl )
+        m_ViewImpl->OnFontSettingsChanged();
     [self setNeedsDisplay];
 }
 

@@ -168,6 +168,20 @@ shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
     return dummy;
 }
 
+shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
+    BackupThemeData(const string &_theme_name) const
+{
+    auto i = m_DefaultThemes.find( _theme_name );
+    if( i != end(m_DefaultThemes) )
+        return i->second;
+    
+    i = m_DefaultThemes.find( "Modern" );
+    if( i != end(m_DefaultThemes) )
+        return i->second;
+    
+    assert( !"default config is corrupted, there's no Modern theme" );
+}
+
 static uint64_t NotificationMaskForKey( const string &_key )
 {
     const auto it = g_EntryToNotificationMapping.find( _key );
@@ -206,11 +220,13 @@ void ThemesManager::SetThemeValue(const string &_theme_name,
     }
 }
 
+
 void ThemesManager::UpdateCurrentTheme()
 {
     // comprose new theme object
     auto theme_data = SelectedThemeData();
-    auto new_theme = make_shared<Theme>((const void*)theme_data.get());
+    auto new_theme = make_shared<Theme>((const void*)theme_data.get(),
+                                        (const void*)BackupThemeData(m_SelectedThemeName).get());
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;

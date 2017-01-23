@@ -1,90 +1,6 @@
-#include <Utility/HexadecimalColor.h>
-#include <Utility/FontExtras.h>
-//#include <fstream>
-//#include <rapidjson/error/en.h>
-//#include <rapidjson/memorystream.h>
-//#include <rapidjson/stringbuffer.h>
-//#include <rapidjson/prettywriter.h>
-#include <NimbleCommander/Core/rapidjson.h>
-//#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+#include "ThemePersistence.h"
 #include "Theme.h"
-//#include "ThemesManager.h"
-
-/*
-const Theme &CurrentTheme()
-{
-// get ThemesManager instance
-// ask for current theme
-// return it
-    static Theme t(nullptr);
-    return t;
-
-}
-
-static string Load(const string &_filepath)
-{
-    ifstream i(_filepath, ios::in | ios::binary);
-    if( i ) {
-        string contents;
-        i.seekg( 0, ios::end );
-        contents.resize( i.tellg() );
-        i.seekg( 0, ios::beg );
-        i.read( &contents[0], contents.size() );
-        i.close();
-        return contents;
-    }
-    return "";
-}
-
-static rapidjson::Document GetDocument()
-{
-    const auto theme = GlobalConfig().GetString("general.theme").value_or("modern");
-    const auto bundle_path = [NSBundle.mainBundle
-        pathForResource:[NSString stringWithUTF8StdString:theme]
-                 ofType:@"json"
-    ];
-    if( !bundle_path )
-        return rapidjson::Document{};
-    const auto supp_path = AppDelegate.me.supportDirectory + theme + ".json";
-    const string json = access(supp_path.c_str(), R_OK) == 0 ?
-        Load(supp_path) :
-        Load(bundle_path.fileSystemRepresentationSafe);
-    
-    rapidjson::Document doc;
-    rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( json.c_str() );
-    
-    if (!ok) {
-        fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)",
-            rapidjson::GetParseError_En(ok.Code()), ok.Offset());
-        exit(EXIT_FAILURE);
-    }
-    return doc;
-} */
-
-static NSColor *ExtractColor( const rapidjson::StandaloneValue &_doc, const char *_path)
-{
-    auto cr = _doc.FindMember(_path);
-    if( cr == _doc.MemberEnd() )
-        return nil;
-    
-    if( !cr->value.IsString() )
-        return nil;
-
-    return [NSColor colorWithHexStdString:cr->value.GetString()];
-}
-
-static NSFont *ExtractFont( const rapidjson::StandaloneValue &_doc, const char *_path)
-{
-    auto cr = _doc.FindMember(_path);
-    if( cr == _doc.MemberEnd() )
-        return nil;
-    
-    if( !cr->value.IsString() )
-        return nil;
-
-    return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
-}
 
 struct Theme::Internals
 {
@@ -161,11 +77,28 @@ struct Theme::Internals
     NSColor *m_ViewerBackgroundColor;
 };
 
-Theme::Theme( const void *_theme_data ):
+Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
     I( make_unique<Internals>() )
 {
-    assert( _theme_data );
-    const auto &doc = *(const rapidjson::StandaloneValue*)_theme_data;
+    assert( _theme_data && _backup_theme_data );
+    const auto &doc     = *(const rapidjson::StandaloneValue*)_theme_data;
+    const auto &backup  = *(const rapidjson::StandaloneValue*)_backup_theme_data;
+  
+    const auto ExtractColor = [&]( const char *_path ) {
+        if( auto v = ThemePersistence::ExtractColor(doc, _path) )
+            return v;
+        if( auto v = ThemePersistence::ExtractColor(backup, _path) )
+            return v;
+        return NSColor.blackColor;
+    };
+    const auto ExtractFont = [&]( const char *_path ) {
+        if( auto v = ThemePersistence::ExtractFont(doc, _path) )
+            return v;
+        if( auto v = ThemePersistence::ExtractFont(backup, _path) )
+            return v;
+        return [NSFont systemFontOfSize:NSFont.systemFontSize];
+    };
+    
     
     I->m_ThemeAppearanceType = [&]{
         auto cr = doc.FindMember("themeAppearance");
@@ -195,148 +128,147 @@ Theme::Theme( const void *_theme_data ):
     I->m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
     
     I->m_FilePanelsGeneralDropBorderColor =
-        ExtractColor(doc, "filePanelsGeneralDropBorderColor");
+        ExtractColor("filePanelsGeneralDropBorderColor");
     I->m_FilePanelsGeneralOverlayColor =
-        ExtractColor(doc, "filePanelsGeneralOverlayColor");
+        ExtractColor("filePanelsGeneralOverlayColor");
     
     I->m_FilePanelsListFont =
-        ExtractFont(doc, "filePanelsListFont");
+        ExtractFont("filePanelsListFont");
     I->m_FilePanelsListGridColor =
-        ExtractColor(doc, "filePanelsListGridColor");
+        ExtractColor("filePanelsListGridColor");
     
     I->m_FilePanelsHeaderFont =
-        ExtractFont(doc, "filePanelsHeaderFont");
+        ExtractFont("filePanelsHeaderFont");
     I->m_FilePanelsHeaderTextColor =
-        ExtractColor(doc, "filePanelsHeaderTextColor");
+        ExtractColor("filePanelsHeaderTextColor");
     I->m_FilePanelsHeaderActiveTextColor =
-        ExtractColor(doc, "filePanelsHeaderActiveTextColor");
+        ExtractColor("filePanelsHeaderActiveTextColor");
     I->m_FilePanelsHeaderActiveBackgroundColor =
-        ExtractColor(doc, "filePanelsHeaderActiveBackgroundColor");
+        ExtractColor("filePanelsHeaderActiveBackgroundColor");
     I->m_FilePanelsHeaderInactiveBackgroundColor =
-        ExtractColor(doc, "filePanelsHeaderInactiveBackgroundColor");
+        ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor =
-        ExtractColor(doc, "filePanelsHeaderSeparatorColor");
-    
+        ExtractColor("filePanelsHeaderSeparatorColor");
     
     I->m_FilePanelsListHeaderFont =
-        ExtractFont(doc, "filePanelsListHeaderFont");
+        ExtractFont("filePanelsListHeaderFont");
     I->m_FilePanelsListHeaderBackgroundColor =
-        ExtractColor(doc, "filePanelsListHeaderBackgroundColor");
+        ExtractColor("filePanelsListHeaderBackgroundColor");
     I->m_FilePanelsListHeaderTextColor =
-        ExtractColor(doc, "filePanelsListHeaderTextColor");
+        ExtractColor("filePanelsListHeaderTextColor");
     I->m_FilePanelsListHeaderSeparatorColor =
-        ExtractColor(doc, "filePanelsListHeaderSeparatorColor");
+        ExtractColor("filePanelsListHeaderSeparatorColor");
     I->m_FilePanelsListSelectedActiveRowBackgroundColor =
-        ExtractColor(doc, "filePanelsListSelectedActiveRowBackgroundColor");
+        ExtractColor("filePanelsListSelectedActiveRowBackgroundColor");
     I->m_FilePanelsListSelectedInactiveRowBackgroundColor =
-        ExtractColor(doc, "filePanelsListSelectedInactiveRowBackgroundColor");
+        ExtractColor("filePanelsListSelectedInactiveRowBackgroundColor");
     I->m_FilePanelsListRegularEvenRowBackgroundColor =
-        ExtractColor(doc, "filePanelsListRegularEvenRowBackgroundColor");
+        ExtractColor("filePanelsListRegularEvenRowBackgroundColor");
     I->m_FilePanelsListRegularOddRowBackgroundColor =
-        ExtractColor(doc, "filePanelsListRegularOddRowBackgroundColor");
+        ExtractColor("filePanelsListRegularOddRowBackgroundColor");
 
     I->m_FilePanelsFooterFont =
-        ExtractFont(doc, "filePanelsFooterFont");
+        ExtractFont("filePanelsFooterFont");
     I->m_FilePanelsFooterTextColor =
-        ExtractColor(doc, "filePanelsFooterTextColor");
+        ExtractColor("filePanelsFooterTextColor");
     I->m_FilePanelsFooterActiveTextColor =
-        ExtractColor(doc, "filePanelsFooterActiveTextColor");
+        ExtractColor("filePanelsFooterActiveTextColor");
     I->m_FilePanelsFooterSeparatorsColor =
-        ExtractColor(doc, "filePanelsFooterSeparatorsColor");
+        ExtractColor("filePanelsFooterSeparatorsColor");
     I->m_FilePanelsFooterActiveBackgroundColor =
-        ExtractColor(doc, "filePanelsFooterActiveBackgroundColor");
+        ExtractColor("filePanelsFooterActiveBackgroundColor");
     I->m_FilePanelsFooterInactiveBackgroundColor =
-        ExtractColor(doc, "filePanelsFooterInactiveBackgroundColor");
+        ExtractColor("filePanelsFooterInactiveBackgroundColor");
     
     I->m_FilePanelsTabsFont =
-        ExtractFont(doc, "filePanelsTabsFont");
+        ExtractFont("filePanelsTabsFont");
     I->m_FilePanelsTabsTextColor =
-        ExtractColor(doc, "filePanelsTabsTextColor");
+        ExtractColor("filePanelsTabsTextColor");
     I->m_FilePanelsTabsSelectedKeyWndActiveBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsSelectedKeyWndActiveBackgroundColor");
+        ExtractColor("filePanelsTabsSelectedKeyWndActiveBackgroundColor");
     I->m_FilePanelsTabsSelectedKeyWndInactiveBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsSelectedKeyWndInactiveBackgroundColor");
+        ExtractColor("filePanelsTabsSelectedKeyWndInactiveBackgroundColor");
     I->m_FilePanelsTabsSelectedNotKeyWndBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsSelectedNotKeyWndBackgroundColor");
+        ExtractColor("filePanelsTabsSelectedNotKeyWndBackgroundColor");
     I->m_FilePanelsTabsRegularKeyWndHoverBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsRegularKeyWndHoverBackgroundColor");
+        ExtractColor("filePanelsTabsRegularKeyWndHoverBackgroundColor");
     I->m_FilePanelsTabsRegularKeyWndRegularBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsRegularKeyWndRegularBackgroundColor");
+        ExtractColor("filePanelsTabsRegularKeyWndRegularBackgroundColor");
     I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor =
-        ExtractColor(doc, "filePanelsTabsRegularNotKeyWndBackgroundColor");
+        ExtractColor("filePanelsTabsRegularNotKeyWndBackgroundColor");
     I->m_FilePanelsTabsSeparatorColor =
-        ExtractColor(doc, "filePanelsTabsSeparatorColor");
+        ExtractColor("filePanelsTabsSeparatorColor");
     I->m_FilePanelsTabsPictogramColor =
-        ExtractColor(doc, "filePanelsTabsPictogramColor");
+        ExtractColor("filePanelsTabsPictogramColor");
     
     I->m_FilePanelsBriefFont =
-        ExtractFont(doc, "filePanelsBriefFont");
+        ExtractFont("filePanelsBriefFont");
     I->m_FilePanelsBriefRegularEvenRowBackgroundColor =
-        ExtractColor(doc, "filePanelsBriefRegularEvenRowBackgroundColor");
+        ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
     I->m_FilePanelsBriefRegularOddRowBackgroundColor =
-        ExtractColor(doc, "filePanelsBriefRegularOddRowBackgroundColor");
+        ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
     I->m_FilePanelsBriefSelectedActiveItemBackgroundColor =
-        ExtractColor(doc, "filePanelsBriefSelectedActiveItemBackgroundColor");
+        ExtractColor("filePanelsBriefSelectedActiveItemBackgroundColor");
     I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor =
-        ExtractColor(doc, "filePanelsBriefSelectedInactiveItemBackgroundColor");
+        ExtractColor("filePanelsBriefSelectedInactiveItemBackgroundColor");
     
     I->m_TerminalFont =
-        ExtractFont(doc, "terminalFont");
+        ExtractFont("terminalFont");
     I->m_TerminalOverlayColor =
-        ExtractColor(doc, "terminalOverlayColor");
+        ExtractColor("terminalOverlayColor");
     I->m_TerminalForegroundColor =
-        ExtractColor(doc, "terminalForegroundColor");
+        ExtractColor("terminalForegroundColor");
     I->m_TerminalBoldForegroundColor =
-        ExtractColor(doc, "terminalBoldForegroundColor");
+        ExtractColor("terminalBoldForegroundColor");
     I->m_TerminalBackgroundColor =
-        ExtractColor(doc, "terminalBackgroundColor");
+        ExtractColor("terminalBackgroundColor");
     I->m_TerminalSelectionColor =
-        ExtractColor(doc, "terminalSelectionColor");
+        ExtractColor("terminalSelectionColor");
     I->m_TerminalCursorColor =
-        ExtractColor(doc, "terminalCursorColor");
+        ExtractColor("terminalCursorColor");
     I->m_TerminalAnsiColor0 =
-        ExtractColor(doc, "terminalAnsiColor0");
+        ExtractColor("terminalAnsiColor0");
     I->m_TerminalAnsiColor1 =
-        ExtractColor(doc, "terminalAnsiColor1");
+        ExtractColor("terminalAnsiColor1");
     I->m_TerminalAnsiColor2 =
-        ExtractColor(doc, "terminalAnsiColor2");
+        ExtractColor("terminalAnsiColor2");
     I->m_TerminalAnsiColor3 =
-        ExtractColor(doc, "terminalAnsiColor3");
+        ExtractColor("terminalAnsiColor3");
     I->m_TerminalAnsiColor4 =
-        ExtractColor(doc, "terminalAnsiColor4");
+        ExtractColor("terminalAnsiColor4");
     I->m_TerminalAnsiColor5 =
-        ExtractColor(doc, "terminalAnsiColor5");
+        ExtractColor("terminalAnsiColor5");
     I->m_TerminalAnsiColor6 =
-        ExtractColor(doc, "terminalAnsiColor6");
+        ExtractColor("terminalAnsiColor6");
     I->m_TerminalAnsiColor7 =
-        ExtractColor(doc, "terminalAnsiColor7");
+        ExtractColor("terminalAnsiColor7");
     I->m_TerminalAnsiColor8 =
-        ExtractColor(doc, "terminalAnsiColor8");
+        ExtractColor("terminalAnsiColor8");
     I->m_TerminalAnsiColor9 =
-        ExtractColor(doc, "terminalAnsiColor9");
+        ExtractColor("terminalAnsiColor9");
     I->m_TerminalAnsiColorA =
-        ExtractColor(doc, "terminalAnsiColorA");
+        ExtractColor("terminalAnsiColorA");
     I->m_TerminalAnsiColorB =
-        ExtractColor(doc, "terminalAnsiColorB");
+        ExtractColor("terminalAnsiColorB");
     I->m_TerminalAnsiColorC =
-        ExtractColor(doc, "terminalAnsiColorC");
+        ExtractColor("terminalAnsiColorC");
     I->m_TerminalAnsiColorD =
-        ExtractColor(doc, "terminalAnsiColorD");
+        ExtractColor("terminalAnsiColorD");
     I->m_TerminalAnsiColorE =
-        ExtractColor(doc, "terminalAnsiColorE");
+        ExtractColor("terminalAnsiColorE");
     I->m_TerminalAnsiColorF =
-        ExtractColor(doc, "terminalAnsiColorF");
+        ExtractColor("terminalAnsiColorF");
     
     I->m_ViewerFont =
-        ExtractFont(doc, "viewerFont");
+        ExtractFont("viewerFont");
     I->m_ViewerOverlayColor =
-        ExtractColor(doc, "viewerOverlayColor");
+        ExtractColor("viewerOverlayColor");
     I->m_ViewerTextColor =
-        ExtractColor(doc, "viewerTextColor");
+        ExtractColor("viewerTextColor");
     I->m_ViewerSelectionColor =
-        ExtractColor(doc, "viewerSelectionColor");
+        ExtractColor("viewerSelectionColor");
     I->m_ViewerBackgroundColor =
-        ExtractColor(doc, "viewerBackgroundColor");
+        ExtractColor("viewerBackgroundColor");
 }
 
 Theme::~Theme()

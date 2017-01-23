@@ -20,7 +20,8 @@ class Theme
 {
 public:
     // workaround to exclude rapidjson from header
-    Theme(const /*rapidjson::StandaloneValue*/void *_dont_call_me_exclamation_mark);
+    Theme(const /*rapidjson::StandaloneValue*/ void *_1,
+          const /*rapidjson::StandaloneValue*/ void *_2);
     ~Theme();
 
     // General appearance settings /////////////////////////////////////////////////////////////////

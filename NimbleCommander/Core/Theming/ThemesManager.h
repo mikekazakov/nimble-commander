@@ -36,6 +36,8 @@ public:
      * Effectively returns ThemeData( SelectedThemeName() ).
      */
     shared_ptr<const rapidjson::StandaloneValue> SelectedThemeData() const;
+    
+    shared_ptr<const rapidjson::StandaloneValue> BackupThemeData( const string &_theme_name ) const;
 
     /**
      * May return shared ptr to kNullType.

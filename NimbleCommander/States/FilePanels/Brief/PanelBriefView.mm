@@ -66,56 +66,18 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
         text_baseline = get<4>(*pit);
     }
     else {
-        // todo: handle double-sized icons
-    
         // try to calculate something by ourselves
         auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
         line_height = font_info.LineHeight() + insets[1] + insets[3];
-        text_baseline = insets[1] + font_info.Ascent();
-        icon_size = font_info.LineHeight();
-    }
-    
-    
- /*   for( auto &l: g_FixedLayoutData ) {
-        if( get<0>(l) == font_size &&
-            get<1>(l) == _layout.double_sized_icon ) {
-            
-            
-            break;
-        }
-    }
-    
-  
-    switch ( (int)floor(_font.pointSize+0.5) ) {
-        case 10:
-        case 11:
+        if( _layout.icon_scale == 1 && line_height < 17 )
             line_height = 17;
-            text_baseline = 5;
-            break;
-        case 12:
-            line_height = 19;
-            text_baseline = 5;
-            break;
-        case 13:
-        case 14:
-            line_height = 19;
-            text_baseline = 4;
-            break;
-        case 15:
-            line_height = 21;
-            text_baseline = 6;
-            break;
-        case 16:
-            line_height = 22;
-            text_baseline = 6;
-            break;
-        default: {
-            auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
-            line_height = font_info.LineHeight() + insets[1] + insets[3];
-            text_baseline = insets[1] + font_info.Ascent();
-            icon_size = font_info.LineHeight();
-        }
-    }*/
+        else if( _layout.icon_scale == 2 && line_height < 35 )
+            line_height = 35;
+        
+        text_baseline = insets[1] + font_info.Descent();
+        icon_size = _layout.icon_scale * 16;
+    }
+    
 
     PanelBriefViewItemLayoutConstants lc;
     lc.inset_left = insets[0]/*7*/;

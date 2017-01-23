@@ -85,9 +85,22 @@ static PanelListViewDateFormatting::Style StyleForWidthHardcodedLikeFinder( int 
             return PanelListViewDateFormatting::Style::Tiny;
     }
     else {
-        // do some magic calculations here... later
-        assert( "write me!!" == 0 );
-        return PanelListViewDateFormatting::Style::Long;
+        // do some magic calculations here...
+        
+//    15      225     165    143   >0
+//    16      236     172    150   >0
+// intepolation scale:
+//                 ~=/1.35 ~=/1.15
+        const auto s = 236. / 16.;
+        const auto v = s * _font_size;
+        if( _width >= v )
+            return PanelListViewDateFormatting::Style::Long;
+        else if( _width >= v / 1.35 )
+            return PanelListViewDateFormatting::Style::Medium;
+        else if( _width >= v / (1.35 * 1.15) )
+            return PanelListViewDateFormatting::Style::Short;
+        else
+            return PanelListViewDateFormatting::Style::Tiny;
     }
 }
 

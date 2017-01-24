@@ -35,7 +35,7 @@
     self.Text.stringValue = [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", [NSString stringWithUTF8StdString:m_LinkPath]];
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];
-    GoogleAnalytics::Instance().PostScreenView("Symlink Altering");
+    GA().PostScreenView("Symlink Altering");
 }
 
 - (void)showSheetFor:(NSWindow *)_window

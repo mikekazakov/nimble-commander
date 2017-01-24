@@ -53,7 +53,7 @@
 {
     [self showWindow:self];
     m_Self = self;
-    GoogleAnalytics::Instance().PostScreenView("VFS List Window");
+    GA().PostScreenView("VFS List Window");
 }
 
 - (void) updateData

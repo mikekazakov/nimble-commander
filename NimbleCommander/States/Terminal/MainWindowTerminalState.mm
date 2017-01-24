@@ -154,7 +154,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self UpdateTitle];
-    GoogleAnalytics::Instance().PostScreenView("Terminal State");
+    GA().PostScreenView("Terminal State");
 }
 
 - (void)Resigned

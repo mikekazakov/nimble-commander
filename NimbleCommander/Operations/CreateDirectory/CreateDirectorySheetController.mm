@@ -32,7 +32,7 @@
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     [self.window makeFirstResponder:self.TextField];
-    GoogleAnalytics::Instance().PostScreenView("Create Directory");
+    GA().PostScreenView("Create Directory");
 }
 
 - (IBAction)OnCreate:(id)sender

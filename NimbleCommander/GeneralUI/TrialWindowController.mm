@@ -68,7 +68,7 @@
                                          [NSBundle.mainBundle.infoDictionary objectForKey:@"NSHumanReadableCopyright"]
                                          ];
     
-    GoogleAnalytics::Instance().PostScreenView("Trial Nag Screen");
+    GA().PostScreenView("Trial Nag Screen");
 }
 
 - (IBAction)OnClose:(id)sender

@@ -210,7 +210,7 @@ static AppDelegate *g_Me = nil;
 //        m_Skin = new_skin;
 //        [self didChangeValueForKey:@"skin"];
 //        
-//        GoogleAnalytics::Instance().PostEvent("Appearance",
+//        GA().PostEvent("Appearance",
 //                                              "Set",
 //                                              new_skin == ApplicationSkin::Classic ? "Classic" : "Modern");
 //    }
@@ -262,7 +262,7 @@ static AppDelegate *g_Me = nil;
         !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
         FeedbackManager::Instance().ApplicationRunsCount() >= 5 ) {
         CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
-        GoogleAnalytics::Instance().UpdateEnabledStatus();
+        GA().UpdateEnabledStatus();
     }
 }
 
@@ -363,7 +363,7 @@ static AppDelegate *g_Me = nil;
         m_AppStoreHelper.onProductPurchased = [=](const string &_id){
             if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
-                GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
+                GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
         dispatch_to_main_queue_after(500ms, [=]{ [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
@@ -553,7 +553,7 @@ static AppDelegate *g_Me = nil;
         [alert runModal];
         
         [self updateMainMenuFeaturesByVersionAndState];
-        GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Successful external license activation");
+        GA().PostEvent("Licensing", "Buy", "Successful external license activation");
     }
 }
 
@@ -566,7 +566,7 @@ static AppDelegate *g_Me = nil;
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"]];
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
+    GA().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id)sender
@@ -653,13 +653,13 @@ static AppDelegate *g_Me = nil;
 - (IBAction)OnShowHelp:(id)sender
 {
     [NSWorkspace.sharedWorkspace openURL:[NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"]];
-    GoogleAnalytics::Instance().PostEvent("Help", "Click", "Open Help");
+    GA().PostEvent("Help", "Click", "Open Help");
 }
 
 - (IBAction)onMainMenuPerformGoToProductForum:(id)sender
 {
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/forum/"]];
-    GoogleAnalytics::Instance().PostEvent("Help", "Click", "Visit Forum");
+    GA().PostEvent("Help", "Click", "Visit Forum");
 }
 
 - (IBAction)OnMenuToggleAdminMode:(id)sender
@@ -674,7 +674,7 @@ static AppDelegate *g_Me = nil;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         }
-        GoogleAnalytics::Instance().PostScreenView("Admin Mode");
+        GA().PostScreenView("Admin Mode");
     }
 
     [self updateDockTileBadge];

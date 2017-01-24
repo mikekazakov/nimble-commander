@@ -35,7 +35,7 @@
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
     [self.window makeFirstResponder:self.LinkName];
-    GoogleAnalytics::Instance().PostScreenView("Hardlink Create");
+    GA().PostScreenView("Hardlink Create");
 }
 
 - (IBAction)OnCreate:(id)sender

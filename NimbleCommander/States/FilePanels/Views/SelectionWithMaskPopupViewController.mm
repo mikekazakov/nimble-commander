@@ -58,7 +58,7 @@ static spinlock                         g_InitialMaskLock;
         self.comboBox.stringValue = i != end(g_InitialMask) ? (*i).second : @"*.*";
     }
     
-    GoogleAnalytics::Instance().PostScreenView("Mask Selection Popup");
+    GA().PostScreenView("Mask Selection Popup");
 }
 
 - (IBAction)OnComboBox:(id)sender

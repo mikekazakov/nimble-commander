@@ -108,7 +108,7 @@
     [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView];
 //    [self.window makeFirstResponder:m_View];
 //    [self UpdateTitle];
-    GoogleAnalytics::Instance().PostScreenView("File Viewer State");
+    GA().PostScreenView("File Viewer State");
 }
 
 - (void) Resigned

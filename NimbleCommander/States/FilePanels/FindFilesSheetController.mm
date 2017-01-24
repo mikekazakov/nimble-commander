@@ -306,7 +306,7 @@ private:
         self.SearchInArchivesButton.enabled = false;
     }
     
-    GoogleAnalytics::Instance().PostScreenView("Find Files");
+    GA().PostScreenView("Find Files");
 }
 
 - (void) dealloc

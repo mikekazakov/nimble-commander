@@ -392,7 +392,7 @@ static vector<group_info> LoadGroupsWithOD()
                                   [NSNumber numberWithInt:(int)m_Items->size()]];
     
     [self PopulateControls];
-    GoogleAnalytics::Instance().PostScreenView("Unix Attributes");
+    GA().PostScreenView("Unix Attributes");
 }
 
 - (void) PopulateControls

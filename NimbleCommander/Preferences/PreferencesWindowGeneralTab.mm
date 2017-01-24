@@ -77,7 +77,7 @@
 - (IBAction)OnSendStatisticsChanged:(id)sender
 {
     dispatch_to_main_queue_after(1s, []{
-        GoogleAnalytics::Instance().UpdateEnabledStatus();
+        GA().UpdateEnabledStatus();
     });
 }
 

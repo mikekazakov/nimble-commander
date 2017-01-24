@@ -176,7 +176,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
     self.Progress.controlSize = NSMiniControlSize;
     [self.Progress setIndeterminate:false];
     
-    GoogleAnalytics::Instance().PostScreenView("Calculate Checksum");
+    GA().PostScreenView("Calculate Checksum");
 }
 
 - (IBAction)OnClose:(id)sender

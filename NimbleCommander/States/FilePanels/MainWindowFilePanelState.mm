@@ -292,7 +292,7 @@ static void SetupRatingOverlay(NSView *_background_view)
     [self UpdateTitle];
     
     // think it's a bad idea to post messages on every new window created
-    GoogleAnalytics::Instance().PostScreenView("File Panels State");
+    GA().PostScreenView("File Panels State");
 }
 
 - (void) Resigned

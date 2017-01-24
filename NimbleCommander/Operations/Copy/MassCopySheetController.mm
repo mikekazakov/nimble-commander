@@ -144,7 +144,7 @@ static string MakeCanonicPath(string _input)
     if( !ActivationManager::Instance().HasCopyVerification() )
         self.VerifySetting.enabled = false;
     
-    GoogleAnalytics::Instance().PostScreenView("File Copy");
+    GA().PostScreenView("File Copy");
 }
 
 - (IBAction)OnCopy:(id)sender

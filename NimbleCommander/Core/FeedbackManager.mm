@@ -106,7 +106,7 @@ void FeedbackManager::CommitRatingOverlayResult(int _result)
         return;
     
     const char *labels[] = { "Discard", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars" };
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
+    GA().PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
     
     m_LastRating = _result;
     m_LastRatingTime = time(nullptr);
@@ -186,7 +186,7 @@ void FeedbackManager::ResetStatistics()
 
 void FeedbackManager::EmailFeedback()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Email Feedback");
+    GA().PostEvent("Feedback", "Action", "Email Feedback");
     NSString *toAddress = @"feedback@magnumbytes.com";
     NSString *subject = [NSString stringWithFormat: @"Feedback on %@ version %@ (%@)",
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
@@ -201,7 +201,7 @@ void FeedbackManager::EmailFeedback()
 
 void FeedbackManager::EmailSupport()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Email Support");
+    GA().PostEvent("Feedback", "Action", "Email Support");
     NSString *toAddress = @"support@magnumbytes.com";
     NSString *subject = [NSString stringWithFormat: @"Support on %@ version %@ (%@)",
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
@@ -216,7 +216,7 @@ void FeedbackManager::EmailSupport()
 
 void FeedbackManager::RateOnAppStore()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Rate on AppStore");
+    GA().PostEvent("Feedback", "Action", "Rate on AppStore");
     NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
                                  ActivationManager::Instance().AppStoreID().c_str()];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
@@ -226,21 +226,21 @@ static const auto g_SocialMessage = NSLocalizedString(@"I use Nimble Commander, 
 
 void FeedbackManager::ShareOnFacebook()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on Facebook");
+    GA().PostEvent("Feedback", "Action", "Share on Facebook");
     if( auto fb = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnFacebook] )
         [fb performWithItems:@[g_SocialMessage]];
 }
 
 void FeedbackManager::ShareOnTwitter()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on Twitter");
+    GA().PostEvent("Feedback", "Action", "Share on Twitter");
     if( auto tw = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnTwitter] )
         [tw performWithItems:@[g_SocialMessage]];
 }
 
 void FeedbackManager::ShareOnLinkedIn()
 {
-    GoogleAnalytics::Instance().PostEvent("Feedback", "Action", "Share on LinkedIn");
+    GA().PostEvent("Feedback", "Action", "Share on LinkedIn");
     if( auto li = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnLinkedIn] )
         [li performWithItems:@[g_SocialMessage]];
 }

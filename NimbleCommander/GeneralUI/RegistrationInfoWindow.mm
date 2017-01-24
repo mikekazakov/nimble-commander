@@ -61,7 +61,7 @@
             [self.tabView selectTabViewItemAtIndex:2];
         }
     }
-    GoogleAnalytics::Instance().PostScreenView("Registration Info Sheet");
+    GA().PostScreenView("Registration Info Sheet");
 }
 
 - (IBAction)onOK:(id)sender

@@ -80,7 +80,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
     
     self.Text.delegate = self;
     [self controlTextDidChange:[NSNotification notificationWithName:@"" object:nil]];
-    GoogleAnalytics::Instance().PostScreenView("Go To Folder");
+    GA().PostScreenView("Go To Folder");
 }
 
 - (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler

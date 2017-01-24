@@ -71,7 +71,7 @@
     
     [self buildTitle];
     
-    GoogleAnalytics::Instance().PostScreenView("Delete Files");
+    GA().PostScreenView("Delete Files");
 }
 
 - (IBAction)onPrimaryAction:(id)sender

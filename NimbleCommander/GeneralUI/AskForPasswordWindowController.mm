@@ -25,7 +25,7 @@
     if(self) {
         (void)self.window;
         self.Resource.stringValue = _name;
-        GoogleAnalytics::Instance().PostScreenView("Ask For Password");
+        GA().PostScreenView("Ask For Password");
     }
     return self;
 }

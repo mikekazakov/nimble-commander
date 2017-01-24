@@ -36,7 +36,7 @@
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     self.LinkPath.stringValue = [NSString stringWithUTF8StdString:m_LinkPath];
     [self.window makeFirstResponder:self.LinkPath];
-    GoogleAnalytics::Instance().PostScreenView("Symlink Create");
+    GA().PostScreenView("Symlink Create");
 }
 
 - (void)showSheetFor:(NSWindow *)_window

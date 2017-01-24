@@ -207,7 +207,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     sheet.onCtrlU = [sheet makeClickHotkey:self.CaseProcessing];
     sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
     
-    GoogleAnalytics::Instance().PostScreenView("Batch Rename");
+    GA().PostScreenView("Batch Rename");
 }
 
 - (IBAction)OnCancel:(id)sender

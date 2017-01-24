@@ -61,7 +61,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
     }
     
-    GoogleAnalytics::Instance().PostScreenView("SFTP Connection");
+    GA().PostScreenView("SFTP Connection");
 }
 
 - (IBAction)OnSaved:(id)sender

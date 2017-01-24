@@ -106,7 +106,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     if( !m_ProFeaturesProduct )
         return;
     
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
+    GA().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
     SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
     [SKPaymentQueue.defaultQueue addPayment:payment];
 }
@@ -116,7 +116,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     if( !m_ProFeaturesProduct )
         return;
     
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Restore IAP purchases");
+    GA().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
 
@@ -135,7 +135,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     dispatch_assert_main_queue();
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     w.suppressDontShowAgain = true;
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Show Pro features IAP");
+    GA().PostEvent("Licensing", "Buy", "Show Pro features IAP");
     
     const auto result = [NSApp runModalForWindow:w.window];
     
@@ -162,14 +162,14 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
     
     // let's show a nag screen
-    GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "Show Pro features IAP As Nagscreen");
+    GA().PostEvent("Licensing", "Buy", "Show Pro features IAP As Nagscreen");
 
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     const auto result = [NSApp runModalForWindow:w.window];
     
     if( w.dontShowAgain ) {
         CFDefaultsSetBool(g_PrefsPFDontShow, true);
-        GoogleAnalytics::Instance().PostEvent("Licensing", "Buy", "User has turned off IAP Nagscreen");
+        GA().PostEvent("Licensing", "Buy", "User has turned off IAP Nagscreen");
     }
     if( result == NSModalResponseOK )
         [self askUserToBuyProFeatures];

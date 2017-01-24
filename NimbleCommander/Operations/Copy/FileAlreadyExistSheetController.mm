@@ -115,7 +115,7 @@ static bool IsShiftPressed()
     self.ExistingFileSize.integerValue = m_DestinationStat.st_size;
     self.RememberCheck.state = NSOffState;
     
-    GoogleAnalytics::Instance().PostScreenView("File Copy Already Exists");
+    GA().PostScreenView("File Copy Already Exists");
 }
 
 - (void)showDialogForWindow:(NSWindow *)_parent

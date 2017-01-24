@@ -28,5 +28,5 @@ void ShowPreferencesWindow()
     }();
     
     [preferences showWindow:nil];
-    GoogleAnalytics::Instance().PostScreenView("Preferences Window");
+    GA().PostScreenView("Preferences Window");
 }

@@ -81,7 +81,7 @@
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;
 
-    GoogleAnalytics::Instance().PostScreenView("File Viewer Sheet");
+    GA().PostScreenView("File Viewer Sheet");
 }
 
 - (IBAction)OnClose:(id)sender

@@ -34,7 +34,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
     self.queryComboBox.usesDataSource = true;
     self.queryComboBox.dataSource = m_QueryHistory;
     
-    GoogleAnalytics::Instance().PostScreenView("Spotlight Popup");
+    GA().PostScreenView("Spotlight Popup");
 }
 
 - (IBAction)onQueryComboBox:(id)sender

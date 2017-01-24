@@ -77,7 +77,7 @@
     self.window.nextResponder = m_Controller;
         
     [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
-    GoogleAnalytics::Instance().PostScreenView("File Viewer Window");    
+    GA().PostScreenView("File Viewer Window");    
 }
 
 - (bool) performBackgrounOpening

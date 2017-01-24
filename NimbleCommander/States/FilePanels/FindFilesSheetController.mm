@@ -250,9 +250,6 @@ private:
         m_MaskHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory);
         m_TextHistory = make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         
-        m_BatchQueue = SerialQueueT::Make();
-        m_StatQueue = SerialQueueT::Make();
-      
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
@@ -370,7 +367,7 @@ private:
 {
     dispatch_assert_background_queue();
     m_StatGroup.Wait();
-    m_StatQueue->Wait();
+    m_StatQueue.Wait();
 
     [self UpdateByTimer:m_BatchDrainTimer];
     m_BatchQueue.Wait();

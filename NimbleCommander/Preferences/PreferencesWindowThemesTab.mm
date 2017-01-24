@@ -342,7 +342,10 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                     auto name = m_ThemeNames[m_SelectedTheme];
                     rapidjson::StandaloneDocument sdoc;
                     sdoc.CopyFrom(doc, rapidjson::g_CrtAllocator);
-                    m_Manager->ImportThemeData( name, sdoc );
+                    if( m_Manager->ImportThemeData( name, sdoc ) ) {
+                        [self loadSelectedDocument];
+                        [self.outlineView reloadData];
+                    }                    
                 }
             }
 }

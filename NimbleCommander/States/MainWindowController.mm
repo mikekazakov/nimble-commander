@@ -359,10 +359,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     self.window.contentView = self.topmostState.windowContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
-    NSLog(@"assigned called");
     if([self.topmostState respondsToSelector:@selector(Assigned)])
         [self.topmostState Assigned];
-    NSLog(@"assigned finished");            
 }
 
 - (OperationsController*) OperationsController
@@ -374,8 +372,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     dispatch_assert_main_queue();
     
-    NSLog(@"file view request");
-    
     if( !m_BigFileViewLoadingQ.Empty() )
         return;
     
@@ -385,13 +381,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             if( !m_Viewer )
             dispatch_sync(dispatch_get_main_queue(),[&]{
                 m_Viewer = [[MainWindowInternalViewerState alloc] init];
-                NSLog(@"file view allocated");
             });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
-                NSLog(@"file openFile: finished");
                 dispatch_to_main_queue([=]{
                     [self PushNewWindowState:m_Viewer];
-                    NSLog(@"pushed new state");
                 });
             }
         }

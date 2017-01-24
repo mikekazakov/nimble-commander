@@ -253,20 +253,14 @@ static int InvertBitFlag( int _value, int _flag )
     dispatch_assert_main_queue();
     assert(self.view != nil );
     
-//    NSLog(@"InternalViewerHistory::Instance().EntryByPath(...)");
-    
     // try to load a saved info if any
     if( auto info = InternalViewerHistory::Instance().EntryByPath(m_GlobalFilePath) ) {
         auto options = InternalViewerHistory::Instance().Options();
         if( options.encoding && options.mode ) {
-//            NSLog(@"[m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode] started");
             [m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode];
-//            NSLog(@"[m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode] finished");
         }
         else {
-//            NSLog(@"[m_View SetFile:m_ViewerFileWindow.get()] started");
             [m_View SetFile:m_ViewerFileWindow.get()];
-//            NSLog(@"[m_View SetFile:m_ViewerFileWindow.get()] finished");
             if( options.encoding )  m_View.encoding = info->encoding;
             if( options.mode )      m_View.mode = info->view_mode;
         }
@@ -274,17 +268,13 @@ static int InvertBitFlag( int _value, int _flag )
         if( options.wrapping )      m_View.wordWrap = info->wrapping;
         if( options.position )      m_View.verticalPositionInBytes = info->position;
         if( options.selection )     m_View.selectionInFile = info->selection;
-//        NSLog(@"opening with history finished");
     }
     else {
-//        NSLog(@"[m_View SetFile:m_ViewerFileWindow.get()] started");
         [m_View SetFile:m_ViewerFileWindow.get()];
-//        NSLog(@"[m_View SetFile:m_ViewerFileWindow.get()] finished");
         int encoding = 0;
         if( GlobalConfig().GetBool(g_ConfigRespectComAppleTextEncoding) &&
            (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
             m_View.encoding = encoding;
-//        NSLog(@"opening without history finished");
     }
     
     m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);

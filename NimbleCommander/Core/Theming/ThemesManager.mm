@@ -151,7 +151,12 @@ string ThemesManager::SelectedThemeName() const
 
 shared_ptr<const rapidjson::StandaloneValue> ThemesManager::SelectedThemeData() const
 {
-    return ThemeData( m_SelectedThemeName );
+    auto i = ThemeData( m_SelectedThemeName );
+    if( i->GetType() == rapidjson::kObjectType )
+        return i;
+    
+    // at this moment there's some inconsistency in config, lets use a failsafe Modern theme.
+    return BackupThemeData( "Modern" );
 }
 
 shared_ptr<const rapidjson::StandaloneValue> ThemesManager::

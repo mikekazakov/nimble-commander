@@ -11,6 +11,11 @@
         "skin": 1,
         
         /**
+        * Very temporarily! classic, modern, dark.
+        */
+        "theme": "Modern",
+        
+        /**
          * Show/hide toolbar
          */
         "showToolbar": true,
@@ -131,7 +136,12 @@
              */
             "maxFPS": 60,
   
-            "bottomGapForOverlappedTerminal": 0
+            "bottomGapForOverlappedTerminal": 0,
+            
+            /**
+             * Separator between filenames/filepaths for copying in pasteboard.
+             */
+            "separatorForCopyingMultipleFilenames": "\n"
         },
         
         /**
@@ -317,6 +327,82 @@
                                     "focused": "#FF0000"
                                  }
             ]
+        },
+        "layout": {
+            "layouts_v1": [
+                            {
+                                "title": "Short",
+                                "brief": {
+                                    "mode": 1,
+                                    "fixed_amount_value": 3
+                                }
+                            },
+                            {
+                                "title": "Medium",
+                                "brief": {
+                                    "mode": 2
+                                }
+                            },
+                            {
+                                "title": "Full",
+                                "list": {
+                                    "columns": [
+                                                {
+                                                    "kind": 1
+                                                },
+                                                {
+                                                    "kind": 2
+                                                },
+                                                {
+                                                    "kind": 3
+                                                },
+                                                {
+                                                    "kind": 5
+                                                },
+                                                {
+                                                    "kind": 4
+                                                }
+                                    ]
+                                }
+                           },
+                           {
+                                "title": "Wide",
+                                "list": {
+                                    "columns": [
+                                                {
+                                                    "kind": 1
+                                                },
+                                                {
+                                                    "kind": 2
+                                                }
+                                       ]
+                                }
+                           },
+                           {
+                                "title": "Custom Layout V",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VI",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VII",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout VIII",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout IX",
+                                "disabled": null
+                           },
+                           {
+                                "title": "Custom Layout X",
+                                "disabled": null
+                           }
+            ]
         }
     },
     
@@ -466,6 +552,359 @@
                 "parameters": "%p %-p",
                 "shortcut": ""
             }
+        ]
+    },
+    
+    "themes": {
+        "themes_v1": [
+                      {
+                      "themeName": "Modern",
+                      "themeAppearance": "aqua",
+                      "filePanelsColoringRules_v1": [
+                                                     {
+                                                     "name": "selected",
+                                                     "regular": "#FF0000",
+                                                     "focused": "#FF0000",
+                                                     "filter": {
+                                                     "selected": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "hidden",
+                                                     "regular": "#666666",
+                                                     "focused": "#999999",
+                                                     "filter": {
+                                                     "hidden": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "other",
+                                                     "regular": "#000000",
+                                                     "focused": "#FFFFFF"
+                                                     }
+                                                     ],
+                      "filePanelsGeneralDropBorderColor": "@blueColor",
+                      "filePanelsGeneralOverlayColor": "@whiteColor",
+                      
+                      /* File Panels -> tabs settings */
+                      "filePanelsTabsFont": "@systemFont, 11",
+                      "filePanelsTabsTextColor": "@controlTextColor",
+                      "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#FFFFFF",
+                      "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "@clearColor",
+                      "filePanelsTabsSelectedNotKeyWndBackgroundColor": "@clearColor",
+                      "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#A5A5A5",
+                      "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#B9B9B9",
+                      "filePanelsTabsRegularNotKeyWndBackgroundColor": "@clearColor",
+                      "filePanelsTabsSeparatorColor": "#8080806B",
+                      "filePanelsTabsPictogramColor": "#303030",
+                      
+                      /* File Panels -> header settings */
+                      "filePanelsHeaderFont": "@labelFont, 13",
+                      "filePanelsHeaderTextColor": "@labelColor",
+                      "filePanelsHeaderActiveTextColor": "@labelColor",
+                      "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsHeaderInactiveBackgroundColor": "@clearColor",
+                      "filePanelsHeaderSeparatorColor": "#8080806B",
+                      
+                      /* File Panels -> footer settings */
+                      "filePanelsFooterFont": "@labelFont, 13",
+                      "filePanelsFooterTextColor" : "@labelColor",
+                      "filePanelsFooterActiveTextColor" : "@labelColor",
+                      "filePanelsFooterSeparatorsColor": "#8080806B",
+                      "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsFooterInactiveBackgroundColor": "#E8E8E8",
+                      
+                      /* File Panels -> List settings */
+                      "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListGridColor": "@clearColor",
+                      "filePanelsListHeaderFont": "@systemFont, 11",
+                      "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
+                      "filePanelsListHeaderTextColor": "@headerTextColor",
+                      "filePanelsListHeaderSeparatorColor": "#8080806B",
+                      "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
+                      "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
+                      "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+                      
+                      /* File Panels -> Brief settings */
+                      "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
+                      "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "@lightGrayColor",
+                      
+                      /* Terminal Emulator */
+                      "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@whiteColor",
+                      "terminalForegroundColor": "#BFBFBF",
+                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalBackgroundColor": "#000000",
+                      "terminalSelectionColor": "#E5E5E5",
+                      "terminalCursorColor": "#666666",
+                      "terminalAnsiColor0": "#000000", // black
+                      "terminalAnsiColor1": "#990000", // red
+                      "terminalAnsiColor2": "#00A600", // green
+                      "terminalAnsiColor3": "#999900", // yellow
+                      "terminalAnsiColor4": "#0000B2", // blue
+                      "terminalAnsiColor5": "#B200B2", // magenta
+                      "terminalAnsiColor6": "#00A6B2", // cyan
+                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor8": "#666666", // bright black
+                      "terminalAnsiColor9": "#E50000", // bright red
+                      "terminalAnsiColorA": "#00D900", // bright green
+                      "terminalAnsiColorB": "#E5E500", // bright yellow
+                      "terminalAnsiColorC": "#0000FF", // bright blue
+                      "terminalAnsiColorD": "#E500E5", // bright magenta
+                      "terminalAnsiColorE": "#00E5E5", // bright cyan
+                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      
+                      /* Viewer Emulator */
+                      "viewerFont": "Menlo-Regular, 13",
+                      "viewerOverlayColor": "@whiteColor",
+                      "viewerTextColor": "#000000",
+                      "viewerSelectionColor": "#B4D6FC",
+                      "viewerBackgroundColor": "#FFFFFF"
+                      },
+                      {
+                      "themeName": "Classic",
+                      "themeAppearance": "aqua",
+                      
+                      "filePanelsColoringRules_v1": [
+                                                     {
+                                                     "name": "selected",
+                                                     "regular": "#FFFF00",
+                                                     "focused": "#FFFF00",
+                                                     "filter": {
+                                                     "selected": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "hidden",
+                                                     "regular": "#008080",
+                                                     "focused": "#808080",
+                                                     "filter": {
+                                                     "hidden": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "regular files",
+                                                     "regular": "#00FFFF",
+                                                     "focused": "#000000",
+                                                     "filter": {
+                                                     "reg": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "directories",
+                                                     "regular": "#FFFFFF",
+                                                     "focused": "#FFFFFF",
+                                                     "filter": {
+                                                     "directory": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "other",
+                                                     "regular": "#FF0000",
+                                                     "focused": "#FF0000"
+                                                     }
+                                                     ],
+                      "filePanelsGeneralDropBorderColor": "@yellowColor",
+                      "filePanelsGeneralOverlayColor": "@whiteColor",
+                      
+                      /* File Panels -> tabs settings */
+                      "filePanelsTabsFont": "Menlo-Regular, 11",
+                      "filePanelsTabsTextColor": "#E5E5E5",
+                      "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#008080",
+                      "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "#000080",
+                      "filePanelsTabsSelectedNotKeyWndBackgroundColor": "#000080",
+                      "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#000080",
+                      "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#000080",
+                      "filePanelsTabsRegularNotKeyWndBackgroundColor": "#000080",
+                      "filePanelsTabsSeparatorColor": "#00FFFF",
+                      "filePanelsTabsPictogramColor": "#E5E5E5",
+                      
+                      /* File Panels -> header settings */
+                      "filePanelsHeaderFont": "Menlo-Regular, 13",
+                      "filePanelsHeaderTextColor": "#00FFFF",
+                      "filePanelsHeaderActiveTextColor": "@whiteColor",
+                      "filePanelsHeaderActiveBackgroundColor": "#000080",
+                      "filePanelsHeaderInactiveBackgroundColor": "#000080",
+                      "filePanelsHeaderSeparatorColor": "#00FFFF",
+                      
+                      /* File Panels -> footer settings */
+                      "filePanelsFooterFont": "Menlo-Regular, 13",
+                      "filePanelsFooterTextColor" : "#00FFFF",
+                      "filePanelsFooterActiveTextColor" : "@whiteColor",
+                      "filePanelsFooterSeparatorsColor": "#00FFFF",
+                      "filePanelsFooterActiveBackgroundColor": "#000080",
+                      "filePanelsFooterInactiveBackgroundColor": "#000080",
+                      
+                      /* File Panels -> List settings */
+                      "filePanelsListFont": "Menlo-Regular, 13",
+                      "filePanelsListGridColor": "#00FFFF",
+                      "filePanelsListHeaderFont": "Menlo-Regular, 13",
+                      "filePanelsListHeaderBackgroundColor": "#000080",
+                      "filePanelsListHeaderTextColor": "@yellowColor",
+                      "filePanelsListHeaderSeparatorColor": "#00FFFF",
+                      "filePanelsListSelectedActiveRowBackgroundColor": "#008080",
+                      "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
+                      "filePanelsListRegularEvenRowBackgroundColor": "#000080",
+                      "filePanelsListRegularOddRowBackgroundColor" : "#000080",
+                      
+                      /* File Panels -> Brief settings */
+                      "filePanelsBriefFont": "Menlo-Regular, 13",
+                      "filePanelsBriefRegularEvenRowBackgroundColor": "#000080",
+                      "filePanelsBriefRegularOddRowBackgroundColor": "#000080",
+                      "filePanelsBriefSelectedActiveItemBackgroundColor": "#008080",
+                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "#000080",
+                      
+                      /* Terminal Emulator */
+                      "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@whiteColor",
+                      "terminalForegroundColor": "#BFBFBF",
+                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalBackgroundColor": "#000000",
+                      "terminalSelectionColor": "#E5E5E5",
+                      "terminalCursorColor": "#666666",
+                      "terminalAnsiColor0": "#000000", // black
+                      "terminalAnsiColor1": "#990000", // red
+                      "terminalAnsiColor2": "#00A600", // green
+                      "terminalAnsiColor3": "#999900", // yellow
+                      "terminalAnsiColor4": "#0000B2", // blue
+                      "terminalAnsiColor5": "#B200B2", // magenta
+                      "terminalAnsiColor6": "#00A6B2", // cyan
+                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor8": "#666666", // bright black
+                      "terminalAnsiColor9": "#E50000", // bright red
+                      "terminalAnsiColorA": "#00D900", // bright green
+                      "terminalAnsiColorB": "#E5E500", // bright yellow
+                      "terminalAnsiColorC": "#0000FF", // bright blue
+                      "terminalAnsiColorD": "#E500E5", // bright magenta
+                      "terminalAnsiColorE": "#00E5E5", // bright cyan
+                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      
+                      /* Viewer Emulator */
+                      "viewerFont": "Menlo-Regular, 13",
+                      "viewerOverlayColor": "@whiteColor",
+                      "viewerTextColor": "#00FFFF",
+                      "viewerSelectionColor": "#008080",
+                      "viewerBackgroundColor": "#000080"
+                      },
+                      {
+                      "themeName": "Dark",
+                      "themeAppearance": "dark",
+                      
+                      "filePanelsColoringRules_v1": [
+                                                     {
+                                                     "name": "selected",
+                                                     "regular": "#FF0000",
+                                                     "focused": "#FF0000",
+                                                     "filter": {
+                                                     "selected": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "hidden",
+                                                     "regular": "#666666",
+                                                     "focused": "#999999",
+                                                     "filter": {
+                                                     "hidden": true
+                                                     }
+                                                     },
+                                                     {
+                                                     "name": "other",
+                                                     "regular": "#777777",
+                                                     "focused": "#FFFFFF"
+                                                     }
+                                                     ],
+                      "filePanelsGeneralDropBorderColor": "@blueColor",
+                      "filePanelsGeneralOverlayColor": "@blackColor",
+                      
+                      /* File Panels -> tabs settings */
+                      "filePanelsTabsFont": "@systemFont, 11",
+                      "filePanelsTabsTextColor": "@controlTextColor",
+                      "filePanelsTabsSelectedKeyWndActiveBackgroundColor": "#323232",
+                      "filePanelsTabsSelectedKeyWndInactiveBackgroundColor": "#181818",
+                      "filePanelsTabsSelectedNotKeyWndBackgroundColor": "#101010",
+                      "filePanelsTabsRegularKeyWndHoverBackgroundColor": "#3A3A3A",
+                      "filePanelsTabsRegularKeyWndRegularBackgroundColor": "#000000",
+                      "filePanelsTabsRegularNotKeyWndBackgroundColor": "#000000",
+                      "filePanelsTabsSeparatorColor": "#8080806B",
+                      "filePanelsTabsPictogramColor": "@controlTextColor",
+                      
+                      /* File Panels -> header settings */
+                      "filePanelsHeaderFont": "@labelFont, 13",
+                      "filePanelsHeaderTextColor": "#777777",
+                      "filePanelsHeaderActiveTextColor": "@labelColor",
+                      "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsHeaderSeparatorColor": "#8080806B",
+                      
+                      /* File Panels -> footer settings */
+                      "filePanelsFooterFont": "@labelFont, 13",
+                      "filePanelsFooterTextColor" : "#777777",
+                      "filePanelsFooterActiveTextColor" : "@labelColor",
+                      "filePanelsFooterSeparatorsColor": "#282828",
+                      "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsFooterInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      
+                      /* File Panels -> List settings */
+                      "filePanelsListFont": "@systemFont, 13",
+                      "filePanelsListGridColor": "@clearColor",
+                      "filePanelsListHeaderFont": "@systemFont, 11",
+                      "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
+                      "filePanelsListHeaderTextColor": "#777777",
+                      "filePanelsListHeaderSeparatorColor": "#8080806B",
+                      "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
+                      "filePanelsListSelectedInactiveRowBackgroundColor": "@darkGrayColor",
+                      "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+                      
+                      /* File Panels -> Brief settings */
+                      "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
+                      "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "@darkGrayColor",
+                      
+                      /* Terminal Emulator */
+                      "terminalFont": "Menlo-Regular, 13",
+                      "terminalOverlayColor": "@blackColor",
+                      "terminalForegroundColor": "#BFBFBF",
+                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalBackgroundColor": "#000000",
+                      "terminalSelectionColor": "#E5E5E5",
+                      "terminalCursorColor": "#666666",
+                      "terminalAnsiColor0": "#000000", // black
+                      "terminalAnsiColor1": "#990000", // red
+                      "terminalAnsiColor2": "#00A600", // green
+                      "terminalAnsiColor3": "#999900", // yellow
+                      "terminalAnsiColor4": "#0000B2", // blue
+                      "terminalAnsiColor5": "#B200B2", // magenta
+                      "terminalAnsiColor6": "#00A6B2", // cyan
+                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor8": "#666666", // bright black
+                      "terminalAnsiColor9": "#E50000", // bright red
+                      "terminalAnsiColorA": "#00D900", // bright green
+                      "terminalAnsiColorB": "#E5E500", // bright yellow
+                      "terminalAnsiColorC": "#0000FF", // bright blue
+                      "terminalAnsiColorD": "#E500E5", // bright magenta
+                      "terminalAnsiColorE": "#00E5E5", // bright cyan
+                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      
+                      /* Viewer Emulator */
+                      "viewerFont": "Menlo-Regular, 13",
+                      "viewerOverlayColor": "@blackColor",
+                      "viewerTextColor": "#000000",
+                      "viewerSelectionColor": "#B4D6FC",
+                      "viewerBackgroundColor": "#FFFFFF"
+                      }
+                      
+        
+        
+        
+        
+        
         ]
     }
 }

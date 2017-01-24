@@ -499,14 +499,28 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
             volume->mount_flags.local       == false ;
 }
 
+static void EjectOnUnmount( DADiskRef disk, DADissenterRef dissenter, void *context )
+{
+    if( dissenter == nullptr ) {
+        DADiskRef disk2 = DADiskCopyWholeDisk(disk);
+        DADiskEject(disk2, kDADiskEjectOptionDefault, nullptr, nullptr);
+        CFRelease(disk2);
+    }
+}
+
 void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=]{
+    dispatch_async(dispatch_get_main_queue(), [=]{
         if(auto volume = VolumeFromPath(_path)) {
             DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+            DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
             CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
             if( DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url) ) {
-                DADiskUnmount(disk, kDADiskUnmountOptionForce, NULL, NULL);
+                auto need_eject = true; // maybe change in some case?
+                DADiskUnmount(disk,
+                              kDADiskUnmountOptionForce,
+                              need_eject ? EjectOnUnmount : nullptr,
+                              nullptr);
                 CFRelease(disk);
             }
             CFRelease(session);

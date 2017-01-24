@@ -9,7 +9,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../../Files/MainWindowStateProtocol.h"
+#include "../MainWindowStateProtocol.h"
 #include "../../Viewer/BigFileView.h"
 #include "../../Viewer/InternalViewerToolbarProtocol.h"
 

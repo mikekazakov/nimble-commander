@@ -1,410 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowTerminalTab">
             <connections>
-                <outlet property="fontVisibleName" destination="GJ7-fd-OXF" id="CLu-gH-S74"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="367"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="271"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zr7-ub-6YW">
-                    <rect key="frame" x="18" y="177" width="82" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="ANSI Colors" id="2Kw-RY-4u0">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <colorWell toolTip="Black (0)" translatesAutoresizingMaskIntoConstraints="NO" id="dZp-nY-uvb">
-                    <rect key="frame" x="20" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="RpG-EU-rWc"/>
-                        <constraint firstAttribute="height" constant="20" id="soe-Kr-o7Q"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor0" id="NLe-Ov-XFu">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Red (1)" translatesAutoresizingMaskIntoConstraints="NO" id="rh6-5H-Jyw">
-                    <rect key="frame" x="51" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="6iI-3W-eP9"/>
-                        <constraint firstAttribute="height" constant="20" id="OTx-vy-9VZ"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor1" id="pty-yr-m5X">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Green (2)" translatesAutoresizingMaskIntoConstraints="NO" id="E42-cg-CNl">
-                    <rect key="frame" x="82" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="UNo-dP-GTX"/>
-                        <constraint firstAttribute="height" constant="20" id="mqw-gg-Hyq"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor2" id="Vie-ej-hQH">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Yellow (3)" translatesAutoresizingMaskIntoConstraints="NO" id="XGW-r6-zbG">
-                    <rect key="frame" x="113" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="3Vn-o0-JrI"/>
-                        <constraint firstAttribute="height" constant="20" id="ktD-qE-eTn"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor3" id="stn-XW-HDQ">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Blue (4)" translatesAutoresizingMaskIntoConstraints="NO" id="zOX-2h-pbe">
-                    <rect key="frame" x="144" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="LGL-rD-lcZ"/>
-                        <constraint firstAttribute="width" constant="28" id="TB1-lL-GT6"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor4" id="rjs-7j-96F">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Magenta (5)" translatesAutoresizingMaskIntoConstraints="NO" id="BoS-nR-L8j">
-                    <rect key="frame" x="175" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="OEx-yj-Plu"/>
-                        <constraint firstAttribute="width" constant="28" id="uLp-bR-b8O"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor5" id="P1z-Ra-f9e">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Cyan (6)" translatesAutoresizingMaskIntoConstraints="NO" id="lYJ-Wx-Aeh">
-                    <rect key="frame" x="206" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="FJ6-Dk-9fL"/>
-                        <constraint firstAttribute="height" constant="20" id="v1c-MA-uwr"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor6" id="X6g-k2-mEp">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="White (7)" translatesAutoresizingMaskIntoConstraints="NO" id="6CK-Is-VQh">
-                    <rect key="frame" x="237" y="153" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="PEQ-O8-m5g"/>
-                        <constraint firstAttribute="height" constant="20" id="soP-UU-L1n"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor7" id="uBw-WH-I10">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Black (8)" translatesAutoresizingMaskIntoConstraints="NO" id="XtX-go-ptl">
-                    <rect key="frame" x="20" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="2aF-62-yC0"/>
-                        <constraint firstAttribute="width" constant="28" id="63j-1U-j8q"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor8" id="Drp-Er-f3b">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Red (9)" translatesAutoresizingMaskIntoConstraints="NO" id="Yzb-fh-eM5">
-                    <rect key="frame" x="51" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="4qW-X9-C6L"/>
-                        <constraint firstAttribute="width" constant="28" id="IXA-kw-gBw"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor9" id="oUw-4T-bTQ">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Green (10)" translatesAutoresizingMaskIntoConstraints="NO" id="dHi-nX-Gs9">
-                    <rect key="frame" x="82" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="Qfl-I0-N4n"/>
-                        <constraint firstAttribute="height" constant="20" id="iZP-2b-bi8"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor10" id="08v-U4-bMl">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Yellow (11)" translatesAutoresizingMaskIntoConstraints="NO" id="tDc-fO-mgO">
-                    <rect key="frame" x="113" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="rgm-xk-TbR"/>
-                        <constraint firstAttribute="width" constant="28" id="voc-T8-WY6"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor11" id="QYT-bN-bLX">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Blue (12)" translatesAutoresizingMaskIntoConstraints="NO" id="UBU-ZG-6gR">
-                    <rect key="frame" x="144" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="6vP-vD-Z0X"/>
-                        <constraint firstAttribute="width" constant="28" id="FtW-KM-1F0"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor12" id="qHZ-kg-lIU">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Magenta (13)" translatesAutoresizingMaskIntoConstraints="NO" id="FNv-mM-sTP">
-                    <rect key="frame" x="175" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="k5h-9R-zB2"/>
-                        <constraint firstAttribute="width" constant="28" id="yzj-D3-7Ha"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor13" id="n4n-Mu-l7r">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright Cyan (14)" translatesAutoresizingMaskIntoConstraints="NO" id="jPa-lB-CwM">
-                    <rect key="frame" x="206" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="jgg-aB-8MN"/>
-                        <constraint firstAttribute="height" constant="20" id="sL4-Zo-7Qt"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor14" id="h7c-QW-OUA">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell toolTip="Bright White (15)" translatesAutoresizingMaskIntoConstraints="NO" id="4OJ-NR-85t">
-                    <rect key="frame" x="237" y="130" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="PMr-y0-haj"/>
-                        <constraint firstAttribute="width" constant="28" id="kYn-5a-Opm"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.AnsiColor15" id="7y6-sB-LH1">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="wlb-jH-pG1">
-                    <rect key="frame" x="20" y="306" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="9Dh-vb-t7P"/>
-                        <constraint firstAttribute="height" constant="20" id="jc6-93-3cN"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.textColor" id="fMH-pX-R0b">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="CIE-oo-Sjs">
-                    <rect key="frame" x="20" y="283" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="SlI-Tj-NwG"/>
-                        <constraint firstAttribute="width" constant="28" id="ftr-Q8-0i1"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.boldTextColor" id="UTX-7C-Ba0">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="mLR-jE-upV">
-                    <rect key="frame" x="20" y="260" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="28" id="5Ux-YV-11s"/>
-                        <constraint firstAttribute="height" constant="20" id="uJ8-2I-n3G"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.backgroundColor" id="dtz-My-itG">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="g8c-T5-qeY">
-                    <rect key="frame" x="20" y="237" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="BlL-kD-Pc7"/>
-                        <constraint firstAttribute="width" constant="28" id="OlJ-Zy-lbb"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.selectionColor" id="NZZ-jr-rdF">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2ZN-7T-nB3">
-                    <rect key="frame" x="54" y="285" width="61" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bold Text" id="Yfm-Nn-AuD">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7C-sQ-rpU">
-                    <rect key="frame" x="54" y="239" width="61" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Selection" id="ezd-9K-uv3">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6bS-Yw-6MZ">
-                    <rect key="frame" x="54" y="262" width="77" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Background" id="cwt-bk-IjR">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="1hh-Ot-Nda">
-                    <rect key="frame" x="20" y="214" width="28" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="uBa-L0-dZg"/>
-                        <constraint firstAttribute="width" constant="28" id="udR-A1-Rb0"/>
-                    </constraints>
-                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.cursorColor" id="Vsd-Fp-Lio">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </colorWell>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rF2-wk-sKe">
-                    <rect key="frame" x="54" y="216" width="45" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="IGT-Dv-Ld8">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
-                    <rect key="frame" x="323" y="277" width="48" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor" id="nU3-et-JNg">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-9U-Klv">
-                    <rect key="frame" x="271" y="155" width="48" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Normal" id="B4C-wO-uIY">
+                    <rect key="frame" x="18" y="234" width="49" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor:" id="nU3-et-JNg">
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TYX-YO-eRo">
-                    <rect key="frame" x="271" y="132" width="48" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Bright" id="AD2-zv-RsG">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kxJ-qf-MsA">
-                    <rect key="frame" x="18" y="330" width="85" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Basic Colors" id="WRM-bF-61O">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
-                    <rect key="frame" x="325" y="215" width="255" height="58"/>
+                    <rect key="frame" x="73" y="193" width="255" height="58"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     <size key="cellSize" width="255" height="18"/>
                     <size key="intercellSpacing" width="4" height="2"/>
@@ -432,58 +54,8 @@
                         <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.terminal.cursorMode" id="k7e-oW-gf4"/>
                     </connections>
                 </matrix>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">
-                    <rect key="frame" x="323" y="191" width="107" height="18"/>
-                    <buttonCell key="cell" type="check" title="Hide scrollbar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zcL-oM-aS5">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.hideVerticalScrollbar" id="VVw-wM-YY2"/>
-                    </connections>
-                </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6TY-ad-Zr5">
-                    <rect key="frame" x="323" y="330" width="34" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Font" id="9LW-aK-nMs">
-                        <font key="font" metaFont="systemBold"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GJ7-fd-OXF">
-                    <rect key="frame" x="323" y="314" width="176" height="14"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="172" id="gHQ-RC-OM3"/>
-                    </constraints>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="d5L-HZ-652">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rUn-31-MQ4">
-                    <rect key="frame" x="500" y="307" width="85" height="28"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="Ww7-pK-t57"/>
-                    </constraints>
-                    <buttonCell key="cell" type="push" title="Change..." bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="10R-Vq-CP2">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="OnSetFont:" target="-2" id="lkw-nI-LT5"/>
-                    </connections>
-                </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O2I-Ah-bcY">
-                    <rect key="frame" x="54" y="308" width="30" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Text" id="p0R-sF-276">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aka-YG-TVI">
-                    <rect key="frame" x="18" y="93" width="105" height="17"/>
+                    <rect key="frame" x="18" y="168" width="105" height="17"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Open shell with: " id="nWF-WN-ul0">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -491,7 +63,7 @@
                     </textFieldCell>
                 </textField>
                 <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BYU-QH-WHm">
-                    <rect key="frame" x="129" y="72" width="294" height="38"/>
+                    <rect key="frame" x="129" y="147" width="294" height="38"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     <size key="cellSize" width="294" height="18"/>
                     <size key="intercellSpacing" width="4" height="2"/>
@@ -520,7 +92,7 @@
                     </connections>
                 </matrix>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oJr-Cv-UJI">
-                    <rect key="frame" x="153" y="42" width="300" height="22"/>
+                    <rect key="frame" x="153" y="117" width="300" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="300" id="18A-yW-Vlw"/>
                     </constraints>
@@ -539,100 +111,41 @@
                     </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Ie-L3-z7Z">
-                    <rect key="frame" x="151" y="20" width="207" height="14"/>
+                    <rect key="frame" x="151" y="95" width="207" height="14"/>
                     <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Supported shells: bash, zsh and [t]csh" id="9D7-aw-d5c">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">
+                    <rect key="frame" x="18" y="71" width="107" height="18"/>
+                    <buttonCell key="cell" type="check" title="Hide scrollbar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zcL-oM-aS5">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="-3" name="value" keyPath="self.delegate.config.terminal.hideVerticalScrollbar" id="VVw-wM-YY2"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
-                <constraint firstItem="dZp-nY-uvb" firstAttribute="leading" secondItem="XtX-go-ptl" secondAttribute="leading" id="1w7-iK-cmR"/>
-                <constraint firstItem="g8c-T5-qeY" firstAttribute="top" secondItem="mLR-jE-upV" secondAttribute="bottom" constant="3" id="21u-SQ-WKN"/>
-                <constraint firstItem="stk-zw-sC0" firstAttribute="top" secondItem="y11-Bl-tZz" secondAttribute="bottom" constant="4" id="2w3-6g-MNR"/>
-                <constraint firstItem="tDc-fO-mgO" firstAttribute="leading" secondItem="dHi-nX-Gs9" secondAttribute="trailing" constant="3" id="3ek-Cw-hBZ"/>
-                <constraint firstItem="L7C-sQ-rpU" firstAttribute="leading" secondItem="g8c-T5-qeY" secondAttribute="trailing" constant="8" symbolic="YES" id="4VB-eN-rsX"/>
-                <constraint firstItem="GJ7-fd-OXF" firstAttribute="top" secondItem="6TY-ad-Zr5" secondAttribute="bottom" constant="2" id="53x-Fy-T1h"/>
-                <constraint firstItem="kxJ-qf-MsA" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="5QM-4b-KLW"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="top" secondItem="g8c-T5-qeY" secondAttribute="bottom" constant="3" id="5uz-VM-6Go"/>
-                <constraint firstItem="rUn-31-MQ4" firstAttribute="leading" secondItem="GJ7-fd-OXF" secondAttribute="trailing" constant="8" symbolic="YES" id="6al-L5-VPE"/>
-                <constraint firstItem="UBU-ZG-6gR" firstAttribute="leading" secondItem="tDc-fO-mgO" secondAttribute="trailing" constant="3" id="7qe-hv-aVD"/>
+                <constraint firstItem="y11-Bl-tZz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="83s-J6-5FL"/>
                 <constraint firstItem="oJr-Cv-UJI" firstAttribute="top" secondItem="BYU-QH-WHm" secondAttribute="bottom" constant="8" symbolic="YES" id="84C-UI-dIX"/>
-                <constraint firstItem="aka-YG-TVI" firstAttribute="top" secondItem="XtX-go-ptl" secondAttribute="bottom" constant="20" id="868-sH-GnM"/>
                 <constraint firstItem="BYU-QH-WHm" firstAttribute="leading" secondItem="aka-YG-TVI" secondAttribute="trailing" constant="8" symbolic="YES" id="8La-hI-gez"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="lYJ-Wx-Aeh" secondAttribute="centerY" id="9Cu-GJ-kUR"/>
-                <constraint firstItem="kxJ-qf-MsA" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="9T7-oV-CX6"/>
-                <constraint firstItem="rF2-wk-sKe" firstAttribute="leading" secondItem="1hh-Ot-Nda" secondAttribute="trailing" constant="8" symbolic="YES" id="AJT-rB-nsd"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="UBU-ZG-6gR" secondAttribute="centerY" id="BiO-cz-k1e"/>
-                <constraint firstItem="zOX-2h-pbe" firstAttribute="leading" secondItem="XGW-r6-zbG" secondAttribute="trailing" constant="3" id="C21-G1-5VC"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="rh6-5H-Jyw" secondAttribute="centerY" id="Drz-f8-jhV"/>
-                <constraint firstItem="dHi-nX-Gs9" firstAttribute="leading" secondItem="Yzb-fh-eM5" secondAttribute="trailing" constant="3" id="EUD-us-myY"/>
-                <constraint firstItem="4OJ-NR-85t" firstAttribute="leading" secondItem="jPa-lB-CwM" secondAttribute="trailing" constant="3" id="Fu1-Yh-8gt"/>
                 <constraint firstItem="4Ie-L3-z7Z" firstAttribute="leading" secondItem="oJr-Cv-UJI" secondAttribute="leading" id="GXy-c4-drO"/>
                 <constraint firstItem="4Ie-L3-z7Z" firstAttribute="top" secondItem="oJr-Cv-UJI" secondAttribute="bottom" constant="8" symbolic="YES" id="HWW-10-iuX"/>
-                <constraint firstItem="FNv-mM-sTP" firstAttribute="leading" secondItem="UBU-ZG-6gR" secondAttribute="trailing" constant="3" id="IPZ-Fa-QFf"/>
-                <constraint firstItem="6CK-Is-VQh" firstAttribute="leading" secondItem="lYJ-Wx-Aeh" secondAttribute="trailing" constant="3" id="Imb-WP-IHw"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="6CK-Is-VQh" secondAttribute="centerY" id="KLK-H1-y42"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="4OJ-NR-85t" secondAttribute="centerY" id="KXR-fy-VoB"/>
+                <constraint firstItem="stk-zw-sC0" firstAttribute="leading" secondItem="y11-Bl-tZz" secondAttribute="trailing" constant="8" symbolic="YES" id="IQb-uK-d3q"/>
                 <constraint firstItem="aka-YG-TVI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="Kyc-m5-7Ju"/>
-                <constraint firstItem="lYJ-Wx-Aeh" firstAttribute="leading" secondItem="BoS-nR-L8j" secondAttribute="trailing" constant="3" id="L9n-Fi-JYa"/>
-                <constraint firstItem="zr7-ub-6YW" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="LEp-Ak-fA2"/>
-                <constraint firstItem="nS8-9U-Klv" firstAttribute="leading" secondItem="6CK-Is-VQh" secondAttribute="trailing" constant="8" symbolic="YES" id="LTi-zP-g26"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="leading" secondItem="kxJ-qf-MsA" secondAttribute="leading" id="M1O-QG-OM8"/>
-                <constraint firstItem="O2I-Ah-bcY" firstAttribute="leading" secondItem="wlb-jH-pG1" secondAttribute="trailing" constant="8" symbolic="YES" id="NG1-0e-QC5"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="leading" secondItem="g8c-T5-qeY" secondAttribute="leading" id="NOW-Vp-ZEf"/>
-                <constraint firstItem="6TY-ad-Zr5" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="NdX-A9-w2Q"/>
-                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TYX-YO-eRo" secondAttribute="trailing" constant="20" symbolic="YES" id="O9x-pb-a17"/>
-                <constraint firstItem="jPa-lB-CwM" firstAttribute="leading" secondItem="FNv-mM-sTP" secondAttribute="trailing" constant="3" id="PFa-6S-ubv"/>
                 <constraint firstItem="oJr-Cv-UJI" firstAttribute="leading" secondItem="BYU-QH-WHm" secondAttribute="leading" constant="24" id="PPe-Dv-s7c"/>
-                <constraint firstItem="stk-zw-sC0" firstAttribute="leading" secondItem="uAW-va-aIo" secondAttribute="leading" id="Pbk-IK-R5k"/>
-                <constraint firstItem="rh6-5H-Jyw" firstAttribute="leading" secondItem="dZp-nY-uvb" secondAttribute="trailing" constant="3" id="Rin-gA-sZz"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="Yzb-fh-eM5" secondAttribute="centerY" id="S6M-BE-7Q5"/>
-                <constraint firstItem="wlb-jH-pG1" firstAttribute="centerY" secondItem="O2I-Ah-bcY" secondAttribute="centerY" id="TrZ-ZZ-Xkc"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="dHi-nX-Gs9" secondAttribute="centerY" id="Unk-XC-g2E"/>
-                <constraint firstItem="y11-Bl-tZz" firstAttribute="leading" secondItem="stk-zw-sC0" secondAttribute="leading" id="Vyn-Tt-KfF"/>
-                <constraint firstItem="TYX-YO-eRo" firstAttribute="leading" secondItem="4OJ-NR-85t" secondAttribute="trailing" constant="8" symbolic="YES" id="Wad-Xr-ymK"/>
-                <constraint firstItem="CIE-oo-Sjs" firstAttribute="centerY" secondItem="2ZN-7T-nB3" secondAttribute="centerY" id="YYu-Zh-ltJ"/>
-                <constraint firstItem="2ZN-7T-nB3" firstAttribute="leading" secondItem="CIE-oo-Sjs" secondAttribute="trailing" constant="8" symbolic="YES" id="Zke-dD-w9M"/>
-                <constraint firstItem="BoS-nR-L8j" firstAttribute="leading" secondItem="zOX-2h-pbe" secondAttribute="trailing" constant="3" id="Zsc-OA-yJN"/>
-                <constraint firstItem="Yzb-fh-eM5" firstAttribute="leading" secondItem="XtX-go-ptl" secondAttribute="trailing" constant="3" id="aFj-uC-7QM"/>
-                <constraint firstItem="rUn-31-MQ4" firstAttribute="baseline" secondItem="GJ7-fd-OXF" secondAttribute="baseline" id="bVD-Ta-owj"/>
-                <constraint firstItem="6bS-Yw-6MZ" firstAttribute="leading" secondItem="mLR-jE-upV" secondAttribute="trailing" constant="8" symbolic="YES" id="c6n-Oa-p0c"/>
-                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="nS8-9U-Klv" secondAttribute="trailing" constant="20" symbolic="YES" id="cRJ-1a-NyT"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="FNv-mM-sTP" secondAttribute="centerY" id="d2D-JK-4tZ"/>
-                <constraint firstItem="dZp-nY-uvb" firstAttribute="top" secondItem="zr7-ub-6YW" secondAttribute="bottom" constant="4" id="d6P-0k-vJr"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="nS8-9U-Klv" secondAttribute="centerY" id="dWc-4C-JEg"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="leading" secondItem="E42-cg-CNl" secondAttribute="trailing" constant="3" id="esw-9f-Ycj"/>
-                <constraint firstItem="E42-cg-CNl" firstAttribute="leading" secondItem="rh6-5H-Jyw" secondAttribute="trailing" constant="3" id="fAa-dG-181"/>
-                <constraint firstItem="wlb-jH-pG1" firstAttribute="top" secondItem="kxJ-qf-MsA" secondAttribute="bottom" constant="4" id="fcb-EN-pog"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="E42-cg-CNl" secondAttribute="centerY" id="gUO-ST-sQU"/>
-                <constraint firstItem="rF2-wk-sKe" firstAttribute="centerY" secondItem="1hh-Ot-Nda" secondAttribute="centerY" id="gVw-CJ-id9"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="zOX-2h-pbe" secondAttribute="centerY" id="h7g-4P-OPK"/>
-                <constraint firstItem="L7C-sQ-rpU" firstAttribute="centerY" secondItem="g8c-T5-qeY" secondAttribute="centerY" id="hJA-Ki-GyG"/>
-                <constraint firstItem="mLR-jE-upV" firstAttribute="centerY" secondItem="6bS-Yw-6MZ" secondAttribute="centerY" id="iHv-e0-mDj"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="tDc-fO-mgO" secondAttribute="centerY" id="j5p-wi-DEO"/>
-                <constraint firstItem="zr7-ub-6YW" firstAttribute="top" secondItem="1hh-Ot-Nda" secondAttribute="bottom" constant="20" id="mSA-Dd-UUa"/>
-                <constraint firstItem="TYX-YO-eRo" firstAttribute="width" secondItem="nS8-9U-Klv" secondAttribute="width" id="mU4-Sg-N5c"/>
-                <constraint firstItem="CIE-oo-Sjs" firstAttribute="top" secondItem="wlb-jH-pG1" secondAttribute="bottom" constant="3" id="meT-tU-66Q"/>
-                <constraint firstItem="dZp-nY-uvb" firstAttribute="leading" secondItem="zr7-ub-6YW" secondAttribute="leading" id="nFZ-b8-s6L"/>
-                <constraint firstItem="uAW-va-aIo" firstAttribute="top" secondItem="stk-zw-sC0" secondAttribute="bottom" constant="8" symbolic="YES" id="oc4-FA-l7k"/>
-                <constraint firstItem="y11-Bl-tZz" firstAttribute="leading" secondItem="6TY-ad-Zr5" secondAttribute="leading" id="onZ-zv-JXL"/>
-                <constraint firstItem="mLR-jE-upV" firstAttribute="top" secondItem="CIE-oo-Sjs" secondAttribute="bottom" constant="3" id="qLE-Dt-M6F"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="leading" secondItem="wlb-jH-pG1" secondAttribute="leading" id="rTg-TN-Rj3"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="jPa-lB-CwM" secondAttribute="centerY" id="scc-fF-WA4"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="dZp-nY-uvb" secondAttribute="centerY" id="t8L-LU-XKn"/>
-                <constraint firstItem="y11-Bl-tZz" firstAttribute="top" secondItem="GJ7-fd-OXF" secondAttribute="bottom" constant="20" id="tNc-nP-XPy"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="top" secondItem="dZp-nY-uvb" secondAttribute="bottom" constant="3" id="vVw-lz-XjH"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="leading" secondItem="CIE-oo-Sjs" secondAttribute="leading" id="vnz-Qa-5Jx"/>
-                <constraint firstItem="GJ7-fd-OXF" firstAttribute="leading" secondItem="6TY-ad-Zr5" secondAttribute="leading" id="vs7-ep-amN"/>
-                <constraint firstItem="6TY-ad-Zr5" firstAttribute="leading" secondItem="nS8-9U-Klv" secondAttribute="trailing" constant="8" symbolic="YES" id="wE6-OW-4HS"/>
-                <constraint firstItem="XtX-go-ptl" firstAttribute="centerY" secondItem="TYX-YO-eRo" secondAttribute="centerY" id="wPH-rY-0JV"/>
+                <constraint firstItem="uAW-va-aIo" firstAttribute="leading" secondItem="y11-Bl-tZz" secondAttribute="leading" id="bao-Cp-wWH"/>
+                <constraint firstItem="uAW-va-aIo" firstAttribute="top" secondItem="4Ie-L3-z7Z" secondAttribute="bottom" constant="8" symbolic="YES" id="e1n-cD-m1c"/>
                 <constraint firstItem="BYU-QH-WHm" firstAttribute="top" secondItem="aka-YG-TVI" secondAttribute="top" id="wQn-aq-uC0"/>
-                <constraint firstItem="1hh-Ot-Nda" firstAttribute="leading" secondItem="mLR-jE-upV" secondAttribute="leading" id="xH8-lF-CRX"/>
-                <constraint firstItem="XGW-r6-zbG" firstAttribute="centerY" secondItem="BoS-nR-L8j" secondAttribute="centerY" id="zCW-J6-MIj"/>
+                <constraint firstItem="aka-YG-TVI" firstAttribute="top" secondItem="stk-zw-sC0" secondAttribute="bottom" constant="8" symbolic="YES" id="xIs-RY-Fgb"/>
+                <constraint firstItem="y11-Bl-tZz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="xQL-i5-xCC"/>
+                <constraint firstItem="stk-zw-sC0" firstAttribute="top" secondItem="y11-Bl-tZz" secondAttribute="top" id="y8q-qc-w7j"/>
             </constraints>
-            <point key="canvasLocation" x="117" y="286.5"/>
+            <point key="canvasLocation" x="117" y="238.5"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="P8G-GI-rPW"/>
     </objects>

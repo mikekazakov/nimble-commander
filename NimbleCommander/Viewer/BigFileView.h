@@ -9,8 +9,8 @@
 #pragma once
 
 #include <Utility/Encodings.h>
-#include "../../Files/FileWindow.h"
-#include "../../Files/OrthodoxMonospace.h"
+#include <NimbleCommander/Core/FileWindow.h>
+#include <NimbleCommander/Core/OrthodoxMonospace.h>
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption
@@ -34,10 +34,8 @@ enum class BigFileViewModes : int
 // appearance section
 - (CTFontRef)   TextFont;
 - (CGColorRef)  TextForegroundColor;
-- (DoubleColor) SelectionBkFillColor;
-- (DoubleColor) BackgroundFillColor;
-- (bool)        ShouldAntialias;
-- (bool)        ShouldSmoothFonts;
+- (CGColorRef) SelectionBkFillColor;
+- (CGColorRef) BackgroundFillColor;
 
 /**
  * Specify if view should draw a border.

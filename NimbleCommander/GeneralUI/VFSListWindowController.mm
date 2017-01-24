@@ -6,7 +6,8 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
 #include "VFSListWindowController.h"
 
@@ -33,6 +34,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     __weak VFSListWindowController *weak_self = self;
     auto cb = [=]{
@@ -51,7 +53,7 @@
 {
     [self showWindow:self];
     m_Self = self;
-    GoogleAnalytics::Instance().PostScreenView("VFS List Window");
+    GA().PostScreenView("VFS List Window");
 }
 
 - (void) updateData

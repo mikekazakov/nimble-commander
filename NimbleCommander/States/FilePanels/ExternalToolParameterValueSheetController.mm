@@ -6,6 +6,7 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "ExternalToolParameterValueSheetController.h"
 
 @interface ExternalToolParameterValueSheetController ()
@@ -36,6 +37,7 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     
     m_Values.resize( m_ValueNames.size() );
     

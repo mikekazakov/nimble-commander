@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BigFileViewSheet.h"
 #include "InternalViewerController.h"
 
@@ -61,6 +62,9 @@
 
 - (void)windowDidLoad
 {
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+
     self.view.hasBorder = true;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 
@@ -77,7 +81,7 @@
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;
 
-    GoogleAnalytics::Instance().PostScreenView("File Viewer Sheet");
+    GA().PostScreenView("File Viewer Sheet");
 }
 
 - (IBAction)OnClose:(id)sender

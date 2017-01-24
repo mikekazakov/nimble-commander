@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include <Utility/Encodings.h>
 #import "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 #include "BigFileViewHistory.h"
 #include "InternalViewerHistory.h"
 
@@ -139,8 +139,6 @@ static NSString* StorageFileName()
     if(self == nil)
         return self;
     
-    m_Queue = SerialQueueT::Make();
-    
     // try to load history from file
     m_History = [[NSKeyedUnarchiver unarchiveObjectWithFile:StorageFileName()] mutableCopy];
         
@@ -174,8 +172,8 @@ static NSString* StorageFileName()
 
 - (void)OnTerminate:(NSNotification *)note
 {
-    m_Queue->Wait();
-    if(m_IsDirty)
+    m_Queue.Wait();
+    if( m_IsDirty )
         [NSKeyedArchiver archiveRootObject:m_History toFile:StorageFileName()];
 }
 
@@ -195,7 +193,7 @@ static NSString* StorageFileName()
     assert(_entry);
     assert(_entry->last_viewed);
     assert(_entry->path);
-    m_Queue->Run([=]{
+    m_Queue.Run([=]{
         m_IsDirty = true;
         for(BigFileViewHistoryEntry *e in m_History)
             if(e->path != nil &&
@@ -231,7 +229,7 @@ static NSString* StorageFileName()
 + (bool) DeleteHistory
 {
     if(g_SharedInstance != nil)
-        g_SharedInstance->m_Queue->Run([]{
+        g_SharedInstance->m_Queue.Run([]{
             g_SharedInstance->m_History = [NSMutableArray new];
             g_SharedInstance->m_IsDirty = false;
         });

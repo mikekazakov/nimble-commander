@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "A2052F3732EC5031AAEE7DE75E773F81F5ACC749",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "B28F34E93FF7C34A6E2F490D54CBCF67304F4394" : 9223372036854775807,
+    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : 9223372036854775807,
+    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "6BDEAD39-1FC1-45A9-88D2-99A9CF7F2F8D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "B28F34E93FF7C34A6E2F490D54CBCF67304F4394" : "source\/3rd_Party\/MMTabBarView\/",
+    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : "source\/habanero\/",
+    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : "source\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "NimbleCommander",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "NimbleCommander.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/mikekazakov\/nimblecommander.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "A2052F3732EC5031AAEE7DE75E773F81F5ACC749"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/MiMo42\/MMTabBarView.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "B28F34E93FF7C34A6E2F490D54CBCF67304F4394"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/mikekazakov\/habanero.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23"
+    }
+  ]
+}

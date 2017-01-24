@@ -7,7 +7,7 @@
 //
 
 #include <Utility/FontExtras.h>
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowTerminalTab.h"
 

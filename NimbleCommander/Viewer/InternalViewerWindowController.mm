@@ -6,8 +6,9 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/AppDelegate.h"
-#include "../../Files/GoogleAnalytics.h"
+#include "../Bootstrap/AppDelegate.h"
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "BigFileView.h"
 #include "InternalViewerController.h"
 #include "InternalViewerWindowController.h"
@@ -61,6 +62,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     self.window.toolbar = self.internalViewerToolbar;
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.internalViewerToolbarSearchField;
@@ -75,7 +77,7 @@
     self.window.nextResponder = m_Controller;
         
     [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
-    GoogleAnalytics::Instance().PostScreenView("File Viewer Window");    
+    GA().PostScreenView("File Viewer Window");    
 }
 
 - (bool) performBackgrounOpening

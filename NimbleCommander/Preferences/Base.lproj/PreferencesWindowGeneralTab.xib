@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowGeneralTab">
@@ -18,38 +20,8 @@
             <rect key="frame" x="0.0" y="0.0" width="640" height="140"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8" userLabel="Static Text - Skin">
-                    <rect key="frame" x="18" y="103" width="296" height="17"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="EwU-6U-w5U"/>
-                    </constraints>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Application appearance:" id="14">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                    <rect key="frame" x="318" y="97" width="135" height="26"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="130" id="7qz-8Y-mjg"/>
-                    </constraints>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="10">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="11">
-                            <items>
-                                <menuItem title="Classic" id="13"/>
-                                <menuItem title="Modern" id="12"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="-3" name="selectedIndex" keyPath="delegate.config.general.skin" id="gwc-16-hd1"/>
-                    </connections>
-                </popUpButton>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                    <rect key="frame" x="314" y="66" width="143" height="32"/>
+                    <rect key="frame" x="314" y="92" width="143" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="130" id="Uvv-7h-B38"/>
                     </constraints>
@@ -62,7 +34,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="55">
-                    <rect key="frame" x="18" y="76" width="296" height="17"/>
+                    <rect key="frame" x="18" y="102" width="296" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="WRW-Mf-BIz"/>
                     </constraints>
@@ -73,7 +45,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mE6-dr-OKl">
-                    <rect key="frame" x="18" y="49" width="296" height="17"/>
+                    <rect key="frame" x="18" y="75" width="296" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="Wx1-FM-SzG"/>
                     </constraints>
@@ -84,7 +56,7 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8tk-ZS-HXz">
-                    <rect key="frame" x="314" y="39" width="92" height="32"/>
+                    <rect key="frame" x="314" y="65" width="92" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="8tX-8H-w09"/>
                     </constraints>
@@ -97,7 +69,7 @@
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="mEe-1l-Yn2">
-                    <rect key="frame" x="156" y="18" width="328" height="18"/>
+                    <rect key="frame" x="156" y="44" width="328" height="18"/>
                     <buttonCell key="cell" type="check" title="Send anonymous usage statistics to the developer" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="uW2-01-WEk">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -112,22 +84,16 @@
                 <constraint firstItem="mEe-1l-Yn2" firstAttribute="centerX" secondItem="1" secondAttribute="centerX" id="0SO-rc-gln"/>
                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="30" secondAttribute="trailing" constant="20" symbolic="YES" id="7El-SZ-fOn"/>
                 <constraint firstItem="mE6-dr-OKl" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="7nT-fX-tJv"/>
-                <constraint firstItem="8" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="Byr-9A-Sci"/>
                 <constraint firstItem="mE6-dr-OKl" firstAttribute="baseline" secondItem="8tk-ZS-HXz" secondAttribute="baseline" id="DWR-Gx-qRV"/>
-                <constraint firstItem="55" firstAttribute="top" secondItem="8" secondAttribute="bottom" constant="10" id="GWT-ef-VqC"/>
                 <constraint firstItem="8tk-ZS-HXz" firstAttribute="leading" secondItem="mE6-dr-OKl" secondAttribute="trailing" constant="8" symbolic="YES" id="Jsg-pf-8Iw"/>
                 <constraint firstItem="mEe-1l-Yn2" firstAttribute="top" secondItem="8tk-ZS-HXz" secondAttribute="bottom" constant="12" id="Pi9-9F-rqC"/>
+                <constraint firstItem="30" firstAttribute="leading" secondItem="1" secondAttribute="centerX" id="QpF-mh-46a"/>
                 <constraint firstItem="mE6-dr-OKl" firstAttribute="top" secondItem="55" secondAttribute="bottom" constant="10" id="XVu-Ye-Bul"/>
-                <constraint firstItem="8" firstAttribute="trailing" secondItem="mE6-dr-OKl" secondAttribute="trailing" id="cK0-34-ZvJ"/>
-                <constraint firstItem="8" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="dp5-W5-Y3X"/>
-                <constraint firstItem="8" firstAttribute="trailing" secondItem="55" secondAttribute="trailing" id="f8z-Bi-VzO"/>
+                <constraint firstItem="30" firstAttribute="leading" secondItem="8tk-ZS-HXz" secondAttribute="leading" id="bTj-I0-FCe"/>
                 <constraint firstItem="55" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="gzh-KN-5Td"/>
-                <constraint firstAttribute="centerX" secondItem="9" secondAttribute="leading" id="iwD-yk-yQh"/>
-                <constraint firstItem="9" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" symbolic="YES" id="ohQ-ha-Mzw"/>
                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8tk-ZS-HXz" secondAttribute="trailing" constant="20" symbolic="YES" id="rRE-74-ng4"/>
-                <constraint firstItem="8" firstAttribute="baseline" secondItem="9" secondAttribute="baseline" id="slQ-t7-f4C"/>
+                <constraint firstItem="30" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="sCH-9h-gF7"/>
                 <constraint firstItem="30" firstAttribute="leading" secondItem="55" secondAttribute="trailing" constant="8" symbolic="YES" id="tQd-hJ-HV9"/>
-                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="9" secondAttribute="trailing" constant="20" symbolic="YES" id="vtd-S9-y1l"/>
                 <constraint firstItem="30" firstAttribute="baseline" secondItem="55" secondAttribute="baseline" id="wgf-ND-KF3"/>
             </constraints>
             <point key="canvasLocation" x="79" y="118"/>

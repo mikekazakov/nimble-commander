@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/SandboxManager.h"
-#include "../../Files/AppDelegate.h"
-#include "../../Files/GoogleAnalytics.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include "../Core/SandboxManager.h"
+#include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowGeneralTab.h"
 
@@ -77,7 +77,7 @@
 - (IBAction)OnSendStatisticsChanged:(id)sender
 {
     dispatch_to_main_queue_after(1s, []{
-        GoogleAnalytics::Instance().UpdateEnabledStatus();
+        GA().UpdateEnabledStatus();
     });
 }
 

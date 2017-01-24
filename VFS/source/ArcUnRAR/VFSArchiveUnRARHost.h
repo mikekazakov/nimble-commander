@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <Habanero/DispatchQueue.h>
+#include <Habanero/SerialQueue.h>
 #include "../../include/VFS/VFSHost.h"
 #include "../../include/VFS/VFSFile.h"
 

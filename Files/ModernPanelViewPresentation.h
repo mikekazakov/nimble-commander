@@ -41,7 +41,7 @@ public:
     NSRect ItemFilenameRect(int _item_index) const override;
     void SetupFieldRenaming(NSScrollView *_editor, int _item_index) override;
     
-    NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::PanelVolatileData &_vd) const;
+    NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::VolatileData &_vd) const;
 
 protected:
     virtual void SetTrimming(PanelViewFilenameTrimming _mode) override;
@@ -74,7 +74,7 @@ private:
     void OnGeometryOptionsChanged();
     void BuildGeometry();
     void BuildAppearance();
-    const ColoringAttrs& AttrsForItem(const VFSListingItem& _item, const PanelData::PanelVolatileData& _item_vd) const;
+    const ColoringAttrs& AttrsForItem(const VFSListingItem& _item, const PanelData::VolatileData& _item_vd) const;
     
     NSFont *m_Font;
     FontGeometryInfo m_FontInfo;

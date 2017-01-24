@@ -11,7 +11,7 @@
 #include <Habanero/DispatchQueue.h>
 #include "vfs/VFS.h"
 #include "PanelViewTypes.h"
-#include "ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 #include "Config.h"
 
 @class PanelView;

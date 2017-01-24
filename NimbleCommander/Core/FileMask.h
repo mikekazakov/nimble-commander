@@ -46,6 +46,9 @@ public:
      */
     static string ToFilenameWildCard(const string& _mask);
     
+    bool operator ==(const FileMask&_rhs) const noexcept;
+    bool operator !=(const FileMask&_rhs) const noexcept;
+    
 private:
     vector< pair<optional<regex>, optional<string>>> m_Masks; // regexp or corresponding simple mask
     string m_Mask;

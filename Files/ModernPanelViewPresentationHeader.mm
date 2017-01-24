@@ -24,10 +24,10 @@ static NSString *FormHumanReadableSortModeReprentation(PanelData::PanelSortMode:
         case PanelData::PanelSortMode::SortByExtRev:   return @"E";
         case PanelData::PanelSortMode::SortBySize:     return @"s";
         case PanelData::PanelSortMode::SortBySizeRev:  return @"S";
-        case PanelData::PanelSortMode::SortByMTime:    return @"m";
-        case PanelData::PanelSortMode::SortByMTimeRev: return @"M";
-        case PanelData::PanelSortMode::SortByBTime:    return @"b";
-        case PanelData::PanelSortMode::SortByBTimeRev: return @"B";
+        case PanelData::PanelSortMode::SortByModTime:    return @"m";
+        case PanelData::PanelSortMode::SortByModTimeRev: return @"M";
+        case PanelData::PanelSortMode::SortByBirthTime:    return @"b";
+        case PanelData::PanelSortMode::SortByBirthTimeRev: return @"B";
         default:                            return @"?";
     }
 }

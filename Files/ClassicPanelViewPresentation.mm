@@ -9,11 +9,11 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/Encodings.h>
 #include <Utility/FontCache.h>
+#include <Utility/ByteCountFormatter.h>
 #include "ClassicPanelViewPresentation.h"
 #include "OrthodoxMonospace.h"
 #include "PanelView.h"
 #include "PanelData.h"
-#include "ByteCountFormatter.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Helper functions and constants.
@@ -130,7 +130,7 @@ oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeRepresentat
     return r;
 }
 
-oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd) const
+oms::StringBuf<6> ClassicPanelViewPresentation::FormHumanReadableSizeReprentationForDirEnt(const VFSListingItem &_dirent, const PanelData::VolatileData& _vd) const
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -170,10 +170,10 @@ static oms::StringBuf<1> FormHumanReadableSortModeReprentation(PanelData::PanelS
         case PanelData::PanelSortMode::SortByExtRev:   c='E'; break;
         case PanelData::PanelSortMode::SortBySize:     c='s'; break;
         case PanelData::PanelSortMode::SortBySizeRev:  c='S'; break;
-        case PanelData::PanelSortMode::SortByMTime:    c='m'; break;
-        case PanelData::PanelSortMode::SortByMTimeRev: c='M'; break;
-        case PanelData::PanelSortMode::SortByBTime:    c='b'; break;
-        case PanelData::PanelSortMode::SortByBTimeRev: c='B'; break;
+        case PanelData::PanelSortMode::SortByModTime:    c='m'; break;
+        case PanelData::PanelSortMode::SortByModTimeRev: c='M'; break;
+        case PanelData::PanelSortMode::SortByBirthTime:    c='b'; break;
+        case PanelData::PanelSortMode::SortByBirthTimeRev: c='B'; break;
         default:                                       c='?'; break;
     }
     oms::StringBuf<1> r;
@@ -317,7 +317,7 @@ void ClassicPanelViewPresentation::BuildAppearance()
     SetViewNeedsDisplay();    
 }
 
-DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelData::PanelVolatileData& _vd, bool _is_focused)
+DoubleColor ClassicPanelViewPresentation::GetDirectoryEntryTextColor(const VFSListingItem &_dirent, const PanelData::VolatileData& _vd, bool _is_focused)
 {
     for(auto &r: m_ColoringRules)
         if(r.filter.Filter(_dirent, _vd))

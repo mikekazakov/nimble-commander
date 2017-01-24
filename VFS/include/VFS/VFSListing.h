@@ -36,11 +36,12 @@ public:
      * Returns items amount in this listing. 
      */
     unsigned            Count               () const noexcept;
+    bool                Empty               () const noexcept;
     bool                IsUniform           () const noexcept;
     bool                HasCommonHost       () const noexcept;
     bool                HasCommonDirectory  () const noexcept;
 
-    VFSListingItem     Item                 (unsigned _ind) const;
+    VFSListingItem      Item                (unsigned _ind) const;
 
     const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;
@@ -84,6 +85,9 @@ public:
 
     bool                HasBTime            (unsigned _ind) const;
     time_t              BTime               (unsigned _ind) const;
+
+    bool                HasAddTime          (unsigned _ind) const;
+    time_t              AddTime             (unsigned _ind) const; // will return BTime if there's no AddTime
     
     bool                HasUID              (unsigned _ind) const;
     uid_t               UID                 (unsigned _ind) const;
@@ -134,6 +138,7 @@ private:
     variable_container<time_t>      m_MTimes;
     variable_container<time_t>      m_CTimes;
     variable_container<time_t>      m_BTimes;
+    variable_container<time_t>      m_AddTimes;
     variable_container<uid_t>       m_UIDS;
     variable_container<gid_t>       m_GIDS;
     variable_container<uint32_t>    m_UnixFlags;
@@ -198,6 +203,9 @@ public:
 
     bool            HasBTime()          const;
     time_t          BTime()             const;
+
+    bool            HasAddTime()        const;
+    time_t          AddTime()           const;
     
     bool            HasUnixFlags()      const;
     uint32_t        UnixFlags()         const;

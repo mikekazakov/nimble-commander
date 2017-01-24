@@ -80,6 +80,7 @@ static void Compress( VFSListingInput &_input )
     if( _input.mtimes.mode() == variable_container<>::type::sparse && _input.mtimes.is_contiguous() )       _input.mtimes.compress_contiguous();
     if( _input.ctimes.mode() == variable_container<>::type::sparse && _input.ctimes.is_contiguous() )       _input.ctimes.compress_contiguous();
     if( _input.btimes.mode() == variable_container<>::type::sparse && _input.btimes.is_contiguous() )       _input.btimes.compress_contiguous();
+    if( _input.add_times.mode() == variable_container<>::type::sparse && _input.add_times.is_contiguous() ) _input.add_times.compress_contiguous();
     if( _input.uids.mode() == variable_container<>::type::sparse && _input.uids.is_contiguous() )           _input.uids.compress_contiguous();
     if( _input.gids.mode() == variable_container<>::type::sparse && _input.gids.is_contiguous() )           _input.gids.compress_contiguous();
     if( _input.unix_flags.mode() == variable_container<>::type::sparse && _input.unix_flags.is_contiguous() ) _input.unix_flags.compress_contiguous();
@@ -106,6 +107,7 @@ shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
     l->m_BTimes = move(_input.btimes);
     l->m_CTimes = move(_input.ctimes);
     l->m_MTimes = move(_input.mtimes);
+    l->m_AddTimes = move(_input.add_times);
     l->m_UnixModes = move(_input.unix_modes);
     l->m_UnixTypes = move(_input.unix_types);
     l->m_UIDS = move(_input.uids);
@@ -404,6 +406,11 @@ unsigned VFSListing::Count() const noexcept
     return m_ItemsCount;
 };
 
+bool VFSListing::Empty() const noexcept
+{
+    return m_ItemsCount == 0;
+}
+
 bool VFSListing::IsUniform() const noexcept
 {
     return HasCommonHost() && HasCommonDirectory();
@@ -489,6 +496,18 @@ time_t VFSListing::BTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
+}
+
+bool VFSListing::HasAddTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_AddTimes.has(_ind);
+}
+
+time_t VFSListing::AddTime(unsigned _ind) const
+{
+    __CHECK_BOUNDS(_ind);
+    return m_AddTimes.has(_ind) ? m_AddTimes[_ind] : BTime(_ind);
 }
 
 mode_t VFSListing::UnixMode(unsigned _ind) const
@@ -794,6 +813,16 @@ bool VFSListingItem::HasBTime() const
 time_t VFSListingItem::BTime() const
 {
     return L->BTime(I);
+}
+
+bool VFSListingItem::HasAddTime() const
+{
+    return L->HasAddTime(I);
+}
+
+time_t VFSListingItem::AddTime() const
+{
+    return L->AddTime(I);
 }
 
 bool VFSListingItem::HasUnixFlags() const

@@ -3,10 +3,10 @@
 #include <Utility/SystemInformation.h>
 #include <copyfile.h>
 #include <VFS/Native.h>
-#include "../../Files/MASAppInstalledChecker.h"
-#include "../../Files/AppDelegateCPP.h"
-#include "../../Files/GoogleAnalytics.h"
-#include "../../Files/AppStoreHelper.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
+#include "AppDelegateCPP.h"
+#include <NimbleCommander/Core/AppStoreHelper.h>
 #include "ActivationManager.h"
 
 // trial non-mas version setup
@@ -169,11 +169,11 @@ ActivationManager::ActivationManager()
     else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
         if(has_mas_paid_version)
-            GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "MAS Installed");
+            GA().PostEvent("Licensing", "Activated Startup", "MAS Installed");
         const bool has_valid_license = UserHasValidAquaticLicense();
         if( has_valid_license ) {
             m_LicenseInfo = GetAquaticLicenseInfo( InstalledAquaticLicensePath() );
-            GoogleAnalytics::Instance().PostEvent("Licensing", "Activated Startup", "License Installed");
+            GA().PostEvent("Licensing", "Activated Startup", "License Installed");
         }
         
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
@@ -189,10 +189,10 @@ ActivationManager::ActivationManager()
             if( m_TrialDaysLeft > 0 ) {
 //                m_IsActivated = true;
                 m_IsTrialPeriod = true;
-                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
+                GA().PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
             }
             else {
-                GoogleAnalytics::Instance().PostEvent("Licensing", "Trial Startup", "Trial exceeded", -m_TrialDaysLeft);
+                GA().PostEvent("Licensing", "Trial Startup", "Trial exceeded", -m_TrialDaysLeft);
                 m_IsTrialPeriod = false;
             }
         }

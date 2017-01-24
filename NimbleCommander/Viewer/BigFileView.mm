@@ -8,10 +8,13 @@
 
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
-#include "../../Files/DataBlockAnalysis.h"
-#include "../../Files/AppDelegate.h"
-#include "../../Files/Config.h"
-#include "../../Files/TemporaryNativeFileStorage.h"
+#include <Utility/DataBlockAnalysis.h>
+#include "../Bootstrap/AppDelegate.h"
+#include "../Bootstrap/Config.h"
+#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
@@ -20,7 +23,7 @@
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
-static const auto g_ConfigModernShouldAntialias = "viewer.modern.shouldAntialiasText";
+/*static const auto g_ConfigModernShouldAntialias = "viewer.modern.shouldAntialiasText";
 static const auto g_ConfigModernShouldSmooth    = "viewer.modern.shouldSmoothText";
 static const auto g_ConfigModernTextColor       = "viewer.modern.textColor";
 static const auto g_ConfigModernSelectionColor  = "viewer.modern.selectionColor";
@@ -31,7 +34,7 @@ static const auto g_ConfigClassicShouldSmooth   = "viewer.classic.shouldSmoothTe
 static const auto g_ConfigClassicTextColor      = "viewer.classic.textColor";
 static const auto g_ConfigClassicSelectionColor = "viewer.classic.selectionColor";
 static const auto g_ConfigClassicBackgroundColor= "viewer.classic.backgroundColor";
-static const auto g_ConfigClassicFont           = "viewer.classic.font";
+static const auto g_ConfigClassicFont           = "viewer.classic.font";*/
 
 const static double g_BorderWidth = 1.0;
 
@@ -42,13 +45,6 @@ const static double g_BorderWidth = 1.0;
 
     optional<string> m_NativeStoredFile;
     
-    CTFontRef       m_Font;
-    CGColorRef      m_ForegroundColor;
-    DoubleColor     m_SelectionBkFillColor;
-    DoubleColor     m_BackgroundFillColor;
-    bool            m_ShouldAntialias;
-    bool            m_ShouldSmoothFonts;
-        
     // layout
     bool            m_WrapWords;
     
@@ -63,7 +59,8 @@ const static double g_BorderWidth = 1.0;
                                                  // updated when windows moves, regarding current selection in bytes
     CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                                  // updated when windows moves, regarding current selection in bytes
-    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
+//    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
+    ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -107,7 +104,7 @@ const static double g_BorderWidth = 1.0;
     [self frameDidChange];
     [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];    
     
-    __weak BigFileView* weak_self = self;
+/*    __weak BigFileView* weak_self = self;
     GlobalConfig().ObserveMany(m_ConfigObservations,
                                [=]{ [(BigFileView*)weak_self reloadAppearance]; },
                                initializer_list<const char *>{  g_ConfigClassicFont,
@@ -123,14 +120,22 @@ const static double g_BorderWidth = 1.0;
                                    g_ConfigModernSelectionColor,
                                    g_ConfigModernBackgroundColor   }
                                );
+                               */
+    
+    __weak BigFileView* weak_self = self;
+    m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        ThemesManager::Notifications::Viewer, [weak_self]{
+            if( auto strong_self = weak_self )
+                [strong_self reloadAppearance];
+        });
 }
 
 - (void) dealloc
 {
     [self unbind:@"verticalPositionPercentage"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    CFRelease(m_ForegroundColor);
-    CFRelease(m_Font);
+//    CFRelease(m_ForegroundColor);
+//    CFRelease(m_Font);
 }
 
 - (void)layoutVerticalScroll
@@ -149,35 +154,36 @@ const static double g_BorderWidth = 1.0;
 
 - (void)reloadAppearance
 {
-    auto skin = AppDelegate.me.skin;
-    if(skin == ApplicationSkin::Modern) {
-        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
-        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
+//    auto skin = AppDelegate.me.skin;
+//    if(skin == ApplicationSkin::Modern) {
+//        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
+//        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
 
-        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernBackgroundColor).value_or(""));
-        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernSelectionColor).value_or(""));
+//        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernBackgroundColor).value_or(""));
+//        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernSelectionColor).value_or(""));
         // todo: switch to NSColor!
-        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].CGColor);
+//        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
+//        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].CGColor);
         
         
-        if(m_Font) CFRelease(m_Font);
-        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
-    }
-    else if(skin == ApplicationSkin::Classic) {
-        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
-        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
-
-        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicBackgroundColor).value_or(""));
-        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
-        // todo: switch to NSColor!
-        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
-        
-        if(m_Font) CFRelease(m_Font);
-        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
-    }
-    m_ViewImpl->OnFontSettingsChanged();    
+//        if(m_Font) CFRelease(m_Font);
+//        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
+//    }
+//    else if(skin == ApplicationSkin::Classic) {
+//        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
+//        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
+//
+//        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicBackgroundColor).value_or(""));
+//        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
+//        // todo: switch to NSColor!
+//        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
+//        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
+//        
+//        if(m_Font) CFRelease(m_Font);
+//        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
+//    }
+    if( m_ViewImpl )
+        m_ViewImpl->OnFontSettingsChanged();
     [self setNeedsDisplay];
 }
 
@@ -243,6 +249,7 @@ const static double g_BorderWidth = 1.0;
         if(stat.likely_utf16_le)        encoding = encodings::ENCODING_UTF16LE;
         else if(stat.likely_utf16_be)   encoding = encodings::ENCODING_UTF16BE;
         else if(stat.can_be_utf8)       encoding = encodings::ENCODING_UTF8;
+        else                            encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
     }
     
     BigFileViewModes mode = stat.is_binary ? BigFileViewModes::Hex : BigFileViewModes::Text;
@@ -265,6 +272,9 @@ const static double g_BorderWidth = 1.0;
     });
     
     self.mode = _mode;
+    
+    [self willChangeValueForKey:@"encoding"];
+    [self didChangeValueForKey:@"encoding"];
 }
 
 - (void) detachFromFile
@@ -371,27 +381,19 @@ const static double g_BorderWidth = 1.0;
 }
 
 - (CTFontRef) TextFont{
-    return m_Font;
+    return (__bridge CTFontRef)CurrentTheme().ViewerFont();
 }
 
 - (CGColorRef) TextForegroundColor{
-    return m_ForegroundColor;
+    return CurrentTheme().ViewerTextColor().CGColor;
 }
 
-- (DoubleColor) SelectionBkFillColor{
-    return m_SelectionBkFillColor;
+- (CGColorRef) SelectionBkFillColor{
+  return CurrentTheme().ViewerSelectionColor().CGColor;
 }
 
-- (DoubleColor) BackgroundFillColor{
-    return m_BackgroundFillColor;
-}
-
-- (bool) ShouldAntialias {
-    return m_ShouldAntialias;
-}
-
-- (bool) ShouldSmoothFonts {
-    return m_ShouldSmoothFonts;
+- (CGColorRef) BackgroundFillColor{
+    return CurrentTheme().ViewerBackgroundColor().CGColor;
 }
 
 - (void) RequestWindowMovementAt: (uint64_t) _pos

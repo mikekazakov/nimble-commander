@@ -247,7 +247,7 @@ void IconsGenerator::BuildGenericIcons()
     m_GenericFileIconBitmap =  [[NSBitmapImageRep alloc] initWithCGImage:[m_GenericFileIcon CGImageForProposedRect:0 context:0 hints:0]];
 }
 
-NSImageRep *IconsGenerator::ImageFor(const VFSListingItem &_item, PanelData::PanelVolatileData &_item_vd)
+NSImageRep *IconsGenerator::ImageFor(const VFSListingItem &_item, PanelData::VolatileData &_item_vd)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -398,7 +398,7 @@ optional<IconsGenerator::BuildResult> IconsGenerator::Runner(const BuildRequest 
         if(_req.generation != m_Generation)
             return nullopt;
         
-        // 2nd - if we haven't built a real thumbnail - try an extention instead
+        // 2nd - if we haven't built a real thumbnail - try an extension instead
         if(_req.thumbnail == nil &&
            m_IconsMode >= IconMode::Icons &&
            CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.

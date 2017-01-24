@@ -49,6 +49,7 @@ struct VFSListingInput
     variable_container<time_t>      mtimes{variable_container<>::type::common};
     variable_container<time_t>      ctimes{variable_container<>::type::common};
     variable_container<time_t>      btimes{variable_container<>::type::common};
+    variable_container<time_t>      add_times{variable_container<>::type::sparse};
     
     /**
      * unix modes should be present for every item in listing.

@@ -7,20 +7,22 @@
 //
 
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include <Utility/PathManip.h>
-#include "../../Viewer/BigFileViewSheet.h"
-#include "../../Viewer/InternalViewerWindowController.h"
-#include "../../Core/SearchForFiles.h"
-#include "../../Files/ByteCountFormatter.h"
-#include "../../Files/PanelAux.h"
-#include "../../Files/Config.h"
-#include "../../Bootstrap/ActivationManager.h"
-#include "../../Files/GoogleAnalytics.h"
-#include "../../Files/AppDelegate.h"
-#include "../../Core/VFSInstanceManager.h"
+#include <NimbleCommander/Viewer/BigFileViewSheet.h>
+#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
+#include <NimbleCommander/Core/SearchForFiles.h>
+#include <Utility/ByteCountFormatter.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/States/FilePanels/PanelAux.h>
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FindFilesSheetController.h"
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
@@ -250,7 +252,7 @@ private:
         
         m_BatchQueue = SerialQueueT::Make();
         m_StatQueue = SerialQueueT::Make();
-        
+      
         self.focusedItem = nil;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
@@ -262,6 +264,8 @@ private:
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
     
@@ -306,7 +310,7 @@ private:
         self.SearchInArchivesButton.enabled = false;
     }
     
-    GoogleAnalytics::Instance().PostScreenView("Find Files");
+    GA().PostScreenView("Find Files");
 }
 
 - (void) dealloc
@@ -369,7 +373,8 @@ private:
     m_StatQueue->Wait();
 
     [self UpdateByTimer:m_BatchDrainTimer];
-    m_BatchQueue->Wait();
+    m_BatchQueue.Wait();
+    m_StatQueue.Wait();
     
     dispatch_to_main_queue([=]{
         [m_BatchDrainTimer invalidate];
@@ -478,7 +483,7 @@ private:
                                                   it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
                                                   
                                                   FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
-                                                  m_BatchQueue->Run([self, item]{
+                                                  m_BatchQueue.Run([self, item]{
                                                       // dumping result entry into batch array in BatchQueue
                                                       [m_FoundItemsBatch addObject:item];
                                                   });
@@ -487,7 +492,7 @@ private:
                                               if( _in_host.IsNativeFS() )
                                                   m_StatGroup.Run( move(stat_block) );
                                               else
-                                                  m_StatQueue->Run( move(stat_block) );
+                                                  m_StatQueue.Run( move(stat_block) );
                                               
                                               if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
                                                   m_FileSearch->Stop(); // gorshochek, ne vari!!!
@@ -555,7 +560,7 @@ private:
 
 - (void) UpdateByTimer:(NSTimer*)theTimer
 {
-    m_BatchQueue->Run([=]{
+    m_BatchQueue.Run([=]{
         if( m_FoundItemsBatch.count == 0 )
             return; // nothing to add
         

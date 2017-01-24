@@ -11,7 +11,7 @@
 #include "ModernPanelViewPresentationItemsFooter.h"
 #include "ModernPanelViewPresentation.h"
 #include "PanelData.h"
-#include "ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 
 static const double g_TextInsetsInLine[4] = {7, 1, 5, 1};
 static CGColorRef g_FooterStrokeColorAct = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
@@ -118,7 +118,7 @@ NSString* ModernPanelViewPresentationItemsFooter::FormHumanReadableBytesAndFiles
 }
 
 void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current_entry,
-                                                  const PanelData::PanelVolatileData &_current_item_vd,
+                                                  const PanelData::VolatileData &_current_item_vd,
                                                   const PanelData::Statistics &_stats,
                                                   PanelViewType _view_type,
                                                   bool _active,
@@ -182,7 +182,7 @@ void ModernPanelViewPresentationItemsFooter::Draw(const VFSListingItem &_current
     }
 }
 
-void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem& _current_item, const PanelData::PanelVolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active)
+void ModernPanelViewPresentationItemsFooter::PrepareToDraw(const VFSListingItem& _current_item, const PanelData::VolatileData &_current_item_vd, const PanelData::Statistics &_stats, PanelViewType _view_type, bool _active)
 {
     if(_stats.selected_entries_amount != 0)
     {

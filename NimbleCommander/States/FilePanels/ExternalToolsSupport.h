@@ -18,8 +18,8 @@
 **/
 
 #include <Habanero/Observable.h>
-#include "../../../Files/ActionShortcut.h"
-#include "../../../Files/Config.h"
+#include "../../Core/ActionShortcut.h"
+#include "../../Bootstrap/Config.h"
 
 class ExternalToolsParameters
 {

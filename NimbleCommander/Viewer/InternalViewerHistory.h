@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Files/Config.h"
+#include "../Bootstrap/Config.h"
 #include "BigFileView.h"
 
 class InternalViewerHistory

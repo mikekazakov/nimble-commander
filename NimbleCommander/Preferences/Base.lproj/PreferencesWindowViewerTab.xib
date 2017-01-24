@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowViewerTab">
@@ -13,21 +15,21 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView misplaced="YES" id="1">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="342"/>
+        <customView id="1">
+            <rect key="frame" x="0.0" y="0.0" width="640" height="345"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <tabView translatesAutoresizingMaskIntoConstraints="NO" id="3">
-                    <rect key="frame" x="13" y="10" width="614" height="329"/>
+                <tabView drawsBackground="NO" allowsTruncatedLabels="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="3">
+                    <rect key="frame" x="0.0" y="0.0" width="640" height="345"/>
                     <font key="font" metaFont="system"/>
                     <tabViewItems>
                         <tabViewItem label="Common" identifier="1" id="4">
                             <view key="view" id="7">
-                                <rect key="frame" x="10" y="33" width="594" height="283"/>
+                                <rect key="frame" x="0.0" y="0.0" width="640" height="345"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="262">
-                                        <rect key="frame" x="275" y="204" width="301" height="18"/>
+                                        <rect key="frame" x="298" y="249" width="324" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="ZhI-Bt-vwL"/>
                                         </constraints>
@@ -40,7 +42,7 @@
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="272">
-                                        <rect key="frame" x="18" y="232" width="243" height="17"/>
+                                        <rect key="frame" x="18" y="277" width="266" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="gkp-TF-wuo"/>
                                         </constraints>
@@ -51,7 +53,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="279">
-                                        <rect key="frame" x="265" y="225" width="201" height="26"/>
+                                        <rect key="frame" x="288" y="270" width="201" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="196" id="blI-9x-vyO"/>
                                         </constraints>
@@ -65,7 +67,7 @@
                                         </connections>
                                     </popUpButton>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="605">
-                                        <rect key="frame" x="18" y="156" width="243" height="17"/>
+                                        <rect key="frame" x="18" y="201" width="266" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="GKn-1c-8CM"/>
                                         </constraints>
@@ -76,7 +78,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="613">
-                                        <rect key="frame" x="265" y="150" width="105" height="26"/>
+                                        <rect key="frame" x="288" y="195" width="105" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="100" id="MqK-ss-uj7"/>
                                         </constraints>
@@ -111,7 +113,7 @@
                                         </connections>
                                     </popUpButton>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="Q1Z-tG-gn0">
-                                        <rect key="frame" x="275" y="184" width="301" height="18"/>
+                                        <rect key="frame" x="298" y="229" width="324" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="XRG-jG-LDO"/>
                                         </constraints>
@@ -124,7 +126,7 @@
                                         </connections>
                                     </button>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="339">
-                                        <rect key="frame" x="18" y="126" width="243" height="17"/>
+                                        <rect key="frame" x="18" y="171" width="266" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="Bm5-Ow-CA9"/>
                                         </constraints>
@@ -135,7 +137,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="346">
-                                        <rect key="frame" x="265" y="125" width="311" height="18"/>
+                                        <rect key="frame" x="288" y="170" width="334" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="WtD-Mf-eG5"/>
                                         </constraints>
@@ -148,7 +150,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="374">
-                                        <rect key="frame" x="265" y="105" width="311" height="18"/>
+                                        <rect key="frame" x="288" y="150" width="334" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="dkf-Ly-Bbi"/>
                                         </constraints>
@@ -161,7 +163,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="381">
-                                        <rect key="frame" x="265" y="85" width="311" height="18"/>
+                                        <rect key="frame" x="288" y="130" width="334" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="e12-gJ-d4Q"/>
                                         </constraints>
@@ -174,7 +176,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="388">
-                                        <rect key="frame" x="265" y="65" width="311" height="18"/>
+                                        <rect key="frame" x="288" y="110" width="334" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="7Pb-Dr-VOb"/>
                                         </constraints>
@@ -187,7 +189,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="395">
-                                        <rect key="frame" x="265" y="45" width="311" height="18"/>
+                                        <rect key="frame" x="288" y="90" width="334" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="SWY-hW-DTs"/>
                                         </constraints>
@@ -200,7 +202,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="595">
-                                        <rect key="frame" x="261" y="13" width="117" height="32"/>
+                                        <rect key="frame" x="284" y="58" width="117" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="PSH-KO-6dT"/>
                                         </constraints>
@@ -213,7 +215,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MRR-gL-5uN">
-                                        <rect key="frame" x="162" y="262" width="99" height="17"/>
+                                        <rect key="frame" x="185" y="307" width="99" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Show viewer in:" id="R3d-db-TY3">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -221,7 +223,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wAW-jb-ud7">
-                                        <rect key="frame" x="265" y="256" width="141" height="26"/>
+                                        <rect key="frame" x="288" y="301" width="141" height="26"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="pcu-aT-6ha">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -249,7 +251,7 @@
                                     <constraint firstItem="595" firstAttribute="leading" secondItem="395" secondAttribute="leading" id="2iG-4o-ZAa"/>
                                     <constraint firstItem="wAW-jb-ud7" firstAttribute="baseline" secondItem="MRR-gL-5uN" secondAttribute="baseline" id="44m-uf-WWP"/>
                                     <constraint firstAttribute="trailing" secondItem="381" secondAttribute="trailing" constant="20" symbolic="YES" id="5ol-ES-Fp2"/>
-                                    <constraint firstItem="wAW-jb-ud7" firstAttribute="top" secondItem="7" secondAttribute="top" constant="3" id="7hN-WP-H2N"/>
+                                    <constraint firstItem="wAW-jb-ud7" firstAttribute="top" secondItem="7" secondAttribute="top" constant="20" symbolic="YES" id="7hN-WP-H2N"/>
                                     <constraint firstItem="613" firstAttribute="baseline" secondItem="605" secondAttribute="baseline" id="AaI-Wp-NHn"/>
                                     <constraint firstAttribute="trailing" secondItem="395" secondAttribute="trailing" constant="20" symbolic="YES" id="BA1-Ed-fxF"/>
                                     <constraint firstItem="374" firstAttribute="leading" secondItem="381" secondAttribute="leading" id="CZl-XP-NeC"/>
@@ -287,321 +289,14 @@
                                 </constraints>
                             </view>
                         </tabViewItem>
-                        <tabViewItem label="Classic" identifier="2" id="5">
-                            <view key="view" id="6">
-                                <rect key="frame" x="10" y="33" width="594" height="286"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="183">
-                                        <rect key="frame" x="272" y="182" width="92" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Antialiasing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="205">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.classic.shouldAntialiasText" id="4dZ-Sg-g08">
-                                                <dictionary key="options">
-                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </button>
-                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="184">
-                                        <rect key="frame" x="272" y="162" width="88" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Smoothing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="203">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.classic.shouldSmoothText" id="4TM-yV-sBc">
-                                                <dictionary key="options">
-                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </button>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="185">
-                                        <rect key="frame" x="274" y="206" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="HKX-ri-rT5"/>
-                                            <constraint firstAttribute="width" constant="28" id="Mwh-Oa-Uf1"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.classic.backgroundColor" id="r3d-8z-Mkz">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="187">
-                                        <rect key="frame" x="274" y="234" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="NnC-KH-pdY"/>
-                                            <constraint firstAttribute="width" constant="28" id="Vke-mH-Rh9"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.classic.selectionColor" id="HTD-3B-Vq7">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="188">
-                                        <rect key="frame" x="169" y="236" width="99" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selection color:" id="198">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="189">
-                                        <rect key="frame" x="274" y="262" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="C9n-7L-abx"/>
-                                            <constraint firstAttribute="width" constant="28" id="vvO-1o-Jej"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.classic.textColor" id="EAW-o0-ljn">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="190">
-                                        <rect key="frame" x="200" y="264" width="68" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="195">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="191">
-                                        <rect key="frame" x="304" y="255" width="92" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="UCb-IN-NTx"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="193">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="OnSetClassicFont:" target="-2" id="261"/>
-                                        </connections>
-                                    </button>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="316">
-                                        <rect key="frame" x="172" y="183" width="96" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text rendering:" id="318">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="186">
-                                        <rect key="frame" x="153" y="208" width="115" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Background color:" id="201">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="183" firstAttribute="top" secondItem="185" secondAttribute="bottom" constant="8" symbolic="YES" id="0Ze-zt-XZA"/>
-                                    <constraint firstItem="185" firstAttribute="centerY" secondItem="186" secondAttribute="centerY" id="5Z2-p0-MBY"/>
-                                    <constraint firstItem="185" firstAttribute="leading" secondItem="183" secondAttribute="leading" id="6o8-9I-SgS"/>
-                                    <constraint firstItem="187" firstAttribute="leading" secondItem="188" secondAttribute="trailing" constant="8" symbolic="YES" id="6ue-Db-aqc"/>
-                                    <constraint firstItem="183" firstAttribute="leading" secondItem="316" secondAttribute="trailing" constant="8" symbolic="YES" id="7Ry-4d-roW"/>
-                                    <constraint firstItem="185" firstAttribute="leading" secondItem="187" secondAttribute="leading" id="BHd-Gy-kCC"/>
-                                    <constraint firstItem="184" firstAttribute="top" secondItem="183" secondAttribute="bottom" constant="6" symbolic="YES" id="BIx-Di-em7"/>
-                                    <constraint firstItem="189" firstAttribute="centerY" secondItem="190" secondAttribute="centerY" id="CKy-kQ-yDq"/>
-                                    <constraint firstItem="189" firstAttribute="leading" secondItem="190" secondAttribute="trailing" constant="8" symbolic="YES" id="GZW-wP-Tmv"/>
-                                    <constraint firstItem="187" firstAttribute="centerY" secondItem="188" secondAttribute="centerY" id="JMj-Jm-1Wv"/>
-                                    <constraint firstItem="187" firstAttribute="leading" secondItem="189" secondAttribute="leading" id="KcN-K9-Nw5"/>
-                                    <constraint firstItem="185" firstAttribute="leading" secondItem="186" secondAttribute="trailing" constant="8" symbolic="YES" id="Kuh-yd-FHf"/>
-                                    <constraint firstItem="316" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="Q2F-Jh-qLg"/>
-                                    <constraint firstItem="189" firstAttribute="top" secondItem="6" secondAttribute="top" constant="3" id="UiM-Y1-yUg"/>
-                                    <constraint firstItem="190" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="XPt-60-A59"/>
-                                    <constraint firstItem="187" firstAttribute="top" secondItem="189" secondAttribute="bottom" constant="8" symbolic="YES" id="Xfg-Yx-nCo"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="183" secondAttribute="trailing" constant="20" symbolic="YES" id="evm-oJ-hAP"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="184" secondAttribute="trailing" constant="20" symbolic="YES" id="gSn-wO-pSb"/>
-                                    <constraint firstItem="183" firstAttribute="leading" secondItem="184" secondAttribute="leading" id="lGX-c7-LR3"/>
-                                    <constraint firstAttribute="centerX" secondItem="189" secondAttribute="leading" constant="20" id="nAi-D0-ctr"/>
-                                    <constraint firstItem="191" firstAttribute="centerY" secondItem="189" secondAttribute="centerY" id="ndp-bB-8Ha"/>
-                                    <constraint firstItem="191" firstAttribute="leading" secondItem="189" secondAttribute="trailing" constant="8" symbolic="YES" id="o5E-lm-J3x"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="191" secondAttribute="trailing" constant="20" symbolic="YES" id="pD7-nk-DKA"/>
-                                    <constraint firstItem="185" firstAttribute="top" secondItem="187" secondAttribute="bottom" constant="8" symbolic="YES" id="rml-dX-DIy"/>
-                                    <constraint firstItem="188" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="t2Z-30-Yvi"/>
-                                    <constraint firstItem="186" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6" secondAttribute="leading" constant="20" symbolic="YES" id="uA3-uY-RRv"/>
-                                    <constraint firstItem="316" firstAttribute="baseline" secondItem="183" secondAttribute="baseline" id="yid-Ph-9Wm"/>
-                                </constraints>
-                            </view>
-                        </tabViewItem>
-                        <tabViewItem label="Modern" identifier="" id="18">
-                            <view key="view" id="19">
-                                <rect key="frame" x="10" y="33" width="594" height="286"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="20">
-                                        <rect key="frame" x="272" y="182" width="92" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Antialiasing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="21">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.modern.shouldAntialiasText" id="aWx-dB-Zqr">
-                                                <dictionary key="options">
-                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </button>
-                                    <button misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="41">
-                                        <rect key="frame" x="272" y="162" width="88" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Smoothing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="43">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="self.delegate.config.viewer.modern.shouldSmoothText" id="wec-Vo-8p0">
-                                                <dictionary key="options">
-                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </button>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="49">
-                                        <rect key="frame" x="274" y="206" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="BZ3-BC-Ugr"/>
-                                            <constraint firstAttribute="width" constant="28" id="llY-jl-QYh"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.modern.backgroundColor" id="Oab-LE-vwf">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="62">
-                                        <rect key="frame" x="153" y="208" width="115" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Background color:" id="63">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="79">
-                                        <rect key="frame" x="274" y="234" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="Hbl-Hd-Ed0"/>
-                                            <constraint firstAttribute="width" constant="28" id="Z8I-2t-Dfp"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.modern.selectionColor" id="Dgb-uc-S3m">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="86">
-                                        <rect key="frame" x="169" y="236" width="99" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Selection color:" id="88">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <colorWell misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96">
-                                        <rect key="frame" x="274" y="262" width="28" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="2PW-3o-tU4"/>
-                                            <constraint firstAttribute="width" constant="28" id="NrA-N5-exK"/>
-                                        </constraints>
-                                        <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <connections>
-                                            <binding destination="-3" name="value" keyPath="delegate.config.viewer.modern.textColor" id="kRy-s7-Mb7">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">PreferencesHexStringToColorValueTransformer</string>
-                                                </dictionary>
-                                            </binding>
-                                        </connections>
-                                    </colorWell>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="102">
-                                        <rect key="frame" x="200" y="264" width="68" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text color:" id="103">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="108">
-                                        <rect key="frame" x="304" y="255" width="92" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="tBv-1M-L4X"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="push" title="Font" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="109">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="OnSetModernFont:" target="-2" id="115"/>
-                                        </connections>
-                                    </button>
-                                    <textField verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="333">
-                                        <rect key="frame" x="172" y="183" width="96" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Text rendering:" id="335">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="96" firstAttribute="centerY" secondItem="108" secondAttribute="centerY" id="02w-HR-XjU"/>
-                                    <constraint firstItem="96" firstAttribute="centerY" secondItem="102" secondAttribute="centerY" id="2wg-hZ-lKz"/>
-                                    <constraint firstItem="333" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="19" secondAttribute="leading" constant="20" symbolic="YES" id="5c9-8Y-DHV"/>
-                                    <constraint firstItem="49" firstAttribute="leading" secondItem="62" secondAttribute="trailing" constant="8" symbolic="YES" id="A1I-9W-t7D"/>
-                                    <constraint firstItem="41" firstAttribute="top" secondItem="20" secondAttribute="bottom" constant="6" symbolic="YES" id="C7j-Zu-Xyq"/>
-                                    <constraint firstItem="62" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="19" secondAttribute="leading" constant="20" symbolic="YES" id="ELD-A8-LRd"/>
-                                    <constraint firstItem="96" firstAttribute="centerX" secondItem="49" secondAttribute="centerX" id="PqU-21-agO"/>
-                                    <constraint firstItem="62" firstAttribute="centerY" secondItem="49" secondAttribute="centerY" id="QN8-D6-Nw5"/>
-                                    <constraint firstItem="49" firstAttribute="top" secondItem="79" secondAttribute="bottom" constant="8" symbolic="YES" id="SJi-mv-VMc"/>
-                                    <constraint firstItem="79" firstAttribute="centerY" secondItem="86" secondAttribute="centerY" id="TRk-Bq-Lkc"/>
-                                    <constraint firstItem="20" firstAttribute="top" secondItem="49" secondAttribute="bottom" constant="8" symbolic="YES" id="XXO-qD-f64"/>
-                                    <constraint firstItem="96" firstAttribute="centerX" secondItem="79" secondAttribute="centerX" id="Xe8-fd-VMi"/>
-                                    <constraint firstAttribute="centerX" secondItem="96" secondAttribute="leading" constant="20" id="bBd-mh-hdE"/>
-                                    <constraint firstItem="333" firstAttribute="baseline" secondItem="20" secondAttribute="baseline" id="bqo-as-1I6"/>
-                                    <constraint firstItem="79" firstAttribute="leading" secondItem="86" secondAttribute="trailing" constant="8" symbolic="YES" id="c0W-qL-Kfq"/>
-                                    <constraint firstItem="108" firstAttribute="leading" secondItem="96" secondAttribute="trailing" constant="8" symbolic="YES" id="eDs-F5-ebM"/>
-                                    <constraint firstItem="96" firstAttribute="leading" secondItem="102" secondAttribute="trailing" constant="8" symbolic="YES" id="eIT-w9-Qi4"/>
-                                    <constraint firstItem="96" firstAttribute="top" secondItem="19" secondAttribute="top" constant="3" id="ei8-42-tBn"/>
-                                    <constraint firstItem="102" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="19" secondAttribute="leading" constant="20" symbolic="YES" id="f1R-6E-p4s"/>
-                                    <constraint firstItem="20" firstAttribute="leading" secondItem="333" secondAttribute="trailing" constant="8" symbolic="YES" id="ge0-ei-ciZ"/>
-                                    <constraint firstItem="41" firstAttribute="leading" secondItem="49" secondAttribute="leading" id="i2Q-mq-jE4"/>
-                                    <constraint firstItem="86" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="19" secondAttribute="leading" constant="20" symbolic="YES" id="jDj-nD-gmw"/>
-                                    <constraint firstItem="41" firstAttribute="leading" secondItem="20" secondAttribute="leading" id="jfv-Dt-7ZX"/>
-                                    <constraint firstItem="79" firstAttribute="top" secondItem="96" secondAttribute="bottom" constant="8" symbolic="YES" id="wWV-kD-U1f"/>
-                                </constraints>
-                            </view>
-                        </tabViewItem>
                     </tabViewItems>
                 </tabView>
             </subviews>
             <constraints>
-                <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" constant="12" symbolic="YES" id="13"/>
-                <constraint firstItem="3" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="14"/>
-                <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" constant="20" symbolic="YES" id="16"/>
-                <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" constant="20" symbolic="YES" id="17"/>
+                <constraint firstItem="3" firstAttribute="top" secondItem="1" secondAttribute="top" id="13"/>
+                <constraint firstItem="3" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="14"/>
+                <constraint firstAttribute="bottom" secondItem="3" secondAttribute="bottom" id="16"/>
+                <constraint firstAttribute="trailing" secondItem="3" secondAttribute="trailing" id="17"/>
             </constraints>
             <point key="canvasLocation" x="338" y="372"/>
         </customView>

@@ -7,7 +7,7 @@
 //
 
 #include <Utility/SheetController.h>
-#include "../../Files/PanelViewPresentationItemsColoringFilter.h"
+#include "../States/FilePanels/PanelViewPresentationItemsColoringFilter.h"
 
 @interface PreferencesWindowPanelsTabColoringFilterSheet : SheetController
 

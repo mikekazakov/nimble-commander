@@ -1,0 +1,88 @@
+//
+// Prefix header for all source files of the 'Directories' target in the 'Directories' project
+//
+
+// basic C facilities
+#include <assert.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <ftw.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+
+// networking stuff
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#define _LIBCPP_DISABLE_AVAILABILITY 1
+
+#include <CoreFoundation/CoreFoundation.h>
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import <Foundation/Foundation.h>
+    #import <Quartz/Quartz.h>
+#endif
+
+#ifdef __cplusplus
+    #include <vector>
+    #include <array>
+    #include <string>
+    #include <list>
+    #include <deque>
+    #include <queue>
+    #include <map>
+    #include <unordered_map>
+    #include <set>
+    #include <unordered_set>
+    #include <algorithm>
+    #include <functional>
+    #include <numeric>
+    #include <memory>
+    #include <atomic>
+    #include <iostream>
+    #include <mutex>
+    #include <chrono>
+    #include <thread>
+    #include <shared_mutex>
+    #include <functional>
+    #include <future>
+    #include <random>
+
+    // low-level facilities from Habanero
+    #include <Habanero/dispatch_cpp.h>
+    #include <Habanero/mach_time.h>
+    #include <Habanero/spinlock.h>
+
+    using namespace std;
+    using namespace std::chrono;
+
+    #include <experimental/optional>
+    #include <experimental/string_view>
+    using namespace std::experimental;
+
+    #include "../../Files/3rd_party/built/include/boost/filesystem.hpp"
+    using boost::filesystem::path;
+
+    #include "../../Files/3rd_party/built/include/boost/logic/tribool.hpp"
+    using boost::logic::tribool;
+    using boost::logic::indeterminate;
+
+    #include "../../Files/3rd_party/any.hpp"
+    using linb::any;
+    using linb::any_cast;
+
+    #include <Utility/StringExtras.h>
+
+    #ifdef __OBJC__
+        #include <Utility/ObjCpp.h>
+    #endif
+#endif

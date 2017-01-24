@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
-#include "../../Files/ExternalEditorInfo.h"
+#include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 

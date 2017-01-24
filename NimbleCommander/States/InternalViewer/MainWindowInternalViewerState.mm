@@ -6,10 +6,10 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/MainWindowController.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include "../MainWindowController.h"
 #include "../../Viewer/InternalViewerController.h"
-#include "../../Files/GoogleAnalytics.h"
-#include "../../Files/ActionsShortcutsManager.h"
+#include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 
 @interface MainWindowInternalViewerState ()
@@ -24,11 +24,14 @@
 @property (strong) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property (strong) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
 
+@property (strong) IBOutlet BigFileView *embeddedFileView;
+
 @end
 
 @implementation MainWindowInternalViewerState
 {    
     InternalViewerController *m_Controller;
+    NSLayoutConstraint         *m_TopLayoutConstraint;    
 }
 
 - (id) init
@@ -46,11 +49,11 @@
 
 - (void)viewDidLoad
 {
-    dispatch_assert_main_queue();    
+    dispatch_assert_main_queue();
     [super viewDidLoad];
     // Do view setup here.
-    self.view.focusRingType = NSFocusRingTypeNone;
-    m_Controller.view = objc_cast<BigFileView>(self.view);
+    self.embeddedFileView.focusRingType = NSFocusRingTypeNone;
+    m_Controller.view = self.embeddedFileView;
  
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;
@@ -86,20 +89,31 @@
 
 - (void) Assigned
 {
-    [self view];
+    const auto v = self.view;
+    m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:self.embeddedFileView
+                                                         attribute:NSLayoutAttributeTop
+                                                         relatedBy:NSLayoutRelationEqual
+                                                            toItem:v.window.contentLayoutGuide
+                                                         attribute:NSLayoutAttributeTop
+                                                        multiplier:1
+                                                          constant:0];
+    m_TopLayoutConstraint.active = true;
+    [v layoutSubtreeIfNeeded];
     
-    m_Controller.nextResponder = self.view.window.nextResponder;
-    self.view.window.nextResponder = m_Controller;
+    m_Controller.nextResponder = v.window.nextResponder;
+    v.window.nextResponder = m_Controller;
     
     [m_Controller show];
-    self.view.window.title = m_Controller.verboseTitle;
+    v.window.title = m_Controller.verboseTitle;
+    [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView];
 //    [self.window makeFirstResponder:m_View];
 //    [self UpdateTitle];
-    GoogleAnalytics::Instance().PostScreenView("File Viewer State");
+    GA().PostScreenView("File Viewer State");
 }
 
 - (void) Resigned
 {
+    m_TopLayoutConstraint.active = false;
     self.view.window.nextResponder = m_Controller.nextResponder;
     m_Controller.nextResponder = nil;
 }

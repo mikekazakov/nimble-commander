@@ -263,3 +263,13 @@ bool FileMask::IsEmpty() const
 {
     return m_Masks.empty();
 }
+
+bool FileMask::operator ==(const FileMask&_rhs) const noexcept
+{
+    return m_Mask == _rhs.m_Mask;
+}
+
+bool FileMask::operator !=(const FileMask&_rhs) const noexcept
+{
+    return !(*this == _rhs);
+}

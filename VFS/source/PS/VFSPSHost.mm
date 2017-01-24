@@ -270,14 +270,14 @@ public:
 
 VFSPSHost::VFSPSHost():
     VFSHost("", shared_ptr<VFSHost>(0), Tag),
-    m_UpdateQ(SerialQueueT::Make("VFSPSHost"))
+    m_UpdateQ("VFSPSHost")
 {
     CommitProcs(GetProcs());
 }
 
 VFSPSHost::~VFSPSHost()
 {
-    m_UpdateQ->Stop();
+//    m_UpdateQ->Stop();
 }
 
 VFSConfiguration VFSPSHost::Configuration() const
@@ -363,12 +363,12 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
 void VFSPSHost::UpdateCycle()
 {
     auto weak_this = weak_ptr<VFSPSHost>(SharedPtr());
-    m_UpdateQ->Run([=](auto _q){
-        if(_q->IsStopped())
+    m_UpdateQ.Run([=]{
+        if(m_UpdateQ.IsStopped())
             return;
 
         auto procs = GetProcs();
-        if(!_q->IsStopped())
+        if(!m_UpdateQ.IsStopped())
         {
             auto me = weak_this;
             dispatch_to_main_queue([=,procs=move(procs)]{

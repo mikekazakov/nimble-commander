@@ -88,7 +88,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
         self.themesPopUp.lastItem.tag = i;
     }
     
-    [self.themesPopUp.menu addItem:[]{
+    /*[self.themesPopUp.menu addItem:[]{
         auto i = NSMenuItem.separatorItem;
         i.tag = -1;
         return i;
@@ -98,7 +98,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
         i.title = @"Manage Themes...";
         i.tag = -1;
         return i;
-    }()];
+    }()];*/
 }
 
 - (void)viewDidLoad
@@ -300,5 +300,51 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
+- (IBAction)onExportClicked:(id)sender
+{
+    auto name = m_ThemeNames[m_SelectedTheme];
+    if( auto v = m_Manager->ThemeData(name) ) {
+        rapidjson::StringBuffer buffer;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+        v->Accept(writer);
+        
+        NSSavePanel *panel = [NSSavePanel savePanel];
+        panel.nameFieldStringValue = [NSString stringWithUTF8StdString:name];
+        panel.allowedFileTypes = @[@"json"];
+        panel.allowsOtherFileTypes = false;
+        panel.directoryURL = [NSFileManager.defaultManager URLForDirectory:NSDesktopDirectory
+                                                                  inDomain:NSUserDomainMask
+                                                         appropriateForURL:nil
+                                                                    create:false
+                                                                     error:nil];
+        if( [panel runModal] == NSFileHandlingPanelOKButton )
+            if( panel.URL != nil ) {
+                auto data = [NSData dataWithBytes:buffer.GetString()
+                                           length:buffer.GetSize()];
+                [data writeToURL:panel.URL atomically:true];
+            }
+    }
+}
+
+- (IBAction)onImportClicked:(id)sender
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.allowedFileTypes = @[@"json"];
+    panel.allowsOtherFileTypes = false;
+    if( [panel runModal] == NSFileHandlingPanelOKButton )
+        if( panel.URL != nil )
+            if( auto d = [NSData dataWithContentsOfURL:panel.URL] ) {
+                string str { (const char*)d.bytes, d.length };
+            
+                rapidjson::Document doc;
+                rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( str.c_str() );
+                if( ok ) {
+                    auto name = m_ThemeNames[m_SelectedTheme];
+                    rapidjson::StandaloneDocument sdoc;
+                    sdoc.CopyFrom(doc, rapidjson::g_CrtAllocator);
+                    m_Manager->ImportThemeData( name, sdoc );
+                }
+            }
+}
 
 @end

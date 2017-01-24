@@ -319,3 +319,50 @@ bool ThemesManager::DiscardThemeChanges( const string &_theme_name )
     WriteThemes();
     return true;
 }
+
+bool ThemesManager::ImportThemeData(const string &_theme_name,
+                                    const rapidjson::StandaloneValue &_data)
+{
+    if( _data.GetType() != rapidjson::kObjectType )
+        return false;
+
+    auto it = m_Themes.find( _theme_name );
+    if( it != end(m_Themes) ) {
+        auto &old_doc = *it->second;
+        
+        rapidjson::StandaloneDocument new_doc;
+        new_doc.CopyFrom( old_doc, rapidjson::g_CrtAllocator );
+        
+        bool any = false;
+        uint64_t changes_mask = 0;
+        for( auto i = _data.MemberBegin(), e = _data.MemberEnd(); i != e; ++i ) {
+            if( new_doc.HasMember(i->name) )
+                if( new_doc[i->name] == i->value )
+                    continue;
+            
+            new_doc.RemoveMember( i->name );
+            new_doc.AddMember(rapidjson::MakeStandaloneString(i->name.GetString()),
+                    rapidjson::StandaloneValue(i->value, rapidjson::g_CrtAllocator),
+                    rapidjson::g_CrtAllocator);
+            changes_mask |= NotificationMaskForKey( i->name.GetString() );
+            any = true;
+        }
+        
+        if( !any )
+            return false;
+    
+        // put new data into our working dictionary
+        it->second = make_shared<rapidjson::StandaloneDocument>( move(new_doc) );
+        
+        // if this is a selected theme
+        if( _theme_name == m_SelectedThemeName ) {
+            UpdateCurrentTheme();
+            FireObservers( changes_mask );
+        }
+        
+        // TODO: move to background thread, delay execution
+        WriteThemes();
+    }
+
+    return true;
+}

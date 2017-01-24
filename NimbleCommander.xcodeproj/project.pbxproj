@@ -2061,7 +2061,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CF536C0D16C92EA200F37203 /* PanelMainWindowState */ = {
+		CF536C0D16C92EA200F37203 /* FilePanels */ = {
 			isa = PBXGroup;
 			children = (
 				CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */,
@@ -2072,7 +2072,7 @@
 				CF27414D1803E60D006D6687 /* Views */,
 				CF9DBE171A48836A00FF735B /* Helpers */,
 			);
-			name = PanelMainWindowState;
+			name = FilePanels;
 			sourceTree = "<group>";
 		};
 		CF55CDD81B29EF52001B4F91 /* Batch Rename */ = {
@@ -2274,9 +2274,9 @@
 				CFDAC2461DFBEE340039A104 /* MainWindowController.mm */,
 				CFDAC2471DFBEE340039A104 /* MainWindowStateProtocol.h */,
 				CF396AEB173FA89A00A20C42 /* Viewer */,
-				CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */,
-				CF536C0D16C92EA200F37203 /* PanelMainWindowState */,
-				CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */,
+				CFB709C418E99AC100A83E61 /* ExternalEditor */,
+				CF536C0D16C92EA200F37203 /* FilePanels */,
+				CFB3E4771844AC3000D375E2 /* Terminal */,
 			);
 			name = States;
 			sourceTree = "<group>";
@@ -2414,7 +2414,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CFB3E4771844AC3000D375E2 /* TerminalMainWindowState */ = {
+		CFB3E4771844AC3000D375E2 /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
 				CFDAC2771DFBF9260039A104 /* MainWindowExternalTerminalEditorState.h */,
@@ -2441,7 +2441,7 @@
 				CFDAC28C1DFBF9260039A104 /* TermView.h */,
 				CFDAC28D1DFBF9260039A104 /* TermView.mm */,
 			);
-			name = TerminalMainWindowState;
+			name = Terminal;
 			sourceTree = "<group>";
 		};
 		CFB517F91BDF53C1000AAE89 /* LLVM */ = {
@@ -2492,11 +2492,11 @@
 			name = Marketing;
 			sourceTree = "<group>";
 		};
-		CFB709C418E99AC100A83E61 /* ExternalEditorMainWindowState */ = {
+		CFB709C418E99AC100A83E61 /* ExternalEditor */ = {
 			isa = PBXGroup;
 			children = (
 			);
-			name = ExternalEditorMainWindowState;
+			name = ExternalEditor;
 			sourceTree = "<group>";
 		};
 		CFC058DD170B27D500A20CF2 /* UnixAttr */ = {

@@ -38,16 +38,27 @@ public:
      */
     shared_ptr<const rapidjson::StandaloneValue> SelectedThemeData() const;
     
-    shared_ptr<const rapidjson::StandaloneValue> BackupThemeData( const string &_theme_name ) const;
-
     /**
      * May return shared ptr to kNullType.
      */
     shared_ptr<const rapidjson::StandaloneValue> ThemeData( const string &_theme_name ) const;
     
+    /**
+     * Tries to find a default value for this theme.
+     * If there's no - return value for Modern theme.
+     */
+    shared_ptr<const rapidjson::StandaloneValue> BackupThemeData( const string &_theme_name ) const;    
+    
     void SetThemeValue(const string &_theme_name,
                        const string &_key,
                        const rapidjson::StandaloneValue &_value);
+    
+    /**
+     * Performs per-element document merge, replacing values in theme named _theme_name with
+     * values from _data. Any unchanged or absent in _data values are untouched.
+     */
+    bool ImportThemeData(const string &_theme_name,
+                         const rapidjson::StandaloneValue &_data);
     
     bool DiscardThemeChanges( const string &_theme_name );
 

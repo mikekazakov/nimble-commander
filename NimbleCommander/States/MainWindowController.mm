@@ -8,14 +8,12 @@
 //
 
 #include <Habanero/debug.h>
-//#include "3rd_party/rapidjson/include/rapidjson/stringbuffer.h"
-//#include "3rd_party/rapidjson/include/rapidjson/writer.h"
-//#include "3rd_party/rapidjson/include/rapidjson/prettywriter.h"
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "Terminal/MainWindowTerminalState.h"
 #include "Terminal/TermShellTask.h"
 #include "Terminal/MainWindowExternalTerminalEditorState.h"
@@ -29,8 +27,8 @@
 #include "../Bootstrap/AppDelegate.h"
 #include "FilePanels/MainWindowFilePanelState.h"
 #include "FilePanels/PanelController.h"
-#include "../Core/ActionsShortcutsManager.h"
-#include "../Bootstrap/ActivationManager.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
@@ -76,7 +74,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
     [window setContentBorderThickness:40 forEdge:NSMinYEdge];
     window.contentView.wantsLayer = YES;
-    window.appearance = CurrentTheme().Appearance();
+    CocoaAppearanceManager::Instance().ManageWindowApperance(window);
     [window invalidateShadow];
     
     if(self = [super initWithWindow:window]) {

@@ -11,14 +11,15 @@ class ThemesManager : ObservableBase
 public:
     struct Notifications {
         enum : uint64_t{
-            FilePanelsGeneral   = 0x00000001,
-            FilePanelsTabs      = 0x00000002,
-            FilePanelsHeader    = 0x00000004,
-            FilePanelsFooter    = 0x00000008,
-            FilePanelsBrief     = 0x00000010,
-            FilePanelsList      = 0x00000020,
-            Viewer              = 0x00000040,
-            Terminal            = 0x00000080
+            Appearance          = 0x00000001,
+            FilePanelsGeneral   = 0x00000002,
+            FilePanelsTabs      = 0x00000004,
+            FilePanelsHeader    = 0x00000008,
+            FilePanelsFooter    = 0x00000010,
+            FilePanelsBrief     = 0x00000020,
+            FilePanelsList      = 0x00000040,
+            Viewer              = 0x00000080,
+            Terminal            = 0x00000100
         };
     };
 
@@ -65,5 +66,6 @@ private:
     string m_SelectedThemeName;
     unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_Themes;
     vector<string> m_OrderedThemeNames;
-    unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_DefaultThemes;    
+    unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_DefaultThemes;
+    ObservationTicket m_AppearanceObservation;
 };

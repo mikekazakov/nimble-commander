@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFACFA091E24AB0000FD6AB6 /* MMAttachedTabBarButton.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9D21E24AB0000FD6AB6 /* MMAttachedTabBarButton.h */; };
+		CFACFA0A1E24AB0000FD6AB6 /* MMAttachedTabBarButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9D31E24AB0000FD6AB6 /* MMAttachedTabBarButton.m */; };
+		CFACFA0B1E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9D41E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.h */; };
+		CFACFA0C1E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9D51E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.m */; };
+		CFACFA0D1E24AB0000FD6AB6 /* MMOverflowPopUpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9D61E24AB0000FD6AB6 /* MMOverflowPopUpButton.h */; };
+		CFACFA0E1E24AB0000FD6AB6 /* MMOverflowPopUpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9D71E24AB0000FD6AB6 /* MMOverflowPopUpButton.m */; };
+		CFACFA0F1E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9D81E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.h */; };
+		CFACFA101E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9D91E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.m */; };
+		CFACFA111E24AB0000FD6AB6 /* MMProgressIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9DA1E24AB0000FD6AB6 /* MMProgressIndicator.h */; };
+		CFACFA121E24AB0000FD6AB6 /* MMProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9DB1E24AB0000FD6AB6 /* MMProgressIndicator.m */; };
+		CFACFA131E24AB0000FD6AB6 /* MMRolloverButton.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9DC1E24AB0000FD6AB6 /* MMRolloverButton.h */; };
+		CFACFA141E24AB0000FD6AB6 /* MMRolloverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9DD1E24AB0000FD6AB6 /* MMRolloverButton.m */; };
+		CFACFA151E24AB0000FD6AB6 /* MMRolloverButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9DE1E24AB0000FD6AB6 /* MMRolloverButtonCell.h */; };
+		CFACFA161E24AB0000FD6AB6 /* MMRolloverButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9DF1E24AB0000FD6AB6 /* MMRolloverButtonCell.m */; };
+		CFACFA171E24AB0000FD6AB6 /* MMSlideButtonsAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E01E24AB0000FD6AB6 /* MMSlideButtonsAnimation.h */; };
+		CFACFA181E24AB0000FD6AB6 /* MMSlideButtonsAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9E11E24AB0000FD6AB6 /* MMSlideButtonsAnimation.m */; };
+		CFACFA191E24AB0000FD6AB6 /* MMTabBarButton.Common.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E21E24AB0000FD6AB6 /* MMTabBarButton.Common.h */; };
+		CFACFA1A1E24AB0000FD6AB6 /* MMTabBarButton.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E31E24AB0000FD6AB6 /* MMTabBarButton.h */; };
+		CFACFA1B1E24AB0000FD6AB6 /* MMTabBarButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9E41E24AB0000FD6AB6 /* MMTabBarButton.m */; };
+		CFACFA1C1E24AB0000FD6AB6 /* MMTabBarButton.Private.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E51E24AB0000FD6AB6 /* MMTabBarButton.Private.h */; };
+		CFACFA1D1E24AB0000FD6AB6 /* MMTabBarButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E61E24AB0000FD6AB6 /* MMTabBarButtonCell.h */; };
+		CFACFA1E1E24AB0000FD6AB6 /* MMTabBarButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9E71E24AB0000FD6AB6 /* MMTabBarButtonCell.m */; };
+		CFACFA1F1E24AB0000FD6AB6 /* MMTabBarButtonCell.Private.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E81E24AB0000FD6AB6 /* MMTabBarButtonCell.Private.h */; };
+		CFACFA201E24AB0000FD6AB6 /* MMTabBarController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9E91E24AB0000FD6AB6 /* MMTabBarController.h */; };
+		CFACFA211E24AB0000FD6AB6 /* MMTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9EA1E24AB0000FD6AB6 /* MMTabBarController.m */; };
+		CFACFA221E24AB0000FD6AB6 /* MMTabBarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9EB1E24AB0000FD6AB6 /* MMTabBarItem.h */; };
+		CFACFA231E24AB0000FD6AB6 /* MMTabBarView-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9ED1E24AB0000FD6AB6 /* MMTabBarView-Prefix.pch */; };
+		CFACFA241E24AB0000FD6AB6 /* MMTabBarView.Globals.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9EE1E24AB0000FD6AB6 /* MMTabBarView.Globals.h */; };
+		CFACFA251E24AB0000FD6AB6 /* MMTabBarView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9EF1E24AB0000FD6AB6 /* MMTabBarView.h */; };
+		CFACFA261E24AB0000FD6AB6 /* MMTabBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9F01E24AB0000FD6AB6 /* MMTabBarView.m */; };
+		CFACFA271E24AB0000FD6AB6 /* MMTabBarView.Private.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9F11E24AB0000FD6AB6 /* MMTabBarView.Private.h */; };
+		CFACFA281E24AB0000FD6AB6 /* MMTabDragAssistant.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9F21E24AB0000FD6AB6 /* MMTabDragAssistant.h */; };
+		CFACFA291E24AB0000FD6AB6 /* MMTabDragAssistant.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9F31E24AB0000FD6AB6 /* MMTabDragAssistant.m */; };
+		CFACFA2A1E24AB0000FD6AB6 /* MMTabDragView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9F41E24AB0000FD6AB6 /* MMTabDragView.h */; };
+		CFACFA2B1E24AB0000FD6AB6 /* MMTabDragView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9F51E24AB0000FD6AB6 /* MMTabDragView.m */; };
+		CFACFA2C1E24AB0000FD6AB6 /* MMTabDragWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9F61E24AB0000FD6AB6 /* MMTabDragWindow.h */; };
+		CFACFA2D1E24AB0000FD6AB6 /* MMTabDragWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9F71E24AB0000FD6AB6 /* MMTabDragWindow.m */; };
+		CFACFA2E1E24AB0000FD6AB6 /* MMTabDragWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9F81E24AB0000FD6AB6 /* MMTabDragWindowController.h */; };
+		CFACFA2F1E24AB0000FD6AB6 /* MMTabDragWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9F91E24AB0000FD6AB6 /* MMTabDragWindowController.m */; };
+		CFACFA301E24AB0000FD6AB6 /* MMTabPasteboardItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9FA1E24AB0000FD6AB6 /* MMTabPasteboardItem.h */; };
+		CFACFA311E24AB0000FD6AB6 /* MMTabPasteboardItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9FB1E24AB0000FD6AB6 /* MMTabPasteboardItem.m */; };
+		CFACFA321E24AB0000FD6AB6 /* MMTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9FC1E24AB0000FD6AB6 /* MMTabStyle.h */; };
+		CFACFA331E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9FD1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.h */; };
+		CFACFA341E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9FE1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.m */; };
+		CFACFA351E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACF9FF1E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.h */; };
+		CFACFA361E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA001E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.m */; };
+		CFACFA371E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACFA011E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.h */; };
+		CFACFA381E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA021E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.m */; };
+		CFACFA391E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACFA031E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.h */; };
+		CFACFA3A1E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA041E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.m */; };
+		CFACFA3B1E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACFA051E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.h */; };
+		CFACFA3C1E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA061E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.m */; };
+		CFACFA3D1E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACFA071E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.h */; };
+		CFACFA3E1E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA081E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.m */; };
+		CFACFA421E24ACBA00FD6AB6 /* MMMetalTabStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = CFACFA401E24ACBA00FD6AB6 /* MMMetalTabStyle.h */; };
+		CFACFA431E24ACBA00FD6AB6 /* MMMetalTabStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CFACFA411E24ACBA00FD6AB6 /* MMMetalTabStyle.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CFACF9BA1E24AAB800FD6AB6 /* libMMTabBarViewLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMMTabBarViewLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFACF9D21E24AB0000FD6AB6 /* MMAttachedTabBarButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMAttachedTabBarButton.h; path = MMTabBarView/MMAttachedTabBarButton.h; sourceTree = SOURCE_ROOT; };
+		CFACF9D31E24AB0000FD6AB6 /* MMAttachedTabBarButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMAttachedTabBarButton.m; path = MMTabBarView/MMAttachedTabBarButton.m; sourceTree = SOURCE_ROOT; };
+		CFACF9D41E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMAttachedTabBarButtonCell.h; path = MMTabBarView/MMAttachedTabBarButtonCell.h; sourceTree = SOURCE_ROOT; };
+		CFACF9D51E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMAttachedTabBarButtonCell.m; path = MMTabBarView/MMAttachedTabBarButtonCell.m; sourceTree = SOURCE_ROOT; };
+		CFACF9D61E24AB0000FD6AB6 /* MMOverflowPopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMOverflowPopUpButton.h; path = MMTabBarView/MMOverflowPopUpButton.h; sourceTree = SOURCE_ROOT; };
+		CFACF9D71E24AB0000FD6AB6 /* MMOverflowPopUpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMOverflowPopUpButton.m; path = MMTabBarView/MMOverflowPopUpButton.m; sourceTree = SOURCE_ROOT; };
+		CFACF9D81E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMOverflowPopUpButtonCell.h; path = MMTabBarView/MMOverflowPopUpButtonCell.h; sourceTree = SOURCE_ROOT; };
+		CFACF9D91E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMOverflowPopUpButtonCell.m; path = MMTabBarView/MMOverflowPopUpButtonCell.m; sourceTree = SOURCE_ROOT; };
+		CFACF9DA1E24AB0000FD6AB6 /* MMProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMProgressIndicator.h; path = MMTabBarView/MMProgressIndicator.h; sourceTree = SOURCE_ROOT; };
+		CFACF9DB1E24AB0000FD6AB6 /* MMProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMProgressIndicator.m; path = MMTabBarView/MMProgressIndicator.m; sourceTree = SOURCE_ROOT; };
+		CFACF9DC1E24AB0000FD6AB6 /* MMRolloverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMRolloverButton.h; path = MMTabBarView/MMRolloverButton.h; sourceTree = SOURCE_ROOT; };
+		CFACF9DD1E24AB0000FD6AB6 /* MMRolloverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMRolloverButton.m; path = MMTabBarView/MMRolloverButton.m; sourceTree = SOURCE_ROOT; };
+		CFACF9DE1E24AB0000FD6AB6 /* MMRolloverButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMRolloverButtonCell.h; path = MMTabBarView/MMRolloverButtonCell.h; sourceTree = SOURCE_ROOT; };
+		CFACF9DF1E24AB0000FD6AB6 /* MMRolloverButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMRolloverButtonCell.m; path = MMTabBarView/MMRolloverButtonCell.m; sourceTree = SOURCE_ROOT; };
+		CFACF9E01E24AB0000FD6AB6 /* MMSlideButtonsAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMSlideButtonsAnimation.h; path = MMTabBarView/MMSlideButtonsAnimation.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E11E24AB0000FD6AB6 /* MMSlideButtonsAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMSlideButtonsAnimation.m; path = MMTabBarView/MMSlideButtonsAnimation.m; sourceTree = SOURCE_ROOT; };
+		CFACF9E21E24AB0000FD6AB6 /* MMTabBarButton.Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarButton.Common.h; path = MMTabBarView/MMTabBarButton.Common.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E31E24AB0000FD6AB6 /* MMTabBarButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarButton.h; path = MMTabBarView/MMTabBarButton.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E41E24AB0000FD6AB6 /* MMTabBarButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabBarButton.m; path = MMTabBarView/MMTabBarButton.m; sourceTree = SOURCE_ROOT; };
+		CFACF9E51E24AB0000FD6AB6 /* MMTabBarButton.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarButton.Private.h; path = MMTabBarView/MMTabBarButton.Private.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E61E24AB0000FD6AB6 /* MMTabBarButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarButtonCell.h; path = MMTabBarView/MMTabBarButtonCell.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E71E24AB0000FD6AB6 /* MMTabBarButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabBarButtonCell.m; path = MMTabBarView/MMTabBarButtonCell.m; sourceTree = SOURCE_ROOT; };
+		CFACF9E81E24AB0000FD6AB6 /* MMTabBarButtonCell.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarButtonCell.Private.h; path = MMTabBarView/MMTabBarButtonCell.Private.h; sourceTree = SOURCE_ROOT; };
+		CFACF9E91E24AB0000FD6AB6 /* MMTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarController.h; path = MMTabBarView/MMTabBarController.h; sourceTree = SOURCE_ROOT; };
+		CFACF9EA1E24AB0000FD6AB6 /* MMTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabBarController.m; path = MMTabBarView/MMTabBarController.m; sourceTree = SOURCE_ROOT; };
+		CFACF9EB1E24AB0000FD6AB6 /* MMTabBarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarItem.h; path = MMTabBarView/MMTabBarItem.h; sourceTree = SOURCE_ROOT; };
+		CFACF9EC1E24AB0000FD6AB6 /* MMTabBarView-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "MMTabBarView-Info.plist"; path = "MMTabBarView/MMTabBarView-Info.plist"; sourceTree = SOURCE_ROOT; };
+		CFACF9ED1E24AB0000FD6AB6 /* MMTabBarView-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMTabBarView-Prefix.pch"; path = "MMTabBarView/MMTabBarView-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		CFACF9EE1E24AB0000FD6AB6 /* MMTabBarView.Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarView.Globals.h; path = MMTabBarView/MMTabBarView.Globals.h; sourceTree = SOURCE_ROOT; };
+		CFACF9EF1E24AB0000FD6AB6 /* MMTabBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarView.h; path = MMTabBarView/MMTabBarView.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F01E24AB0000FD6AB6 /* MMTabBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabBarView.m; path = MMTabBarView/MMTabBarView.m; sourceTree = SOURCE_ROOT; };
+		CFACF9F11E24AB0000FD6AB6 /* MMTabBarView.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabBarView.Private.h; path = MMTabBarView/MMTabBarView.Private.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F21E24AB0000FD6AB6 /* MMTabDragAssistant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabDragAssistant.h; path = MMTabBarView/MMTabDragAssistant.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F31E24AB0000FD6AB6 /* MMTabDragAssistant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabDragAssistant.m; path = MMTabBarView/MMTabDragAssistant.m; sourceTree = SOURCE_ROOT; };
+		CFACF9F41E24AB0000FD6AB6 /* MMTabDragView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabDragView.h; path = MMTabBarView/MMTabDragView.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F51E24AB0000FD6AB6 /* MMTabDragView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabDragView.m; path = MMTabBarView/MMTabDragView.m; sourceTree = SOURCE_ROOT; };
+		CFACF9F61E24AB0000FD6AB6 /* MMTabDragWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabDragWindow.h; path = MMTabBarView/MMTabDragWindow.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F71E24AB0000FD6AB6 /* MMTabDragWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabDragWindow.m; path = MMTabBarView/MMTabDragWindow.m; sourceTree = SOURCE_ROOT; };
+		CFACF9F81E24AB0000FD6AB6 /* MMTabDragWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabDragWindowController.h; path = MMTabBarView/MMTabDragWindowController.h; sourceTree = SOURCE_ROOT; };
+		CFACF9F91E24AB0000FD6AB6 /* MMTabDragWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabDragWindowController.m; path = MMTabBarView/MMTabDragWindowController.m; sourceTree = SOURCE_ROOT; };
+		CFACF9FA1E24AB0000FD6AB6 /* MMTabPasteboardItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabPasteboardItem.h; path = MMTabBarView/MMTabPasteboardItem.h; sourceTree = SOURCE_ROOT; };
+		CFACF9FB1E24AB0000FD6AB6 /* MMTabPasteboardItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabPasteboardItem.m; path = MMTabBarView/MMTabPasteboardItem.m; sourceTree = SOURCE_ROOT; };
+		CFACF9FC1E24AB0000FD6AB6 /* MMTabStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabStyle.h; path = MMTabBarView/MMTabStyle.h; sourceTree = SOURCE_ROOT; };
+		CFACF9FD1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSAffineTransform+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSAffineTransform+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACF9FE1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSAffineTransform+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSAffineTransform+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACF9FF1E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSBezierPath+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSBezierPath+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACFA001E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSBezierPath+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSBezierPath+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACFA011E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSCell+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSCell+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACFA021E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSCell+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSCell+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACFA031E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSString+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACFA041E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSString+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACFA051E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSTabViewItem+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSTabViewItem+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACFA061E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSTabViewItem+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSTabViewItem+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACFA071E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSView+MMTabBarViewExtensions.h"; path = "MMTabBarView/NSView+MMTabBarViewExtensions.h"; sourceTree = SOURCE_ROOT; };
+		CFACFA081E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSView+MMTabBarViewExtensions.m"; path = "MMTabBarView/NSView+MMTabBarViewExtensions.m"; sourceTree = SOURCE_ROOT; };
+		CFACFA401E24ACBA00FD6AB6 /* MMMetalTabStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMetalTabStyle.h; path = MMTabBarView/Styles/MMMetalTabStyle.h; sourceTree = SOURCE_ROOT; };
+		CFACFA411E24ACBA00FD6AB6 /* MMMetalTabStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMetalTabStyle.m; path = MMTabBarView/Styles/MMMetalTabStyle.m; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFACF9B71E24AAB800FD6AB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFACF9B11E24AAB800FD6AB6 = {
+			isa = PBXGroup;
+			children = (
+				CFACF9BC1E24AAB800FD6AB6 /* MMTabBarViewLib */,
+				CFACF9BB1E24AAB800FD6AB6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFACF9BB1E24AAB800FD6AB6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFACF9BA1E24AAB800FD6AB6 /* libMMTabBarViewLib.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFACF9BC1E24AAB800FD6AB6 /* MMTabBarViewLib */ = {
+			isa = PBXGroup;
+			children = (
+				CFACFA401E24ACBA00FD6AB6 /* MMMetalTabStyle.h */,
+				CFACFA411E24ACBA00FD6AB6 /* MMMetalTabStyle.m */,
+				CFACF9D21E24AB0000FD6AB6 /* MMAttachedTabBarButton.h */,
+				CFACF9D31E24AB0000FD6AB6 /* MMAttachedTabBarButton.m */,
+				CFACF9D41E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.h */,
+				CFACF9D51E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.m */,
+				CFACF9D61E24AB0000FD6AB6 /* MMOverflowPopUpButton.h */,
+				CFACF9D71E24AB0000FD6AB6 /* MMOverflowPopUpButton.m */,
+				CFACF9D81E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.h */,
+				CFACF9D91E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.m */,
+				CFACF9DA1E24AB0000FD6AB6 /* MMProgressIndicator.h */,
+				CFACF9DB1E24AB0000FD6AB6 /* MMProgressIndicator.m */,
+				CFACF9DC1E24AB0000FD6AB6 /* MMRolloverButton.h */,
+				CFACF9DD1E24AB0000FD6AB6 /* MMRolloverButton.m */,
+				CFACF9DE1E24AB0000FD6AB6 /* MMRolloverButtonCell.h */,
+				CFACF9DF1E24AB0000FD6AB6 /* MMRolloverButtonCell.m */,
+				CFACF9E01E24AB0000FD6AB6 /* MMSlideButtonsAnimation.h */,
+				CFACF9E11E24AB0000FD6AB6 /* MMSlideButtonsAnimation.m */,
+				CFACF9E21E24AB0000FD6AB6 /* MMTabBarButton.Common.h */,
+				CFACF9E31E24AB0000FD6AB6 /* MMTabBarButton.h */,
+				CFACF9E41E24AB0000FD6AB6 /* MMTabBarButton.m */,
+				CFACF9E51E24AB0000FD6AB6 /* MMTabBarButton.Private.h */,
+				CFACF9E61E24AB0000FD6AB6 /* MMTabBarButtonCell.h */,
+				CFACF9E71E24AB0000FD6AB6 /* MMTabBarButtonCell.m */,
+				CFACF9E81E24AB0000FD6AB6 /* MMTabBarButtonCell.Private.h */,
+				CFACF9E91E24AB0000FD6AB6 /* MMTabBarController.h */,
+				CFACF9EA1E24AB0000FD6AB6 /* MMTabBarController.m */,
+				CFACF9EB1E24AB0000FD6AB6 /* MMTabBarItem.h */,
+				CFACF9EC1E24AB0000FD6AB6 /* MMTabBarView-Info.plist */,
+				CFACF9ED1E24AB0000FD6AB6 /* MMTabBarView-Prefix.pch */,
+				CFACF9EE1E24AB0000FD6AB6 /* MMTabBarView.Globals.h */,
+				CFACF9EF1E24AB0000FD6AB6 /* MMTabBarView.h */,
+				CFACF9F01E24AB0000FD6AB6 /* MMTabBarView.m */,
+				CFACF9F11E24AB0000FD6AB6 /* MMTabBarView.Private.h */,
+				CFACF9F21E24AB0000FD6AB6 /* MMTabDragAssistant.h */,
+				CFACF9F31E24AB0000FD6AB6 /* MMTabDragAssistant.m */,
+				CFACF9F41E24AB0000FD6AB6 /* MMTabDragView.h */,
+				CFACF9F51E24AB0000FD6AB6 /* MMTabDragView.m */,
+				CFACF9F61E24AB0000FD6AB6 /* MMTabDragWindow.h */,
+				CFACF9F71E24AB0000FD6AB6 /* MMTabDragWindow.m */,
+				CFACF9F81E24AB0000FD6AB6 /* MMTabDragWindowController.h */,
+				CFACF9F91E24AB0000FD6AB6 /* MMTabDragWindowController.m */,
+				CFACF9FA1E24AB0000FD6AB6 /* MMTabPasteboardItem.h */,
+				CFACF9FB1E24AB0000FD6AB6 /* MMTabPasteboardItem.m */,
+				CFACF9FC1E24AB0000FD6AB6 /* MMTabStyle.h */,
+				CFACF9FD1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.h */,
+				CFACF9FE1E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.m */,
+				CFACF9FF1E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.h */,
+				CFACFA001E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.m */,
+				CFACFA011E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.h */,
+				CFACFA021E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.m */,
+				CFACFA031E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.h */,
+				CFACFA041E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.m */,
+				CFACFA051E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.h */,
+				CFACFA061E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.m */,
+				CFACFA071E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.h */,
+				CFACFA081E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.m */,
+			);
+			path = MMTabBarViewLib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CFACF9B81E24AAB800FD6AB6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFACFA271E24AB0000FD6AB6 /* MMTabBarView.Private.h in Headers */,
+				CFACFA1D1E24AB0000FD6AB6 /* MMTabBarButtonCell.h in Headers */,
+				CFACFA3B1E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.h in Headers */,
+				CFACFA371E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.h in Headers */,
+				CFACFA1A1E24AB0000FD6AB6 /* MMTabBarButton.h in Headers */,
+				CFACFA0D1E24AB0000FD6AB6 /* MMOverflowPopUpButton.h in Headers */,
+				CFACFA391E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.h in Headers */,
+				CFACFA171E24AB0000FD6AB6 /* MMSlideButtonsAnimation.h in Headers */,
+				CFACFA3D1E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.h in Headers */,
+				CFACFA0B1E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.h in Headers */,
+				CFACFA2A1E24AB0000FD6AB6 /* MMTabDragView.h in Headers */,
+				CFACFA251E24AB0000FD6AB6 /* MMTabBarView.h in Headers */,
+				CFACFA301E24AB0000FD6AB6 /* MMTabPasteboardItem.h in Headers */,
+				CFACFA091E24AB0000FD6AB6 /* MMAttachedTabBarButton.h in Headers */,
+				CFACFA151E24AB0000FD6AB6 /* MMRolloverButtonCell.h in Headers */,
+				CFACFA351E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.h in Headers */,
+				CFACFA2E1E24AB0000FD6AB6 /* MMTabDragWindowController.h in Headers */,
+				CFACFA331E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.h in Headers */,
+				CFACFA0F1E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.h in Headers */,
+				CFACFA201E24AB0000FD6AB6 /* MMTabBarController.h in Headers */,
+				CFACFA321E24AB0000FD6AB6 /* MMTabStyle.h in Headers */,
+				CFACFA1F1E24AB0000FD6AB6 /* MMTabBarButtonCell.Private.h in Headers */,
+				CFACFA111E24AB0000FD6AB6 /* MMProgressIndicator.h in Headers */,
+				CFACFA191E24AB0000FD6AB6 /* MMTabBarButton.Common.h in Headers */,
+				CFACFA231E24AB0000FD6AB6 /* MMTabBarView-Prefix.pch in Headers */,
+				CFACFA2C1E24AB0000FD6AB6 /* MMTabDragWindow.h in Headers */,
+				CFACFA281E24AB0000FD6AB6 /* MMTabDragAssistant.h in Headers */,
+				CFACFA221E24AB0000FD6AB6 /* MMTabBarItem.h in Headers */,
+				CFACFA421E24ACBA00FD6AB6 /* MMMetalTabStyle.h in Headers */,
+				CFACFA131E24AB0000FD6AB6 /* MMRolloverButton.h in Headers */,
+				CFACFA241E24AB0000FD6AB6 /* MMTabBarView.Globals.h in Headers */,
+				CFACFA1C1E24AB0000FD6AB6 /* MMTabBarButton.Private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CFACF9B91E24AAB800FD6AB6 /* MMTabBarViewLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFACF9C31E24AAB800FD6AB6 /* Build configuration list for PBXNativeTarget "MMTabBarViewLib" */;
+			buildPhases = (
+				CFACF9B61E24AAB800FD6AB6 /* Sources */,
+				CFACF9B71E24AAB800FD6AB6 /* Frameworks */,
+				CFACF9B81E24AAB800FD6AB6 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MMTabBarViewLib;
+			productName = MMTabBarViewLib;
+			productReference = CFACF9BA1E24AAB800FD6AB6 /* libMMTabBarViewLib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFACF9B21E24AAB800FD6AB6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = "Michael G. Kazakov";
+				TargetAttributes = {
+					CFACF9B91E24AAB800FD6AB6 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CFACF9B51E24AAB800FD6AB6 /* Build configuration list for PBXProject "MMTabBarViewLib" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CFACF9B11E24AAB800FD6AB6;
+			productRefGroup = CFACF9BB1E24AAB800FD6AB6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFACF9B91E24AAB800FD6AB6 /* MMTabBarViewLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFACF9B61E24AAB800FD6AB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFACFA211E24AB0000FD6AB6 /* MMTabBarController.m in Sources */,
+				CFACFA361E24AB0000FD6AB6 /* NSBezierPath+MMTabBarViewExtensions.m in Sources */,
+				CFACFA341E24AB0000FD6AB6 /* NSAffineTransform+MMTabBarViewExtensions.m in Sources */,
+				CFACFA3C1E24AB0000FD6AB6 /* NSTabViewItem+MMTabBarViewExtensions.m in Sources */,
+				CFACFA311E24AB0000FD6AB6 /* MMTabPasteboardItem.m in Sources */,
+				CFACFA2F1E24AB0000FD6AB6 /* MMTabDragWindowController.m in Sources */,
+				CFACFA141E24AB0000FD6AB6 /* MMRolloverButton.m in Sources */,
+				CFACFA2B1E24AB0000FD6AB6 /* MMTabDragView.m in Sources */,
+				CFACFA101E24AB0000FD6AB6 /* MMOverflowPopUpButtonCell.m in Sources */,
+				CFACFA431E24ACBA00FD6AB6 /* MMMetalTabStyle.m in Sources */,
+				CFACFA0E1E24AB0000FD6AB6 /* MMOverflowPopUpButton.m in Sources */,
+				CFACFA1B1E24AB0000FD6AB6 /* MMTabBarButton.m in Sources */,
+				CFACFA0A1E24AB0000FD6AB6 /* MMAttachedTabBarButton.m in Sources */,
+				CFACFA3E1E24AB0000FD6AB6 /* NSView+MMTabBarViewExtensions.m in Sources */,
+				CFACFA261E24AB0000FD6AB6 /* MMTabBarView.m in Sources */,
+				CFACFA1E1E24AB0000FD6AB6 /* MMTabBarButtonCell.m in Sources */,
+				CFACFA161E24AB0000FD6AB6 /* MMRolloverButtonCell.m in Sources */,
+				CFACFA3A1E24AB0000FD6AB6 /* NSString+MMTabBarViewExtensions.m in Sources */,
+				CFACFA291E24AB0000FD6AB6 /* MMTabDragAssistant.m in Sources */,
+				CFACFA0C1E24AB0000FD6AB6 /* MMAttachedTabBarButtonCell.m in Sources */,
+				CFACFA181E24AB0000FD6AB6 /* MMSlideButtonsAnimation.m in Sources */,
+				CFACFA121E24AB0000FD6AB6 /* MMProgressIndicator.m in Sources */,
+				CFACFA2D1E24AB0000FD6AB6 /* MMTabDragWindow.m in Sources */,
+				CFACFA381E24AB0000FD6AB6 /* NSCell+MMTabBarViewExtensions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFACF9C11E24AAB800FD6AB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = .;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CFACF9C21E24AAB800FD6AB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = .;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CFACF9C41E24AAB800FD6AB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFACF9C51E24AAB800FD6AB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFACF9B51E24AAB800FD6AB6 /* Build configuration list for PBXProject "MMTabBarViewLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFACF9C11E24AAB800FD6AB6 /* Debug */,
+				CFACF9C21E24AAB800FD6AB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFACF9C31E24AAB800FD6AB6 /* Build configuration list for PBXNativeTarget "MMTabBarViewLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFACF9C41E24AAB800FD6AB6 /* Debug */,
+				CFACF9C51E24AAB800FD6AB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFACF9B21E24AAB800FD6AB6 /* Project object */;
+}

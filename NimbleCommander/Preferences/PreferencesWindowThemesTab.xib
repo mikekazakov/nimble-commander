@@ -156,21 +156,8 @@
                         <action selector="onRevertClicked:" target="-2" id="WXm-qh-uYR"/>
                     </connections>
                 </button>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h63-Ng-Yy2">
-                    <rect key="frame" x="346" y="359" width="60" height="19"/>
-                    <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="08K-SG-44X"/>
-                    </constraints>
-                    <buttonCell key="cell" type="recessed" title="Export" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MoT-ih-r3N">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="12"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="onExportClicked:" target="-2" id="YxT-2O-89G"/>
-                    </connections>
-                </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cVc-ui-vZg">
-                    <rect key="frame" x="414" y="359" width="60" height="19"/>
+                    <rect key="frame" x="346" y="359" width="60" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="kXM-5P-Mhm"/>
                     </constraints>
@@ -182,21 +169,34 @@
                         <action selector="onImportClicked:" target="-2" id="RtY-jj-RfW"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h63-Ng-Yy2">
+                    <rect key="frame" x="414" y="359" width="60" height="19"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="08K-SG-44X"/>
+                    </constraints>
+                    <buttonCell key="cell" type="recessed" title="Export" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MoT-ih-r3N">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="systemBold" size="12"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onExportClicked:" target="-2" id="YxT-2O-89G"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstItem="cVc-ui-vZg" firstAttribute="baseline" secondItem="h63-Ng-Yy2" secondAttribute="baseline" id="2gH-WL-SDp"/>
                 <constraint firstItem="UWu-1O-w6e" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="68v-y4-YGB"/>
+                <constraint firstItem="cVc-ui-vZg" firstAttribute="leading" secondItem="SYN-29-2Ch" secondAttribute="trailing" constant="8" symbolic="YES" id="8XM-9P-xzT"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="top" secondItem="9jG-uy-qcQ" secondAttribute="bottom" constant="8" symbolic="YES" id="BIW-38-egz"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="leading" secondItem="UWu-1O-w6e" secondAttribute="trailing" constant="8" symbolic="YES" id="ECI-ef-u85"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="Er7-ID-ct0"/>
                 <constraint firstItem="h63-Ng-Yy2" firstAttribute="baseline" secondItem="SYN-29-2Ch" secondAttribute="baseline" id="IUS-ES-lv5"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="baseline" secondItem="UWu-1O-w6e" secondAttribute="baseline" id="L7S-e2-jbg"/>
-                <constraint firstItem="h63-Ng-Yy2" firstAttribute="leading" secondItem="SYN-29-2Ch" secondAttribute="trailing" constant="8" symbolic="YES" id="LHj-5Q-cyd"/>
                 <constraint firstAttribute="trailing" secondItem="0oI-YO-0HY" secondAttribute="trailing" constant="20" symbolic="YES" id="OLT-i1-KyI"/>
                 <constraint firstItem="SYN-29-2Ch" firstAttribute="leading" secondItem="9jG-uy-qcQ" secondAttribute="trailing" constant="8" symbolic="YES" id="PKX-sa-e6U"/>
                 <constraint firstItem="SYN-29-2Ch" firstAttribute="baseline" secondItem="9jG-uy-qcQ" secondAttribute="baseline" id="SGM-qW-qk0"/>
-                <constraint firstItem="cVc-ui-vZg" firstAttribute="leading" secondItem="h63-Ng-Yy2" secondAttribute="trailing" constant="8" symbolic="YES" id="aeb-dJ-626"/>
                 <constraint firstAttribute="bottom" secondItem="0oI-YO-0HY" secondAttribute="bottom" constant="20" symbolic="YES" id="dGY-ci-hjg"/>
+                <constraint firstItem="h63-Ng-Yy2" firstAttribute="leading" secondItem="cVc-ui-vZg" secondAttribute="trailing" constant="8" symbolic="YES" id="ffT-Ty-bnl"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="hgr-o5-zvb"/>
             </constraints>
         </customView>

@@ -69,7 +69,7 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 - (void) buildBasicControls
 {
     MainWindowFilePanelState* state = m_State;
-    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_LeftPanelGoToButton.target = state;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
@@ -78,7 +78,7 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     m_LeftPanelGoToButton.owner = state;
     m_LeftPanelGoToButton.isRight = false;
 
-    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_RightPanelGoToButton.target = state;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wselector"
@@ -87,13 +87,13 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     m_RightPanelGoToButton.owner = state;
     m_RightPanelGoToButton.isRight = true;
 
-    m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
     m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
     [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
     m_LeftPanelShareButton.refusesFirstResponder = true;
     
-    m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 23)];
+    m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
     m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
     [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];

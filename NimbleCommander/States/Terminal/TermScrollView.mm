@@ -108,6 +108,12 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
+        [self addConstraints:
+         [NSLayoutConstraint constraintsWithVisualFormat:top ? @"V:|-0-[m_ViewHolder]" :
+                                                               @"V:[m_ViewHolder]-0-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
         
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)

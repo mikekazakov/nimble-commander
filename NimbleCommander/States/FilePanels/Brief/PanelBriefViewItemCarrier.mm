@@ -1,5 +1,6 @@
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelView.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewItem.h"
@@ -7,7 +8,7 @@
 
 static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 
-static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
+static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
 {
     static NSParagraphStyle *styles[3];
     static once_flag once;
@@ -29,10 +30,10 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     });
     
     switch( _mode ) {
-        case NSLineBreakByTruncatingHead:   return styles[0];
-        case NSLineBreakByTruncatingTail:   return styles[1];
-        case NSLineBreakByTruncatingMiddle: return styles[2];
-        default:                            return nil;
+        case PanelViewFilenameTrimming::Heading:    return styles[0];
+        case PanelViewFilenameTrimming::Trailing:   return styles[1];
+        case PanelViewFilenameTrimming::Middle:     return styles[2];
+        default:                                    return nil;
     }
 }
 
@@ -293,9 +294,10 @@ static NSPoint  g_LastMouseDownPos = {};
 
 - (void) buildTextAttributes
 {
+    const auto tm = panel::GetCurrentFilenamesTrimmingMode();
     NSDictionary *attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsBriefFont(),
                             NSForegroundColorAttributeName: m_TextColor,
-                            NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+                            NSParagraphStyleAttributeName: ParagraphStyle(tm)};
     
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename
                                                           attributes:attrs];

@@ -70,6 +70,19 @@ struct NSEventModifierFlagsHolder
     operator NSEventModifierFlags() const { return ((uint64_t)flags) << 16; }
 };
 
+static const auto g_ConfigTrimmingMode = "filePanel.presentation.filenamesTrimmingMode";
+PanelViewFilenameTrimming panel::GetCurrentFilenamesTrimmingMode()
+{
+    static PanelViewFilenameTrimming mode = []{
+        const auto v = (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode);
+        static auto ticket = GlobalConfig().Observe(g_ConfigTrimmingMode, []{
+            mode = (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode);
+        });
+        return v;
+    }();
+    return mode;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface PanelView()

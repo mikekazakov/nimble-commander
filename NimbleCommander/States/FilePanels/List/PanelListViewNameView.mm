@@ -7,7 +7,7 @@
 
 static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 
-static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
+static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
 {
     static NSParagraphStyle *styles[3];
     static once_flag once;
@@ -29,10 +29,10 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     });
     
     switch( _mode ) {
-        case NSLineBreakByTruncatingHead:   return styles[0];
-        case NSLineBreakByTruncatingTail:   return styles[1];
-        case NSLineBreakByTruncatingMiddle: return styles[2];
-        default:                            return nil;
+        case PanelViewFilenameTrimming::Heading:    return styles[0];
+        case PanelViewFilenameTrimming::Trailing:   return styles[1];
+        case PanelViewFilenameTrimming::Middle:     return styles[2];
+        default:                                    return nil;
     }
 }
 
@@ -151,10 +151,11 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
     PanelListViewRowView *row_view = (PanelListViewRowView*)self.superview;
     if( !row_view )
         return;
-    
+
+    const auto tm = panel::GetCurrentFilenamesTrimmingMode();
     NSDictionary *attrs = @{NSFontAttributeName:row_view.listView.font,
                             NSForegroundColorAttributeName: row_view.rowTextColor,
-                            NSParagraphStyleAttributeName: ParagraphStyle(NSLineBreakByTruncatingMiddle)};
+                            NSParagraphStyleAttributeName: ParagraphStyle(tm)};
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename
                                                           attributes:attrs];
     

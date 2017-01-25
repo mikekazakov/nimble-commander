@@ -101,3 +101,8 @@ struct PanelViewLayout;
 + (NSArray*) acceptedDragAndDropTypes;
 
 @end
+
+namespace panel
+{
+    PanelViewFilenameTrimming GetCurrentFilenamesTrimmingMode();
+};

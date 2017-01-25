@@ -142,6 +142,10 @@ static NSString *Orthodox( time_t _time )
     return [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_time]];
 }
 
+// disclaimer: CFDateFormatter is not thread safe, even for read-only usage, thus using spinlocks
+// to control access. might need something more scaleable later.
+// like having multiple instances (and locks) and choose them according current thread id
+
 static NSString *Long( time_t _time )
 {
     static const auto formatter = []{
@@ -149,7 +153,8 @@ static NSString *Long( time_t _time )
         CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    
+    static spinlock formatter_lock;
+    lock_guard<spinlock> lock(formatter_lock);
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
     return (NSString*)CFBridgingRelease(str);
 }
@@ -161,7 +166,8 @@ static NSString *Medium( time_t _time )
         CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    
+    static spinlock formatter_lock;
+    lock_guard<spinlock> lock(formatter_lock);
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
     return (NSString*)CFBridgingRelease(str);
 }
@@ -173,7 +179,8 @@ static NSString *Short( time_t _time )
         CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    
+    static spinlock formatter_lock;
+    lock_guard<spinlock> lock(formatter_lock);
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
     return (NSString*)CFBridgingRelease(str);
 }
@@ -190,8 +197,9 @@ static NSString *Tiny( time_t _time )
         CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
         return f;
     }();
-    
     const auto is_today = [NSCalendar.currentCalendar isDateInToday:[NSDate dateWithTimeIntervalSince1970:_time]];
+    static spinlock formatter_lock;
+    lock_guard<spinlock> lock(formatter_lock);
     auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, is_today ? today : general, (double)_time - kCFAbsoluteTimeIntervalSince1970);
     return (NSString*)CFBridgingRelease(str);
 }

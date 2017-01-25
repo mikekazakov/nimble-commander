@@ -1341,7 +1341,9 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             req.filename = name;
             req.timeout = 2s;            
             req.done = [=]{
-                [((PanelController*)ws).view startFieldEditorRenaming];
+                dispatch_to_main_queue([=]{
+                    [((PanelController*)ws).view startFieldEditorRenaming];
+                });
             };
             [ss ScheduleDelayedSelectionChangeFor:req];
         });
@@ -1403,7 +1405,9 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             req.filename = name;
             req.timeout = 2s;
             req.done = [=]{
-                [((PanelController*)ws).view startFieldEditorRenaming];
+                dispatch_to_main_queue([=]{
+                    [((PanelController*)ws).view startFieldEditorRenaming];
+                });
             };
             [ss ScheduleDelayedSelectionChangeFor:req];
         });

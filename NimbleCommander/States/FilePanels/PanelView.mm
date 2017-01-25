@@ -11,12 +11,7 @@
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
-//#include "PanelData.h"
 #include "PanelController.h"
-//#include "PanelViewPresentation.h"
-//#include "ModernPanelViewPresentation.h"
-//#include "ClassicPanelViewPresentation.h"
-
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
@@ -84,42 +79,16 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     if (self) {
         m_Data = nullptr;
         m_CursorPos = -1;
-        
-        __weak PanelView *weak_self = self;
-        m_KeyboardModifierFlags = 0;
         m_HeaderTitle = @"";
-//        m_FieldRenamingRequestTicket = 0;
-        
-/*        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];*/
-/*        
- MB write own field editor, which will listen to this notification himself?
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(appWillResignActive)
-                                                   name:NSApplicationWillResignActiveNotification
-                                                 object:[NSApplication sharedApplication]];
- 
- */
-//        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
-        
-//        auto skin = AppDelegate.me.skin;
-//        if (skin == ApplicationSkin::Modern)
-//            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
-//        else if(skin == ApplicationSkin::Classic)
-//            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
-//        
-        
-        //m_ItemsView = [[PanelBriefView alloc] initWithFrame:frame];
-//        m_ItemsView = [[PanelListView alloc] initWithFrame:frame];
+
         m_ItemsView = [self spawnListView];
         m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_ItemsView];
         
         m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
-        m_HeaderView.sortModeChangeCallback = [=](PanelDataSortMode _sm){
+        __weak PanelView *weak_self = self;
+        m_HeaderView.sortModeChangeCallback = [weak_self](PanelDataSortMode _sm){
             if( PanelView *strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
@@ -179,10 +148,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
 }
 
-//- (BOOL)isFlipped
-//{
-//    return YES;
-//}
+- (BOOL) isOpaque
+{
+    return true;
+}
 
 - (BOOL)acceptsFirstResponder
 {

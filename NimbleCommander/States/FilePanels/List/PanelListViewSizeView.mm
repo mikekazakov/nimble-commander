@@ -1,4 +1,5 @@
 #include <Utility/ByteCountFormatter.h>
+#include "../PanelViewPresentationSettings.h"
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -19,35 +20,6 @@ static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData
     }
     else {
         return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), _format);
-    }
-}
-
-static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
-{
-    static NSParagraphStyle *styles[3];
-    static once_flag once;
-    call_once(once, []{
-        NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
-        p0.alignment = NSTextAlignmentRight;
-        p0.lineBreakMode = NSLineBreakByTruncatingHead;
-        styles[0] = p0;
-        
-        NSMutableParagraphStyle *p1 = [NSMutableParagraphStyle new];
-        p1.alignment = NSTextAlignmentRight;
-        p1.lineBreakMode = NSLineBreakByTruncatingTail;
-        styles[1] = p1;
-        
-        NSMutableParagraphStyle *p2 = [NSMutableParagraphStyle new];
-        p2.alignment = NSTextAlignmentRight;
-        p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
-        styles[2] = p2;
-    });
-    
-    switch( _mode ) {
-        case NSLineBreakByTruncatingHead:   return styles[0];
-        case NSLineBreakByTruncatingTail:   return styles[1];
-        case NSLineBreakByTruncatingMiddle: return styles[2];
-        default:                            return nil;
     }
 }
 
@@ -122,7 +94,7 @@ static NSParagraphStyle *ParagraphStyle( NSLineBreakMode _mode )
 static const auto g_ParagraphStyle = []{
     NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
     p.alignment = NSTextAlignmentRight;
-    p.lineBreakMode = /*NSLineBreakByTruncatingMiddle*/NSLineBreakByClipping;
+    p.lineBreakMode = NSLineBreakByClipping;
     return p;
 }();
 
@@ -132,7 +104,7 @@ static const auto g_ParagraphStyle = []{
         if( auto item = row_view.item )
             m_String = FileSizeToString(item,
                                         row_view.vd,
-                                        ByteCountFormatter::Type::Adaptive8);
+                                        panel::GetFileSizeFormat());
 
         m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
                              NSForegroundColorAttributeName: row_view.rowTextColor,

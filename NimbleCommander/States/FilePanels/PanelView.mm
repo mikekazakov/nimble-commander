@@ -8,7 +8,7 @@
 
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-//#include <Utility/NSView+Sugar.h>
+#include <Utility/NSEventModifierFlagsHolder.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 //#include "PanelData.h"
@@ -32,7 +32,6 @@ enum class CursorSelectionType : int8_t
 
 struct PanelViewStateStorage
 {
-//    int dispay_offset;
     string focused_item;
 };
 
@@ -48,39 +47,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
     full += _path;
     return hash<string>()(full);
-}
-
-struct NSEventModifierFlagsHolder
-{
-    uint8_t flags;
-    inline NSEventModifierFlagsHolder() : flags(0) {}
-    inline NSEventModifierFlagsHolder( NSEventModifierFlags _flags ) :
-        flags( ((_flags & NSEventModifierFlagDeviceIndependentFlagsMask) >> 16) & 0xFF ) {}
-    inline bool is_capslock()   const { return flags & (NSEventModifierFlagCapsLock     >> 16); }
-    inline bool is_shift()      const { return flags & (NSEventModifierFlagShift        >> 16); }
-    inline bool is_control()    const { return flags & (NSEventModifierFlagControl      >> 16); }
-    inline bool is_option()     const { return flags & (NSEventModifierFlagOption       >> 16); }
-    inline bool is_command()    const { return flags & (NSEventModifierFlagCommand      >> 16); }
-    inline bool is_numpad()     const { return flags & (NSEventModifierFlagNumericPad   >> 16); }
-    inline bool is_help()       const { return flags & (NSEventModifierFlagHelp         >> 16); }
-    inline bool is_func()       const { return flags & (NSEventModifierFlagFunction     >> 16); }
-    
-    bool operator==(const NSEventModifierFlagsHolder&_rhs) const { return flags == _rhs.flags; }
-    bool operator!=(const NSEventModifierFlagsHolder&_rhs) const { return flags != _rhs.flags; }
-    operator NSEventModifierFlags() const { return ((uint64_t)flags) << 16; }
-};
-
-static const auto g_ConfigTrimmingMode = "filePanel.presentation.filenamesTrimmingMode";
-PanelViewFilenameTrimming panel::GetCurrentFilenamesTrimmingMode()
-{
-    static PanelViewFilenameTrimming mode = []{
-        const auto v = (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode);
-        static auto ticket = GlobalConfig().Observe(g_ConfigTrimmingMode, []{
-            mode = (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode);
-        });
-        return v;
-    }();
-    return mode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

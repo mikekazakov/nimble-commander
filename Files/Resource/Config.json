@@ -68,11 +68,6 @@
             "showDotDotEntry": true,
   
             /**
-             * Show volume information bar below file panels
-             */
-            "showVolumeInformationBar": true,
-
-            /**
              * Show current paths in other file panels in GoTo pop-up menu
              */
             "appendOtherWindowsPathsToGoToMenu": true,

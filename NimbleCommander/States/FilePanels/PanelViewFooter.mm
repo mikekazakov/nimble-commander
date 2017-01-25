@@ -4,6 +4,7 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
+#include "PanelViewPresentationSettings.h"
 #include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"
@@ -284,7 +285,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         
         m_SizeLabel.stringValue = FileSizeToString(_item,
                                                    _vd,
-                                                   ByteCountFormatter::Type::Fixed6);
+                                                   panel::GetFileSizeFormat());
         
         m_ModTime.stringValue = PanelListViewDateFormatting::Format(
                                                                    PanelListViewDateFormatting::Style::Medium,
@@ -387,7 +388,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         else {
             m_SelectionLabel.stringValue = FormHumanReadableBytesAndFiles(m_Stats.bytes_in_selected_entries,
                                                                           m_Stats.selected_entries_amount,
-                                                                          ByteCountFormatter::Type::SpaceSeparated);
+                                                                          panel::GetSelectionSizeFormat());
             m_SelectionLabel.hidden = false;
             m_FilenameLabel.hidden = true;
             m_SizeLabel.hidden = true;

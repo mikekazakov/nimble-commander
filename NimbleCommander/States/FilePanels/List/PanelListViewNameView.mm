@@ -1,5 +1,6 @@
 #include <Utility/FontExtras.h>
 #include "../PanelView.h"
+#include "../PanelViewPresentationSettings.h"
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"

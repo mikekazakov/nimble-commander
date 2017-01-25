@@ -97,6 +97,7 @@
 		CF3120C61A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF31F66D1DFE6268005A1A40 /* PanelViewLayoutSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */; };
 		CF31F6701DFE644B005A1A40 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
+		CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */; };
 		CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
 		CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CF45CA291D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
@@ -1024,6 +1025,8 @@
 		CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewLayoutSupport.mm; path = NimbleCommander/States/FilePanels/PanelViewLayoutSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF31F66E1DFE644B005A1A40 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Brief/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF31F66F1DFE644B005A1A40 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/Brief/Layout.mm; sourceTree = SOURCE_ROOT; };
+		CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationSettings.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.h; sourceTree = SOURCE_ROOT; };
+		CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationSettings.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.mm; sourceTree = SOURCE_ROOT; };
 		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconsGenerator2.h; path = NimbleCommander/States/FilePanels/IconsGenerator2.h; sourceTree = SOURCE_ROOT; };
 		CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconsGenerator2.mm; path = NimbleCommander/States/FilePanels/IconsGenerator2.mm; sourceTree = SOURCE_ROOT; };
@@ -1906,6 +1909,8 @@
 				CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */,
 				CFDAC2121DFBBD110039A104 /* PanelView.h */,
 				CFDAC2131DFBBD110039A104 /* PanelView.mm */,
+				CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */,
+				CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */,
 				CF31F66B1DFE6268005A1A40 /* PanelViewLayoutSupport.h */,
 				CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */,
 				CFDAC2151DFBBD3D0039A104 /* PanelViewTypes.h */,
@@ -3637,6 +3642,7 @@
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
 				CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */,
 				CFDAC2901DFBF9260039A104 /* TermParser.mm in Sources */,
+				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,
 				CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */,
 				CFDAC2971DFBF9260039A104 /* TermShellTask.cpp in Sources */,
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,

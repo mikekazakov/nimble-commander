@@ -2,6 +2,7 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelView.h"
+#include "../PanelViewPresentationSettings.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"

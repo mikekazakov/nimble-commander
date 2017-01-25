@@ -13,6 +13,7 @@
 		CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
 		CF34BEEF1E225EB3006A6B72 /* ColoredSeparatorLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */; };
 		CF34BEF11E225EB9006A6B72 /* ColoredSeparatorLine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */; };
+		CF3E6DF51E386F52002B4AAD /* NSEventModifierFlagsHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */; };
 		CF56C2D11DC3719000F0DF0F /* ByteCountFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */; };
 		CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */; };
 		CF84C8E71DB867F200B4E888 /* Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = CF84C8E61DB867F200B4E888 /* Layout.h */; };
@@ -75,6 +76,7 @@
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
+		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
 		CF84C8E61DB867F200B4E888 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = include/Utility/Layout.h; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
@@ -254,6 +257,7 @@
 				CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */,
 				CF34BEEF1E225EB3006A6B72 /* ColoredSeparatorLine.h in Headers */,
 				CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */,
+				CF3E6DF51E386F52002B4AAD /* NSEventModifierFlagsHolder.h in Headers */,
 				CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,

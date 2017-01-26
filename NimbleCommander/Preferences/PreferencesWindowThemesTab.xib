@@ -144,39 +144,67 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SYN-29-2Ch">
-                    <rect key="frame" x="278" y="359" width="60" height="19"/>
+                    <rect key="frame" x="278" y="359" width="51" height="19"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="Wbj-4x-93D"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Wbj-4x-93D"/>
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Revert" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="b8c-6i-eUM">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="12"/>
+                        <font key="font" metaFont="systemBold" size="11"/>
                     </buttonCell>
                     <connections>
                         <action selector="onRevertClicked:" target="-2" id="WXm-qh-uYR"/>
+                        <binding destination="-2" name="enabled" keyPath="self.selectedThemeCanBeReverted" id="vPP-wA-6YD"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fk3-8g-Eaq">
+                    <rect key="frame" x="331" y="359" width="68" height="19"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="kgR-bC-UPp"/>
+                    </constraints>
+                    <buttonCell key="cell" type="recessed" title="Duplicate" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Gep-4j-i4f">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="systemBold" size="11"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onDuplicateClicked:" target="-2" id="xzF-YR-aib"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Vs-Mk-Rzo">
+                    <rect key="frame" x="401" y="359" width="59" height="19"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Hgh-eP-zrK"/>
+                    </constraints>
+                    <buttonCell key="cell" type="recessed" title="Remove" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rLT-UR-67R">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="systemBold" size="11"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onRemoveClicked:" target="-2" id="rrj-8I-gYd"/>
+                        <binding destination="-2" name="enabled" keyPath="self.selectedThemeCanBeRemoved" id="8Nr-Tq-YDl"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cVc-ui-vZg">
-                    <rect key="frame" x="346" y="359" width="60" height="19"/>
+                    <rect key="frame" x="462" y="359" width="52" height="19"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="kXM-5P-Mhm"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="kXM-5P-Mhm"/>
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Import" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KRF-Q2-TeT">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="12"/>
+                        <font key="font" metaFont="systemBold" size="11"/>
                     </buttonCell>
                     <connections>
                         <action selector="onImportClicked:" target="-2" id="RtY-jj-RfW"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h63-Ng-Yy2">
-                    <rect key="frame" x="414" y="359" width="60" height="19"/>
+                    <rect key="frame" x="516" y="359" width="52" height="19"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="08K-SG-44X"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="08K-SG-44X"/>
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Export" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MoT-ih-r3N">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="12"/>
+                        <font key="font" metaFont="systemBold" size="11"/>
                     </buttonCell>
                     <connections>
                         <action selector="onExportClicked:" target="-2" id="YxT-2O-89G"/>
@@ -186,7 +214,7 @@
             <constraints>
                 <constraint firstItem="cVc-ui-vZg" firstAttribute="baseline" secondItem="h63-Ng-Yy2" secondAttribute="baseline" id="2gH-WL-SDp"/>
                 <constraint firstItem="UWu-1O-w6e" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="68v-y4-YGB"/>
-                <constraint firstItem="cVc-ui-vZg" firstAttribute="leading" secondItem="SYN-29-2Ch" secondAttribute="trailing" constant="8" symbolic="YES" id="8XM-9P-xzT"/>
+                <constraint firstItem="1Vs-Mk-Rzo" firstAttribute="baseline" secondItem="fk3-8g-Eaq" secondAttribute="baseline" id="9ep-3n-9w4"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="top" secondItem="9jG-uy-qcQ" secondAttribute="bottom" constant="8" symbolic="YES" id="BIW-38-egz"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="leading" secondItem="UWu-1O-w6e" secondAttribute="trailing" constant="8" symbolic="YES" id="ECI-ef-u85"/>
                 <constraint firstItem="9jG-uy-qcQ" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="Er7-ID-ct0"/>
@@ -195,10 +223,15 @@
                 <constraint firstAttribute="trailing" secondItem="0oI-YO-0HY" secondAttribute="trailing" constant="20" symbolic="YES" id="OLT-i1-KyI"/>
                 <constraint firstItem="SYN-29-2Ch" firstAttribute="leading" secondItem="9jG-uy-qcQ" secondAttribute="trailing" constant="8" symbolic="YES" id="PKX-sa-e6U"/>
                 <constraint firstItem="SYN-29-2Ch" firstAttribute="baseline" secondItem="9jG-uy-qcQ" secondAttribute="baseline" id="SGM-qW-qk0"/>
+                <constraint firstItem="cVc-ui-vZg" firstAttribute="leading" secondItem="1Vs-Mk-Rzo" secondAttribute="trailing" constant="2" id="bGF-i4-FM5"/>
+                <constraint firstItem="fk3-8g-Eaq" firstAttribute="leading" secondItem="SYN-29-2Ch" secondAttribute="trailing" constant="2" id="bcL-dc-Tar"/>
+                <constraint firstItem="fk3-8g-Eaq" firstAttribute="baseline" secondItem="SYN-29-2Ch" secondAttribute="baseline" id="c1i-Rr-qHA"/>
                 <constraint firstAttribute="bottom" secondItem="0oI-YO-0HY" secondAttribute="bottom" constant="20" symbolic="YES" id="dGY-ci-hjg"/>
-                <constraint firstItem="h63-Ng-Yy2" firstAttribute="leading" secondItem="cVc-ui-vZg" secondAttribute="trailing" constant="8" symbolic="YES" id="ffT-Ty-bnl"/>
+                <constraint firstItem="1Vs-Mk-Rzo" firstAttribute="leading" secondItem="fk3-8g-Eaq" secondAttribute="trailing" constant="2" id="dyl-hn-rqc"/>
+                <constraint firstItem="h63-Ng-Yy2" firstAttribute="leading" secondItem="cVc-ui-vZg" secondAttribute="trailing" constant="2" id="ffT-Ty-bnl"/>
                 <constraint firstItem="0oI-YO-0HY" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="hgr-o5-zvb"/>
             </constraints>
         </customView>
+        <userDefaultsController representsSharedInstance="YES" id="KE9-K5-bEB"/>
     </objects>
 </document>

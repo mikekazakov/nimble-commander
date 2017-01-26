@@ -136,7 +136,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==4)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeLeft
                                                      relatedBy:NSLayoutRelationEqual

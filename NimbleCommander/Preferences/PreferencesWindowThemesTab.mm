@@ -46,7 +46,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 @interface PreferencesWindowThemesTab ()
 @property (strong) IBOutlet NSOutlineView *outlineView;
 @property (strong) IBOutlet NSPopUpButton *themesPopUp;
-
+@property bool selectedThemeCanBeRemoved;
+@property bool selectedThemeCanBeReverted;
 @end
 
 @implementation PreferencesWindowThemesTab
@@ -65,18 +66,23 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         m_Manager = &AppDelegate.me.themesManager;
-        m_ThemeNames = m_Manager->ThemeNames();
-        m_SelectedTheme = 0; // what if there's no themes?
-        auto it = find(begin(m_ThemeNames), end(m_ThemeNames), m_Manager->SelectedThemeName());
-        if( it != end(m_ThemeNames) )
-            m_SelectedTheme = (int)distance( begin(m_ThemeNames), it );
-        
+        [self loadThemesNames];
         [self loadSelectedDocument];
         
         m_Nodes = BuildThemeSettingsNodesTree();
     }
     
     return self;
+}
+
+- (void) loadThemesNames
+{
+    m_ThemeNames = m_Manager->ThemeNames();
+    assert( !m_ThemeNames.empty() ); // there should be at least 3 default themes!
+    m_SelectedTheme = 0;
+    auto it = find(begin(m_ThemeNames), end(m_ThemeNames), m_Manager->SelectedThemeName());
+    if( it != end(m_ThemeNames) )
+        m_SelectedTheme = (int)distance( begin(m_ThemeNames), it );
 }
 
 - (void) buildThemeNamesPopup
@@ -87,18 +93,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
         [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
         self.themesPopUp.lastItem.tag = i;
     }
-    
-    /*[self.themesPopUp.menu addItem:[]{
-        auto i = NSMenuItem.separatorItem;
-        i.tag = -1;
-        return i;
-    }()];
-    [self.themesPopUp.menu addItem:[]{
-        auto i = [[NSMenuItem alloc] init];
-        i.title = @"Manage Themes...";
-        i.tag = -1;
-        return i;
-    }()];*/
+    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
 }
 
 - (void)viewDidLoad
@@ -107,8 +102,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     // Do view setup here.
         
     [self buildThemeNamesPopup];
-    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
-    [self.outlineView expandItem:nil expandChildren:YES];
+    [self.outlineView expandItem:nil expandChildren:true];
 }
 
 -(NSString*)identifier
@@ -128,7 +122,6 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                                       @"Preferences",
                                       "General preferences tab title");
 }
-
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable id)item
 {
@@ -288,8 +281,12 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 - (void) loadSelectedDocument
 {
     // CHECKS!!!
-    const auto &theme_name = m_ThemeNames[m_SelectedTheme];
+    const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), rapidjson::g_CrtAllocator );
+    
+    
+    self.selectedThemeCanBeRemoved = m_Manager->CanBeRemoved(theme_name);
+    self.selectedThemeCanBeReverted = m_Manager->HasDefaultSettings(theme_name);
 }
 
 - (IBAction)onRevertClicked:(id)sender
@@ -348,6 +345,39 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                     }                    
                 }
             }
+}
+
+- (IBAction)onDuplicateClicked:(id)sender
+{
+    const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+    if( m_Manager->AddTheme(m_Manager->SuitableNameForNewTheme(theme_name),
+                            self.selectedThemeFrontend) ) {
+        [self reloadAll];
+    }
+}
+
+- (void) reloadAll
+{
+    [self loadThemesNames];
+    [self loadSelectedDocument];
+    [self buildThemeNamesPopup];
+    [self.outlineView reloadData];
+}
+
+- (IBAction)onRemoveClicked:(id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this theme?",
+        "Asking user for confirmation on erasing custom theme - message");
+    alert.informativeText = NSLocalizedString(@"You can’t undo this action.",
+        "Asking user for confirmation on erasing custom theme - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    if( [alert runModal] == NSAlertFirstButtonReturn ) {
+        const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+        if( m_Manager->RemoveTheme(theme_name) )
+            [self reloadAll];
+    }
 }
 
 @end

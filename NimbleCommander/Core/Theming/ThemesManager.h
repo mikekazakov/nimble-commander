@@ -107,6 +107,15 @@ public:
      * If it was a selected theme - changes it too.
      */
     bool RemoveTheme( const string &_theme_name );
+    
+    bool CanBeRenamed( const string &_theme_name ) const;
+    
+    /**
+     * Renames specified theme to new name. If it is one of default ones - it can't be renamed.
+     * If some theme named _to_name already exist - returns false.
+     * If _theme_name is a selected theme - updates it too.
+     */
+    bool RenameTheme( const string &_theme_name, const string &_to_name );
 
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges( uint64_t _notification_mask, function<void()> _callback );

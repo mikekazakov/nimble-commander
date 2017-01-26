@@ -276,8 +276,7 @@ bool ThemesManager::SelectTheme( const string &_theme_name )
     if( m_SelectedThemeName == _theme_name )
         return true;
     
-    auto i = m_Themes.find(_theme_name);
-    if( i == end(m_Themes) )
+    if( !m_Themes.count(_theme_name) )
         return false;
     
     m_SelectedThemeName = _theme_name;
@@ -348,6 +347,9 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
     bool any = false;
     uint64_t changes_mask = 0;
     for( auto i = _data.MemberBegin(), e = _data.MemberEnd(); i != e; ++i ) {
+        if( i->name == g_NameKey )
+            continue;
+        
         if( new_doc.HasMember(i->name) )
             if( new_doc[i->name] == i->value )
                 continue;
@@ -415,7 +417,7 @@ string ThemesManager::SuitableNameForNewTheme( const string &_current_theme_name
 
 bool ThemesManager::CanBeRemoved( const string &_theme_name ) const
 {
-    return !HasDefaultSettings( _theme_name );
+    return m_Themes.count(_theme_name) && !HasDefaultSettings( _theme_name );
 }
 
 bool ThemesManager::RemoveTheme( const string &_theme_name )
@@ -429,11 +431,53 @@ bool ThemesManager::RemoveTheme( const string &_theme_name )
     if( otni != end(m_OrderedThemeNames) )
         m_OrderedThemeNames.erase(otni);
 
+    // TODO: move to background thread, delay execution
+    WriteThemes();
+
     if( m_SelectedThemeName == _theme_name )
         SelectTheme( m_OrderedDefaultThemeNames.at(0) );
     
+    return true;
+}
+
+bool ThemesManager::CanBeRenamed( const string &_theme_name ) const
+{
+    return m_Themes.count(_theme_name) && !HasDefaultSettings( _theme_name );
+}
+
+bool ThemesManager::RenameTheme( const string &_theme_name, const string &_to_name )
+{
+    if( _theme_name == _to_name )
+        return false;
+
+    if( !CanBeRenamed(_theme_name) )
+        return false;
+    
+    if( m_Themes.count(_to_name) )
+        return false;
+    
+    auto old_doc = ThemeData(_theme_name);
+    if( !old_doc || old_doc->GetType() != rapidjson::kObjectType )
+        return false;
+    
+    rapidjson::StandaloneDocument doc;
+    doc.CopyFrom(*old_doc, rapidjson::g_CrtAllocator);
+    
+    doc.RemoveMember( g_NameKey );
+    doc.AddMember(rapidjson::MakeStandaloneString(g_NameKey),
+                  rapidjson::MakeStandaloneString(_to_name),
+                  rapidjson::g_CrtAllocator);
+    
+    m_Themes.erase(_theme_name);
+    m_Themes.emplace( _to_name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+    replace( begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name, _to_name );
+    
+
     // TODO: move to background thread, delay execution
     WriteThemes();
+
+    if( m_SelectedThemeName == _theme_name )
+        SelectTheme( _to_name );
 
     return true;
 }

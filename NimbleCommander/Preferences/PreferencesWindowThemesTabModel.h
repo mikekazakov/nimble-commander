@@ -5,7 +5,8 @@ enum class PreferencesWindowThemesTabItemType
     Color,
     Font,
     ColoringRules,
-    Appearance
+    Appearance,
+    ThemeTitle
     // bool?
 };
 

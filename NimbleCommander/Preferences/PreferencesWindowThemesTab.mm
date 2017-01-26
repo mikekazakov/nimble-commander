@@ -19,6 +19,7 @@
 #include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabModel.h"
+#include "PreferencesWindowThemesTabImportSheet.h"
 
 static NSTextField *SpawnSectionTitle( NSString *_title )
 {
@@ -195,6 +196,18 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                 v.target = self;
                 return v;
             }
+            if( i.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {
+                NSTextField *v = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+                v.stringValue = [NSString stringWithUTF8String:
+                    self.selectedThemeFrontend[i.entry.c_str()].GetString()];
+                v.bordered = false;
+                v.editable = true;
+                v.enabled = self.selectedThemeCanBeRemoved;
+                v.usesSingleLineMode = true;
+                v.lineBreakMode = NSLineBreakByTruncatingHead;
+                v.delegate = self;
+                return v;
+            }
         }
     }
     
@@ -291,7 +304,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 
 - (IBAction)onRevertClicked:(id)sender
 {
-    if( m_Manager->DiscardThemeChanges(m_ThemeNames[m_SelectedTheme]) ) {
+    const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
+    if( m_Manager->DiscardThemeChanges(theme_name) ) {
         [self loadSelectedDocument];
         [self.outlineView reloadData];
     }
@@ -299,14 +313,14 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 
 - (IBAction)onExportClicked:(id)sender
 {
-    auto name = m_ThemeNames[m_SelectedTheme];
-    if( auto v = m_Manager->ThemeData(name) ) {
+    const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
+    if( auto v = m_Manager->ThemeData(theme_name) ) {
         rapidjson::StringBuffer buffer;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         v->Accept(writer);
         
         NSSavePanel *panel = [NSSavePanel savePanel];
-        panel.nameFieldStringValue = [NSString stringWithUTF8StdString:name];
+        panel.nameFieldStringValue = [NSString stringWithUTF8StdString:theme_name];
         panel.allowedFileTypes = @[@"json"];
         panel.allowsOtherFileTypes = false;
         panel.directoryURL = [NSFileManager.defaultManager URLForDirectory:NSDesktopDirectory
@@ -323,35 +337,60 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
+- (void) importThemeWithURL:(NSURL*)url
+{
+    if( auto d = [NSData dataWithContentsOfURL:url] ) {
+        string str { (const char*)d.bytes, d.length };
+        
+        auto doc = make_shared<rapidjson::Document>();
+        rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>( str.c_str() );
+        if( !ok )
+            return;
+        
+        PreferencesWindowThemesTabImportSheet *sheet =
+            [[PreferencesWindowThemesTabImportSheet alloc] init];
+        sheet.importAsName = url.lastPathComponent.stringByDeletingPathExtension;
+        
+        [sheet beginSheetForWindow:self.view.window
+                 completionHandler:^(NSModalResponse returnCode) {
+                     if( returnCode != NSModalResponseOK  )
+                         return;
+                     
+                     auto name = sheet.overwriteCurrentTheme ?
+                        m_ThemeNames[m_SelectedTheme] :
+                        sheet.importAsName.UTF8String ;
+                     
+                     rapidjson::StandaloneDocument sdoc;
+                     sdoc.CopyFrom(*doc, rapidjson::g_CrtAllocator);
+                     bool result = sheet.overwriteCurrentTheme ?
+                        m_Manager->ImportThemeData( name, sdoc ) :
+                        m_Manager->AddTheme(name, sdoc);
+                     
+                     if( result )
+                         [self reloadAll];
+                 }];
+    }
+}
+
 - (IBAction)onImportClicked:(id)sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowedFileTypes = @[@"json"];
     panel.allowsOtherFileTypes = false;
-    if( [panel runModal] == NSFileHandlingPanelOKButton )
-        if( panel.URL != nil )
-            if( auto d = [NSData dataWithContentsOfURL:panel.URL] ) {
-                string str { (const char*)d.bytes, d.length };
-            
-                rapidjson::Document doc;
-                rapidjson::ParseResult ok = doc.Parse<rapidjson::kParseCommentsFlag>( str.c_str() );
-                if( ok ) {
-                    auto name = m_ThemeNames[m_SelectedTheme];
-                    rapidjson::StandaloneDocument sdoc;
-                    sdoc.CopyFrom(doc, rapidjson::g_CrtAllocator);
-                    if( m_Manager->ImportThemeData( name, sdoc ) ) {
-                        [self loadSelectedDocument];
-                        [self.outlineView reloadData];
-                    }                    
-                }
-            }
+    if( [panel runModal] == NSFileHandlingPanelOKButton && panel.URL != nil) {
+        NSURL *url = panel.URL;
+        dispatch_to_main_queue_after(200ms, [=]{
+            [self importThemeWithURL:url];
+        });
+    }
 }
 
 - (IBAction)onDuplicateClicked:(id)sender
 {
     const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
-    if( m_Manager->AddTheme(m_Manager->SuitableNameForNewTheme(theme_name),
-                            self.selectedThemeFrontend) ) {
+    const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
+    if( m_Manager->AddTheme(new_name, self.selectedThemeFrontend) ) {
+        m_Manager->SelectTheme(new_name);
         [self reloadAll];
     }
 }
@@ -377,6 +416,25 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
         const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
         if( m_Manager->RemoveTheme(theme_name) )
             [self reloadAll];
+    }
+}
+
+- (void) controlTextDidEndEditing:(NSNotification *)obj
+{
+    NSTextField *tf = obj.object;
+    if( !tf )
+        return;
+    
+    const auto row = [self.outlineView rowForView:tf];
+    const id item = [self.outlineView itemAtRow:row];
+    if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
+        if( node.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {
+            const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+            if( m_Manager->RenameTheme(theme_name, tf.stringValue.UTF8String) )
+                [self reloadAll];
+            else
+                tf.stringValue = [NSString stringWithUTF8StdString:theme_name];
+        }
     }
 }
 

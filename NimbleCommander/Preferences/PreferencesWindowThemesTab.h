@@ -11,6 +11,7 @@
 
 @interface PreferencesWindowThemesTab : NSViewController <RHPreferencesViewControllerProtocol,
                                                           NSOutlineViewDelegate,
-                                                          NSOutlineViewDataSource>
+                                                          NSOutlineViewDataSource,
+                                                          NSTextFieldDelegate>
 
 @end

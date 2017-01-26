@@ -178,7 +178,15 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColorNode(@"ANSI color 15 (bright white)", "terminalAnsiColorF"),
     ];
 
-    return @[SpawnGroupNode(@"General", @[SpawnAppearanceNode(@"UI Appearance", "themeAppearance")]),
+    auto general_nodes = @[
+        [[PreferencesWindowThemesTabItemNode alloc]
+            initWithTitle:@"Theme title"
+            forEntry:"themeName"
+            ofType:PreferencesWindowThemesTabItemType::ThemeTitle],
+        SpawnAppearanceNode(@"UI Appearance", "themeAppearance")
+    ];
+
+    return @[SpawnGroupNode(@"General", general_nodes),
              fp_group,
              SpawnGroupNode(@"Viewer", viewer_nodes),
              SpawnGroupNode(@"Terminal", term_nodes)];

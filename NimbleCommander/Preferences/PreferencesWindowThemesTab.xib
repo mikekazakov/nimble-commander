@@ -118,7 +118,7 @@
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9jG-uy-qcQ">
                     <rect key="frame" x="68" y="356" width="205" height="26"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="AO2-w6-jPv"/>
+                        <constraint firstAttribute="width" constant="200" id="AO2-w6-jPv"/>
                     </constraints>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="jVi-Cq-WQB" id="YLe-qc-h6e">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -150,7 +150,7 @@
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Revert" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="b8c-6i-eUM">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="11"/>
+                        <font key="font" metaFont="smallSystemBold"/>
                     </buttonCell>
                     <connections>
                         <action selector="onRevertClicked:" target="-2" id="WXm-qh-uYR"/>
@@ -164,7 +164,7 @@
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Duplicate" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Gep-4j-i4f">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="11"/>
+                        <font key="font" metaFont="smallSystemBold"/>
                     </buttonCell>
                     <connections>
                         <action selector="onDuplicateClicked:" target="-2" id="xzF-YR-aib"/>
@@ -177,7 +177,7 @@
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Remove" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rLT-UR-67R">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="11"/>
+                        <font key="font" metaFont="smallSystemBold"/>
                     </buttonCell>
                     <connections>
                         <action selector="onRemoveClicked:" target="-2" id="rrj-8I-gYd"/>
@@ -191,7 +191,7 @@
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Import" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KRF-Q2-TeT">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="11"/>
+                        <font key="font" metaFont="smallSystemBold"/>
                     </buttonCell>
                     <connections>
                         <action selector="onImportClicked:" target="-2" id="RtY-jj-RfW"/>
@@ -204,7 +204,7 @@
                     </constraints>
                     <buttonCell key="cell" type="recessed" title="Export" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MoT-ih-r3N">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="11"/>
+                        <font key="font" metaFont="smallSystemBold"/>
                     </buttonCell>
                     <connections>
                         <action selector="onExportClicked:" target="-2" id="YxT-2O-89G"/>

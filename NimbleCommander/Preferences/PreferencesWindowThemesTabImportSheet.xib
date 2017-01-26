@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowThemesTabImportSheet">
+            <connections>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="400" height="183"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="400" height="183"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zKn-Ba-omn">
+                        <rect key="frame" x="294" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="KtR-bZ-jQ9"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Import" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NQq-tq-S68">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onImport:" target="-2" id="JjB-sV-VXb"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n4n-Y1-CBZ">
+                        <rect key="frame" x="202" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Weu-Yi-WGA"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cbI-8M-hIM">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onCancel:" target="-2" id="C3J-Bz-jMg"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="4Tt-Zw-v5d">
+                        <rect key="frame" x="19" y="113" width="223" height="18"/>
+                        <buttonCell key="cell" type="radio" title="Overwrite current theme settings" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="eYe-YS-npt">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="self.overwriteCurrentTheme" id="A1v-YG-W95"/>
+                        </connections>
+                    </button>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="de0-o2-R8D">
+                        <rect key="frame" x="19" y="87" width="165" height="18"/>
+                        <buttonCell key="cell" type="radio" title="Import as a new theme:" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="g9Q-gY-8zD">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="self.importAsNewTheme" id="bJT-VM-hzq"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="on5-db-9Yi">
+                        <rect key="frame" x="40" y="58" width="260" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="260" id="ymy-xd-3rf"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="hHV-qD-59t">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="enabled" keyPath="self.overwriteCurrentTheme" id="tT0-aT-fFK">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="value" keyPath="self.importAsName" id="1Sd-WX-kB7">
+                                <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Rim-Lb-SbU">
+                        <rect key="frame" x="18" y="146" width="364" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="How do you wish to import this theme?" id="2Fl-xL-9fp">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="de0-o2-R8D" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="2GH-Ap-JWC"/>
+                    <constraint firstItem="on5-db-9Yi" firstAttribute="top" secondItem="de0-o2-R8D" secondAttribute="bottom" constant="8" symbolic="YES" id="2KS-Bo-s63"/>
+                    <constraint firstItem="Rim-Lb-SbU" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="2PV-xl-peo"/>
+                    <constraint firstItem="zKn-Ba-omn" firstAttribute="baseline" secondItem="n4n-Y1-CBZ" secondAttribute="baseline" id="Ja6-o1-ShS"/>
+                    <constraint firstAttribute="trailing" secondItem="Rim-Lb-SbU" secondAttribute="trailing" constant="20" symbolic="YES" id="SDe-j2-JTd"/>
+                    <constraint firstItem="4Tt-Zw-v5d" firstAttribute="top" secondItem="Rim-Lb-SbU" secondAttribute="bottom" constant="16" id="TBg-H9-sOA"/>
+                    <constraint firstItem="Rim-Lb-SbU" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="dsS-Fb-UxF"/>
+                    <constraint firstItem="4Tt-Zw-v5d" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="fSV-7d-u9c"/>
+                    <constraint firstItem="zKn-Ba-omn" firstAttribute="leading" secondItem="n4n-Y1-CBZ" secondAttribute="trailing" constant="12" symbolic="YES" id="gfR-5T-AXW"/>
+                    <constraint firstItem="on5-db-9Yi" firstAttribute="leading" secondItem="de0-o2-R8D" secondAttribute="leading" constant="20" id="ipC-8X-LUe"/>
+                    <constraint firstAttribute="bottom" secondItem="zKn-Ba-omn" secondAttribute="bottom" constant="20" symbolic="YES" id="naq-l2-f3Z"/>
+                    <constraint firstAttribute="trailing" secondItem="zKn-Ba-omn" secondAttribute="trailing" constant="20" symbolic="YES" id="ugx-yS-ajc"/>
+                    <constraint firstItem="de0-o2-R8D" firstAttribute="top" secondItem="4Tt-Zw-v5d" secondAttribute="bottom" constant="10" id="zbz-PZ-3S5"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="100" y="118.5"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="5DT-UW-LF2"/>
+    </objects>
+</document>

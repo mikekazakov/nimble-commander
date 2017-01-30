@@ -80,6 +80,8 @@
     using linb::any;
     using linb::any_cast;
 
+    #include "fixed_eytzinger_map.h"
+
     #include <Utility/StringExtras.h>
 
     #ifdef __OBJC__

@@ -1,5 +1,6 @@
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
+#include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -56,6 +57,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         
         m_PathTextField= [[NSTextField alloc] initWithFrame:NSRect()];
         m_PathTextField.translatesAutoresizingMaskIntoConstraints = false;
+        m_PathTextField.cell = [VerticallyCenteredTextFieldCell new];
         m_PathTextField.bordered = false;
         m_PathTextField.editable = false;
         m_PathTextField.drawsBackground = false;

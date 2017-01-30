@@ -1,5 +1,6 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
+#include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -107,6 +108,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         
         m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_FilenameLabel.cell = [VerticallyCenteredTextFieldCell new];
         m_FilenameLabel.bordered = false;
         m_FilenameLabel.editable = false;
         m_FilenameLabel.selectable = false;
@@ -115,11 +117,13 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_FilenameLabel.usesSingleLineMode = true;
         m_FilenameLabel.alignment = NSTextAlignmentLeft;
         m_FilenameLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        [m_FilenameLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_FilenameLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_FilenameLabel];
 
         m_SizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SizeLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_SizeLabel.cell = [VerticallyCenteredTextFieldCell new];
         m_SizeLabel.bordered = false;
         m_SizeLabel.editable = false;
         m_SizeLabel.drawsBackground = false;
@@ -127,11 +131,13 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_SizeLabel.usesSingleLineMode = true;
         m_SizeLabel.alignment = NSTextAlignmentRight;
         m_SizeLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        [m_SizeLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_SizeLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_SizeLabel];
 
         m_ModTime = [[NSTextField alloc] initWithFrame:NSRect()];
         m_ModTime.translatesAutoresizingMaskIntoConstraints = false;
+        m_ModTime.cell = [VerticallyCenteredTextFieldCell new];
         m_ModTime.bordered = false;
         m_ModTime.editable = false;
         m_ModTime.drawsBackground = false;
@@ -139,12 +145,13 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_ModTime.usesSingleLineMode = true;
         m_ModTime.alignment = NSTextAlignmentRight;
         m_ModTime.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-//        m_ModTime.preferredMaxLayoutWidth = 150;
-        [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_ModTime];
         
         m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_SelectionLabel.cell = [VerticallyCenteredTextFieldCell new];
         m_SelectionLabel.bordered = false;
         m_SelectionLabel.editable = false;
         m_SelectionLabel.drawsBackground = false;
@@ -152,13 +159,15 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_SelectionLabel.usesSingleLineMode = true;
         m_SelectionLabel.alignment = NSTextAlignmentCenter;
         m_SelectionLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-//        m_SelectionLabel.preferredMaxLayoutWidth = 0;
-        [m_SelectionLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_SelectionLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         [self addSubview:m_SelectionLabel];
 
         m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_ItemsLabel.cell = [VerticallyCenteredTextFieldCell new];
         m_ItemsLabel.bordered = false;
         m_ItemsLabel.editable = false;
         m_ItemsLabel.drawsBackground = false;
@@ -171,6 +180,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         
         m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_VolumeLabel.translatesAutoresizingMaskIntoConstraints = false;
+        m_VolumeLabel.cell = [VerticallyCenteredTextFieldCell new];
         m_VolumeLabel.bordered = false;
         m_VolumeLabel.editable = false;
         m_VolumeLabel.drawsBackground = false;

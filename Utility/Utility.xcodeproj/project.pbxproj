@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */ = {isa = PBXBuildFile; fileRef = CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */; };
 		CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
+		CF1846F61E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */; };
+		CF1846F81E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */; };
 		CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */; };
 		CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
 		CF34BEEF1E225EB3006A6B72 /* ColoredSeparatorLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */; };
@@ -72,6 +74,8 @@
 /* Begin PBXFileReference section */
 		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
+		CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticallyCenteredTextFieldCell.h; path = include/Utility/VerticallyCenteredTextFieldCell.h; sourceTree = "<group>"; };
+		CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VerticallyCenteredTextFieldCell.mm; path = source/VerticallyCenteredTextFieldCell.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
@@ -164,6 +168,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */,
 				CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
@@ -201,6 +206,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
 				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
@@ -242,6 +248,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1846F61E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h in Headers */,
 				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
 				CFDAC2BC1DFD0C980039A104 /* ExtensionLowercaseComparison.h in Headers */,
 				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
@@ -342,6 +349,7 @@
 				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
 				CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */,
 				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
+				CF1846F81E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm in Sources */,
 				CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */,
 				CF84C8E91DB867FC00B4E888 /* Layout.mm in Sources */,
 				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,

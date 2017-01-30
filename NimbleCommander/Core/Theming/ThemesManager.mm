@@ -8,7 +8,7 @@ static const auto g_NameKey = "themeName";
 static shared_ptr<Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
-static unordered_map<string, uint64_t> g_EntryToNotificationMapping = {
+static fixed_eytzinger_map<string, uint64_t> g_EntryToNotificationMapping = {
 {"themeAppearance", TMN::Appearance },
 {"filePanelsColoringRules_v1",          TMN::FilePanelsGeneral },
 {"filePanelsGeneralDropBorderColor",    TMN::FilePanelsGeneral },

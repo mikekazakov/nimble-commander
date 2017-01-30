@@ -6,29 +6,24 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "FilePanelMainSplitView.h"
+
 #include <NimbleCommander/States/FilePanels/PanelView.h>
-//#include "ModernPanelViewPresentation.h"
-//#include "ClassicPanelViewPresentation.h"
-#include "FilePanelsTabbedHolder.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include "FilePanelsTabbedHolder.h"
+#include "FilePanelMainSplitView.h"
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;
 
-static CGColorRef DividerColor(bool _wnd_active)
-{
-    static CGColorRef act = CGColorCreateGenericRGB(176/255.0, 176/255.0, 176/255.0, 1.0);
-    static CGColorRef inact = CGColorCreateGenericRGB(225/255.0, 225/255.0, 225/255.0, 1.0);
-    return _wnd_active ? act : inact;
-}
-
 @implementation FilePanelMainSplitView
 {
-    FilePanelsTabbedHolder *m_BasicViews[2]; // if there's no overlays - this will be nils
-                                             // if any part becomes overlayed - basic view is backed up in this array
-    double m_Prop;
-    double m_DividerThickness;
+    // if there's no overlays - these will be nils
+    // if any part becomes overlayed - basic view is backed up in this array
+    FilePanelsTabbedHolder *m_BasicViews[2];
+    ThemesManager::ObservationTicket m_ThemeChangesObservation;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -39,87 +34,33 @@ static CGColorRef DividerColor(bool _wnd_active)
         self.vertical = true;
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
-        m_Prop = 0.5;
-        m_DividerThickness = 1.;
         
         FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th1];
         FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th2];
 
-//        [self observeValueForKeyPath:@"skin" ofObject:AppDelegate.me change:nil context:nullptr];
-//        [AppDelegate.me addObserver:self forKeyPath:@"skin" options:0 context:NULL];
+        __weak FilePanelMainSplitView* weak_self = self;
+        m_ThemeChangesObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::FilePanelsGeneral,
+            [=]{ [weak_self setNeedsDisplay:true];});
     }
     return self;
 }
 
-- (void) dealloc
-{
-//    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];
-}
-
 - (CGFloat)dividerThickness
 {
-    return self.anyCollapsed ? 1 : m_DividerThickness;
+    return 1;
 }
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
 {
     auto mid = floor(self.frame.size.width / 2.);
-    if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap)
+    if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap )
         return mid;
     
-    m_Prop = proposedPosition / self.frame.size.width;
-    
-//    if(AppDelegate.me.skin == ApplicationSkin::Modern)
-//        return proposedPosition;
-//    else if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
-//        float gran = p->Granularity();
-//        float rest = fmod(proposedPosition, gran);
-//        return proposedPosition - rest;
-//    }
     return proposedPosition;
 }
-
-- (void)splitView:(NSSplitView *)splitView resizeSubviewsWithOldSize:(NSSize)oldSize
-{
-    NSRect newFrame  = splitView.frame;
-    
-    // if the width hasn't changed - tell sender to adjust subviews
-    // this is also true for modern presentation - default behaviour that case
-//    if (newFrame.size.width == oldSize.width || AppDelegate.me.skin == ApplicationSkin::Modern) {
-        [splitView adjustSubviews];
-        return;
-//    }
-//    
-//    [self resizeSubviewsManually];
-}
-
-//- (void)resizeSubviewsManually
-//{
-//    NSRect newFrame = self.frame;
-//    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(self.leftTabbedHolder.current.presentation)) {
-//        NSRect leftRect  = [self.subviews[0] frame];
-//        NSRect rightRect = [self.subviews[1] frame];
-//        
-//        float gran = p->Granularity();
-//        float center_x = m_Prop * newFrame.size.width;
-//        float rest = fmod(center_x, gran);
-//        
-//        leftRect.origin = NSMakePoint(0, 0);
-//        leftRect.size.height = newFrame.size.height;
-//        leftRect.size.width = center_x - rest;
-//        [self.subviews[0] setFrame:leftRect];
-//        
-//        rightRect.origin.y = 0;
-//        rightRect.origin.x = leftRect.size.width + 1;
-//        rightRect.size.height = newFrame.size.height;
-//        rightRect.size.width = newFrame.size.width - leftRect.size.width;
-//        [self.subviews[1] setFrame:rightRect];
-//        return;
-//    }
-//    [self adjustSubviews];
-//}
 
 -(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
@@ -133,11 +74,15 @@ static CGColorRef DividerColor(bool _wnd_active)
 
 - (void)drawDividerInRect:(NSRect)rect
 {
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-    CGContextSaveGState(context);    
-    CGContextSetFillColorWithColor(context, DividerColor(self.window.isKeyWindow));
-    CGContextFillRect(context, rect);
-    CGContextRestoreGState(context);
+    if( auto c = CurrentTheme().FilePanelsGeneralSplitterColor() ) {
+        [c set];
+        if( c.alphaComponent == 1. )
+            NSRectFill(rect);
+        else
+            NSRectFillUsingOperation(rect, NSCompositingOperationSourceAtop);
+    }
+    else
+        NSDrawWindowBackground(rect);
 }
 
 - (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview

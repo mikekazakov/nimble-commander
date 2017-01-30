@@ -37,6 +37,7 @@ public:
     const vector<ColoringRules>& FilePanelsItemsColoringRules() const noexcept;
     NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
     NSColor *FilePanelsGeneralOverlayColor() const noexcept;
+    NSColor *FilePanelsGeneralSplitterColor() const noexcept;
     
     // File Panels --> Tabs bar settings ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsTabsFont() const noexcept;

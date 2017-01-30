@@ -10,6 +10,7 @@ struct Theme::Internals
     vector<PanelViewPresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
     NSColor *m_FilePanelsGeneralOverlayColor;
+    NSColor *m_FilePanelsGeneralSplitterColor;
     NSFont  *m_FilePanelsHeaderFont;
     NSColor *m_FilePanelsHeaderTextColor;
     NSColor *m_FilePanelsHeaderActiveTextColor;
@@ -131,6 +132,8 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
         ExtractColor("filePanelsGeneralDropBorderColor");
     I->m_FilePanelsGeneralOverlayColor =
         ExtractColor("filePanelsGeneralOverlayColor");
+    I->m_FilePanelsGeneralSplitterColor =
+        ExtractColor("filePanelsGeneralSplitterColor");
     
     I->m_FilePanelsListFont =
         ExtractFont("filePanelsListFont");
@@ -623,4 +626,9 @@ NSColor *Theme::TerminalOverlayColor() const noexcept
 NSColor *Theme::ViewerOverlayColor() const noexcept
 {
     return I->m_ViewerOverlayColor;
+}
+
+NSColor *Theme::FilePanelsGeneralSplitterColor() const noexcept
+{
+    return I->m_FilePanelsGeneralSplitterColor;
 }

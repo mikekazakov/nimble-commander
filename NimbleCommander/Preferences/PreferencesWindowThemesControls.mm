@@ -50,6 +50,7 @@
         m_Description.editable = false;
         m_Description.drawsBackground = false;
         m_Description.font = [NSFont labelFontOfSize:11];
+        m_Description.stringValue = [m_Color toHexString];
         [self addSubview:m_Description];
         
         auto views = NSDictionaryOfVariableBindings(m_ColorWell, m_Description);

@@ -580,6 +580,7 @@
                                                      ],
                       "filePanelsGeneralDropBorderColor": "@blueColor",
                       "filePanelsGeneralOverlayColor": "@whiteColor",
+                      "filePanelsGeneralSplitterColor": "#BABABA",
                       
                       /* File Panels -> tabs settings */
                       "filePanelsTabsFont": "@systemFont, 11",
@@ -705,6 +706,7 @@
                                                      ],
                       "filePanelsGeneralDropBorderColor": "@yellowColor",
                       "filePanelsGeneralOverlayColor": "@whiteColor",
+                      "filePanelsGeneralSplitterColor": "#00FFFF",
                       
                       /* File Panels -> tabs settings */
                       "filePanelsTabsFont": "Menlo-Regular, 11",
@@ -814,6 +816,7 @@
                                                      ],
                       "filePanelsGeneralDropBorderColor": "@blueColor",
                       "filePanelsGeneralOverlayColor": "@blackColor",
+                      "filePanelsGeneralSplitterColor": "#282828",
                       
                       /* File Panels -> tabs settings */
                       "filePanelsTabsFont": "@systemFont, 11",

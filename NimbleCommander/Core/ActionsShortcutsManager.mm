@@ -12,7 +12,7 @@
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
 
  // persistance holy grail is below, change id's only in emergency case:
-static const vector<pair<string,int>> g_ActionsTags = {
+static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.nimble_commander.about",                     10000},
     {"menu.nimble_commander.preferences",               10010},
     {"menu.nimble_commander.hide",                      10020},
@@ -357,13 +357,13 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate()
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
-    m_TagToAction.reserve(g_ActionsTags.size());
-    m_ActionToTag.reserve(g_ActionsTags.size());
+    m_ActionToTag.assign( begin(g_ActionsTags), end(g_ActionsTags) );
     
-    for(auto &i: g_ActionsTags) {
-        m_TagToAction[i.second] = i.first;
-        m_ActionToTag[i.first]  = i.second;
-    }
+    vector< pair<int, const char*> > tag_to_action;
+    tag_to_action.reserve(g_ActionsTags.size());
+    for( auto &p: g_ActionsTags)
+        tag_to_action.emplace_back( p.second, p.first );
+    m_TagToAction.assign( begin(tag_to_action), end(tag_to_action) );
         
     for(auto &d: g_DefaultShortcuts) {
         auto i = m_ActionToTag.find( get<0>(d) );
@@ -550,7 +550,7 @@ bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
                        atomically:true];
 }
 
-const vector<pair<string,int>>& ActionsShortcutsManager::AllShortcuts() const
+const vector<pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() const
 {
     return g_ActionsTags;
 }

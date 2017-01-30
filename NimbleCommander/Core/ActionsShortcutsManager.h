@@ -57,7 +57,7 @@ public:
     
     void SetMenuShortCuts(NSMenu *_menu) const;
     
-    const vector<pair<string,int>>& AllShortcuts() const;
+    const vector<pair<const char*,int>>& AllShortcuts() const;
     
     nanoseconds LastChanged() const;
     
@@ -69,11 +69,11 @@ private:
     void WriteOverrides(NSMutableArray *_dict) const;
     bool WriteOverridesToConfigFile() const;
     
-    unordered_map<int, string>        m_TagToAction;
-    unordered_map<string, int>        m_ActionToTag;
-    unordered_map<int, ShortCut>      m_ShortCutsDefaults;
-    unordered_map<int, ShortCut>      m_ShortCutsOverrides;
-    nanoseconds                       m_LastChanged;
+    fixed_eytzinger_map<int, const char*>       m_TagToAction;
+    fixed_eytzinger_map<string, int, less<>>    m_ActionToTag;
+    unordered_map<int, ShortCut>                m_ShortCutsDefaults;
+    unordered_map<int, ShortCut>                m_ShortCutsOverrides;
+    nanoseconds                                 m_LastChanged;
 };
 
 

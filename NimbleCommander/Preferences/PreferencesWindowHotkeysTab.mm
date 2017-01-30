@@ -86,7 +86,8 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
     self = [super init];
     if (self) {
         m_ToolsStorage = _tool_storage;
-        m_Shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
+        m_Shortcuts.assign(begin(ActionsShortcutsManager::Instance().AllShortcuts()),
+                           end(ActionsShortcutsManager::Instance().AllShortcuts()));
         
         // remove shortcuts whichs are absent in main menu
         m_Shortcuts.erase(remove_if(begin(m_Shortcuts),

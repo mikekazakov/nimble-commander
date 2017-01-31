@@ -257,12 +257,16 @@ const noexcept
     return item;
 }
 
-- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+- (CGFloat)collectionView:(NSCollectionView *)collectionView
+                   layout:(NSCollectionViewLayout*)collectionViewLayout
+minimumLineSpacingForSectionAtIndex:(NSInteger)section
 {
     return 0;
 }
 
-- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+- (CGFloat)collectionView:(NSCollectionView *)collectionView
+                   layout:(NSCollectionViewLayout*)collectionViewLayout
+minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
     return 0;
 }

@@ -21,7 +21,8 @@
     m_VD = PanelData::VolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
-    self.carrier.background = nil;    
+    self.carrier.background = nil;
+    self.carrier.qsHighlight = {0, 0};
 }
 
 - (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil

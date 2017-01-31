@@ -1,9 +1,9 @@
 #pragma once
 
 #include <functional>
-//#include <
 
 #ifdef __OBJC__
+#include <objc/runtime.h>
 
 /**
  * Returns a _T_ class object if _from_ can be converted to it.
@@ -11,7 +11,8 @@
  * If _from_ is nil - returns nil.
  */
 template<typename T>
-inline T* objc_cast(id from) noexcept {
+inline T* objc_cast(id from) noexcept
+{
     static const auto class_meta = [T class];
     if( [from isKindOfClass:class_meta] )
         return static_cast<T*>(from);
@@ -26,6 +27,12 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
         if( __strong T *strong_obj = weak_obj )
             [T instanceMethodForSelector:_sel](strong_obj, _sel);
     };
+}
+
+template<typename T>
+inline size_t objc_sizeof() noexcept
+{
+    return class_getInstanceSize ([T class]);
 }
 
 #endif

@@ -11,7 +11,7 @@
         "skin": 1,
         
         /**
-        * Very temporarily! classic, modern, dark.
+        * Selected theme name. Default includes three: "Modern", "Classic", "Dark".
         */
         "theme": "Modern",
         
@@ -484,10 +484,13 @@
         "customShellPath": "/bin/bash",
         
         /**
-         * Limit maximum rate of view redrawing, zero is no limit
+         * Limit maximum rate of view redrawing, zero is no limit.
          */
         "maxFPS": 60,
-  
+
+        /**
+         * Option to mandatory hide the scrollbar.
+         */
         "hideVerticalScrollbar": false,
         
         /**
@@ -496,41 +499,7 @@
          * 1 - Underline,
          * 2 - Vertical bar
          */
-        "cursorMode": 0,
-
-        /**
-         * Font
-         */
-        "font": "Menlo-Regular, 13",
-        
-        /**
-         * Basic colors:
-         */
-        "textColor":        "#BFBFBF",
-        "boldTextColor":    "#E5E5E5",
-        "backgroundColor":  "#000000",
-        "selectionColor":   "#E5E5E5",
-        "cursorColor":      "#666666",
-        
-        /**
-         * 16 ANSI colors:
-         */
-        "AnsiColor0":  "#000000", // black
-        "AnsiColor1":  "#990000", // red
-        "AnsiColor2":  "#00A600", // green
-        "AnsiColor3":  "#999900", // yellow
-        "AnsiColor4":  "#0000B2", // blue
-        "AnsiColor5":  "#B200B2", // magenta
-        "AnsiColor6":  "#00A6B2", // cyan
-        "AnsiColor7":  "#BFBFBF", // white
-        "AnsiColor8":  "#666666", // bright black
-        "AnsiColor9":  "#E50000", // bright red
-        "AnsiColor10": "#00D900", // bright green
-        "AnsiColor11": "#E5E500", // bright yellow
-        "AnsiColor12": "#0000FF", // bright blue
-        "AnsiColor13": "#E500E5", // bright magenta
-        "AnsiColor14": "#00E5E5", // bright cyan
-        "AnsiColor15": "#E5E5E5"  // bright white
+        "cursorMode": 0
     },
     
     "externalTools": {

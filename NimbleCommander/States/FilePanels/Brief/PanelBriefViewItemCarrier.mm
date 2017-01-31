@@ -68,7 +68,9 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
         m_Filename = @"";
         m_QSHighlight = {0, 0};
         m_PermitFieldRenaming = false;
-        [self buildTextAttributes];
+        m_Highlighted = false;
+        m_IsDropTarget = false;
+        m_AttrString = [[NSMutableAttributedString alloc] initWithString:@"" attributes:nil];
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];        
     }
     return self;
@@ -270,8 +272,10 @@ static NSPoint  g_LastMouseDownPos = {};
 - (void) setFilenameColor:(NSColor *)filenameColor
 {
     if( m_TextColor != filenameColor ) {
-        m_TextColor = filenameColor;
-        [self buildTextAttributes];
+        m_TextColor = filenameColor;        
+        [m_AttrString addAttribute:NSForegroundColorAttributeName
+                                 value:m_TextColor
+                                 range:NSMakeRange(0, m_AttrString.length)];
         [self setNeedsDisplay:true];
     }
 }
@@ -289,7 +293,6 @@ static NSPoint  g_LastMouseDownPos = {};
     if( m_Filename != filename ) {
         m_Filename = filename;
         [self buildTextAttributes];
-        [self setNeedsDisplay:true];
     }
 }
 
@@ -303,18 +306,30 @@ static NSPoint  g_LastMouseDownPos = {};
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename
                                                           attributes:attrs];
     
-    if( m_QSHighlight.first != m_QSHighlight.second )
-        if( m_QSHighlight.first < m_Filename.length && m_QSHighlight.second <= m_Filename.length  )
-            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
-                                 value:@(NSUnderlineStyleSingle)
-                                 range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
+    if(m_QSHighlight.first != m_QSHighlight.second &&
+       m_QSHighlight.first  <  m_Filename.length   &&
+       m_QSHighlight.second <= m_Filename.length    )
+        [m_AttrString addAttribute:NSUnderlineStyleAttributeName
+                             value:@(NSUnderlineStyleSingle)
+                             range:NSMakeRange(m_QSHighlight.first,
+                                               m_QSHighlight.second - m_QSHighlight.first)];
+    
+    [self setNeedsDisplay:true];
 }
 
 - (void) setQsHighlight:(pair<int16_t, int16_t>)qsHighlight
 {
     if( m_QSHighlight != qsHighlight ) {
         m_QSHighlight = qsHighlight;
-        [self buildTextAttributes];
+        [m_AttrString removeAttribute:NSUnderlineStyleAttributeName
+                                range:NSMakeRange(0, m_AttrString.length)];
+        if(m_QSHighlight.first != m_QSHighlight.second &&
+           m_QSHighlight.first  <  m_Filename.length   &&
+           m_QSHighlight.second <= m_Filename.length    )
+            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
+                                 value:@(NSUnderlineStyleSingle)
+                                 range:NSMakeRange(m_QSHighlight.first,
+                                                   m_QSHighlight.second - m_QSHighlight.first)];
         [self setNeedsDisplay:true];
     }
 }

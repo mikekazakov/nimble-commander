@@ -69,14 +69,15 @@ private:
     void WriteOverrides(NSMutableArray *_dict) const;
     bool WriteOverridesToConfigFile() const;
     
+    void ReadOverrideFromConfig();
+    void WriteOverridesToConfig() const;
+    
     fixed_eytzinger_map<int, const char*>       m_TagToAction;
     fixed_eytzinger_map<string, int, less<>>    m_ActionToTag;
-    unordered_map<int, ShortCut>                m_ShortCutsDefaults;
-    unordered_map<int, ShortCut>                m_ShortCutsOverrides;
+    fixed_eytzinger_map<int, ShortCut>          m_ShortCutsDefaults;
+    fixed_eytzinger_map<int, ShortCut>          m_ShortCutsOverrides;
     nanoseconds                                 m_LastChanged;
 };
-
-
 
 class ActionsShortcutsManager::ShortCutsUpdater
 {

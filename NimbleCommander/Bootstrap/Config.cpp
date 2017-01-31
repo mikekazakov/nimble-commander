@@ -36,6 +36,7 @@ static time_t ModificationTime( const string &_filepath )
 
 rapidjson::CrtAllocator GenericConfig::g_CrtAllocator;
 
+// _target += _overwrites
 static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target_document, const rapidjson::Value &_overwrites )
 {
     for( auto i = _overwrites.MemberBegin(), e = _overwrites.MemberEnd(); i != e; ++i ) {
@@ -43,7 +44,8 @@ static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target
         auto &over_val = i->value;
   
         auto cur_it = _target.FindMember(over_name);
-        if( cur_it ==  _target.MemberEnd() ) { // there's no such value in current config tree - just add it at once
+        if( cur_it ==  _target.MemberEnd() ) {
+            // there's no such value in current config tree - just add it at once
             rapidjson::Value key( over_name, _target_document.GetAllocator() );
             rapidjson::Value val( over_val, _target_document.GetAllocator() );
             _target.AddMember( key, val, _target_document.GetAllocator() );
@@ -75,29 +77,35 @@ static void MergeDocument( rapidjson::Document &_target, const rapidjson::Docume
 }
 
 // _staging = _defaults <- _overwrites;
-
-static void BuildOverwritesRec( const rapidjson::Value &_defaults, const rapidjson::Value &_staging, rapidjson::Value &_overwrites, rapidjson::Document &_overwrites_doc )
+static void BuildOverwritesRec(const rapidjson::Value &_defaults,
+                               const rapidjson::Value &_staging,
+                               rapidjson::Value &_overwrites,
+                               rapidjson::Document &_overwrites_doc )
 {
     for( auto i = _staging.MemberBegin(), e = _staging.MemberEnd(); i != e; ++i ) {
         auto &staging_name = i->name;
         auto &staging_val = i->value;
      
         auto defaults_it = _defaults.FindMember(staging_name);
-        if( defaults_it == _defaults.MemberEnd() ) { // no such item in defaults -> should be placed in overwrites
+        if( defaults_it == _defaults.MemberEnd() ) {
+            // no such item in defaults -> should be placed in overwrites
             rapidjson::Value key( staging_name, _overwrites_doc.GetAllocator() );
             rapidjson::Value val( staging_val, _overwrites_doc.GetAllocator() );
             _overwrites.AddMember( key, val, _overwrites_doc.GetAllocator() );
         }
         else {
             auto &defaults_val = defaults_it->value;
-            if( defaults_val.GetType() == staging_val.GetType() && defaults_val.GetType() == rapidjson::kObjectType ) {
+            if( defaults_val.GetType() == staging_val.GetType() &&
+                defaults_val.GetType() == rapidjson::kObjectType ) {
                 // adding an empty object.
                 rapidjson::Value key( staging_name, _overwrites_doc.GetAllocator() );
                 rapidjson::Value val( rapidjson::kObjectType );
                 _overwrites.AddMember( key, val, _overwrites_doc.GetAllocator() );
                 
-                
-                BuildOverwritesRec(defaults_val, staging_val, _overwrites[staging_name], _overwrites_doc);
+                BuildOverwritesRec(defaults_val,
+                                   staging_val,
+                                   _overwrites[staging_name],
+                                   _overwrites_doc);
             }
             else if( defaults_val != staging_val ) {
                 rapidjson::Value key( staging_name, _overwrites_doc.GetAllocator() );

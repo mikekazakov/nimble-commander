@@ -43,7 +43,9 @@ template <typename _Key, typename _Value, class _Compare = std::less<_Key> >
 class fixed_eytzinger_map : private _Compare, __fixed_eytzinger_map_base
 {
     struct pair_ptr_wrap;
+    struct const_pair_ptr_wrap;
     struct proxy_iterator;
+    struct const_proxy_iterator;
 public:
     typedef size_t                                  size_type;
     typedef std::pair<_Key,_Value>                  value_type;
@@ -51,8 +53,9 @@ public:
     typedef _Value                                  mapped_type;
     typedef _Compare                                key_compare;
     typedef proxy_iterator                          iterator;
-    typedef proxy_iterator                          const_iterator;
-    typedef std::pair<const_iterator,const_iterator>range_pair;
+    typedef const_proxy_iterator                    const_iterator;
+    typedef std::pair<iterator,iterator>            range_pair;
+    typedef std::pair<const_iterator,const_iterator>const_range_pair;
     
     
     // Construction
@@ -73,9 +76,17 @@ public:
 
 
     // Element access
+    mapped_type& at( const key_type& key );
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    mapped_type&>::type at( const _K2& key );
+    
     const mapped_type& at( const key_type& key ) const;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
     const mapped_type&>::type at( const _K2& key ) const;
+
+    mapped_type& operator[]( const key_type& key );
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    mapped_type&>::type operator[]( const _K2& key );
     
     const mapped_type& operator[]( const key_type& key ) const;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
@@ -83,10 +94,12 @@ public:
     
     
     // Iterators
-    const_iterator          begin()     const noexcept;
-    const_iterator          end()       const noexcept;
-    const_iterator          cbegin()    const noexcept;
-    const_iterator          cend()      const noexcept;
+    iterator       begin()     noexcept;
+    iterator       end()       noexcept;
+    const_iterator begin()     const noexcept;
+    const_iterator end()       const noexcept;
+    const_iterator cbegin()    const noexcept;
+    const_iterator cend()      const noexcept;
     
     
     // Modifiers
@@ -104,18 +117,34 @@ public:
     size_type count( const key_type& key ) const noexcept;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
     size_type>::type count( const _K2& key ) const noexcept;
+
+    iterator find( const key_type& key ) noexcept;
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    iterator>::type find(const _K2& key) noexcept;
     
     const_iterator find( const key_type& key ) const noexcept;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
     const_iterator>::type find(const _K2& key) const noexcept;
     
-    range_pair equal_range( const key_type& key ) const noexcept;
+    range_pair equal_range( const key_type& key ) noexcept;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
-    range_pair>::type equal_range(const _K2& key) const noexcept;
+    range_pair>::type equal_range(const _K2& key) noexcept;
+
+    const_range_pair equal_range( const key_type& key ) const noexcept;
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    const_range_pair>::type equal_range(const _K2& key) const noexcept;
+
+    iterator lower_bound( const key_type& key ) noexcept;
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    iterator>::type lower_bound(const _K2& key) noexcept;
     
     const_iterator lower_bound( const key_type& key ) const noexcept;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
     const_iterator>::type lower_bound(const _K2& key) const noexcept;
+    
+    iterator upper_bound( const key_type& key ) noexcept;
+    template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
+    iterator>::type upper_bound(const _K2& key) noexcept;
     
     const_iterator upper_bound( const key_type& key ) const noexcept;
     template <typename _K2> typename std::enable_if<__is_transparent<_Compare, _K2>::value,
@@ -375,12 +404,18 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::max_size() const noexcept
 }
 
 template <typename _Key, typename _Value, typename _Compare>
-typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
-fixed_eytzinger_map<_Key, _Value, _Compare>::begin() const noexcept
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::begin() noexcept
 {
     return iterator{ __m_keys, __m_values };
 }
 
+template <typename _Key, typename _Value, typename _Compare>
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::begin() const noexcept
+{
+    return const_iterator{ __m_keys, __m_values };
+}
 
 template <typename _Key, typename _Value, typename _Compare>
 typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
@@ -390,17 +425,24 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::cbegin() const noexcept
 }
 
 template <typename _Key, typename _Value, typename _Compare>
-typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
-fixed_eytzinger_map<_Key, _Value, _Compare>::end() const noexcept
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::end() noexcept
 {
     return iterator{ __m_keys + __m_count, __m_values + __m_count };
 }
 
 template <typename _Key, typename _Value, typename _Compare>
 typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::end() const noexcept
+{
+    return const_iterator{ __m_keys + __m_count, __m_values + __m_count };
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator
 fixed_eytzinger_map<_Key, _Value, _Compare>::cend() const noexcept
 {
-    return cend();
+    return end();
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -417,7 +459,7 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::lower_bound(const _Key& _key) const
             j = 2 * j + 1; // left branch
         }
     }
-    return iterator{__m_keys + i, __m_values + i};
+    return const_iterator{__m_keys + i, __m_values + i};
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -438,6 +480,82 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::lower_bound(const _K2& _key) const 
             j = 2 * j + 1; // left branch
         }
     }
+    return const_iterator{__m_keys + i, __m_values + i};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::lower_bound(const _Key& _key) noexcept
+{
+    size_type i = __m_count, j = 0;
+    while( j < __m_count ) {
+        if( __comp(__m_keys[j], _key) ){
+            j = 2 * j + 2; // right branch
+        }
+        else {
+            i = j;
+            j = 2 * j + 1; // left branch
+        }
+    }
+    return iterator{__m_keys + i, __m_values + i};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+>::type
+fixed_eytzinger_map<_Key, _Value, _Compare>::lower_bound(const _K2& _key) noexcept
+{
+    size_type i = __m_count, j = 0;
+    while( j < __m_count ) {
+        if( __comp2(__m_keys[j], _key) ){
+            j = 2 * j + 2; // right branch
+        }
+        else {
+            i = j;
+            j = 2 * j + 1; // left branch
+        }
+    }
+    return iterator{__m_keys + i, __m_values + i};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::upper_bound( const key_type& _key ) noexcept
+{
+    size_type i = __m_count, j = 0;
+    while( j < __m_count ) {
+        if( __comp(_key, __m_keys[j]) ){
+            i = j;
+            j = 2 * j + 1; // left branch
+        }
+        else {
+            j = 2 * j + 2; // right branch
+        }
+    }
+    return iterator{__m_keys + i, __m_values + i};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+>::type
+fixed_eytzinger_map<_Key, _Value, _Compare>::upper_bound( const _K2& _key ) noexcept
+{
+    size_type i = __m_count, j = 0;
+    while( j < __m_count ) {
+        if( __comp2(_key, __m_keys[j]) ){
+            i = j;
+            j = 2 * j + 1; // left branch
+        }
+        else {
+            j = 2 * j + 2; // right branch
+        }
+    }
     return iterator{__m_keys + i, __m_values + i};
 }
 
@@ -455,7 +573,7 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::upper_bound( const key_type& _key )
             j = 2 * j + 2; // right branch
         }
     }
-    return iterator{__m_keys + i, __m_values + i};
+    return const_iterator{__m_keys + i, __m_values + i};
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -476,7 +594,7 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::upper_bound( const _K2& _key ) cons
             j = 2 * j + 2; // right branch
         }
     }
-    return iterator{__m_keys + i, __m_values + i};
+    return const_iterator{__m_keys + i, __m_values + i};
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -504,6 +622,55 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::find( const _K2& _key ) const noexc
 }
 
 template <typename _Key, typename _Value, typename _Compare>
+typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+fixed_eytzinger_map<_Key, _Value, _Compare>::find( const _Key& _key ) noexcept
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp(_key, *__p.k) )
+        return __p;
+    return end();
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator
+>::type
+fixed_eytzinger_map<_Key, _Value, _Compare>::find( const _K2& _key ) noexcept
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp2(_key, *__p.k) )
+        return __p;
+    return end();
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+std::pair<typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator,
+          typename fixed_eytzinger_map<_Key, _Value, _Compare>::iterator>
+fixed_eytzinger_map<_Key, _Value, _Compare>::equal_range( const _Key& _key ) noexcept
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp(_key, *__p.k) )
+        return {__p, std::next(__p, 1)};
+    return {end(), end()};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    typename fixed_eytzinger_map<_Key, _Value, _Compare>::range_pair
+>::type
+fixed_eytzinger_map<_Key, _Value, _Compare>::equal_range( const _K2& _key ) noexcept
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp2(_key, *__p.k) )
+        return {__p, std::next(__p, 1)};
+    return {end(), end()};
+}
+
+template <typename _Key, typename _Value, typename _Compare>
 std::pair<typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator,
           typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_iterator>
 fixed_eytzinger_map<_Key, _Value, _Compare>::equal_range( const _Key& _key ) const noexcept
@@ -518,7 +685,7 @@ template <typename _Key, typename _Value, typename _Compare>
 template <typename _K2>
 typename std::enable_if<
     __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
-    typename fixed_eytzinger_map<_Key, _Value, _Compare>::range_pair
+    typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_range_pair
 >::type
 fixed_eytzinger_map<_Key, _Value, _Compare>::equal_range( const _K2& _key ) const noexcept
 {
@@ -552,6 +719,29 @@ typename std::enable_if<
 }
 
 template <typename _Key, typename _Value, typename _Compare>
+_Value &fixed_eytzinger_map<_Key, _Value, _Compare>::
+at( const key_type &_key )
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp(_key, *__p.k) )
+        return *__p.v;
+    __throw_at();
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    _Value&>
+::type fixed_eytzinger_map<_Key, _Value, _Compare>::at( const _K2 &_key )
+{
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp2(_key, *__p.k) )
+        return *__p.v;
+    __throw_at();
+}
+
+template <typename _Key, typename _Value, typename _Compare>
 const _Value &fixed_eytzinger_map<_Key, _Value, _Compare>::
 at( const key_type &_key ) const
 {
@@ -572,6 +762,23 @@ typename std::enable_if<
     if( __p != end() && !__comp2(_key, *__p.k) )
         return *__p.v;
     __throw_at();
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+_Value& fixed_eytzinger_map<_Key, _Value, _Compare>::
+operator[]( const key_type& _key )
+{
+    return at(_key);
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+template <typename _K2>
+typename std::enable_if<
+    __fixed_eytzinger_map_base::__is_transparent<_Compare, _K2>::value,
+    _Value&>
+::type fixed_eytzinger_map<_Key, _Value, _Compare>::operator[]( const _K2 &_key )
+{
+    return at(_key);
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -636,9 +843,20 @@ assign(_InputIterator _begin, _InputIterator _end)
 
 template <typename _Key, typename _Value, typename _Compare>
 struct fixed_eytzinger_map<_Key, _Value, _Compare>::pair_ptr_wrap :
+    std::pair<const _Key&, _Value&>
+{
+    pair_ptr_wrap(const _Key *_k, _Value *_v) noexcept :
+        std::pair<const _Key&, _Value&>(*_k, *_v) {}
+    
+    const std::pair<const _Key&, _Value&>* operator->() const noexcept
+        { return this; }
+};
+
+template <typename _Key, typename _Value, typename _Compare>
+struct fixed_eytzinger_map<_Key, _Value, _Compare>::const_pair_ptr_wrap :
     std::pair<const _Key&, const _Value&>
 {
-    pair_ptr_wrap(const _Key *_k, const _Value *_v) noexcept :
+    const_pair_ptr_wrap(const _Key *_k, const _Value *_v) noexcept :
         std::pair<const _Key&, const _Value&>(*_k, *_v) {}
     
     const std::pair<const _Key&, const _Value&>* operator->() const noexcept
@@ -652,16 +870,16 @@ struct fixed_eytzinger_map<_Key, _Value, _Compare>::proxy_iterator
     typedef ssize_t                                 difference_type;
     typedef std::pair<_Key, _Value>                 value_type;
     typedef pair_ptr_wrap                           pointer;
-    typedef std::pair<const _Key&, const _Value&>   reference;
+    typedef std::pair<const _Key&, _Value&>         reference;
 
     proxy_iterator() noexcept : k(nullptr), v(nullptr)
         { }
-    proxy_iterator( const _Key *_k, const _Value *_v ) noexcept : k(_k), v(_v)
+    proxy_iterator( const _Key *_k, _Value *_v ) noexcept : k(_k), v(_v)
         { }
     reference operator *() const noexcept
         { return reference{*k, *v}; }
     pointer operator->() const noexcept
-        { return pair_ptr_wrap{ k, v }; }
+        { return pointer{ k, v }; }
     reference operator[](difference_type _n) const noexcept
         { return *(*this + _n); }
     proxy_iterator &operator++() noexcept
@@ -694,7 +912,7 @@ struct fixed_eytzinger_map<_Key, _Value, _Compare>::proxy_iterator
         { return k >= _rhs.k; }
 private:
     const _Key *k;
-    const _Value *v;
+    _Value *v;
     friend class fixed_eytzinger_map;
 };
 
@@ -711,6 +929,78 @@ template <typename _Key, typename _Value, typename _Compare>
 inline typename fixed_eytzinger_map<_Key, _Value, _Compare>::proxy_iterator
 operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::proxy_iterator __x,
           typename fixed_eytzinger_map<_Key, _Value, _Compare>::proxy_iterator::difference_type __n
+          ) noexcept
+{
+    __x += __n;
+    return __x;
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+struct fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator
+{
+    typedef std::random_access_iterator_tag         iterator_category;
+    typedef ssize_t                                 difference_type;
+    typedef std::pair<_Key, _Value>                 value_type;
+    typedef const_pair_ptr_wrap                     pointer;
+    typedef std::pair<const _Key&, const _Value&>   reference;
+
+    const_proxy_iterator() noexcept : k(nullptr), v(nullptr)
+        { }
+    const_proxy_iterator( const _Key *_k, const _Value *_v ) noexcept : k(_k), v(_v)
+        { }
+    reference operator *() const noexcept
+        { return reference{*k, *v}; }
+    pointer operator->() const noexcept
+        { return pointer{ k, v }; }
+    reference operator[](difference_type _n) const noexcept
+        { return *(*this + _n); }
+    const_proxy_iterator &operator++() noexcept
+        { ++k; ++v; return *this; }
+    const_proxy_iterator operator++(int) noexcept
+        { proxy_iterator __tmp = *this; ++(*this); return __tmp; }
+    const_proxy_iterator &operator--() noexcept
+        { --k; --v; return *this; }
+    const_proxy_iterator operator--(int) noexcept
+        { proxy_iterator __tmp = *this; --(*this); return __tmp; }
+    const_proxy_iterator &operator+=(difference_type _d) noexcept
+        { k += _d; v += _d; return *this; }
+    const_proxy_iterator &operator-=(difference_type _d) noexcept
+        { k -= _d; v -= _d; return *this; }
+    const_proxy_iterator operator -(difference_type _d) noexcept
+        { proxy_iterator __tmp = *this; return __tmp -= _d; }
+    difference_type operator-(const const_proxy_iterator &_rhs) const noexcept
+        { return k - _rhs.k; }
+    bool operator ==(const const_proxy_iterator &_rhs) const noexcept
+        { return k == _rhs.k; }
+    bool operator !=(const const_proxy_iterator &_rhs) const noexcept
+        { return k != _rhs.k; }
+    bool operator  <(const const_proxy_iterator &_rhs) const noexcept
+        { return k < _rhs.k; }
+    bool operator  >(const const_proxy_iterator &_rhs) const noexcept
+        { return k > _rhs.k; }
+    bool operator <=(const const_proxy_iterator &_rhs) const noexcept
+        { return k <= _rhs.k; }
+    bool operator >=(const const_proxy_iterator &_rhs) const noexcept
+        { return k >= _rhs.k; }
+private:
+    const _Key *k;
+    const _Value *v;
+    friend class fixed_eytzinger_map;
+};
+
+template <typename _Key, typename _Value, typename _Compare>
+inline typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator
+operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator::difference_type __n,
+          typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator __x) noexcept
+{
+    __x += __n;
+    return __x;
+}
+
+template <typename _Key, typename _Value, typename _Compare>
+inline typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator
+operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator __x,
+          typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator::difference_type __n
           ) noexcept
 {
     __x += __n;

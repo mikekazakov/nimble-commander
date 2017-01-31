@@ -6,10 +6,14 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include "ActionsShortcutsManager.h"
-#include "../Bootstrap/AppDelegate.h"
 
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
+
+// this ket should not exist in config defaults
+static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
  // persistance holy grail is below, change id's only in emergency case:
 static const vector<pair<const char*,int>> g_ActionsTags = {
@@ -316,16 +320,9 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.move_first",                                    u8"\uF729"  }, // home
         {"panel.move_last",                                     u8"\uF72B"  }, // end
         {"panel.move_next_page",                                u8"\uF72D"  }, // page down
-        {"panel.scroll_next_page",                              u8"⌥\uF72D"  }, // alt+page down
+        {"panel.scroll_next_page",                              u8"⌥\uF72D" }, // alt+page down
         {"panel.move_prev_page",                                u8"\uF72C"  }, // page up
-        {"panel.scroll_prev_page",                                u8"⌥\uF72C"  }, // alt+page up
-
-/*    {"panel.move_next_page",                            100'060},
-        {"panel.scroll_next_page",                          100'061},
-            {"panel.move_prev_page",                            100'070},
-                {"panel.scroll_prev_page",                          100'071},*/
-    
-    
+        {"panel.scroll_prev_page",                              u8"⌥\uF72C" }, // alt+page up
         {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
         {"panel.invert_item_selection",                         u8""        },
         {"panel.go_root",                                       u8"/"       }, // slash
@@ -359,23 +356,37 @@ ActionsShortcutsManager::ActionsShortcutsManager()
 {
     m_ActionToTag.assign( begin(g_ActionsTags), end(g_ActionsTags) );
     
-    vector< pair<int, const char*> > tag_to_action;
-    tag_to_action.reserve(g_ActionsTags.size());
-    for( auto &p: g_ActionsTags)
-        tag_to_action.emplace_back( p.second, p.first );
-    m_TagToAction.assign( begin(tag_to_action), end(tag_to_action) );
-        
-    for(auto &d: g_DefaultShortcuts) {
-        auto i = m_ActionToTag.find( get<0>(d) );
-        if( i == end(m_ActionToTag) )
-            continue;
-        
-        if( ShortCut sc{get<1>(d)} )
-            m_ShortCutsDefaults[i->second] = sc;
+    {
+        vector< pair<int, const char*> > tag_to_action;
+        tag_to_action.reserve(g_ActionsTags.size());
+        for( auto &p: g_ActionsTags)
+            tag_to_action.emplace_back( p.second, p.first );
+        m_TagToAction.assign( begin(tag_to_action), end(tag_to_action) );
     }
     
-    if(auto a = [NSArray arrayWithContentsOfFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]])
+    {
+        vector<pair<int, const char*>> default_shortcuts;
+        default_shortcuts.reserve( g_DefaultShortcuts.size() );
+        for( auto &d: g_DefaultShortcuts) {
+            auto i = m_ActionToTag.find( d.first );
+            if( i != end(m_ActionToTag) )
+                default_shortcuts.emplace_back( i->second, d.second );
+        }
+        m_ShortCutsDefaults.assign( begin(default_shortcuts), end(default_shortcuts) );
+    }
+    
+    // TODO: remove this after 1.2.0 is out
+    const auto overrides_file = [NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile];
+    if( auto a = [NSArray arrayWithContentsOfFile:overrides_file] ) {
         ReadOverrides(a);
+        [NSFileManager.defaultManager trashItemAtURL:[NSURL fileURLWithPath:overrides_file]
+                                    resultingItemURL:nil
+                                               error:nil];
+        WriteOverridesToConfig();
+    }
+    else
+        ReadOverrideFromConfig();
+        
     
     m_LastChanged = machtime();
 }
@@ -405,32 +416,25 @@ string ActionsShortcutsManager::ActionFromTag(int _tag) const
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 {
     NSArray *array = _menu.itemArray;
-    for(NSMenuItem *i: array)
-    {
-        if(i.submenu != nil)
-        {
+    for( NSMenuItem *i: array ) {
+        if( i.submenu != nil ) {
             SetMenuShortCuts(i.submenu);
         }
-        else
-        {
+        else {
             int tag = (int)i.tag;
 
             auto scover = m_ShortCutsOverrides.find(tag);
-            if(scover != m_ShortCutsOverrides.end())
-            {
+            if( scover != m_ShortCutsOverrides.end() ) {
                 i.keyEquivalent = scover->second.Key();
                 i.keyEquivalentModifierMask = scover->second.modifiers;
             }
-            else
-            {
+            else {
                 auto sc = m_ShortCutsDefaults.find(tag);
-                if(sc != m_ShortCutsDefaults.end())
-                {
+                if( sc != m_ShortCutsDefaults.end() ) {
                     i.keyEquivalent = sc->second.Key();
                     i.keyEquivalentModifierMask = sc->second.modifiers;
                 }
-                else if(m_TagToAction.find(tag) != m_TagToAction.end())
-                {
+                else if( m_TagToAction.find(tag) != m_TagToAction.end() ) {
                     i.keyEquivalent = @"";
                     i.keyEquivalentModifierMask = 0;
                 }
@@ -441,13 +445,11 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 
 void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
 {
-    m_ShortCutsOverrides.clear();
-    
     if(_dict.count % 2 != 0)
         return;
 
-    for(int ind = 0; ind < _dict.count; ind += 2)
-    {
+    vector< pair<int, const char*> > overrides;
+    for(int ind = 0; ind < _dict.count; ind += 2) {
         NSString *key = [_dict objectAtIndex:ind];
         NSString *obj = [_dict objectAtIndex:ind+1];
 
@@ -458,8 +460,28 @@ void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
         if([obj isEqualToString:@"default"])
             continue;
         
-        m_ShortCutsOverrides[i->second] = ShortCut{obj.UTF8String};
+        overrides.emplace_back( i->second, obj.UTF8String );
     }
+    
+    m_ShortCutsOverrides.assign( begin(overrides), end(overrides) );
+}
+
+void ActionsShortcutsManager::ReadOverrideFromConfig()
+{
+    using namespace rapidjson;
+
+    auto v = GlobalConfig().Get( g_OverridesConfigPath );
+    if( v.GetType() != kObjectType )
+        return;
+    
+    vector< pair<int, const char*> > overrides;
+    for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i )
+        if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
+            auto att = m_ActionToTag.find( i->name.GetString() );
+            if( att != m_ActionToTag.end() )
+                overrides.emplace_back( att->second, i->value.GetString() );
+        }
+    m_ShortCutsOverrides.assign( begin(overrides), end(overrides) );
 }
 
 void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
@@ -512,10 +534,17 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     
     if( m_ShortCutsDefaults[tag] == _sc ) {
         // hotkey is same as the default one
-        if( m_ShortCutsOverrides.find(tag) != end(m_ShortCutsOverrides) ) {
+        if( m_ShortCutsOverrides.count(tag) ) {
             // if something was written as override - erase it
-            m_ShortCutsOverrides.erase(tag);
-            WriteOverridesToConfigFile(); // immediately write to config file
+            vector< pair<int, ShortCut> > tmp;
+            for( const auto &v: m_ShortCutsOverrides )
+                if( v.first != tag )
+                    tmp.emplace_back( v.first, v.second );
+                    
+            m_ShortCutsOverrides.assign( begin(tmp), end(tmp) );
+            
+            // immediately write to config file
+            WriteOverridesToConfig();
             m_LastChanged = machtime();
             return true;
         }
@@ -529,7 +558,7 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
     m_ShortCutsOverrides[tag] = _sc;
     
     // immediately write to config file
-    WriteOverridesToConfigFile();
+    WriteOverridesToConfig();
     m_LastChanged = machtime();
     return true;
 }
@@ -537,7 +566,7 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
 void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
-    WriteOverridesToConfigFile();
+    WriteOverridesToConfig();
     m_LastChanged = machtime();      
 }
 
@@ -548,6 +577,23 @@ bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
 
     return [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
                        atomically:true];
+}
+
+void ActionsShortcutsManager::WriteOverridesToConfig() const
+{
+    using namespace rapidjson;
+    GenericConfig::ConfigValue overrides{ kObjectType };
+    
+    for( auto &i: g_ActionsTags ) {
+        auto scover = m_ShortCutsOverrides.find(i.second);
+        if( scover != end(m_ShortCutsOverrides) )
+            overrides.AddMember(
+                                MakeStandaloneString(i.first),
+                                MakeStandaloneString(scover->second.ToPersString()),
+                                g_CrtAllocator);
+    }
+    
+    GlobalConfig().Set( g_OverridesConfigPath, overrides );
 }
 
 const vector<pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() const

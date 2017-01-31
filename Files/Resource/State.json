@@ -3,7 +3,8 @@
     "filePanel": {
         "findFilesSheet": {},
         "findWithSpotlightPopup": {},
-        "selectWithMaskPopup": {}
+        "selectWithMaskPopup": {},
+        "batchRename": {}
     },
     "viewer": {
     }

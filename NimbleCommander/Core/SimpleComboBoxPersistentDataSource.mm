@@ -13,25 +13,8 @@
 {
     vector<NSString *>  m_Items;
     int                 m_MaxItems;
-    NSString*           m_PlistFilename;
     string              m_ConfigPath;
     bool                m_Clean;
-}
-
-- (instancetype)initWithPlistPath:(NSString*)path
-{
-    self = [super init];
-    if(self) {
-        m_MaxItems = 12;
-        m_PlistFilename = path;
-        m_Clean = true;
-        
-        if(auto array = objc_cast<NSArray>([NSKeyedUnarchiver unarchiveObjectWithFile:m_PlistFilename]))
-            for(id obj in array)
-                if(auto str = objc_cast<NSString>(obj))
-                    m_Items.emplace_back(str);
-    }
-    return self;
 }
 
 - (instancetype)initWithStateConfigPath:(const string&)path
@@ -56,19 +39,11 @@
     if( m_Clean )
         return;
     
-    if( m_PlistFilename ) {
-        NSMutableArray *array = [NSMutableArray arrayWithCapacity:m_Items.size()];
-        for(auto i: m_Items)
-            [array addObject:i];
-        NSString *fn = m_PlistFilename;
-        dispatch_to_background([=]{
-            [NSKeyedArchiver archiveRootObject:array toFile:fn];
-        });
-    }
-    else if( !m_ConfigPath.empty() ) {
+    if( !m_ConfigPath.empty() ) {
         GenericConfig::ConfigValue arr(rapidjson::kArrayType);
         for( auto &s: m_Items )
-            arr.PushBack( GenericConfig::ConfigValue(s.UTF8String, GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+            arr.PushBack(GenericConfig::ConfigValue(s.UTF8String, GenericConfig::g_CrtAllocator),
+                         GenericConfig::g_CrtAllocator );
         StateConfig().Set(m_ConfigPath.c_str(), arr);
     }
 }

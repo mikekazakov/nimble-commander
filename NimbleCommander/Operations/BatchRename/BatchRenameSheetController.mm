@@ -9,12 +9,15 @@
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BatchRenameSheetController.h"
 #include "BatchRename.h"
 #include "BatchRenameSheetRangeSelectionPopoverController.h"
+
+static const auto g_ConfigPatternsPath = "filePanel.batchRename.lastPatterns";
+static const auto g_ConfigSearchesPath = "filePanel.batchRename.lastSearches";
+static const auto g_ConfigReplacesPath = "filePanel.batchRename.lastReplaces";
 
 static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTableViewDataType";
 
@@ -174,18 +177,18 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     [self.FilenamesTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
     
     // set up data sources for comboboxes
-    m_RenamePatternDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
-                                 [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastpatterns.bplist"]];
+    m_RenamePatternDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+        initWithStateConfigPath:g_ConfigPatternsPath];
     self.FilenameMask.usesDataSource = true;
     self.FilenameMask.dataSource = m_RenamePatternDataSource;
 
-    m_SearchForDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
-                             [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastsearches.bplist"]];
+    m_SearchForDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+        initWithStateConfigPath:g_ConfigSearchesPath];
     self.SearchForComboBox.usesDataSource = true;
     self.SearchForComboBox.dataSource = m_SearchForDataSource;
     
-    m_ReplaceWithDataSource = [[SimpleComboBoxPersistentDataSource alloc] initWithPlistPath:
-                               [NSFileManager.defaultManager.applicationSupportDirectory stringByAppendingString:@"/batchrenamesheet_lastreplaces.bplist"]];
+    m_ReplaceWithDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+        initWithStateConfigPath:g_ConfigReplacesPath];
     self.ReplaceWithComboBox.usesDataSource = true;
     self.ReplaceWithComboBox.dataSource = m_ReplaceWithDataSource;
     

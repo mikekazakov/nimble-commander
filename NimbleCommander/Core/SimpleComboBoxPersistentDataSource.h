@@ -10,7 +10,6 @@
 
 @interface SimpleComboBoxPersistentDataSource : NSObject<NSComboBoxDataSource>
 
-- (instancetype)initWithPlistPath:(NSString*)path;
 - (instancetype)initWithStateConfigPath:(const string&)path;
 
 - (void)reportEnteredItem:(NSString*)item; // item can be nil

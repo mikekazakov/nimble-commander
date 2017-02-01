@@ -10,6 +10,7 @@
 
 #include <Utility/SheetController.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
+#include <NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h>
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 

@@ -1000,6 +1000,7 @@
 		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
 		CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeDelete_Tests.mm; sourceTree = "<group>"; };
 		CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_eytzinger_map.h; path = NimbleCommander/Bootstrap/fixed_eytzinger_map.h; sourceTree = SOURCE_ROOT; };
+		CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProFeaturesWindowController.h; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProFeaturesWindowController.mm; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.h; sourceTree = SOURCE_ROOT; };
@@ -1874,6 +1875,7 @@
 				CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */,
 				CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
+				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
 				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,

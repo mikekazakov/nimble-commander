@@ -15,6 +15,7 @@
 class ExternalToolsStorage;
 class PanelViewLayoutsStorage;
 class ThemesManager;
+class ExternalEditorsStorage;
 class VFSHost;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
@@ -78,6 +79,8 @@ class VFSHost;
 @property (nonatomic, readonly) PanelViewLayoutsStorage& panelLayouts;
 
 @property (nonatomic, readonly) ThemesManager& themesManager;
+
+@property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 

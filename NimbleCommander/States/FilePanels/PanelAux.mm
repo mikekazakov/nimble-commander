@@ -204,7 +204,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
 
 void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
                                                                VFSHostPtr _host,
-                                                               ExternalEditorInfo *_ext_ed,
+                                                               shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                                                string _file_title,
                                                                PanelController *_panel)
 {
@@ -212,8 +212,8 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
     
     if( _host->IsNativeFS() ) {
         if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
-            [wnd RequestExternalEditorTerminalExecution:_ext_ed.path.fileSystemRepresentationSafe
-                                                 params:[_ext_ed substituteFileName:_filepath]
+            [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
+                                                 params:_ext_ed->SubstituteFileName(_filepath)
                                               fileTitle:_file_title];
     }
     else
@@ -240,8 +240,8 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
                 RegisterRemoteFileUploading( _filepath, _host, *tmp, _panel );
                 dispatch_to_main_queue([=]{ // when we sucessfuly download a file - request terminal execution in main thread
                     if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
-                        [wnd RequestExternalEditorTerminalExecution:_ext_ed.path.fileSystemRepresentationSafe
-                                                             params:[_ext_ed substituteFileName:*tmp]
+                        [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
+                                                             params:_ext_ed->SubstituteFileName(*tmp)
                                                           fileTitle:_file_title];
                 });
             }

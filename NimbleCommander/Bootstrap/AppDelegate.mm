@@ -35,6 +35,7 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
+#include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
@@ -62,6 +63,7 @@ static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
 static const auto g_ConfigSelectedThemes = "general.theme";
 static const auto g_ConfigThemesList = "themes.themes_v1";
+static const auto g_ConfigExtEditorsList = "externalEditors.editors_v1";
 
 GenericConfig &GlobalConfig() noexcept
 {
@@ -716,6 +718,12 @@ static AppDelegate *g_Me = nil;
 - (ThemesManager&) themesManager
 {
     static auto i = new ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
+    return *i;
+}
+
+- (ExternalEditorsStorage&) externalEditorsStorage
+{
+    static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList);
     return *i;
 }
 

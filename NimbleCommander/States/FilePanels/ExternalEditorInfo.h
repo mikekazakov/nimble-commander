@@ -7,37 +7,58 @@
 //
 
 #pragma once
-#include <VFS/VFS.h>
 
-@interface ExternalEditorInfo : NSObject<NSCoding, NSCopying>
+class VFSListingItem;
 
-@property (nonatomic) NSString *name;
-@property (nonatomic) NSString *path;
-@property (nonatomic) NSString *arguments;
-@property (nonatomic) NSString *mask;
-@property (nonatomic) bool only_files;
-@property (nonatomic) uint64_t max_size;
-@property (nonatomic) bool terminal;
+class ExternalEditorStartupInfo
+{
+public:
+    ExternalEditorStartupInfo() noexcept;
+    
+    const string   &Name()              const noexcept;
+    const string   &Path()              const noexcept;
+    const string   &Arguments()         const noexcept;
+    const string   &Mask()              const noexcept;
+    bool            OnlyFiles()         const noexcept;
+    uint64_t        MaxFileSize()       const noexcept;
+    bool            OpenInTerminal()    const noexcept;
+
+    bool IsValidForItem(const VFSListingItem&_item) const;
+    
+    /**
+     * Returns arguments in UTF8 form where %% appearances are changed to specified file path.
+     * Treat empty arguments as @"%%" string. _path is escaped with backward slashes.
+     */
+    string SubstituteFileName(const string &_path) const;
 
 
-- (bool) isValidItem:(const VFSListingItem&)_item;
+private:
+    string m_Name;
+    string m_Path;
+    string m_Arguments;
+    string m_Mask;
+    uint64_t m_MaxFileSize;
+    bool m_OnlyFiles;
+    bool m_OpenInTerminal;
+    friend struct ExternalEditorsPersistence;
+    friend class ExternalEditorsStorage;
+};
 
-/**
- * Returns arguments in UTF8 form where %% appearances are changed to specified file path.
- * Treat empty arguments as @"%%" string. _path is escaped with backward slashes.
- */
-- (string) substituteFileName:(const string &)_path;
+// STA api design, access only from main thread!
+class ExternalEditorsStorage
+{
+public:
+    ExternalEditorsStorage(const char* _config_path);
 
-@end
+    shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
+    vector<shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
+    
+    void SetExternalEditors( const vector<shared_ptr<ExternalEditorStartupInfo>>& _editors );
 
+private:
+    void LoadFromConfig();
+    void SaveToConfig();
 
-@interface ExternalEditorsList : NSObject
-
-+ (ExternalEditorsList*) sharedList;
-
-- (ExternalEditorInfo*) FindViableEditorForItem:(const VFSListingItem&)_item;
-- (NSMutableArray*) Editors;
-- (void) setEditors:(NSMutableArray*)_editors;
-
-@end
-
+    vector<shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
+    const char* const m_ConfigPath;
+};

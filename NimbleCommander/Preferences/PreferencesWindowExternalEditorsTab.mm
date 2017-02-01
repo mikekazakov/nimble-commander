@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include "PreferencesWindowExternalEditorsTab.h"
@@ -23,11 +24,28 @@
 @end
 
 @implementation PreferencesWindowExternalEditorsTab
+{
+    NSMutableArray *m_Editors;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
+    
+        auto v = AppDelegate.me.externalEditorsStorage.AllExternalEditors();
+        m_Editors = [NSMutableArray new];
+        for( auto i: v ) {
+            ExternalEditorInfo *ed = [ExternalEditorInfo new];
+            ed.name = [NSString stringWithUTF8StdString:i->Name()];
+            ed.path = [NSString stringWithUTF8StdString:i->Path()];
+            ed.arguments = [NSString stringWithUTF8StdString:i->Arguments()];
+            ed.mask = [NSString stringWithUTF8StdString:i->Mask()];
+            ed.only_files = i->OnlyFiles();
+            ed.max_size = i->MaxFileSize();
+            ed.terminal = i->OpenInTerminal();
+            [m_Editors addObject:ed];
+        }
     }
     
     return self;
@@ -58,12 +76,17 @@
 
 - (NSMutableArray *) ExtEditors
 {
-    return ExternalEditorsList.sharedList.Editors;
+    return m_Editors;
 }
 
 - (void) setExtEditors:(NSMutableArray *)ExtEditors
 {
-    ExternalEditorsList.sharedList.Editors = ExtEditors;
+    m_Editors = ExtEditors;
+    vector< shared_ptr<ExternalEditorStartupInfo> > eds;
+    for( ExternalEditorInfo *i in m_Editors )
+        eds.emplace_back( [i toStartupInfo] );
+    
+    AppDelegate.me.externalEditorsStorage.SetExternalEditors( eds );
 }
 
 - (IBAction)OnNewEditor:(id)sender

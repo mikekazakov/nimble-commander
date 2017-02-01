@@ -519,6 +519,25 @@
         ]
     },
     
+    "externalEditors": {
+        "editors_v1": [
+                       {
+                       "name": "vi",
+                       "path": "/usr/bin/vi",
+                       "args": "%%",
+                       "mask": "*",
+                       "openInTerminal": true
+                       },
+                       {
+                       "name": "TextEdit",
+                       "path": "/Applications/TextEdit.app",
+                       "args": "",
+                       "mask": "*",
+                       "openInTerminal": false
+                       }
+                       ]
+    },
+    
     "themes": {
         "themes_v1": [
                       {

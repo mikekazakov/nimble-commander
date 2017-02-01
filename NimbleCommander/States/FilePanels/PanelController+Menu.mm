@@ -1075,16 +1075,16 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     if( !item || item.IsDotDot() )
         return;
     
-    ExternalEditorInfo *ed = [ExternalEditorsList.sharedList FindViableEditorForItem:item];
+    auto ed = AppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
     if( !ed ) {
         NSBeep();
         return;
     }
     
-    if( ed.terminal == false )
+    if( ed->OpenInTerminal() == false )
         PanelVFSFileWorkspaceOpener::Open(item.Path(),
                                           item.Host(),
-                                          ed.path.fileSystemRepresentationSafe,
+                                          ed->Path(),
                                           self);
     else
         PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(item.Path(),

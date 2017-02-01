@@ -11,6 +11,7 @@
 
 @class PanelController;
 @class ExternalEditorInfo;
+class ExternalEditorStartupInfo;
 
 // this class allows opening file in VFS with regular [NSWorkspace open]
 // after refactoring the need to keep this class at all is in doubts
@@ -38,7 +39,7 @@ public:
     
     static void OpenInExternalEditorTerminal(string _filepath,
                                              VFSHostPtr _host,
-                                             ExternalEditorInfo *_ext_ed,
+                                             shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                              string _file_title,
                                              PanelController *_panel);
 };

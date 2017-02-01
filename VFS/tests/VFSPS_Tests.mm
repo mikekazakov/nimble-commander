@@ -7,7 +7,7 @@
 //
 
 #include "tests_common.h"
-#include "../Files/vfs/vfs_ps.h"
+#include <VFS/PS.h>
 
 @interface VFSPS_Tests : XCTestCase
 @end

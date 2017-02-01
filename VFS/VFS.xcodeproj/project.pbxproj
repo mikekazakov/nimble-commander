@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF1847011E41C86D008B7C9F /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF1847001E41C86D008B7C9F /* Tests.m */; };
+		CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFCF1DA224E200992B84 /* libVFS.a */; };
+		CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */; };
+		CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847131E41C9C0008B7C9F /* libHabanero.a */; };
+		CF1847161E41C9D7008B7C9F /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847151E41C9D7008B7C9F /* libRoutedIO.a */; };
+		CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */; };
+		CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471D1E41CA2D008B7C9F /* libUtility.a */; };
+		CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */; };
+		CF1847221E41CAFF008B7C9F /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */; };
+		CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847231E41CB07008B7C9F /* libboost_system.a */; };
+		CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
+		CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472A1E41CC4E008B7C9F /* libssh2.a */; };
+		CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847281E41CC4C008B7C9F /* libcrypto.a */; };
+		CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847261E41CC49008B7C9F /* libssl.a */; };
+		CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */; };
+		CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472F1E41CFB7008B7C9F /* libarchive.a */; };
 		CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* ArcLA.h */; };
 		CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* ArcUnRAR.h */; };
 		CF69CFF61DA227E400992B84 /* Native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* Native.h */; };
@@ -83,7 +99,38 @@
 		CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0791DA238D400992B84 /* VFSListingInput.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CF1847041E41C86D008B7C9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CFC71DA224E200992B84 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF69CFCE1DA224E200992B84;
+			remoteInfo = VFS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF1847001E41C86D008B7C9F /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
+		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
+		CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_Tests.mm; path = tests/VFSArchive_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSFTP_Tests.mm; path = tests/VFSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPS_Tests.mm; path = tests/VFSPS_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSSFTP_Tests.mm; path = tests/VFSSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF1847131E41C9C0008B7C9F /* libHabanero.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHabanero.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.a"; sourceTree = "<group>"; };
+		CF1847151E41C9D7008B7C9F /* libRoutedIO.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRoutedIO.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.a"; sourceTree = "<group>"; };
+		CF1847171E41C9F9008B7C9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		CF1847191E41CA0B008B7C9F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		CF18471D1E41CA2D008B7C9F /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
+		CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../Files/3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
+		CF1847231E41CB07008B7C9F /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../Files/3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
+		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
+		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
+		CF18472A1E41CC4E008B7C9F /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../Files/3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
+		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
@@ -162,6 +209,25 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CF1846FB1E41C86D008B7C9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */,
+				CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */,
+				CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */,
+				CF1847161E41C9D7008B7C9F /* libRoutedIO.a in Frameworks */,
+				CF1847221E41CAFF008B7C9F /* libboost_filesystem.a in Frameworks */,
+				CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */,
+				CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */,
+				CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */,
+				CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */,
+				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
+				CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */,
+				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF69CFCC1DA224E200992B84 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -172,12 +238,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF1846FF1E41C86D008B7C9F /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CF1847091E41C8A5008B7C9F /* tests_common.h */,
+				CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */,
+				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
+				CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */,
+				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
+				CF1847001E41C86D008B7C9F /* Tests.m */,
+				CF1847021E41C86D008B7C9F /* Info.plist */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF18472F1E41CFB7008B7C9F /* libarchive.a */,
+				CF18472A1E41CC4E008B7C9F /* libssh2.a */,
+				CF1847281E41CC4C008B7C9F /* libcrypto.a */,
+				CF1847261E41CC49008B7C9F /* libssl.a */,
+				CF1847231E41CB07008B7C9F /* libboost_system.a */,
+				CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */,
+				CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */,
+				CF18471D1E41CA2D008B7C9F /* libUtility.a */,
+				CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */,
+				CF1847191E41CA0B008B7C9F /* SystemConfiguration.framework */,
+				CF1847171E41C9F9008B7C9F /* Security.framework */,
+				CF1847151E41C9D7008B7C9F /* libRoutedIO.a */,
+				CF1847131E41C9C0008B7C9F /* libHabanero.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CF69CFC61DA224E200992B84 = {
 			isa = PBXGroup;
 			children = (
 				CF69CFDD1DA227B100992B84 /* Headers */,
 				CF69CFDF1DA227C100992B84 /* Source */,
+				CF1846FF1E41C86D008B7C9F /* Tests */,
 				CF69CFD01DA224E200992B84 /* Products */,
+				CF1847121E41C9C0008B7C9F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -185,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFCF1DA224E200992B84 /* libVFS.a */,
+				CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -390,6 +493,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		CF1846FD1E41C86D008B7C9F /* VFS Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF1847081E41C86D008B7C9F /* Build configuration list for PBXNativeTarget "VFS Tests" */;
+			buildPhases = (
+				CF1846FA1E41C86D008B7C9F /* Sources */,
+				CF1846FB1E41C86D008B7C9F /* Frameworks */,
+				CF1846FC1E41C86D008B7C9F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF1847051E41C86D008B7C9F /* PBXTargetDependency */,
+			);
+			name = "VFS Tests";
+			productName = Tests;
+			productReference = CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CF69CFCE1DA224E200992B84 /* VFS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF69CFD31DA224E200992B84 /* Build configuration list for PBXNativeTarget "VFS" */;
@@ -416,6 +537,10 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
+					CF1846FD1E41C86D008B7C9F = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
 					CF69CFCE1DA224E200992B84 = {
 						CreatedOnToolsVersion = 8.0;
 						ProvisioningStyle = Automatic;
@@ -435,11 +560,33 @@
 			projectRoot = "";
 			targets = (
 				CF69CFCE1DA224E200992B84 /* VFS */,
+				CF1846FD1E41C86D008B7C9F /* VFS Tests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		CF1846FC1E41C86D008B7C9F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		CF1846FA1E41C86D008B7C9F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */,
+				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
+				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
+				CF1847011E41C86D008B7C9F /* Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF69CFCB1DA224E200992B84 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -479,7 +626,41 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CF1847051E41C86D008B7C9F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF69CFCE1DA224E200992B84 /* VFS */;
+			targetProxy = CF1847041E41C86D008B7C9F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		CF1847061E41C86D008B7C9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = Logovo.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF1847071E41C86D008B7C9F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = Logovo.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CF69CFD11DA224E200992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -530,6 +711,11 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -588,6 +774,11 @@
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/include",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -618,6 +809,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF1847081E41C86D008B7C9F /* Build configuration list for PBXNativeTarget "VFS Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF1847061E41C86D008B7C9F /* Debug */,
+				CF1847071E41C86D008B7C9F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		CF69CFCA1DA224E200992B84 /* Build configuration list for PBXProject "VFS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

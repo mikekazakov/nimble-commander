@@ -7,8 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "../Files/vfs/vfs_net_sftp.h"
-#include "../Files/PanelData.h"
+#include <VFS/NetSFTP.h>
+//#include "../Files/vfs/vfs_net_sftp.h"
+//#include "../Files/PanelData.h"
 
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local";
@@ -63,15 +64,24 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     if(!listing)
         return;
     
-    PanelData data;
-    data.Load(listing, PanelData::PanelType::Directory);
-    XCTAssert( data.Listing().Count() == 22);
-    XCTAssert( "bin"s == data.EntryAtSortPosition(0).Name() );
-    XCTAssert( "var"s == data.EntryAtSortPosition(19).Name() );
-    XCTAssert( "initrd.img"s == data.EntryAtSortPosition(20).Name() );
-    XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(21).Name() );
+    auto has = [&](const string fn) {
+        return find_if( begin(*listing), end(*listing), [&](const auto &v) {
+            return v.Filename() == fn;
+        }) != end(*listing);
+    };
+    auto at = [&](const string fn) {
+        return *find_if( begin(*listing), end(*listing), [&](const auto &v) {
+            return v.Filename() == fn;
+        });
+    };
     
-    XCTAssert( data.EntryAtSortPosition(0).IsDir() );
+    XCTAssert( listing->Count() == 22 );
+    XCTAssert( has("bin") );
+    XCTAssert( has("var") );
+    XCTAssert( has("initrd.img") );
+    XCTAssert( has("vmlinuz") );
+    XCTAssert( at("bin").IsDir() );
+
     // need to check symlinks
 }
 
@@ -191,15 +201,23 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         if(!listing)
             return;
         
-        PanelData data;
-        data.Load(listing, PanelData::PanelType::Directory);
-        XCTAssert( data.Listing().Count() == 21);
-        XCTAssert( "root"s == data.EntryAtSortPosition(11).Name() );
-        XCTAssert( "var"s == data.EntryAtSortPosition(18).Name() );
-        XCTAssert( "initrd.img"s == data.EntryAtSortPosition(19).Name() );
-        XCTAssert( "vmlinuz"s == data.EntryAtSortPosition(20).Name() );
+        auto has = [&](const string fn) {
+            return find_if( begin(*listing), end(*listing), [&](const auto &v) {
+                return v.Filename() == fn;
+            }) != end(*listing);
+        };
+        auto at = [&](const string fn) {
+            return *find_if( begin(*listing), end(*listing), [&](const auto &v) {
+                return v.Filename() == fn;
+            });
+        };
         
-        XCTAssert( data.EntryAtSortPosition(0).IsDir() );
+        XCTAssert( listing->Count() == 21 );
+        XCTAssert( has("bin") );
+        XCTAssert( has("var") );
+        XCTAssert( has("initrd.img") );
+        XCTAssert( has("vmlinuz") );
+        XCTAssert( at("bin").IsDir() );
         
         
         VFSFilePtr file;

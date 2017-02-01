@@ -529,7 +529,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         [op AddOnFinishHandler:^{
             dispatch_to_main_queue([=]{
                 if(auto ss = ws)
-                    [ss RefreshDirectory];
+                    [ss refreshPanel];
             });
         }];
     
@@ -642,7 +642,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
             req.filename = filename;
             [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
             if( force_refresh  )
-                [m_CurrentController RefreshDirectory];
+                [m_CurrentController refreshPanel];
         });
       }
      ];

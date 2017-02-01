@@ -79,6 +79,8 @@ namespace VFSNetFTP
          */
         void MakeEntryDirty(const string &_path);
         
+        void MarkDirectoryDirty( const string &_path );
+        
         /**
          * Creates a new dirty file.
          * If this file already exist in cache - mark it as dirty.

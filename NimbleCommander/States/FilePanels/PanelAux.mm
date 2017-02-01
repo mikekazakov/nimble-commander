@@ -63,7 +63,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                         if( !pc.receivesUpdateNotifications )
                             [operation AddOnFinishHandler:[=]{
                                 dispatch_to_main_queue( [=]{
-                                    [(PanelController*)origin_controller RefreshDirectory]; // perhaps need to check that path didn't changed
+                                    [(PanelController*)origin_controller refreshPanel]; // perhaps need to check that path didn't changed
                                 });
                             }];
                     [window.OperationsController AddOperation:operation];

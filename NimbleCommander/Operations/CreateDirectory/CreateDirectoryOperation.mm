@@ -91,7 +91,7 @@ static NSString *OperationTitleFromPath(const char *_path)
             PanelController *target = self.TargetPanel;
             
             dispatch_to_main_queue( [=]{
-                [target RefreshDirectory];
+                [target refreshPanel];
                 PanelControllerDelayedSelection req;
                 req.filename = m_OriginalPathRequest;
                 [target ScheduleDelayedSelectionChangeFor:req];

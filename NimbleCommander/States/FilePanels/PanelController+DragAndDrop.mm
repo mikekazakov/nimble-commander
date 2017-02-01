@@ -458,7 +458,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             __weak PanelController *dst_cntr = self;
             [op AddOnFinishHandler:^{
                 dispatch_to_main_queue([dst_cntr]{
-                    if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
+                    if(PanelController *pc = dst_cntr) [pc refreshPanel];
                 });
             }];
             [self.state.OperationsController AddOperation:op];
@@ -474,8 +474,8 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             __weak PanelController *dst_cntr = self;
             [op AddOnFinishHandler:^{
                 dispatch_to_main_queue([src_cntr, dst_cntr]{
-                    if(PanelController *pc = src_cntr) [pc RefreshDirectory];
-                    if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
+                    if(PanelController *pc = src_cntr) [pc refreshPanel];
+                    if(PanelController *pc = dst_cntr) [pc refreshPanel];
                 });
             }];
             [self.state.OperationsController AddOperation:op];
@@ -516,7 +516,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         __weak PanelController *dst_cntr = self;
         [op AddOnFinishHandler:^{
             dispatch_to_main_queue([dst_cntr]{
-                if(PanelController *pc = dst_cntr) [pc RefreshDirectory];
+                if(PanelController *pc = dst_cntr) [pc refreshPanel];
             });
         }];
         [self.state.OperationsController AddOperation:op];

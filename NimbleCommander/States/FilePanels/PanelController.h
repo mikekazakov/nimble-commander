@@ -169,7 +169,8 @@ namespace panel
 
 - (void) AttachToControls:(NSProgressIndicator*)_indicator
                     share:(NSButton*)_share;
-- (void) RefreshDirectory; // user pressed cmd+r by default
+- (void) refreshPanel; // reload panel contents
+- (void) forceRefreshPanel; // user pressed cmd+r by default
 //- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
 

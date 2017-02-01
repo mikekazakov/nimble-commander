@@ -286,6 +286,9 @@ int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
                                         int _flags,
                                         VFSCancelChecker _cancel_checker)
 {
+    if( _flags & VFSFlags::F_ForceRefresh )
+        m_Cache->MarkDirectoryDirty( _path );
+
     shared_ptr<VFSNetFTP::Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
     if(result != 0)
@@ -550,8 +553,7 @@ int VFSNetFTPHost::Rename(const char *_old_path, const char *_new_path, VFSCance
 
 void VFSNetFTPHost::MakeDirectoryStructureDirty(const char *_path)
 {
-    if(auto dir = m_Cache->FindDirectory(_path))
-    {
+    if(auto dir = m_Cache->FindDirectory(_path)) {
         InformDirectoryChanged(dir->path);
         dir->dirty_structure = true;
     }

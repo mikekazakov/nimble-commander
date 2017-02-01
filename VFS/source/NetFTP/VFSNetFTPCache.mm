@@ -83,6 +83,13 @@ namespace VFSNetFTP
         return FindDirectoryInt(_path);
     }
     
+    void Cache::MarkDirectoryDirty( const string &_path )
+    {
+        lock_guard<mutex> lock(m_CacheLock);
+        if( auto d = FindDirectoryInt(_path) )
+            d->dirty_structure = true;
+    }
+    
     shared_ptr<Directory> Cache::FindDirectoryInt(const string &_path) const
     {
         if(_path.empty() ||

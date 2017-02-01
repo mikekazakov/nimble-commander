@@ -303,8 +303,8 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     __weak auto opp = self.oppositePanelController;
     auto update_both_panels = [=] {
         dispatch_to_main_queue( [=]{
-            [(PanelController*)cur RefreshDirectory];
-            [(PanelController*)opp RefreshDirectory];
+            [(PanelController*)cur refreshPanel];
+            [(PanelController*)opp refreshPanel];
         });
     };
     return update_both_panels;

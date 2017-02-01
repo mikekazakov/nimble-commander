@@ -200,7 +200,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
     
-    [self RefreshDirectory];
+    [self refreshPanel];
 }
 
 - (void)configQuickSearchSettingsChanged
@@ -419,28 +419,28 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     [m_View setNeedsDisplay];
 }
 
-- (void) RefreshDirectory
+- (void) refreshPanelDiscardingCaches:(bool)_force
 {
     if(m_View == nil)
         return; // guard agains calls from init process
     if( m_Data.Listing().shared_from_this() == VFSListing::EmptyListing() )
         return; // guard agains calls from init process
     
-    // going async here
-    if(!m_DirectoryLoadingQ.Empty())
+    if( !m_DirectoryLoadingQ.Empty() )
         return; //reducing overhead
 
     // later: maybe check PanelType somehow
     
     if( self.isUniform ) {
-        string dirpath = m_Data.DirectoryPathWithTrailingSlash();
-        auto vfs = self.vfs;
-//        m_DirectoryReLoadingQ->Run([=](const SerialQueue &_q){
+        const auto fetch_flags = m_VFSFetchingFlags | (_force ? VFSFlags::F_ForceRefresh : 0);
+        const auto dirpath = m_Data.DirectoryPathWithTrailingSlash();
+        const auto vfs = self.vfs;
+        
         m_DirectoryReLoadingQ.Run([=]{
             VFSListingPtr listing;
             int ret = vfs->FetchFlexibleListing(dirpath.c_str(),
                                                 listing,
-                                                m_VFSFetchingFlags,
+                                                fetch_flags,
                                                 [&]{ return m_DirectoryReLoadingQ.IsStopped(); }
                                                 );
             if(ret >= 0)
@@ -465,6 +465,16 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                 });
         });
     }
+}
+
+- (void) refreshPanel
+{
+   [self refreshPanelDiscardingCaches:false];
+}
+
+- (void) forceRefreshPanel
+{
+    [self refreshPanelDiscardingCaches:true];
 }
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
@@ -668,7 +678,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     if( self.isUniform )
         m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), [=]{
             dispatch_to_main_queue([=]{
-                [(PanelController *)weakself RefreshDirectory];
+                [(PanelController *)weakself refreshPanel];
             });
         });
     
@@ -817,7 +827,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
                     PanelControllerDelayedSelection req;
                     req.filename = target_fn;
                     [self ScheduleDelayedSelectionChangeFor:req];
-                    [self RefreshDirectory];
+                    [self refreshPanel];
                 } );
         }];
     }

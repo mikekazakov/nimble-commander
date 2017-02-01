@@ -706,7 +706,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     __weak auto cur = self;
     auto update_this_panel = [=] {
         dispatch_to_main_queue( [=]{
-            [(PanelController*)cur RefreshDirectory];
+            [(PanelController*)cur refreshPanel];
         });
     };
     return update_this_panel;
@@ -917,7 +917,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnRefreshPanel:(id)sender
 {
-    [self RefreshDirectory];
+    [self forceRefreshPanel];
 }
 
 - (IBAction)OnCalculateSizes:(id)sender
@@ -1280,7 +1280,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             PanelController *ss = ws;
             
             if(force_reload)
-                [ss RefreshDirectory];
+                [ss refreshPanel];
             
             PanelControllerDelayedSelection req;
             req.filename = name;
@@ -1335,7 +1335,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             PanelController *ss = ws;
             
             if(force_reload)
-                [ss RefreshDirectory];
+                [ss refreshPanel];
             
             PanelControllerDelayedSelection req;
             req.filename = name;
@@ -1399,7 +1399,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             PanelController *ss = ws;
             
             if(force_reload)
-                [ss RefreshDirectory];
+                [ss refreshPanel];
             
             PanelControllerDelayedSelection req;
             req.filename = name;
@@ -1500,7 +1500,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     __weak PanelController *wpc = self;
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue( [=]{
-            if(PanelController *pc = wpc) [pc RefreshDirectory];
+            if(PanelController *pc = wpc) [pc refreshPanel];
         });
     }];
     

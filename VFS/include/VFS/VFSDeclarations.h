@@ -35,13 +35,17 @@ namespace VFSFlags
         
     // Flags altering host behaviour
     /** do not follow symlinks when resolving item name */
-    F_NoFollow  = 0x02000000,
+    F_NoFollow          = 0x10000000,
         
     // Flags altering listing building
     /** for listing. don't fetch dot-dot entry in directory listing */
-    F_NoDotDot  = 0x04000000,
+    F_NoDotDot          = 0x20000000,
+    
     /** for listing. ask system to provide localized display names */
-    F_LoadDisplayNames  = 0x08000000
+    F_LoadDisplayNames  = 0x40000000,
+    
+    /** discard caches when fetching information. */
+    F_ForceRefresh      = 0x80000000,
         
     };
 };

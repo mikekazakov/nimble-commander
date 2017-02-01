@@ -285,11 +285,11 @@ template <typename _Key, typename _Value, typename _Compare>
 void fixed_eytzinger_map<_Key, _Value, _Compare>::__deallocate() noexcept
 {
     if( __m_keys ) {
-        ::operator delete( __m_keys, __m_count );
+        ::operator delete( __m_keys );
         __m_keys = nullptr;
     }
     if( __m_values ) {
-        ::operator delete( __m_values, __m_count );
+        ::operator delete( __m_values );
         __m_values = nullptr;
     }
     __m_count = 0;

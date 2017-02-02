@@ -103,6 +103,10 @@
 		CFD725FD1E42DD3A00603077 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FC1E42DD3A00603077 /* libcurl.a */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
 		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
+		CFD7273C1E42EC7B00603077 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */; };
+		CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273D1E42EC8E00603077 /* Carbon.framework */; };
+		CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
+		CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD727411E42EC9D00603077 /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -216,6 +220,10 @@
 		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CFD725FC1E42DD3A00603077 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../Files/3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
+		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
+		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		CFD7273F1E42EC9A00603077 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CFD727411E42EC9D00603077 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,7 +239,11 @@
 				CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */,
 				CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */,
 				CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */,
+				CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */,
 				CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */,
+				CFD7273C1E42EC7B00603077 /* DiskArbitration.framework in Frameworks */,
+				CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */,
+				CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */,
 				CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */,
 				CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */,
 				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
@@ -270,6 +282,10 @@
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFD727411E42EC9D00603077 /* AppKit.framework */,
+				CFD7273F1E42EC9A00603077 /* Foundation.framework */,
+				CFD7273D1E42EC8E00603077 /* Carbon.framework */,
+				CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */,
 				CFD725FF1E42DD6000603077 /* LDAP.framework */,
 				CFD725FC1E42DD3A00603077 /* libcurl.a */,
 				CFD725F91E42DC4B00603077 /* libz.a */,

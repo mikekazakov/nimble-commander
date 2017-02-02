@@ -164,7 +164,7 @@
             /**
              * Should filtering show only matching filenames(false) or should it only focus matching filenames in whole panel(true)
              */
-            "softFiltering": true,
+            "softFiltering": false,
             
             /**
              * Where to find a piece of text in filename, integer enumeration:

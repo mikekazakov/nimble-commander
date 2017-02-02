@@ -1085,6 +1085,11 @@ bool PanelData::ClearTextFiltering()
     m_SoftFiltering.text = nil;
     m_HardFiltering.text.text = nil;
     
+    for( auto &vd: m_VolatileData ) {
+        vd.qs_highlight_begin = 0;
+        vd.qs_highlight_end = 0;
+    }
+    
     DoSortWithHardFiltering();
     ClearSelectedFlagsFromHiddenElements(); // not sure if this is needed here
     BuildSoftFilteringIndeces();

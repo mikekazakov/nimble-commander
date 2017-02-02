@@ -126,7 +126,7 @@ static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
 //        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"%1$@ matches | %2$@", @"FilePanelsQuickSearch", ""), [NSNumber numberWithInt:_matches], _string];
 //}
 
-NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
+static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
 {
     if( !_key )
         return _str;
@@ -216,10 +216,8 @@ NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         __weak PanelController *wself = self;
         dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
             if(PanelController *sself = wself)
-                if(sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime()) {
-                    [sself->m_View setQuickSearchPrompt:nil withMatchesCount:0];
-                    //                    sself->m_View.quickSearchPrompt = nil;
-                }
+                if( sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime() )
+                    [sself QuickSearchClearFiltering];
         });
     }
     

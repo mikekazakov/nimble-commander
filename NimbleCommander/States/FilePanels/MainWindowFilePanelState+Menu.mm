@@ -526,7 +526,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
         static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
                                                                          {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down", "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
-        hotkeys_updater.CheckAndUpdate();
         
         if( hk_move_up.IsKeyDown(unicode, kc, mod)  ) {
             [self OnViewPanelsPositionMoveUp:self];

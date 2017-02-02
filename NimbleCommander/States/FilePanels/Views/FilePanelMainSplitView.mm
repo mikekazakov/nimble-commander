@@ -273,7 +273,6 @@ static const auto g_MinPanelWidth = 120;
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_left, &hk_move_right},
                                                                      {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
-    hotkeys_updater.CheckAndUpdate();
     
     if( hk_move_left.IsKeyDown(unicode, kc, mod) ) {
         [self OnViewPanelsPositionMoveLeft:self];

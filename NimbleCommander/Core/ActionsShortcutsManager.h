@@ -14,12 +14,14 @@
 // ⌥ - NSAlternateKeyMask
 // ⌘ - NSCommandKeyMask
 
+#include <Habanero/Observable.h>
 #include "ActionShortcut.h"
 
-class ActionsShortcutsManager
+class ActionsShortcutsManager : ObservableBase
 {
 public:
     using ShortCut = ::ActionShortcut;
+    struct AutoUpdatingShortCut;
     class ShortCutsUpdater;
     
     static ActionsShortcutsManager &Instance();
@@ -59,7 +61,8 @@ public:
     
     const vector<pair<const char*,int>>& AllShortcuts() const;
     
-    nanoseconds LastChanged() const;
+    using ObservationTicket = ObservableBase::ObservationTicket;
+    ObservationTicket ObserveChanges(function<void()> _callback);
     
 private:
     ActionsShortcutsManager();
@@ -76,18 +79,16 @@ private:
     fixed_eytzinger_map<string, int, less<>>    m_ActionToTag;
     fixed_eytzinger_map<int, ShortCut>          m_ShortCutsDefaults;
     fixed_eytzinger_map<int, ShortCut>          m_ShortCutsOverrides;
-    nanoseconds                                 m_LastChanged;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater
 {
 public:
     ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions );
-    
-    void CheckAndUpdate();
 private:
+    void CheckAndUpdate() const;
     vector< pair<ShortCut*, int> >  m_Pets;
-    nanoseconds                     m_LastUpdated;
+    ObservationTicket               m_Ticket;
 };
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y

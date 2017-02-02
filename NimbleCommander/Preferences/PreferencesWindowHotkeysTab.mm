@@ -48,6 +48,8 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
         {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"         },
         {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"         },
         {"panel.show_preview",                  @"File Panels ▶ Show Preview"                   },
+        {"panel.go_into_enclosing_folder",      @"File Panels ▶ Go to Enclosing Folder"         },
+        {"panel.go_into_folder",                @"File Panels ▶ Go Into Folder"                 },
     };
     
     for( auto &i: titles )

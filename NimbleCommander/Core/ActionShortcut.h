@@ -19,5 +19,5 @@ struct ActionShortcut
     bool        IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept;
     
     uint16_t        unicode;
-    uint64_t        modifiers;
+    uint64_t        modifiers; // TODO: NSEventModifierFlagsHolder, will save 12 bytes per AS
 };

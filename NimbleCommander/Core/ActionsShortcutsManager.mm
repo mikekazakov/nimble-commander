@@ -168,6 +168,8 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"panel.scroll_prev_page",                          100'071},
     {"panel.move_next_and_invert_selection",            100'080},
     {"panel.invert_item_selection",                     100'081},
+    {"panel.go_into_enclosing_folder",                  100'120},
+    {"panel.go_into_folder",                            100'130},
     {"panel.go_root",                                   100'090},
     {"panel.go_home",                                   100'100},
     {"panel.show_preview",                              100'110},
@@ -325,13 +327,14 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.scroll_prev_page",                              u8"⌥\uF72C" }, // alt+page up
         {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
         {"panel.invert_item_selection",                         u8""        },
+        {"panel.go_into_enclosing_folder",                      u8""        },
+        {"panel.go_into_folder",                                u8""        },
         {"panel.go_root",                                       u8"/"       }, // slash
         {"panel.go_home",                                       u8"~"       }, // tilde
         {"panel.show_preview",                                  u8" "       }, // space
 };
 
-ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions ):
-    m_LastUpdated(0)
+ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions )
 {
     if( _hotkeys.size() != _actions.size() )
         throw logic_error("_hotkeys.size() != _actions.size()");
@@ -339,17 +342,16 @@ ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<Sh
     auto &am = ActionsShortcutsManager::Instance();
     for( int i = 0; i < _hotkeys.size(); ++i )
         m_Pets.emplace_back( _hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]) );
+    m_Ticket = am.ObserveChanges( [this]{ CheckAndUpdate(); } );
+    
     CheckAndUpdate();
 }
 
-void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate()
+void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 {
     auto &am = ActionsShortcutsManager::Instance();
-    if( m_LastUpdated < am.LastChanged() ) {
-        for( auto &i: m_Pets )
-            *i.first = am.ShortCutFromTag(i.second);
-        m_LastUpdated = am.LastChanged();
-    }
+    for( auto &i: m_Pets )
+        *i.first = am.ShortCutFromTag(i.second);
 }
 
 ActionsShortcutsManager::ActionsShortcutsManager()
@@ -386,9 +388,6 @@ ActionsShortcutsManager::ActionsShortcutsManager()
     }
     else
         ReadOverrideFromConfig();
-        
-    
-    m_LastChanged = machtime();
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -545,21 +544,31 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
             
             // immediately write to config file
             WriteOverridesToConfig();
-            m_LastChanged = machtime();
+            FireObservers();
             return true;
         }
         return false;
     }
     
     auto now = m_ShortCutsOverrides.find(tag);
-    if( now != end(m_ShortCutsOverrides) && now->second == _sc )
-        return false; // nothing new, it's the same as currently in overrides
+    if( now != end(m_ShortCutsOverrides) ) {
+        if( now->second == _sc )
+            return false; // nothing new, it's the same as currently in overrides
     
-    m_ShortCutsOverrides[tag] = _sc;
+        m_ShortCutsOverrides[tag] = _sc;
+    }
+    else {
+        vector< pair<int, ShortCut> > tmp;
+        for( const auto &v: m_ShortCutsOverrides )
+            tmp.emplace_back( v.first, v.second );
+        tmp.emplace_back( tag, _sc );
+        
+        m_ShortCutsOverrides.assign( begin(tmp), end(tmp) );
+    }
     
     // immediately write to config file
     WriteOverridesToConfig();
-    m_LastChanged = machtime();
+    FireObservers();
     return true;
 }
 
@@ -567,7 +576,7 @@ void ActionsShortcutsManager::RevertToDefaults()
 {
     m_ShortCutsOverrides.clear();
     WriteOverridesToConfig();
-    m_LastChanged = machtime();      
+    FireObservers();
 }
 
 bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
@@ -601,7 +610,8 @@ const vector<pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() con
     return g_ActionsTags;
 }
 
-nanoseconds ActionsShortcutsManager::LastChanged() const
+ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::
+    ObserveChanges(function<void()> _callback)
 {
-    return m_LastChanged;
+    return ObservableBase::AddObserver(_callback);
 }

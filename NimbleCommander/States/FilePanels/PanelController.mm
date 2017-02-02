@@ -477,12 +477,22 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     [self refreshPanelDiscardingCaches:true];
 }
 
+static bool RouteKeyboardInputIntoTerminal()
+{
+    static bool route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
+    static auto observe_ticket = GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal, []{
+        route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
+    });
+    return route;
+}
+
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
     [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
  
-    const bool route_to_overlapped_terminal = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
-    const bool terminal_can_eat = route_to_overlapped_terminal && [self.state overlappedTerminalWillEatKeyDown:event];
+    const bool route_to_overlapped_terminal = RouteKeyboardInputIntoTerminal();
+    const bool terminal_can_eat = route_to_overlapped_terminal &&
+                                  [self.state overlappedTerminalWillEatKeyDown:event];
     
     NSString*  const character   = event.charactersIgnoringModifiers;
     if ( character.length > 0 ) {
@@ -506,11 +516,11 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 //            }
 //        }
         
-        if(unicode == NSTabCharacter) { // Tab button
+        if( unicode == NSTabCharacter ) { // Tab button
             [self.state HandleTabButton];
             return true;
         }
-        if(keycode == 53) { // Esc button
+        if( keycode == 53 ) { // Esc button
             [self CancelBackgroundOperations];
             [self.state CloseOverlay:self];
             m_BriefSystemOverview = nil;
@@ -520,38 +530,48 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         }
         
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview}, {"menu.file.open", "menu.file.open_native", "panel.go_root", "panel.go_home", "panel.show_preview"});
-        hotkeys_updater.CheckAndUpdate();
+        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview, hk_go_into, kh_go_outside;
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview, &hk_go_into, &kh_go_outside}, {"menu.file.open", "menu.file.open_native", "panel.go_root", "panel.go_home", "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
 
-        if( hk_preview.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
-            [self OnFileViewCommand:self];
-            return true;
-        }
-
-        if( hk_go_home.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
-            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-            return true;
-        }
-        
-        if( hk_go_root.IsKeyDown(unicode, keycode, modif) && !terminal_can_eat ) {
-            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
-            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-            return true;
-        }
-        
-        if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
-            [self handleGoIntoDirOrOpenInSystemSync];
-            return true;
-        }
-        if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
-            [self handleOpenInSystem];
-            return true;
+        if( !terminal_can_eat ) {
+            if( hk_preview.IsKeyDown(unicode, keycode, modif) ) {
+                [self OnFileViewCommand:self];
+                return true;
+            }
+            if( hk_go_home.IsKeyDown(unicode, keycode, modif) ) {
+                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
+                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+                return true;
+            }
+            if( hk_go_root.IsKeyDown(unicode, keycode, modif) ) {
+                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
+                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+                return true;
+            }
+            if( hk_go_into.IsKeyDown(unicode, keycode, modif) ) {
+                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
+                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+                return true;
+            }
+            if( kh_go_outside.IsKeyDown(unicode, keycode, modif) ) {
+                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
+                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+                return true;
+            }
+            if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
+                // we keep it here to avoid blinking on menu item
+                [self handleGoIntoDirOrOpenInSystemSync];
+                return true;
+            }
+            if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
+                // we keep it here to avoid blinking on menu item
+                [self handleOpenInSystem];
+                return true;
+            }
         }
         
         // try to process this keypress with QuickSearch
-        if([self QuickSearchProcessKeyDown:event])
+        if( [self QuickSearchProcessKeyDown:event] )
             return true;
         
         if(keycode == 51 && // backspace

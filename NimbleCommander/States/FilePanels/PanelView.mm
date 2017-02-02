@@ -540,7 +540,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
            "panel.scroll_next_page", "panel.scroll_prev_page"
        }
       );
-    hotkeys_updater.CheckAndUpdate();
 
     if( hk_up.IsKeyDown(unicode, keycode, modifiers & ~NSShiftKeyMask) )
         [self HandlePrevFile];

@@ -1,6 +1,6 @@
 #include <XCTest/XCTest.h>
 #include <Habanero/algo.h>
-#include "../../vfs/vfs_native.h"
+#include <VFS/Native.h>
 #include "FileSysAttrChangeOperation.h"
 #include "FileSysAttrChangeOperationCommand.h"
 

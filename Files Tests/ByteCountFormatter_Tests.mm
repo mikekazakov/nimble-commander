@@ -7,7 +7,7 @@
 //
 
 #include "tests_common.h"
-#include "../Files/ByteCountFormatter.h"
+#include <Utility/ByteCountFormatter.h>
 
 @interface ByteCountFormatter_Tests : XCTestCase
 @end

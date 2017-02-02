@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF1847011E41C86D008B7C9F /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = CF1847001E41C86D008B7C9F /* Tests.m */; };
 		CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFCF1DA224E200992B84 /* libVFS.a */; };
 		CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */; };
 		CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847131E41C9C0008B7C9F /* libHabanero.a */; };
@@ -118,7 +117,6 @@
 
 /* Begin PBXFileReference section */
 		CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF1847001E41C86D008B7C9F /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
 		CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_Tests.mm; path = tests/VFSArchive_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -264,7 +262,6 @@
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
-				CF1847001E41C86D008B7C9F /* Tests.m */,
 				CF1847021E41C86D008B7C9F /* Info.plist */,
 			);
 			path = Tests;
@@ -606,7 +603,6 @@
 				CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
-				CF1847011E41C86D008B7C9F /* Tests.m in Sources */,
 				CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,8 +7,8 @@
 //
 
 #include "tests_common.h"
-#include "../Files/VFS/vfs_native.h"
-#include "../Files/Operations/Delete/FileDeletionOperation.h"
+#include <VFS/Native.h>
+#include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                          const vector<string> &_filenames,

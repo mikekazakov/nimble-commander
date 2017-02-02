@@ -7,9 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "../Files/VFS/VFS.h"
-#include "../Files/PanelData.h"
-#include "../Files/FileWindow.h"
+#include <VFS/VFS.h>
+#include <NimbleCommander/States/FilePanels/PanelData.h>
+#include <NimbleCommander/Core/FileWindow.h>
 #include <random>
 
 class TestGenericMemReadOnlyFile : public VFSFile

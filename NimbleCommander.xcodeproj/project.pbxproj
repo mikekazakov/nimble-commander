@@ -75,13 +75,9 @@
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
-		CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A996186C743A00745C4C /* VFSPS_Tests.mm */; };
-		CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */; };
-		CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */; };
 		CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; };
 		CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
 		CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
-		CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */; };
 		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
@@ -306,7 +302,6 @@
 		CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
-		CF6D9C7B19667A190077B146 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7819667A180077B146 /* libbz2.a */; };
 		CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7919667A190077B146 /* liblzma.a */; };
 		CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7E19667A270077B146 /* Carbon.framework */; };
 		CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C8019667A2D0077B146 /* LDAP.framework */; };
@@ -708,6 +703,317 @@
 		CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */; };
 		CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFD6F9131BEBAADE00A1B046 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F9111BEBAADE00A1B046 /* Job.cpp */; };
+		CFD726011E42E06300603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
+		CFD726021E42E06300603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
+		CFD726031E42E06400603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
+		CFD726041E42E06800603077 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
+		CFD726051E42E06900603077 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
+		CFD726061E42E06900603077 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
+		CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */; };
+		CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */; };
+		CFD726091E42E07100603077 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */; };
+		CFD7260A1E42E07300603077 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2351DFBDE560039A104 /* Application.mm */; };
+		CFD7260B1E42E07400603077 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2351DFBDE560039A104 /* Application.mm */; };
+		CFD7260C1E42E07400603077 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2351DFBDE560039A104 /* Application.mm */; };
+		CFD7260D1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
+		CFD7260E1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
+		CFD7260F1E42E07A00603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
+		CFD726101E42E07C00603077 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22D1DFBDBCB0039A104 /* Config.cpp */; };
+		CFD726111E42E07D00603077 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22D1DFBDBCB0039A104 /* Config.cpp */; };
+		CFD726121E42E07E00603077 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22D1DFBDBCB0039A104 /* Config.cpp */; };
+		CFD726131E42E08100603077 /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22F1DFBDBCB0039A104 /* Config.mm */; };
+		CFD726141E42E08200603077 /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22F1DFBDBCB0039A104 /* Config.mm */; };
+		CFD726151E42E08200603077 /* Config.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22F1DFBDBCB0039A104 /* Config.mm */; };
+		CFD726161E42E09000603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
+		CFD726171E42E09000603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
+		CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
+		CFD726191E42E09300603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFD7261A1E42E09400603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFD7261B1E42E09500603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
+		CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
+		CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
+		CFD7261F1E42E0AB00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
+		CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
+		CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
+		CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
+		CFD726231E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
+		CFD726241E42E0B200603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
+		CFD726251E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
+		CFD726261E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
+		CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
+		CFD726281E42E0BC00603077 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C71DFD0F840039A104 /* QLThumbnailsCache.mm */; };
+		CFD7262A1E42E0BE00603077 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C71DFD0F840039A104 /* QLThumbnailsCache.mm */; };
+		CFD7262B1E42E0BF00603077 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C71DFD0F840039A104 /* QLThumbnailsCache.mm */; };
+		CFD7262C1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
+		CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
+		CFD7262E1E42E0C300603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
+		CFD7262F1E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
+		CFD726301E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
+		CFD726311E42E0C700603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
+		CFD726321E42E0CC00603077 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F71DFD17520039A104 /* Common.mm */; };
+		CFD726331E42E0CC00603077 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F71DFD17520039A104 /* Common.mm */; };
+		CFD726341E42E0CD00603077 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F71DFD17520039A104 /* Common.mm */; };
+		CFD726351E42E0D400603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
+		CFD726361E42E0D500603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
+		CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
+		CFD726381E42E0D800603077 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LSUrls.mm */; };
+		CFD726391E42E0D900603077 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LSUrls.mm */; };
+		CFD7263A1E42E0D900603077 /* LSUrls.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LSUrls.mm */; };
+		CFD7263B1E42E0E100603077 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
+		CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
+		CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
+		CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
+		CFD7263F1E42E0EE00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
+		CFD726401E42E10200603077 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A51DFBFD000039A104 /* OrthodoxMonospace.mm */; };
+		CFD726411E42E10300603077 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A51DFBFD000039A104 /* OrthodoxMonospace.mm */; };
+		CFD726421E42E10300603077 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A51DFBFD000039A104 /* OrthodoxMonospace.mm */; };
+		CFD726431E42E10600603077 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2161DFBC2430039A104 /* rapidjson.cpp */; };
+		CFD726441E42E10700603077 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2161DFBC2430039A104 /* rapidjson.cpp */; };
+		CFD726451E42E10800603077 /* rapidjson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2161DFBC2430039A104 /* rapidjson.cpp */; };
+		CFD726461E42E11100603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
+		CFD726471E42E11300603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
+		CFD726481E42E11300603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
+		CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
+		CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
+		CFD7264B1E42E11C00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
+		CFD7264C1E42E11F00603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFD7264F1E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CFD726501E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */; };
+		CFD726521E42E12700603077 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A01DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp */; };
+		CFD726531E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A01DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp */; };
+		CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A01DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp */; };
+		CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */; };
+		CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */; };
+		CFD726571E42E1A700603077 /* PreferencesWindowThemesTabModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */; };
+		CFD726581E42E1B300603077 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2441DFBEE340039A104 /* MainWindow.mm */; };
+		CFD726591E42E1B300603077 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2441DFBEE340039A104 /* MainWindow.mm */; };
+		CFD7265A1E42E1B400603077 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2441DFBEE340039A104 /* MainWindow.mm */; };
+		CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2461DFBEE340039A104 /* MainWindowController.mm */; };
+		CFD7265C1E42E1B700603077 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2461DFBEE340039A104 /* MainWindowController.mm */; };
+		CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2461DFBEE340039A104 /* MainWindowController.mm */; };
+		CFD7265E1E42E1D600603077 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
+		CFD7265F1E42E1D700603077 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
+		CFD726601E42E1D700603077 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
+		CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
+		CFD726621E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
+		CFD726631E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
+		CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
+		CFD726651E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
+		CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
+		CFD726671E42E1E700603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* MainWindowFilePanelState+ContextMenu.mm */; };
+		CFD726681E42E1E700603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* MainWindowFilePanelState+ContextMenu.mm */; };
+		CFD726691E42E1E800603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* MainWindowFilePanelState+ContextMenu.mm */; };
+		CFD7266A1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
+		CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
+		CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
+		CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
+		CFD7266E1E42E1F100603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
+		CFD7266F1E42E1F200603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
+		CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFD726711E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFD726721E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
+		CFD726731E42E1FA00603077 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */; };
+		CFD726741E42E1FA00603077 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */; };
+		CFD726751E42E1FB00603077 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */; };
+		CFD726761E42E1FE00603077 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */; };
+		CFD726771E42E1FF00603077 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */; };
+		CFD726781E42E1FF00603077 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */; };
+		CFD726791E42E20200603077 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24B1DFBF0B30039A104 /* PanelController.mm */; };
+		CFD7267A1E42E20300603077 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24B1DFBF0B30039A104 /* PanelController.mm */; };
+		CFD7267B1E42E20400603077 /* PanelController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24B1DFBF0B30039A104 /* PanelController.mm */; };
+		CFD7267C1E42E20700603077 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */; };
+		CFD7267D1E42E20800603077 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */; };
+		CFD7267E1E42E20900603077 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */; };
+		CFD7267F1E42E20B00603077 /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24F1DFBF0B30039A104 /* PanelController+DelayedSelection.mm */; };
+		CFD726801E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24F1DFBF0B30039A104 /* PanelController+DelayedSelection.mm */; };
+		CFD726811E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24F1DFBF0B30039A104 /* PanelController+DelayedSelection.mm */; };
+		CFD726821E42E20F00603077 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2511DFBF0B30039A104 /* PanelController+DragAndDrop.mm */; };
+		CFD726831E42E21000603077 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2511DFBF0B30039A104 /* PanelController+DragAndDrop.mm */; };
+		CFD726841E42E21100603077 /* PanelController+DragAndDrop.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2511DFBF0B30039A104 /* PanelController+DragAndDrop.mm */; };
+		CFD726851E42E21700603077 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */; };
+		CFD726861E42E21800603077 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */; };
+		CFD726871E42E21800603077 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */; };
+		CFD726881E42E21B00603077 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2551DFBF0B30039A104 /* PanelController+Navigation.mm */; };
+		CFD726891E42E21C00603077 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2551DFBF0B30039A104 /* PanelController+Navigation.mm */; };
+		CFD7268A1E42E21C00603077 /* PanelController+Navigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2551DFBF0B30039A104 /* PanelController+Navigation.mm */; };
+		CFD7268B1E42E21F00603077 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2571DFBF0B30039A104 /* PanelController+NavigationMenu.mm */; };
+		CFD7268C1E42E21F00603077 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2571DFBF0B30039A104 /* PanelController+NavigationMenu.mm */; };
+		CFD7268D1E42E22000603077 /* PanelController+NavigationMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2571DFBF0B30039A104 /* PanelController+NavigationMenu.mm */; };
+		CFD7268E1E42E22200603077 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2591DFBF0B30039A104 /* PanelController+QuickSearch.mm */; };
+		CFD7268F1E42E22300603077 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2591DFBF0B30039A104 /* PanelController+QuickSearch.mm */; };
+		CFD726901E42E22300603077 /* PanelController+QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2591DFBF0B30039A104 /* PanelController+QuickSearch.mm */; };
+		CFD726911E42E22600603077 /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2261DFBD6910039A104 /* PanelData.mm */; };
+		CFD726921E42E22700603077 /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2261DFBD6910039A104 /* PanelData.mm */; };
+		CFD726931E42E22700603077 /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2261DFBD6910039A104 /* PanelData.mm */; };
+		CFD726941E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */; };
+		CFD726951E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */; };
+		CFD726961E42E22C00603077 /* PanelDataItemVolatileData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */; };
+		CFD726971E42E23000603077 /* PanelDataPersistency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */; };
+		CFD726981E42E23000603077 /* PanelDataPersistency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */; };
+		CFD726991E42E23100603077 /* PanelDataPersistency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */; };
+		CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */; };
+		CFD7269B1E42E23500603077 /* PanelDataSortMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */; };
+		CFD7269C1E42E23600603077 /* PanelDataSortMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9A7FF81DE1914100DEDF0B /* PanelDataSortMode.mm */; };
+		CFD7269D1E42E23900603077 /* PanelDataStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */; };
+		CFD7269E1E42E23A00603077 /* PanelDataStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */; };
+		CFD7269F1E42E23B00603077 /* PanelDataStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */; };
+		CFD726A01E42E23E00603077 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */; };
+		CFD726A11E42E23F00603077 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */; };
+		CFD726A21E42E23F00603077 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */; };
+		CFD726A31E42E24400603077 /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2131DFBBD110039A104 /* PanelView.mm */; };
+		CFD726A41E42E24500603077 /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2131DFBBD110039A104 /* PanelView.mm */; };
+		CFD726A51E42E24500603077 /* PanelView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2131DFBBD110039A104 /* PanelView.mm */; };
+		CFD726A61E42E24800603077 /* PanelViewPresentationSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */; };
+		CFD726A71E42E24900603077 /* PanelViewPresentationSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */; };
+		CFD726A81E42E24A00603077 /* PanelViewPresentationSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */; };
+		CFD726AA1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */; };
+		CFD726AB1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */; };
+		CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */; };
+		CFD726AD1E42E25500603077 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C21DFD0DE40039A104 /* SharingService.mm */; };
+		CFD726AE1E42E25600603077 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C21DFD0DE40039A104 /* SharingService.mm */; };
+		CFD726AF1E42E25600603077 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C21DFD0DE40039A104 /* SharingService.mm */; };
+		CFD726B01E42E26100603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
+		CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
+		CFD726B21E42E26200603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
+		CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
+		CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
+		CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
+		CFD726B61E42E28100603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
+		CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
+		CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
+		CFD726B91E42E28600603077 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
+		CFD726BA1E42E28600603077 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
+		CFD726BB1E42E28700603077 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
+		CFD726BC1E42E28900603077 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
+		CFD726BD1E42E28A00603077 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
+		CFD726BE1E42E28A00603077 /* IconsGenerator2.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */; };
+		CFD726BF1E42E28D00603077 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
+		CFD726C01E42E28E00603077 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
+		CFD726C11E42E28E00603077 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
+		CFD726C21E42E29100603077 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
+		CFD726C31E42E29200603077 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
+		CFD726C41E42E29200603077 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
+		CFD726C51E42E29A00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
+		CFD726C61E42E29B00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
+		CFD726C71E42E29B00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
+		CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */; };
+		CFD726C91E42E2A100603077 /* PanelBriefView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */; };
+		CFD726CA1E42E2A200603077 /* PanelBriefView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */; };
+		CFD726CB1E42E2A400603077 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
+		CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
+		CFD726CD1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
+		CFD726CE1E42E2A800603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C51DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm */; };
+		CFD726CF1E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C51DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm */; };
+		CFD726D01E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C51DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm */; };
+		CFD726D11E42E2AC00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
+		CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
+		CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
+		CFD726D41E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */; };
+		CFD726D51E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */; };
+		CFD726D61E42E2B300603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C91DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm */; };
+		CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
+		CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
+		CFD726D91E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
+		CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
+		CFD726DB1E42E2BE00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
+		CFD726DC1E42E2BF00603077 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
+		CFD726DD1E42E2C100603077 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
+		CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
+		CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
+		CFD726E01E42E2C600603077 /* PanelListViewDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */; };
+		CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */; };
+		CFD726E21E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */; };
+		CFD726E31E42E2CC00603077 /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CFD726E41E42E2CD00603077 /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CFD726E61E42E2CE00603077 /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CFD726E71E42E2D100603077 /* PanelListViewGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */; };
+		CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */; };
+		CFD726E91E42E2D200603077 /* PanelListViewGeometry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */; };
+		CFD726EA1E42E2D500603077 /* PanelListViewNameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */; };
+		CFD726EB1E42E2D500603077 /* PanelListViewNameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */; };
+		CFD726EC1E42E2D600603077 /* PanelListViewNameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B31DC1934D00F0DF0F /* PanelListViewNameView.mm */; };
+		CFD726ED1E42E2D900603077 /* PanelListViewRowView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */; };
+		CFD726EE1E42E2D900603077 /* PanelListViewRowView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */; };
+		CFD726EF1E42E2DA00603077 /* PanelListViewRowView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B51DC1934D00F0DF0F /* PanelListViewRowView.mm */; };
+		CFD726F01E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
+		CFD726F11E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
+		CFD726F21E42E2DE00603077 /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
+		CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
+		CFD726F41E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
+		CFD726F51E42E2E200603077 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
+		CFD726F61E42E2E400603077 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
+		CFD726F71E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
+		CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
+		CFD726F91E42E2E800603077 /* PanelListViewTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */; };
+		CFD726FA1E42E2E800603077 /* PanelListViewTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */; };
+		CFD726FB1E42E2E900603077 /* PanelListViewTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */; };
+		CFD726FC1E42E2F300603077 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
+		CFD726FD1E42E2F400603077 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
+		CFD726FE1E42E2F400603077 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
+		CFD726FF1E42E2F800603077 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */; };
+		CFD727001E42E2F800603077 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */; };
+		CFD727011E42E2F900603077 /* MainWndGoToButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */; };
+		CFD727021E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
+		CFD727031E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
+		CFD727041E42E2FD00603077 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
+		CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
+		CFD727061E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
+		CFD727071E42E30100603077 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
+		CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
+		CFD727091E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
+		CFD7270A1E42E30500603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
+		CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
+		CFD7270C1E42E30800603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
+		CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
+		CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
+		CFD7270F1E42E30D00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
+		CFD727101E42E30D00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
+		CFD727111E42E31C00603077 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */; };
+		CFD727121E42E31D00603077 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */; };
+		CFD727131E42E31E00603077 /* ConnectionsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */; };
+		CFD727141E42E32100603077 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AD1DFD096E0039A104 /* NetworkConnectionsManager.mm */; };
+		CFD727151E42E32100603077 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AD1DFD096E0039A104 /* NetworkConnectionsManager.mm */; };
+		CFD727161E42E32200603077 /* NetworkConnectionsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2AD1DFD096E0039A104 /* NetworkConnectionsManager.mm */; };
+		CFD727171E42E32400603077 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A81DFD093E0039A104 /* ToolsMenuDelegate.mm */; };
+		CFD727181E42E32400603077 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A81DFD093E0039A104 /* ToolsMenuDelegate.mm */; };
+		CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2A81DFD093E0039A104 /* ToolsMenuDelegate.mm */; };
+		CFD7271A1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */; };
+		CFD7271B1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */; };
+		CFD7271C1E42E32D00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2781DFBF9260039A104 /* MainWindowExternalTerminalEditorState.mm */; };
+		CFD7271D1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */; };
+		CFD7271E1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */; };
+		CFD7271F1E42E33000603077 /* MainWindowTerminalState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* MainWindowTerminalState.mm */; };
+		CFD727201E42E33200603077 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27C1DFBF9260039A104 /* TermParser.mm */; };
+		CFD727211E42E33300603077 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27C1DFBF9260039A104 /* TermParser.mm */; };
+		CFD727221E42E33300603077 /* TermParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27C1DFBF9260039A104 /* TermParser.mm */; };
+		CFD727231E42E33700603077 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */; };
+		CFD727241E42E33800603077 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */; };
+		CFD727251E42E33800603077 /* TermScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27D1DFBF9260039A104 /* TermScreen.cpp */; };
+		CFD727261E42E33B00603077 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */; };
+		CFD727271E42E33C00603077 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */; };
+		CFD727281E42E33C00603077 /* TermScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27F1DFBF9260039A104 /* TermScreenBuffer.cpp */; };
+		CFD727291E42E34200603077 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2841DFBF9260039A104 /* TermScrollView.mm */; };
+		CFD7272A1E42E34300603077 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2841DFBF9260039A104 /* TermScrollView.mm */; };
+		CFD7272B1E42E34400603077 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2841DFBF9260039A104 /* TermScrollView.mm */; };
+		CFD7272C1E42E34600603077 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */; };
+		CFD7272D1E42E34600603077 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */; };
+		CFD7272E1E42E34700603077 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2861DFBF9260039A104 /* TermShellTask.cpp */; };
+		CFD7272F1E42E34A00603077 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */; };
+		CFD727301E42E34B00603077 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */; };
+		CFD727311E42E34B00603077 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2891DFBF9260039A104 /* TermSingleTask.mm */; };
+		CFD727321E42E34F00603077 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28A1DFBF9260039A104 /* TermTask.cpp */; };
+		CFD727331E42E35000603077 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28A1DFBF9260039A104 /* TermTask.cpp */; };
+		CFD727341E42E35000603077 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28A1DFBF9260039A104 /* TermTask.cpp */; };
+		CFD727351E42E35400603077 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28D1DFBF9260039A104 /* TermView.mm */; };
+		CFD727361E42E35500603077 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28D1DFBF9260039A104 /* TermView.mm */; };
+		CFD727371E42E35500603077 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC28D1DFBF9260039A104 /* TermView.mm */; };
+		CFD727381E42E3E300603077 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CFD727391E42E3EE00603077 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -801,9 +1107,6 @@
 		CFE9DDFC1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
 		CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
 		CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */; };
-		CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */; };
-		CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */; };
-		CFED5A321C4F966200BFCB5C /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -1057,7 +1360,6 @@
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
 		CF47A992186C61A600745C4C /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chained_strings_Tests.mm; sourceTree = "<group>"; };
 		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
-		CF47A996186C743A00745C4C /* VFSPS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = VFSPS_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTab.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.h; sourceTree = SOURCE_ROOT; };
@@ -1151,7 +1453,6 @@
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
 		CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFS.xcodeproj; path = VFS/VFS.xcodeproj; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF6D9C7819667A180077B146 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = 3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF6D9C7919667A190077B146 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = 3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF6D9C7E19667A270077B146 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Carbon.framework; sourceTree = DEVELOPER_DIR; };
 		CF6D9C8019667A2D0077B146 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/LDAP.framework; sourceTree = DEVELOPER_DIR; };
@@ -1283,7 +1584,6 @@
 		CF9066B219AB51B3001DC687 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		CF9066B419AB54CE001DC687 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_party/built/lib/libcrypto.a; sourceTree = "<group>"; };
 		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
-		CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = VFSSFTP_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAlreadyExistSheetController.h; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistSheetController.mm; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.mm; sourceTree = SOURCE_ROOT; };
@@ -1324,7 +1624,6 @@
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
-		CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSArchive_Tests.mm; sourceTree = "<group>"; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = Resource/Help.pdf; sourceTree = "<group>"; };
 		CFB66F901D8537A90017D2A0 /* FeedbackManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManager.h; path = NimbleCommander/Core/FeedbackManager.h; sourceTree = SOURCE_ROOT; };
@@ -1334,7 +1633,6 @@
 		CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistrationInfoWindow.h; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.h; sourceTree = SOURCE_ROOT; };
 		CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RegistrationInfoWindow.mm; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.mm; sourceTree = SOURCE_ROOT; };
 		CFB7099918D6FA1800A83E61 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
-		CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VFSFTP_Tests.mm; sourceTree = "<group>"; };
 		CFB709BD18E561F200A83E61 /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessSheetController.h; path = ../NimbleCommander/GeneralUI/ProcessSheetController.h; sourceTree = "<group>"; };
 		CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessSheetController.mm; path = ../NimbleCommander/GeneralUI/ProcessSheetController.mm; sourceTree = "<group>"; };
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
@@ -1565,9 +1863,6 @@
 		CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = 3rd_party/DisclosureViewController/DisclosureViewController.h; sourceTree = "<group>"; };
 		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
 		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MassCopySheetDisclosureViewController.xib; path = NimbleCommander/Operations/Copy/MassCopySheetDisclosureViewController.xib; sourceTree = SOURCE_ROOT; };
-		CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = Files/States/Terminal/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
-		CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = Files/States/Terminal/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
-		CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = Files/States/Terminal/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
 		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
@@ -1624,7 +1919,6 @@
 				CF6D9C8319667A330077B146 /* Security.framework in Frameworks */,
 				CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */,
 				CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */,
-				CF6D9C7B19667A190077B146 /* libbz2.a in Frameworks */,
 				CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */,
 				CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */,
 				CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */,
@@ -1636,6 +1930,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
+				CFD727391E42E3EE00603077 /* libRoutedIO.a in Frameworks */,
+				CFD727381E42E3E300603077 /* libVFS.a in Frameworks */,
 				CFA53A191D433E2A00C562A7 /* libAquaticPrime.a in Frameworks */,
 				CFA53A1A1D433E2A00C562A7 /* libunrar.a in Frameworks */,
 				CFA53A1B1D433E2A00C562A7 /* libarchive.a in Frameworks */,
@@ -2044,16 +2341,10 @@
 			name = Viewer;
 			sourceTree = "<group>";
 		};
-		CF47A983186C607C00745C4C /* Files Tests */ = {
+		CF47A983186C607C00745C4C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CFED5A311C4F966200BFCB5C /* TermShellTask_Tests.mm */,
-				CFED5A2D1C4F962700BFCB5C /* TermScreenBufferTests.mm */,
-				CFED5A2E1C4F962700BFCB5C /* TermScreenTests.mm */,
 				CF47A994186C663000745C4C /* tests_common.h */,
-				CF47A996186C743A00745C4C /* VFSPS_Tests.mm */,
-				CFB709AE18DAAC2D00A83E61 /* VFSFTP_Tests.mm */,
-				CF9066BF19AB7324001DC687 /* VFSSFTP_Tests.mm */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
@@ -2062,11 +2353,11 @@
 				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
-				CFB1E08519F93B6000AD567A /* VFSArchive_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
+			name = Tests;
 			path = "Files Tests";
 			sourceTree = "<group>";
 		};
@@ -2545,10 +2836,10 @@
 				CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */,
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121A16C4BD3D00D247EE /* Source */,
+				CF47A983186C607C00745C4C /* Tests */,
 				B51014CF170721340023FF24 /* Resources */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
-				CF47A983186C607C00745C4C /* Files Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2668,7 +2959,6 @@
 				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */,
 				CFD7E4E6190FD61E0064D249 /* libboost_system.a */,
-				CF6D9C7819667A180077B146 /* libbz2.a */,
 				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF811A901D8262BE001F9E7F /* libcrypto.a */,
 				CF9066B419AB54CE001DC687 /* libcrypto.a */,
@@ -3322,23 +3612,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2329561BDCD8680092BCAD /* VFSFTP_Tests.mm in Sources */,
-				CFED5A301C4F962700BFCB5C /* TermScreenTests.mm in Sources */,
-				CF23295F1BDCED250092BCAD /* VFSArchive_Tests.mm in Sources */,
 				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
 				CFDAC3021DFD8B630039A104 /* FileSysAttrChangeOperation_Tests.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
-				CF2329551BDCD7790092BCAD /* VFSPS_Tests.mm in Sources */,
-				CFED5A2F1C4F962700BFCB5C /* TermScreenBufferTests.mm in Sources */,
 				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
 				CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
-				CFED5A321C4F966200BFCB5C /* TermShellTask_Tests.mm in Sources */,
 				CFDAC29B1DFBF93C0039A104 /* TermShellTask_Tests.mm in Sources */,
 				CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */,
-				CF2329581BDCE1A00092BCAD /* VFSSFTP_Tests.mm in Sources */,
 				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
 				CFDAC29D1DFBF9850039A104 /* TermScreenTests.mm in Sources */,
@@ -3352,85 +3635,181 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD726361E42E0D500603077 /* FileWindow.cpp in Sources */,
+				CFD726831E42E21000603077 /* PanelController+DragAndDrop.mm in Sources */,
 				CF9069741BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
+				CFD7270C1E42E30800603077 /* QuickPreview.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
+				CFD727241E42E33800603077 /* TermScreen.cpp in Sources */,
 				CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */,
+				CFD7269E1E42E23A00603077 /* PanelDataStatistics.cpp in Sources */,
 				CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
+				CFD726021E42E06300603077 /* AppDelegate+Migration.mm in Sources */,
 				CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
+				CFD726EE1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
+				CFD726951E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
+				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
+				CFD7262B1E42E0BF00603077 /* QLThumbnailsCache.mm in Sources */,
+				CFD726AB1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */,
+				CFD726C61E42E29B00603077 /* Layout.mm in Sources */,
+				CFD7261A1E42E09400603077 /* Theme.mm in Sources */,
 				CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
+				CFD726741E42E1FA00603077 /* MainWindowFilePanelState+Tools.mm in Sources */,
+				CFD726621E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */,
+				CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
+				CFD726981E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
+				CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */,
+				CFD726D51E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
+				CFD726911E42E22600603077 /* PanelData.mm in Sources */,
+				CFD726BA1E42E28600603077 /* PanelViewImplementationProtocol.mm in Sources */,
+				CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
+				CFD726CF1E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF50C41F1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF50C4291C0ADE85009DF611 /* GenericOperationView.mm in Sources */,
 				CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */,
+				CFD726861E42E21800603077 /* PanelController+Menu.mm in Sources */,
 				CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
 				CF4E56A61D5068D300452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF56BF561D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
+				CFD726C01E42E28E00603077 /* PanelViewHeader.mm in Sources */,
+				CFD726141E42E08200603077 /* Config.mm in Sources */,
+				CFD7269B1E42E23500603077 /* PanelDataSortMode.mm in Sources */,
+				CFD727301E42E34B00603077 /* TermSingleTask.mm in Sources */,
 				CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */,
+				CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
+				CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */,
 				CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
 				CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CFD6DD191D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
+				CFD726591E42E1B300603077 /* MainWindow.mm in Sources */,
 				CF50C4251C0ADE7D009DF611 /* OperationsController.mm in Sources */,
+				CFD726471E42E11300603077 /* SandboxManager.mm in Sources */,
+				CFD727151E42E32100603077 /* NetworkConnectionsManager.mm in Sources */,
 				CF50C40B1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
+				CFD726E31E42E2CC00603077 /* PanelListViewDateTimeView.mm in Sources */,
+				CFD727001E42E2F800603077 /* MainWndGoToButton.mm in Sources */,
 				CF4E56B81D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
+				CFD726231E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */,
 				CF9069861BB54035000C3CBB /* Job.cpp in Sources */,
+				CFD726F11E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,
+				CFD726251E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
+				CFD726411E42E10300603077 /* OrthodoxMonospace.mm in Sources */,
 				CFDAC2B61DFD0B7D0039A104 /* AppStoreHelper.mm in Sources */,
 				CF50C42B1C0ADE88009DF611 /* OperationsSummaryViewController.mm in Sources */,
+				CFD7260B1E42E07400603077 /* Application.mm in Sources */,
+				CFD726A11E42E23F00603077 /* PanelHistory.mm in Sources */,
+				CFD727091E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
+				CFD726651E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */,
+				CFD7265C1E42E1B700603077 /* MainWindowController.mm in Sources */,
+				CFD7271B1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
+				CFD7267B1E42E20400603077 /* PanelController.mm in Sources */,
+				CFD726A41E42E24500603077 /* PanelView.mm in Sources */,
+				CFD726C91E42E2A100603077 /* PanelBriefView.mm in Sources */,
 				CF50C45C1C0ADF51009DF611 /* JobTrash.mm in Sources */,
+				CFD727031E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */,
 				CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
+				CFD7268F1E42E22300603077 /* PanelController+QuickSearch.mm in Sources */,
 				CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */,
 				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
+				CFD7272A1E42E34300603077 /* TermScrollView.mm in Sources */,
 				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFD726BD1E42E28A00603077 /* IconsGenerator2.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CFA2D6061E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
+				CFD7271E1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */,
 				CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */,
+				CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF9069901BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF50C4271C0ADE7F009DF611 /* OperationStats.mm in Sources */,
+				CFD726FD1E42E2F400603077 /* TabBarStyle.mm in Sources */,
+				CFD727331E42E35000603077 /* TermTask.cpp in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
+				CFD726441E42E10700603077 /* rapidjson.cpp in Sources */,
+				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
+				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
+				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
+				CFD726681E42E1E700603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
+				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
+				CFD727361E42E35500603077 /* TermView.mm in Sources */,
 				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF876D3F1D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
+				CFD726171E42E09000603077 /* CocoaAppearanceManager.mm in Sources */,
+				CFD726711E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF876D431D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
+				CFD726EB1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
+				CFD727181E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
+				CFD726331E42E0CC00603077 /* Common.mm in Sources */,
 				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
+				CFD7260E1E42E07900603077 /* main.cpp in Sources */,
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
+				CFD727271E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
+				CFD726801E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
+				CFD727071E42E30100603077 /* FilePanelOverlappedTerminal.mm in Sources */,
+				CFD726A71E42E24900603077 /* PanelViewPresentationSettings.mm in Sources */,
 				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CFD7270F1E42E30D00603077 /* BriefSystemOverview.mm in Sources */,
+				CFD727121E42E31D00603077 /* ConnectionsMenuDelegate.mm in Sources */,
+				CFD7266F1E42E1F200603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF04DDF71E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CFD726DC1E42E2BF00603077 /* Layout.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
+				CFD726C31E42E29200603077 /* PanelViewFooter.mm in Sources */,
+				CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CF50C4031C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
+				CFD726FA1E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
+				CFD7265F1E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */,
+				CFD726111E42E07D00603077 /* Config.cpp in Sources */,
+				CFD726F41E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
+				CFD727221E42E33300603077 /* TermParser.mm in Sources */,
 				CF876D411D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
+				CFD7267D1E42E20800603077 /* PanelController+DataAccess.mm in Sources */,
+				CFD726771E42E1FF00603077 /* PanelAux.mm in Sources */,
+				CFD726531E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
+				CFD726501E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
+				CFD726891E42E21C00603077 /* PanelController+Navigation.mm in Sources */,
+				CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
+				CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
+				CFD726391E42E0D900603077 /* LSUrls.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
+				CFD7272D1E42E34600603077 /* TermShellTask.cpp in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */,
@@ -3438,10 +3817,16 @@
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
+				CFD726AE1E42E25600603077 /* SharingService.mm in Sources */,
 				CF50C40F1C0ADE38009DF611 /* FileCompressOperation.mm in Sources */,
+				CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */,
+				CFD726051E42E06900603077 /* AppDelegate.mm in Sources */,
 				CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
+				CFD7268C1E42E21F00603077 /* PanelController+NavigationMenu.mm in Sources */,
+				CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
+				CFD726301E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */,
 				CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3452,92 +3837,196 @@
 			files = (
 				CFA5395D1D433E2A00C562A7 /* FileDeletionOperation.mm in Sources */,
 				CFA5395E1D433E2A00C562A7 /* FileAlreadyExistSheetController.mm in Sources */,
+				CFD726E21E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */,
+				CFD727061E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */,
+				CFD727371E42E35500603077 /* TermView.mm in Sources */,
+				CFD727211E42E33300603077 /* TermParser.mm in Sources */,
 				CF4E56D81D506B9800452912 /* FindFilesSheetController.mm in Sources */,
+				CFD726311E42E0C700603077 /* WorkspaceIconsCache.mm in Sources */,
+				CFD726F71E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
+				CFD726EC1E42E2D600603077 /* PanelListViewNameView.mm in Sources */,
 				CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFA5396E1D433E2A00C562A7 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CFD726451E42E10800603077 /* rapidjson.cpp in Sources */,
 				CFA5396F1D433E2A00C562A7 /* FileCopyOperation.mm in Sources */,
+				CFD726C11E42E28E00603077 /* PanelViewHeader.mm in Sources */,
+				CFD7268A1E42E21C00603077 /* PanelController+Navigation.mm in Sources */,
 				CFA539701D433E2A00C562A7 /* GenericOperationView.mm in Sources */,
+				CFD727101E42E30D00603077 /* BriefSystemOverview.mm in Sources */,
 				CFA539761D433E2A00C562A7 /* Job.cpp in Sources */,
 				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
+				CFD726A81E42E24A00603077 /* PanelViewPresentationSettings.mm in Sources */,
 				CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */,
 				CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
+				CFD726F21E42E2DE00603077 /* PanelListViewSizeView.mm in Sources */,
+				CFD727041E42E2FD00603077 /* FilePanelMainSplitView.mm in Sources */,
+				CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
+				CFD727281E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
 				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
 				CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFA539871D433E2A00C562A7 /* JobTrash.mm in Sources */,
+				CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */,
+				CFD726871E42E21800603077 /* PanelController+Menu.mm in Sources */,
+				CFD726481E42E11300603077 /* SandboxManager.mm in Sources */,
 				CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CFD726DB1E42E2BE00603077 /* Layout.mm in Sources */,
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
+				CFD727251E42E33800603077 /* TermScreen.cpp in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */,
 				CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
 				CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CFD7262A1E42E0BE00603077 /* QLThumbnailsCache.mm in Sources */,
 				CFA539921D433E2A00C562A7 /* Job.cpp in Sources */,
+				CFD726B21E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CFA539941D433E2A00C562A7 /* JobSourceItems.cpp in Sources */,
+				CFD7267E1E42E20900603077 /* PanelController+DataAccess.mm in Sources */,
 				CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */,
+				CFD726241E42E0B200603077 /* ActionsShortcutsManager.mm in Sources */,
 				CF662AE41D8A4E89008F9DD5 /* ActivationManager.cpp in Sources */,
+				CFD726E91E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
+				CFD7272B1E42E34400603077 /* TermScrollView.mm in Sources */,
+				CFD7268D1E42E22000603077 /* PanelController+NavigationMenu.mm in Sources */,
 				CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */,
+				CFD726601E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
+				CFD726121E42E07E00603077 /* Config.cpp in Sources */,
 				CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */,
+				CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */,
 				CF876D471D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */,
+				CFD726961E42E22C00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFA539A81D433E2A00C562A7 /* MassCopySheetController.mm in Sources */,
 				CFA539A91D433E2A00C562A7 /* FileLinkOperationJob.mm in Sources */,
+				CFD727311E42E34B00603077 /* TermSingleTask.mm in Sources */,
+				CFD726841E42E21100603077 /* PanelController+DragAndDrop.mm in Sources */,
 				CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */,
+				CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CFA539AF1D433E2A00C562A7 /* CreateDirectoryOperation.mm in Sources */,
+				CFD7260F1E42E07A00603077 /* main.cpp in Sources */,
+				CFD7263B1E42E0E100603077 /* TrialWindowController.mm in Sources */,
 				CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF876D441D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
+				CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
+				CFD7271C1E42E32D00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
+				CFD7261B1E42E09500603077 /* Theme.mm in Sources */,
+				CFD726FE1E42E2F400603077 /* TabBarStyle.mm in Sources */,
+				CFD726A51E42E24500603077 /* PanelView.mm in Sources */,
+				CFD726CA1E42E2A200603077 /* PanelBriefView.mm in Sources */,
+				CFD726F51E42E2E200603077 /* PanelListViewTableHeaderCell.mm in Sources */,
+				CFD7270A1E42E30500603077 /* FilePanelsTabbedHolder.mm in Sources */,
+				CFD726AF1E42E25600603077 /* SharingService.mm in Sources */,
 				CF1E3D151D59A4A600609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFD7262E1E42E0C300603077 /* QLVFSThumbnailsCache.mm in Sources */,
+				CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */,
 				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
 				CFA539BF1D433E2A00C562A7 /* FTPConnectionSheetController.mm in Sources */,
 				CFA539CA1D433E2A00C562A7 /* CreateDirectoryOperationJob.mm in Sources */,
+				CFD726D91E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
+				CFD7263F1E42E0EE00603077 /* GoogleAnalytics.mm in Sources */,
 				CF4E56C51D50692000452912 /* PreferencesWindowTerminalTab.mm in Sources */,
+				CFD726901E42E22300603077 /* PanelController+QuickSearch.mm in Sources */,
 				CFA539CD1D433E2A00C562A7 /* ProcessSheetController.mm in Sources */,
 				CFA539CE1D433E2A00C562A7 /* FileCompressOperation.mm in Sources */,
 				CFA539CF1D433E2A00C562A7 /* FileLinkNewHardlinkSheetController.mm in Sources */,
+				CFD726BB1E42E28700603077 /* PanelViewImplementationProtocol.mm in Sources */,
+				CFD726341E42E0CD00603077 /* Common.mm in Sources */,
 				CFA539D11D433E2A00C562A7 /* SFTPConnectionSheetController.mm in Sources */,
+				CFD726CD1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
+				CFD727131E42E31E00603077 /* ConnectionsMenuDelegate.mm in Sources */,
+				CFD726781E42E1FF00603077 /* PanelAux.mm in Sources */,
 				CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFA539D61D433E2A00C562A7 /* OperationsSummaryViewController.mm in Sources */,
 				CFA539D81D433E2A00C562A7 /* Operation.mm in Sources */,
 				CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF56BF571D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
+				CFD726061E42E06900603077 /* AppDelegate.mm in Sources */,
 				CFA539E21D433E2A00C562A7 /* OperationStats.mm in Sources */,
+				CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFA539E31D433E2A00C562A7 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CFD7260C1E42E07400603077 /* Application.mm in Sources */,
+				CFD726BE1E42E28A00603077 /* IconsGenerator2.mm in Sources */,
 				CFA539E41D433E2A00C562A7 /* FileCompressOperationJob.cpp in Sources */,
+				CFD7269C1E42E23600603077 /* PanelDataSortMode.mm in Sources */,
+				CFD726D61E42E2B300603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
+				CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */,
+				CFD726C71E42E29B00603077 /* Layout.mm in Sources */,
 				CFA2D6051E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
+				CFD7263A1E42E0D900603077 /* LSUrls.mm in Sources */,
 				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
+				CFD726011E42E06300603077 /* AppDelegate+Migration.mm in Sources */,
 				CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */,
 				CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */,
+				CFD726631E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */,
+				CFD726C41E42E29200603077 /* PanelViewFooter.mm in Sources */,
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
+				CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */,
+				CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
+				CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
+				CFD726E41E42E2CD00603077 /* PanelListViewDateTimeView.mm in Sources */,
+				CFD726D01E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */,
+				CFD7265A1E42E1B400603077 /* MainWindow.mm in Sources */,
+				CFD726151E42E08200603077 /* Config.mm in Sources */,
 				CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */,
+				CFD7272E1E42E34700603077 /* TermShellTask.cpp in Sources */,
+				CFD727161E42E32200603077 /* NetworkConnectionsManager.mm in Sources */,
 				CFA539FC1D433E2A00C562A7 /* BatchRenameOperationJob.mm in Sources */,
+				CFD726A21E42E23F00603077 /* PanelHistory.mm in Sources */,
+				CFD726FB1E42E2E900603077 /* PanelListViewTableView.mm in Sources */,
+				CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CF4E56CB1D50693D00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFA539FF1D433E2A00C562A7 /* FileSysAttrChangeOperation.mm in Sources */,
 				CFA53A011D433E2A00C562A7 /* BatchRenameSheetController.mm in Sources */,
 				CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
+				CFD726EF1E42E2DA00603077 /* PanelListViewRowView.mm in Sources */,
 				CF876D491D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
+				CFD726721E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CFA53A071D433E2A00C562A7 /* OperationJob.cpp in Sources */,
+				CFD7264B1E42E11C00603077 /* SearchInFile.cpp in Sources */,
+				CFD726931E42E22700603077 /* PanelData.mm in Sources */,
 				CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */,
 				CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
+				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */,
+				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
+				CFD726811E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */,
+				CFD726991E42E23100603077 /* PanelDataPersistency.cpp in Sources */,
+				CFD7266E1E42E1F100603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
+				CFD7269F1E42E23B00603077 /* PanelDataStatistics.cpp in Sources */,
 				CF56BEFB1D5C26B000A08D2B /* InternalViewerController.mm in Sources */,
+				CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
+				CFD726421E42E10300603077 /* OrthodoxMonospace.mm in Sources */,
+				CFD7267A1E42E20300603077 /* PanelController.mm in Sources */,
 				CF04DDF61E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CFD7271F1E42E33000603077 /* MainWindowTerminalState.mm in Sources */,
 				CFA53A0D1D433E2A00C562A7 /* FileSysEntryAttrSheetController.mm in Sources */,
+				CFD726751E42E1FB00603077 /* MainWindowFilePanelState+Tools.mm in Sources */,
+				CFD726691E42E1E800603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */,
 				CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
+				CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
+				CFD727341E42E35000603077 /* TermTask.cpp in Sources */,
+				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
+				CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */,
+				CFD727011E42E2F900603077 /* MainWndGoToButton.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
+				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3744,94 +4233,196 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD7266A1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
+				CFD726281E42E0BC00603077 /* QLThumbnailsCache.mm in Sources */,
+				CFD727201E42E33200603077 /* TermParser.mm in Sources */,
+				CFD726921E42E22700603077 /* PanelData.mm in Sources */,
+				CFD726E61E42E2CE00603077 /* PanelListViewDateTimeView.mm in Sources */,
 				CF9069751BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
 				CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */,
+				CFD7260A1E42E07300603077 /* Application.mm in Sources */,
+				CFD726671E42E1E700603077 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
+				CFD726731E42E1FA00603077 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CF4E56D41D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CF50C4221C0ADE78009DF611 /* OperationJob.cpp in Sources */,
+				CFD726B01E42E26100603077 /* CopyFilePaths.mm in Sources */,
+				CFD7262C1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
+				CFD726131E42E08100603077 /* Config.mm in Sources */,
+				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
+				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CFD7271D1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */,
+				CFD7265E1E42E1D600603077 /* FilesDraggingSource.mm in Sources */,
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
+				CFD7267F1E42E20B00603077 /* PanelController+DelayedSelection.mm in Sources */,
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
+				CFD727171E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,
 				CF50C3FE1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */,
+				CFD7262F1E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */,
+				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
+				CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */,
+				CFD726941E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFA2D6071E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF50C4041C0ADE18009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
+				CFD7269D1E42E23900603077 /* PanelDataStatistics.cpp in Sources */,
+				CFD726BC1E42E28900603077 /* IconsGenerator2.mm in Sources */,
 				CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */,
+				CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
+				CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */,
+				CFD726D11E42E2AC00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
+				CFD727111E42E31C00603077 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF4E56AA1D5068DC00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */,
 				CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */,
+				CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */,
 				CF50C45D1C0ADF52009DF611 /* JobTrash.mm in Sources */,
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CFD726A61E42E24800603077 /* PanelViewPresentationSettings.mm in Sources */,
+				CFD726581E42E1B300603077 /* MainWindow.mm in Sources */,
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
+				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
+				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,
+				CFD726EA1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
+				CFD7264C1E42E11F00603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
+				CFD7268B1E42E21F00603077 /* PanelController+NavigationMenu.mm in Sources */,
+				CFD727321E42E34F00603077 /* TermTask.cpp in Sources */,
 				CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
+				CFD726B91E42E28600603077 /* PanelViewImplementationProtocol.mm in Sources */,
+				CFD726ED1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
+				CFD726F91E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
+				CFD727021E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */,
+				CFD726761E42E1FE00603077 /* PanelAux.mm in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
+				CFD726C21E42E29100603077 /* PanelViewFooter.mm in Sources */,
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
+				CFD7268E1E42E22200603077 /* PanelController+QuickSearch.mm in Sources */,
 				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
+				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
+				CFD726E71E42E2D100603077 /* PanelListViewGeometry.mm in Sources */,
+				CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */,
+				CFD726A01E42E23E00603077 /* PanelHistory.mm in Sources */,
+				CFD7260D1E42E07900603077 /* main.cpp in Sources */,
+				CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */,
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */,
 				CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */,
+				CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
+				CFD726A31E42E24400603077 /* PanelView.mm in Sources */,
 				CF04DE091E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
+				CFD726041E42E06800603077 /* AppDelegate.mm in Sources */,
+				CFD726FC1E42E2F300603077 /* TabBarStyle.mm in Sources */,
+				CFD726CE1E42E2A800603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
+				CFD726381E42E0D800603077 /* LSUrls.mm in Sources */,
+				CFD7272F1E42E34A00603077 /* TermSingleTask.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
+				CFD726F61E42E2E400603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF876D381D51E0AF009C0CCE /* BigFileView.mm in Sources */,
+				CFD726191E42E09300603077 /* Theme.mm in Sources */,
+				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF50C4261C0ADE7F009DF611 /* OperationStats.mm in Sources */,
+				CFD726821E42E20F00603077 /* PanelController+DragAndDrop.mm in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CF50C3EF1C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
+				CFD726E01E42E2C600603077 /* PanelListViewDateFormatting.mm in Sources */,
+				CFD7264F1E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
+				CFD7271A1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
+				CFD726431E42E10600603077 /* rapidjson.cpp in Sources */,
+				CFD726FF1E42E2F800603077 /* MainWndGoToButton.mm in Sources */,
 				CF4E56C31D50691E00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF50C3FC1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
+				CFD7267C1E42E20700603077 /* PanelController+DataAccess.mm in Sources */,
+				CFD727141E42E32100603077 /* NetworkConnectionsManager.mm in Sources */,
 				CFF6F2E81A13567C00011177 /* ProcessSheetController.mm in Sources */,
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
+				CFD726101E42E07C00603077 /* Config.cpp in Sources */,
+				CFD726401E42E10200603077 /* OrthodoxMonospace.mm in Sources */,
 				CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */,
+				CFD726851E42E21700603077 /* PanelController+Menu.mm in Sources */,
+				CFD726521E42E12700603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */,
+				CFD726881E42E21B00603077 /* PanelController+Navigation.mm in Sources */,
 				CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
+				CFD726DD1E42E2C100603077 /* PanelListView.mm in Sources */,
 				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
+				CFD726D41E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
+				CFD726F01E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,
 				CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
+				CFD726161E42E09000603077 /* CocoaAppearanceManager.mm in Sources */,
+				CFD726461E42E11100603077 /* SandboxManager.mm in Sources */,
+				CFD726571E42E1A700603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,
+				CFD726261E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF50C4021C0ADE15009DF611 /* CreateDirectoryOperation.mm in Sources */,
 				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
+				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
 				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
+				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
+				CFD726091E42E07100603077 /* AppDelegateCPP.mm in Sources */,
+				CFD727351E42E35400603077 /* TermView.mm in Sources */,
 				CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CF4E56C91D50693B00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */,
+				CFD726351E42E0D400603077 /* FileWindow.cpp in Sources */,
+				CFD726AA1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */,
+				CFD726BF1E42E28D00603077 /* PanelViewHeader.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
+				CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */,
+				CFD727291E42E34200603077 /* TermScrollView.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
+				CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */,
 				CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
+				CFD7272C1E42E34600603077 /* TermShellTask.cpp in Sources */,
+				CFD726B61E42E28100603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CF876D3D1D51E0AF009C0CCE /* BigFileViewText.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
+				CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
+				CFD726CB1E42E2A400603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */,
 				CF876D531D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CFD726AD1E42E25500603077 /* SharingService.mm in Sources */,
+				CFD727261E42E33B00603077 /* TermScreenBuffer.cpp in Sources */,
+				CFD7261F1E42E0AB00603077 /* ActionShortcut.mm in Sources */,
 				CF50C40E1C0ADE37009DF611 /* FileCompressOperation.mm in Sources */,
+				CFD726031E42E06400603077 /* AppDelegate+Migration.mm in Sources */,
 				CF6A428B1CD7B9C00085CAF9 /* shared_mutex.cpp in Sources */,
+				CFD727231E42E33700603077 /* TermScreen.cpp in Sources */,
+				CFD726321E42E0CC00603077 /* Common.mm in Sources */,
+				CFD726971E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
 				CF1E3D2D1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4475,6 +5066,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
@@ -4538,6 +5130,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;

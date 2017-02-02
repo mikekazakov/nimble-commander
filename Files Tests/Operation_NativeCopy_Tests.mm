@@ -7,9 +7,8 @@
 //
 
 #include "tests_common.h"
-#include "../Files/VFS/VFS.h"
-#include "../Files/VFS/vfs_native.h"
-#include "../Files/Operations/Copy/FileCopyOperation.h"
+#include <VFS/Native.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,

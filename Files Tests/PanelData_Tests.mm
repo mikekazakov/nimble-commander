@@ -7,10 +7,10 @@
 //
 
 #include "tests_common.h"
-#include "../Files/VFS/VFS.h"
-#include "../Files/VFS/vfs_native.h"
-#include "../Files/VFS/VFSListingInput.h"
-#include "../Files/PanelData.h"
+#include <VFS/VFS.h>
+#include <VFS/Native.h>
+#include <VFS/VFSListingInput.h>
+#include <NimbleCommander/States/FilePanels/PanelData.h>
 
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {

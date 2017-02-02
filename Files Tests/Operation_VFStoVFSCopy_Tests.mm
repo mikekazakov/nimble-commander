@@ -7,12 +7,12 @@
 //
 
 #include "tests_common.h"
-#include "../Files/vfs/VFS.h"
-#include "../Files/vfs/vfs_native.h"
-#include "../Files/vfs/vfs_net_ftp.h"
-#include "../Files/vfs/vfs_arc_unrar.h"
-#include "../Files/vfs/vfs_xattr.h"
-#include "../Files/Operations/Copy/FileCopyOperation.h"
+#include <VFS/VFS.h>
+#include <VFS/Native.h>
+#include <VFS/NetFTP.h>
+#include <VFS/ArcUnRAR.h>
+#include <VFS/Xattr.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 
 static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";
 

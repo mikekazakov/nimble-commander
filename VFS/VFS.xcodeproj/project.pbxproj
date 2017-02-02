@@ -97,6 +97,13 @@
 		CF69D0771DA2353000992B84 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* VFSPSHost.mm */; };
 		CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0731DA2353000992B84 /* VFSPSInternal.h */; };
 		CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0791DA238D400992B84 /* VFSListingInput.h */; };
+		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
+		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
+		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
+		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
+		CFD725FD1E42DD3A00603077 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FC1E42DD3A00603077 /* libcurl.a */; };
+		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
+		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -206,6 +213,11 @@
 		CF69D0721DA2353000992B84 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = source/PS/VFSPSHost.mm; sourceTree = "<group>"; };
 		CF69D0731DA2353000992B84 /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = source/PS/VFSPSInternal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
+		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
+		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
+		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
+		CFD725FC1E42DD3A00603077 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../Files/3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
+		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,10 +233,16 @@
 				CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */,
 				CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */,
 				CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */,
+				CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */,
+				CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */,
 				CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */,
 				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
 				CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */,
 				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
+				CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */,
+				CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */,
+				CFD725FD1E42DD3A00603077 /* libcurl.a in Frameworks */,
+				CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +273,11 @@
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFD725FF1E42DD6000603077 /* LDAP.framework */,
+				CFD725FC1E42DD3A00603077 /* libcurl.a */,
+				CFD725F91E42DC4B00603077 /* libz.a */,
+				CFD725F71E42DC3600603077 /* liblzma.a */,
+				CFD725F51E42DC3200603077 /* libbz2.a */,
 				CF18472F1E41CFB7008B7C9F /* libarchive.a */,
 				CF18472A1E41CC4E008B7C9F /* libssh2.a */,
 				CF1847281E41CC4C008B7C9F /* libcrypto.a */,
@@ -584,6 +607,7 @@
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
 				CF1847011E41C86D008B7C9F /* Tests.m in Sources */,
+				CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -816,6 +840,7 @@
 				CF1847071E41C86D008B7C9F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CF69CFCA1DA224E200992B84 /* Build configuration list for PBXProject "VFS" */ = {
 			isa = XCConfigurationList;

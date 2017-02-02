@@ -7,10 +7,9 @@
 //
 
 #include "tests_common.h"
-#include "../Files/vfs/VFS.h"
-#include "../Files/vfs/vfs_arc_la.h"
-#include "../Files/vfs/vfs_native.h"
-#include "../Files/Operations/Copy/FileCopyOperation.h"
+#include <VFS/VFS.h>
+#include <VFS/ArcLA.h>
+#include <VFS/Native.h>
 
 static const string g_Preffix = "/.FilesTestingData/archives/";
 static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
@@ -19,15 +18,6 @@ static const string g_Adium = g_Preffix + "adium.app.zip";
 static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
 static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
-
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                                 const vector<string> &_filenames,
-                                                 VFSHost &_host)
-{
-    vector<VFSListingItem> items;
-    _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
-    return items;
-}
 
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -290,63 +280,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     XCTAssert( memcmp(buf, finfo, sz) == 0 );
     file.reset();
-}
-
-- (void)testAdiumZip_CopyFromVFS
-{
-    auto dir = self.makeTmpDir;
-    
-    shared_ptr<VFSArchiveHost> host;
-    try {
-        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
-    } catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-        return;
-    }
-    
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithItems:FetchItems("/", {"Adium.app"}, *host)
-           destinationPath:dir.native()
-           destinationHost:VFSNativeHost::SharedHost()
-                   options:{}];    
-
-    __block bool finished = false;
-    [op AddOnFinishHandler:^{ finished = true; }];
-    [op Start];
-    [self waitUntilFinish:finished];
-    
-    int result = 0;
-    XCTAssert( VFSCompareEntries("/Adium.app", host, dir / "Adium.app", VFSNativeHost::SharedHost(), result) == 0);
-    XCTAssert( result == 0 );
-    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
-}
-
-- (void)testExtractedFilesSignature
-{
-    auto dir = self.makeTmpDir;
-    
-    shared_ptr<VFSArchiveHost> host;
-    try {
-        host = make_shared<VFSArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
-    } catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-        return;
-    }
-    
-    FileCopyOperation *op = [FileCopyOperation alloc];
-    op = [op initWithItems:FetchItems("/", {"Files.app"}, *host)
-           destinationPath:dir.native()
-           destinationHost:VFSNativeHost::SharedHost()
-                   options:{}];
-    
-    __block bool finished = false;
-    [op AddOnFinishHandler:^{ finished = true; }];
-    [op Start];
-    [self waitUntilFinish:finished];
-    
-    string command = "/usr/bin/codesign --verify "s + (dir/"Files.app").native();
-    XCTAssert( system( command.c_str() ) == 0);
-    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
 }
 
 - (path)makeTmpDir

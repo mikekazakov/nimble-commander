@@ -898,6 +898,13 @@
 			remoteGlobalIDString = CFD62B721C99C19A0021EE7F;
 			remoteInfo = Habanero;
 		};
+		CFD725F21E42DBD900603077 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF1846FE1E41C86D008B7C9F;
+			remoteInfo = "VFS Tests";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1099,7 +1106,6 @@
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
 		CF50C4761C0EB52A009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
 		CF50C4771C0EB6A0009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MassCopySheetController.strings; sourceTree = "<group>"; };
-		CF561B1317D627B3009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../../../../../../usr/local/lib/liblzma.a; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
 		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
@@ -2186,6 +2192,7 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFDB1DA2250C00992B84 /* libVFS.a */,
+				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2560,18 +2567,10 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CFB8CDBC1D82BFAD007B1142 /* libssh2.a */,
-				CF811A901D8262BE001F9E7F /* libcrypto.a */,
-				CF811A911D8262BE001F9E7F /* libssl.a */,
 				CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */,
 				CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */,
-				CFA183721CA0133600544633 /* libAquaticPrime.a */,
-				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
-				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
 				CF9066C319AB7928001DC687 /* libcrypto.dylib */,
-				CF9066B419AB54CE001DC687 /* libcrypto.a */,
-				CF9066B519AB54CE001DC687 /* libssl.a */,
 				CF9066B219AB51B3001DC687 /* libssl.dylib */,
 				CF6D9C9219667A850077B146 /* libSystem.dylib */,
 				CF6D9C9019667A640077B146 /* Quartz.framework */,
@@ -2584,45 +2583,37 @@
 				CF6D9C8219667A330077B146 /* Security.framework */,
 				CF6D9C8019667A2D0077B146 /* LDAP.framework */,
 				CF6D9C7E19667A270077B146 /* Carbon.framework */,
-				CF6D9C7819667A180077B146 /* libbz2.a */,
-				CF6D9C7919667A190077B146 /* liblzma.a */,
 				CF6FAA201B82E1DD006E0742 /* Sparkle.framework */,
-				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
-				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
-				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
-				CFA3D7C81962613B006A30A1 /* Carbon.framework */,
-				CF1100D1191378BD00E170FC /* LDAP.framework */,
-				CF1100CF1913788800E170FC /* Security.framework */,
-				CF1100CD1913778800E170FC /* libcurl.a */,
-				CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */,
-				CFD7E4E6190FD61E0064D249 /* libboost_system.a */,
 				CFB7099918D6FA1800A83E61 /* libcurl.dylib */,
 				CF73A6221816B3C200F59016 /* libquarantine.dylib */,
 				CF73A6201816B36C00F59016 /* libSystem.dylib */,
-				CF029BFC17E87C2700415033 /* libz.a */,
-				CF029BFA17E878A400415033 /* libbz2.a */,
-				CF561B1517D6290F009D37A4 /* liblzma.a */,
-				CF561B1317D627B3009D37A4 /* liblzma.a */,
-				CF47A981186C607C00745C4C /* XCTest.framework */,
-				CFC5121616C4BD3D00D247EE /* Other Frameworks */,
+				CFD725F41E42DBF200603077 /* Static Libraries */,
+				CFC5121616C4BD3D00D247EE /* System Frameworks */,
 			);
 			name = Frameworks;
 			path = Files;
 			sourceTree = "<group>";
 		};
-		CFC5121616C4BD3D00D247EE /* Other Frameworks */ = {
+		CFC5121616C4BD3D00D247EE /* System Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */,
-				CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */,
-				B50976A31729BA150080412E /* Quartz.framework */,
-				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,
 				CFC5121716C4BD3D00D247EE /* AppKit.framework */,
+				CFA3D7C81962613B006A30A1 /* Carbon.framework */,
+				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
 				CFC5121816C4BD3D00D247EE /* CoreData.framework */,
-				CFC5121916C4BD3D00D247EE /* Foundation.framework */,
 				CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */,
+				CFC5121916C4BD3D00D247EE /* Foundation.framework */,
+				CF1100D1191378BD00E170FC /* LDAP.framework */,
+				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,
+				B50976A31729BA150080412E /* Quartz.framework */,
+				CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */,
+				CF1100CF1913788800E170FC /* Security.framework */,
+				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
+				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
+				CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */,
+				CF47A981186C607C00745C4C /* XCTest.framework */,
 			);
-			name = "Other Frameworks";
+			name = "System Frameworks";
 			sourceTree = "<group>";
 		};
 		CFC5121A16C4BD3D00D247EE /* Source */ = {
@@ -2668,6 +2659,29 @@
 				CFD62B831C99C1CA0021EE7F /* libHabanero.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CFD725F41E42DBF200603077 /* Static Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				CFA183721CA0133600544633 /* libAquaticPrime.a */,
+				CFD62D9B1C9BC7540021EE7F /* libarchive.a */,
+				CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */,
+				CFD7E4E6190FD61E0064D249 /* libboost_system.a */,
+				CF6D9C7819667A180077B146 /* libbz2.a */,
+				CF029BFA17E878A400415033 /* libbz2.a */,
+				CF811A901D8262BE001F9E7F /* libcrypto.a */,
+				CF9066B419AB54CE001DC687 /* libcrypto.a */,
+				CF1100CD1913778800E170FC /* libcurl.a */,
+				CF6D9C7919667A190077B146 /* liblzma.a */,
+				CF561B1517D6290F009D37A4 /* liblzma.a */,
+				CFB8CDBC1D82BFAD007B1142 /* libssh2.a */,
+				CF811A911D8262BE001F9E7F /* libssl.a */,
+				CF9066B519AB54CE001DC687 /* libssl.a */,
+				CF5A0B291C9E7D76005839B7 /* libunrar.a */,
+				CF029BFC17E87C2700415033 /* libz.a */,
+			);
+			name = "Static Libraries";
 			sourceTree = "<group>";
 		};
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
@@ -2960,6 +2974,13 @@
 			fileType = archive.ar;
 			path = libHabanero.a;
 			remoteRef = CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFD725F31E42DBD900603077 /* VFS Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "VFS Tests.xctest";
+			remoteRef = CFD725F21E42DBD900603077 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

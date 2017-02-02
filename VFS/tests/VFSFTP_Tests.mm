@@ -7,9 +7,9 @@
 //
 
 #import "tests_common.h"
-#include "../Files/vfs/VFS.h"
-#include "../Files/vfs/vfs_net_ftp.h"
-#include "../Files/vfs/vfs_native.h"
+#include <VFS/VFS.h>
+#include <VFS/NetFTP.h>
+#include <VFS/Native.h>
 
 
 static string g_LocalFTP = "192.168.2.5";

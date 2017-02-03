@@ -166,7 +166,7 @@ static int ReadSingleEntryAttributesByPath(PosixIOInterface &_io,
                             ATTR_CMN_GRPID          |
                             ATTR_CMN_ACCESSMASK	    |
                             ATTR_CMN_FLAGS;
-    attr_list.fileattr    = ATTR_FILE_TOTALSIZE;
+    attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
 
     const int fd = _io.open(_path, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
@@ -221,7 +221,7 @@ static int ReadSingleEntryAttributesByPath(PosixIOInterface &_io,
     else
         params.add_time = -1;
     
-    if( attrs.returned.fileattr & ATTR_FILE_TOTALSIZE )
+    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
         params.size = attrs.file_size;
     else
         params.size = -1;
@@ -332,7 +332,7 @@ static int ReadDirAttributesBulk(
                             ATTR_CMN_GRPID          |
                             ATTR_CMN_ACCESSMASK	    |
                             ATTR_CMN_FLAGS;
-    attr_list.fileattr    = ATTR_FILE_TOTALSIZE;
+    attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
 
     char attr_buf[65536];
@@ -441,7 +441,7 @@ static int ReadDirAttributesBulk(
                 else
                     params.add_time = -1;
                 
-                if( attrs.returned.fileattr & ATTR_FILE_TOTALSIZE ) {
+                if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
                     params.size = *(off_t*)field;
                     field += sizeof(off_t);
                 }

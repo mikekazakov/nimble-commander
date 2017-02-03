@@ -302,12 +302,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             const auto col_id = [identifier characterAtIndex:0];
             if( col_id == 'A' ) {
                 auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
-                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
-                [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
-//- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::PanelVolatileData&)_vd
-//                NSImageRep* icon = m_IconsGenerator.ImageFor(vfs_item, vd);
-//                [nv setFilename:vfs_item.NSDisplayName()];
-//                [nv setIcon:icon];
+                if( m_Data->IsValidSortPosition((int)row) ) {
+                    auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+                    [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
+                }
                 return nv;
             }
             if( col_id == 'B' ) {
@@ -470,7 +468,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (void) syncVolatileData
 {
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-        rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
+        if( m_Data->IsValidSortPosition((int)row) )
+            rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
     }];
 }
 
@@ -556,9 +555,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     dispatch_assert_main_queue();
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
         const auto index = (int)row;
-        auto &vd = m_Data->VolatileDataAtSortPosition(index);
-        if( vd.icon == _icon_no )
-            rowView.nameView.icon = _image;
+        if( m_Data->IsValidSortPosition(index) ) {
+            auto &vd = m_Data->VolatileDataAtSortPosition(index);
+            if( vd.icon == _icon_no )
+                rowView.nameView.icon = _image;
+        }
     }];
 }
 

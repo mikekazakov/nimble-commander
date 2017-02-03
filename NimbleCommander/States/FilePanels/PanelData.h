@@ -113,9 +113,11 @@ public:
     VolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
     const VolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
     
+    bool IsValidSortPosition(int _pos) const noexcept;
     VFSListingItem   EntryAtSortPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     VolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const VolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
+    
     vector<string>          SelectedEntriesFilenames() const;
     vector<VFSListingItem> SelectedEntries() const;
     

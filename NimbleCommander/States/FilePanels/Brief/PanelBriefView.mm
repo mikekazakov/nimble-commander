@@ -417,7 +417,9 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
         if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
             const auto index = (int)index_path.item;
-            [i setVD:m_Data->VolatileDataAtSortPosition(index)];
+            // need to firstly check if we're still in sync with panel data
+            if( m_Data->IsValidSortPosition(index) )
+                [i setVD:m_Data->VolatileDataAtSortPosition(index)];
         }
 }
 
@@ -438,10 +440,12 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
         if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
             const auto index = (int)index_path.item;
-            auto &vd = m_Data->VolatileDataAtSortPosition(index);
-            if( vd.icon == _icon_no ) {
-                [i setIcon:_image];
-                break;
+            if( m_Data->IsValidSortPosition(index) ) {
+                auto &vd = m_Data->VolatileDataAtSortPosition(index);
+                if( vd.icon == _icon_no ) {
+                    [i setIcon:_image];
+                    break;
+                }
             }
         }
 }

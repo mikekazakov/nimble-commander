@@ -860,6 +860,11 @@ VFSListingItem PanelData::EntryAtRawPosition(int _pos) const noexcept
     return {};
 }
 
+bool PanelData::IsValidSortPosition(int _pos) const noexcept
+{
+    return RawIndexForSortIndex(_pos) >= 0;
+}
+
 VFSListingItem PanelData::EntryAtSortPosition(int _pos) const noexcept
 {
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));

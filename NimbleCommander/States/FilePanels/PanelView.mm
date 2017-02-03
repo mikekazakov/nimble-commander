@@ -1112,7 +1112,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         if( !self.active )
             [self.window makeFirstResponder:self];
         
-        if( _sorted_index < 0 )
+        if( !m_Data->IsValidSortPosition(_sorted_index) )
             return;
 
         const int current_cursor_pos = m_CursorPos;

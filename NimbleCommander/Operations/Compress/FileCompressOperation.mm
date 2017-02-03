@@ -253,4 +253,9 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     });
 }
 
+- (string) resultArchiveFilename
+{
+    return m_ArchiveName ? m_ArchiveName.UTF8String : "";
+}
+
 @end

@@ -1014,6 +1014,7 @@
 		CFD727381E42E3E300603077 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
 		CFD727391E42E3EE00603077 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
+		CFD727451E442C0200603077 /* Operation_Archive.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD727431E442BA400603077 /* Operation_Archive.mm */; };
 		CFD7E4E7190FD61E0064D249 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CFD7E4E8190FD61E0064D249 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1700,6 +1701,7 @@
 		CFD6F9111BEBAADE00A1B046 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = NimbleCommander/Operations/Delete/Job.cpp; sourceTree = SOURCE_ROOT; };
 		CFD6F9121BEBAADE00A1B046 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = NimbleCommander/Operations/Delete/Job.h; sourceTree = SOURCE_ROOT; };
 		CFD6F9141BEBBF6E00A1B046 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Delete/Options.h; sourceTree = SOURCE_ROOT; };
+		CFD727431E442BA400603077 /* Operation_Archive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation_Archive.mm; path = NimbleCommander/Tests/Operation_Archive.mm; sourceTree = SOURCE_ROOT; };
 		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -2344,6 +2346,7 @@
 		CF47A983186C607C00745C4C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFD727431E442BA400603077 /* Operation_Archive.mm */,
 				CF47A994186C663000745C4C /* tests_common.h */,
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
@@ -3614,6 +3617,7 @@
 			files = (
 				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
 				CFDAC3021DFD8B630039A104 /* FileSysAttrChangeOperation_Tests.mm in Sources */,
+				CFD727451E442C0200603077 /* Operation_Archive.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,

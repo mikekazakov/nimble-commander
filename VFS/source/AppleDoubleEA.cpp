@@ -331,7 +331,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
     struct {
         char name[256];
         int name_len;
-        void *data;
+        unique_ptr<char[]> data;
         unsigned data_sz;
         bool isfinfo;
         unsigned attr_hdr_offset;
@@ -362,10 +362,10 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
     for(int i = 0; i < eas_count; ++i) {
         ssize_t sz = _file.XAttrGet(file_eas[i].name, 0, 0);
         if(sz > 0) {
-            file_eas[i].data = alloca(sz);
+            file_eas[i].data = make_unique<char[]>(sz);
             assert(file_eas[i].data);
             file_eas[i].data_sz = (unsigned)sz;
-            _file.XAttrGet(file_eas[i].name, file_eas[i].data, file_eas[i].data_sz);
+            _file.XAttrGet(file_eas[i].name, file_eas[i].data.get(), file_eas[i].data_sz);
         }
     }
 
@@ -408,21 +408,23 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
   /*attr_header_p->flags                            = SWAP32(0);*/
     attr_header_p->num_attrs                        = SWAP16(attrs_hdrs_count);
     
-    for(int i = 0; i < eas_count; ++i)
-        if(!file_eas[i].isfinfo) {
-            attr_entry_t *entry = (attr_entry_t *)((char *)apple_double + file_eas[i].attr_hdr_offset);
-            entry->offset   = SWAP32(file_eas[i].attr_data_offset);
-            entry->length   = SWAP32(file_eas[i].data_sz);
-            entry->namelen  = file_eas[i].name_len + 1;
-            strcpy((char*)&entry->name[0], file_eas[i].name);
-            memcpy((char *)apple_double + file_eas[i].attr_data_offset, file_eas[i].data, file_eas[i].data_sz);
+    for(int i = 0; i < eas_count; ++i) {
+        const auto &ea = file_eas[i];
+        if( !ea.isfinfo ) {
+            attr_entry_t *entry = (attr_entry_t *)((char *)apple_double + ea.attr_hdr_offset);
+            entry->offset   = SWAP32(ea.attr_data_offset);
+            entry->length   = SWAP32(ea.data_sz);
+            entry->namelen  = ea.name_len + 1;
+            strcpy((char*)&entry->name[0], ea.name);
+            memcpy((char *)apple_double + ea.attr_data_offset, ea.data.get(), ea.data_sz);
         }
         else {
             memcpy(&attr_header_p->appledouble.finfo[0],
-                   file_eas[i].data,
-                   min(32u, file_eas[i].data_sz)
+                   ea.data.get(),
+                   min(32u, ea.data_sz)
                    );
         }
+    }
 
     *_buf_sz = full_ad_size;
     return apple_double;

@@ -21,4 +21,7 @@
 - (OperationDialogAlert *)OnCantAccessSourceDir:(NSError*)_error forPath:(const char *)_path;
 - (OperationDialogAlert *)OnReadError:(NSError*)_error forPath:(const char *)_path;
 - (OperationDialogAlert *)OnWriteError:(NSError*)_error;
+
+@property (nonatomic, readonly) string resultArchiveFilename;
+
 @end

@@ -41,6 +41,7 @@
 - (id) initWithFilepath:(string)path
                      at:(VFSHostPtr)vfs
 {
+    assert( dispatch_is_main_queue() );
     self = [super init];
     if(self) {
         m_VFS = vfs;
@@ -51,6 +52,11 @@
         
     }
     return self;
+}
+
+- (void) dealloc
+{
+    assert( dispatch_is_main_queue() );
 }
 
 - (bool) open

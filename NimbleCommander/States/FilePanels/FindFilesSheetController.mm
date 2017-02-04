@@ -630,14 +630,16 @@ private:
     
     if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
         BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            if([sheet open]) {
-                dispatch_to_main_queue([=]{
+        dispatch_to_background([=]{
+            const auto success = [sheet open];
+            dispatch_to_main_queue([=]{
+                // make sure that 'sheet' will be destroyed in main queue
+                if( success ) {
                     [sheet beginSheetForWindow:self.window];
                     if(cont.location >= 0)
                         [sheet markInitialSelection:cont searchTerm:search_req.UTF8String];
-                });
-            }
+                }
+            });
         });
     }
     else { // as a window

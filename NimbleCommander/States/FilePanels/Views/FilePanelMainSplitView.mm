@@ -79,7 +79,7 @@ static const auto g_MinPanelWidth = 120;
         if( c.alphaComponent == 1. )
             NSRectFill(rect);
         else
-            NSRectFillUsingOperation(rect, NSCompositingOperationSourceAtop);
+            NSRectFillUsingOperation(rect, NSCompositingOperationSourceOver);
     }
     else
         NSDrawWindowBackground(rect);

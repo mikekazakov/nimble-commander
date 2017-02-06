@@ -9,6 +9,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
+#include <Utility/ColoredSeparatorLine.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/OperationsController.h>
@@ -225,9 +226,10 @@ static void SetupRatingOverlay(NSView *_background_view)
     m_MainSplitView.rightTabbedHolder.tabBar.delegate = self;
     [self addSubview:m_MainSplitView];
     
-    m_SeparatorLine = [[NSBox alloc] initWithFrame:NSRect()];
+    m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
     m_SeparatorLine.boxType = NSBoxSeparator;
+    m_SeparatorLine.borderColor = CurrentTheme().FilePanelsGeneralTopSeparatorColor();
     [self addSubview:m_SeparatorLine];
     
     m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];

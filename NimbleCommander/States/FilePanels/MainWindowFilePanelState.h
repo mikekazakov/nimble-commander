@@ -27,6 +27,7 @@ class ExternalToolsStorage;
 @class OperationsSummaryViewController;
 @class FilePanelOverlappedTerminal;
 @class MainWindowFilePanelsStateToolbarDelegate;
+@class ColoredSeparatorLine;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
@@ -44,7 +45,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     OperationsController *m_OperationsController;
     OperationsSummaryViewController *m_OpSummaryController;
     
-    NSBox                *m_SeparatorLine;
+    ColoredSeparatorLine *m_SeparatorLine;
     MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;
     __weak NSResponder   *m_LastResponder;
     

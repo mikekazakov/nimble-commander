@@ -206,17 +206,14 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
-				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
-				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
-				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
-				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
-				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
-				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
+				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
+				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
+				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
+				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
@@ -224,6 +221,8 @@
 				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
 				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
+				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
+				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
@@ -236,6 +235,7 @@
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
+				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
 			name = Source;

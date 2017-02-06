@@ -38,6 +38,7 @@ public:
     NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
     NSColor *FilePanelsGeneralOverlayColor() const noexcept;
     NSColor *FilePanelsGeneralSplitterColor() const noexcept;
+    NSColor *FilePanelsGeneralTopSeparatorColor() const noexcept;
     
     // File Panels --> Tabs bar settings ///////////////////////////////////////////////////////////
     NSFont  *FilePanelsTabsFont() const noexcept;

@@ -15,7 +15,7 @@
         if( c.alphaComponent == 1. )
             NSRectFill(rc);
         else
-            NSRectFillUsingOperation(rc, NSCompositingOperationSourceAtop);
+            NSRectFillUsingOperation(rc, NSCompositingOperationSourceOver);
     }
     else
         [super drawRect:rect];

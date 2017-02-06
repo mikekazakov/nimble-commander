@@ -83,7 +83,8 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColoringRulesNode(@"Filenames coloring rules", "filePanelsColoringRules_v1"),
     SpawnColorNode(@"Drop border color", "filePanelsGeneralDropBorderColor"),
     SpawnColorNode(@"Overlay color", "filePanelsGeneralOverlayColor"),
-    SpawnColorNode(@"Splitter color", "filePanelsGeneralSplitterColor")
+    SpawnColorNode(@"Splitter color", "filePanelsGeneralSplitterColor"),
+    SpawnColorNode(@"Top separator color", "filePanelsGeneralTopSeparatorColor"),
     ];
     
     auto fp_tabs_nodes = @[

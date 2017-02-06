@@ -78,7 +78,7 @@ static void FillRect( NSRect rc, NSColor *c )
     if( c.alphaComponent == 1. )
         NSRectFill(rc);
     else
-        NSRectFillUsingOperation(rc, NSCompositingOperationSourceAtop);
+        NSRectFillUsingOperation(rc, NSCompositingOperationSourceOver);
 }
 
 - (void) drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView

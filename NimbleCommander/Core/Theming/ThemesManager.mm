@@ -14,6 +14,7 @@ static const fixed_eytzinger_map<string, uint64_t> g_EntryToNotificationMapping 
 {"filePanelsGeneralDropBorderColor",    TMN::FilePanelsGeneral },
 {"filePanelsGeneralOverlayColor",       TMN::FilePanelsGeneral },
 {"filePanelsGeneralSplitterColor",      TMN::FilePanelsGeneral },
+{"filePanelsGeneralTopSeparatorColor",  TMN::FilePanelsGeneral },
 {"filePanelsTabsFont",                                  TMN::FilePanelsTabs },
 {"filePanelsTabsTextColor",                             TMN::FilePanelsTabs },
 {"filePanelsTabsSelectedKeyWndActiveBackgroundColor",   TMN::FilePanelsTabs },

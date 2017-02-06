@@ -5,10 +5,17 @@
 #include "PanelListViewDateTimeView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 
+@interface PanelListViewDateTimeView()
+
+@property (nonatomic) NSFont *font;
+
+@end
+
 @implementation PanelListViewDateTimeView
 {
     time_t          m_Time;
     NSString       *m_String;
+    NSFont         *m_Font;
     CTLineRef       m_Line;
     PanelListViewDateFormatting::Style m_Style;
 }
@@ -21,6 +28,7 @@
         m_Line = nullptr;
         m_String = @"";
         m_Style = PanelListViewDateFormatting::Style::Orthodox;
+        m_Font = CurrentTheme().FilePanelsListFont();
     }
     return self;
 }
@@ -74,6 +82,19 @@
     }
 }
 
+- (NSFont*) font
+{
+    return m_Font;
+}
+
+- (void) setFont:(NSFont *)font
+{
+    if( font != m_Font ) {
+        m_Font = font;
+        [self buildLine];
+    }
+}
+
 - (void) buildString
 {
     const auto new_string = [&]{
@@ -95,7 +116,7 @@
 - (void) buildLine
 {
     assert( m_String );
-    const auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsListFont(),
+    const auto attrs = @{NSFontAttributeName: m_Font,
                          (NSString*)kCTForegroundColorFromContextAttributeName: @YES};
     NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
                                                              attributes:attrs];
@@ -141,6 +162,7 @@
 
 - (void) buildPresentation
 {
+    self.font = CurrentTheme().FilePanelsListFont();
     [self setNeedsDisplay:true];
 }
 

@@ -800,7 +800,7 @@
                                                      },
                                                      {
                                                      "name": "other",
-                                                     "regular": "#777777",
+                                                     "regular": "#929292",
                                                      "focused": "#FFFFFF"
                                                      }
                                                      ],
@@ -825,7 +825,7 @@
                       "filePanelsHeaderFont": "@labelFont, 13",
                       "filePanelsHeaderTextColor": "#777777",
                       "filePanelsHeaderActiveTextColor": "@labelColor",
-                      "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsHeaderActiveBackgroundColor": "#383838",
                       "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsHeaderSeparatorColor": "#8080806B",
                       
@@ -834,7 +834,7 @@
                       "filePanelsFooterTextColor" : "#777777",
                       "filePanelsFooterActiveTextColor" : "@labelColor",
                       "filePanelsFooterSeparatorsColor": "#282828",
-                      "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
+                      "filePanelsFooterActiveBackgroundColor": "#383838",
                       "filePanelsFooterInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       
                       /* File Panels -> List settings */
@@ -845,7 +845,7 @@
                       "filePanelsListHeaderTextColor": "#777777",
                       "filePanelsListHeaderSeparatorColor": "#8080806B",
                       "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
-                      "filePanelsListSelectedInactiveRowBackgroundColor": "@darkGrayColor",
+                      "filePanelsListSelectedInactiveRowBackgroundColor": "#555555",
                       "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
                       
@@ -854,7 +854,7 @@
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
                       "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
-                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "@darkGrayColor",
+                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "#555555",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

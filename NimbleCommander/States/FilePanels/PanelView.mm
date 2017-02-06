@@ -443,15 +443,18 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 {
     dispatch_assert_main_queue();
     
-    int origpos = m_CursorPos;
-//    m_Presentation->MoveCursorToNextItem();
+    const auto origpos = m_CursorPos;
     
     if(auto entry = m_Data->EntryAtSortPosition(origpos))
         [self SelectUnselectInRange:origpos
                       last_included:origpos
                              select:!m_Data->VolatileDataAtSortPosition(origpos).is_selected()];
+
+    if( m_CursorPos + 1 < m_Data->SortedDirectoryEntries().size() ) {
+        m_CursorPos++;
+        [self OnCursorPositionChanged];
+    }
     
-    [self OnCursorPositionChanged];
 }
 
 - (void) onInvertCurrentItemSelection

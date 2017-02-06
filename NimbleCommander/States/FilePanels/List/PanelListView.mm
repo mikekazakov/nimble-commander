@@ -77,10 +77,6 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     PanelListViewDateFormatting::Style  m_DateAddedFormattingStyle;
     PanelListViewDateFormatting::Style  m_DateModifiedFormattingStyle;
     
-    dispatch_group_t                    m_BatchUpdateGroup;
-    dispatch_queue_t                    m_BatchUpdateQueue;
-    bool                                m_IsBatchUpdate;
-    
     stack<PanelListViewRowView*>        m_RowsStash;
     
     PanelDataSortMode                   m_SortMode;
@@ -101,9 +97,6 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_IconsGenerator = &_ic;
-        m_BatchUpdateGroup = dispatch_group_create();
-        m_BatchUpdateQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-        m_IsBatchUpdate = false;
         
         [self calculateItemLayout];
         
@@ -290,7 +283,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return v;
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
+- (nullable NSView *)tableView:(NSTableView *)tableView
+            viewForTableColumn:(nullable NSTableColumn *)tableColumn
+                           row:(NSInteger)row
 {
     if( !m_Data )
         return nil;
@@ -314,24 +309,16 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             if( col_id == 'C' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateCreatedView:dv withItem:vfs_item];
-//                - (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
-                
-//                dv.time = vfs_item.BTime();
-//                dv.style = m_DateCreatedFormattingStyle;
                 return dv;
             }
             if( col_id == 'D' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateAddedView:dv withItem:vfs_item];
-//                dv.time = vfs_item.BTime();
-//                dv.style = m_DateAddedFormattingStyle;
                 return dv;
             }
             if( col_id == 'E' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateModifiedView:dv withItem:vfs_item];
-//                dv.time = vfs_item.MTime();
-//                dv.style = m_DateModifiedFormattingStyle;
                 return dv;
             }
         }
@@ -384,41 +371,20 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
 {
-    if( m_IsBatchUpdate )
-        dispatch_group_async(m_BatchUpdateGroup, m_BatchUpdateQueue, [=]{
-            _view.time = _item.BTime();
-            _view.style = m_DateCreatedFormattingStyle;
-        });
-    else {
-        _view.time = _item.BTime();
-        _view.style = m_DateCreatedFormattingStyle;
-    }
+    _view.time = _item.BTime();
+    _view.style = m_DateCreatedFormattingStyle;
 }
 
 - (void) fillDataForDateAddedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
 {
-    if( m_IsBatchUpdate )
-        dispatch_group_async(m_BatchUpdateGroup, m_BatchUpdateQueue, [=]{
-            _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
-            _view.style = m_DateAddedFormattingStyle;
-        });
-    else {
-        _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
-        _view.style = m_DateAddedFormattingStyle;
-    }
+    _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
+    _view.style = m_DateAddedFormattingStyle;
 }
 
 - (void) fillDataForDateModifiedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
 {
-    if( m_IsBatchUpdate )
-        dispatch_group_async(m_BatchUpdateGroup, m_BatchUpdateQueue, [=]{
-            _view.time = _item.MTime();
-            _view.style = m_DateModifiedFormattingStyle;
-        });
-    else {
-        _view.time = _item.MTime();
-        _view.style = m_DateModifiedFormattingStyle;
-    }
+    _view.time = _item.MTime();
+    _view.style = m_DateModifiedFormattingStyle;
 }
 
 - (void) dataChanged
@@ -428,8 +394,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     const auto new_rows_count = m_Data->SortedEntriesCount();
 
     m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
-    
-    m_IsBatchUpdate = true;
     
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *row_view, NSInteger row) {
         if( row >= new_rows_count )
@@ -458,11 +422,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     else if( old_rows_count > new_rows_count )
         [m_TableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(new_rows_count, old_rows_count - new_rows_count)]
                            withAnimation:NSTableViewAnimationEffectNone];
-    
-    dispatch_group_wait(m_BatchUpdateGroup, DISPATCH_TIME_FOREVER);
-    m_IsBatchUpdate = false;
-    
-//     mtb.ResetMicro();
 }
 
 - (void) syncVolatileData

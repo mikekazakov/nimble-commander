@@ -16,17 +16,13 @@
     VFSListingItem                  m_Item;
     PanelDataItemVolatileData         m_VD;
     NSColor*                        m_RowColor;
-    DoubleColor                     m_RowDoubleColor;
     NSColor*                        m_TextColor;
-    DoubleColor                     m_TextDoubleColor;
     int                             m_ItemIndex;
     bool                            m_PanelActive;
     bool                            m_IsDropTarget;
 }
 @synthesize rowBackgroundColor = m_RowColor;
-@synthesize rowBackgroundDoubleColor = m_RowDoubleColor;
 @synthesize rowTextColor = m_TextColor;
-@synthesize rowTextDoubleColor = m_TextDoubleColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
 
@@ -69,11 +65,8 @@
 {
     if( m_PanelActive != panelActive ) {
         m_PanelActive = panelActive;
-        
-        if( self.selected ) {
+        if( self.selected )
             [self updateColors];
-            [self notifySubviewsToRebuildPresentation];
-        }
     }
 }
 
@@ -94,9 +87,7 @@
 {
     if( m_VD != vd ) {
         m_VD = vd;
-        // ....
         [self updateColors];
-        [self notifySubviewsToRebuildPresentation];
     }
 }
 
@@ -111,54 +102,53 @@
         [super setSelected:selected];
         [self updateLayer];
         [self updateColors];
-        [self notifySubviewsToRebuildPresentation];
     }
 }
 
-/*static const auto g_DateTimeParagraphStyle = []{
-    NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
-    p.alignment = NSLeftTextAlignment;
-    p.lineBreakMode = NSLineBreakByTruncatingMiddle;
-    return p;
-}();*/
-
-- (void) updateColors
+- (NSColor*) findCurrentBackgroundColor
 {
     if( self.selected )
-        m_RowColor = m_PanelActive ?
+        return m_PanelActive ?
             CurrentTheme().FilePanelsListSelectedActiveRowBackgroundColor() :
             CurrentTheme().FilePanelsListSelectedInactiveRowBackgroundColor();
     else
-        m_RowColor = m_ItemIndex % 2 ?
+        return m_ItemIndex % 2 ?
             CurrentTheme().FilePanelsListRegularOddRowBackgroundColor() :
             CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
-    
-//    m_RowColor = NSColor.blueColor;
-    
-    
-    m_RowDoubleColor = DoubleColor(m_RowColor);
-    
-//    NSColor *backgroundColor;
-//    self.backgroundColor = m_RowColor;
-//   self.layer.backgroundColor = m_RowColor.CGColor;
-    
-    if(const auto list_view = self.listView) {
-        const vector<PanelViewPresentationItemsColoringRule> &rules = list_view.coloringRules;
+}
+
+- (NSColor*) findCurrentTextColor
+{
+    if( const auto list_view = self.listView ) {
+        const auto &rules = list_view.coloringRules;
         const auto focus = self.selected && m_PanelActive;
         for( const auto &i: rules )
-            if( i.filter.Filter(m_Item, m_VD) ) {
-                m_TextColor = focus ? i.focused : i.regular;
-                break;
-            }
-        m_TextDoubleColor = DoubleColor(m_TextColor);
+            if( i.filter.Filter(m_Item, m_VD) )
+                return focus ? i.focused : i.regular;
+    }
+    return NSColor.blackColor;
+}
 
-        // build date-time view text attributes here
-/*        m_DateTimeViewTextAttributes = @{NSFontAttributeName: list_view.font,
-                                         NSForegroundColorAttributeName: m_TextColor,
-                                         NSParagraphStyleAttributeName: g_DateTimeParagraphStyle};*/
+- (void) updateColors
+{
+    auto colors_has_changed = false;
+    
+    auto new_row_bg_color = [self findCurrentBackgroundColor];
+    if( m_RowColor != new_row_bg_color ) {
+        m_RowColor = new_row_bg_color;
+        colors_has_changed = true;
     }
     
-    [self setNeedsDisplay:true];
+    auto new_row_fg_color = [self findCurrentTextColor];
+    if( new_row_fg_color != m_TextColor ) {
+        m_TextColor = new_row_fg_color;
+        colors_has_changed = true;
+    }
+    
+    if( colors_has_changed ) {
+        [self setNeedsDisplay:true];
+        [self notifySubviewsToRebuildPresentation];
+    }
 }
 
 - (void)updateLayer
@@ -242,11 +232,6 @@
         
 //        w.layer.backgroundColor = m_RowColor.CGColor;
     }
-}
-
-- (void) forceSubviewsToRebuildPresentation
-{
-    [self notifySubviewsToRebuildPresentation];
 }
 
 - (void)didAddSubview:(NSView *)subview

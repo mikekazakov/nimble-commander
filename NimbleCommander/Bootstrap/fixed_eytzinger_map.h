@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Michael G. Kazakov <mike.kazakov@gmail.com>
+/* Copyright (c) 2017 Michael Kazakov <mike.kazakov@gmail.com>
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -37,6 +37,9 @@ public:
     
     [[noreturn]] inline void __throw_at() const
     { throw std::out_of_range("fixed_eytzinger_map::at:  key not found"); }
+    [[noreturn]] inline void __throw_sb() const
+    { throw std::out_of_range("fixed_eytzinger_map::operator[]:  key not found"); }
+    
 };
 
 template <typename _Key, typename _Value, class _Compare = std::less<_Key> >
@@ -768,7 +771,10 @@ template <typename _Key, typename _Value, typename _Compare>
 _Value& fixed_eytzinger_map<_Key, _Value, _Compare>::
 operator[]( const key_type& _key )
 {
-    return at(_key);
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp(_key, *__p.k) )
+        return *__p.v;
+    __throw_sb();
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -778,14 +784,20 @@ typename std::enable_if<
     _Value&>
 ::type fixed_eytzinger_map<_Key, _Value, _Compare>::operator[]( const _K2 &_key )
 {
-    return at(_key);
+    iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp2(_key, *__p.k) )
+        return *__p.v;
+    __throw_sb();
 }
 
 template <typename _Key, typename _Value, typename _Compare>
 const _Value& fixed_eytzinger_map<_Key, _Value, _Compare>::
 operator[]( const key_type& _key ) const
 {
-    return at(_key);
+    const_iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp(_key, *__p.k) )
+        return *__p.v;
+    __throw_sb();
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -795,7 +807,10 @@ typename std::enable_if<
     const _Value&>
 ::type fixed_eytzinger_map<_Key, _Value, _Compare>::operator[]( const _K2 &_key ) const
 {
-    return at(_key);
+    const_iterator __p = lower_bound(_key);
+    if( __p != end() && !__comp2(_key, *__p.k) )
+        return *__p.v;
+    __throw_sb();
 }
 
 template <typename _Key, typename _Value, typename _Compare>
@@ -990,7 +1005,8 @@ private:
 
 template <typename _Key, typename _Value, typename _Compare>
 inline typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator
-operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator::difference_type __n,
+operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::
+            const_proxy_iterator::difference_type __n,
           typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator __x) noexcept
 {
     __x += __n;
@@ -1000,7 +1016,8 @@ operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iter
 template <typename _Key, typename _Value, typename _Compare>
 inline typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator
 operator+(typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator __x,
-          typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator::difference_type __n
+          typename fixed_eytzinger_map<_Key, _Value, _Compare>::const_proxy_iterator::
+            difference_type __n
           ) noexcept
 {
     __x += __n;

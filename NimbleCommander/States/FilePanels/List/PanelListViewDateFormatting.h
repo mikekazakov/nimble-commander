@@ -12,6 +12,9 @@ public:
         Tiny        = 4
     };
     
+    /**
+     * May return nil!
+     */
     static NSString *Format( Style _style, time_t _time );
     static Style SuitableStyleForWidth( int _width, NSFont *_font );
     

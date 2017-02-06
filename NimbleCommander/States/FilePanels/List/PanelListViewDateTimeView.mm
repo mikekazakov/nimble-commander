@@ -76,31 +76,33 @@
 
 - (void) buildString
 {
-    if( m_Time >= 0 )
-        m_String = PanelListViewDateFormatting::Format(m_Style, m_Time);
-    else
-        m_String = @"--";
-    [self buildLine];
-    if( dispatch_is_main_queue() )
+    const auto new_string = [&]{
+        if( m_Time >= 0 ) {
+            auto dts = PanelListViewDateFormatting::Format(m_Style, m_Time);
+            return dts ? dts : @"";
+        }
+        else
+            return @"--";
+    }();
+    
+    if( ![new_string isEqualToString:m_String] ) {
+        m_String = new_string;
+        [self buildLine];
         [self setNeedsDisplay:true];
-    else
-        dispatch_to_main_queue([=]{
-            [self setNeedsDisplay:true];
-        });
+    }
 }
 
 - (void) buildLine
 {
-    // may be on background thread
+    assert( m_String );
     const auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsListFont(),
                          (NSString*)kCTForegroundColorFromContextAttributeName: @YES};
     NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
                                                              attributes:attrs];
-    auto line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as);
-    auto old = m_Line;
-    m_Line = line;
-    if( old )
-        CFRelease( old );
+    
+    if( m_Line )
+        CFRelease( m_Line );
+    m_Line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as );
 }
 
 - (time_t) time
@@ -114,15 +116,17 @@
         if( auto lv = rv.listView ) {
             const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
-            
             const auto context = NSGraphicsContext.currentContext.CGContext;
+            
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
             DrawTableVerticalSeparatorForView(self);            
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),
-                                              bounds.size.width -  geometry.LeftInset() - geometry.RightInset(),
+                                              bounds.size.width -
+                                                geometry.LeftInset() -
+                                                geometry.RightInset(),
                                               0);
 
             if( m_Line ) {
@@ -137,7 +141,6 @@
 
 - (void) buildPresentation
 {
-    [self buildLine];
     [self setNeedsDisplay:true];
 }
 

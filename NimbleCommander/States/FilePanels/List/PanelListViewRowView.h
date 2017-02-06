@@ -15,14 +15,9 @@
 @property (nonatomic) PanelDataItemVolatileData vd;
 @property (nonatomic, weak) PanelListView *listView;
 @property (nonatomic, readonly) NSColor *rowBackgroundColor;
-@property (nonatomic, readonly) DoubleColor rowBackgroundDoubleColor;
 @property (nonatomic, readonly) NSColor *rowTextColor;
-@property (nonatomic, readonly) DoubleColor rowTextDoubleColor;
 @property (nonatomic) bool panelActive;
 @property (nonatomic) int itemIndex;
 @property (nonatomic, readonly) PanelListViewNameView *nameView;
-//@property (nonatomic, readonly) NSDictionary *dateTimeViewTextAttributes;
-
-- (void) forceSubviewsToRebuildPresentation;
 
 @end

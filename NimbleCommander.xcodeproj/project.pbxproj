@@ -2073,7 +2073,6 @@
 				CF7D13881BF5E38B001F53FD /* OperationStats.h */,
 				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
 				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
-				B5AD9CDF17030E550099BC6D /* SummaryView */,
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* UnixAttr */,
 				CFAC50CD1714016800A3E5C5 /* Copy */,
@@ -2154,13 +2153,6 @@
 				CFA2D6031E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.xib */,
 			);
 			name = Preferences;
-			sourceTree = "<group>";
-		};
-		B5AD9CDF17030E550099BC6D /* SummaryView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = SummaryView;
 			sourceTree = "<group>";
 		};
 		CF039E981791109000DC85D6 /* RHPreferences */ = {

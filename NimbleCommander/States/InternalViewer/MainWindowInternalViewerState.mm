@@ -7,10 +7,23 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include "../../Viewer/InternalViewerController.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
+
+@interface MainWindowInternalViewerBackground : NSView
+@end
+
+@implementation MainWindowInternalViewerBackground
+- (BOOL) isOpaque { return true; }
+- (BOOL) wantsUpdateLayer { return true; }
+- (void) updateLayer
+{
+    self.layer.backgroundColor = CurrentTheme().ViewerOverlayColor().CGColor;
+}
+@end
 
 @interface MainWindowInternalViewerState ()
 

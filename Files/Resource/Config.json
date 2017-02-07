@@ -884,9 +884,9 @@
                       /* Viewer Emulator */
                       "viewerFont": "Menlo-Regular, 13",
                       "viewerOverlayColor": "@blackColor",
-                      "viewerTextColor": "#000000",
-                      "viewerSelectionColor": "#B4D6FC",
-                      "viewerBackgroundColor": "#FFFFFF"
+                      "viewerTextColor": "#DCDCDC",
+                      "viewerSelectionColor": "#245DFA",
+                      "viewerBackgroundColor": "#141414"
                       }
                       
         

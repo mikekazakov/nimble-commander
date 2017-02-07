@@ -254,10 +254,28 @@ vector<shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts
     return m_Layouts;
 }
 
-const shared_ptr<const PanelViewLayout>& PanelViewLayoutsStorage::LastResortLayout() const
+const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout() const
 {
     static const shared_ptr<const PanelViewLayout> l = make_shared<PanelViewLayout>( L1() );
     return l;
+}
+
+const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::DefaultLayout() const
+{
+    for( int i = 1; i >= 0; --i )
+        if( auto l = GetLayout(i) )
+            if( !l->is_disabled() )
+                return l;
+    return LastResortLayout();
+}
+
+int PanelViewLayoutsStorage::DefaultLayoutIndex() const
+{
+    for( int i = 1; i >= 0; --i )
+        if( auto l = GetLayout(i) )
+            if( !l->is_disabled() )
+                return i;
+    return -1;
 }
 
 void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_index )

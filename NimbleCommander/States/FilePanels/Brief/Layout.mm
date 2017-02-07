@@ -6,7 +6,7 @@ static_assert( sizeof(_) == 10 );
 _::PanelBriefViewColumnsLayout()  noexcept:
     fixed_mode_width(150),
     fixed_amount_value(3),
-    dynamic_width_min(100),
+    dynamic_width_min(140),
     dynamic_width_max(300),
     dynamic_width_equal(false),
     icon_scale(1),

@@ -73,7 +73,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     CursorSelectionType         m_KeyboardCursorSelectionType;
 }
 
-- (id)initWithFrame:(NSRect)frame
+- (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -81,8 +81,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_CursorPos = -1;
         m_HeaderTitle = @"";
 
-        m_ItemsView = [self spawnListView];
-        m_ItemsView.translatesAutoresizingMaskIntoConstraints = false;
+        m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
         
         m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
@@ -107,6 +106,27 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
     
     return self;
+}
+
+- (id)initWithFrame:(NSRect)frame
+{
+    assert( !"don't call [PanelView initWithFrame:(NSRect)frame]" );
+    return nil;
+}
+
+- (NSView<PanelViewImplementationProtocol>*) spawnItemViewWithLayout:(const PanelViewLayout&)_layout
+{
+    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
+        auto v = [self spawnListView];
+        v.columnsLayout = *ll;
+        return v;
+    }
+    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
+        auto v = [self spawnBriefView];
+        v.columnsLayout = *bl;
+        return v;
+    }
+    return nil;
 }
 
 -(void) dealloc
@@ -134,6 +154,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 - (PanelListView*) spawnListView
 {
    PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+    v.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
     v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
         if( PanelView *strong_self = weak_self )
@@ -144,8 +165,9 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (PanelBriefView*) spawnBriefView
 {
-    return [[PanelBriefView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
-    
+    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+    v.translatesAutoresizingMaskIntoConstraints = false;
+    return v;
 }
 
 - (BOOL) isOpaque
@@ -673,7 +695,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     const auto init = !objc_cast<PanelBriefView>(m_ItemsView);
     if( init ) {
         auto v = [self spawnBriefView];
-        v.translatesAutoresizingMaskIntoConstraints = false;
+        //v.translatesAutoresizingMaskIntoConstraints = false;
         //    [self addSubview:m_ItemsView];
         
         [self replaceSubview:m_ItemsView with:v];
@@ -684,13 +706,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         
-        if( m_Data )
-            [m_ItemsView setData:m_Data];
+        if( m_Data ) {
+            m_ItemsView.data = m_Data;
+            m_ItemsView.sortMode = m_Data->SortMode();
+        }
         
         if( m_CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_CursorPos];
-        
-        m_ItemsView.sortMode = m_Data->SortMode();
     }
 
     if( auto v = objc_cast<PanelBriefView>(m_ItemsView) ) {
@@ -704,7 +726,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     if( init ) {
         auto v = [self spawnListView];
-        v.translatesAutoresizingMaskIntoConstraints = false;
+        //v.translatesAutoresizingMaskIntoConstraints = false;
         
         [self replaceSubview:m_ItemsView with:v];
         m_ItemsView = v;
@@ -719,13 +741,13 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
         [self layout];
         
-        if( m_Data )
-            [m_ItemsView setData:m_Data];
+        if( m_Data ) {
+            m_ItemsView.data = m_Data;
+            m_ItemsView.sortMode = m_Data->SortMode();
+        }
         
         if( m_CursorPos >= 0 )
             [m_ItemsView setCursorPosition:m_CursorPos];
-        
-        m_ItemsView.sortMode = m_Data->SortMode();
     }
     
     if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {

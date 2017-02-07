@@ -143,7 +143,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
-        m_ViewLayoutIndex = -1;
+        m_ViewLayoutIndex = AppDelegate.me.panelLayouts.DefaultLayoutIndex();
+        m_AssignedViewLayout = AppDelegate.me.panelLayouts.DefaultLayout();
         
         __weak PanelController* weakself = self;
         auto on_change = [=]{
@@ -155,7 +156,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
         m_DirectoryReLoadingQ.SetOnChange(on_change);
         m_DirectoryLoadingQ.SetOnChange(on_change);
         
-        m_View = [[PanelView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        static const auto pv_rect = NSMakeRect(0, 0, 100, 100);
+        m_View = [[PanelView alloc] initWithFrame:pv_rect layout:*m_AssignedViewLayout];
         m_View.delegate = self;
         m_View.data = &m_Data;
         

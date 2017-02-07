@@ -61,7 +61,13 @@ public:
     /**
      * Should be used when panel is forced to use a disabled layout.
      */
-    const shared_ptr<const PanelViewLayout>& LastResortLayout() const;
+    const shared_ptr<const PanelViewLayout> LastResortLayout() const;
+    
+    /**
+     * Default layout that will be used by file panel upon initialization.
+     */
+    const shared_ptr<const PanelViewLayout> DefaultLayout() const;
+    int DefaultLayoutIndex() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges( function<void()> _callback );

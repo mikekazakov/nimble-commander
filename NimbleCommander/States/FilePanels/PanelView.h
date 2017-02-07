@@ -44,6 +44,8 @@ struct PanelViewLayout;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;
 
+- (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout;
+
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
  * possibly focusing some file, may be "".

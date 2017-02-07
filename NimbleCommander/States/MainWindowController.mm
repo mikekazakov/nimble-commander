@@ -169,6 +169,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)restoreDefaultWindowStateFromConfig
 {
+    // supposed to be called when windows are restored upon app start
     auto panels_state = StateConfig().Get(g_JSONRestorationFilePanelsStateKey);
     if( !panels_state.IsNull() )
         [m_PanelState decodeRestorableState:panels_state];
@@ -176,6 +177,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)restoreDefaultWindowStateFromLastOpenedWindow
 {
+    // supposed to be called when new window is allocated
     if( MainWindowController *last = g_LastFocusedMainWindowController ) {
         [m_PanelState.leftPanelController copyOptionsFromController:last->m_PanelState.leftPanelController];
         [m_PanelState.rightPanelController copyOptionsFromController:last->m_PanelState.rightPanelController];

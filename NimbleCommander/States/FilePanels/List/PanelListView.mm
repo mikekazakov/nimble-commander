@@ -239,12 +239,16 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
     if( object == m_PanelView && [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
-        [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-            rowView.panelActive = active;
+        [m_TableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rv, NSInteger row) {
+            if( auto v = objc_cast<PanelListViewRowView>(rv) )
+                v.panelActive = active;
         }];
     }
     if( [keyPath isEqualToString:@"width"] ) {
@@ -329,27 +333,28 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (nullable NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)rowIndex
 {
+    if( !m_Data )
+        return nil;
+
     const auto row = (int)rowIndex;
-    if( m_Data ) {
-        if( auto item = m_Data->EntryAtSortPosition(row) ) {
-            auto &vd = m_Data->VolatileDataAtSortPosition(row);
-            
-            PanelListViewRowView *row_view;
-            if( !m_RowsStash.empty() ) {
-                row_view = m_RowsStash.top();
-                m_RowsStash.pop();
-                row_view.item = item;
-            }
-            else {
-                row_view = [[PanelListViewRowView alloc] initWithItem:item];
-                row_view.listView = self;
-            }
-            row_view.itemIndex = row;
-            row_view.vd = vd;
-            row_view.panelActive = m_PanelView.active;
-            
-            return row_view;
+    if( auto item = m_Data->EntryAtSortPosition(row) ) {
+        auto &vd = m_Data->VolatileDataAtSortPosition(row);
+        
+        PanelListViewRowView *row_view;
+        if( !m_RowsStash.empty() ) {
+            row_view = m_RowsStash.top();
+            m_RowsStash.pop();
+            row_view.item = item;
         }
+        else {
+            row_view = [[PanelListViewRowView alloc] initWithItem:item];
+            row_view.listView = self;
+        }
+        row_view.itemIndex = row;
+        row_view.vd = vd;
+        row_view.panelActive = m_PanelView.active;
+        
+        return row_view;
     }
     return nil;
 }

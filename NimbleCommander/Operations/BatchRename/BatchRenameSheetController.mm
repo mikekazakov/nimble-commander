@@ -316,7 +316,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             self.isValidRenaming = false;
         }
         else {
-            m_LabelsAfter[i].textColor = NSColor.blackColor;
+            m_LabelsAfter[i].textColor = NSColor.labelColor;
         }
     }
 }

@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "RegistrationInfoWindow.h"
 
@@ -34,6 +35,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Self = self;
     
     if( ActivationManager::ForAppStore() ) { // MAS version

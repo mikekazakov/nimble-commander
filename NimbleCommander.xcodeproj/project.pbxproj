@@ -2689,9 +2689,6 @@
 				CFDAC2A51DFBFD000039A104 /* OrthodoxMonospace.mm */,
 				CFDAC2161DFBC2430039A104 /* rapidjson.cpp */,
 				CFDAC2171DFBC2430039A104 /* rapidjson.h */,
-				CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */,
-				CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */,
-				CF8D0CEE1D9623E000ADFF14 /* RegistrationInfoWindow.xib */,
 				CFDAC21C1DFBC9080039A104 /* SandboxManager.h */,
 				CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */,
 				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,
@@ -2795,6 +2792,9 @@
 				CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */,
 				CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */,
 				CF8D0CF11D96244900ADFF14 /* ProFeaturesWindowController.xib */,
+				CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */,
+				CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */,
+				CF8D0CEE1D9623E000ADFF14 /* RegistrationInfoWindow.xib */,
 			);
 			name = Marketing;
 			sourceTree = "<group>";

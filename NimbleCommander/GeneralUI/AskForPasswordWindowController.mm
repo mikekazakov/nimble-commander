@@ -7,6 +7,7 @@
 //
 
 #include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "AskForPasswordWindowController.h"
 
 @interface AskForPasswordWindowController ()
@@ -28,6 +29,12 @@
         GA().PostScreenView("Ask For Password");
     }
     return self;
+}
+
+- (void)windowDidLoad
+{
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 }
 
 - (NSString*)enteredPasswd

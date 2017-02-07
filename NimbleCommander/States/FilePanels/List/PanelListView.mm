@@ -121,6 +121,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_TableView.allowsMultipleSelection = false;
         m_TableView.allowsEmptySelection = false;
         m_TableView.allowsColumnSelection = false;
+        m_TableView.allowsColumnReordering = false;
         m_TableView.usesAlternatingRowBackgroundColors = true;
         m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
         m_TableView.rowHeight = m_Geometry.LineHeight();

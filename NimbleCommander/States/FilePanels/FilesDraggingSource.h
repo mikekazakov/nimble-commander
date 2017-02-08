@@ -26,6 +26,7 @@
 @property(nonatomic, readonly)  const vector<PanelDraggingItem*>&   items;
 
 - (FilesDraggingSource*) initWithSourceController:(PanelController*)_controller;
+- (void)writeURLsPBoard:(NSPasteboard*)_sender;
 - (void)addItem:(PanelDraggingItem*)_item;
 
 @end

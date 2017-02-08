@@ -1,10 +1,15 @@
 #include <VFS/Native.h>
 #include "FilesDraggingSource.h"
 
-static NSString *g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
-static NSString *g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
-static NSString *g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
-static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
+static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
+
+// "com.apple.pasteboard.promised-file-url"
+static const auto g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFileURLPromise;
+
+// "public.file-url"
+static const auto g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
+
+static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
 
 @implementation PanelDraggingItem
 {
@@ -39,9 +44,9 @@ static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeC
     VFSHostPtr                  m_CommonHost;
     bool                        m_AreAllHostsWriteable;
     bool                        m_AreAllHostsNative;
-    bool                        m_FilenameURLsPasteboard;
-    bool                        m_FilenamesPasteboard;
-    bool                        m_URLsPromisePasteboard;
+//    bool                        m_FilenameURLsPasteboard;
+//    bool                        m_FilenamesPasteboard;
+//    bool                        m_URLsPromisePasteboard;
 }
 
 @synthesize areAllHostsWriteable = m_AreAllHostsWriteable;
@@ -60,7 +65,7 @@ static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeC
     self = [super init];
     if(self) {
         m_SourceController = _controller;
-        m_FilenameURLsPasteboard = m_FilenamesPasteboard = m_URLsPromisePasteboard = true;
+//        m_FilenameURLsPasteboard = m_FilenamesPasteboard = m_URLsPromisePasteboard = true;
         m_AreAllHostsWriteable = false;
         m_AreAllHostsNative = false;
     }
@@ -108,25 +113,25 @@ static NSString *g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeC
 }
 
 // g_PasteboardFilenamesUTI - NSFilenamesPboardType as UTI
-- (void)provideFilenamesPasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
-{
-    if( !m_FilenamesPasteboard )
-        return;
-    
-    m_FilenameURLsPasteboard = false;
-    m_FilenamesPasteboard = false;
-    m_URLsPromisePasteboard = false;
-    
-    cout << "provideFilenamesPasteboard" << endl;
-    
-    NSMutableArray *ar = [NSMutableArray new];
-    for( auto &i: m_Items )
-        if( i.item.Host()->IsNativeFS() ) {
-            auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:i.item.Path()]];
-            [ar addObject:url];
-        }
-    [sender writeObjects:ar];
- }
+//- (void)provideFilenamesPasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
+//{
+//    if( !m_FilenamesPasteboard )
+//        return;
+//    
+//    m_FilenameURLsPasteboard = false;
+//    m_FilenamesPasteboard = false;
+//    m_URLsPromisePasteboard = false;
+//    
+//    cout << "provideFilenamesPasteboard" << endl;
+//    
+//    NSMutableArray *ar = [NSMutableArray new];
+//    for( auto &i: m_Items )
+//        if( i.item.Host()->IsNativeFS() ) {
+//            auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:i.item.Path()]];
+//            [ar addObject:url];
+//        }
+//    [sender writeObjects:ar];
+// }
 
 static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 {
@@ -148,54 +153,84 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 // "com.apple.pasteboard.promised-file-url"
 - (void)provideURLPromisePasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
 {
-    if( !m_URLsPromisePasteboard )
-        return;
-    
-    m_FilenameURLsPasteboard    = false;
-    m_FilenamesPasteboard       = false;
-    m_URLsPromisePasteboard     = false;
-  
     if( auto drop_url = ExtractPromiseDropLocation(sender) ) {
-        NSMutableArray *ar = [NSMutableArray new];
-        for(auto &i: m_Items) {
-            path dest = path(drop_url.path.fileSystemRepresentation) / i.item.Filename();
-            VFSEasyCopyNode(i.item.Path().c_str(), i.item.Host(),
-                            dest.c_str(), VFSNativeHost::SharedHost());
-            if( NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dest.c_str()]
-                                        isDirectory:i.item.IsDir()
-                                      relativeToURL:nil] )
-                [ar addObject:url];
+        const auto dest = path(drop_url.path.fileSystemRepresentation) / item.item.Filename();
+
+        // retrieve item itself
+        const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(), item.item.Host(),
+                                          dest.c_str(), VFSNativeHost::SharedHost());
+        
+        if( ret == 0 ) {
+            // write result url into pasteboard
+            const auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dest.c_str()]
+                                        isDirectory:item.item.IsDir()
+                                      relativeToURL:nil];
+            if( url )
+                [sender writeObjects:@[url]];
         }
-        [sender writeObjects:ar];
     }
+}
+
+// From Apple's doc:
+//    The recommended approach for writing URLs to the pasteboard is as follows:
+//    NSArray *arrayOfURLs; // assume this exists
+//    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard]; // get pasteboard
+//    [pasteboard clearContents]; // clear pasteboard to take ownership
+//    [pasteboard writeObjects:arrayOfURLs]; // write the URLs
+- (void) writeURLsPBoard:(NSPasteboard*)_sender
+{
+    NSMutableArray *urls = [NSMutableArray new];
+    for( auto &i: m_Items )
+        if( i.item.Host()->IsNativeFS() ) {
+            auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:i.item.Path()]];
+            [urls addObject:url];
+        }
+
+    if( urls.count ) {
+        [_sender clearContents]; // clear pasteboard to take ownership
+        [_sender writeObjects:urls]; // clear pasteboard to take ownership
+    }
+    
 }
 
 // g_PasteboardFileURLUTI - kUTTypeFileURL
 // "public.file-url"
-- (void)provideFilenamesURLsPasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
-{
-    if( !m_FilenameURLsPasteboard )
-        return;
-    
-    m_FilenamesPasteboard = false;
-    
-    if( item.item.Host()->IsNativeFS() ) {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:item.item.Path()]];
-        [url writeToPasteboard:sender];
-    }
-}
+//- (void)provideFilenamesURLsPasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
+//{
+//    if( !m_FilenameURLsPasteboard )
+//        return;
+//    
+//    m_FilenamesPasteboard = false;
+//    
+//    if( item.item.Host()->IsNativeFS() ) {
+//        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:item.item.Path()]];
+//        [url writeToPasteboard:sender];
+//    }
+//}
 
 // dispatch incoming data request
 - (void)pasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item provideDataForType:(NSString *)type
 {
     if( !item.item )
         return;
-    else if( [type isEqualToString:g_PasteboardFilenamesUTI] )
-        [self provideFilenamesPasteboard:sender item:item];
+    
+    if( false ) ;
+//    else if( [type isEqualToString:g_PasteboardFilenamesUTI] )
+//        [self provideFilenamesPasteboard:sender item:item];
     else if ( [type isEqualToString:g_PasteboardFileURLPromiseUTI] )
         [self provideURLPromisePasteboard:sender item:item];
-    else if( [type isEqualToString:g_PasteboardFileURLUTI] )
-        [self provideFilenamesURLsPasteboard:sender item:item];
+//    else if( [type isEqualToString:g_PasteboardFileURLUTI] )
+//        [self provideFilenamesURLsPasteboard:sender item:item];
+}
+
+- (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
+{
+    NSLog(@"pasteboardChangedOwner: %@", pasteboard);
+}
+
+- (void)pasteboardFinishedWithDataProvider:(NSPasteboard *)pasteboard
+{
+    NSLog(@"pasteboardFinishedWithDataProvider: %@", pasteboard);
 }
 
 - (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation

@@ -20,7 +20,7 @@
 #include "FilesDraggingSource.h"
 
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
-This is the most obscura Cocoa usage in NC.
+This is the most obscure Cocoa usage in NC.
  
 Test cases to check if it works:
 - drag and drop few images into Messages.app.
@@ -40,6 +40,10 @@ Check table:
  Mail.app                 +                      -
  VLC.app                  +                      -
  Finder.app               +                      +
+ Firefox(drag to Gdrive)  +                      -
+ Safari(drag to Gdrive)   +                      -
+ Chrome(drag to Gdrive)   +                      -
+ 
  
 *///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -227,8 +231,8 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const Pa
 
     const auto pasteboard_types = all_items_native ?
         @[FilesDraggingSource.fileURLsPromiseDragUTI,
-          FilesDraggingSource.filenamesPBoardDragUTI,
-          FilesDraggingSource.fileURLsDragUTI,
+//        FilesDraggingSource.filenamesPBoardDragUTI,
+//        FilesDraggingSource.fileURLsDragUTI,
           FilesDraggingSource.privateDragUTI] :
         @[FilesDraggingSource.fileURLsPromiseDragUTI,
           FilesDraggingSource.privateDragUTI];
@@ -252,8 +256,13 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const Pa
         dragPosition.y -= 16;
     }
     
-    [_view beginDraggingSessionWithItems:drag_items event:_event source:dragging_source];
-    [NSApp preventWindowOrdering];
+    auto session = [_view beginDraggingSessionWithItems:drag_items
+                                                  event:_event
+                                                 source:dragging_source];
+    if( session ) {
+        [dragging_source writeURLsPBoard:session.draggingPasteboard];
+        [NSApp preventWindowOrdering];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

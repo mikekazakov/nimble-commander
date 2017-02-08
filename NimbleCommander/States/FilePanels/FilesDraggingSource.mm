@@ -165,8 +165,11 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
             const auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dest.c_str()]
                                         isDirectory:item.item.IsDir()
                                       relativeToURL:nil];
-            if( url )
+            if( url ) {
+                // NB! keep this in dumb form!
+                // [url writeToPasteboard:sender] doesn't work.
                 [sender writeObjects:@[url]];
+            }
         }
     }
 }
@@ -221,16 +224,6 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
         [self provideURLPromisePasteboard:sender item:item];
 //    else if( [type isEqualToString:g_PasteboardFileURLUTI] )
 //        [self provideFilenamesURLsPasteboard:sender item:item];
-}
-
-- (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
-{
-    NSLog(@"pasteboardChangedOwner: %@", pasteboard);
-}
-
-- (void)pasteboardFinishedWithDataProvider:(NSPasteboard *)pasteboard
-{
-    NSLog(@"pasteboardFinishedWithDataProvider: %@", pasteboard);
 }
 
 - (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation

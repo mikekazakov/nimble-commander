@@ -369,6 +369,8 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
+    IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
+    IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")
         return panels::actions::CopyFileName::ValidateMenuItem(self, item);
@@ -384,7 +386,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.open_xattr")              return m_View.item && m_View.item.Host()->IsNativeFS();
     
-    return true; // will disable some items in the future
+    return true;
 }
 
 - (IBAction)OnGoBack:(id)sender {
@@ -878,26 +880,29 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
-    if(m_BriefSystemOverview) {
+    if( m_BriefSystemOverview ) {
         [self.state CloseOverlay:self];
         m_BriefSystemOverview = nil;
         return;
     }
+    
     m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
-    [self UpdateBriefSystemOverview];
+    if( m_BriefSystemOverview )
+        [self UpdateBriefSystemOverview];
 }
 
 - (IBAction)OnFileViewCommand:(id)sender
 {
     // Close quick preview, if it is open.
-    if(m_QuickLook) {
+    if( m_QuickLook ) {
         [self.state CloseOverlay:self];
         m_QuickLook = nil;
         return;
     }
     
     m_QuickLook = [self.state RequestQuickLookView:self];
-    [self OnCursorChanged];
+    if( m_QuickLook )
+        [self OnCursorChanged];
 }
 
 - (void)selectAll:(id)sender

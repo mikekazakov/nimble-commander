@@ -691,6 +691,9 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel
 {
+    if( m_MainSplitView.anyCollapsed )
+        return nil;
+
     QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if([self isLeftController:_panel])
         m_MainSplitView.rightOverlay = view;
@@ -703,6 +706,9 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel
 {
+    if( m_MainSplitView.anyCollapsed )
+        return nil;
+        
     BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if([self isLeftController:_panel])
         m_MainSplitView.rightOverlay = view;
@@ -751,6 +757,11 @@ static void SetupRatingOverlay(NSView *_background_view)
 - (bool)isPanelsSplitViewHidden
 {
     return m_MainSplitView.hidden;
+}
+
+- (bool) anyPanelCollapsed
+{
+    return m_MainSplitView.anyCollapsed;
 }
 
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd

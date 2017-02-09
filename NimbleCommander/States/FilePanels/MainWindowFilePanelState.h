@@ -129,6 +129,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 @property (nonatomic, readonly) bool isPanelsSplitViewHidden;
 
+@property (nonatomic, readonly) bool anyPanelCollapsed;
+
 - (void) HandleTabButton;
 
 // UI wiring

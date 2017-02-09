@@ -1305,6 +1305,7 @@
 		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzmadec.a; path = 3rd_Party/liblzmadec/built/liblzmadec.a; sourceTree = SOURCE_ROOT; };
 		CF1100CD1913778800E170FC /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = 3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
@@ -2853,6 +2854,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */,
 				CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */,
 				CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */,
 				CF955F021B8DC6CB004A25AF /* libz.dylib */,
@@ -5186,6 +5188,10 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd_Party/liblzmadec/built",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";
@@ -5207,6 +5213,10 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd_Party/liblzmadec/built",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";

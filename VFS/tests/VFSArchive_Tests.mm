@@ -11,13 +11,14 @@
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
 
-static const string g_Preffix = "/.FilesTestingData/archives/";
-static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
-static const string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
-static const string g_Adium = g_Preffix + "adium.app.zip";
-static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
-static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
+static const auto g_Preffix = "/.FilesTestingData/archives/"s;
+static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
+static const auto g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
+static const auto g_Adium = g_Preffix + "adium.app.zip";
+static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
+static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
+static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
+static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -279,6 +280,30 @@ static int VFSCompareEntries(const path& _file1_full_path,
     const uint8_t finfo[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     XCTAssert( memcmp(buf, finfo, sz) == 0 );
+    file.reset();
+}
+
+- (void)testLZMASupport
+{
+  shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_LZMA.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+
+    VFSFilePtr file;
+    char buf[4096];
+    ssize_t sz;
+    
+    XCTAssert( host->CreateFile("/lzma-4.32.7/ltmain.sh", file, 0) == 0 );
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
+
+    auto d = file->ReadFile();
+    XCTAssert( d->size() == 196440 );
+    auto ref = "# ltmain.sh - Provide generalized library-building support services.";
+    XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
     file.reset();
 }
 

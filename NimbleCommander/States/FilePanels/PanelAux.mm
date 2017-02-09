@@ -336,7 +336,7 @@ bool panel::IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
                                 v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
         }
         else // hardcoded fallback data
-            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "rar" };
+            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "xz", "rar" };
         return v;
     }();
     

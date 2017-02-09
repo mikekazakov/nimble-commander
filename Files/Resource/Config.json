@@ -214,7 +214,19 @@
              * 1 - Verify after moving files
              * 2 - Verify always
              */
-            "defaultChecksumVerification": 1
+            "defaultChecksumVerification": 1,
+            
+            /**
+             * Time in milliseconds, that NC will wait before checking for changes in shadow copy of
+             * VFS file after getting a notification from filesystem.
+             */
+            "vfsShadowUploadChangesCheckDelay": 5000,
+
+            /**
+             * Time in milliseconds, after which NC will give up on watching for changes in shadow 
+             * copy of VFS file. Measured from making of shadow copy or from the it's last change.
+             */
+            "vfsShadowUploadObservationDropDelay": 3600000
         },
         
         /**

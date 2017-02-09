@@ -265,6 +265,19 @@ int GenericConfig::GetInt(const char *_path) const
     return 0;
 }
 
+int GenericConfig::GetIntOr(const char *_path, int _default) const
+{
+    auto v = GetInternal(_path);
+    if( v.GetType() == rapidjson::kNumberType ) {
+        if( v.IsInt() )         return v.GetInt();
+        else if( v.IsUint()  )  return (int)v.GetUint();
+        else if( v.IsInt64() )  return (int)v.GetInt64();
+        else if( v.IsUint64() ) return (int)v.GetUint64();
+        else if( v.IsDouble() ) return (int)v.GetDouble();
+    }
+    return _default;
+}
+
 bool GenericConfig::Has(const char *_path) const
 {
     lock_guard<mutex> lock(m_DocumentLock);

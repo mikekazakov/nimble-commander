@@ -25,7 +25,37 @@
 static const auto g_ConfigArchivesExtensionsWhieList    = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
 static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
+static const auto g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
+static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
+
+static milliseconds UploadingCheckDelay()
+{
+    static const auto fetch = []{
+        return milliseconds(GlobalConfig().GetIntOr(g_CheckDelay, 5000));
+    };
+    static milliseconds delay = []{
+        static auto ticket = GlobalConfig().Observe(g_CheckDelay, []{
+            delay = fetch();
+        });
+        return fetch();
+    }();
+    return delay;
+}
+
+static milliseconds UploadingDropDelay()
+{
+    static const auto fetch = []{
+        return milliseconds(GlobalConfig().GetIntOr(g_DropDelay, 3600000));
+    };
+    static milliseconds delay = []{
+        static auto ticket = GlobalConfig().Observe(g_DropDelay, []{
+            delay = fetch();
+        });
+        return fetch();
+    }();
+    return delay;
+}
 
 static void RegisterRemoteFileUploading(const string& _original_path,
                                         const VFSHostPtr& _original_vfs,
@@ -37,41 +67,53 @@ static void RegisterRemoteFileUploading(const string& _original_path,
        
     if( !_original_vfs->IsWriteable() )
         return; // no reason to watch file we can't upload then
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
+
     __weak MainWindowController* origin_window = _origin.mainWindowController;
     __weak PanelController* origin_controller = _origin;
     VFSHostWeakPtr weak_host(_original_vfs);
+
+    auto on_file_change = [=]{
+        MainWindowController* window = origin_window;
+        if( !window )
+            return;
+        
+        auto vfs = weak_host.lock();
+        if( !vfs )
+            return;
+        
+        vector<VFSListingItem> listing_items;
+        auto &storage_host = *VFSNativeHost::SharedHost();
+        const auto changed_item_directory = path(_native_path).parent_path().native();
+        const auto changed_item_filename = path(_native_path).filename().native();
+        const auto ret = storage_host.FetchFlexibleListingItems(changed_item_directory,
+                                                                {1, changed_item_filename},
+                                                                0,
+                                                                listing_items,
+                                                                nullptr);
+        if( ret == 0 ) {
+            FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
+            opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
+            auto operation = [[FileCopyOperation alloc] initWithItems:listing_items
+                                                      destinationPath:_original_path
+                                                      destinationHost:vfs
+                                                              options:opts];
+            if( auto pc = (PanelController*)origin_controller )
+                if( !pc.receivesUpdateNotifications )
+                    [operation AddOnFinishHandler:[=]{
+                        dispatch_to_main_queue( [=]{
+                            // TODO: perhaps need to check that path didn't changed
+                            [(PanelController*)origin_controller refreshPanel];
+                        });
+                    }];
+            [window.OperationsController AddOperation:operation];
+        }
+    };
     
-    TemporaryNativeFileChangesSentinel::Instance().WatchFile(_native_path, [=]{
-        if( MainWindowController* window = origin_window )
-            if( auto vfs = weak_host.lock() ) {
-                vector<VFSListingItem> items;
-                int ret = VFSNativeHost::SharedHost()->FetchFlexibleListingItems(path(_native_path).parent_path().native(),
-                                                                                 vector<string>(1, path(_native_path).filename().native()),
-                                                                                 0,
-                                                                                 items,
-                                                                                 nullptr);
-                if( ret == 0 ) {
-                    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
-                    opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
-                    auto operation = [[FileCopyOperation alloc] initWithItems:items
-                                                              destinationPath:_original_path
-                                                              destinationHost:vfs
-                                                                      options:opts];
-                    if( auto pc = (PanelController*)origin_controller )
-                        if( !pc.receivesUpdateNotifications )
-                            [operation AddOnFinishHandler:[=]{
-                                dispatch_to_main_queue( [=]{
-                                    [(PanelController*)origin_controller refreshPanel]; // perhaps need to check that path didn't changed
-                                });
-                            }];
-                    [window.OperationsController AddOperation:operation];
-                }
-                
-            }
-    });
-#pragma clang diagnostic pop
+    auto &sentinel = TemporaryNativeFileChangesSentinel::Instance();
+    sentinel.WatchFile(_native_path,
+                       on_file_change,
+                       UploadingCheckDelay(),
+                       UploadingDropDelay());
 }
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,

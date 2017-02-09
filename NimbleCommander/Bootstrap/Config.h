@@ -49,6 +49,11 @@ public:
      * Return 0 if value wasn't found.
      */
     int GetInt(const char *_path) const;
+
+    /**
+     * Return _default if value wasn't found.
+     */
+    int GetIntOr(const char *_path, int _default) const;
     
     bool Set(const char *_path, const ConfigValue &_value);
     bool Set(const char *_path, int _value);

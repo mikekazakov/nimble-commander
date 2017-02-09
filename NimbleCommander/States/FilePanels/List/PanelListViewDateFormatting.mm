@@ -149,8 +149,16 @@ static NSString *Orthodox( time_t _time )
 static NSString *Long( time_t _time )
 {
     static const auto formatter = []{
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterLongStyle, kCFDateFormatterShortStyle);
-        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
+        auto l = CFLocaleCopyCurrent();
+        auto f =  CFDateFormatterCreate(kCFAllocatorDefault,
+                                        l,
+                                        kCFDateFormatterLongStyle,
+                                        kCFDateFormatterShortStyle);
+        CFRelease(l);
+        CFDateFormatterSetProperty(f,
+                                   kCFDateFormatterDoesRelativeDateFormattingKey,
+                                   kCFBooleanTrue);
+        
         return f;
     }();
     static spinlock formatter_lock;
@@ -162,8 +170,15 @@ static NSString *Long( time_t _time )
 static NSString *Medium( time_t _time )
 {
     static const auto formatter = []{
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterMediumStyle, kCFDateFormatterShortStyle);
-        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
+        auto l = CFLocaleCopyCurrent();
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
+                                       l,
+                                       kCFDateFormatterMediumStyle,
+                                       kCFDateFormatterShortStyle);
+        CFRelease(l);
+        CFDateFormatterSetProperty(f,
+                                   kCFDateFormatterDoesRelativeDateFormattingKey,
+                                   kCFBooleanTrue);
         return f;
     }();
     static spinlock formatter_lock;
@@ -175,8 +190,15 @@ static NSString *Medium( time_t _time )
 static NSString *Short( time_t _time )
 {
     static const auto formatter = []{
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterShortStyle, kCFDateFormatterShortStyle);
-        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
+        auto l = CFLocaleCopyCurrent();
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
+                                       l,
+                                       kCFDateFormatterShortStyle,
+                                       kCFDateFormatterShortStyle);
+        CFRelease(l);
+        CFDateFormatterSetProperty(f,
+                                   kCFDateFormatterDoesRelativeDateFormattingKey,
+                                   kCFBooleanTrue);
         return f;
     }();
     static spinlock formatter_lock;
@@ -188,13 +210,27 @@ static NSString *Short( time_t _time )
 static NSString *Tiny( time_t _time )
 {
     static const auto general = []{
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterShortStyle, kCFDateFormatterNoStyle);
-        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
+        auto l = CFLocaleCopyCurrent();
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
+                                       l,
+                                       kCFDateFormatterShortStyle,
+                                       kCFDateFormatterNoStyle);
+        CFRelease(l);
+        CFDateFormatterSetProperty(f,
+                                   kCFDateFormatterDoesRelativeDateFormattingKey,
+                                   kCFBooleanTrue);
         return f;
     }();
     static const auto today = []{
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault, CFLocaleCopyCurrent(), kCFDateFormatterNoStyle, kCFDateFormatterShortStyle);
-        CFDateFormatterSetProperty(f, kCFDateFormatterDoesRelativeDateFormattingKey, kCFBooleanTrue);
+        auto l = CFLocaleCopyCurrent();
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
+                                       l,
+                                       kCFDateFormatterNoStyle,
+                                       kCFDateFormatterShortStyle);
+        CFRelease(l);
+        CFDateFormatterSetProperty(f,
+                                   kCFDateFormatterDoesRelativeDateFormattingKey,
+                                   kCFBooleanTrue);
         return f;
     }();
     const auto is_today = [NSCalendar.currentCalendar isDateInToday:[NSDate dateWithTimeIntervalSince1970:_time]];

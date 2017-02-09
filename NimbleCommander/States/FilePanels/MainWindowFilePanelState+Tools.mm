@@ -70,6 +70,19 @@ static string ExtractParamInfoFromListingItem( ExternalToolsParameters::FileInfo
     return {};
 }
 
+static string ExtractParamInfoFromContext(ExternalToolsParameters::FileInfo _what,
+                                          PanelController *_pc )
+{
+    if( !_pc )
+        return {};
+    
+    if( _what == ExternalToolsParameters::FileInfo::DirectoryPath )
+        if( _pc.isUniform)
+            return _pc.currentDirectoryPath;
+    
+    return {};
+}
+
 static string CombineStringsIntoEscapedSpaceSeparatedString( const vector<string> &_l )
 {
     string result;
@@ -275,7 +288,10 @@ static bool IsRunnableExecutable( const string &_path )
             auto &v = _par.GetCurrentItem(step.index);
             if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] )
                 if( max_files_left > 0 ) {
-                    params += EscapeSpaces( ExtractParamInfoFromListingItem( v.what, context.view.item ) );
+                    if( auto entry = context.view.item )
+                        params += EscapeSpaces( ExtractParamInfoFromListingItem( v.what, entry ) );
+                    else
+                        params += EscapeSpaces( ExtractParamInfoFromContext( v.what, context ) );
                     max_files_left--;
                 }
         }

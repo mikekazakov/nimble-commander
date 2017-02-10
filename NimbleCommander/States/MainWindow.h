@@ -10,4 +10,7 @@
 
 @interface MainWindow : NSWindow
 
+- (instancetype) init;
++ (NSString*) defaultIdentifier;
+
 @end

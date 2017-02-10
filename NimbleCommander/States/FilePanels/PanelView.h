@@ -54,7 +54,8 @@ struct PanelViewLayout;
 
 /**
  * called by controller to inform that internals of panel data object has changed (possibly reloaded).
- * should be called before directoryChanged
+ * should be called before directoryChanged.
+ * volatileDataChanged will be triggered automatically.
  */
 - (void) dataUpdated;
 

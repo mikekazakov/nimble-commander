@@ -256,6 +256,8 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     
     [self.view loadRestorableState:_pc.view.encodeRestorableState];
     self.data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
+    [self.view dataUpdated];
+    [self.view dataSortingHasChanged];
     self.layoutIndex = _pc.layoutIndex;
 }
 

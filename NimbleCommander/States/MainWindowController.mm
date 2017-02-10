@@ -13,14 +13,12 @@
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "Terminal/MainWindowTerminalState.h"
 #include "Terminal/TermShellTask.h"
 #include "Terminal/MainWindowExternalTerminalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
 #include "../Viewer/InternalViewerWindowController.h"
 #include "../GeneralUI/RegistrationInfoWindow.h"
-#include "Utility/SystemInformation.h"
 #include <Utility/NativeFSManager.h>
 #include "MainWindowController.h"
 #include "MainWindow.h"
@@ -53,33 +51,16 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 @synthesize terminalState = m_Terminal;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
-- (id)init {
-    static const auto flags = NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|
-    NSMiniaturizableWindowMask|NSTexturedBackgroundWindowMask|NSWindowStyleMaskFullSizeContentView;
-    MainWindow* window = [[MainWindow alloc] initWithContentRect:NSMakeRect(100, 100, 1000, 600)
-                                                       styleMask:flags
-                                                         backing:NSBackingStoreBuffered
-                                                           defer:false];
-    window.minSize = NSMakeSize(640, 480);
-    window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
-    window.restorable = YES;
-    window.restorationClass = self.class;
-    window.identifier = NSStringFromClass(self.class);
-    window.title = @"";
-    if(![window setFrameUsingName:NSStringFromClass(self.class)])
-        [window center];
-    if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
-        window.tabbingMode = NSWindowTabbingModeDisallowed;
-
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
-    [window setContentBorderThickness:40 forEdge:NSMinYEdge];
-    window.contentView.wantsLayer = YES;
-    CocoaAppearanceManager::Instance().ManageWindowApperance(window);
-    [window invalidateShadow];
-    
-    if(self = [super initWithWindow:window]) {
+- (id)init
+{
+    auto window = [[MainWindow alloc] init];
+    if( !window )
+        return nil;
+      
+    if( self = [super initWithWindow:window] ) {
         self.shouldCascadeWindows = NO;
         window.delegate = self;
+        window.restorationClass = self.class;
         
         m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
         
@@ -101,15 +82,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                                                    name:NSWindowDidBecomeKeyNotification
                                                  object:self.window];
         
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(applicationWillTerminate)
-                                                   name:NSApplicationWillTerminateNotification
-                                                 object:NSApplication.sharedApplication];
-        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
-                                                           selector:@selector(volumeWillUnmount:)
-                                                               name:NSWorkspaceWillUnmountNotification
-                                                             object:nil];
-        
         __weak MainWindowController* weak_self = self;
         m_ConfigObservationTicktets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar, [=]{ [(MainWindowController*)weak_self onConfigShowToolbarChanged]; }) );
     }
@@ -119,10 +91,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 -(void) dealloc
 {
-    [self.window saveFrameUsingName:NSStringFromClass(self.class)];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];
-    assert(m_WindowState.empty());
+    assert( m_WindowState.empty() );
 }
 
 - (BOOL) isRestorable
@@ -134,8 +104,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
-    AppDelegate *delegate = (AppDelegate*)NSApplication.sharedApplication.delegate;
-    if(delegate.isRunningTests) {
+    if( AppDelegate.me.isRunningTests ) {
         completionHandler(nil, nil);
         return;
     }
@@ -144,11 +113,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 //        return;
     
     NSWindow *window = nil;
-    if ([identifier isEqualToString:NSStringFromClass(self.class)])
-    {
+    if( [identifier isEqualToString:MainWindow.defaultIdentifier] )
+        window = [AppDelegate.me AllocateNewMainWindow].window;
 
-        window = [delegate AllocateNewMainWindow].window;
-    }
     completionHandler(window, nil);
 }
 
@@ -223,13 +190,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     
     [NSAnimationContext endGrouping];
     m_ToolbarVisible = _toolbar_visible;
-}
-
-- (void)applicationWillTerminate
-{
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(OnApplicationWillTerminate)])
-            [i OnApplicationWillTerminate];
 }
 
 - (void)windowDidResize:(NSNotification *)notification
@@ -498,24 +458,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         return self.window.toolbar != nil;
     }
     return true;
-}
-
-
-- (void)volumeWillUnmount:(NSNotification *)notification
-{
-    // manually check if attached terminal is locking the volument is about to be unmounted.
-    // in that case - change working directory so volume can be actually unmounted.
-    if( !m_Terminal )
-        return;
-    if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
-        auto state = m_Terminal.task.State();
-        if( state == TermShellTask::TaskState::Shell ) {
-            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( m_Terminal.CWD );
-            auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath( path.fileSystemRepresentationSafe );
-            if( cwd_volume == unmounting_volume )
-                [m_Terminal ChDir:"/Volumes/"]; // TODO: need to do something more elegant
-        }
-    }
 }
 
 - (IBAction)onMainMenuPerformShowRegistrationInfo:(id)sender

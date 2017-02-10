@@ -675,10 +675,6 @@ static void SetupRatingOverlay(NSView *_background_view)
     }
 }
 
-- (void)OnApplicationWillTerminate
-{
-}
-
 - (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
     vector<tuple<string, VFSHostPtr> > r;

@@ -24,7 +24,5 @@
 - (void)WindowWillBeginSheet;
 - (void)WindowDidEndSheet;
 - (bool)WindowShouldClose:(MainWindowController*)sender;
-//- (void)SkinSettingsChanged;
-- (void)OnApplicationWillTerminate;
 - (bool)needsWindowTitle;
 @end

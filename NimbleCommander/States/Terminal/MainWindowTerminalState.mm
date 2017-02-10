@@ -7,11 +7,12 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <Utility/NativeFSManager.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include "../../NimbleCommander/States/MainWindowController.h"
-#include "../../NimbleCommander/Core/ActionsShortcutsManager.h"
-#include "../../NimbleCommander/Bootstrap/Config.h"
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"
 #include "TermScreen.h"
@@ -58,8 +59,18 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
         self.wantsLayer = true;
+        
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
+                                                           selector:@selector(volumeWillUnmount:)
+                                                               name:NSWorkspaceWillUnmountNotification
+                                                             object:nil];
     }
     return self;
+}
+
+- (void) dealloc
+{
+    [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];
 }
 
 - (BOOL) canDrawSubviewsIntoLayer
@@ -267,6 +278,22 @@ static const auto g_CustomPath = "terminal.customShellPath";
         return true;
     }
     return true;
+}
+
+- (void)volumeWillUnmount:(NSNotification *)notification
+{
+    // manually check if attached terminal is locking the volument is about to be unmounted.
+    // in that case - change working directory so volume can be actually unmounted.
+    if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
+        auto state = self.task.State();
+        if( state == TermShellTask::TaskState::Shell ) {
+            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( self.CWD );
+            auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath(
+                path.fileSystemRepresentationSafe );
+            if( cwd_volume == unmounting_volume )
+                [self ChDir:"/Volumes/"]; // TODO: need to do something more elegant
+        }
+    }
 }
 
 @end

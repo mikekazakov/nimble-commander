@@ -6,11 +6,55 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../Core/ActionsShortcutsManager.h"
+#include <Utility/SystemInformation.h>
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "MainWindow.h"
 #include "MainWindowController.h"
 
+static const auto g_Identifier = NSStringFromClass(MainWindow.class);
+
 @implementation MainWindow
+
++ (NSString*) defaultIdentifier
+{
+    return g_Identifier;
+}
+
+- (instancetype) init
+{
+    static const auto flags =
+        NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|
+        NSTexturedBackgroundWindowMask|NSWindowStyleMaskFullSizeContentView;
+    
+    if( self = [super initWithContentRect:NSMakeRect(100, 100, 1000, 600)
+                                styleMask:flags
+                                  backing:NSBackingStoreBuffered
+                                    defer:false] ) {
+        
+        self.minSize = NSMakeSize(640, 480);
+        self.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
+        self.restorable = YES;
+        self.identifier = g_Identifier;
+        self.title = @"";
+        if( ![self setFrameUsingName:g_Identifier] )
+            [self center];
+        if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
+            self.tabbingMode = NSWindowTabbingModeDisallowed;
+        
+        [self setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+        [self setContentBorderThickness:40 forEdge:NSMinYEdge];
+        self.contentView.wantsLayer = YES;
+        CocoaAppearanceManager::Instance().ManageWindowApperance(self);
+        [self invalidateShadow];
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    [self saveFrameUsingName:g_Identifier];
+}
 
 + (BOOL) allowsAutomaticWindowTabbing
 {

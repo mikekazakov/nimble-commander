@@ -5,34 +5,49 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
 
-static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelDataItemVolatileData &_vd, ByteCountFormatter::Type _format)
+// use values from 0xFFFFFFFFFFFFFFFDu to encode additional states
+static const auto g_InvalidSize                 = 0xFFFFFFFFFFFFFFFFu;
+static const auto g_NonCalculatedSizeForDotDot  = g_InvalidSize - 1;
+static const auto g_NonCalculatedSizeForDir     = g_InvalidSize - 2;
+
+static uint64_t ExtractSizeFromInfos(const VFSListingItem &_dirent,
+                                     const PanelDataItemVolatileData &_vd)
 {
     if( _dirent.IsDir() ) {
-        if( _vd.is_size_calculated() ) {
-            return ByteCountFormatter::Instance().ToNSString(_vd.size, _format);
-        }
-        else {
-            if(_dirent.IsDotDot())
-                return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
-            else
-                return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD", "Folders dummy string when size is not available, for English is 'Folder'");
-        }
+        if( _vd.is_size_calculated() )
+            return _vd.size;
+        else
+            return _dirent.IsDotDot() ? g_NonCalculatedSizeForDotDot : g_NonCalculatedSizeForDir;
     }
     else {
-        return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), _format);
+        return _dirent.Size();
     }
+}
+
+static NSString *SizeStringFromEncodedSize( uint64_t _sz )
+{
+    if( _sz == g_InvalidSize )
+        return @"";
+    if( _sz == g_NonCalculatedSizeForDir )
+        return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD", "Folders dummy string when size is not available, for English is 'Folder'");
+    if( _sz == g_NonCalculatedSizeForDotDot )
+        return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
+
+    return ByteCountFormatter::Instance().ToNSString( _sz, panel::GetFileSizeFormat() );
 }
 
 @implementation PanelListViewSizeView
 {
     NSString        *m_String;
     NSDictionary    *m_TextAttributes;
+    uint64_t         m_Size;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_Size = g_InvalidSize;
         m_String = @"";
     }
     return self;
@@ -98,18 +113,26 @@ static const auto g_ParagraphStyle = []{
     return p;
 }();
 
+- (void) setSizeWithItem:(const VFSListingItem &)_dirent
+                   andVD:(const PanelDataItemVolatileData &)_vd
+{
+    if( !_dirent )
+        return;
+    
+    const auto new_sz = ExtractSizeFromInfos( _dirent, _vd );
+    if( new_sz != m_Size ) {
+        m_Size = new_sz;
+        m_String = SizeStringFromEncodedSize( m_Size );
+        [self setNeedsDisplay:true];
+    }
+}
+
 - (void) buildPresentation
 {
-    if( PanelListViewRowView *row_view = (PanelListViewRowView*)self.superview ) {
-        if( auto item = row_view.item )
-            m_String = FileSizeToString(item,
-                                        row_view.vd,
-                                        panel::GetFileSizeFormat());
-
-        m_TextAttributes = @{NSFontAttributeName:row_view.listView.font,
+    if( auto row_view = (PanelListViewRowView*)self.superview ) {
+        m_TextAttributes = @{NSFontAttributeName: row_view.listView.font,
                              NSForegroundColorAttributeName: row_view.rowTextColor,
                              NSParagraphStyleAttributeName: g_ParagraphStyle};
-        
         [self setNeedsDisplay:true];
     }
 }

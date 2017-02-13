@@ -6,6 +6,7 @@
 
 @class PanelListView;
 @class PanelListViewNameView;
+@class PanelListViewSizeView;
 
 @interface PanelListViewRowView : NSTableRowView
 
@@ -19,5 +20,6 @@
 @property (nonatomic) bool panelActive;
 @property (nonatomic) int itemIndex;
 @property (nonatomic, readonly) PanelListViewNameView *nameView;
+@property (nonatomic, readonly) PanelListViewSizeView *sizeView;
 
 @end

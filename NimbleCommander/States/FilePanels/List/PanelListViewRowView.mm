@@ -3,6 +3,7 @@
 #include "../PanelView.h"
 #include "PanelListView.h"
 #include "PanelListViewNameView.h"
+#include "PanelListViewSizeView.h"
 #include "PanelListViewRowView.h"
 
 @interface PanelListViewRowView()
@@ -74,7 +75,6 @@
 {
     if( m_Item != item ) {
         m_Item = item; /// ....
-        
     }
 }
 
@@ -88,6 +88,7 @@
     if( m_VD != vd ) {
         m_VD = vd;
         [self updateColors];
+        [self.sizeView setSizeWithItem:m_Item andVD:m_VD];
     }
 }
 
@@ -243,6 +244,14 @@
 - (PanelListViewNameView*) nameView
 {
     return objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
+}
+
+- (PanelListViewSizeView *) sizeView
+{
+    for( NSView *child in self.subviews )
+        if( auto v = objc_cast<PanelListViewSizeView>(child) )
+            return v;
+    return nil;
 }
 
 - (BOOL) acceptsFirstMouse:(NSEvent *)theEvent

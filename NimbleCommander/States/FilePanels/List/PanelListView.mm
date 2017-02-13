@@ -309,7 +309,12 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 return nv;
             }
             if( col_id == 'B' ) {
-                return RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
+                auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
+                if( m_Data->IsValidSortPosition((int)row) ) {
+                    auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+                    [self fillDataForSizeView:sv withItem:vfs_item andVD:vd];
+                }
+                return sv;
             }
             if( col_id == 'C' ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
@@ -375,6 +380,13 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [_view setIcon:icon];
 }
 
+- (void) fillDataForSizeView:(PanelListViewSizeView*)_view
+                    withItem:(const VFSListingItem&)_item
+                       andVD:(PanelData::VolatileData&)_vd
+{
+    [_view setSizeWithItem:_item andVD:_vd];
+}
+
 - (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
 {
     _view.time = _item.BTime();
@@ -414,20 +426,32 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 if( identifier.length == 0 )
                     continue;
                 const auto col_id = [v.identifier characterAtIndex:0];
-                if( col_id == 'A' )     [self fillDataForNameView:(PanelListViewNameView*)v withItem:item andVD:vd];
-                if( col_id == 'C' )     [self fillDataForDateCreatedView:(PanelListViewDateTimeView*)v withItem:item];
-                if( col_id == 'D' )     [self fillDataForDateAddedView:(PanelListViewDateTimeView*)v withItem:item];
-                if( col_id == 'E' )     [self fillDataForDateModifiedView:(PanelListViewDateTimeView*)v withItem:item];
+                if( col_id == 'A' ) [self fillDataForNameView:(PanelListViewNameView*)v
+                                                     withItem:item
+                                                        andVD:vd];
+                if( col_id == 'B' ) [self fillDataForSizeView:(PanelListViewSizeView*)v
+                                                     withItem:item
+                                                        andVD:vd];
+                if( col_id == 'C' ) [self fillDataForDateCreatedView:(PanelListViewDateTimeView*)v
+                                                            withItem:item];
+                if( col_id == 'D' ) [self fillDataForDateAddedView:(PanelListViewDateTimeView*)v
+                                                          withItem:item];
+                if( col_id == 'E' ) [self fillDataForDateModifiedView:(PanelListViewDateTimeView*)v
+                                                             withItem:item];
             }
         }
     }];
 
-    if( old_rows_count < new_rows_count )
-        [m_TableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(old_rows_count, new_rows_count - old_rows_count)]
+    if( old_rows_count < new_rows_count ) {
+        const auto to_add = NSMakeRange(old_rows_count, new_rows_count - old_rows_count);
+        [m_TableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:to_add]
                            withAnimation:NSTableViewAnimationEffectNone];
-    else if( old_rows_count > new_rows_count )
-        [m_TableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(new_rows_count, old_rows_count - new_rows_count)]
+    }
+    else if( old_rows_count > new_rows_count ) {
+        const auto to_remove = NSMakeRange(new_rows_count, old_rows_count - new_rows_count);
+        [m_TableView removeRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:to_remove]
                            withAnimation:NSTableViewAnimationEffectNone];
+    }
 }
 
 - (void) syncVolatileData

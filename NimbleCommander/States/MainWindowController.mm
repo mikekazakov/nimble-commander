@@ -226,14 +226,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [AppDelegate.me RemoveMainWindow:self];
 }
 
-- (BOOL)windowShouldClose:(id)sender {
-    for(auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i)
-        if([*i respondsToSelector:@selector(WindowShouldClose:)])
-            if(![*i WindowShouldClose:self])
+- (BOOL)windowShouldClose:(id)sender
+{
+    for( auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i )
+        if( [*i respondsToSelector:@selector(WindowShouldClose:)] )
+            if( ![*i WindowShouldClose:self] )
                 return false;
     
-    if(m_Terminal != nil)
-        if(![m_Terminal WindowShouldClose:self])
+    if( m_Terminal != nil )
+        if( ![m_Terminal WindowShouldClose:self] )
             return false;
     
     return true;
@@ -245,20 +246,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(didBecomeKeyWindow)])
             [i didBecomeKeyWindow];
-}
-
-- (void)windowWillBeginSheet:(NSNotification *)notification
-{
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(WindowWillBeginSheet)])
-            [i WindowWillBeginSheet];
-}
-
-- (void)windowDidEndSheet:(NSNotification *)notification
-{
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(WindowDidEndSheet)])
-            [i WindowDidEndSheet];
 }
 
 - (IBAction)OnShowToolbar:(id)sender
@@ -376,23 +363,21 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     });
 }
 
-- (void)RequestTerminal:(const string&)_cwd;
+- (void)requestTerminal:(const string&)_cwd;
 {
-    if(m_Terminal == nil)
-    {
+    if(m_Terminal == nil) {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
         [state SetInitialWD:_cwd];
         [self PushNewWindowState:state];
         m_Terminal = state;
     }
-    else
-    {
+    else {
         [self PushNewWindowState:m_Terminal];
         [m_Terminal ChDir:_cwd.c_str()];
     }
 }
 
-- (void)RequestTerminalExecution:(const char*)_filename at:(const char*)_cwd
+- (void)requestTerminalExecution:(const char*)_filename at:(const char*)_cwd
 {
     [self requestTerminalExecution:_filename at:_cwd withParameters:nullptr];
 }

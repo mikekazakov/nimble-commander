@@ -136,9 +136,11 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (IBAction)OnShowTerminal:(id)sender
 {
     string path = "";
-    if( self.isPanelActive && self.activePanelController.isUniform && self.activePanelController.vfs->IsNativeFS() )
+    if( self.isPanelActive &&
+        self.activePanelController.isUniform &&
+        self.activePanelController.vfs->IsNativeFS() )
         path = self.activePanelController.currentDirectoryPath;
-    [(MainWindowController*)self.window.delegate RequestTerminal:path];
+    [(MainWindowController*)self.window.delegate requestTerminal:path];
 }
 
 + (void)performVFSItemOpenInPanel:(PanelController*)_panel item:(VFSListingItem)_item

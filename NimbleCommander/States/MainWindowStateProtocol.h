@@ -21,8 +21,6 @@
 - (void)didBecomeKeyWindow;
 - (void)WindowDidResize;
 - (void)WindowWillClose;
-- (void)WindowWillBeginSheet;
-- (void)WindowDidEndSheet;
 - (bool)WindowShouldClose:(MainWindowController*)sender;
 - (bool)needsWindowTitle;
 @end

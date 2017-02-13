@@ -762,8 +762,11 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd
 {
-    if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] )
-        [(MainWindowController*)self.window.delegate RequestTerminalExecution:_filename.c_str() at:_cwd.c_str()];
+    if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] ) {
+        const auto ctrl = (MainWindowController*)self.window.delegate;
+        [ctrl requestTerminalExecution:_filename.c_str()
+                                    at:_cwd.c_str()];
+    }
 }
 
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc

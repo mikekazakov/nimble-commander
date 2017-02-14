@@ -47,7 +47,8 @@ static void AcceptResult( VFSHostWeakPtr _host, string _path, optional<VFSStatFS
                 lp.current = *_stat;
                 for( auto p: lp.watchers ) {
                     assert( p );
-                    p->Accept( *lp.current );
+                    if( p->m_Active )
+                        p->Accept( *lp.current );
                 }
             }
             

@@ -100,15 +100,14 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
-        [self addSubview:m_SeparatorLine];
         
         m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_FilenameLabel.cell = [VerticallyCenteredTextFieldCell new];
+        m_FilenameLabel.stringValue = @"";
         m_FilenameLabel.bordered = false;
         m_FilenameLabel.editable = false;
         m_FilenameLabel.selectable = false;
@@ -116,71 +115,67 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_FilenameLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_FilenameLabel.usesSingleLineMode = true;
         m_FilenameLabel.alignment = NSTextAlignmentLeft;
-        m_FilenameLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         [m_FilenameLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
             forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_FilenameLabel];
-
+        
         m_SizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SizeLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_SizeLabel.cell = [VerticallyCenteredTextFieldCell new];
+        m_SizeLabel.stringValue = @"";
         m_SizeLabel.bordered = false;
         m_SizeLabel.editable = false;
         m_SizeLabel.drawsBackground = false;
         m_SizeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_SizeLabel.usesSingleLineMode = true;
         m_SizeLabel.alignment = NSTextAlignmentRight;
-        m_SizeLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         [m_SizeLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
             forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_SizeLabel];
-
+        
         m_ModTime = [[NSTextField alloc] initWithFrame:NSRect()];
         m_ModTime.translatesAutoresizingMaskIntoConstraints = false;
         m_ModTime.cell = [VerticallyCenteredTextFieldCell new];
+        m_ModTime.stringValue = @"";
         m_ModTime.bordered = false;
         m_ModTime.editable = false;
         m_ModTime.drawsBackground = false;
         m_ModTime.lineBreakMode = NSLineBreakByTruncatingHead;
         m_ModTime.usesSingleLineMode = true;
         m_ModTime.alignment = NSTextAlignmentRight;
-        m_ModTime.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
             forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_ModTime];
         
         m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_SelectionLabel.cell = [VerticallyCenteredTextFieldCell new];
+        m_SelectionLabel.stringValue = @"";
         m_SelectionLabel.bordered = false;
         m_SelectionLabel.editable = false;
         m_SelectionLabel.drawsBackground = false;
         m_SelectionLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_SelectionLabel.usesSingleLineMode = true;
         m_SelectionLabel.alignment = NSTextAlignmentCenter;
-        m_SelectionLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
         [m_SelectionLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
             forOrientation:NSLayoutConstraintOrientationHorizontal];
         [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
             forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_SelectionLabel];
-
+        
         m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_ItemsLabel.cell = [VerticallyCenteredTextFieldCell new];
+        m_ItemsLabel.stringValue = @"";
         m_ItemsLabel.bordered = false;
         m_ItemsLabel.editable = false;
         m_ItemsLabel.drawsBackground = false;
         m_ItemsLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         m_ItemsLabel.usesSingleLineMode = true;
         m_ItemsLabel.alignment = NSTextAlignmentCenter;
-        m_ItemsLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        [m_ItemsLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_ItemsLabel];
+        [m_ItemsLabel setContentCompressionResistancePriority:40
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         
         m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
         m_VolumeLabel.translatesAutoresizingMaskIntoConstraints = false;
         m_VolumeLabel.cell = [VerticallyCenteredTextFieldCell new];
+        m_VolumeLabel.stringValue = @"";
         m_VolumeLabel.bordered = false;
         m_VolumeLabel.editable = false;
         m_VolumeLabel.drawsBackground = false;
@@ -188,20 +183,32 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_VolumeLabel.usesSingleLineMode = true;
         m_VolumeLabel.alignment = NSTextAlignmentRight;
         m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
-        m_VolumeLabel.font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        [m_VolumeLabel setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_VolumeLabel];
+        [m_VolumeLabel setContentCompressionResistancePriority:40
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
         
         m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
         m_VSeparatorLine1.boxType = NSBoxSeparator;
-        [m_VSeparatorLine1 setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [self addSubview:m_VSeparatorLine1];
-
+        [m_VSeparatorLine1 setContentCompressionResistancePriority:40
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
+        
         m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
         m_VSeparatorLine2.boxType = NSBoxSeparator;
-        [m_VSeparatorLine2 setContentCompressionResistancePriority:40 forOrientation:NSLayoutConstraintOrientationHorizontal];
+        [m_VSeparatorLine2 setContentCompressionResistancePriority:40
+            forOrientation:NSLayoutConstraintOrientationHorizontal];
+        
+        
+        [self setupPresentation];
+        
+        [self addSubview:m_SeparatorLine];
+        [self addSubview:m_FilenameLabel];
+        [self addSubview:m_SizeLabel];
+        [self addSubview:m_ModTime];
+        [self addSubview:m_SelectionLabel];
+        [self addSubview:m_ItemsLabel];
+        [self addSubview:m_VolumeLabel];
+        [self addSubview:m_VSeparatorLine1];
         [self addSubview:m_VSeparatorLine2];
         
         NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_FilenameLabel, m_SizeLabel, m_ModTime, m_ItemsLabel, m_VolumeLabel, m_VSeparatorLine1, m_VSeparatorLine2);
@@ -254,14 +261,12 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsFooter, [weak_self]{
             if( auto strong_self = weak_self ) {
-                [strong_self setupLabelColors];
+                [strong_self setupPresentation];
                 [strong_self observeValueForKeyPath:@"active" ofObject:nil change:nil context:nil];
             }
         });
-        
-        [self updateVolumeInfo];
-        [self setupLabelColors];
     }
+
     return self;
 }
 
@@ -329,7 +334,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     }
 }
 
-- (void) setupLabelColors
+- (void) setupPresentation
 {
     auto f = CurrentTheme().FilePanelsFooterFont();
     m_FilenameLabel.font = f;
@@ -376,7 +381,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         m_TextColor = active ?
             CurrentTheme().FilePanelsFooterActiveTextColor() :
             CurrentTheme().FilePanelsFooterTextColor();
-        [self setupLabelColors];
+        [self setupPresentation];
         [self setNeedsDisplay:true];
     }
 }

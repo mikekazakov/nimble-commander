@@ -58,6 +58,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_PathTextField= [[NSTextField alloc] initWithFrame:NSRect()];
         m_PathTextField.translatesAutoresizingMaskIntoConstraints = false;
         m_PathTextField.cell = [VerticallyCenteredTextFieldCell new];
+        m_PathTextField.stringValue = @"";
         m_PathTextField.bordered = false;
         m_PathTextField.editable = false;
         m_PathTextField.drawsBackground = false;
@@ -67,8 +68,8 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         [self addSubview:m_PathTextField];
         
         m_SearchTextField= [[NSSearchField alloc] initWithFrame:NSRect()];
+        m_SearchTextField.stringValue = @"";
         m_SearchTextField.translatesAutoresizingMaskIntoConstraints = false;
-//        m_SearchTextField.delegate = self;
         m_SearchTextField.sendsWholeSearchString = false;
         m_SearchTextField.target = self;
         m_SearchTextField.action = @selector(onSearchFieldAction:);
@@ -83,6 +84,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         [self addSubview:m_SearchTextField];
         
         m_SearchMatchesField= [[NSTextField alloc] initWithFrame:NSRect()];
+        m_SearchMatchesField.stringValue = @"";
         m_SearchMatchesField.translatesAutoresizingMaskIntoConstraints = false;
         m_SearchMatchesField.bordered = false;
         m_SearchMatchesField.editable = false;

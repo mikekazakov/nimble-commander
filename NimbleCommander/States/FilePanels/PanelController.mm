@@ -38,7 +38,6 @@ static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.qui
 
 static const auto g_RestorationDataKey = "data";
 static const auto g_RestorationSortingKey = "sorting";
-static const auto g_RestorationViewKey = "view";
 static const auto g_RestorationLayoutKey = "layout";
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
@@ -127,6 +126,24 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     return panel::IsExtensionInArchivesWhitelist(_item.Extension());
 }
 
+#define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE( _name, _path )\
+static bool _name()\
+{\
+    static const auto fetch = []{\
+        return GlobalConfig().GetBool((_path));\
+    };\
+    static bool value = []{\
+        static auto ticket = GlobalConfig().Observe((_path), []{\
+            value = fetch();\
+        });\
+        return fetch();\
+    }();\
+    return value;\
+}
+
+MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowDotDotEntry, g_ConfigShowDotDotEntry);
+MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowLocalizedFilenames, g_ConfigShowLocalizedFilenames);
+
 @implementation PanelController
 @synthesize view = m_View;
 @synthesize data = m_Data;
@@ -192,12 +209,12 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
 
 - (void)configVFSFetchFlagsChanged
 {
-    if( GlobalConfig().GetBool(g_ConfigShowDotDotEntry) == false )
+    if( ConfigShowDotDotEntry() == false )
         m_VFSFetchingFlags |= VFSFlags::F_NoDotDot;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_NoDotDot;
     
-    if( GlobalConfig().GetBool(g_ConfigShowLocalizedFilenames) == true )
+    if( ConfigShowLocalizedFilenames() == true )
         m_VFSFetchingFlags |= VFSFlags::F_LoadDisplayNames;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
@@ -254,7 +271,6 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     if( !_pc )
         return;
     
-    [self.view loadRestorableState:_pc.view.encodeRestorableState];
     self.data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
     [self.view dataUpdated];
     [self.view dataSortingHasChanged];
@@ -900,8 +916,8 @@ static bool RouteKeyboardInputIntoTerminal()
   
     json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
                    m_Data.EncodeSortingOptions(), rapidjson::g_CrtAllocator );
-    json.AddMember(rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator),
-                   [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
+//    json.AddMember(rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator),
+//                   [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
     json.AddMember(rapidjson::StandaloneValue(g_RestorationLayoutKey, rapidjson::g_CrtAllocator),
                    rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
     
@@ -920,8 +936,8 @@ static bool RouteKeyboardInputIntoTerminal()
             pers.Restore();
         }
         
-        if( _state.HasMember(g_RestorationViewKey) )
-            [m_View loadRestorableState:_state[g_RestorationViewKey]];
+//        if( _state.HasMember(g_RestorationViewKey) )
+//            [m_View loadRestorableState:_state[g_RestorationViewKey]];
         
         if( _state.HasMember(g_RestorationLayoutKey) )
             if( _state[g_RestorationLayoutKey].IsNumber() )

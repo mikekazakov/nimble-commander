@@ -11,8 +11,7 @@
 
 @interface OperationsSummaryViewController : NSViewController
 
-- (id)initWithController:(OperationsController *)_controller
-                  window:(NSWindow*)_wnd;
+- (id)initWithController:(OperationsController *)_controller;
 
 @property (readonly) OperationsController *OperationsController;
 @property (readonly) NSView *backgroundView;

@@ -1104,30 +1104,30 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     }
 }
 
-- (rapidjson::StandaloneValue) encodeRestorableState
-{
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    auto add_int = [&](const char*_name, int _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
-    
-//    add_int("viewMode", (int)self.type);
-    return json;
-}
+//- (rapidjson::StandaloneValue) encodeRestorableState
+//{
+//    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+//    auto add_int = [&](const char*_name, int _v) {
+//        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
+//    
+////    add_int("viewMode", (int)self.type);
+//    return json;
+//}
 
-- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state
-{
-    if( !_state.IsObject() )
-        return;
-    
-//    if( _state.HasMember("viewMode") && _state["viewMode"].IsInt() ) {
-//        PanelViewType vt = (PanelViewType)_state["viewMode"].GetInt();
-//        if( vt == PanelViewType::Short || // brutal validation
-//            vt == PanelViewType::Medium ||
-//            vt == PanelViewType::Full ||
-//            vt == PanelViewType::Wide )
-//            self.type = vt;
-//    }
-}
+//- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state
+//{
+//    if( !_state.IsObject() )
+//        return;
+//    
+////    if( _state.HasMember("viewMode") && _state["viewMode"].IsInt() ) {
+////        PanelViewType vt = (PanelViewType)_state["viewMode"].GetInt();
+////        if( vt == PanelViewType::Short || // brutal validation
+////            vt == PanelViewType::Medium ||
+////            vt == PanelViewType::Full ||
+////            vt == PanelViewType::Wide )
+////            self.type = vt;
+////    }
+//}
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event
 {

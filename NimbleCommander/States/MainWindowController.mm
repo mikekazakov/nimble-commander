@@ -35,6 +35,12 @@ static auto g_CocoaRestorationFilePanelsStateKey = @"filePanelsState";
 static const auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
 static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
+@interface MainWindowController()
+
+@property (nonatomic, readonly) bool toolbarVisible;
+
+@end
+
 @implementation MainWindowController
 {
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
@@ -44,14 +50,14 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTicktets;
+    vector<GenericConfig::ObservationTicket> m_ConfigTickets;
 }
 
 @synthesize filePanelsState = m_PanelState;
 @synthesize terminalState = m_Terminal;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
-- (id)init
+- (instancetype)initBase
 {
     auto window = [[MainWindow alloc] init];
     if( !window )
@@ -61,32 +67,66 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         self.shouldCascadeWindows = NO;
         window.delegate = self;
         window.restorationClass = self.class;
-        
+
         m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
+    }
+    return self;
+}
+
+- (id)init
+{
+    if( self = [self initBase] ) {
+       
+        m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:
+            self.window.contentView.frame];
         
-        m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:[self.window.contentView frame]
-                                                                Window:self.window];
+//        [self setupToolbarState];
         
-        if( m_PanelState.toolbar && m_ToolbarVisible ) { // ugly hack with hard-coded toolbar height to fix-up invalid window size after restoring
-            NSRect rc = self.window.frame;
-            auto toolbar_height = 38;
-            rc.origin.y -= toolbar_height;
-            rc.size.height += toolbar_height;
-            [self.window setFrame:rc display:false];
-        }
-        
-        [self PushNewWindowState:m_PanelState];
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(didBecomeKeyWindow)
-                                                   name:NSWindowDidBecomeKeyNotification
-                                                 object:self.window];
-        
-        __weak MainWindowController* weak_self = self;
-        m_ConfigObservationTicktets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar, [=]{ [(MainWindowController*)weak_self onConfigShowToolbarChanged]; }) );
+        [self pushState:m_PanelState];
+        [self setupNotificationCallbacks];
     }
     
     return self;
+}
+
+- (instancetype) initWithLastOpenedWindowOptions
+{
+//        MachTimeBenchmark mtb;
+    if( self = [self initBase] ) {
+//        mtb.ResetMicro(" [self initBase]: ");
+
+
+   
+   
+//        cout << "!!1 " << self.window.contentView.bounds.size.height << endl;
+   
+//        [self setupToolbarState];
+//        mtb.ResetMicro(" [self setupToolbarState]: ");
+        
+        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
+            self.window.contentView.frame];
+//        mtb.ResetMicro(" initEmptyFileStateWithFrame in microseconds: ");
+        
+//        cout << "!!2 " << self.window.contentView.bounds.size.height << endl;
+        
+        [self pushState:m_PanelState];
+//        mtb.ResetMicro(" [self PushNewWindowState: ");
+
+        [self setupNotificationCallbacks];
+//        mtb.ResetMicro(" [self setupNotificationCallbacks]: ");
+    }
+    return self;
+}
+
+- (void) setupNotificationCallbacks
+{
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(didBecomeKeyWindow)
+                                               name:NSWindowDidBecomeKeyNotification
+                                             object:self.window];
+    
+    m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
+        objc_callback(self, @selector(onConfigShowToolbarChanged))) );
 }
 
 -(void) dealloc
@@ -173,22 +213,20 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return false;
 }
 
-- (void) updateTitleAndToolbarVisibilityWith:(NSToolbar *)_toolbar toolbarVisible:(bool)_toolbar_visible needsTitle:(bool)_needs_title
+- (void) updateTitleAndToolbarVisibilityWith:(NSToolbar *)_toolbar
+                              toolbarVisible:(bool)_toolbar_visible
+                                  needsTitle:(bool)_needs_title
 {
-    auto frame = self.window.frame;
-    [NSAnimationContext beginGrouping];
-    
     self.window.toolbar = _toolbar;
-    if(self.window.toolbar)
-        self.window.toolbar.visible = _toolbar_visible;
+    if( _toolbar )
+        _toolbar.visible = _toolbar_visible;
 
-    self.window.titleVisibility = _needs_title ? NSWindowTitleVisible : ( (_toolbar && _toolbar_visible) ? NSWindowTitleHidden : NSWindowTitleVisible );
+    self.window.titleVisibility = _needs_title ?
+        NSWindowTitleVisible :
+        ( (_toolbar && _toolbar_visible) ?
+            NSWindowTitleHidden :
+            NSWindowTitleVisible );
 
-    // for non-fullscreen windows we fix up window size after showing/hiding toolbar so it looks more solid
-    if( (self.window.styleMask & NSFullScreenWindowMask) == 0)
-        [self.window setFrame:frame display:true animate:false];
-    
-    [NSAnimationContext endGrouping];
     m_ToolbarVisible = _toolbar_visible;
 }
 
@@ -296,20 +334,29 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                                    needsTitle:self.currentStateNeedWindowTitle];
 }
 
-- (void) PushNewWindowState:(NSObject<MainWindowStateProtocol> *)_state
+- (void) pushState:(NSObject<MainWindowStateProtocol> *)_state
 {
     dispatch_assert_main_queue();
     m_WindowState.push_back(_state);
     
+//    MachTimeBenchmark mtb;
+    
     [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
+//    mtb.ResetMicro("  [self updateTitleAndToolbarVisibilityWith ");
+    
     
     self.window.contentView = self.topmostState.windowContentView;
+//    mtb.ResetMicro("  self.window.contentView = ");
+    
     [self.window makeFirstResponder:self.window.contentView];
+//    mtb.ResetMicro("  [self.window makeFirstResponder ");
     
     if([self.topmostState respondsToSelector:@selector(Assigned)])
         [self.topmostState Assigned];
+    
+//    mtb.ResetMicro("  [self.topmostState Assigned] ");
 }
 
 - (OperationsController*) OperationsController
@@ -333,7 +380,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
                 dispatch_to_main_queue([=]{
-                    [self PushNewWindowState:m_Viewer];
+                    [self pushState:m_Viewer];
                 });
             }
         }
@@ -368,11 +415,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if(m_Terminal == nil) {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
         [state SetInitialWD:_cwd];
-        [self PushNewWindowState:state];
+        [self pushState:state];
         m_Terminal = state;
     }
     else {
-        [self PushNewWindowState:m_Terminal];
+        [self pushState:m_Terminal];
         [m_Terminal ChDir:_cwd.c_str()];
     }
 }
@@ -387,11 +434,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if(m_Terminal == nil) {
         MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
         [state SetInitialWD:_cwd];
-        [self PushNewWindowState:state];
+        [self pushState:state];
         m_Terminal = state;
     }
     else {
-        [self PushNewWindowState:m_Terminal];
+        [self pushState:m_Terminal];
     }
     [m_Terminal Execute:_filename at:_cwd with_parameters:_params];
 }
@@ -405,11 +452,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         if( PanelController *pc = m_PanelState.activePanelController )
             if( pc.isUniform && pc.vfs->IsNativeFS() )
                 [state SetInitialWD:pc.currentDirectoryPath];
-        [self PushNewWindowState:state];
+        [self pushState:state];
         m_Terminal = state;
     }
     else {
-        [self PushNewWindowState:m_Terminal];
+        [self pushState:m_Terminal];
     }
     [m_Terminal Execute:_binary_path with_parameters:_params];
 }
@@ -425,7 +472,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                                    params:_params
                                 fileTitle:_file_title
              ];
-    [self PushNewWindowState:state];
+    [self pushState:state];
 }
 
 - (id<MainWindowStateProtocol>) topmostState

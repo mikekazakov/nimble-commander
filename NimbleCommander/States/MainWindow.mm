@@ -13,6 +13,7 @@
 #include "MainWindowController.h"
 
 static const auto g_Identifier = NSStringFromClass(MainWindow.class);
+static const auto g_MinWindowSize = NSMakeSize(640, 480);
 
 @implementation MainWindow
 
@@ -30,21 +31,25 @@ static const auto g_Identifier = NSStringFromClass(MainWindow.class);
     if( self = [super initWithContentRect:NSMakeRect(100, 100, 1000, 600)
                                 styleMask:flags
                                   backing:NSBackingStoreBuffered
-                                    defer:false] ) {
-        
-        self.minSize = NSMakeSize(640, 480);
+                                    defer:true] ) {
+        self.minSize = g_MinWindowSize;
         self.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
-        self.restorable = YES;
+        self.restorable = true;
         self.identifier = g_Identifier;
         self.title = @"";
+        
         if( ![self setFrameUsingName:g_Identifier] )
             [self center];
+
         if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
             self.tabbingMode = NSWindowTabbingModeDisallowed;
         
-        [self setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
-        [self setContentBorderThickness:40 forEdge:NSMinYEdge];
-        self.contentView.wantsLayer = YES;
+        [self setAutorecalculatesContentBorderThickness:false
+                                                forEdge:NSMinYEdge];
+        [self setContentBorderThickness:40
+                                forEdge:NSMinYEdge];
+        
+//        self.contentView.wantsLayer = YES;
         CocoaAppearanceManager::Instance().ManageWindowApperance(self);
         [self invalidateShadow];
     }

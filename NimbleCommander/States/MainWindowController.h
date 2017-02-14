@@ -15,6 +15,8 @@ class VFSHost;
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
+- (instancetype) initWithLastOpenedWindowOptions;
+
 - (OperationsController*) OperationsController;
 
 // Window state manipulations
@@ -44,7 +46,6 @@ class VFSHost;
 @property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
 
 // Toolbar support
-@property (nonatomic, readonly) bool toolbarVisible;
 - (void)OnShowToolbar:(id)sender;
 
 @end

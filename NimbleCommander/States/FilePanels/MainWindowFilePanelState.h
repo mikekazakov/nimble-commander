@@ -50,9 +50,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     __weak NSResponder   *m_LastResponder;
     
     bool                m_ShowTabs;
-    bool                m_GoToForceActivation;
     
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
+    vector<GenericConfig::ObservationTicket> m_ConfigTickets;
 }
 
 @property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
@@ -60,7 +59,10 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
 
-- (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
+- (id) initWithFrame:(NSRect)frameRect;
+
+- (id) initEmptyFileStateWithFrame:(NSRect)frameRect;
+
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)activePanelChangedTo:(PanelController *)controller;
 

@@ -618,7 +618,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
   
     return FetchFlexibleListingBulk(_path, _target, _flags, _cancel_checker);
     
-    MachTimeBenchmark mtb;
+//    MachTimeBenchmark mtb;
     
     static const auto dirents_reserve_amount = 64;
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
@@ -802,7 +802,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
     
     _target = VFSListing::Build(move(listing_source));
     
-    mtb.ResetMicro();
+//    mtb.ResetMicro();
     
     return 0;
 }

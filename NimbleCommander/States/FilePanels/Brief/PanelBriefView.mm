@@ -226,14 +226,9 @@ const noexcept
 
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
-    MachTimeBenchmark mtb1;
     PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"A" forIndexPath:indexPath];
-//    mtb1.ResetMicro("PanelBriefViewItem ");
     assert(item);
-//    AAPLImageFile *imageFile = [self imageFileAtIndexPath:indexPath];
-//    item.representedObject = imageFile;
     
-    MachTimeBenchmark mtb;
     if( m_Data ) {
         const auto index = (int)indexPath.item;
         if( auto vfs_item = m_Data->EntryAtSortPosition(index) ) {

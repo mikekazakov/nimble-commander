@@ -450,6 +450,9 @@ static AppDelegate *g_Me = nil;
 {
     MainWindowController *mwc = [MainWindowController new];
     [mwc restoreDefaultWindowStateFromLastOpenedWindow];
+//    MachTimeBenchmark mtb;
+//    MainWindowController *mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
+//    mtb.ResetMicro("initWithLastOpenedWindowOptions microseconds: ");
     m_MainWindows.push_back(mwc);
     [mwc showWindow:self];
 }

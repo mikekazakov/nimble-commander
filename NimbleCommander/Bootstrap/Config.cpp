@@ -246,10 +246,7 @@ optional<string> GenericConfig::GetString(const char *_path) const
 
 bool GenericConfig::GetBool(const char *_path) const
 {
-    auto v = GetInternal(_path);
-    if( v.GetType() == rapidjson::kTrueType )
-        return true;
-    return false;
+    return GetBoolInternal( _path );
 }
 
 int GenericConfig::GetInt(const char *_path) const
@@ -280,7 +277,7 @@ int GenericConfig::GetIntOr(const char *_path, int _default) const
 
 bool GenericConfig::Has(const char *_path) const
 {
-    lock_guard<mutex> lock(m_DocumentLock);
+    lock_guard<spinlock> lock(m_DocumentLock);
     return FindUnlocked(_path) != nullptr;
 }
 
@@ -329,11 +326,19 @@ const rapidjson::Value *GenericConfig::FindDefaultUnlocked(string_view _path) co
 
 GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 {
-    lock_guard<mutex> lock(m_DocumentLock);
+    lock_guard<spinlock> lock(m_DocumentLock);
     auto v = FindUnlocked(_path);
     if( !v )
         return ConfigValue( rapidjson::kNullType );
     return ConfigValue( *v, g_CrtAllocator );
+}
+
+bool GenericConfig::GetBoolInternal(string_view _path) const
+{
+    lock_guard<spinlock> lock(m_DocumentLock);
+    if( const auto v = FindUnlocked(_path) )
+        return v->GetType() == rapidjson::kTrueType;
+    return false;
 }
 
 GenericConfig::ConfigValue GenericConfig::GetInternalDefault(string_view _path) const
@@ -393,7 +398,7 @@ bool GenericConfig::Set(const char *_path, const ConfigValue &_value)
 bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
 {
     {
-        lock_guard<mutex> lock(m_DocumentLock);
+        lock_guard<spinlock> lock(m_DocumentLock);
         
         rapidjson::Value *st = &m_Current;
         string_view path = _path;
@@ -475,7 +480,8 @@ GenericConfig::ObservationTicket::operator bool() const noexcept
     return instance != nullptr && ticket != 0;
 }
 
-GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path, function<void()> _change_callback)
+GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path,
+                                                        function<void()> _change_callback)
 {
     if( !_change_callback )
         return ObservationTicket(nullptr, 0);
@@ -487,18 +493,24 @@ GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path, funct
         o.callback = move(_change_callback);
         o.ticket = t;
         
-        lock_guard<mutex> lock(m_ObserversLock);
-        
-        auto current_observers_it = m_Observers.find(path);
-        
-        auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
-        if( current_observers_it != end(m_Observers)  ) {
-            new_observers->reserve( current_observers_it->second->size() + 1 );
-            *new_observers = *(current_observers_it->second);
+        LOCK_GUARD( m_ObserversLock ) {
+            auto current_observers_it = m_Observers.find(path);
+            
+            if( current_observers_it != end(m_Observers)  ) {
+                // somebody is already watching this path
+                auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+                new_observers->reserve( current_observers_it->second->size() + 1 );
+                *new_observers = *(current_observers_it->second);
+                new_observers->emplace_back( to_shared_ptr(move(o)) );
+                current_observers_it->second = new_observers;
+            }
+            else {
+                // it's the first request to observe this path
+                auto new_observers = make_shared<vector<shared_ptr<Observer>>>
+                    (1, to_shared_ptr(move(o)) );
+                m_Observers.emplace( move(path), move(new_observers) );
+            }
         }
-        new_observers->emplace_back( to_shared_ptr(move(o)) );
-        
-        m_Observers[path] = move(new_observers);
     }
     
     return ObservationTicket(this, t);
@@ -509,7 +521,7 @@ void GenericConfig::StopObserving(unsigned long _ticket)
     if( !_ticket )
         return;
     
-    lock_guard<mutex> lock(m_ObserversLock);
+    lock_guard<spinlock> lock(m_ObserversLock);
     for( auto &path: m_Observers ) {
         auto &observers = path.second;
         for( size_t i = 0, e = observers->size(); i != e; ++i ) {
@@ -528,7 +540,7 @@ void GenericConfig::StopObserving(unsigned long _ticket)
 shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path) const
 {
     string path = _path;
-    lock_guard<mutex> lock(m_ObserversLock);
+    lock_guard<spinlock> lock(m_ObserversLock);
     auto observers_it = m_Observers.find(path);
     if( observers_it != end(m_Observers) )
         return  observers_it->second;
@@ -537,7 +549,7 @@ shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObser
 
 shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const string &_path) const
 {
-    lock_guard<mutex> lock(m_ObserversLock);
+    lock_guard<spinlock> lock(m_ObserversLock);
     auto observers_it = m_Observers.find(_path);
     if( observers_it != end(m_Observers) )
         return  observers_it->second;
@@ -574,7 +586,7 @@ void GenericConfig::RunOverwritesDumping()
     auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
     
     {
-        lock_guard<mutex> lock(m_DocumentLock);
+        lock_guard<spinlock> lock(m_DocumentLock);
         BuildOverwrites(m_Defaults, m_Current, *d);
     }
     
@@ -643,7 +655,7 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
     
     vector<string> changes;
     {
-        lock_guard<mutex> lock(m_DocumentLock);
+        lock_guard<spinlock> lock(m_DocumentLock);
         stack< tuple<const rapidjson::Value*,const rapidjson::Value*, string> > travel;
         travel.emplace( make_tuple(&m_Current, &new_staging_doc, "") );
         

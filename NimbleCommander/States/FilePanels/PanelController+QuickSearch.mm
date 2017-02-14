@@ -153,10 +153,11 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     bool any_changed = m_Data.ClearTextFiltering();
     
     [m_View setQuickSearchPrompt:nil withMatchesCount:0];
-    [m_View dataUpdated]; // need to call only when something actually changed
     
-    if( any_changed )
+    if( any_changed ) {
+        [m_View dataUpdated];
         pers.Restore();
+    }
 }
 
 - (bool)HandleQuickSearchSoft: (NSString*) _key

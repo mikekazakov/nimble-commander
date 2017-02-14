@@ -83,7 +83,6 @@
 @implementation OperationsSummaryViewController
 {
     NSPopover                       *m_Popover;
-    __unsafe_unretained NSWindow    *m_Window;
     OperationsController            *m_OperationsController;
     NSButton                        *m_ListButton;
     NSView                          *m_BackgroundView;
@@ -93,16 +92,12 @@
 @synthesize backgroundView = m_BackgroundView;
 
 - (id)initWithController:(OperationsController *)_controller
-                  window:(NSWindow*)_wnd
 {
     if (self = [super initWithNibName:nil bundle:nil]) {
-        m_Window = _wnd;
         m_OperationsController = _controller;
-        
         [self loadView];
         
         [m_OperationsController addObserver:self forKeyPath:@"OperationsCount" options:0 context:nil];
-//        [m_OperationsController addObserver:self forKeyPath:@"OperationsWithDialogsCount" options:0 context:nil];
         
         NSBoxWithMouseOverProperty *box = [[NSBoxWithMouseOverProperty alloc] initWithFrame:NSMakeRect(0, 0, 300, 34)];
         box.titlePosition = NSNoTitle;

@@ -65,8 +65,8 @@ struct PanelViewLayout;
 
 //- (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 
-- (rapidjson::StandaloneValue) encodeRestorableState;
-- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
+//- (rapidjson::StandaloneValue) encodeRestorableState;
+//- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
 - (void) SavePathState;
 - (void) LoadPathState;

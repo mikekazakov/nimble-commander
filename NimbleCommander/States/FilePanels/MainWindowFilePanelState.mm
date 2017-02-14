@@ -99,21 +99,33 @@ static void SetupRatingOverlay(NSView *_background_view)
     [_background_view addSubview:v];
 }
 
+static bool GoToForcesPanelActivation()
+{
+    static const auto fetch = []{
+        return GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
+    };
+    static bool force = []{
+        static auto ticket = GlobalConfig().Observe(g_ConfigGeneralShowTabs, []{
+            force = fetch();
+        });
+        return fetch();
+    }();
+    return force;
+}
+
 @implementation MainWindowFilePanelState
 
 @synthesize OperationsController = m_OperationsController;
 @synthesize operationsSummaryView = m_OpSummaryController;
 
-- (id) initWithFrame:(NSRect)frameRect Window:(NSWindow*)_wnd;
+- (id) initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {        
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
-        m_GoToForceActivation = GlobalConfig().GetBool( g_ConfigGoToActivation );
         
         m_OperationsController = [[OperationsController alloc] init];
-        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController
-                                                                                     window:_wnd];
+        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController];
         // setup background view if any show be shown
         if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
             SetupRatingOverlay( m_OpSummaryController.backgroundView );
@@ -137,29 +149,62 @@ static void SetupRatingOverlay(NSView *_background_view)
         [self updateTabBarsVisibility];
         [self layoutSubtreeIfNeeded];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
-        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
-                                                           selector:@selector(volumeWillUnmount:)
-                                                               name:NSWorkspaceWillUnmountNotification
-                                                             object:nil];
-#pragma clang diagnostic pop
-        
-        __weak MainWindowFilePanelState* weak_self = self;
-        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralShowTabs, [=]{ [(MainWindowFilePanelState*)weak_self onShowTabsSettingChanged]; }) );
+     
+        [self setupNotificationsCallbacks];
     }
     return self;
+}
+
+- (id) initEmptyFileStateWithFrame:(NSRect)frameRect
+{
+    if( self = [super initWithFrame:frameRect] ) {
+        m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
+        m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
+        m_OperationsController = [[OperationsController alloc] init];
+        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController];
+        // setup background view if any show be shown
+        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
+            SetupRatingOverlay( m_OpSummaryController.backgroundView );
+        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
+            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
+        
+        m_LeftPanelControllers.emplace_back([PanelController new]);
+        m_RightPanelControllers.emplace_back([PanelController new]);
+        
+        [self CreateControls];
+        
+        // panel creation and preparation
+        m_LeftPanelControllers.front().state = self;
+        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
+                                                   share:m_ToolbarDelegate.leftPanelShareButton];
+        m_RightPanelControllers.front().state = self;
+        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
+                                                    share:m_ToolbarDelegate.rightPanelShareButton];
+        
+//        [self loadInitialPanelData];
+
+        [self updateTabBarsVisibility];
+//        [self layoutSubtreeIfNeeded];
+        [self loadOverlappedTerminalSettingsAndRunIfNecessary];
+        [self setupNotificationsCallbacks];
+    }
+    return self;
+}
+
+- (void) setupNotificationsCallbacks
+{
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(frameDidChange)
+                                               name:NSViewFrameDidChangeNotification
+                                             object:self];
+    
+    m_ConfigTickets.emplace_back( GlobalConfig().Observe(
+        g_ConfigGeneralShowTabs, objc_callback(self, @selector(onShowTabsSettingChanged))));
 }
 
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    [NSWorkspace.sharedWorkspace.notificationCenter removeObserver:self];    
 }
 
 - (BOOL)acceptsFirstResponder { return true; }
@@ -279,7 +324,7 @@ static void SetupRatingOverlay(NSView *_background_view)
                                                         multiplier:1
                                                           constant:0];
     c.active = true;
-    [self layoutSubtreeIfNeeded];
+//    [self layoutSubtreeIfNeeded];
 
     if( m_LastResponder ) {
         // if we already were active and have some focused view - restore it
@@ -299,6 +344,12 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 - (void) Resigned
 {
+}
+
+- (void) layout
+{
+//    cout << self.bounds.size.width << " " << self.bounds.size.height << endl;
+    [super layout];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
@@ -321,7 +372,7 @@ static void SetupRatingOverlay(NSView *_background_view)
     
     m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
-    if( !self.leftPanelController.isActive && m_GoToForceActivation )
+    if( !self.leftPanelController.isActive && GoToForcesPanelActivation() )
         [self ActivatePanelByController:self.leftPanelController];
     
     if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
@@ -349,7 +400,7 @@ static void SetupRatingOverlay(NSView *_background_view)
     
     m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     
-    if( !self.rightPanelController.isActive && m_GoToForceActivation )
+    if( !self.rightPanelController.isActive && GoToForcesPanelActivation() )
         [self ActivatePanelByController:self.rightPanelController];
     
     if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {

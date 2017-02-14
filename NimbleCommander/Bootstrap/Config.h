@@ -88,6 +88,7 @@ private:
     void        FireObservers(const string& _path) const;
     void        StopObserving(unsigned long _ticket);
     ConfigValue GetInternal(string_view _path) const;
+    bool        GetBoolInternal(string_view _path) const;
     ConfigValue GetInternalDefault(string_view _path) const;
     const rapidjson::Value *FindUnlocked(string_view _path) const;
     const rapidjson::Value *FindDefaultUnlocked(string_view _path) const;
@@ -98,11 +99,11 @@ private:
     void        OnOverwritesFileDirChanged();
     void        MergeChangedOverwrites(const rapidjson::Document &_new_overwrites_diff);
     
-    mutable mutex                                                       m_DocumentLock;
+    mutable spinlock                                                    m_DocumentLock;
     rapidjson::Document                                                 m_Current;
     rapidjson::Document                                                 m_Defaults;
     unordered_map<string, shared_ptr<vector<shared_ptr<Observer>>>>     m_Observers;
-    mutable mutex                                                       m_ObserversLock;
+    mutable spinlock                                                    m_ObserversLock;
     
     string                                                              m_DefaultsPath;
     string                                                              m_OverwritesPath;

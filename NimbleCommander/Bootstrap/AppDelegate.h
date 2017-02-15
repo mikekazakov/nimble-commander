@@ -20,9 +20,8 @@ class VFSHost;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-- (IBAction)NewWindow:(id)sender;
-- (MainWindowController*) AllocateNewMainWindow;
-- (void) RemoveMainWindow:(MainWindowController*) _wnd;
+- (void) addMainWindow:(MainWindowController*) _wnd;
+- (void) removeMainWindow:(MainWindowController*) _wnd;
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;

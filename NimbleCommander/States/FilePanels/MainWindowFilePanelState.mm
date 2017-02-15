@@ -118,7 +118,7 @@ static bool GoToForcesPanelActivation()
 @synthesize OperationsController = m_OperationsController;
 @synthesize operationsSummaryView = m_OpSummaryController;
 
-- (id) initWithFrame:(NSRect)frameRect
+- (instancetype) initBaseWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {        
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
@@ -145,9 +145,7 @@ static bool GoToForcesPanelActivation()
         [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
                                                     share:m_ToolbarDelegate.rightPanelShareButton];
         
-        [self loadInitialPanelData];
         [self updateTabBarsVisibility];
-        [self layoutSubtreeIfNeeded];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];
      
         [self setupNotificationsCallbacks];
@@ -155,38 +153,17 @@ static bool GoToForcesPanelActivation()
     return self;
 }
 
-- (id) initEmptyFileStateWithFrame:(NSRect)frameRect
+- (instancetype) initWithFrame:(NSRect)frameRect
 {
-    if( self = [super initWithFrame:frameRect] ) {
-        m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
-        m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
-        m_OperationsController = [[OperationsController alloc] init];
-        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController];
-        // setup background view if any show be shown
-        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
-            SetupRatingOverlay( m_OpSummaryController.backgroundView );
-        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
-            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
-        
-        m_LeftPanelControllers.emplace_back([PanelController new]);
-        m_RightPanelControllers.emplace_back([PanelController new]);
-        
-        [self CreateControls];
-        
-        // panel creation and preparation
-        m_LeftPanelControllers.front().state = self;
-        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
-                                                   share:m_ToolbarDelegate.leftPanelShareButton];
-        m_RightPanelControllers.front().state = self;
-        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
-                                                    share:m_ToolbarDelegate.rightPanelShareButton];
-        
-//        [self loadInitialPanelData];
+    if( self = [self initBaseWithFrame:frameRect] ) {
+        [self loadDefaultPanelContent];
+    }
+    return self;
+}
 
-        [self updateTabBarsVisibility];
-//        [self layoutSubtreeIfNeeded];
-        [self loadOverlappedTerminalSettingsAndRunIfNecessary];
-        [self setupNotificationsCallbacks];
+- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect
+{
+    if( self = [self initBaseWithFrame:frameRect] ) {
     }
     return self;
 }
@@ -218,7 +195,7 @@ static bool GoToForcesPanelActivation()
     self.layer.backgroundColor = CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
 }
 
-- (void) loadInitialPanelData
+- (void) loadDefaultPanelContent
 {
     auto &am = ActivationManager::Instance();
     auto left_controller = m_LeftPanelControllers.front();

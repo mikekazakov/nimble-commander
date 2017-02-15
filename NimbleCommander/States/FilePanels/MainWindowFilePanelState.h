@@ -59,9 +59,11 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
 
-- (id) initWithFrame:(NSRect)frameRect;
+- (instancetype) initWithFrame:(NSRect)frameRect;
+- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect;
 
-- (id) initEmptyFileStateWithFrame:(NSRect)frameRect;
+- (void) loadDefaultPanelContent;
+
 
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)activePanelChangedTo:(PanelController *)controller;

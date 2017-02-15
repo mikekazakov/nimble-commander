@@ -252,7 +252,7 @@ static AppDelegate *g_Me = nil;
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
             showed_modal_dialog = true;
             if( m_MainWindows.empty() )
-                [self AllocateNewMainWindow];
+                [self allocateDefaultMainWindow];
         }
     }
     
@@ -437,27 +437,25 @@ static AppDelegate *g_Me = nil;
     return NO;
 }
 
-// AllocateNewMainWindow and NewWindow are pretty similar, it's bad they are different methods
-- (MainWindowController*)AllocateNewMainWindow
+- (MainWindowController*)allocateDefaultMainWindow
 {
-    MainWindowController *mwc = [MainWindowController new];
-    m_MainWindows.push_back(mwc);    
+    MainWindowController *mwc = [[MainWindowController alloc] initDefaultWindow];
     [mwc showWindow:self];
     return mwc;
 }
 
-- (IBAction)NewWindow:(id)sender
+- (IBAction)onMainMenuNewWindow:(id)sender
 {
-    MainWindowController *mwc = [MainWindowController new];
-    [mwc restoreDefaultWindowStateFromLastOpenedWindow];
-//    MachTimeBenchmark mtb;
-//    MainWindowController *mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
-//    mtb.ResetMicro("initWithLastOpenedWindowOptions microseconds: ");
-    m_MainWindows.push_back(mwc);
+    MainWindowController *mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
     [mwc showWindow:self];
 }
 
-- (void) RemoveMainWindow:(MainWindowController*) _wnd
+- (void) addMainWindow:(MainWindowController*) _wnd
+{
+    m_MainWindows.push_back(_wnd);
+}
+
+- (void) removeMainWindow:(MainWindowController*) _wnd
 {
     auto it = find(begin(m_MainWindows), end(m_MainWindows), _wnd);
     if(it != end(m_MainWindows))
@@ -511,11 +509,17 @@ static AppDelegate *g_Me = nil;
     if( !m_FinishedLaunching || m_IsRunningTests )
         return false;
     
-    if( m_MainWindows.empty() ) {
-        auto mw = [self AllocateNewMainWindow];
-        if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
-            [mw restoreDefaultWindowStateFromConfig];
-    }
+    if( !m_MainWindows.empty() )
+        return true;
+  
+    MainWindowController *new_window;
+    if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
+        new_window = [[MainWindowController alloc] initRestoringLastWindowFromConfig];
+    else
+        new_window = [[MainWindowController alloc] initDefaultWindow];
+    
+    [new_window showWindow:self];
+    
     return true;
 }
 
@@ -619,7 +623,7 @@ static AppDelegate *g_Me = nil;
         }
     
     if( !target_window ) {
-        [self AllocateNewMainWindow];
+        [self allocateDefaultMainWindow];
         target_window = [m_MainWindows.back() window];
     }
 

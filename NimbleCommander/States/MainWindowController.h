@@ -15,7 +15,9 @@ class VFSHost;
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
+- (instancetype) initDefaultWindow;
 - (instancetype) initWithLastOpenedWindowOptions;
+- (instancetype) initRestoringLastWindowFromConfig;
 
 - (OperationsController*) OperationsController;
 

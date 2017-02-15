@@ -69,21 +69,30 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         window.restorationClass = self.class;
 
         m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
+
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(didBecomeKeyWindow)
+                                                   name:NSWindowDidBecomeKeyNotification
+                                                 object:self.window];
+        
+        m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
+            objc_callback(self, @selector(onConfigShowToolbarChanged))) );
+        
+        [AppDelegate.me addMainWindow:self];
+        
+        [self invalidateRestorableState];
     }
     return self;
 }
 
-- (id)init
+- (instancetype) initDefaultWindow
 {
     if( self = [self initBase] ) {
        
         m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:
             self.window.contentView.frame];
         
-//        [self setupToolbarState];
-        
         [self pushState:m_PanelState];
-        [self setupNotificationCallbacks];
     }
     
     return self;
@@ -91,43 +100,59 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (instancetype) initWithLastOpenedWindowOptions
 {
-//        MachTimeBenchmark mtb;
     if( self = [self initBase] ) {
-//        mtb.ResetMicro(" [self initBase]: ");
-
-
-   
-   
-//        cout << "!!1 " << self.window.contentView.bounds.size.height << endl;
-   
-//        [self setupToolbarState];
-//        mtb.ResetMicro(" [self setupToolbarState]: ");
         
+        // almost "free" state initially
         m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
             self.window.contentView.frame];
-//        mtb.ResetMicro(" initEmptyFileStateWithFrame in microseconds: ");
-        
-//        cout << "!!2 " << self.window.contentView.bounds.size.height << endl;
-        
-        [self pushState:m_PanelState];
-//        mtb.ResetMicro(" [self PushNewWindowState: ");
 
-        [self setupNotificationCallbacks];
-//        mtb.ResetMicro(" [self setupNotificationCallbacks]: ");
+        // copy options from previous window, if there's any
+        [self restoreDefaultWindowStateFromLastOpenedWindow];
+
+        // load initial contents
+        [m_PanelState loadDefaultPanelContent];
+        
+        // run the state
+        [self pushState:m_PanelState];
     }
     return self;
 }
 
-- (void) setupNotificationCallbacks
+- (instancetype) initRestoringLastWindowFromConfig
 {
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(didBecomeKeyWindow)
-                                               name:NSWindowDidBecomeKeyNotification
-                                             object:self.window];
-    
-    m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
-        objc_callback(self, @selector(onConfigShowToolbarChanged))) );
+    if( self = [self initBase] ) {
+        
+        // almost "free" state initially
+        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
+            self.window.contentView.frame];
+        
+        [self restoreDefaultWindowStateFromConfig];
+        
+        // run the state
+        [self pushState:m_PanelState];
+    }
+    return self;
 }
+
+- (instancetype) initForSystemRestoration
+{
+   if( self = [self initBase] ) {
+        
+        // almost "free" state initially
+        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
+            self.window.contentView.frame];
+       
+        // run the state
+        [self pushState:m_PanelState];
+    }
+    return self;
+}
+
+- (instancetype) init
+{
+    return [self initDefaultWindow];
+}
+
 
 -(void) dealloc
 {
@@ -153,9 +178,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 //        return;
     
     NSWindow *window = nil;
-    if( [identifier isEqualToString:MainWindow.defaultIdentifier] )
-        window = [AppDelegate.me AllocateNewMainWindow].window;
-
+    if( [identifier isEqualToString:MainWindow.defaultIdentifier] ) {
+        auto ctrl = [[MainWindowController alloc] initForSystemRestoration];
+        window = ctrl.window;
+    }
     completionHandler(window, nil);
 }
 
@@ -261,7 +287,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     m_PanelState = nil;
     m_Terminal = nil;
     
-    [AppDelegate.me RemoveMainWindow:self];
+    [AppDelegate.me removeMainWindow:self];
 }
 
 - (BOOL)windowShouldClose:(id)sender

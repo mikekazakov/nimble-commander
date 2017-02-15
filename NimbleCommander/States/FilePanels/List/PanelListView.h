@@ -24,8 +24,6 @@ struct PanelListViewColumnsLayout;
 - (void) syncVolatileData;
 - (void) setData:(PanelData*)_data;
 
-- (const vector<PanelViewPresentationItemsColoringRule>&) coloringRules;
-
 - (const PanelListViewGeometry&) geometry;
 
 - (NSFont*) font;

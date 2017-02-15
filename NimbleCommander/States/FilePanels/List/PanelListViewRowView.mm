@@ -120,13 +120,15 @@
 
 - (NSColor*) findCurrentTextColor
 {
-    if( const auto list_view = self.listView ) {
-        const auto &rules = list_view.coloringRules;
-        const auto focus = self.selected && m_PanelActive;
-        for( const auto &i: rules )
-            if( i.filter.Filter(m_Item, m_VD) )
-                return focus ? i.focused : i.regular;
-    }
+    if( !m_Item )
+        return NSColor.blackColor;
+
+    const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();;
+    const auto focus = self.selected && m_PanelActive;
+    for( const auto &i: rules )
+        if( i.filter.Filter(m_Item, m_VD) )
+            return focus ? i.focused : i.regular;
+
     return NSColor.blackColor;
 }
 

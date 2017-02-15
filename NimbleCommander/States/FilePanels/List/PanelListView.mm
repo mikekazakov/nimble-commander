@@ -152,11 +152,6 @@ void DrawTableVerticalSeparatorForView(NSView *v)
             }
         });
         
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];
     }
     return self;
 }
@@ -227,7 +222,6 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateModifiedColumn removeObserver:self forKeyPath:@"width"];
-    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void)viewDidMoveToSuperview
@@ -497,35 +491,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [m_TableView selectRowIndexes:[NSIndexSet indexSet]
                  byExtendingSelection:false];
     }
-}
-
-- (void)frameDidChange
-{
-//    MachTimeBenchmark mtb;
-    [m_ScrollView layoutSubtreeIfNeeded];
-//    mtb.ResetMicro();
-
-}
-
-
-//
-//@property (nonatomic, readonly) int itemsInColumn;
-//@property (nonatomic) int cursorPosition;
-
-- (const vector<PanelViewPresentationItemsColoringRule>&) coloringRules
-{
-//    return g_ColoringRules;
-/*    static vector<PanelViewPresentationItemsColoringRule> rules;
-    static once_flag once;
-    call_once(once,[]{
-        auto cr = GlobalConfig().Get(g_ConfigColoring);
-        if( cr.IsArray() )
-            for( auto i = cr.Begin(), e = cr.End(); i != e; ++i )
-                rules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(*i) );
-        rules.emplace_back(); // always have a default ("others") non-filtering filter at the back
-    });
-    return rules;*/
-    return CurrentTheme().FilePanelsItemsColoringRules();
 }
 
 - (const PanelListViewGeometry&) geometry

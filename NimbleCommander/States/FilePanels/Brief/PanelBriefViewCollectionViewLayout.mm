@@ -29,6 +29,9 @@
     NSArray<__kindof NSCollectionViewLayoutAttributes *> *attrs = [super layoutAttributesForElementsInRect:rect];
     
     const int items_per_column = self.rowsCount;
+    if( !items_per_column )
+        return attrs;
+    
     const double item_height = self.itemSize.height;
     
     struct Col {

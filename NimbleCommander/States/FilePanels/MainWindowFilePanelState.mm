@@ -774,7 +774,7 @@ static bool GoToForcesPanelActivation()
 
 - (void)frameDidChange
 {
-    [self layoutSubtreeIfNeeded];
+//    [self layoutSubtreeIfNeeded];
     [self updateBottomConstraint];
 }
 

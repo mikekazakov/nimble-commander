@@ -280,9 +280,11 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : 50;
 }
 
-- (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+- (NSSize)collectionView:(NSCollectionView *)collectionView
+                  layout:(NSCollectionViewLayout*)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    const auto layout = m_ItemLayout;
+    const auto &layout = m_ItemLayout;
     const auto index = (int)indexPath.item;
     
     switch( m_ColumnsLayout.mode ) {
@@ -292,7 +294,9 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
                 m_MaxFilenamePxWidth :
                 m_FilenamesPxWidths[index];
             width += 2*layout.inset_left + layout.icon_size + layout.inset_right;
-            width = clamp( width, m_ColumnsLayout.dynamic_width_min, m_ColumnsLayout.dynamic_width_max );
+            width = clamp(width,
+                          m_ColumnsLayout.dynamic_width_min,
+                          m_ColumnsLayout.dynamic_width_max );
             return NSMakeSize( width, layout.item_height );
         }
         case PanelBriefViewColumnsLayout::Mode::FixedWidth: {
@@ -445,43 +449,60 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         }
 }
 
+- (void) updateFixedAmountLayout
+{
+    // find a column to stick with
+    const auto &column_positions = m_Layout.columnPositions;
+    optional<int> column_stick;
+    if( !column_positions.empty() ) {
+        const auto visible_rect = m_ScrollView.documentVisibleRect;
+        const auto it = find_if( begin(column_positions), end(column_positions), [=](auto v) {
+            return v != numeric_limits<int>::max() && v >= visible_rect.origin.x;
+        });
+        if( it != end(column_positions) )
+            column_stick = (int)distance( begin(column_positions), it );
+    }
+    
+    // find delta between that column origin and visible rect
+    const auto previous_scroll_position = m_ScrollView.contentView.bounds.origin;
+    const auto previous_delta = column_stick ?
+        column_positions[*column_stick] - int(previous_scroll_position.x) :
+        0;
+    
+    // rearrange stuff now
+    [m_Layout invalidateLayout];
+    [self layoutSubtreeIfNeeded];
+    
+    // find a new delta between sticked column and visible rect
+    const auto new_scroll_position = m_ScrollView.contentView.bounds.origin;
+    const auto new_delta = (column_stick &&
+                            *column_stick < column_positions.size() &&
+                            column_positions[*column_stick] != numeric_limits<int>::max() ) ?
+        column_positions[*column_stick] - int(new_scroll_position.x) :
+        0;
+    
+    // if there is the difference - adjust scroll position
+    if( previous_delta != new_delta ) {
+        const auto new_pos = NSMakePoint(new_scroll_position.x + new_delta - previous_delta,
+                                         new_scroll_position.y);
+        [m_ScrollView.documentView scrollPoint:new_pos];
+    }
+}
+
 - (void)frameDidChange
 {
     // special treating for FixedAmount layout mode
     if( m_ColumnsLayout.mode == PanelBriefViewColumnsLayout::Mode::FixedAmount ) {
-        
-        // find a column to stick with
-        const auto &column_positions = m_Layout.columnPositions;
-        optional<int> column_stick;
-        if( !column_positions.empty() ) {
-            const auto visible_rect = m_ScrollView.documentVisibleRect;
-            const auto it = find_if( begin(column_positions), end(column_positions), [=](auto v) {
-                return v != numeric_limits<int>::max() && v >= visible_rect.origin.x;
+        if( !self.window.visible )
+            // the is really a HACK:
+            // we have to push update into next cycle, since it could be ignored if triggered in
+            // the middle of another update cycle, which happens on resize during initial layout.
+            // sadface.
+            dispatch_to_main_queue([=]{
+                [self updateFixedAmountLayout];
             });
-            if( it != end(column_positions) )
-                column_stick = (int)distance( begin(column_positions), it );
-        }
-        
-        // find delta between that column origin and visible rect
-        const auto  previous_scroll_position = m_ScrollView.contentView.bounds.origin;
-        int previous_delta = column_stick ? column_positions[*column_stick] - previous_scroll_position.x : 0;
-        
-        // rearrange stuff now
-        [m_CollectionView.collectionViewLayout invalidateLayout];
-        [self layoutSubtreeIfNeeded];
-
-        // find a new delta between sticked column and visible rect
-        NSPoint new_scroll_position = m_ScrollView.contentView.bounds.origin;
-        int new_delta = 0;
-        if(column_stick &&
-           *column_stick < column_positions.size() &&
-           column_positions[*column_stick] != numeric_limits<int>::max() )
-            new_delta = column_positions[*column_stick] - new_scroll_position.x;
-        
-        // if there is the difference - adjust scroll position 
-        if( previous_delta != new_delta )
-            [m_ScrollView.documentView scrollPoint:NSMakePoint(new_scroll_position.x + new_delta - previous_delta,
-                                                                 new_scroll_position.y)];
+        else
+            [self updateFixedAmountLayout];
     }
 }
 
@@ -490,7 +511,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     if( columnsLayout != m_ColumnsLayout ) {
         m_ColumnsLayout = columnsLayout;
         [self calculateItemLayout];
-        [m_CollectionView.collectionViewLayout invalidateLayout];
+        [m_Layout invalidateLayout];
     }
 }
 

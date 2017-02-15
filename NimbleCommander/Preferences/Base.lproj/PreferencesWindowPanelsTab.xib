@@ -563,7 +563,7 @@
                                                             <rect key="frame" x="8" y="45" width="240" height="166"/>
                                                             <clipView key="contentView" id="Q5x-oK-mXN">
                                                                 <rect key="frame" x="1" y="0.0" width="238" height="165"/>
-                                                                <autoresizingMask key="autoresizingMask"/>
+                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="1CY-V7-OVc" viewBased="YES" id="LBn-0D-ZCF">
                                                                         <rect key="frame" x="0.0" y="0.0" width="261" height="142"/>
@@ -663,7 +663,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <action selector="onLayoutBriefIcon1xClicked:" target="-2" id="zEZ-BY-Ocf"/>
+                                                                <action selector="performClick:" target="7ro-0V-9eu" id="Pz6-ce-hjN"/>
                                                             </connections>
                                                         </button>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HL1-7b-Udk">
@@ -677,7 +677,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <action selector="onLayoutBriefIcon2xClicked:" target="-2" id="b5K-0T-nOW"/>
+                                                                <action selector="performClick:" target="xTl-VG-uq4" id="nyr-Zg-F8W"/>
                                                             </connections>
                                                         </button>
                                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="F4k-4c-r0T">

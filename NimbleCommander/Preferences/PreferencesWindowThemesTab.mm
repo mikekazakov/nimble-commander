@@ -7,6 +7,7 @@
 //
 
 #include <fstream>
+#include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>

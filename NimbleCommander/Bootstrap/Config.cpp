@@ -1,6 +1,7 @@
 #include <fstream>
 #include <Habanero/algo.h>
 #include <Utility/FSEventsDirUpdate.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>

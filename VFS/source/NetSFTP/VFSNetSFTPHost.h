@@ -99,7 +99,7 @@ private:
     in_addr_t InetAddr() const;
     const class VFSNetSFTPHostConfiguration &Config() const;
     
-    list<unique_ptr<Connection>>                m_Connections;
+    vector<unique_ptr<Connection>>              m_Connections;
     mutex                                       m_ConnectionsLock;
     VFSConfiguration                            m_Config;
     string                                      m_HomeDir;

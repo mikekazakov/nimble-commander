@@ -33,11 +33,18 @@ VFSNetSFTPHost::Connection::~Connection()
     }
 }
 
-bool VFSNetSFTPHost::Connection::Alive() const {
-    int error = 0;
-    socklen_t len = sizeof (error);
-    int retval = getsockopt (socket, SOL_SOCKET, SO_ERROR, &error, &len );
-    return retval == 0;
+bool VFSNetSFTPHost::Connection::Alive() const
+{
+    const auto socket_ok = [&]{
+        int error = 0;
+        socklen_t len = sizeof(error);
+        int retval = getsockopt (socket, SOL_SOCKET, SO_ERROR, &error, &len );
+        return retval == 0 && error == 0;
+    }();
+    
+    const auto session_ok = libssh2_session_last_errno(ssh) == 0;
+    
+    return socket_ok && session_ok;
 }
 
 struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in operations
@@ -317,14 +324,18 @@ int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
 
 int VFSNetSFTPHost::GetConnection(unique_ptr<Connection> &_t)
 {
-    {
-        lock_guard<mutex> lock(m_ConnectionsLock);
-        for(auto i = m_Connections.begin(); i != m_Connections.end(); ++i)
-            if((*i)->Alive()) {
-                _t = move(*i);
-                m_Connections.erase(i);
+    LOCK_GUARD(m_ConnectionsLock) {
+        while( !m_Connections.empty() ) {
+            auto connection = move(m_Connections.front());
+            m_Connections.erase( begin(m_Connections) );
+
+            // if front connection is fine - return it
+            if( connection->Alive() ) {
+                _t = move(connection);
                 return 0;
             }
+            // otherwise this connection object will be destroyed.
+        }
     }
     
     int rc = SpawnSSH2(_t);

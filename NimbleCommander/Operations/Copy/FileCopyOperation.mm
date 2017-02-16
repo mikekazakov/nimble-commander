@@ -502,6 +502,10 @@ static NSString *ExtractCopyToName(const string&_s)
         }
         return result;
     };
+    m_Job.m_OnCantAccessSourceItem  = [weak_self](int _vfs_error, string _path){
+        auto strong_self = weak_self;
+        return [[strong_self OnCopyCantAccessSrcFile:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];
+    };
     m_Job.m_OnCantOpenDestinationFile = [weak_self](int _vfs_error, string _path){
         auto strong_self = weak_self;
         return [[strong_self OnCopyCantOpenDestFile:VFSError::ToNSError(_vfs_error) ForFile:_path.c_str()] WaitForResult];

@@ -501,11 +501,11 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
 
 static void EjectOnUnmount( DADiskRef disk, DADissenterRef dissenter, void *context )
 {
-    if( dissenter == nullptr ) {
-        DADiskRef disk2 = DADiskCopyWholeDisk(disk);
-        DADiskEject(disk2, kDADiskEjectOptionDefault, nullptr, nullptr);
-        CFRelease(disk2);
-    }
+    if( dissenter == nullptr )
+        if( DADiskRef disk2 = DADiskCopyWholeDisk(disk) ) {
+            DADiskEject(disk2, kDADiskEjectOptionDefault, nullptr, nullptr);
+            CFRelease(disk2);
+        }
 }
 
 void NativeFSManager::EjectVolumeContainingPath(const string &_path)

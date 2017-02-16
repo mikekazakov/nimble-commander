@@ -156,6 +156,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [op Start];
     [self waitUntilFinish:finished];
 
+    this_thread::sleep_for(100ms);
 
     shared_ptr<VFSArchiveHost> host;
     try {

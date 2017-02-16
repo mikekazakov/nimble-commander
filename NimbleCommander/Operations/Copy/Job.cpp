@@ -21,7 +21,8 @@ static bool ShouldPreallocateSpace(int64_t _bytes_to_write, const NativeFileSyst
         return false;
 
     // need to check destination fs and permit preallocation only on certain filesystems
-    return _fs_info.fs_type_name == "hfs"; // Apple's copyfile() also uses preallocation on Xsan volumes
+    static const auto prealloc_on = { "hfs", "apfs" };
+    return count( begin(prealloc_on), end(prealloc_on), _fs_info.fs_type_name ) != 0;
 }
 
 // PreallocateSpace assumes following ftruncate, meaningless otherwise

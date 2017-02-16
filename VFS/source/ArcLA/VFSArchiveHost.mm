@@ -282,11 +282,14 @@ int VFSArchiveHost::ReadArchiveListing()
     
     m_LastItemUID = aruid - 1;
     
-    if(ret == ARCHIVE_EOF)
+    if( ret == ARCHIVE_EOF )
         return VFSError::Ok;
 
     printf("%s\n", archive_error_string(m_Arc));
     
+    if( ret == ARCHIVE_WARN )
+        return VFSError::Ok;
+
     return VFSError::GenericError;
 }
 

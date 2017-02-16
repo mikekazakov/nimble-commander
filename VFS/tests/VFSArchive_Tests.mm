@@ -19,6 +19,7 @@ static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
 static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
+static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -294,8 +295,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
     }
 
     VFSFilePtr file;
-    char buf[4096];
-    ssize_t sz;
     
     XCTAssert( host->CreateFile("/lzma-4.32.7/ltmain.sh", file, 0) == 0 );
     XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
@@ -303,6 +302,28 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto d = file->ReadFile();
     XCTAssert( d->size() == 196440 );
     auto ref = "# ltmain.sh - Provide generalized library-building support services.";
+    XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
+    file.reset();
+}
+
+- (void)testArchiveWithWarning
+{
+  shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_WarningArchive.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+
+    VFSFilePtr file;
+    
+    XCTAssert( host->CreateFile("/maverix-master/maverix-theme/app/js/app.js", file, 0) == 0 );
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
+
+    auto d = file->ReadFile();
+    XCTAssert( d->size() == 1426 );
+    auto ref = "'use strict';";
     XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
     file.reset();
 }

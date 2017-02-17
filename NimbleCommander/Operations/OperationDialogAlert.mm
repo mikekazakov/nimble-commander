@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "Operation.h"
 #include "OperationDialogAlert.h"
 
@@ -81,15 +82,18 @@
 {
     dispatch_assert_main_queue();
     
+    // m_Alert.window has no controller set, at least in 10.12.
+    // use this fact to hijack the panel's window and move focus with arrow buttons:
+    m_Controller = [[AlertPanelController alloc] initWithWindow:m_Alert.window];
+    
+    CocoaAppearanceManager::Instance().ManageWindowApperance( m_Alert.window );
+    
     [m_Alert beginSheetModalForWindow:_parent completionHandler:^(NSModalResponse returnCode) {
         m_Result = (int)returnCode;
         if( m_Result != OperationDialogResult::None )
             [(Operation*)m_Operation OnDialogClosed:self];
     }];
     
-    // m_Alert.window has no controller set, at least in 10.12.
-    // use this fact to hijack the panel's window and move focus with arrow buttons:
-    m_Controller = [[AlertPanelController alloc] initWithWindow:m_Alert.window];
 }
 
 - (BOOL)IsVisible

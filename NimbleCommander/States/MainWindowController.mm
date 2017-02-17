@@ -58,6 +58,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 @synthesize terminalState = m_Terminal;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
++ (MainWindowController*)lastFocused
+{
+    return (MainWindowController*)g_LastFocusedMainWindowController;
+}
+
 - (instancetype)initBase
 {
     auto window = [[MainWindow alloc] init];
@@ -65,7 +70,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         return nil;
       
     if( self = [super initWithWindow:window] ) {
-        self.shouldCascadeWindows = NO;
         window.delegate = self;
         window.restorationClass = self.class;
 

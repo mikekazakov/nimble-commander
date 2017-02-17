@@ -14,6 +14,7 @@
 
 static const auto g_Identifier = NSStringFromClass(MainWindow.class);
 static const auto g_MinWindowSize = NSMakeSize(640, 480);
+static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 @implementation MainWindow
 
@@ -28,7 +29,7 @@ static const auto g_MinWindowSize = NSMakeSize(640, 480);
         NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|
         NSTexturedBackgroundWindowMask|NSWindowStyleMaskFullSizeContentView;
     
-    if( self = [super initWithContentRect:NSMakeRect(100, 100, 1000, 600)
+    if( self = [super initWithContentRect:g_InitialWindowContentRect
                                 styleMask:flags
                                   backing:NSBackingStoreBuffered
                                     defer:true] ) {
@@ -38,8 +39,25 @@ static const auto g_MinWindowSize = NSMakeSize(640, 480);
         self.identifier = g_Identifier;
         self.title = @"";
         
-        if( ![self setFrameUsingName:g_Identifier] )
-            [self center];
+        // window placement logic below:
+        // (it may be later overwritten by Cocoa's restoration mechanism)
+        if( auto mwc = MainWindowController.lastFocused ) {
+            // if there's any previous main window alive - copy that frame initially
+            [self setFrame:mwc.window.frame
+                   display:false
+                   animate:false];
+            // then cascade it using built-in AppKit logic:
+            auto cascade_loc = NSMakePoint(0, 0);
+            cascade_loc = [self cascadeTopLeftFromPoint:cascade_loc]; // init cascasing
+            [self cascadeTopLeftFromPoint:cascade_loc]; // actually cascade this window
+        }
+        else {
+            // if there's no alive window - grab previous value from user defaults
+            if( ![self setFrameUsingName:g_Identifier] ) {
+                // if we somehow don't have it - simply center window
+                [self center];
+            }
+        }
 
         if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
             self.tabbingMode = NSWindowTabbingModeDisallowed;

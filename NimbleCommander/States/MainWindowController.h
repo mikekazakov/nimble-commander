@@ -50,4 +50,6 @@ class VFSHost;
 // Toolbar support
 - (void)OnShowToolbar:(id)sender;
 
++ (MainWindowController*)lastFocused;
+
 @end

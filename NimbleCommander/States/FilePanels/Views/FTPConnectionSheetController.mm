@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -84,7 +85,7 @@
 
 - (void) ClearRecentServers
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    Alert *alert = [[Alert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user for confirmation for clearing recent connections");
     alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informing user that action can't be reverted");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];

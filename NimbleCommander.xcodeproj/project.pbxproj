@@ -82,6 +82,7 @@
 		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
+		CF2740841E57F5DD000D4365 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
 		CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */; };
 		CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
@@ -1326,6 +1327,8 @@
 		CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewItemCarrier.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.mm; sourceTree = SOURCE_ROOT; };
 		CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooter.h; path = NimbleCommander/States/FilePanels/PanelViewFooter.h; sourceTree = SOURCE_ROOT; };
 		CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooter.mm; path = NimbleCommander/States/FilePanels/PanelViewFooter.mm; sourceTree = SOURCE_ROOT; };
+		CF2740821E57F5DD000D4365 /* Alert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Alert.h; path = NimbleCommander/Core/Alert.h; sourceTree = SOURCE_ROOT; };
+		CF2740831E57F5DD000D4365 /* Alert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alert.mm; path = NimbleCommander/Core/Alert.mm; sourceTree = SOURCE_ROOT; };
 		CF27F9371E31B366009A3ACF /* PreferencesWindowThemesTabModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabModel.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabModel.h; sourceTree = SOURCE_ROOT; };
 		CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabModel.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabModel.mm; sourceTree = SOURCE_ROOT; };
 		CF282AC81E0A2D6300EC7F33 /* PanelBriefViewCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewCollectionView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.h; sourceTree = SOURCE_ROOT; };
@@ -2671,6 +2674,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF2740821E57F5DD000D4365 /* Alert.h */,
+				CF2740831E57F5DD000D4365 /* Alert.mm */,
 				CF5FE7FE1E149FF700CD83B4 /* Theming */,
 				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
 				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
@@ -4166,6 +4171,7 @@
 				CF56BF541D68061600A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CFDAC2CC1DFD0F840039A104 /* QLThumbnailsCache.mm in Sources */,
 				CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */,
+				CF2740841E57F5DD000D4365 /* Alert.mm in Sources */,
 				CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */,
 				CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */,

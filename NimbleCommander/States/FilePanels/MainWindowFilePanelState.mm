@@ -11,6 +11,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <VFS/Native.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Operations/OperationsSummaryViewController.h>
@@ -663,7 +664,7 @@ static bool GoToForcesPanelActivation()
         !self.isAnythingRunningInOverlappedTerminal )
         return true;
     
-    NSAlert *dialog = [[NSAlert alloc] init];
+    Alert *dialog = [[Alert alloc] init];
     [dialog addButtonWithTitle:NSLocalizedString(@"Stop and Close", "User action to stop running actions and close window")];
     [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     dialog.messageText = NSLocalizedString(@"The window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");

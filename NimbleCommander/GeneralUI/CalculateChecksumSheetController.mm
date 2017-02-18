@@ -9,6 +9,7 @@
 #include <Habanero/Hash.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "CalculateChecksumSheetController.h"
@@ -253,13 +254,13 @@ const static vector<pair<NSString*,int>> g_Algos = {
     m_Host->CreateFile( (path(m_Path) / g_SumsFilename).c_str(), file);
     int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP );
     if(rc < 0) {
-        [[NSAlert alertWithError:VFSError::ToNSError(rc)] runModal];
+        [[Alert alertWithError:VFSError::ToNSError(rc)] runModal];
         return;
     }
     
     rc = file->WriteFile(str.data(), str.size());
     if(rc < 0)
-        [[NSAlert alertWithError:VFSError::ToNSError(rc)] runModal];
+        [[Alert alertWithError:VFSError::ToNSError(rc)] runModal];
     
     self.didSaved = true;
 }

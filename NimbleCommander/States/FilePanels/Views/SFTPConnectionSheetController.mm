@@ -7,6 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "SFTPConnectionSheetController.h"
@@ -102,7 +103,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 - (void) ClearRecentServers
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    Alert *alert = [[Alert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
     alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];

@@ -30,6 +30,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -98,7 +99,7 @@ static optional<string> AskUserForLicenseFile()
 
 static bool AskUserToResetDefaults()
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    Alert *alert = [[Alert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
     alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
@@ -118,7 +119,7 @@ static bool AskUserToResetDefaults()
 
 static bool AskUserToProvideUsageStatistics()
 {
-    NSAlert *alert = [[NSAlert alloc] init];
+    Alert *alert = [[Alert alloc] init];
     alert.messageText = NSLocalizedString(@"Please help us to improve the product", "Asking user to provide anonymous usage information - message");
     alert.informativeText = NSLocalizedString(@"Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected.", "Asking user to provide anonymous usage information - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"Send", "")];
@@ -476,7 +477,7 @@ static AppDelegate *g_Me = nil;
         }
     
     if (has_running_ops) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        Alert *alert = [[Alert alloc] init];
         alert.messageText = NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?", "Asking user for quitting app with activity");
         [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit", "Asking user for quitting app with activity - confirmation")];
         [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
@@ -554,7 +555,7 @@ static AppDelegate *g_Me = nil;
 {
     const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
     if( valid_and_installed ) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        Alert *alert = [[Alert alloc] init];
         alert.icon = [NSImage imageNamed:@"checked_icon"];
         alert.messageText       = NSLocalizedString(@"__THANKS_FOR_REGISTER_MESSAGE", "Message to thank user for buying");
         alert.informativeText   = NSLocalizedString(@"__THANKS_FOR_REGISTER_INFORMATIVE", "Informative text to thank user for buying");
@@ -678,7 +679,7 @@ static AppDelegate *g_Me = nil;
     else {
         bool result = RoutedIO::Instance().TurnOn();
         if( !result ) {
-            NSAlert *alert = [[NSAlert alloc] init];
+            Alert *alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"Failed to access the privileged helper.", "Information that toggling admin mode on has failed");
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];

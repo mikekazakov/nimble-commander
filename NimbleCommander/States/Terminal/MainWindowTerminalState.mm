@@ -8,6 +8,7 @@
 
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -223,7 +224,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     if(children.empty())
         return true;
 
-    NSAlert *dialog = [[NSAlert alloc] init];
+    Alert *dialog = [[Alert alloc] init];
     dialog.messageText = NSLocalizedString(@"Do you want to close this window?", "Asking to close window with processes running");
     NSMutableString *cap = [NSMutableString new];
     [cap appendString:NSLocalizedString(@"Closing this window will terminate the running processes: ", "Informing when closing with running terminal processes")];

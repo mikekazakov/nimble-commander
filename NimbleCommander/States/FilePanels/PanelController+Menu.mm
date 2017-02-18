@@ -18,6 +18,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/XAttr.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/BatchRename/BatchRename.h>
 #include <NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h>
@@ -519,7 +520,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
         return true;
     } catch (VFSErrorException &e) {
         dispatch_to_main_queue([=]{
-            NSAlert *alert = [[NSAlert alloc] init];
+            Alert *alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
@@ -577,7 +578,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
         return true;
     } catch (const VFSErrorException &e) {
         dispatch_to_main_queue([=]{
-            NSAlert *alert = [[NSAlert alloc] init];
+            Alert *alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
@@ -672,7 +673,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
         if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) ) {
-            NSAlert *alert = [[NSAlert alloc] init];
+            Alert *alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"Are you sure you want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
             alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
             [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
@@ -1393,7 +1394,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
         int ret = VFSEasyCreateEmptyFile(path.c_str(), vfs);
         if( ret != 0)
             return dispatch_to_main_queue([=]{
-                NSAlert *alert = [[NSAlert alloc] init];
+                Alert *alert = [[Alert alloc] init];
                 alert.messageText = NSLocalizedString(@"Failed to create an empty file:", "Showing error when trying to create an empty file");
                 alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
                 [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
@@ -1457,7 +1458,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
         context->RequestedDirectory = "/";
         [self GoToDirWithContext:context];
     } catch (const VFSErrorException &e) {
-        NSAlert *alert = [[NSAlert alloc] init];
+        Alert *alert = [[Alert alloc] init];
         alert.messageText = NSLocalizedString(@"Failed to open extended attributes", "Alert message text when failed to open xattr vfs");
         alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
         [alert runModal];

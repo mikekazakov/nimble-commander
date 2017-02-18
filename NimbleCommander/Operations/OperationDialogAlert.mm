@@ -6,32 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <NimbleCommander/Core/Alert.h>
 #include "Operation.h"
 #include "OperationDialogAlert.h"
 
-@interface AlertPanelController : NSWindowController
-
-@end
-
-@implementation AlertPanelController
-
-- (void)moveRight:(id)sender
-{
-    [self.window selectNextKeyView:sender];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [self.window selectPreviousKeyView:sender];
-}
-
-@end
-
 @implementation OperationDialogAlert
 {
-    NSAlert            *m_Alert;
-    AlertPanelController *m_Controller;
+    Alert              *m_Alert;
     __weak Operation   *m_Operation;
     int                 m_Result;
 }
@@ -42,7 +23,7 @@
 {
     self = [super init];
     if (self) {
-        m_Alert = [[NSAlert alloc] init];
+        m_Alert = [[Alert alloc] init];
     }
     return self;
 }
@@ -81,12 +62,6 @@
 - (void)showDialogForWindow:(NSWindow *)_parent
 {
     dispatch_assert_main_queue();
-    
-    // m_Alert.window has no controller set, at least in 10.12.
-    // use this fact to hijack the panel's window and move focus with arrow buttons:
-    m_Controller = [[AlertPanelController alloc] initWithWindow:m_Alert.window];
-    
-    CocoaAppearanceManager::Instance().ManageWindowApperance( m_Alert.window );
     
     [m_Alert beginSheetModalForWindow:_parent completionHandler:^(NSModalResponse returnCode) {
         m_Result = (int)returnCode;

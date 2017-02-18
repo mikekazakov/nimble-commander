@@ -17,6 +17,7 @@
 #include "PanelAux.h"
 #include "SharingService.h"
 #include "Views/BriefSystemOverview.h"
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <Utility/ExtensionLowercaseComparison.h>
@@ -847,7 +848,7 @@ static bool RouteKeyboardInputIntoTerminal()
  
     // checking for invalid symbols
     if( !item.Host()->ValidateFilename(target_fn.c_str()) ) {
-        NSAlert *a = [[NSAlert alloc] init];
+        Alert *a = [[Alert alloc] init];
         a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
                          _filename.length <= 256 ? _filename : [[_filename substringToIndex:256] stringByAppendingString:@"..."]
                          ];

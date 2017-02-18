@@ -816,7 +816,7 @@
                                                      "focused": "#FFFFFF"
                                                      }
                                                      ],
-                      "filePanelsGeneralDropBorderColor": "@blueColor",
+                      "filePanelsGeneralDropBorderColor": "@grayColor",
                       "filePanelsGeneralOverlayColor": "@blackColor",
                       "filePanelsGeneralSplitterColor": "#282828",
                       "filePanelsGeneralTopSeparatorColor": "#6060606B",

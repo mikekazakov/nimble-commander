@@ -8,7 +8,8 @@
 
 @interface PanelListViewRowView()
 
-@property (nonatomic) bool isDropTarget;
+@property (nonatomic) bool dropTarget;
+@property (nonatomic) bool highlighted;
 
 @end
 
@@ -20,7 +21,8 @@
     NSColor*                        m_TextColor;
     int                             m_ItemIndex;
     bool                            m_PanelActive;
-    bool                            m_IsDropTarget;
+    bool                            m_DropTarget;
+    bool                            m_Highlighted;
 }
 @synthesize rowBackgroundColor = m_RowColor;
 @synthesize rowTextColor = m_TextColor;
@@ -31,14 +33,15 @@
 {
     self = [super initWithFrame:NSRect()];
     if( self ) {
+        m_PanelActive = false;
+        m_DropTarget = false;
+        m_Highlighted = false;
         m_Item = _item;
         m_ItemIndex = 0;
         m_RowColor = NSColor.whiteColor;
         m_TextColor = NSColor.blackColor;
         self.selected = false;
         [self updateColors];
-        m_PanelActive = false;
-        m_IsDropTarget = false;
 //        self.wantsLayer = true;
 //        self.canDrawSubviewsIntoLayer = true;
 //        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
@@ -89,6 +92,7 @@
         m_VD = vd;
         [self updateColors];
         [self.sizeView setSizeWithItem:m_Item andVD:m_VD];
+        self.highlighted = vd.is_highlighted();
     }
 }
 
@@ -154,13 +158,18 @@
     }
 }
 
+- (BOOL)wantsUpdateLayer
+{
+    return true; // just use background color
+}
+
 - (void)updateLayer
 {
     self.layer.backgroundColor = m_RowColor.CGColor;
 }
 
-- (BOOL)wantsUpdateLayer {
-    return true;  // Tells NSView to call `updateLayer` instead of `drawRect:`
+- (void) drawRect:(NSRect)dirtyRect
+{
 }
 
 - (void) addSubview:(NSView *)view
@@ -180,9 +189,6 @@
 {
     /* Fuck off you NSTableView, I'll not accept your fake selection view as my child! */
 }
-
-- (void) drawRect:(NSRect)dirtyRect
-{}
 
 //- (void)display {}
 //- (void)displayIfNeeded{}
@@ -354,13 +360,13 @@ static NSPoint  g_LastMouseDownPos = {};
     if( [self validateDropHitTest:sender] ) {
         const auto op = [self.listView.panelView panelItem:my_index operationForDragging:sender];
         if( op != NSDragOperationNone ) {
-            self.isDropTarget = true;
+            self.dropTarget = true;
             [self.superview draggingExited:sender];
             return op;
         }
     }
 
-    self.isDropTarget = false;
+    self.dropTarget = false;
     return [self.superview draggingEntered:sender];
 }
 
@@ -372,7 +378,7 @@ static NSPoint  g_LastMouseDownPos = {};
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
     if( self.isDropTarget ) {
-        self.isDropTarget = false;
+        self.dropTarget = false;
     }
     else {
         [self.superview draggingExited:sender];
@@ -391,8 +397,8 @@ static NSPoint  g_LastMouseDownPos = {};
     if( my_index < 0 )
         return false;
     
-    if( self.isDropTarget ) {
-        self.isDropTarget = false;        
+    if( self.dropTarget ) {
+        self.dropTarget = false;
         return [self.listView.panelView panelItem:my_index performDragOperation:sender];
     }
     else
@@ -401,20 +407,38 @@ static NSPoint  g_LastMouseDownPos = {};
 
 - (bool) isDropTarget
 {
-    return m_IsDropTarget;
+    return m_DropTarget;
 }
 
-- (void) setIsDropTarget:(bool)isDropTarget
+- (void) setDropTarget:(bool)isDropTarget
 {
-    if( m_IsDropTarget != isDropTarget ) {
-        m_IsDropTarget = isDropTarget;
-        if( m_IsDropTarget ) {
-            self.layer.borderWidth = 1;
-            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
-        }
-        else
-            self.layer.borderWidth = 0;
+    if( m_DropTarget != isDropTarget ) {
+        m_DropTarget = isDropTarget;
+        [self updateBorder];
     }
+}
+
+- (bool) isHighlighted
+{
+    return m_Highlighted;
+}
+
+- (void) setHighlighted:(bool)highlighted
+{
+    if( m_Highlighted != highlighted ) {
+        m_Highlighted = highlighted;
+        [self updateBorder];
+    }
+}
+
+- (void) updateBorder
+{
+    if( m_DropTarget || m_Highlighted ) {
+        self.layer.borderWidth = 1;
+        self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+    }
+    else
+        self.layer.borderWidth = 0;
 }
 
 @end

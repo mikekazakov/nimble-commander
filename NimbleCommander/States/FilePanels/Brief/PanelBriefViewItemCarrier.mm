@@ -156,15 +156,6 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
                          respectFlipped:false
                                   hints:nil];
     
-    
-    if( m_Highlighted ) {
-        // TODO: need to implement something like in Finder - draw rect with a color regaring current background color
-        NSRect rc = self.bounds;
-        [NSGraphicsContext saveGraphicsState];
-        NSSetFocusRingStyle(NSFocusRingOnly);
-        [[NSBezierPath bezierPathWithRect:NSInsetRect(rc,2,2)] fill];
-        [NSGraphicsContext restoreGraphicsState];
-    }
 }
 
 - (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
@@ -363,7 +354,7 @@ static NSPoint  g_LastMouseDownPos = {};
 {
     if( m_Highlighted != highlighted ) {
         m_Highlighted = highlighted;
-        [self setNeedsDisplay:true];
+        [self updateBorder];
     }
 }
 
@@ -443,13 +434,18 @@ static NSPoint  g_LastMouseDownPos = {};
 {
     if( m_IsDropTarget != isDropTarget ) {
         m_IsDropTarget = isDropTarget;
-        if( m_IsDropTarget ) {
-            self.layer.borderWidth = 1;
-            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
-        }
-        else
-            self.layer.borderWidth = 0;
+        [self updateBorder];
     }
+}
+
+- (void) updateBorder
+{
+    if( m_IsDropTarget || m_Highlighted ) {
+        self.layer.borderWidth = 1;
+        self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+    }
+    else
+        self.layer.borderWidth = 0;
 }
 
 - (void) setLayoutConstants:(PanelBriefViewItemLayoutConstants)layoutConstants

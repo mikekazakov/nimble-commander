@@ -237,20 +237,14 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (void) selectPreviousFilePanelTab
 {
-    FilePanelsTabbedHolder *th = self.activeFilePanelsTabbedHolder;
-    if(!th)
-        return;
-    
-    [th selectPreviousFilePanelTab];
+    if( auto th = self.activeFilePanelsTabbedHolder )
+        [th selectPreviousFilePanelTab];
 }
 
 - (void) selectNextFilePanelTab
 {
-    FilePanelsTabbedHolder *th = self.activeFilePanelsTabbedHolder;
-    if(!th)
-        return;
-
-    [th selectNextFilePanelTab];
+    if( auto th = self.activeFilePanelsTabbedHolder )
+        [th selectNextFilePanelTab];
 }
 
 - (void) updateTabBarsVisibility

@@ -26,6 +26,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h>
+#include "Actions/TabSelection.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -84,8 +85,10 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         item.hidden = self.currentSideTabsCount < 2;
         return true;
     }
-    IF_MENU_TAG("menu.window.show_previous_tab")    return self.currentSideTabsCount > 1;
-    IF_MENU_TAG("menu.window.show_next_tab")        return self.currentSideTabsCount > 1;
+    IF_MENU_TAG("menu.window.show_previous_tab")
+        return panels::actions::ShowPreviousTab::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.window.show_next_tab")
+        return panels::actions::ShowNextTab::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.view.show_tabs") {
         item.title = GlobalConfig().GetBool(g_ConfigGeneralShowTabs) ?
             NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
@@ -488,12 +491,12 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (IBAction)OnWindowShowPreviousTab:(id)sender
 {
-    [self selectPreviousFilePanelTab];
+    panels::actions::ShowPreviousTab::Perform(self, sender);
 }
 
 - (IBAction)OnWindowShowNextTab:(id)sender
 {
-    [self selectNextFilePanelTab];
+    panels::actions::ShowNextTab::Perform(self, sender);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
@@ -511,14 +514,12 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
     if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
-        static const int next_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_next_tab");
-        if([NSApplication.sharedApplication.menu itemWithTagHierarchical:next_tab].enabled)
+        if( panels::actions::ShowNextTab::Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }
     if( unicode == NSTabCharacter && mod == (NSControlKeyMask|NSShiftKeyMask) ) {
-        static const int prev_tab = ActionsShortcutsManager::Instance().TagFromAction("menu.window.show_previous_tab");
-        if([NSApplication.sharedApplication.menu itemWithTagHierarchical:prev_tab].enabled)
+        if( panels::actions::ShowPreviousTab::Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }

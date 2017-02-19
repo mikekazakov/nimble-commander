@@ -1,5 +1,4 @@
-
-#import "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState.h"
 
 @interface MainWindowFilePanelState (TabsSupport)
 

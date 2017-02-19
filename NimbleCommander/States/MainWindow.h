@@ -12,5 +12,6 @@
 
 - (instancetype) init;
 + (NSString*) defaultIdentifier;
++ (NSString*) defaultFrameIdentifier;
 
 @end

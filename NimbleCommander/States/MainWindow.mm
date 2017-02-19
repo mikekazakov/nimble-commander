@@ -12,7 +12,8 @@
 #include "MainWindow.h"
 #include "MainWindowController.h"
 
-static const auto g_Identifier = NSStringFromClass(MainWindow.class);
+static const auto g_Identifier = @"MainWindow";
+static const auto g_FrameIdentifier = @"MainWindow";
 static const auto g_MinWindowSize = NSMakeSize(640, 480);
 static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
@@ -21,6 +22,11 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 + (NSString*) defaultIdentifier
 {
     return g_Identifier;
+}
+
++ (NSString*) defaultFrameIdentifier
+{
+    return g_FrameIdentifier;
 }
 
 - (instancetype) init
@@ -53,7 +59,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         }
         else {
             // if there's no alive window - grab previous value from user defaults
-            if( ![self setFrameUsingName:g_Identifier] ) {
+            if( ![self setFrameUsingName:g_FrameIdentifier] ) {
                 // if we somehow don't have it - simply center window
                 [self center];
             }
@@ -74,9 +80,16 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
-    [self saveFrameUsingName:g_Identifier];
+    // NB! do NOT place anything much useful here.
+    // It might not get called upoon Cmd+Q.
+}
+
+- (void)close
+{
+    [self saveFrameUsingName:g_FrameIdentifier];
+    [super close];
 }
 
 + (BOOL) allowsAutomaticWindowTabbing

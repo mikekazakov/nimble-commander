@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="FindFilesSheetController">
@@ -165,7 +167,7 @@ DQ
                                     <connections>
                                         <action trigger="doubleAction" selector="doubleClick:" target="-2" id="1IO-R8-OSc"/>
                                         <outlet property="delegate" destination="-2" id="bf8-GP-aZf"/>
-                                        <outlet property="nextKeyView" destination="XFM-mL-fme" id="exF-7U-2Fm"/>
+                                        <outlet property="nextKeyView" destination="g6m-zK-tE9" id="4Lv-Ne-sHI"/>
                                     </connections>
                                 </tableView>
                             </subviews>
@@ -236,7 +238,7 @@ DQ
                                     <string key="NSValueTransformerName">NSIsNotNil</string>
                                 </dictionary>
                             </binding>
-                            <outlet property="nextKeyView" destination="g6m-zK-tE9" id="Yah-IF-G8T"/>
+                            <outlet property="nextKeyView" destination="NVP-CR-YO4" id="g5I-2t-rGY"/>
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
@@ -287,7 +289,7 @@ DQ
                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
                             </binding>
-                            <outlet property="nextKeyView" destination="40b-pd-d3f" id="pJN-eA-Vk9"/>
+                            <outlet property="nextKeyView" destination="XFM-mL-fme" id="bNf-7Z-deN"/>
                         </connections>
                     </button>
                     <box autoresizesSubviews="NO" borderType="none" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">

@@ -729,4 +729,19 @@ private:
     self.GoToButton.keyEquivalent = @"";
 }
 
+- (BOOL)tableView:(NSTableView *)tableView
+shouldTypeSelectForEvent:(NSEvent *)event
+withCurrentSearchString:(NSString *)searchString
+{
+    if( event.charactersIgnoringModifiers.length == 1 &&
+        [event.charactersIgnoringModifiers characterAtIndex:0] == 0x20 ) {
+        // treat Spacebar as View button
+        dispatch_to_main_queue([=]{
+            [self OnFileView:self];
+        });
+        return false;
+    }
+    return true;
+}
+
 @end

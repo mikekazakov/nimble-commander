@@ -116,7 +116,7 @@
                     </scroller>
                 </scrollView>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9jG-uy-qcQ">
-                    <rect key="frame" x="68" y="356" width="205" height="26"/>
+                    <rect key="frame" x="72" y="356" width="205" height="26"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="200" id="AO2-w6-jPv"/>
                     </constraints>
@@ -136,15 +136,15 @@
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UWu-1O-w6e">
-                    <rect key="frame" x="18" y="362" width="46" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Theme" id="dpl-Vw-2I6">
+                    <rect key="frame" x="18" y="362" width="50" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Theme:" id="dpl-Vw-2I6">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SYN-29-2Ch">
-                    <rect key="frame" x="278" y="359" width="51" height="19"/>
+                    <rect key="frame" x="282" y="359" width="51" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Wbj-4x-93D"/>
                     </constraints>
@@ -158,7 +158,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fk3-8g-Eaq">
-                    <rect key="frame" x="331" y="359" width="68" height="19"/>
+                    <rect key="frame" x="335" y="359" width="68" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="kgR-bC-UPp"/>
                     </constraints>
@@ -171,7 +171,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Vs-Mk-Rzo">
-                    <rect key="frame" x="401" y="359" width="59" height="19"/>
+                    <rect key="frame" x="405" y="359" width="59" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Hgh-eP-zrK"/>
                     </constraints>
@@ -185,7 +185,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cVc-ui-vZg">
-                    <rect key="frame" x="462" y="359" width="52" height="19"/>
+                    <rect key="frame" x="466" y="359" width="52" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="kXM-5P-Mhm"/>
                     </constraints>
@@ -198,7 +198,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h63-Ng-Yy2">
-                    <rect key="frame" x="516" y="359" width="52" height="19"/>
+                    <rect key="frame" x="520" y="359" width="52" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="08K-SG-44X"/>
                     </constraints>

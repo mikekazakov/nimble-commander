@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,7 +19,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="y11-Bl-tZz">
-                    <rect key="frame" x="18" y="234" width="49" height="17"/>
+                    <rect key="frame" x="191" y="234" width="49" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cursor:" id="nU3-et-JNg">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -26,7 +27,7 @@
                     </textFieldCell>
                 </textField>
                 <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="stk-zw-sC0">
-                    <rect key="frame" x="73" y="193" width="255" height="58"/>
+                    <rect key="frame" x="246" y="193" width="255" height="58"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     <size key="cellSize" width="255" height="18"/>
                     <size key="intercellSpacing" width="4" height="2"/>
@@ -55,7 +56,7 @@
                     </connections>
                 </matrix>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aka-YG-TVI">
-                    <rect key="frame" x="18" y="168" width="105" height="17"/>
+                    <rect key="frame" x="135" y="160" width="105" height="17"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Open shell with: " id="nWF-WN-ul0">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -63,7 +64,7 @@
                     </textFieldCell>
                 </textField>
                 <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BYU-QH-WHm">
-                    <rect key="frame" x="129" y="147" width="294" height="38"/>
+                    <rect key="frame" x="246" y="139" width="294" height="38"/>
                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     <size key="cellSize" width="294" height="18"/>
                     <size key="intercellSpacing" width="4" height="2"/>
@@ -92,7 +93,7 @@
                     </connections>
                 </matrix>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oJr-Cv-UJI">
-                    <rect key="frame" x="153" y="117" width="300" height="22"/>
+                    <rect key="frame" x="270" y="113" width="300" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="300" id="18A-yW-Vlw"/>
                     </constraints>
@@ -111,7 +112,7 @@
                     </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Ie-L3-z7Z">
-                    <rect key="frame" x="151" y="95" width="207" height="14"/>
+                    <rect key="frame" x="268" y="95" width="207" height="14"/>
                     <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Supported shells: bash, zsh and [t]csh" id="9D7-aw-d5c">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -119,7 +120,7 @@
                     </textFieldCell>
                 </textField>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="uAW-va-aIo">
-                    <rect key="frame" x="18" y="71" width="107" height="18"/>
+                    <rect key="frame" x="244" y="63" width="107" height="18"/>
                     <buttonCell key="cell" type="check" title="Hide scrollbar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zcL-oM-aS5">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -130,18 +131,18 @@
                 </button>
             </subviews>
             <constraints>
-                <constraint firstItem="y11-Bl-tZz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="83s-J6-5FL"/>
-                <constraint firstItem="oJr-Cv-UJI" firstAttribute="top" secondItem="BYU-QH-WHm" secondAttribute="bottom" constant="8" symbolic="YES" id="84C-UI-dIX"/>
+                <constraint firstItem="oJr-Cv-UJI" firstAttribute="top" secondItem="BYU-QH-WHm" secondAttribute="bottom" constant="4" id="84C-UI-dIX"/>
                 <constraint firstItem="BYU-QH-WHm" firstAttribute="leading" secondItem="aka-YG-TVI" secondAttribute="trailing" constant="8" symbolic="YES" id="8La-hI-gez"/>
+                <constraint firstItem="BYU-QH-WHm" firstAttribute="top" secondItem="stk-zw-sC0" secondAttribute="bottom" constant="16" id="CiG-gr-nbl"/>
                 <constraint firstItem="4Ie-L3-z7Z" firstAttribute="leading" secondItem="oJr-Cv-UJI" secondAttribute="leading" id="GXy-c4-drO"/>
-                <constraint firstItem="4Ie-L3-z7Z" firstAttribute="top" secondItem="oJr-Cv-UJI" secondAttribute="bottom" constant="8" symbolic="YES" id="HWW-10-iuX"/>
+                <constraint firstItem="4Ie-L3-z7Z" firstAttribute="top" secondItem="oJr-Cv-UJI" secondAttribute="bottom" constant="4" id="HWW-10-iuX"/>
                 <constraint firstItem="stk-zw-sC0" firstAttribute="leading" secondItem="y11-Bl-tZz" secondAttribute="trailing" constant="8" symbolic="YES" id="IQb-uK-d3q"/>
-                <constraint firstItem="aka-YG-TVI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="Kyc-m5-7Ju"/>
                 <constraint firstItem="oJr-Cv-UJI" firstAttribute="leading" secondItem="BYU-QH-WHm" secondAttribute="leading" constant="24" id="PPe-Dv-s7c"/>
-                <constraint firstItem="uAW-va-aIo" firstAttribute="leading" secondItem="y11-Bl-tZz" secondAttribute="leading" id="bao-Cp-wWH"/>
-                <constraint firstItem="uAW-va-aIo" firstAttribute="top" secondItem="4Ie-L3-z7Z" secondAttribute="bottom" constant="8" symbolic="YES" id="e1n-cD-m1c"/>
+                <constraint firstItem="uAW-va-aIo" firstAttribute="top" secondItem="4Ie-L3-z7Z" secondAttribute="bottom" constant="16" id="e1n-cD-m1c"/>
+                <constraint firstItem="stk-zw-sC0" firstAttribute="leading" secondItem="BYU-QH-WHm" secondAttribute="leading" id="kgd-DC-cZ1"/>
+                <constraint firstItem="stk-zw-sC0" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="centerX" multiplier="0.77" id="oF3-yB-Pca"/>
+                <constraint firstItem="uAW-va-aIo" firstAttribute="leading" secondItem="BYU-QH-WHm" secondAttribute="leading" id="q6e-Kc-TTg"/>
                 <constraint firstItem="BYU-QH-WHm" firstAttribute="top" secondItem="aka-YG-TVI" secondAttribute="top" id="wQn-aq-uC0"/>
-                <constraint firstItem="aka-YG-TVI" firstAttribute="top" secondItem="stk-zw-sC0" secondAttribute="bottom" constant="8" symbolic="YES" id="xIs-RY-Fgb"/>
                 <constraint firstItem="y11-Bl-tZz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="xQL-i5-xCC"/>
                 <constraint firstItem="stk-zw-sC0" firstAttribute="top" secondItem="y11-Bl-tZz" secondAttribute="top" id="y8q-qc-w7j"/>
             </constraints>

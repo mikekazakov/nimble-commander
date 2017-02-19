@@ -18,10 +18,24 @@
 @property (nonatomic) NSMutableArray *ExtEditors;
 @property (strong) IBOutlet NSArrayController *ExtEditorsController;
 @property (strong) IBOutlet NSTableView *TableView;
+@property (strong) IBOutlet NSSegmentedControl *addRemove;
 
 - (IBAction)OnNewEditor:(id)sender;
 
 @end
+
+static bool AskUserToDeleteEditor()
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this editor?", "Asking the user for confirmation on deleting the external editor - message");
+    alert.informativeText = NSLocalizedString(@"This operation is not reversible.", "Asking the user for confirmation on deleting the external editor - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+    if( [alert runModal] == NSAlertFirstButtonReturn )
+        return true;
+    return false;
+}
 
 @implementation PreferencesWindowExternalEditorsTab
 {
@@ -153,6 +167,19 @@
     [self.ExtEditorsController removeObject:item];
     [self.ExtEditorsController insertObject:item atArrangedObjectIndex:drag_to];
     return true;
+}
+
+- (IBAction)onPlusMinus:(id)sender
+{
+  const auto segment = self.addRemove.selectedSegment;
+    if( segment == 0 ) {
+        [self OnNewEditor:sender];
+    }
+    else if( segment == 1 ) {
+        if( self.ExtEditorsController.canRemove )
+            if( AskUserToDeleteEditor() )
+                [self.ExtEditorsController remove:sender];
+    }
 }
 
 @end

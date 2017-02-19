@@ -73,6 +73,7 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
 
 @interface PreferencesWindowPanelsTab()
 
+@property (strong) IBOutlet NSTabView *tabParts;
 @property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
 @property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
@@ -547,6 +548,12 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     }();
 
     return l;
+}
+
+- (IBAction)onHeaderClicked:(id)sender
+{
+    NSInteger index = [sender selectedSegment];
+    [self.tabParts selectTabViewItemAtIndex:index];
 }
 
 @end

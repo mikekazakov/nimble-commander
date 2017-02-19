@@ -4,14 +4,7 @@
      */
     "general": {
         /**
-         * Application appearance mode, integer enumeration:
-         * 0 - classic
-         * 1 - modern
-         */
-        "skin": 1,
-        
-        /**
-        * Selected theme name. Default includes three: "Modern", "Classic", "Dark".
+        * Selected theme name. Defaults includes three: "Modern", "Classic", "Dark".
         */
         "theme": "Modern",
         
@@ -230,111 +223,8 @@
         },
         
         /**
-         * Settings related to modern presentation mode
+         * Panel layout settings. By default layout N2 is used.
          */
-        "modern": {
-            /**
-             * Icons mode, integer enumeration:
-             * 0 - Generic file/directory icons only
-             * 1 - Icons based on file types
-             * 2 - Thumbnails based on file content
-             */
-            "iconsMode": 2,
-            
-            "fontSize": 13,
-
-            "regularBackground": "#FDFFFF",
-            
-            "alternativeBackground": "#F2F2F2",
-            
-            "columnDivider": "#E0E0E0",
-            
-            "activeCursor": "#0C50D0",
-            
-            "inactiveCursor": "#D4D4D4",
-            
-            "coloringRules_v1": [
-                                 {
-                                 "name": "selected",
-                                    "regular": "#FF0000",
-                                    "focused": "#FF0000",
-                                    "filter": {
-                                        "selected": true
-                                    }
-                                 },
-                                 {
-                                    "name": "hidden",
-                                    "regular": "#666666",
-                                    "focused": "#999999",
-                                    "filter": {
-                                        "hidden": true
-                                    }
-                                 },
-                                 {
-                                    "name": "other",
-                                    "regular": "#000000",
-                                    "focused": "#FFFFFF"
-                                 }
-            ]
-        },
-        
-        /**
-         * Settings related to classic presentation mode
-         */
-        "classic": {
-            
-            "font": "Menlo-Regular, 13",
-            
-            "regularBackground": "#000080",
-            
-            "cursorBackground": "#008080",
-            
-            "textColor": "#00FFFF",
-            
-            "activeTextColor": "#000000",
-            
-            "highlightTextColor": "#FFFF00",
-            
-            "coloringRules_v1": [
-                                 {
-                                    "name": "selected",
-                                    "regular": "#FFFF00",
-                                    "focused": "#FFFF00",
-                                    "filter": {
-                                        "selected": true
-                                    }
-                                 },
-                                 {
-                                    "name": "hidden",
-                                    "regular": "#008080",
-                                    "focused": "#808080",
-                                    "filter": {
-                                        "hidden": true
-                                    }
-                                 },
-                                 {
-                                    "name": "regular files",
-                                    "regular": "#00FFFF",
-                                    "focused": "#000000",
-                                    "filter": {
-                                        "reg": true
-                                    }
-                                 },
-                                 {
-                                    "name": "directories",
-                                    "regular": "#FFFFFF",
-                                    "focused": "#FFFFFF",
-                                    "filter": {
-                                        "directory": true
-                                    }
-                                 },
-                                 {
-                                    "name": "other",
-                                    "regular": "#FF0000",
-                                    "focused": "#FF0000"
-                                 }
-            ]
-        },
         "layout": {
             "layouts_v1": [
                             {

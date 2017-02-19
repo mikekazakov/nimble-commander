@@ -49,7 +49,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                                        <rect key="frame" x="18" y="187" width="558" height="18"/>
+                                        <rect key="frame" x="227" y="141" width="278" height="18"/>
                                         <buttonCell key="cell" type="check" title="Ignore directories when selecting by mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -59,8 +59,8 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="gE9-bs-3HL">
-                                        <rect key="frame" x="18" y="302" width="558" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Restore last window state" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="BgA-eM-bfl">
+                                        <rect key="frame" x="227" y="302" width="128" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Restore last state" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="BgA-eM-bfl">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -69,15 +69,18 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ctP-zl-GEx">
-                                        <rect key="frame" x="18" y="279" width="151" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default left panel path:" id="GnB-SA-FAJ">
+                                        <rect key="frame" x="101" y="279" width="122" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default paths (L/R):" id="GnB-SA-FAJ">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Dv-Ox-hiC">
-                                        <rect key="frame" x="175" y="276" width="399" height="22"/>
+                                        <rect key="frame" x="229" y="276" width="300" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="300" id="HIf-S8-hFF"/>
+                                        </constraints>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" usesSingleLineMode="YES" id="ZSl-uv-pH6">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -87,16 +90,8 @@
                                             <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.initialLeftPanelPath" id="TOz-47-3Ly"/>
                                         </connections>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="n76-Id-JEc">
-                                        <rect key="frame" x="18" y="254" width="151" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Default right panel path:" id="pes-Xh-MY9">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
-                                        <rect key="frame" x="18" y="227" width="558" height="18"/>
+                                        <rect key="frame" x="227" y="181" width="268" height="18"/>
                                         <buttonCell key="cell" type="check" title="Allow dragging and dropping into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -106,7 +101,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
-                                        <rect key="frame" x="18" y="207" width="558" height="18"/>
+                                        <rect key="frame" x="227" y="161" width="330" height="18"/>
                                         <buttonCell key="cell" type="check" title="Redirect keyboard input to the overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -115,8 +110,27 @@
                                             <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.routeKeyboardInputIntoTerminal" id="XoV-z4-d8q"/>
                                         </connections>
                                     </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VQQ-O6-dIM">
+                                        <rect key="frame" x="106" y="216" width="117" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify copied files:" id="4hI-Sa-VZT">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZdQ-lR-XN2">
+                                        <rect key="frame" x="133" y="303" width="90" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Initial window:" id="y6z-lW-ct9">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="naE-Zr-UF7">
-                                        <rect key="frame" x="175" y="251" width="399" height="22"/>
+                                        <rect key="frame" x="229" y="250" width="300" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="300" id="9qV-0W-hJD"/>
+                                        </constraints>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" usesSingleLineMode="YES" id="0bc-Sn-VFs">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -126,16 +140,8 @@
                                             <binding destination="-3" name="value" keyPath="self.delegate.config.filePanel.general.initialRightPanelPath" id="mCR-vE-mut"/>
                                         </connections>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VQQ-O6-dIM">
-                                        <rect key="frame" x="18" y="164" width="117" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify copied files:" id="4hI-Sa-VZT">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ebH-ed-TXz">
-                                        <rect key="frame" x="139" y="158" width="120" height="26"/>
+                                        <rect key="frame" x="227" y="210" width="120" height="26"/>
                                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="dCU-3l-7rD">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
@@ -153,34 +159,27 @@
                                     </popUpButton>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="7Ib-pe-BF6"/>
-                                    <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="8LY-ag-Nws"/>
-                                    <constraint firstItem="760" firstAttribute="top" secondItem="dyN-tf-vzT" secondAttribute="bottom" constant="6" symbolic="YES" id="98H-cQ-6Hh"/>
-                                    <constraint firstItem="ctP-zl-GEx" firstAttribute="top" secondItem="gE9-bs-3HL" secondAttribute="bottom" constant="8" symbolic="YES" id="A4e-eO-DlK"/>
+                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="baseline" secondItem="ctP-zl-GEx" secondAttribute="baseline" id="9TB-RV-GpO"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="baseline" secondItem="VQQ-O6-dIM" secondAttribute="baseline" id="B5J-g7-icW"/>
-                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="naE-Zr-UF7" secondAttribute="bottom" constant="8" symbolic="YES" id="BOX-bB-Vh3"/>
-                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="baseline" secondItem="ctP-zl-GEx" secondAttribute="baseline" id="EDg-mX-pHW"/>
-                                    <constraint firstItem="ctP-zl-GEx" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="Els-Tx-IKw"/>
-                                    <constraint firstItem="760" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="F7W-yl-XI5"/>
-                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="ctP-zl-GEx" secondAttribute="trailing" constant="8" symbolic="YES" id="HPU-ti-ewb"/>
-                                    <constraint firstItem="VQQ-O6-dIM" firstAttribute="top" secondItem="760" secondAttribute="bottom" constant="8" symbolic="YES" id="KcI-BC-SVn"/>
-                                    <constraint firstAttribute="trailing" secondItem="naE-Zr-UF7" secondAttribute="trailing" constant="20" symbolic="YES" id="M4L-p6-aia"/>
-                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="baseline" secondItem="n76-Id-JEc" secondAttribute="baseline" id="Mtg-II-of8"/>
-                                    <constraint firstItem="n76-Id-JEc" firstAttribute="top" secondItem="ctP-zl-GEx" secondAttribute="bottom" constant="8" symbolic="YES" id="PGA-8I-hcL"/>
-                                    <constraint firstItem="VQQ-O6-dIM" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="PQR-N6-3Ay"/>
-                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="8Dv-Ox-hiC" secondAttribute="leading" id="Qrv-tN-CRR"/>
-                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="baseline" secondItem="VQQ-O6-dIM" secondAttribute="baseline" id="TJ8-Ge-9p0"/>
-                                    <constraint firstAttribute="trailing" secondItem="bG0-HE-nN2" secondAttribute="trailing" constant="20" symbolic="YES" id="ZIo-QV-qAN"/>
-                                    <constraint firstAttribute="trailing" secondItem="gE9-bs-3HL" secondAttribute="trailing" constant="20" symbolic="YES" id="Zdd-WO-wwS"/>
+                                    <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="ZdQ-lR-XN2" secondAttribute="trailing" constant="8" symbolic="YES" id="BBI-kV-sgn"/>
+                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="leading" secondItem="bG0-HE-nN2" secondAttribute="leading" id="DU7-SE-zDX"/>
+                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="top" secondItem="8Dv-Ox-hiC" secondAttribute="bottom" constant="4" id="FTL-2k-eoc"/>
+                                    <constraint firstItem="gE9-bs-3HL" firstAttribute="baseline" secondItem="ZdQ-lR-XN2" secondAttribute="baseline" id="NC4-Mv-1lJ"/>
+                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="top" secondItem="naE-Zr-UF7" secondAttribute="bottom" constant="16" id="RXx-hA-OtO"/>
+                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" id="Rjs-NU-zQ4"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gE9-bs-3HL" secondAttribute="trailing" constant="20" symbolic="YES" id="Zdd-WO-wwS"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="leading" secondItem="VQQ-O6-dIM" secondAttribute="trailing" constant="8" symbolic="YES" id="dfW-nT-wta"/>
-                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="n76-Id-JEc" secondAttribute="trailing" constant="8" symbolic="YES" id="gVB-Uo-cYg"/>
-                                    <constraint firstAttribute="trailing" secondItem="8Dv-Ox-hiC" secondAttribute="trailing" constant="20" symbolic="YES" id="gnA-53-oz5"/>
-                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="hh4-sh-ra5"/>
-                                    <constraint firstAttribute="trailing" secondItem="760" secondAttribute="trailing" constant="20" symbolic="YES" id="nms-3v-ixM"/>
+                                    <constraint firstItem="ebH-ed-TXz" firstAttribute="leading" secondItem="naE-Zr-UF7" secondAttribute="leading" id="dlN-gC-bDN"/>
+                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="bG0-HE-nN2" secondAttribute="leading" id="gF5-M3-lF5"/>
+                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="gE9-bs-3HL" secondAttribute="leading" id="gj7-D8-2UO"/>
+                                    <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="8Dv-Ox-hiC" secondAttribute="leading" id="hOZ-HX-7It"/>
+                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="ebH-ed-TXz" secondAttribute="bottom" constant="16" id="hba-3u-dd4"/>
+                                    <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="22" secondAttribute="centerX" multiplier="0.77" id="kP2-l4-Ypb"/>
+                                    <constraint firstItem="760" firstAttribute="top" secondItem="dyN-tf-vzT" secondAttribute="bottom" constant="6" id="nGE-U8-qOA"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="top" secondItem="22" secondAttribute="top" constant="20" symbolic="YES" id="ovB-Ji-fVk"/>
-                                    <constraint firstItem="n76-Id-JEc" firstAttribute="leading" secondItem="22" secondAttribute="leading" constant="20" symbolic="YES" id="qwL-0l-ASE"/>
-                                    <constraint firstItem="dyN-tf-vzT" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" symbolic="YES" id="w7b-S7-KW3"/>
-                                    <constraint firstAttribute="trailing" secondItem="dyN-tf-vzT" secondAttribute="trailing" constant="20" symbolic="YES" id="zgt-yM-3Cq"/>
+                                    <constraint firstItem="760" firstAttribute="leading" secondItem="dyN-tf-vzT" secondAttribute="leading" id="r16-lX-uQn"/>
+                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="top" secondItem="gE9-bs-3HL" secondAttribute="bottom" constant="6" id="wra-QR-7tm"/>
+                                    <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="ctP-zl-GEx" secondAttribute="trailing" constant="8" symbolic="YES" id="x6T-Ps-Qg8"/>
                                 </constraints>
                             </view>
                         </tabViewItem>

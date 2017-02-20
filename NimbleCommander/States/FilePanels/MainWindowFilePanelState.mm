@@ -519,6 +519,7 @@ static bool GoToForcesPanelActivation()
     [self updateTabBarButtons];
     m_LastFocusedPanelController = controller;
     [self synchronizeOverlappedTerminalWithPanel:controller];
+    [self markRestorableStateAsInvalid];
 }
 
 - (void) UpdateTitle
@@ -655,10 +656,21 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
             if( auto sel_right = GetOptionalIntFromObject(json_ui, g_ResorationUISelectedRightTab) )
                 [self.rightTabbedHolder selectTabAtIndex:*sel_right];
             if( auto side = GetOptionalStringFromObject(json_ui, g_ResorationUIFocusedSide) ) {
-                if( *side == "right"s  )
-                    m_LastResponder = self.rightPanelController.view;
-                if( *side == "left"s )
-                    m_LastResponder = self.leftPanelController.view;
+                const auto focus = [&]()->PanelController*{
+                    if( *side == "right"s  )
+                        return self.rightPanelController;
+                    else if( *side == "left"s )
+                        return self.leftPanelController;
+                    return nil;
+                }();
+                if( focus ) {
+                    // if we're already assigned to window - set first responder
+                    if( self.window )
+                        [self ActivatePanelByController:focus];
+                    // if not - memorize it, will set on Assigned
+                    else
+                        m_LastResponder = focus.view;
+                }
             }
         }
     }

@@ -35,8 +35,8 @@
 {
     [super loadView];
     if( !ActivationManager::Instance().Sandboxed() ) {
-        self.FSAccessResetButton.hidden = true;
-        self.FSAccessLabel.hidden = true;
+        self.FSAccessResetButton.enabled = false;
+//        self.FSAccessLabel.enabled = true;
     }
     [self.view layoutSubtreeIfNeeded];    
 }

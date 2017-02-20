@@ -72,6 +72,15 @@ vector<string> sub_masks( const string &_source )
     return masks;
 }
 
+static bool MaskStringNeedsNormalization(string_view _string)
+{
+    for( unsigned char c: _string )
+        if( c > 127 || ( c >= 0x41 && c <= 0x5A ) ) // >= 'A' && <= 'Z'
+            return true;
+    
+    return false;
+}
+
 static string ProduceFormCLowercase(string_view _string)
 {
     CFStackAllocator allocator;
@@ -152,7 +161,10 @@ FileMask::FileMask(const string &_mask):
             }
             else {
                 try {
-                    m_Masks.emplace_back( regex(s), nullopt );
+                    m_Masks.emplace_back(
+                        regex( MaskStringNeedsNormalization(s) ? ProduceFormCLowercase(s) : s ),
+                        nullopt
+                        );
                 }
                 catch(...) {
                 }

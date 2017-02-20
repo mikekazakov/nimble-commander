@@ -117,4 +117,15 @@
     XCTAssert( FileMask::ToFilenameWildCard("jpg,png") == "*jpg*, *png*" );
 }
 
+- (void)testCases {
+    FileMask m1("a");
+    XCTAssert( m1.MatchName("a") == true );
+    XCTAssert( m1.MatchName("A") == true );
+
+    FileMask m2("A");
+    XCTAssert( m2.MatchName("a") == true );
+    XCTAssert( m2.MatchName("A") == true );
+
+}
+
 @end

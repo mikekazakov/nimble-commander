@@ -332,6 +332,12 @@
 		CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
 		CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
+		CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
+		CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
+		CF7C7CB31E5ACDBE002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
+		CF7C7CB41E5ACDD4002DB0E2 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
+		CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
+		CF7C7CB61E5ACDD5002DB0E2 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
 		CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
 		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
@@ -3760,6 +3766,7 @@
 				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */,
 				CFD727361E42E35500603077 /* TermView.mm in Sources */,
+				CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */,
 				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF876D3F1D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
@@ -3775,6 +3782,7 @@
 				CFD7260E1E42E07900603077 /* main.cpp in Sources */,
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFD727271E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
+				CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */,
 				CFD726801E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
@@ -3871,6 +3879,7 @@
 				CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD726F21E42E2DE00603077 /* PanelListViewSizeView.mm in Sources */,
 				CFD727041E42E2FD00603077 /* FilePanelMainSplitView.mm in Sources */,
+				CF7C7CB61E5ACDD5002DB0E2 /* Alert.mm in Sources */,
 				CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD727281E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
 				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
@@ -3980,6 +3989,7 @@
 				CFD726C41E42E29200603077 /* PanelViewFooter.mm in Sources */,
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
 				CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */,
+				CF7C7CB31E5ACDBE002DB0E2 /* TabSelection.mm in Sources */,
 				CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
@@ -4263,6 +4273,7 @@
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
+				CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CFD7271D1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */,
@@ -4376,6 +4387,7 @@
 				CFD726401E42E10200603077 /* OrthodoxMonospace.mm in Sources */,
 				CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFD726851E42E21700603077 /* PanelController+Menu.mm in Sources */,
+				CF7C7CB41E5ACDD4002DB0E2 /* Alert.mm in Sources */,
 				CFD726521E42E12700603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF50C40C1C0ADE2E009DF611 /* Job.cpp in Sources */,

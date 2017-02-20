@@ -132,8 +132,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 -(void) dealloc
 {
     m_Data = nullptr;
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-//    [AppDelegate.me removeObserver:self forKeyPath:@"skin"];    
 }
 
 - (void) setDelegate:(id<PanelViewDelegate>)delegate
@@ -182,14 +180,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (BOOL)becomeFirstResponder
 {
-//    m_ActivationTime = machtime();
-//    self.needsDisplay = true;
     [self.controller panelViewDidBecomeFirstResponder];
-//    m_ReadyToDrag = false;
-//    m_LastPotentialRenamingLBDown = -1;
-//    
-//    [self.window makeFirstResponder:m_ItemsView];
-//
     [self willChangeValueForKey:@"active"];
     [self didChangeValueForKey:@"active"];
     return true;
@@ -197,7 +188,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (BOOL)resignFirstResponder
 {
-//    self.needsDisplay = true;
     __weak PanelView* weak_self = self;
     dispatch_to_main_queue([=]{
         if( PanelView* strong_self = weak_self ) {
@@ -220,43 +210,51 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-    if( _wnd == nil && self.active == true )
-        [self resignFirstResponder];
+    if( self.window ) {
+        [NSNotificationCenter.defaultCenter removeObserver:self
+                                                      name:NSWindowDidBecomeKeyNotification
+                                                    object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self
+                                                      name:NSWindowDidResignKeyNotification
+                                                    object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self
+                                                      name:NSWindowDidBecomeMainNotification
+                                                    object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self
+                                                      name:NSWindowDidResignMainNotification
+                                                    object:nil];
+    }
     
     if( _wnd ) {
         m_IconsGenerator.SetHiDPI( _wnd.backingScaleFactor > 1.0 );
     
         [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowDidBecomeKey)
+                                               selector:@selector(windowStatusDidChange)
                                                    name:NSWindowDidBecomeKeyNotification
                                                  object:_wnd];
         [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowDidResignKey)
+                                               selector:@selector(windowStatusDidChange)
                                                    name:NSWindowDidResignKeyNotification
                                                  object:_wnd];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowStatusDidChange)
+                                                   name:NSWindowDidBecomeMainNotification
+                                                 object:_wnd];
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowStatusDidChange)
+                                                   name:NSWindowDidResignMainNotification
+                                                 object:_wnd];
     }
-    
-    if( _wnd == nil ) {
-    }
-
 }
 
 - (bool) active
 {
-//    return w == nil ? false : w.isKeyWindow && w.firstResponder == self;
-    if( NSWindow *w = self.window )
-        if( w.isKeyWindow )
+    if( auto w = self.window )
+        if( w.isKeyWindow || w.isMainWindow )
             if( id fr = w.firstResponder )
                 return fr == self || [objc_cast<NSView>(fr) isDescendantOf:self];
     return false;
 }
-
-//- (void)frameDidChange
-//{
-//    if (m_Presentation)
-//        m_Presentation->OnFrameChanged([self frame]);
-//    [self commitFieldEditor];
-//}
 
 - (PanelData*) data
 {
@@ -501,16 +499,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     
     if (m_CursorPos == clipped_pos)
         return;
-
-//    m_Presentation->SetCursorPos(_pos); // _pos wil be filtered here
-//    [m_ItemsView setCursorPosition:_pos];
     
     m_CursorPos = clipped_pos;
-//        m_Presentation->SetCursorPos(cursor);
-//    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
-//                         _pos >= 0 &&
-//                         _pos < m_State.Data->SortedDirectoryEntries().size() ) ?
-//                        _pos : -1;
     
     [self OnCursorPositionChanged];
 }
@@ -782,7 +772,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     auto &storage = m_States[ HashForPath(listing.Host(), listing.Directory()) ];
     
     storage.focused_item = item.Name();
-//    storage.dispay_offset = m_State.ItemsDisplayOffset;
 }
 
 - (void) LoadPathState
@@ -801,21 +790,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     int cursor = m_Data->SortedIndexForName(storage.focused_item.c_str());
     if( cursor < 0 )
         return;
-    
-//    m_State.ItemsDisplayOffset = storage.dispay_offset;
-//    m_Presentation->SetCursorPos(cursor);
-//    m_State.CursorPos = (m_State.Data->SortedDirectoryEntries().size() > 0 &&
-//                         cursor >= 0 &&
-//                         cursor < m_State.Data->SortedDirectoryEntries().size() ) ?
-//                         cursor : -1;
-    
-    
-//    m_State->CursorPos = -1;
-//    if(m_State->Data->SortedDirectoryEntries().size() > 0 &&
-//       _pos >= 0 &&
-//       _pos < m_State->Data->SortedDirectoryEntries().size())
-//        m_State->CursorPos = _pos;
-    
     
     [self setCurpos:cursor];
     [self OnCursorPositionChanged];
@@ -1053,28 +1027,11 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     [self commitFieldEditor];
 }*/
 
-- (void) windowDidBecomeKey
+- (void) windowStatusDidChange
 {
     [self willChangeValueForKey:@"active"];
     [self didChangeValueForKey:@"active"];
 }
-
-- (void) windowDidResignKey
-{
-    [self willChangeValueForKey:@"active"];
-    [self didChangeValueForKey:@"active"];
-}
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-//{
-//    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
-//        auto skin = AppDelegate.me.skin;
-//        if (skin == ApplicationSkin::Modern)
-//            [self setPresentation:make_unique<ModernPanelViewPresentation>(self, &m_State)];
-//        else if(skin == ApplicationSkin::Classic)
-//            [self setPresentation:make_unique<ClassicPanelViewPresentation>(self, &m_State)];
-//    }
-//}
 
 - (void) setHeaderTitle:(NSString *)headerTitle
 {
@@ -1103,31 +1060,6 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
             return @"";
     }
 }
-
-//- (rapidjson::StandaloneValue) encodeRestorableState
-//{
-//    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-//    auto add_int = [&](const char*_name, int _v) {
-//        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
-//    
-////    add_int("viewMode", (int)self.type);
-//    return json;
-//}
-
-//- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state
-//{
-//    if( !_state.IsObject() )
-//        return;
-//    
-////    if( _state.HasMember("viewMode") && _state["viewMode"].IsInt() ) {
-////        PanelViewType vt = (PanelViewType)_state["viewMode"].GetInt();
-////        if( vt == PanelViewType::Short || // brutal validation
-////            vt == PanelViewType::Medium ||
-////            vt == PanelViewType::Full ||
-////            vt == PanelViewType::Wide )
-////            self.type = vt;
-////    }
-//}
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event
 {

@@ -343,6 +343,9 @@ static NSMutableDictionary *registeredStyleClasses = nil;
     [self _updateImages];
 
 	[self setNeedsDisplay:YES];
+
+    for( NSView *v in self.subviews )
+        [v setNeedsDisplay:true];
 }
 
 #pragma mark -

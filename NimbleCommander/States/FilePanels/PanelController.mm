@@ -539,7 +539,7 @@ static bool RouteKeyboardInputIntoTerminal()
 //        }
         
         if( unicode == NSTabCharacter ) { // Tab button
-            [self.state HandleTabButton];
+            [self.state changeFocusedSide];
             return true;
         }
         if( keycode == 53 ) { // Esc button

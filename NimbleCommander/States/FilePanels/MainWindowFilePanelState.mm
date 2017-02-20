@@ -43,6 +43,7 @@ static const auto g_ResorationPanelsKey     = "panels_v1";
 static const auto g_ResorationUIKey         = "uiState";
 static const auto g_ResorationUISelectedLeftTab = "selectedLeftTab";
 static const auto g_ResorationUISelectedRightTab = "selectedRightTab";
+static const auto g_ResorationUIFocusedSide = "focusedSide";
 
 static string ExpandPath(const string &_ref )
 {
@@ -472,17 +473,16 @@ static bool GoToForcesPanelActivation()
     return any_of(begin(m_RightPanelControllers), end(m_RightPanelControllers), [&](auto p){ return p == _controller; });
 }
 
-- (void) HandleTabButton
+- (void) changeFocusedSide
 {
-    if([m_MainSplitView anyCollapsedOrOverlayed])
+    if( m_MainSplitView.anyCollapsedOrOverlayed )
         return;
-    PanelController *cur = self.activePanelController;
-    if(!cur)
-        return;
-    if([self isLeftController:cur])
-        [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
-    else
-        [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+    if( auto cur = self.activePanelController ) {
+        if( [self isLeftController:cur] )
+            [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
+        else
+            [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+    }
 }
 
 - (void)ActivatePanelByController:(PanelController *)controller
@@ -579,13 +579,20 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 {
     using namespace rapidjson;
     StandaloneValue ui{kObjectType};
+    
     ui.AddMember(MakeStandaloneString( g_ResorationUISelectedLeftTab ),
                  StandaloneValue( _state.leftTabbedHolder.selectedIndex ),
                  g_CrtAllocator);
+    
     ui.AddMember(MakeStandaloneString( g_ResorationUISelectedRightTab ),
                  StandaloneValue( _state.rightTabbedHolder.selectedIndex ),
                  g_CrtAllocator);
 
+    const auto right_side_selected = [_state isRightController:_state.activePanelController];
+    ui.AddMember(MakeStandaloneString( g_ResorationUIFocusedSide ),
+                 MakeStandaloneString( right_side_selected ? "right" : "left" ),
+                 g_CrtAllocator);
+    
     return ui;
 }
 
@@ -647,6 +654,12 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                 [self.leftTabbedHolder selectTabAtIndex:*sel_left];
             if( auto sel_right = GetOptionalIntFromObject(json_ui, g_ResorationUISelectedRightTab) )
                 [self.rightTabbedHolder selectTabAtIndex:*sel_right];
+            if( auto side = GetOptionalStringFromObject(json_ui, g_ResorationUIFocusedSide) ) {
+                if( *side == "right"s  )
+                    m_LastResponder = self.rightPanelController.view;
+                if( *side == "left"s )
+                    m_LastResponder = self.leftPanelController.view;
+            }
         }
     }
 }
@@ -670,13 +683,13 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     [self updateTabNameForController:_panel];    
 }
 
-- (void) didBecomeKeyWindow
-{
+//- (void) didBecomeKeyWindow
+//{
 /*    // update key modifiers state for views
     unsigned long flags = [NSEvent modifierFlags];
     for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:flags];
     for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:flags];*/
-}
+//}
 
 - (void)WindowDidResize
 {

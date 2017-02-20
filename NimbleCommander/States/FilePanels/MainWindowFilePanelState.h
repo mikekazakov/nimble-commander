@@ -135,7 +135,10 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @property (nonatomic, readonly) bool anyPanelCollapsed;
 
-- (void) HandleTabButton;
+/**
+ * Process Tab button - change focus from left panel to right and vice versa.
+ */
+- (void) changeFocusedSide;
 
 // UI wiring
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender;

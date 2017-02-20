@@ -26,4 +26,17 @@ optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const cha
     return v.GetInt();
 }
 
+optional<const char*> GetOptionalStringFromObject( const StandaloneValue& _value, const char *_name )
+{
+    const auto it = _value.FindMember( _name );
+    if( it == _value.MemberEnd() )
+        return nullopt;
+    
+    const auto &v = it->value;
+    if( !v.IsString() )
+        return nullopt;
+    
+    return v.GetString();
+}
+
 }

@@ -25,4 +25,5 @@ namespace rapidjson
     typedef GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> StandaloneValue;
     GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const char *_str);
     GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const string &_str);
+    optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const char *_name );
 }

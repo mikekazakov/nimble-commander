@@ -265,5 +265,15 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
             }];
 }
 
+- (FilePanelsTabbedHolder *) leftTabbedHolder
+{
+    return m_MainSplitView.leftTabbedHolder;
+}
+
+- (FilePanelsTabbedHolder *) rightTabbedHolder
+{
+    return m_MainSplitView.rightTabbedHolder;
+}
+
 @end
 

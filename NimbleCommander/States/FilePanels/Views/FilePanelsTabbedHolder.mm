@@ -260,4 +260,33 @@
     [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[willbe]];
 }
 
+- (int) selectedIndex
+{
+    auto it = m_TabView.selectedTabViewItem;
+    if( !it )
+        return -1;
+
+    auto ind = [m_TabView indexOfTabViewItem:it];
+    if( ind == NSNotFound )
+        return -1;
+    
+    return (int)ind;
+}
+
+- (void) selectTabAtIndex:(int)_index
+{
+    if( _index < 0 )
+        return;
+
+    const auto tabs = (int)[m_TabBar numberOfTabViewItems];
+    if( _index >= tabs )
+        return;
+    
+    const auto now = (int)[m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
+    if( now == _index )
+        return;
+    
+    [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[_index]];
+}
+
 @end

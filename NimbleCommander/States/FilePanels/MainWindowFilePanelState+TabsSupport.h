@@ -1,5 +1,7 @@
 #include "MainWindowFilePanelState.h"
 
+@class FilePanelsTabbedHolder;
+
 @interface MainWindowFilePanelState (TabsSupport)
 
 - (void) addNewTabToTabView:(NSTabView *)aTabView; // will actually call spawnNewTabInTabView
@@ -17,5 +19,8 @@
 
 - (void) selectPreviousFilePanelTab;
 - (void) selectNextFilePanelTab;
+
+@property (nonatomic, readonly) FilePanelsTabbedHolder *leftTabbedHolder;
+@property (nonatomic, readonly) FilePanelsTabbedHolder *rightTabbedHolder;
 
 @end

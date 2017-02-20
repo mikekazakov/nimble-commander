@@ -11,38 +11,38 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <VFS/Native.h>
-#include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/OperationsController.h>
-#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
-#include "MainWindowFilePanelState.h"
-#include "PanelController.h"
-#include "PanelController+DataAccess.h"
-//#include "ApplicationSkins.h"
-//#include "../../Bootstrap/AppDelegate.h"
-//#include "NimbleCommander"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include "Views/MainWndGoToButton.h"
-#include "Views/QuickPreview.h"
-#include <NimbleCommander/States/MainWindowController.h>
-#include "Views/FilePanelMainSplitView.h"
-#include "Views/BriefSystemOverview.h"
-#include "Views/FilePanelOverlappedTerminal.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/LSUrls.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/FeedbackManager.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
+#include <NimbleCommander/Operations/OperationsController.h>
+#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
+#include <NimbleCommander/States/MainWindowController.h>
+#include "MainWindowFilePanelState.h"
+#include "PanelController.h"
+#include "PanelController+DataAccess.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
-#include <NimbleCommander/Core/FeedbackManager.h>
+#include "Views/MainWndGoToButton.h"
+#include "Views/QuickPreview.h"
+#include "Views/FilePanelMainSplitView.h"
+#include "Views/BriefSystemOverview.h"
+#include "Views/FilePanelOverlappedTerminal.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
 static const auto g_ConfigInitialRightPath  = "filePanel.general.initialRightPanelPath";
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
 static const auto g_ResorationPanelsKey     = "panels_v1";
+static const auto g_ResorationUIKey         = "uiState";
+static const auto g_ResorationUISelectedLeftTab = "selectedLeftTab";
+static const auto g_ResorationUISelectedRightTab = "selectedRightTab";
 
 static string ExpandPath(const string &_ref )
 {
@@ -552,34 +552,54 @@ static bool GoToForcesPanelActivation()
     window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
 }
 
-/*- (void)flagsChanged:(NSEvent *)event
+static rapidjson::StandaloneValue EncodePanelsStates(
+    const vector<PanelController*> &_left,
+    const vector<PanelController*> &_right)
 {
-    for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
-    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:event.modifierFlags];
-}*/
+    using namespace rapidjson;
+    StandaloneValue json{kArrayType};
+    StandaloneValue left{kArrayType};
+    StandaloneValue right{kArrayType};
+    
+    for( auto pc: _left )
+        if( auto v = [pc encodeRestorableState] )
+            left.PushBack( move(*v), g_CrtAllocator );
+    
+    for( auto pc: _right )
+        if( auto v = [pc encodeRestorableState] )
+            right.PushBack( move(*v), g_CrtAllocator );
+    
+    json.PushBack( move(left), g_CrtAllocator );
+    json.PushBack( move(right), g_CrtAllocator );
+    
+    return json;
+}
+
+static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state)
+{
+    using namespace rapidjson;
+    StandaloneValue ui{kObjectType};
+    ui.AddMember(MakeStandaloneString( g_ResorationUISelectedLeftTab ),
+                 StandaloneValue( _state.leftTabbedHolder.selectedIndex ),
+                 g_CrtAllocator);
+    ui.AddMember(MakeStandaloneString( g_ResorationUISelectedRightTab ),
+                 StandaloneValue( _state.rightTabbedHolder.selectedIndex ),
+                 g_CrtAllocator);
+
+    return ui;
+}
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState
 {
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    rapidjson::StandaloneValue json_panels(rapidjson::kArrayType);
-    rapidjson::StandaloneValue json_panels_left(rapidjson::kArrayType);
-    rapidjson::StandaloneValue json_panels_right(rapidjson::kArrayType);
+    using namespace rapidjson;
+    StandaloneValue json{kObjectType};
     
-    for( auto pc: m_LeftPanelControllers )
-        if( auto v = [pc encodeRestorableState] )
-            json_panels_left.PushBack( move(*v), rapidjson::g_CrtAllocator );
-
-    for( auto pc: m_RightPanelControllers )
-        if( auto v = [pc encodeRestorableState] )
-            json_panels_right.PushBack( move(*v), rapidjson::g_CrtAllocator );
-    
-    json_panels.PushBack( move(json_panels_left), rapidjson::g_CrtAllocator );
-    json_panels.PushBack( move(json_panels_right), rapidjson::g_CrtAllocator );
-
-    
-    json.AddMember(rapidjson::StandaloneValue(g_ResorationPanelsKey, rapidjson::g_CrtAllocator),
-                   move(json_panels),
-                   rapidjson::g_CrtAllocator);
+    json.AddMember(MakeStandaloneString(g_ResorationPanelsKey),
+                   EncodePanelsStates( m_LeftPanelControllers, m_RightPanelControllers ),
+                   g_CrtAllocator);
+    json.AddMember(MakeStandaloneString(g_ResorationUIKey),
+                   EncodeUIState(self),
+                   g_CrtAllocator);
     
     return move(json);
 }
@@ -590,9 +610,9 @@ static bool GoToForcesPanelActivation()
         return;
     
     if( _state.HasMember(g_ResorationPanelsKey) ) {
-        auto &json_panels = _state[g_ResorationPanelsKey];
+        const auto &json_panels = _state[g_ResorationPanelsKey];
         if( json_panels.IsArray() && json_panels.Size() == 2 ) {
-            auto &left = json_panels[0];
+            const auto &left = json_panels[0];
             if( left.IsArray() )
                 for( auto i = left.Begin(), e = left.End(); i != e; ++i ) {
                     if( i != left.Begin() ) {
@@ -605,7 +625,7 @@ static bool GoToForcesPanelActivation()
                         [m_LeftPanelControllers.front() loadRestorableState:*i];
                 }
             
-            auto &right = json_panels[1];
+            const auto &right = json_panels[1];
             if( right.IsArray() )
                 for( auto i = right.Begin(), e = right.End(); i != e; ++i ) {
                     if( i != right.Begin() ) {
@@ -617,6 +637,16 @@ static bool GoToForcesPanelActivation()
                     else
                         [m_RightPanelControllers.front() loadRestorableState:*i];
                 }
+        }
+    }
+    if( _state.HasMember(g_ResorationUIKey) ) {
+        const auto &json_ui = _state[g_ResorationUIKey];
+        if( json_ui.IsObject() ) {
+            // invalid indeces are ok here, they will be discarded by FilePanelsTabbedHolder
+            if( auto sel_left = GetOptionalIntFromObject(json_ui, g_ResorationUISelectedLeftTab) )
+                [self.leftTabbedHolder selectTabAtIndex:*sel_left];
+            if( auto sel_right = GetOptionalIntFromObject(json_ui, g_ResorationUISelectedRightTab) )
+                [self.rightTabbedHolder selectTabAtIndex:*sel_right];
         }
     }
 }

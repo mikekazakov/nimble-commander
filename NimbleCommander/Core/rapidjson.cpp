@@ -12,4 +12,18 @@ namespace rapidjson
     {
         return StandaloneValue(_str.c_str(), g_CrtAllocator);
     }
+    
+optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const char *_name )
+{
+    const auto it = _value.FindMember( _name );
+    if( it == _value.MemberEnd() )
+        return nullopt;
+    
+    const auto &v = it->value;
+    if( !v.IsInt() )
+        return nullopt;
+    
+    return v.GetInt();
+}
+
 }

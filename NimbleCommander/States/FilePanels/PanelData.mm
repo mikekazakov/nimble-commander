@@ -3,6 +3,9 @@
 #include "../../Core/FileMask.h"
 #include "PanelData.h"
 
+static_assert( sizeof(PanelData::TextualFilter) == 10 );
+static_assert( sizeof(PanelData::HardFilter) == 11 );
+
 static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);
 
 static inline PanelData::PanelSortMode DefaultSortMode()
@@ -67,6 +70,15 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 // TextualFilter
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
+PanelData::TextualFilter::TextualFilter() noexcept :
+    text{nil},
+    type{Anywhere},
+    ignore_dot_dot{true},
+    clear_on_new_listing{false},
+    hightlight_results{true}
+{
+}
+
 bool PanelData::TextualFilter::operator==(const TextualFilter& _r) const noexcept
 {
     if(type != _r.type)
@@ -101,22 +113,26 @@ PanelData::TextualFilter PanelData::TextualFilter::NoFilter() noexcept
     TextualFilter filter;
     filter.type = Anywhere;
     filter.text = nil;
-    filter.ignoredotdot = true;
+    filter.ignore_dot_dot = true;
     return filter;
 }
 
 static PanelData::TextualFilter::FoundRange g_DummyFoundRange;
-bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
-                                           FoundRange *_found_range) const
+
+bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item) const
 {
-    if( !_found_range )
-        _found_range = &g_DummyFoundRange;
-    *_found_range = {0, 0};
+    return IsValidItem( _item, g_DummyFoundRange );
+}
+
+bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
+                                           FoundRange &_found_range) const
+{
+    _found_range = {0, 0};
     
     if( text == nil )
         return true; // nothing to filter with - just say yes
     
-    if( ignoredotdot && _item.IsDotDot() )
+    if( ignore_dot_dot && _item.IsDotDot() )
         return true; // never filter out the Holy Dot-Dot directory!
     
     const auto textlen = text.length;
@@ -130,8 +146,8 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
         if( result.length == 0 )
             return false;
 
-        _found_range->first = result.location;
-        _found_range->second = result.location + result.length;
+        _found_range.first = result.location;
+        _found_range.second = result.location + result.length;
         
         return true;
     }
@@ -142,8 +158,8 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
         if( result.length == 0 )
             return false;
         
-        _found_range->first = result.location;
-        _found_range->second = result.location + result.length;
+        _found_range.first = result.location;
+        _found_range.second = result.location + result.length;
         
         return true;
     }
@@ -152,8 +168,8 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
             NSRange result = [name rangeOfString:text
                                          options:NSCaseInsensitiveSearch|NSAnchoredSearch];
             if( result.length != 0  ) {
-                _found_range->first = result.location;
-                _found_range->second = result.location + result.length;
+                _found_range.first = result.location;
+                _found_range.second = result.location + result.length;
                 return true;
             }
         }
@@ -167,8 +183,8 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
                                      options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
                                        range:NSMakeRange(dotrange.location - textlen, textlen)];
                 if( result.length != 0 ) {
-                    _found_range->first = result.location;
-                    _found_range->second = result.location + result.length;
+                    _found_range.first = result.location;
+                    _found_range.second = result.location + result.length;
                     return true;
                 }
             }
@@ -178,8 +194,8 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
         NSRange result = [name rangeOfString:text
                                      options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch];
         if( result.length != 0 ) {
-            _found_range->first = result.location;
-            _found_range->second = result.location + result.length;
+            _found_range.first = result.location;
+            _found_range.second = result.location + result.length;
             return true;
         }
         else
@@ -191,7 +207,7 @@ bool PanelData::TextualFilter::IsValidItem(const VFSListingItem& _item,
 
 void PanelData::TextualFilter::OnPanelDataLoad()
 {
-    if( clearonnewlisting )
+    if( clear_on_new_listing )
         text = nil;
 }
 
@@ -205,7 +221,7 @@ bool PanelData::TextualFilter::IsFiltering() const noexcept
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool PanelData::HardFilter::IsValidItem(const VFSListingItem& _item,
-                                        TextualFilter::FoundRange *_found_range) const
+                                        TextualFilter::FoundRange &_found_range) const
 {
     if( show_hidden == false && _item.IsHidden() )
         return false;
@@ -1139,9 +1155,11 @@ void PanelData::DoSortWithHardFiltering()
     if( m_HardFiltering.IsFiltering() ) {
         TextualFilter::FoundRange found_range;
         for( int i = 0; i < size; ++i )
-            if( m_HardFiltering.IsValidItem(m_Listing->Item(i), &found_range) ) {
-                m_VolatileData[i].qs_highlight_begin = found_range.first;
-                m_VolatileData[i].qs_highlight_end = found_range.second;
+            if( m_HardFiltering.IsValidItem(m_Listing->Item(i), found_range) ) {
+                if( m_HardFiltering.text.hightlight_results ) {
+                    m_VolatileData[i].qs_highlight_begin = found_range.first;
+                    m_VolatileData[i].qs_highlight_end = found_range.second;
+                }
                 m_EntriesByCustomSort.push_back(i);
             }
             else {
@@ -1189,18 +1207,17 @@ void PanelData::BuildSoftFilteringIndeces()
     if( m_SoftFiltering.IsFiltering() ) {
         m_EntriesBySoftFiltering.clear();
         m_EntriesBySoftFiltering.reserve(m_EntriesByCustomSort.size());
-        TextualFilter::FoundRange found_range;
+        
         int i = 0, e = (int)m_EntriesByCustomSort.size();
         for( ; i != e; ++i ) {
+            TextualFilter::FoundRange found_range{0,0};
             const int raw_index = m_EntriesByCustomSort[i];
-            if( m_SoftFiltering.IsValidItem( m_Listing->Item(raw_index), &found_range ) ) {
+            if( m_SoftFiltering.IsValidItem( m_Listing->Item(raw_index), found_range ) )
+                m_EntriesBySoftFiltering.push_back(i);
+            
+            if( m_SoftFiltering.hightlight_results ) {
                 m_VolatileData[raw_index].qs_highlight_begin = found_range.first;
                 m_VolatileData[raw_index].qs_highlight_end = found_range.second;
-                m_EntriesBySoftFiltering.push_back(i);
-            }
-            else {
-                m_VolatileData[raw_index].qs_highlight_begin = 0;
-                m_VolatileData[raw_index].qs_highlight_end = 0;
             }
         }
     }

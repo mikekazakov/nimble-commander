@@ -96,14 +96,10 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
         CGEventTapEnable(m_Port, true);
         return nil;
     }
-//    CGEventSourceGetKeyboardType CGEventSourceKeyboardType UCKeyTranslate TISCopyCurrentKeyboardInputSource LMGetKbdType
+
     if( _type == kCGEventKeyDown || _type == kCGEventKeyUp) {
-        const bool key_down = _type == kCGEventKeyDown;
-        const CGKeyCode keycode = (CGKeyCode)CGEventGetIntegerValueField( _event, kCGKeyboardEventKeycode );
-        
-//        CFStringRef ss = createStringForKey(keycode);
-//        int a = [((__bridge NSString*)ss) characterAtIndex:0];
-//        CFRelease(ss);
+        const auto key_down = _type == kCGEventKeyDown;
+        const auto keycode = (CGKeyCode)CGEventGetIntegerValueField( _event, kCGKeyboardEventKeycode );
         
         switch( keycode ) {
             case 145: return NewFnButtonPress( kVK_F1,  key_down, CGEventGetFlags(_event) );

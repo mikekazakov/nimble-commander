@@ -561,7 +561,7 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     if( ret != 0 )
         return VFSError::FromErrno(ret);
     
-    if( _cancel_checker && _cancel_checker() ) VFSError::Cancelled;
+    if( _cancel_checker && _cancel_checker() ) return  VFSError::Cancelled;
     
     // check if final entries count is less than approximate
     if( next_entry_index < approx_entries_count )

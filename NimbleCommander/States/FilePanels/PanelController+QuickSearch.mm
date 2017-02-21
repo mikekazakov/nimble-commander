@@ -197,7 +197,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     
     filtering.text = _text;
     filtering.type = m_QuickSearchWhere;
-    filtering.ignoredotdot = false;
+    filtering.ignore_dot_dot = false;
+    filtering.hightlight_results = m_QuickSearchTypingView;
     m_Data.SetSoftFiltering(filtering);
     
     m_QuickSearchLastType = currenttime;
@@ -220,9 +221,9 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
                 if( sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime() )
                     [sself QuickSearchClearFiltering];
         });
+        
+        [m_View volatileDataChanged];
     }
-    
-    [m_View volatileDataChanged];
 }
 
 - (void)QuickSearchHardUpdateTypingUI
@@ -272,7 +273,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     panel::GenericCursorPersistance pers(m_View, m_Data);
     
     filtering.text.type = m_QuickSearchWhere;
-    filtering.text.clearonnewlisting = true;
+    filtering.text.clear_on_new_listing = true;
+    filtering.text.hightlight_results = m_QuickSearchTypingView;
     m_Data.SetHardFiltering(filtering);
     
     pers.Restore();

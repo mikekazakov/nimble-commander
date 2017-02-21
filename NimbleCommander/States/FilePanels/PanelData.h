@@ -22,10 +22,10 @@ class PanelData
 public:
     typedef vector<unsigned> DirSortIndT; // value in this array is an index for VFSListing
 
-    enum class PanelType
+    enum class PanelType : int8_t
     {
-        Directory,
-        Temporary
+        Directory = 0,
+        Temporary = 1
     };
     
     struct EntrySortKeys
@@ -47,7 +47,7 @@ public:
     
     struct TextualFilter
     {
-        enum Where // persistancy-bound values, don't change it
+        enum Where : int8_t // persistancy-bound values, don't change it
         {
             Anywhere            = 0,
             Beginning           = 1,
@@ -57,25 +57,28 @@ public:
         
         using FoundRange = pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
         
-        Where     type = Anywhere;
-        NSString *text = nil;
-        bool      ignoredotdot = true; // will not apply filter on dot-dot entries
-        bool      clearonnewlisting = false; // if true then PanelData will automatically set text to nil on Load method call
+        NSString *text;
+        Where     type;
+        bool ignore_dot_dot:1; // will not apply filter on dot-dot entries
+        bool clear_on_new_listing:1; // if true then PanelData will automatically set text to nil on Load method call
+        bool hightlight_results:1; // option for PanelData to mark QS hightlight
         
+        TextualFilter() noexcept;
         bool operator==(const TextualFilter& _r) const noexcept;
         bool operator!=(const TextualFilter& _r) const noexcept;
         static Where WhereFromInt(int _v) noexcept;
         static TextualFilter NoFilter() noexcept;
-        bool IsValidItem(const VFSListingItem& _item, FoundRange *_found_range = nullptr) const;
+        bool IsValidItem(const VFSListingItem& _item, FoundRange &_found_range) const;
+        bool IsValidItem(const VFSListingItem& _item) const;
         void OnPanelDataLoad();
         bool IsFiltering() const noexcept;
-    };
+    } __attribute__((packed));
     
     struct HardFilter
     {
-        bool show_hidden = true;
         TextualFilter text = TextualFilter::NoFilter();
-        bool IsValidItem(const VFSListingItem& _item, TextualFilter::FoundRange *_found_range = nullptr) const;
+        bool show_hidden = true;
+        bool IsValidItem(const VFSListingItem& _item, TextualFilter::FoundRange &_found_range) const;
         bool IsFiltering() const noexcept;
         bool operator==(const HardFilter& _r) const noexcept;
         bool operator!=(const HardFilter& _r) const noexcept;

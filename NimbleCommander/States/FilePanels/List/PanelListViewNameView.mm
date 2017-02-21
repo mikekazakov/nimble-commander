@@ -16,16 +16,19 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
         NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
         p0.alignment = NSLeftTextAlignment;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
+        p0.allowsDefaultTighteningForTruncation = false;
         styles[0] = p0;
         
         NSMutableParagraphStyle *p1 = [NSMutableParagraphStyle new];
         p1.alignment = NSLeftTextAlignment;
         p1.lineBreakMode = NSLineBreakByTruncatingTail;
+        p1.allowsDefaultTighteningForTruncation = false;
         styles[1] = p1;
         
         NSMutableParagraphStyle *p2 = [NSMutableParagraphStyle new];
         p2.alignment = NSLeftTextAlignment;
         p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
+        p2.allowsDefaultTighteningForTruncation = false;
         styles[2] = p2;
     });
     

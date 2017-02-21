@@ -10,10 +10,10 @@
 /* Class = "NSTableColumn"; headerCell.title = "P#"; ObjectID = "jeT-jQ-tUY"; */
 "jeT-jQ-tUY.headerCell.title" = "P#";
 
-/* Class = "NSSegmentedCell"; kAV-Pr-c8a.ibShadowedLabels[0] = "Alive VFS"; ObjectID = "kAV-Pr-c8a"; */
+/* Class = "NSSegmentedCell"; kAV-Pr-c8a.ibShadowedLabels[0] = "Active VFSs"; ObjectID = "kAV-Pr-c8a"; */
 "kAV-Pr-c8a.ibShadowedLabels[0]" = "Активные ВФС";
 
-/* Class = "NSSegmentedCell"; kAV-Pr-c8a.ibShadowedLabels[1] = "Known VFS"; ObjectID = "kAV-Pr-c8a"; */
+/* Class = "NSSegmentedCell"; kAV-Pr-c8a.ibShadowedLabels[1] = "Known VFSs"; ObjectID = "kAV-Pr-c8a"; */
 "kAV-Pr-c8a.ibShadowedLabels[1]" = "Известные ВФС";
 
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "nEc-4I-bvG"; */

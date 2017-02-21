@@ -1,62 +1,14 @@
 /* Class = "NSTabViewItem"; label = "Common"; ObjectID = "4"; */
 "4.label" = "Общее";
 
-/* Class = "NSTabViewItem"; label = "Classic"; ObjectID = "5"; */
-"5.label" = "Classic";
-
 /* Class = "NSMenuItem"; title = "Same window"; ObjectID = "5Gm-Pq-yfz"; */
 "5Gm-Pq-yfz.title" = "Текущем окне";
-
-/* Class = "NSTabViewItem"; label = "Modern"; ObjectID = "18"; */
-"18.label" = "Modern";
-
-/* Class = "NSButtonCell"; title = "Antialiasing"; ObjectID = "21"; */
-"21.title" = "Антиалиасинг";
-
-/* Class = "NSButtonCell"; title = "Smoothing"; ObjectID = "43"; */
-"43.title" = "Сглаживание";
-
-/* Class = "NSTextFieldCell"; title = "Background color:"; ObjectID = "63"; */
-"63.title" = "Цвет фона:";
-
-/* Class = "NSTextFieldCell"; title = "Selection color:"; ObjectID = "88"; */
-"88.title" = "Цвет выделения:";
-
-/* Class = "NSTextFieldCell"; title = "Text color:"; ObjectID = "103"; */
-"103.title" = "Цвет текста:";
-
-/* Class = "NSButtonCell"; title = "Font"; ObjectID = "109"; */
-"109.title" = "Шрифт";
-
-/* Class = "NSButtonCell"; title = "Font"; ObjectID = "193"; */
-"193.title" = "Шрифт";
-
-/* Class = "NSTextFieldCell"; title = "Text color:"; ObjectID = "195"; */
-"195.title" = "Цвет текста:";
-
-/* Class = "NSTextFieldCell"; title = "Selection color:"; ObjectID = "198"; */
-"198.title" = "Цвет выделения:";
-
-/* Class = "NSTextFieldCell"; title = "Background color:"; ObjectID = "201"; */
-"201.title" = "Цвет фона:";
-
-/* Class = "NSButtonCell"; title = "Smoothing"; ObjectID = "203"; */
-"203.title" = "Сглаживание";
-
-/* Class = "NSButtonCell"; title = "Antialiasing"; ObjectID = "205"; */
-"205.title" = "Антиалиасинг";
 
 /* Class = "NSButtonCell"; title = "Auto-detect encoding"; ObjectID = "263"; */
 "263.title" = "Автоопределение кодировки";
 
 /* Class = "NSTextFieldCell"; title = "Default encoding:"; ObjectID = "273"; */
 "273.title" = "Кодировка по умолчанию:";
-
-/* Class = "NSTextFieldCell"; title = "Text rendering:"; ObjectID = "318"; */
-"318.title" = "Рендеринг текста:";
-
-/* Class = "NSTextFieldCell"; title = "Text rendering:"; ObjectID = "335"; */
-"335.title" = "Рендеринг текста:";
 
 /* Class = "NSTextFieldCell"; title = "File history:"; ObjectID = "340"; */
 "340.title" = "История файлов:";

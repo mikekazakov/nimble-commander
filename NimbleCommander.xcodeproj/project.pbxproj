@@ -1491,6 +1491,10 @@
 		CF7C7CC71E5C3EB9002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTab.xib; sourceTree = "<group>"; };
 		CF7C7CCD1E5C3ED5002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabColoringRulesControl.xib; sourceTree = "<group>"; };
 		CF7C7CD31E5C3EE2002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabImportSheet.xib; sourceTree = "<group>"; };
+		CF7C7CDA1E5C4CD5002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PanelViewHeaderSortPopup.strings; sourceTree = "<group>"; };
+		CF7C7CE21E5C4CD7002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabImportSheet.strings; sourceTree = "<group>"; };
+		CF7C7CE31E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTab.strings; sourceTree = "<group>"; };
+		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
 		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Delete/DialogResults.h; sourceTree = SOURCE_ROOT; };
 		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = ../NimbleCommander/Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
@@ -4594,6 +4598,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF7C7CC11E5C3D84002DB0E2 /* Base */,
+				CF7C7CDA1E5C4CD5002DB0E2 /* ru */,
 			);
 			name = PanelViewHeaderSortPopup.xib;
 			path = NimbleCommander/States/FilePanels;
@@ -4603,6 +4608,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF7C7CC71E5C3EB9002DB0E2 /* Base */,
+				CF7C7CE31E5C4CD8002DB0E2 /* ru */,
 			);
 			name = PreferencesWindowThemesTab.xib;
 			path = NimbleCommander/Preferences;
@@ -4612,6 +4618,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF7C7CCD1E5C3ED5002DB0E2 /* Base */,
+				CF7C7CE41E5C4CD8002DB0E2 /* ru */,
 			);
 			name = PreferencesWindowThemesTabColoringRulesControl.xib;
 			path = NimbleCommander/Preferences;
@@ -4621,6 +4628,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF7C7CD31E5C3EE2002DB0E2 /* Base */,
+				CF7C7CE21E5C4CD7002DB0E2 /* ru */,
 			);
 			name = PreferencesWindowThemesTabImportSheet.xib;
 			path = NimbleCommander/Preferences;

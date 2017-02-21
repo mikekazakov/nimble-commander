@@ -1,3 +1,6 @@
+/* Class = "NSMenuItem"; title = "5"; ObjectID = "0D4-mI-wvg"; */
+"0D4-mI-wvg.title" = "5";
+
 /* Class = "NSMenuItem"; title = "Restore Purchases"; ObjectID = "0Y5-VP-Vjw"; */
 "0Y5-VP-Vjw.title" = "Восстановить покупки";
 
@@ -211,17 +214,17 @@
 /* Class = "NSMenu"; title = "View Mode"; ObjectID = "880"; */
 "880.title" = "Режим отображения";
 
-/* Class = "NSMenuItem"; title = "Short View Mode"; ObjectID = "882"; */
-"882.title" = "Краткий режим отображения";
+/* Class = "NSMenuItem"; title = "1"; ObjectID = "882"; */
+"882.title" = "1";
 
-/* Class = "NSMenuItem"; title = "Medium View Mode"; ObjectID = "883"; */
-"883.title" = "Средний режим отображения";
+/* Class = "NSMenuItem"; title = "2"; ObjectID = "883"; */
+"883.title" = "2";
 
-/* Class = "NSMenuItem"; title = "Full View Mode"; ObjectID = "884"; */
-"884.title" = "Полный режим отображения";
+/* Class = "NSMenuItem"; title = "3"; ObjectID = "884"; */
+"884.title" = "3";
 
-/* Class = "NSMenuItem"; title = "Wide View Mode"; ObjectID = "885"; */
-"885.title" = "Широкий режим отображения";
+/* Class = "NSMenuItem"; title = "4"; ObjectID = "885"; */
+"885.title" = "4";
 
 /* Class = "NSMenuItem"; ibShadowedToolTip = "Questions? Comments? Send me an email!"; ObjectID = "891"; */
 "891.ibShadowedToolTip" = "Вопросы? Комментарии? Отправьте мне письмо!";
@@ -271,11 +274,17 @@
 /* Class = "NSMenuItem"; title = "Delete Permanently..."; ObjectID = "926"; */
 "926.title" = "Удалить необратимо...";
 
+/* Class = "NSMenuItem"; title = "10"; ObjectID = "ARz-X0-fAA"; */
+"ARz-X0-fAA.title" = "10";
+
 /* Class = "NSMenuItem"; title = "Utilities"; ObjectID = "BTy-M2-2G2"; */
 "BTy-M2-2G2.title" = "Утилиты";
 
 /* Class = "NSMenuItem"; title = "Compress"; ObjectID = "CEQ-U0-LN9"; */
 "CEQ-U0-LN9.title" = "Сжать";
+
+/* Class = "NSMenuItem"; title = "6"; ObjectID = "Dga-lH-RSh"; */
+"Dga-lH-RSh.title" = "6";
 
 /* Class = "NSMenuItem"; title = "New File"; ObjectID = "FeM-q9-Bc2"; */
 "FeM-q9-Bc2.title" = "Новый файл";
@@ -415,6 +424,9 @@
 /* Class = "NSMenuItem"; title = "Turn Admin Mode On"; ObjectID = "ftk-l8-B5i"; */
 "ftk-l8-B5i.title" = "Включить режим администратора";
 
+/* Class = "NSMenuItem"; title = "8"; ObjectID = "gWB-Ja-0bF"; */
+"gWB-Ja-0bF.title" = "8";
+
 /* Class = "NSMenuItem"; title = "FTP Server"; ObjectID = "gZ9-Jg-sEd"; */
 "gZ9-Jg-sEd.title" = "FTP серверу";
 
@@ -478,6 +490,9 @@
 /* Class = "NSMenuItem"; title = "Root"; ObjectID = "tbO-TV-6y7"; */
 "tbO-TV-6y7.title" = "Корень";
 
+/* Class = "NSMenuItem"; title = "Sort by Added Time"; ObjectID = "v7Z-Jf-aho"; */
+"v7Z-Jf-aho.title" = "Сортировать по времени добавления";
+
 /* Class = "NSMenu"; title = "Connect To..."; ObjectID = "vG4-7z-hXO"; */
 "vG4-7z-hXO.title" = "Подключиться к...";
 
@@ -490,8 +505,14 @@
 /* Class = "NSMenuItem"; title = "Paste Filenames to Terminal..."; ObjectID = "wd3-KT-mmq"; */
 "wd3-KT-mmq.title" = "Вставить имена файлов в терминал...";
 
+/* Class = "NSMenuItem"; title = "9"; ObjectID = "xWO-GF-P20"; */
+"xWO-GF-P20.title" = "9";
+
 /* Class = "NSMenuItem"; title = "Move Left"; ObjectID = "xoX-Le-jyi"; */
 "xoX-Le-jyi.title" = "Сдвинуть влево";
+
+/* Class = "NSMenuItem"; title = "7"; ObjectID = "yBW-Py-y1e"; */
+"yBW-Py-y1e.title" = "7";
 
 /* Class = "NSMenuItem"; title = "Show Hidden Files"; ObjectID = "zGu-Ls-RVD"; */
 "zGu-Ls-RVD.title" = "Показывать скрытые файлы";

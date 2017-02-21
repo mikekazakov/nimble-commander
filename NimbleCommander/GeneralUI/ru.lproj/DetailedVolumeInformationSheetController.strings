@@ -55,9 +55,3 @@
 /* Class = "NSTextFieldCell"; title = "Allocation clump:"; ObjectID = "377"; */
 "377.title" = "Мин. увеличение:";
 
-/* Class = "NSBox"; title = "Title"; ObjectID = "600"; */
-"600.title" = "Box";
-
-/* Class = "NSBox"; title = "Title"; ObjectID = "613"; */
-"613.title" = "Box";
-

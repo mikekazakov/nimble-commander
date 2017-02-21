@@ -1,0 +1,18 @@
+/* Class = "NSButtonCell"; title = "Duplicate"; ObjectID = "Gep-4j-i4f"; */
+"Gep-4j-i4f.title" = "Дублировать";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "KRF-Q2-TeT"; */
+"KRF-Q2-TeT.title" = "Импорт";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "MoT-ih-r3N"; */
+"MoT-ih-r3N.title" = "Экспорт";
+
+/* Class = "NSButtonCell"; title = "Revert"; ObjectID = "b8c-6i-eUM"; */
+"b8c-6i-eUM.title" = "Сбросить";
+
+/* Class = "NSTextFieldCell"; title = "Theme:"; ObjectID = "dpl-Vw-2I6"; */
+"dpl-Vw-2I6.title" = "Тема:";
+
+/* Class = "NSButtonCell"; title = "Remove"; ObjectID = "rLT-UR-67R"; */
+"rLT-UR-67R.title" = "Удалить";
+

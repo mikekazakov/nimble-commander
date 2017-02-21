@@ -28,17 +28,11 @@
 /* Class = "NSButtonCell"; title = "Apply to all"; ObjectID = "38"; */
 "38.title" = "Применить ко всем";
 
-/* Class = "NSBox"; title = "Title"; ObjectID = "49"; */
-"49.title" = "";
-
 /* Class = "NSTextFieldCell"; title = "New:"; ObjectID = "57"; */
 "57.title" = "Новый:";
 
 /* Class = "NSTextFieldCell"; title = "Existing:"; ObjectID = "61"; */
 "61.title" = "Имеющийся:";
-
-/* Class = "NSBox"; title = "Title"; ObjectID = "73"; */
-"73.title" = "Box";
 
 /* Class = "NSTextFieldCell"; title = "File already exists"; ObjectID = "120"; */
 "120.title" = "Файл уже существует";

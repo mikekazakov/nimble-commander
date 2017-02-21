@@ -1,39 +1,6 @@
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";
 
-/* Total files size in panel's bottom info bar */
-"%s in %d files" = "%s в %d файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 1 file" = "%s в 1 файле";
-
-/* Total files size in panel's bottom info bar */
-"%s in 2 files" = "%s в 2 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 3 files" = "%s в 3 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 4 files" = "%s в 4 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 5 files" = "%s в 5 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 6 files" = "%s в 6 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 7 files" = "%s в 7 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 8 files" = "%s в 8 файлах";
-
-/* Total files size in panel's bottom info bar */
-"%s in 9 files" = "%s в 9 файлах";
-
-/* Volume information bar, showing volume name and free space */
-"%s: %s available" = "%1$s: %2$s доступно";
-
 /* Asking user for granting file system access for NC - button title */
 "Allow Access" = "Разрешить доступ";
 
@@ -43,6 +10,12 @@
 
 /* Asking user if he really wants to delete information about a stored connection */
 "Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
+
+/* Asking the user for confirmation on deleting the external editor - message */
+"Are you sure you want to remove this editor?" = "Вы действительно хотите убрать этот редактор?";
+
+/* Asking user for confirmation on erasing custom theme - message */
+"Are you sure you want to remove this theme?" = "Вы действительно хотите удалить эту тему?";
 
 /* Asking the user for confirmation on deleting the external tool - message */
 "Are you sure you want to remove this tool?" = "Вы действительно хотите удалить этот инструмент?";
@@ -303,7 +276,8 @@
 /* Asking user to close window with some operations running */
 "The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
 
-/* Asking the user for confirmation on deleting the external tool - message */
+/* Asking the user for confirmation on deleting the external editor - informative text
+   Asking the user for confirmation on deleting the external tool - message */
 "This operation is not reversible." = "Эта операция необратима.";
 
 /* Asking user for confirmation on erasing custom settings - informative text */
@@ -345,27 +319,13 @@
 /* No comment provided by engineer. */
 "Yes" = "Да";
 
-/* Informating user that action can't be reverted
+/* Asking user for confirmation on erasing custom theme - informative text
+   Informating user that action can't be reverted
    Informing user that action can't be reverted */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 
 /* Combo box element available when multiple elements are selected with different values */
 "[Mixed]" = "[Разные]";
-
-/* Bytes count postfix, for English is 'bytes' */
-"__BYTECOUNTFORMATTER_BYTES_WORD" = "байт";
-
-/* One-letter byte postfix, for English is 'B' */
-"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "б";
-
-/* SI postfixes with first symbol empty, for English is ' KMGTP' */
-"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
-
-/* Fixed-length (6 chars) string for folders, for English is 'Folder' */
-"__CLASSICPRESENTATION_FOLDER_WORD" = " Папка";
-
-/* Fixed-length (6 chars) string for upper-dir, for English is '    Up' */
-"__CLASSICPRESENTATION_UP_WORD" = "Наверх";
 
 /* Folders dummy string when size is not available, for English is 'Folder' */
 "__MODERNPRESENTATION_FOLDER_WORD" = "Папка";

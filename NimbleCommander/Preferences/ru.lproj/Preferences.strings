@@ -10,29 +10,20 @@
 /* General preferences tab title */
 "Editors" = "Редакторы";
 
-/* Coloring rules column name */
-"Filter" = "Фильтр";
-
-/* Coloring rules column name */
-"Focused" = "Фокус";
-
 /* General preferences tab title */
 "General" = "Основное";
 
 /* General preferences tab title */
 "Hotkeys" = "Хоткеи";
 
-/* Coloring rules column name */
-"Name" = "Имя";
-
 /* General preferences tab title */
 "Panels" = "Панели";
 
-/* Coloring rules column name */
-"Regular" = "Обычный";
-
 /* General preferences tab title */
 "Terminal" = "Терминал";
+
+/* General preferences tab title */
+"Themes" = "Темы";
 
 /* Informative text saying that Nimble Commander will ask for filesystem access when need it */
 "This will cause Nimble Commander to ask you for access when necessary." = "Nimble Commander будет спрашивать вас о предоставлении доступа при необходимости.";

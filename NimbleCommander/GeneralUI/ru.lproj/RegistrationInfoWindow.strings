@@ -10,7 +10,7 @@
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "Jhi-3b-ZZa"; */
 "Jhi-3b-ZZa.title" = "Имя:";
 
-/* Class = "NSTextFieldCell"; title = "Purchased from the Mac App Store"; ObjectID = "Kvz-nI-J2i"; */
+/* Class = "NSTextFieldCell"; title = "Purchased at the Mac App Store"; ObjectID = "Kvz-nI-J2i"; */
 "Kvz-nI-J2i.title" = "Приобретено в Mac App Store";
 
 /* Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "XN8-NS-QEw"; */

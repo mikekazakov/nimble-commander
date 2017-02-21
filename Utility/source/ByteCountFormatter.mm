@@ -9,6 +9,7 @@
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
 #include <Utility/ByteCountFormatter.h>
+#include <string>
 
 static inline void strsubst(char *_s, char _what, char _to)
 {
@@ -40,6 +41,15 @@ static inline unsigned chartouni(const char *_from, unsigned short *_to, unsigne
 //"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
 
 
+
+//
+//"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "B";
+//"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " KMGTP";
+//"__BYTECOUNTFORMATTER_BYTES_WORD" = "bytes";
+
+// NSArray<NSString *> *preferredLocalizations;
+
+
 constexpr uint64_t ByteCountFormatter::m_Exponent[];
 
 ByteCountFormatter::ByteCountFormatter(bool _localized)
@@ -49,6 +59,8 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
     m_Bytes = {'b', 'y', 't', 'e', 's'};
 
     if(_localized) {
+        auto language = string(NSBundle.mainBundle.preferredLocalizations.firstObject.UTF8String);
+    
         NSNumberFormatter *def_formatter = [NSNumberFormatter new];
         NSString *decimal_symbol = [def_formatter decimalSeparator];
         if(decimal_symbol.length == 1 && [decimal_symbol characterAtIndex:0] < 256) {
@@ -56,18 +68,30 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
             unsigned char sep = [decimal_symbol characterAtIndex:0];
             m_DecimalSeparator = (char)sep;
         }
-
-        NSString *b = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTE_POSTFIX", "One-letter byte postfix, for English is 'B'");
+        
+        NSString *b = [&]{
+            if( language == "ru" ) return @"б";
+            return  @"B";
+        }();
+       // NSString *b = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTE_POSTFIX", "One-letter byte postfix, for English is 'B'");
         if(b.length == 1)
             m_B = [b characterAtIndex:0];
-        
-        NSString *si = NSLocalizedString(@"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY", "SI postfixes with first symbol empty, for English is ' KMGTP'");
+
+        NSString *si = [&]{
+            if( language == "ru" ) return @" КМГТП";
+            return  @" KMGTP";
+        }();
+//        NSString *si = NSLocalizedString(@"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY", "SI postfixes with first symbol empty, for English is ' KMGTP'");
         if(si.length == m_SI.size())
             for(int i = 0; i < m_SI.size(); ++i)
                 m_SI[i] = [si characterAtIndex:i];
 
         m_Bytes.clear();
-        NSString *bytes = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTES_WORD", "Bytes count postfix, for English is 'bytes'");
+//        NSString *bytes = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTES_WORD", "Bytes count postfix, for English is 'bytes'");
+        NSString *bytes = [&]{
+            if( language == "ru" ) return @"байт";
+            return  @"bytes";
+        }();
         for(int i = 0; i < bytes.length; ++i)
             m_Bytes.emplace_back([bytes characterAtIndex:i]);
     }

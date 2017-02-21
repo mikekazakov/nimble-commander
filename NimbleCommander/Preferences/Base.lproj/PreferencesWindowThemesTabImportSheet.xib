@@ -82,14 +82,14 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="enabled" keyPath="self.overwriteCurrentTheme" id="tT0-aT-fFK">
-                                <dictionary key="options">
-                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                </dictionary>
-                            </binding>
                             <binding destination="-2" name="value" keyPath="self.importAsName" id="1Sd-WX-kB7">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                </dictionary>
+                            </binding>
+                            <binding destination="-2" name="enabled" keyPath="self.overwriteCurrentTheme" id="tT0-aT-fFK">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
                                 </dictionary>
                             </binding>
                         </connections>

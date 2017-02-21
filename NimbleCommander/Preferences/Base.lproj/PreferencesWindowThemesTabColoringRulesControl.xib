@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
@@ -201,7 +201,7 @@
                         <action selector="onPlusMinusButton:" target="-2" id="vth-qX-Vo8"/>
                     </connections>
                 </segmentedControl>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="dBF-9n-N5r">
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dBF-9n-N5r">
                     <rect key="frame" x="48" y="1" width="432" height="23"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="Wdk-hz-cM6"/>

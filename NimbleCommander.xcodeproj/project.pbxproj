@@ -346,6 +346,14 @@
 		CF7C7CD01E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
 		CF7C7CD11E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
 		CF7C7CD21E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
+		CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
+		CF7C7CE81E5D356D002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
+		CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
+		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
 		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
@@ -1916,6 +1924,9 @@
 				CF9B12C41D8A6B4700C4E0A5 /* libssl.a in Frameworks */,
 				CF9B12BE1D8A6B3D00C4E0A5 /* libssh2.a in Frameworks */,
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
+				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
+				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */,
+				CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */,
 				CF6E44511CC9DAE8009F45B0 /* libHabanero.a in Frameworks */,
 				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
 				CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */,
@@ -1934,6 +1945,7 @@
 				CF6D9C8719667A420077B146 /* IOKit.framework in Frameworks */,
 				CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */,
 				CF6D9C8519667A3B0077B146 /* SystemConfiguration.framework in Frameworks */,
+				CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */,
 				CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */,
 				CF6D9C8319667A330077B146 /* Security.framework in Frameworks */,
 				CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */,
@@ -2024,7 +2036,10 @@
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
 				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
 				CF9B12C31D8A6B4600C4E0A5 /* libssl.a in Frameworks */,
+				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
+				CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.a in Frameworks */,
 				CF02B5A11D0A61C600F2760D /* libHabanero.a in Frameworks */,
+				CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
 				CF844DBE1D43231500C735DB /* libz.a in Frameworks */,
@@ -2034,6 +2049,7 @@
 				CFF6F3571A13567C00011177 /* libboost_filesystem.a in Frameworks */,
 				CF9B12C01D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
 				CFF6F3581A13567C00011177 /* libboost_system.a in Frameworks */,
+				CF7C7CE81E5D356D002DB0E2 /* ServiceManagement.framework in Frameworks */,
 				CFF6F35A1A13567C00011177 /* Carbon.framework in Frameworks */,
 				CFF6F35B1A13567C00011177 /* LDAP.framework in Frameworks */,
 				CFF6F35C1A13567C00011177 /* Security.framework in Frameworks */,
@@ -5007,25 +5023,12 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_FREE__=1",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/NimbleCommander-MAS-Free-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
-					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";
@@ -5043,22 +5046,9 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_FREE__=1";
 				INFOPLIST_FILE = "$(SRCROOT)/Files/Resource/NimbleCommander-MAS-Free-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
-					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";
@@ -5124,6 +5114,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Files/3rd_party";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5193,6 +5184,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Files/3rd_party";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch";
@@ -5247,10 +5239,6 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
@@ -5275,10 +5263,6 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
 				LIBRARY_SEARCH_PATHS = (

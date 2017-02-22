@@ -6,8 +6,8 @@
 //  Copyright © 2016 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../../Files/AppDelegate.h"
-#include "../../Files/AppStoreHelper.h"
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/AppStoreHelper.h>
 #include "ProFeaturesWindowController.h"
 
 @interface ProFeaturesWindowController ()

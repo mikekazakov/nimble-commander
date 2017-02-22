@@ -8,6 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowThemesTab">
             <connections>
+                <outlet property="exportButton" destination="h63-Ng-Yy2" id="zUA-2g-xZr"/>
+                <outlet property="importButton" destination="cVc-ui-vZg" id="HEs-lK-1YG"/>
                 <outlet property="outlineView" destination="Bqs-5I-e8X" id="5Io-z0-DHN"/>
                 <outlet property="themesPopUp" destination="9jG-uy-qcQ" id="YXb-Yn-2YR"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>

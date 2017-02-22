@@ -47,6 +47,7 @@ public:
     bool HasRoutedIO() const noexcept;
     bool HasTemporaryPanels() const noexcept;
     bool HasSpotlightSearch() const noexcept;
+    bool HasThemesManipulation() const noexcept;
     
     // Trial NonMAS version stuff
     bool UserHadRegistered() const noexcept;

@@ -302,6 +302,11 @@ bool ActivationManager::HasSpotlightSearch() const noexcept
     return m_IsActivated;
 }
 
+bool ActivationManager::HasThemesManipulation() const noexcept
+{
+    return m_IsActivated;
+}
+
 bool ActivationManager::IsTrialPeriod() const noexcept
 {
     return m_IsTrialPeriod;

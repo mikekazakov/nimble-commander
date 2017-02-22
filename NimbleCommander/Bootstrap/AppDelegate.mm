@@ -193,9 +193,6 @@ static AppDelegate *g_Me = nil;
         m_SupportDirectory = EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
         
         [self setupConfigs];
-        
-//        [self reloadSkinSetting];
-//        m_ConfigObservationTickets.emplace_back( GlobalConfig().Observe(g_ConfigGeneralSkin, []{ [AppDelegate.me reloadSkinSetting]; }) );
     }
     return self;
 }
@@ -204,20 +201,6 @@ static AppDelegate *g_Me = nil;
 {
     return g_Me;
 }
-
-//- (void) reloadSkinSetting
-//{
-//    auto new_skin = (ApplicationSkin)GlobalConfig().GetInt(g_ConfigGeneralSkin);
-//    if( new_skin == ApplicationSkin::Modern || new_skin == ApplicationSkin::Classic ) {
-//        [self willChangeValueForKey:@"skin"];
-//        m_Skin = new_skin;
-//        [self didChangeValueForKey:@"skin"];
-//        
-//        GA().PostEvent("Appearance",
-//                                              "Set",
-//                                              new_skin == ApplicationSkin::Classic ? "Classic" : "Modern");
-//    }
-//}
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
@@ -267,6 +250,8 @@ static AppDelegate *g_Me = nil;
         CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
         GA().UpdateEnabledStatus();
     }
+    
+    GA().PostEvent( "Appearance", "Set", self.themesManager.SelectedThemeName().c_str() );
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState

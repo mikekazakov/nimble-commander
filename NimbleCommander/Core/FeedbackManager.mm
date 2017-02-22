@@ -127,8 +127,10 @@ bool FeedbackManager::ShouldShowRatingOverlayView()
         return false; // show only once per run anyway
 
     if( IsEligibleForRatingOverlay() )
-        if( HasInternetConnection() )
+        if( HasInternetConnection() ) {
+            GA().PostEvent("Feedback", "Rating Overlay Shown", "Shown");
             return m_ShownRatingOverlay = true;
+        }
 
     return false;
 }

@@ -362,9 +362,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
                                                overPanelItem:dragging_over_item];
     int valid_items = 0;
     NSDragOperation result = NSDragOperationNone;
-    
-    NSArray *types = _dragging.draggingPasteboard.types;
-    
+        
     if( destination && destination.Host()->IsWriteable()) {
         if( auto source = objc_cast<FilesDraggingSource>(_dragging.draggingSource) ) {
             // drag is from some other panel

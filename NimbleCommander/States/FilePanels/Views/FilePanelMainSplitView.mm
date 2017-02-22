@@ -17,6 +17,7 @@
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;
+static const auto g_ResizingGran = 14.;
 
 @implementation FilePanelMainSplitView
 {
@@ -237,26 +238,6 @@ static const auto g_MinPanelWidth = 120;
     return [self isSubviewCollapsed:_v];
 }
 
-- (double) granularityForKeyResizing
-{
-    FilePanelsTabbedHolder *v;
-    if(m_BasicViews[0]) v = m_BasicViews[0];
-    else if(m_BasicViews[1]) v = m_BasicViews[1];
-    else v = (FilePanelsTabbedHolder *)[self.subviews objectAtIndex:0];
-    
-//    if(ClassicPanelViewPresentation *p = dynamic_cast<ClassicPanelViewPresentation*>(v.current.presentation))
-//        return p->Granularity();
-    return 14.;
-}
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-//{
-//    if (object == AppDelegate.me && [keyPath isEqualToString:@"skin"]) {
-//        m_DividerThickness = AppDelegate.me.skin == ApplicationSkin::Classic ? 0 : 1;
-//        dispatch_to_main_queue_after(1ms, [=]{ [self resizeSubviewsManually]; });
-//    }
-//}
-
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
     NSString* characters = theEvent.charactersIgnoringModifiers;
@@ -301,7 +282,7 @@ static const auto g_MinPanelWidth = 120;
     NSRect left  = v1.frame;
     NSRect right = v2.frame;
     
-    auto gran = self.granularityForKeyResizing;
+    auto gran = g_ResizingGran;
     
     left.size.width -= gran;
     right.origin.x -= gran;
@@ -339,7 +320,7 @@ static const auto g_MinPanelWidth = 120;
     NSRect left  = v1.frame;
     NSRect right = v2.frame;
     
-    auto gran = self.granularityForKeyResizing;
+    auto gran = g_ResizingGran;
     
     left.size.width += gran;
     right.origin.x += gran;

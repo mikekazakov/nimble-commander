@@ -2,26 +2,29 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "GoogleAnalytics.h"
 
+static void PostStartupInfo()
+{
+    sysinfo::SystemOverview so;
+    if( sysinfo::GetSystemOverview(so) )
+        GA().PostEvent("Init info", "Hardware", so.coded_model.c_str());
+    
+    NSString* lang = [NSLocale.autoupdatingCurrentLocale objectForKey:NSLocaleLanguageCode];
+    GA().PostEvent( "Init info", "UI Language", [lang UTF8String] );
+}
+
 GoogleAnalytics& GA() noexcept
 {
-    static GoogleAnalytics *inst;
-    static once_flag once;
-    call_once(once, []{
+    static GoogleAnalytics *inst = []{
         const auto tracking_id =
              ActivationManager::Type() == ActivationManager::Distribution::Trial ? "UA-47180125-2" :
             (ActivationManager::Type() == ActivationManager::Distribution::Free  ? "UA-47180125-3" :
                                                                                    "UA-47180125-4");
     
-        inst = new GoogleAnalytics(tracking_id);
-        if( inst->IsEnabled() ) {
-            sysinfo::SystemOverview so;
-            if( sysinfo::GetSystemOverview(so) )
-                inst->PostEvent("Init info", "Hardware", so.coded_model.c_str());
-    
-            inst->PostEvent("Init info", "UI Language",
-              [[NSLocale.autoupdatingCurrentLocale objectForKey:NSLocaleLanguageCode] UTF8String] );
-        }
-    });
+        const auto ga = new GoogleAnalytics(tracking_id);
+        if( ga->IsEnabled() )
+            dispatch_to_background( PostStartupInfo );
+        return ga;
+    }();
     
     return *inst;
 }

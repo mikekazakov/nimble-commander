@@ -530,7 +530,6 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 
 - (void) onPageDown:(NSEvent*)_event
 {
-    auto a = m_ScrollView.horizontalPageScroll;
     NSRect rect;
     rect = m_CollectionView.visibleRect;
     rect.origin.x += rect.size.width;

@@ -697,8 +697,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
             do_unlink_on_stop       = false,
             do_set_times            = true,
             do_set_unix_flags       = true,
-            need_dst_truncate       = false,
-            dst_existed_before      = false;
+            need_dst_truncate       = false;
     int64_t dst_size_on_stop        = 0,
             total_dst_size          = src_stat_buffer.st_size,
             preallocate_delta       = 0,
@@ -708,7 +707,6 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyNativeFileToNativeFil
     struct stat dst_stat_buffer;
     if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
         // file already exist. what should we do now?
-        dst_existed_before = true;
         const auto setup_overwrite = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = true;
@@ -1030,8 +1028,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
             do_unlink_on_stop       = false,
             do_set_times            = true,
             do_set_unix_flags       = true,
-            need_dst_truncate       = false,
-            dst_existed_before      = false;
+            need_dst_truncate       = false;
     int64_t dst_size_on_stop        = 0,
             total_dst_size          = src_stat_buffer.size,
             preallocate_delta       = 0,
@@ -1041,7 +1038,6 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
     struct stat dst_stat_buffer;
     if( io.stat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
         // file already exist. what should we do now?
-        dst_existed_before = true;
         const auto setup_overwrite = [&]{
             dst_open_flags = O_WRONLY;
             do_unlink_on_stop = true;
@@ -1355,8 +1351,7 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
             do_unlink_on_stop       = false,
             do_set_times            = true,
             do_set_unix_flags       = true,
-            need_dst_truncate       = false,
-            dst_existed_before      = false;
+            need_dst_truncate       = false;
             int64_t dst_size_on_stop= 0,
             total_dst_size          = src_stat_buffer.size,
             initial_writing_offset  = 0;
@@ -1365,7 +1360,6 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToVFSFile(VFSH
     VFSStat dst_stat_buffer;
     if( m_DestinationHost->Stat(_dst_path.c_str(), dst_stat_buffer, 0, 0) == 0) {
         // file already exist. what should we do now?
-        dst_existed_before = true;
         const auto setup_overwrite = [&]{
             dst_open_flags = VFSFlags::OF_Write | VFSFlags::OF_Truncate | VFSFlags::OF_NoCache;
             do_unlink_on_stop = true;

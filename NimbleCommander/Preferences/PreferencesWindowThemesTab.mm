@@ -141,11 +141,9 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable id)item
 {
-    if( item == nil )
-        return m_Nodes[index];
     if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children[index];
-    return nil;
+    return m_Nodes[index];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item

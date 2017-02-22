@@ -958,7 +958,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
   forPartialWordRange:(NSRange)charRange
   indexOfSelectedItem:(NSInteger *)index
 {
-    return nil;
+    return @[];
 }
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector

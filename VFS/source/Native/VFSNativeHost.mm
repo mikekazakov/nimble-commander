@@ -92,7 +92,7 @@ struct EntryAttributesCallbackParams
     gid_t               gid;
     mode_t              mode;
     dev_t               dev;
-    uint32_t            inode;
+    uint64_t            inode;
     uint32_t            flags;
     int64_t             size; // will be 0 if absent
 };
@@ -443,7 +443,7 @@ static int ReadDirAttributesBulk(
                 
                 if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
                     params.size = *(off_t*)field;
-                    field += sizeof(off_t);
+                    /* field += sizeof(off_t); */
                 }
                 else
                     params.size = -1;
@@ -615,196 +615,7 @@ int VFSNativeHost::FetchFlexibleListing(const char *_path,
                                         int _flags,
                                         VFSCancelChecker _cancel_checker)
 {
-  
     return FetchFlexibleListingBulk(_path, _target, _flags, _cancel_checker);
-    
-//    MachTimeBenchmark mtb;
-    
-    static const auto dirents_reserve_amount = 64;
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
-    const bool is_native_io = !io.isrouted();
-    
-    const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
-    if( fd < 0 )
-        return VFSError::FromErrno();
-    auto close_fd = at_scope_end([fd]{
-        close(fd);
-    });
-    
-    
-    
-//    cout << "[[[[[[[[[" << endl;
-//    ReadDirAttributesBulk( fd, [](const ReadDirAttributesBulkCallbackParams &_params){
-//        cout << _params.filename << "  " << _params.inode << endl;
-//    });
-//    cout << "]]]]]]]]]" << endl;
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    bool need_to_add_dot_dot = true; // in some fancy situations there's no ".." entry in directory - we should insert it by hand
-    if(_flags & VFSFlags::F_NoDotDot)
-        need_to_add_dot_dot = false;
-    
-    vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
-    dirents.reserve( dirents_reserve_amount );
-    
-    // initial directory lookup
-    if( auto dirp = fdopendir(dup(fd)) ) {
-        auto close_dir = at_scope_end([=]{ closedir(dirp); });
-    
-        if(_cancel_checker && _cancel_checker())
-            return VFSError::Cancelled;
-    
-        while( auto entp = ::_readdir_unlocked(dirp, 1) ) {
-            if(_cancel_checker && _cancel_checker())
-                return VFSError::Cancelled;
-            
-            if( entp->d_ino == 0 ||      // apple's documentation suggest to skip such files
-                strisdot(entp->d_name) ) // do not process self entry
-                continue;
-               
-            if( strisdotdot( entp->d_name) ) { // special case for dot-dot directory
-                if( !need_to_add_dot_dot )
-                    continue;
-                
-                // TODO: handle situation when ".." is not the #0 entry
-                need_to_add_dot_dot = false;
-                
-                if(strcmp(_path, "/") == 0)
-                    continue; // skip .. for root directory
-                
-                // it's very nice that sometimes OSX can not set a valid flags on ".." file in a mount point
-                // so for now - just fix it by hand
-                if(entp->d_type == 0)
-                    entp->d_type = DT_DIR; // a very-very strange bugfix
-            }
-            
-            dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
-        }
-    }
-    else
-        return VFSError::FromErrno();
-    
-    if(need_to_add_dot_dot)
-        dirents.insert(begin(dirents), make_tuple("..", 0, DT_DIR)); // add ".." entry by hand
-    
-    // set up or listing structure
-    VFSListingInput listing_source;
-    listing_source.hosts[0] = shared_from_this();
-    listing_source.directories[0] = EnsureTrailingSlash(_path);
-    listing_source.inodes.reset( variable_container<>::type::dense );
-    listing_source.atimes.reset( variable_container<>::type::dense );
-    listing_source.mtimes.reset( variable_container<>::type::dense );
-    listing_source.ctimes.reset( variable_container<>::type::dense );
-    listing_source.btimes.reset( variable_container<>::type::dense );
-    listing_source.add_times.reset( variable_container<>::type::sparse );
-    listing_source.unix_flags.reset( variable_container<>::type::dense );
-    listing_source.uids.reset( variable_container<>::type::dense );
-    listing_source.gids.reset( variable_container<>::type::dense );
-    listing_source.sizes.reset( variable_container<>::type::dense );
-    listing_source.symlinks.reset( variable_container<>::type::sparse );
-    listing_source.display_filenames.reset( variable_container<>::type::sparse );
-    spinlock symlinks_guard, display_names_guard, add_times_guard;
-    
-    const unsigned amount = (unsigned)dirents.size();
-    listing_source.filenames.resize(amount);
-    listing_source.inodes.resize(amount);
-    listing_source.unix_types.resize(amount);
-    listing_source.atimes.resize(amount);
-    listing_source.mtimes.resize(amount);
-    listing_source.ctimes.resize(amount);
-    listing_source.btimes.resize(amount);
-    listing_source.unix_modes.resize(amount);
-    listing_source.unix_flags.resize(amount);
-    listing_source.uids.resize(amount);
-    listing_source.gids.resize(amount);
-    listing_source.sizes.resize(amount);
-    
-    for(unsigned n = 0; n != amount ; ++n ) {
-        auto &i = dirents[n];
-        listing_source.filenames[n] = move(get<0>(i));
-        listing_source.inodes[n] = get<1>(i);
-        listing_source.unix_types[n] = get<2>(i);
-    }
-    
-    // stat files, read info about symlinks ands possible display names
-    dispatch_apply(amount, dispatch_get_global_queue(0, 0), [&](size_t n) {
-        if(_cancel_checker && _cancel_checker()) return;
-        auto filename = listing_source.filenames[n].c_str();
-        
-        // stat the file
-        struct stat stat_buffer;
-        if( (is_native_io && fstatat(fd, filename, &stat_buffer, 0) == 0) ||
-           (!is_native_io && io.stat((listing_source.directories[0] + filename).c_str(), &stat_buffer) == 0 ) ) {
-            listing_source.atimes[n]        = stat_buffer.st_atimespec.tv_sec;
-            listing_source.mtimes[n]        = stat_buffer.st_mtimespec.tv_sec;
-            listing_source.ctimes[n]        = stat_buffer.st_ctimespec.tv_sec;
-            listing_source.btimes[n]        = stat_buffer.st_birthtimespec.tv_sec;
-            listing_source.unix_modes[n]    = stat_buffer.st_mode;
-            listing_source.unix_flags[n]    = stat_buffer.st_flags;
-            listing_source.uids[n]          = stat_buffer.st_uid;
-            listing_source.gids[n]          = stat_buffer.st_gid;
-            listing_source.sizes[n]         = stat_buffer.st_size;
-            // add other stat info here. there's a lot more
-        }
-        
-        struct AttrListTime {
-            u_int32_t       length = 0;
-            struct timespec time;
-        } __attribute__((aligned(4), packed)) added_time_buffer;
-        
-        struct attrlist attr_list;
-        memset(&attr_list, 0, sizeof(attr_list));
-        attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
-        attr_list.commonattr = ATTR_CMN_ADDEDTIME;
-        if( getattrlistat(fd, filename, &attr_list, &added_time_buffer, sizeof(added_time_buffer), 0) == 0) {
-            lock_guard<spinlock> guard(add_times_guard);
-            listing_source.add_times.insert(n, added_time_buffer.time.tv_sec );
-        }
-
-        // if we're dealing with a symlink - read it's content to know the real file path
-        if( listing_source.unix_types[n] == DT_LNK ) {
-            char linkpath[MAXPATHLEN];
-            ssize_t sz = is_native_io ?
-                readlinkat(fd, filename, linkpath, MAXPATHLEN) :
-                io.readlink((listing_source.directories[0] + filename).c_str(), linkpath, MAXPATHLEN);
-            if(sz != -1) {
-                linkpath[sz] = 0;
-                lock_guard<spinlock> guard(symlinks_guard);
-                listing_source.symlinks.insert(n, linkpath);
-            }
-            
-            // stat the original file so we can extract some interesting info from it
-            struct stat link_stat_buffer;
-            if( (is_native_io && fstatat(fd, filename, &link_stat_buffer, AT_SYMLINK_NOFOLLOW) == 0) ||
-               (!is_native_io && io.lstat((listing_source.directories[0] + filename).c_str(), &link_stat_buffer) == 0 ) )
-               if(link_stat_buffer.st_flags & UF_HIDDEN)
-                listing_source.unix_flags[n] |= UF_HIDDEN; // currently using only UF_HIDDEN flag
-        }
-        
-        if( _flags & VFSFlags::F_LoadDisplayNames )
-            if( S_ISDIR(listing_source.unix_modes[n]) &&
-               !strisdotdot(listing_source.filenames[n]) ) {
-                static auto &dnc = DisplayNamesCache::Instance();
-                if( auto display_name = dnc.DisplayName(stat_buffer, listing_source.directories[0] + filename) ) {
-                    lock_guard<spinlock> guard(display_names_guard);
-                    listing_source.display_filenames.insert(n, display_name);
-                }
-            }
-    });
-    
-    _target = VFSListing::Build(move(listing_source));
-    
-//    mtb.ResetMicro();
-    
-    return 0;
 }
 
 int VFSNativeHost::CreateFile(const char* _path,

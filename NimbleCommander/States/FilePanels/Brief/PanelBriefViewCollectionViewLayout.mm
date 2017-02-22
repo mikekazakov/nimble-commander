@@ -42,7 +42,6 @@
     
     for( NSCollectionViewLayoutAttributes *i in attrs ) {
         const int index = (int)i.indexPath.item;
-        const int row = index % items_per_column;
         const int col = index / items_per_column;
         
         if( col >= columns.size() )

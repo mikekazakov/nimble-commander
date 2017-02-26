@@ -377,7 +377,7 @@ static NSPoint  g_LastMouseDownPos = {};
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
-    if( self.isDropTarget ) {
+    if( self.dropTarget ) {
         self.dropTarget = false;
     }
     else {
@@ -405,7 +405,7 @@ static NSPoint  g_LastMouseDownPos = {};
         return [self.superview performDragOperation:sender];
 }
 
-- (bool) isDropTarget
+- (bool) dropTarget
 {
     return m_DropTarget;
 }

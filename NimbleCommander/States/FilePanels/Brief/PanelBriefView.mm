@@ -536,6 +536,22 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     [m_CollectionView scrollRectToVisible:rect];
 }
 
+- (void) onScrollToBeginning:(NSEvent*)_event
+{
+    NSRect rect;
+    rect =  m_CollectionView.visibleRect;
+    rect.origin.x = 0;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
+- (void) onScrollToEnd:(NSEvent*)_event
+{
+    NSRect rect;
+    rect = m_CollectionView.visibleRect;
+    rect.origin.x = m_CollectionView.bounds.size.width - rect.size.width;
+    [m_CollectionView scrollRectToVisible:rect];
+}
+
 - (int) sortedItemPosAtPoint:(NSPoint)_window_point
                hitTestOption:(PanelViewHitTest::Options)_options
 {

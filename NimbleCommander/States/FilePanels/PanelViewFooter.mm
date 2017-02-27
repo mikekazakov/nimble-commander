@@ -309,6 +309,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     else {
         m_FilenameLabel.stringValue = @"";
         m_SizeLabel.stringValue = @"";
+        m_ModTime.stringValue = @"";
     }
 }
 

@@ -161,7 +161,9 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"panel.move_left",                                 100'020},
     {"panel.move_right",                                100'030},
     {"panel.move_first",                                100'040},
+    {"panel.scroll_first",                              100'041},
     {"panel.move_last",                                 100'050},
+    {"panel.scroll_last",                               100'051},
     {"panel.move_next_page",                            100'060},
     {"panel.scroll_next_page",                          100'061},
     {"panel.move_prev_page",                            100'070},
@@ -320,7 +322,9 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"panel.move_left",                                     u8"\uF702"  }, // left
         {"panel.move_right",                                    u8"\uF703"  }, // right
         {"panel.move_first",                                    u8"\uF729"  }, // home
+        {"panel.scroll_first",                                  u8"⌥\uF729" }, // alt+home
         {"panel.move_last",                                     u8"\uF72B"  }, // end
+        {"panel.scroll_last",                                   u8"⌥\uF72B" }, // alt+end
         {"panel.move_next_page",                                u8"\uF72D"  }, // page down
         {"panel.scroll_next_page",                              u8"⌥\uF72D" }, // alt+page down
         {"panel.move_prev_page",                                u8"\uF72C"  }, // page up

@@ -687,7 +687,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
-    rect.origin.y -= rect.size.height - m_ScrollView.verticalPageScroll;
+    rect.origin.y -= rect.size.height - m_TableView.headerView.bounds.size.height;
     [m_TableView scrollRectToVisible:rect];
 }
 
@@ -695,7 +695,25 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
-    rect.origin.y += rect.size.height - m_ScrollView.verticalPageScroll;
+    rect.origin.y += rect.size.height;
+    [m_TableView scrollRectToVisible:rect];
+}
+
+- (void) onScrollToBeginning:(NSEvent*)_event
+{
+    NSRect rect;
+    rect = m_TableView.visibleRect;
+    rect.origin.y = -m_TableView.headerView.bounds.size.height;
+    [m_TableView scrollRectToVisible:rect];
+}
+
+- (void) onScrollToEnd:(NSEvent*)_event
+{
+    NSRect rect;
+    rect = m_TableView.visibleRect;
+    rect.origin.y = m_TableView.bounds.size.height -
+                    m_TableView.visibleRect.size.height +
+                    m_TableView.headerView.bounds.size.height;
     [m_TableView scrollRectToVisible:rect];
 }
 

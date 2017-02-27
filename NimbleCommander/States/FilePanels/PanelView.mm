@@ -545,14 +545,14 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     [self checkKeyboardModifierFlags:modifiers];
     
     static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last,
-    hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup;
+    hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup, hk_scrhome, hk_scrend;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
        {&hk_up, &hk_down, &hk_left, &hk_right, &hk_first, &hk_last, &hk_pgdown, &hk_pgup,
-           &hk_inv_and_move, &hk_inv, &hk_scrdown, &hk_scrup},
+           &hk_inv_and_move, &hk_inv, &hk_scrdown, &hk_scrup, &hk_scrhome, &hk_scrend},
        {"panel.move_up", "panel.move_down", "panel.move_left", "panel.move_right", "panel.move_first",
            "panel.move_last", "panel.move_next_page", "panel.move_prev_page",
            "panel.move_next_and_invert_selection", "panel.invert_item_selection",
-           "panel.scroll_next_page", "panel.scroll_prev_page"
+           "panel.scroll_next_page", "panel.scroll_prev_page", "panel.scroll_first", "panel.scroll_last"
        }
       );
 
@@ -576,6 +576,10 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         [self HandlePrevPage];
     else if( hk_scrup.IsKeyDown(unicode, keycode, modifiers) )
         [m_ItemsView onPageUp:event];
+    else if( hk_scrhome.IsKeyDown(unicode, keycode, modifiers) )
+        [m_ItemsView onScrollToBeginning:event];
+    else if( hk_scrend.IsKeyDown(unicode, keycode, modifiers) )
+        [m_ItemsView onScrollToEnd:event];
     else if( hk_inv_and_move.IsKeyDown(unicode, keycode, modifiers) )
         [self onInvertCurrentItemSelectionAndMoveNext];
     else if( hk_inv.IsKeyDown(unicode, keycode, modifiers) )

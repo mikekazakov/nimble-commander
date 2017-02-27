@@ -145,6 +145,12 @@ static bool _name()\
 MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowDotDotEntry, g_ConfigShowDotDotEntry);
 MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowLocalizedFilenames, g_ConfigShowLocalizedFilenames);
 
+static void HeatUpConfigValues()
+{
+    ConfigShowDotDotEntry();
+    ConfigShowLocalizedFilenames();
+}
+
 @implementation PanelController
 @synthesize view = m_View;
 @synthesize data = m_Data;
@@ -154,6 +160,9 @@ MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowLocalizedFilenames, g_ConfigShowL
 
 - (id) init
 {
+    static once_flag once;
+    call_once(once, HeatUpConfigValues);
+
     self = [super init];
     if(self) {
         m_QuickSearchLastType = 0ns;

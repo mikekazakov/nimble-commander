@@ -63,7 +63,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 
 static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _index)
 {
-    return [NSString stringWithFormat:@"Tools  ▶ %@",
+    return [NSString stringWithFormat:@"Tools ▶ %@",
             (_et.m_Title.empty() ?
              [NSString stringWithFormat:@"Tool #%u", _index] :
              [NSString stringWithUTF8StdString:_et.m_Title]) ];

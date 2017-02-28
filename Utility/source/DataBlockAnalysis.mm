@@ -231,3 +231,8 @@ int DoStaticDataBlockAnalysis(const void *_data,
 
     return 0;
 }
+
+bool IsValidUTF8String( const void *_data, size_t _bytes_amount )
+{
+    return UTF8Errors((const unsigned char*)_data, _bytes_amount) == 0;
+}

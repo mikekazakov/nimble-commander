@@ -18,6 +18,8 @@ struct StaticDataBlockAnalysis
     
 };
 
+bool IsValidUTF8String( const void *_data, size_t _bytes_amount );
+
 int DoStaticDataBlockAnalysis(const void *_data,
                               size_t _bytes_amount,
                               StaticDataBlockAnalysis *_output

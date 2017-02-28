@@ -7,7 +7,9 @@
 //
 
 #include <sys/dirent.h>
+#include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>
+#include <Utility/DataBlockAnalysis.h>
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
@@ -47,6 +49,52 @@ static VFSConfiguration ComposeConfiguration(const string &_path, optional<strin
     config.path = _path;
     config.password = move(_passwd);
     return VFSConfiguration( move(config) );
+}
+
+
+static CFStringEncoding DetectEncoding( const void* _bytes, size_t _sz )
+{
+    NSData *data = [NSData dataWithBytesNoCopy:(void*)_bytes
+                                        length:_sz
+                                  freeWhenDone:false];
+    
+    NSStringEncoding ns_enc = [NSString stringEncodingForData:data
+                                           encodingOptions:nil
+                                           convertedString:nil
+                                       usedLossyConversion:nil];
+    if( ns_enc == 0 )
+        return kCFStringEncodingMacRoman;
+    
+    CFStringEncoding cf_enc = CFStringConvertNSStringEncodingToEncoding(ns_enc);
+    if( cf_enc == kCFStringEncodingInvalidId )
+        return kCFStringEncodingMacRoman;
+
+    return cf_enc;
+}
+
+static void DecodeStringToUTF8(const void* _bytes,
+                               size_t _sz,
+                               CFStringEncoding _enc,
+                               char *_buf,
+                               size_t _buf_sz )
+{
+    CFStackAllocator alloc;
+    auto str = CFStringCreateWithBytesNoCopy(alloc.Alloc(),
+                                             (const UInt8*)_bytes,
+                                             _sz,
+                                             _enc,
+                                             false,
+                                             kCFAllocatorNull);
+    if( str ) {
+        if( auto utf8 = CFStringGetCStringPtr(str, kCFStringEncodingUTF8) )
+            strcpy( _buf, utf8 );
+        else
+            CFStringGetCString(str, _buf, _buf_sz, kCFStringEncodingUTF8);
+        CFRelease(str);
+    }
+    else {
+        strcpy( _buf, (const char*)_bytes );
+    }
 }
 
 VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
@@ -184,6 +232,8 @@ int VFSArchiveHost::ReadArchiveListing()
     m_PathToDir.emplace("/", move(root_dir));
     }
 
+    optional<CFStringEncoding> detected_encoding;
+
     VFSArchiveDir *parent_dir = &m_PathToDir["/"s];
     struct archive_entry *aentry;
     int ret;
@@ -192,7 +242,39 @@ int VFSArchiveHost::ReadArchiveListing()
         const struct stat *stat = archive_entry_stat(aentry);
         char path[1024];
         path[0] = '/';
-        strcpy(path + 1, archive_entry_pathname(aentry));
+
+        const auto entry_pathname = archive_entry_pathname(aentry);
+        const auto entry_pathname_len = strlen(entry_pathname);
+  
+        // pathname can be represented in ANY encoding.
+        // if we already have figured out it - convert from it to UTF8 immediately
+        if( detected_encoding ) {
+            DecodeStringToUTF8(entry_pathname,
+                               entry_pathname_len,
+                               *detected_encoding,
+                               path+1,
+                               sizeof(path) - 2);
+        }
+        else {
+            // if we don't know any specific encoding setting for this archive - check for UTF8
+            // this checking is supposed to be very fast, for most archives it will return true
+            if( IsValidUTF8String(entry_pathname, entry_pathname_len) ) {
+                // we can path straightaway
+                strcpy(path + 1, entry_pathname);
+            }
+            else {
+                // if this archive doesn't use a valid UTF8 encoding -
+                // find it out and decode to UTF8
+                if( !detected_encoding )
+                    detected_encoding = DetectEncoding(entry_pathname, entry_pathname_len);
+                
+                DecodeStringToUTF8(entry_pathname,
+                                   entry_pathname_len,
+                                   *detected_encoding,
+                                   path+1,
+                                   sizeof(path) - 2);
+            }
+        }
         
         if(strcmp(path, "/.") == 0) continue; // skip "." entry for ISO for example
 

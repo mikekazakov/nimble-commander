@@ -133,6 +133,24 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
                                                                  false));
 }
 
++ (instancetype)stringWithUTF8StdStringFallback:(const std::string&)stdstring
+{
+    if( auto s = CFStringCreateWithBytes(0,
+                                         (UInt8*)stdstring.c_str(),
+                                         stdstring.length(),
+                                         kCFStringEncodingUTF8,
+                                         false) )
+        return (NSString*) CFBridgingRelease(s);
+
+
+    auto s = CFStringCreateWithBytes(0,
+                                     (UInt8*)stdstring.c_str(),
+                                     stdstring.length(),
+                                     kCFStringEncodingMacRoman,
+                                     false);
+    return (NSString*) CFBridgingRelease(s);
+}
+
 + (instancetype)stringWithUTF8StdStringNoCopy:(const string&)stdstring
 {
     return (NSString*) CFBridgingRelease(CFStringCreateWithBytesNoCopy(0,

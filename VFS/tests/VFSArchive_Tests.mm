@@ -20,6 +20,7 @@ static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
 static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
+static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
 
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -324,6 +325,28 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto d = file->ReadFile();
     XCTAssert( d->size() == 1426 );
     auto ref = "'use strict';";
+    XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
+    file.reset();
+}
+
+- (void)testChineseArchive
+{
+  shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_ChineseArchive.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+
+    VFSFilePtr file;
+    
+    XCTAssert( host->CreateFile(@"/操作系统原理/学生讲座/1.c".UTF8String, file, 0) == 0 );
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == 0 );
+
+    auto d = file->ReadFile();
+    XCTAssert( d->size() == 627 );
+    auto ref = "#include <stdio.h>";
     XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
     file.reset();
 }

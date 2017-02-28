@@ -521,7 +521,6 @@ string PanelData::VerboseDirectoryFullPath() const
     s += m_Listing->Directory();
     if(s.back() != '/') s += '/';
     return s;
-    return "";
 }
 
 struct SortPredLessBase

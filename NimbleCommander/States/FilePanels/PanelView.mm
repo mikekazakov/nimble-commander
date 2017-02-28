@@ -1055,14 +1055,16 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (NSString *) headerTitleForPanel
 {
-    switch( m_Data->Type() ) {
-        case PanelData::PanelType::Directory:
-            return [NSString stringWithUTF8StdString:m_Data->VerboseDirectoryFullPath()];
-        case PanelData::PanelType::Temporary:
-            return @"Temporary Panel"; // TODO: localize
-        default:
-            return @"";
-    }
+    auto title = [&]{
+        switch( m_Data->Type() ) {
+            case PanelData::PanelType::Directory:
+                return [NSString stringWithUTF8StdString:m_Data->VerboseDirectoryFullPath()];
+            case PanelData::PanelType::Temporary:
+                return @"Temporary Panel"; // TODO: localize
+            default:
+                return @"";
+        }}();
+    return title ? title : @"";
 }
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent*)_event

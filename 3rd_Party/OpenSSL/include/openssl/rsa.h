@@ -462,11 +462,13 @@ int ERR_load_RSA_strings(void);
 
 /* Function codes. */
 # define RSA_F_CHECK_PADDING_MD                           140
+# define RSA_F_ENCODE_PKCS1                               146
 # define RSA_F_INT_RSA_VERIFY                             145
 # define RSA_F_OLD_RSA_PRIV_DECODE                        147
 # define RSA_F_PKEY_RSA_CTRL                              143
 # define RSA_F_PKEY_RSA_CTRL_STR                          144
 # define RSA_F_PKEY_RSA_SIGN                              142
+# define RSA_F_PKEY_RSA_VERIFY                            149
 # define RSA_F_PKEY_RSA_VERIFYRECOVER                     141
 # define RSA_F_RSA_ALGOR_TO_MD                            156
 # define RSA_F_RSA_BUILTIN_KEYGEN                         129

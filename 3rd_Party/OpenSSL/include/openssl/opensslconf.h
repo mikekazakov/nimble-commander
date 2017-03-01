@@ -37,6 +37,9 @@ extern "C" {
 #ifndef OPENSSL_NO_ASAN
 # define OPENSSL_NO_ASAN
 #endif
+#ifndef OPENSSL_NO_ASM
+# define OPENSSL_NO_ASM
+#endif
 #ifndef OPENSSL_NO_CRYPTO_MDEBUG
 # define OPENSSL_NO_CRYPTO_MDEBUG
 #endif
@@ -141,7 +144,7 @@ extern "C" {
 # define DEPRECATEDIN_0_9_8(f)
 #endif
 
-#define OPENSSL_CPUID_OBJ
+
 
 /* Generate 80386 code? */
 #undef I386_ONLY

@@ -17,7 +17,6 @@
 		CF1847221E41CAFF008B7C9F /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */; };
 		CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847231E41CB07008B7C9F /* libboost_system.a */; };
 		CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
-		CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472A1E41CC4E008B7C9F /* libssh2.a */; };
 		CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847281E41CC4C008B7C9F /* libcrypto.a */; };
 		CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847261E41CC49008B7C9F /* libssl.a */; };
 		CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */; };
@@ -96,6 +95,7 @@
 		CF69D0771DA2353000992B84 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* VFSPSHost.mm */; };
 		CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0731DA2353000992B84 /* VFSPSInternal.h */; };
 		CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0791DA238D400992B84 /* VFSListingInput.h */; };
+		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
 		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
 		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
@@ -138,7 +138,6 @@
 		CF1847231E41CB07008B7C9F /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../Files/3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
 		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
 		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
-		CF18472A1E41CC4E008B7C9F /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../Files/3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
@@ -215,6 +214,7 @@
 		CF69D0721DA2353000992B84 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = source/PS/VFSPSHost.mm; sourceTree = "<group>"; };
 		CF69D0731DA2353000992B84 /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = source/PS/VFSPSInternal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
+		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
 		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
@@ -231,6 +231,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */,
 				CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */,
 				CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */,
 				CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */,
@@ -245,7 +246,6 @@
 				CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */,
 				CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */,
 				CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */,
-				CF18472B1E41CC4E008B7C9F /* libssh2.a in Frameworks */,
 				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
 				CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */,
 				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
@@ -282,6 +282,7 @@
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF7C7D8E1E659D33002DB0E2 /* libssh2.a */,
 				CFD727411E42EC9D00603077 /* AppKit.framework */,
 				CFD7273F1E42EC9A00603077 /* Foundation.framework */,
 				CFD7273D1E42EC8E00603077 /* Carbon.framework */,
@@ -292,7 +293,6 @@
 				CFD725F71E42DC3600603077 /* liblzma.a */,
 				CFD725F51E42DC3200603077 /* libbz2.a */,
 				CF18472F1E41CFB7008B7C9F /* libarchive.a */,
-				CF18472A1E41CC4E008B7C9F /* libssh2.a */,
 				CF1847281E41CC4C008B7C9F /* libcrypto.a */,
 				CF1847261E41CC49008B7C9F /* libssl.a */,
 				CF1847231E41CB07008B7C9F /* libboost_system.a */,
@@ -746,12 +746,14 @@
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
+					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -808,12 +810,14 @@
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
+					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
+					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;

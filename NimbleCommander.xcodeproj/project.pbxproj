@@ -354,6 +354,7 @@
 		CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
+		CF7C7D961E666194002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D951E659FA7002DB0E2 /* libssh2.a */; };
 		CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
 		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
@@ -644,7 +645,6 @@
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
-		CFB8CDBD1D82BFAD007B1142 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB8CDBC1D82BFAD007B1142 /* libssh2.a */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
 		CFC044E31B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */; };
@@ -1197,6 +1197,13 @@
 			remoteGlobalIDString = CF960E0C1C97FA73001D8B02;
 			remoteInfo = Utility;
 		};
+		CF7C7D941E659FA7002DB0E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF7C7D901E659FA7002DB0E2 /* libssh2.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF7C7D1A1E658FFB002DB0E2;
+			remoteInfo = libssh2;
+		};
 		CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
@@ -1503,6 +1510,7 @@
 		CF7C7CE21E5C4CD7002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabImportSheet.strings; sourceTree = "<group>"; };
 		CF7C7CE31E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTab.strings; sourceTree = "<group>"; };
 		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
+		CF7C7D901E659FA7002DB0E2 /* libssh2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libssh2.xcodeproj; path = 3rd_Party/libssh2/libssh2.xcodeproj; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
 		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Delete/DialogResults.h; sourceTree = SOURCE_ROOT; };
 		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = ../NimbleCommander/Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
@@ -1998,7 +2006,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFB8CDBD1D82BFAD007B1142 /* libssh2.a in Frameworks */,
+				CF7C7D961E666194002DB0E2 /* libssh2.a in Frameworks */,
 				CF811A921D8262BE001F9E7F /* libcrypto.a in Frameworks */,
 				CF811A931D8262BE001F9E7F /* libssl.a in Frameworks */,
 				CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */,
@@ -2543,6 +2551,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CF7C7D911E659FA7002DB0E2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF7C7D951E659FA7002DB0E2 /* libssh2.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF84C8EF1DBB2AA900B4E888 /* List */ = {
 			isa = PBXGroup;
 			children = (
@@ -2862,6 +2878,7 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
+				CF7C7D901E659FA7002DB0E2 /* libssh2.xcodeproj */,
 				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
 				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
@@ -3229,6 +3246,10 @@
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
 				{
+					ProductGroup = CF7C7D911E659FA7002DB0E2 /* Products */;
+					ProjectRef = CF7C7D901E659FA7002DB0E2 /* libssh2.xcodeproj */;
+				},
+				{
 					ProductGroup = CFACF9CD1E24AAD800FD6AB6 /* Products */;
 					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
@@ -3283,6 +3304,13 @@
 			fileType = archive.ar;
 			path = libUtility.a;
 			remoteRef = CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF7C7D951E659FA7002DB0E2 /* libssh2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libssh2.a;
+			remoteRef = CF7C7D941E659FA7002DB0E2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */ = {
@@ -5151,6 +5179,7 @@
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
@@ -5216,6 +5245,7 @@
 					"$(PROJECT_DIR)/3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -5244,10 +5274,6 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/3rd_Party/liblzmadec/built",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";
@@ -5265,10 +5291,6 @@
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "Files/Resource/NimbleCommander-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/3rd_Party/liblzmadec/built",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "";

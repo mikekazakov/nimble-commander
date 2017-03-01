@@ -133,7 +133,7 @@ public:
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
-                     VFSCancelChecker _cancel_checker);
+                     VFSCancelChecker _cancel_checker = nullptr);
     
     /** Actually calls Stat and returns true if return was Ok. */
     virtual bool Exists(const char *_path,

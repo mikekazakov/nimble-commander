@@ -8,8 +8,8 @@
 
 #include "tests_common.h"
 #include <VFS/NetSFTP.h>
-//#include "../Files/vfs/vfs_net_sftp.h"
-//#include "../Files/PanelData.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Habanero/DispatchGroup.h>
 
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local";
@@ -93,6 +93,21 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
     }
+}
+
+- (void)testCrashOnManyConnections
+{
+    auto host = self.hostForVBoxDebian7x86;
+
+    // in this test VFS must simply not crash under this workload.
+    // returning errors on this case is ok at the moment
+    DispatchGroup grp;
+    for( int i =0; i < 100; ++i)
+        grp.Run( [&]{
+            VFSStat st;
+            host->Stat("/bin/cat", st, 0);
+        });
+    grp.Wait();
 }
 
 - (void)testBasicWithPrivateKey

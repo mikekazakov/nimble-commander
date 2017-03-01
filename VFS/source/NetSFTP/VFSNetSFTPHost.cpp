@@ -8,8 +8,8 @@
 
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
-#include "../../../Files/3rd_party/built/include/libssh2.h"
-#include "../../../Files/3rd_party/built/include/libssh2_sftp.h"
+#include <libssh2.h>
+#include <libssh2_sftp.h>
 #include "../VFSListingInput.h"
 #include "VFSNetSFTPHost.h"
 #include "VFSNetSFTPFile.h"
@@ -265,6 +265,7 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     
     int optval = 1;
     setsockopt(connection->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
+	setsockopt(connection->socket, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
 
     connection->ssh = libssh2_session_init_ex(NULL, NULL, NULL, this);
     if(!connection->ssh)
@@ -304,8 +305,6 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
         if ( ret )
             return VFSError::NetSFTPCouldntAuthenticatePassword;
     }
-
-    libssh2_session_set_blocking(connection->ssh, 1);
     
     _t = move(connection);
     

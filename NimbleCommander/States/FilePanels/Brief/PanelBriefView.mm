@@ -148,6 +148,7 @@ const noexcept
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
         m_ScrollView.contentView.copiesOnScroll = true;
+        m_ScrollView.backgroundColor = NSColor.clearColor;
         [self addSubview:m_ScrollView];
         
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);

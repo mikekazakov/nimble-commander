@@ -763,6 +763,7 @@
 					"-std=c++1z",
 				);
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -826,6 +827,7 @@
 					"-std=c++1z",
 				);
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;

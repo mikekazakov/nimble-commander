@@ -243,7 +243,6 @@
 					"source/PrivilegedIOHelper-Launchd.plist",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -264,7 +263,6 @@
 					"source/PrivilegedIOHelper-Launchd.plist",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -320,6 +318,7 @@
 					"-std=c++1z",
 				);
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -369,6 +368,7 @@
 					"-std=c++1z",
 				);
 				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
@@ -399,6 +399,7 @@
 				CF69CFBA1DA209F000992B84 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CF8D0D531D9E4D7400ADFF14 /* Build configuration list for PBXProject "RoutedIO" */ = {
 			isa = XCConfigurationList;

@@ -60,6 +60,10 @@ public:
     typedef std::pair<iterator,iterator>            range_pair;
     typedef std::pair<const_iterator,const_iterator>const_range_pair;
     
+    static_assert( std::is_nothrow_move_constructible<key_type>::value,
+        "key_type must be nothrow move constructible" );
+    static_assert( std::is_nothrow_move_constructible<mapped_type>::value,
+        "mapped_type must be nothrow move constructible" );    
     
     // Construction
     fixed_eytzinger_map();
@@ -265,7 +269,7 @@ fixed_eytzinger_map<_Key, _Value, _Compare>::fixed_eytzinger_map(_InputIterator 
                         value,
                     "incompatible iterator type");
     std::vector< std::pair<_Key,_Value> > t{ _begin, _end };
-    sort(std::begin(t), std::end(t), [](auto &_v1, auto &_v2) {
+    std::sort(std::begin(t), std::end(t), [](auto &_v1, auto &_v2) {
         return _v1.first < _v2.first;
     });
     t.erase( std::unique( t.begin(), t.end(), [](const auto &_v1, const auto &_v2){

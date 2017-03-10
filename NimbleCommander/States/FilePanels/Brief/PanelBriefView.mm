@@ -156,6 +156,7 @@ const noexcept
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
         
         m_CollectionView = [[PanelBriefViewCollectionView alloc] initWithFrame:frameRect];
+        m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         m_CollectionView.dataSource = self;
         m_CollectionView.delegate = self;
 

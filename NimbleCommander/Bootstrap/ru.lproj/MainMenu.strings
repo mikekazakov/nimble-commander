@@ -59,7 +59,7 @@
 "57.title" = "Nimble Commander";
 
 /* Class = "NSMenuItem"; title = "About Nimble Commander"; ObjectID = "58"; */
-"58.title" = "О Nimble Commander";
+"58.title" = "О {AppName}";
 
 /* Class = "NSMenuItem"; title = "Open"; ObjectID = "72"; */
 "72.title" = "Открыть";
@@ -86,10 +86,10 @@
 "131.title" = "Службы";
 
 /* Class = "NSMenuItem"; title = "Hide Nimble Commander"; ObjectID = "134"; */
-"134.title" = "Скрыть Nimble Commander";
+"134.title" = "Скрыть {AppName}";
 
 /* Class = "NSMenuItem"; title = "Quit Nimble Commander"; ObjectID = "136"; */
-"136.title" = "Завершить Nimble Commander";
+"136.title" = "Завершить {AppName}";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
 "145.title" = "Скрыть остальные";
@@ -437,7 +437,7 @@
 "i2G-EV-iTc.title" = "Найти...";
 
 /* Class = "NSMenuItem"; title = "Nimble Commander Help"; ObjectID = "iBP-LD-aNS"; */
-"iBP-LD-aNS.title" = "Справка Nimble Commander";
+"iBP-LD-aNS.title" = "Справка {AppName}";
 
 /* Class = "NSMenuItem"; title = "Home"; ObjectID = "iGm-8g-qdX"; */
 "iGm-8g-qdX.title" = "Личное";

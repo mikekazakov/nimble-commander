@@ -155,6 +155,12 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.window.show_next_tab",                       16050},
     {"menu.window.show_vfs_list",                       16060},
     {"menu.window.bring_all_to_front",                  16030},
+    
+    /**
+    17'xxx block is used for Menu->Help tags, but is not wired into Shortcuts now
+    17'000 - Nimble Commander Help
+    17'010 - Visit Forum
+    **/
 
     {"panel.move_up",                                   100'000},
     {"panel.move_down",                                 100'010},
@@ -401,6 +407,14 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 }
 
 int ActionsShortcutsManager::TagFromAction(const string &_action) const
+{
+    auto it = m_ActionToTag.find(_action);
+    if( it != end(m_ActionToTag) )
+        return it->second;
+    return -1;
+}
+
+int ActionsShortcutsManager::TagFromAction(const char *_action) const
 {
     auto it = m_ActionToTag.find(_action);
     if( it != end(m_ActionToTag) )

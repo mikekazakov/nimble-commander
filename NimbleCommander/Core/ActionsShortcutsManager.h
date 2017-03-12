@@ -30,6 +30,7 @@ public:
      * Return -1 on if tag corresponing _action wasn't found.
      */
     int TagFromAction(const string &_action) const;
+    int TagFromAction(const char *_action) const;
     
     /**
      * return "" on if action corresponing _tag wasn't found.

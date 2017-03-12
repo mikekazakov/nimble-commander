@@ -29,6 +29,7 @@
 #include "PanelController+DataAccess.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
+#include "Favorites.h"
 #include "Views/MainWndGoToButton.h"
 #include "Views/QuickPreview.h"
 #include "Views/FilePanelMainSplitView.h"
@@ -692,7 +693,13 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [self synchronizeOverlappedTerminalWithPanel:_panel];
     }
     
-    [self updateTabNameForController:_panel];    
+    [self updateTabNameForController:_panel];
+    
+    
+    if( _panel.isUniform ) {
+        auto &locations = AppDelegate.me.favoriteLocationsStorage;
+        locations.ReportLocationVisit( *_panel.vfs, _panel.currentDirectoryPath );
+    }
 }
 
 //- (void) didBecomeKeyWindow

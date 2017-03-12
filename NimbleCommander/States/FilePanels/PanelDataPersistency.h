@@ -6,10 +6,36 @@
 class PanelDataPersisency
 {
 public:
-    static optional<rapidjson::StandaloneValue> EncodeVFSPath( const VFSListing &_listing );
+    struct Location
+    {
+        inline bool is_native() const { return hosts.empty(); }
+        vector<any> hosts; // .front() is a deepest host, .back() is topmost
+                           // empty hosts means using native vfs
+        string path;
+    };
 
-    static int CreateVFSFromState( const rapidjson::StandaloneValue &_state, VFSHostPtr &_host );
-    static string GetPathFromState( const rapidjson::StandaloneValue &_state );
+    static string MakeFootprintString( const Location &_loc );
+    static string MakeVerbosePathString( const Location &_loc );
+//    static string MakeFootprintString( const VFSHost &_at_vfs, const string &_path );
+
+    static optional<Location> EncodeLocation( const VFSHost &_vfs, const string &_path );
+    
+ 
+    using json = rapidjson::StandaloneValue;
+    static optional<json> EncodeVFSPath( const VFSHost &_vfs, const string &_path );
+    static optional<json> EncodeVFSPath( const VFSListing &_listing );
+    
+    static optional<Location> JSONToLocation( const json &_json );
+    static optional<json> LocationToJSON( const Location &_location );
+    
+    // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
+    
+
+    static int CreateVFSFromState( const json &_state, VFSHostPtr &_host );
+    static int CreateVFSFromLocation( const Location _state, VFSHostPtr &_host );
+    
+    static string GetPathFromState( const json &_state );
+    
     
 /**
 {
@@ -17,7 +43,7 @@ public:
  path: "/erere/rere/trtr"
 }
 */
-    static optional<rapidjson::StandaloneValue> EncodeVFSHostInfo( const VFSHost& _host );
+    static optional<json> EncodeVFSHostInfo( const VFSHost& _host );
 
     
 /*
@@ -33,11 +59,5 @@ junction: "path"
 uuid: "uuid"
 }
  
- 
- 
- 
  */
-    
-    
 };
-

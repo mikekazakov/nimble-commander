@@ -38,6 +38,7 @@
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
+#include <NimbleCommander/States/FilePanels/Favorites.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
@@ -216,6 +217,7 @@ static AppDelegate *g_Me = nil;
     NativeFSManager::Instance();
     FeedbackManager::Instance();
     [self themesManager];
+    [self favoriteLocationsStorage];
     
     [self updateMainMenuFeaturesByVersionAndState];
     
@@ -477,6 +479,9 @@ static AppDelegate *g_Me = nil;
         }
     }
     
+    // last cleanup before shutting down here:
+    self.favoriteLocationsStorage.StoreData( StateConfig(), "filePanel.favorites" );
+    
     return NSTerminateNow;
 }
 
@@ -717,6 +722,12 @@ static AppDelegate *g_Me = nil;
 - (ExternalEditorsStorage&) externalEditorsStorage
 {
     static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList);
+    return *i;
+}
+
+- (FavoriteLocationsStorage&) favoriteLocationsStorage
+{
+    static auto i = new FavoriteLocationsStorage( StateConfig(), "filePanel.favorites" );
     return *i;
 }
 

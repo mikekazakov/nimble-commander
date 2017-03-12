@@ -438,6 +438,10 @@
 		CF876D551D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */; };
 		CF876D561D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */; };
 		CF876D571D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */; };
+		CF8B24381E6FC68D008EB447 /* Favorites.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* Favorites.cpp */; };
+		CF8B24401E6FC695008EB447 /* Favorites.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* Favorites.cpp */; };
+		CF8B24411E6FC696008EB447 /* Favorites.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* Favorites.cpp */; };
+		CF8B24421E6FC696008EB447 /* Favorites.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* Favorites.cpp */; };
 		CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
@@ -1594,6 +1598,8 @@
 		CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = NimbleCommander/Viewer/InternalViewerWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = NimbleCommander/Viewer/InternalViewerWindowController.xib; sourceTree = SOURCE_ROOT; };
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanelData_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CF8B24361E6FC68D008EB447 /* Favorites.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Favorites.cpp; path = NimbleCommander/States/FilePanels/Favorites.cpp; sourceTree = SOURCE_ROOT; };
+		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8D0CE71D96234900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FeedbackWindow.xib; sourceTree = "<group>"; };
 		CF8D0CED1D9623E000ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/RegistrationInfoWindow.xib; sourceTree = "<group>"; };
 		CF8D0CF01D96244900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProFeaturesWindowController.xib; sourceTree = "<group>"; };
@@ -2623,6 +2629,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF8B24361E6FC68D008EB447 /* Favorites.cpp */,
+				CF8B24371E6FC68D008EB447 /* Favorites.h */,
 				CFDAC2AA1DFD096E0039A104 /* ConnectionsMenuDelegate.h */,
 				CFDAC2AB1DFD096E0039A104 /* ConnectionsMenuDelegate.mm */,
 				CFDAC2AC1DFD096E0039A104 /* NetworkConnectionsManager.h */,
@@ -3776,6 +3784,7 @@
 				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726441E42E10700603077 /* rapidjson.cpp in Sources */,
 				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
+				CF8B24411E6FC696008EB447 /* Favorites.cpp in Sources */,
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CFE9DDFE1BE1C47D007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
@@ -4012,6 +4021,7 @@
 				CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CF4E56B21D5068E800452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFD726E41E42E2CD00603077 /* PanelListViewDateTimeView.mm in Sources */,
+				CF8B24421E6FC696008EB447 /* Favorites.cpp in Sources */,
 				CFD726D01E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */,
 				CFD7265A1E42E1B400603077 /* MainWindow.mm in Sources */,
@@ -4213,6 +4223,7 @@
 				CFDAC2A91DFD093E0039A104 /* ToolsMenuDelegate.mm in Sources */,
 				CFDAC2AF1DFD096E0039A104 /* NetworkConnectionsManager.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
+				CF8B24381E6FC68D008EB447 /* Favorites.cpp in Sources */,
 				CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */,
 				CFDAC2901DFBF9260039A104 /* TermParser.mm in Sources */,
 				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,
@@ -4412,6 +4423,7 @@
 				CFD726881E42E21B00603077 /* PanelController+Navigation.mm in Sources */,
 				CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFD726DD1E42E2C100603077 /* PanelListView.mm in Sources */,
+				CF8B24401E6FC695008EB447 /* Favorites.cpp in Sources */,
 				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFD726D41E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CFD726F01E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,

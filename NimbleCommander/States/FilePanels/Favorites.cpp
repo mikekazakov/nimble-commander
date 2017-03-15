@@ -55,6 +55,8 @@ static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
         strcat( buf, "|" );
     }
     strcat( buf, _path.c_str() );
+    if( _path.empty() || _path.back() != '/' )
+        strcat( buf, "/" );
 
 //    cout << buf << endl;
 
@@ -106,126 +108,98 @@ Encode( const VFSHost &_host, const string &_directory )
     return v;
 }
 
-struct FavoriteLocationsStorage::Visit
-{
-    shared_ptr<const Location>  location;
-    int                         visits_count = 0;
-    time_t                      last_visit = 0;
-};
-
 FavoriteLocationsStorage::FavoriteLocationsStorage( GenericConfig &_config, const char *_path )
 {
     LoadData( _config, _path );
 
-//    AddFavoriteLocation(<#VFSHost &_host#>, <#const string &_directory#>)
-
-//    for( auto &p: DefaultFavorites() )
-    if( m_Favorites.empty() )
+    if( m_Favorites.empty() ) {
         for( auto &p: GetFindersFavorites() )
             AddFavoriteLocation( *VFSNativeHost::SharedHost(), p );
+        
+        if( m_Favorites.empty() )
+            for( auto &p: GetDefaultFavorites() )
+                AddFavoriteLocation( *VFSNativeHost::SharedHost(), p );
+    }
+}
+
+shared_ptr<const FavoriteLocationsStorage::Location> FavoriteLocationsStorage::
+FindInVisitsOrEncode(size_t _footprint,
+                     VFSHost &_host,
+                     const string &_directory)
+{
+    const auto visit = m_Visits.find(_footprint);
+    if( visit != end(m_Visits) )
+        return visit->second.location;
+    
+    return Encode(_host, _directory);
 }
 
 void FavoriteLocationsStorage::AddFavoriteLocation(VFSHost &_host,
                                                    const string &_directory,
-                                                   const string &_filename,
                                                    const string &_title)
 {
+    dispatch_assert_main_queue();
     const auto footprint = HashForPath( _host, _directory );
-//    const auto visit = find_if( begin(m_Visits), end(m_Visits), [footprint](auto &i){
-//        return i.footprint == footprint;
-//    });
-    shared_ptr<const Location> location_ptr;
-    const auto visit = m_Visits.find(footprint);
-    if( visit != end(m_Visits) )
-        location_ptr =visit->second.location;
-    else {
-        if( auto location = Encode(_host, _directory) ) {
-            location_ptr = location;
-        }
-        else
-            return;
-    }
-    
-    
-//    if( visit == end(m_Visits) ) {
-//        if( auto location = Encode(_host, _directory) ) {
-//            Visit v;
-//            v.location = location;
-//            location_ptr = location;
-////            v.footprint = footprint;
-////            m_Visits.emplace_back( move(v) );
-//            m_Visits[footprint] = move(v);
-//        }
-//    }
-//    else
-//        location_ptr = visit->second.location;
-    
-    const auto favorite = find_if( begin(m_Favorites), end(m_Favorites), [&](auto &i){
+
+    const auto has_already = any_of( begin(m_Favorites), end(m_Favorites), [&](auto &i){
         return i.footprint == footprint;
     });
-    if( favorite == end(m_Favorites) ) {
-        Favorite f;
-        f.location = location_ptr;
-        f.footprint = footprint;
-        f.filename = _filename;
-        f.title = _title;
-        
-//        cout << "manual: " << f.location->verbose_path << " - " << footprint << endl;
-        
-        m_Favorites.emplace_back( move(f) );
-    }
+    if( has_already )
+        return;
+
+    const auto location = FindInVisitsOrEncode(footprint, _host, _directory);
+    if( !location )
+        return; // can't represent this host in encoded form
+    
+    Favorite f;
+    f.location = location;
+    f.footprint = footprint;
+    f.title = _title;
+    m_Favorites.emplace_back( move(f) );
+}
+
+optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorage::
+ComposeFavoriteLocation(VFSHost &_host,
+                        const string &_directory,
+                        const string &_title)
+{
+    const auto location = Encode(_host, _directory);
+    if( !location )
+        return nullopt;
+    
+    Favorite f;
+    f.location = location;
+    f.footprint = HashForPath( _host, _directory );
+    f.title = _title;
+    return move(f);
 }
 
 void FavoriteLocationsStorage::ReportLocationVisit( VFSHost &_host, const string &_directory )
 {
+    dispatch_assert_main_queue();
     const auto timestamp = time(nullptr);
     const auto footprint = HashForPath( _host, _directory );
     
-    // O(n), n = number of different locations visited
-//    const auto existing = find_if( begin(m_Visits), end(m_Visits), [footprint](auto &i){
-//        return i.footprint == footprint;
-//    });
     const auto existing = m_Visits.find(footprint);
-    
     if( existing != end(m_Visits) ) {
-        // fastpath - find location, increment visits cound and refresh last visit time
+        // fastpath - found location, just increment visits cound and refresh last visit time
         existing->second.visits_count++;
         existing->second.last_visit = timestamp;
-//        cout << footprint << " - " << existing->visits_count << endl;
     }
     else if( auto location = Encode(_host, _directory) ) {
+        // slowfast - for the first time we need to encode the visited location
         Visit v;
-        
-//        if( auto l = PanelDataPersisency::EncodeLocation(_host, _directory) ) {
-////            v.host_stack2 = move(*l);
-//            auto fp = PanelDataPersisency::MakeFootprintString(*l);
-//            cout << fp << endl;
-//            cout << footprint << " - " << hash<string>()(fp) << endl;
-//        }
-        
-        
         v.location = move(location);
-//        v.footprint = footprint;
         v.last_visit = timestamp;
         v.visits_count = 1;
-//        cout << "new: " << v.location->verbose_path << footprint << endl;
-
-
-//        m_Visits.emplace_back( move(v) );
         m_Visits[footprint] = move(v);
     }
-    
-    
-//    auto fr = FrecentlyUsed(10);
-//    cout << "-----------------" << endl;
-//    for(auto &i: fr)
-//        cout << i->verbose_path << endl;
-//    cout << endl;
 }
 
 vector< shared_ptr<const FavoriteLocationsStorage::Location> >
 FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
 {
+    dispatch_assert_main_queue();
     if( _amount <= 0 )
         return {};
 
@@ -239,7 +213,7 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
     };
     
     // location, visits count, last visit, frecency score
-    vector< tuple<shared_ptr<const Location>, int, time_t, double> > recent_visits;
+    vector< tuple<shared_ptr<const Location>, int, time_t, double> > recent_visits; // todo: switch shared_ptr to index: 16bytes vs 4 bytes
     for( auto &v: m_Visits )
         if( v.second.last_visit > last_date && v.second.visits_count > 0 && !is_favorite(v.first) )
             recent_visits.emplace_back(v.second.location,
@@ -250,7 +224,7 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
     const auto total_visits = accumulate(
         begin(recent_visits),
         end(recent_visits),
-        1, // a little offset to exclude possibility of division by zero
+        int64_t(1), // a little offset to exclude possibility of division by zero
         [](auto &l, auto &r) { return l + get<1>(r); }
         );
     
@@ -277,6 +251,7 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
 vector<FavoriteLocationsStorage::Favorite>
 FavoriteLocationsStorage::Favorites( /*limit output later*/ ) const
 {
+    dispatch_assert_main_queue();
     return m_Favorites;
 }
 
@@ -351,12 +326,42 @@ FavoriteToJSON(const Favorite &_favorite)
                        MakeStandaloneString(_favorite.title),
                        g_CrtAllocator );
 
-    if( !_favorite.filename.empty() )
-        json.AddMember(MakeStandaloneString("filename"),
-                       MakeStandaloneString(_favorite.filename),
-                       g_CrtAllocator );
+//    if( !_favorite.filename.empty() )
+//        json.AddMember(MakeStandaloneString("filename"),
+//                       MakeStandaloneString(_favorite.filename),
+//                       g_CrtAllocator );
 
     return move(json);
+}
+
+optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorage::
+JSONToFavorite( const rapidjson::StandaloneValue& _json )
+{
+    if( !_json.IsObject() )
+        return nullopt;
+    
+    Favorite f;
+    
+    if( !_json.HasMember("location") )
+        return nullopt;
+    if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
+        auto location = make_shared<Location>();
+        location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
+        location->hosts_stack = move(*l);
+        f.location = location;
+    }
+    else
+        return nullopt;
+
+    if( _json.HasMember("title") && _json["title"].IsString() )
+        f.title = _json["title"].GetString();
+    
+//        return nullopt;
+//    v.visits_count = _json["visits_count"].GetInt();
+    
+    auto fp_string = PanelDataPersisency::MakeFootprintString(f.location->hosts_stack);
+    f.footprint = hash<string>()(fp_string);
+    return move(f);
 }
 
 void FavoriteLocationsStorage::StoreData( GenericConfig &_config, const char *_path )
@@ -393,6 +398,9 @@ void FavoriteLocationsStorage::LoadData( GenericConfig &_config, const char *_pa
     if( !json.IsObject() )
         return;
 
+    m_Visits.clear();
+    m_Favorites.clear();
+
     if( json.HasMember("automatic") && json["automatic"].IsArray() ) {
         auto &automatic = json["automatic"];
         for( int i = 0, e = automatic.Size(); i != e; ++i )
@@ -404,6 +412,28 @@ void FavoriteLocationsStorage::LoadData( GenericConfig &_config, const char *_pa
                 
                 m_Visits[fp] = move( *v );
             }
+    }
+
+    if( json.HasMember("manual") && json["manual"].IsArray() ) {
+        auto &manual = json["manual"];
+        for( int i = 0, e = manual.Size(); i != e; ++i ) {
+            if( auto f = JSONToFavorite(manual[i]) )
+               m_Favorites.emplace_back( move(*f) );
+        }
+    }
+}
+
+void FavoriteLocationsStorage::SetFavorites( const vector<Favorite> &_new_favorites )
+{
+    m_Favorites.clear();
+    for( auto &f: _new_favorites ) {
+        if( !f.location )
+            continue;
+        
+        Favorite new_favorite = f;
+        new_favorite.footprint = PanelDataPersisency::
+            MakeFootprintStringHash( new_favorite.location->hosts_stack );
+        m_Favorites.emplace_back( move(new_favorite) );
     }
 }
 

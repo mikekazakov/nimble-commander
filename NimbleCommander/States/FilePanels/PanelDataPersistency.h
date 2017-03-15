@@ -15,6 +15,8 @@ public:
     };
 
     static string MakeFootprintString( const Location &_loc );
+    static size_t MakeFootprintStringHash( const Location &_loc );
+    
     static string MakeVerbosePathString( const Location &_loc );
 //    static string MakeFootprintString( const VFSHost &_at_vfs, const string &_path );
 

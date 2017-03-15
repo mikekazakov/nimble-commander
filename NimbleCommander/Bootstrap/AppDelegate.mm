@@ -39,6 +39,7 @@
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include <NimbleCommander/States/FilePanels/Favorites.h>
+#include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
@@ -771,6 +772,22 @@ static AppDelegate *g_Me = nil;
         [w show];
     else {
         VFSListWindowController *window = [[VFSListWindowController alloc] init];
+        [window show];
+        existing_window = window;
+    }
+}
+
+- (IBAction)onMainMenuPerformShowFavorites:(id)sender
+{
+  static __weak FavoritesWindowController *existing_window = nil;
+    if( auto w = (FavoritesWindowController*)existing_window  )
+        [w show];
+    else {
+        auto storage = []()->FavoriteLocationsStorage& {
+            return AppDelegate.me.favoriteLocationsStorage;
+        };
+        FavoritesWindowController *window = [[FavoritesWindowController alloc]
+            initWithFavoritesStorage:storage];
         [window show];
         existing_window = window;
     }

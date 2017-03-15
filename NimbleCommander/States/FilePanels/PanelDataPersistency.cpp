@@ -116,6 +116,8 @@ EncodeLocation( const VFSHost &_vfs, const string &_path )
         }
     }
     location.path = _path;
+    if( location.path.empty() || location.path.back() != '/' )
+        location.path.push_back('/');
     
     return location;
 }
@@ -332,6 +334,11 @@ string PanelDataPersisency::MakeFootprintString( const Location &_loc )
     
     footprint += _loc.path;
     return footprint;
+}
+
+size_t PanelDataPersisency::MakeFootprintStringHash( const Location &_loc )
+{
+    return hash<string>()( MakeFootprintString(_loc) );
 }
 
 string PanelDataPersisency::MakeVerbosePathString( const Location &_loc )

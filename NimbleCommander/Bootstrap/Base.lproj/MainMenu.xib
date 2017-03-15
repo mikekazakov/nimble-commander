@@ -628,6 +628,12 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Sda-qY-Ec2"/>
+                            <menuItem title="Manage Favorites" id="AJr-TN-F1P">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onMainMenuPerformShowFavorites:" target="-1" id="k86-Gq-0fY"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Quick Lists" id="ToO-KH-35P">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Quick Lists" id="N85-H8-Cbx">

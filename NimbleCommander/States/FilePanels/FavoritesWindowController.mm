@@ -46,7 +46,6 @@ static const auto g_FavoritesWindowControllerDragDataType =
     return self;
 }
 
-
 - (void)windowDidLoad
 {
     [super windowDidLoad];
@@ -76,7 +75,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
     return m_Favorites.size();
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
+- (nullable NSView *)tableView:(NSTableView *)tableView
+            viewForTableColumn:(nullable NSTableColumn *)tableColumn
+                           row:(NSInteger)row
 {
     if( row >= m_Favorites.size() )
         return nil;;
@@ -125,7 +126,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    if( auto rv = objc_cast<NSTableRowView>(tf.superview) ) {
+    if( auto rv = objc_cast<NSTableRowView>(tf.superview) )
         if( rv.superview == self.table ) {
             long row_no = [self.table rowForView:rv];
             if( row_no >= 0 && row_no < m_Favorites.size() ) {
@@ -136,7 +137,6 @@ static const auto g_FavoritesWindowControllerDragDataType =
                 }
             }
         }
-    }
 }
 
 - (NSDragOperation)tableView:(NSTableView *)aTableView

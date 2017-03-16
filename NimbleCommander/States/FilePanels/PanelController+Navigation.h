@@ -8,6 +8,7 @@
 
 #include "../../Core/VFSInstanceManager.h"
 #include "PanelController.h"
+#include "PanelDataPersistency.h"
 
 class PanelControllerGoToDirContext
 {
@@ -59,6 +60,8 @@ loadPreviousState:(bool)_load_state
 // will load previous view state if any
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory;
 // some params later
+
+- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location;
 
 - (void) RecoverFromInvalidDirectory;
 

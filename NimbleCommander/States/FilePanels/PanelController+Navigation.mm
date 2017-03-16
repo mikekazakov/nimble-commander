@@ -36,6 +36,23 @@
     });
 }
 
+- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location
+{
+    m_DirectoryLoadingQ.Run([=]{
+        VFSHostPtr host;
+        if( PanelDataPersisency::CreateVFSFromLocation(_location, host) == VFSError::Ok ) {
+            string path = _location.path;
+            dispatch_to_main_queue([=]{
+                auto context = make_shared<PanelControllerGoToDirContext>();
+                context->VFS = host;
+                context->PerformAsynchronous = true;
+                context->RequestedDirectory = path;
+                [self GoToDirWithContext:context];
+            });
+        }
+    });
+}
+
 - (int) GoToDir:(const string&)_dir
             vfs:(VFSHostPtr)_vfs
    select_entry:(const string&)_filename

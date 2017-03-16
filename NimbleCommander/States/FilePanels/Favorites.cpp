@@ -38,25 +38,6 @@ static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
     return hash<string_view>()(buf);
 }
 
-static string VerbosePath( const VFSHost &_host, const string &_directory )
-{
-    array<const VFSHost*, 32> hosts;
-    int hosts_n = 0;
-
-    auto cur = &_host;
-    while( cur ) {
-        hosts[hosts_n++] = cur;
-        cur = cur->Parent().get();
-    }
-    
-    string s;
-    while(hosts_n > 0)
-        s += hosts[--hosts_n]->Configuration().VerboseJunction();
-    s += _directory;
-    if(s.back() != '/') s += '/';
-    return s;
-}
-
 static shared_ptr<const FavoriteLocationsStorage::Location>
 Encode( const VFSHost &_host, const string &_directory )
 {
@@ -66,7 +47,7 @@ Encode( const VFSHost &_host, const string &_directory )
 
     auto v = make_shared<FavoriteLocationsStorage::Location>();
     v->hosts_stack = move(*location);
-    v->verbose_path = VerbosePath( _host, _directory );
+    v->verbose_path = PanelDataPersisency::MakeVerbosePathString( _host, _directory );
 
     return v;
 }

@@ -8,7 +8,8 @@ class PanelDataPersisency
 public:
     struct Location
     {
-        inline bool is_native() const { return hosts.empty(); }
+        bool is_native() const noexcept;
+        bool is_network() const noexcept;
         vector<any> hosts; // .front() is a deepest host, .back() is topmost
                            // empty hosts means using native vfs
         string path;
@@ -17,8 +18,10 @@ public:
     static string MakeFootprintString( const Location &_loc );
     static size_t MakeFootprintStringHash( const Location &_loc );
     
+    // NB! these functions theat paths as a directory regardless, and resulting path will
+    // containt a trailing slash.
     static string MakeVerbosePathString( const Location &_loc );
-//    static string MakeFootprintString( const VFSHost &_at_vfs, const string &_path );
+    static string MakeVerbosePathString( const VFSHost &_host, const string &_directory );
 
     static optional<Location> EncodeLocation( const VFSHost &_vfs, const string &_path );
     

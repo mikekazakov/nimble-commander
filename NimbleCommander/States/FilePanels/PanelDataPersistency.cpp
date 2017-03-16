@@ -62,6 +62,16 @@ struct ArcUnRAR
 
 };
 
+bool PanelDataPersisency::Location::is_native() const noexcept
+{
+    return hosts.empty();
+}
+
+bool PanelDataPersisency::Location::is_network() const noexcept
+{
+    return !hosts.empty() && any_cast<Network>(&hosts.front());
+}
+
 static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host );
 
 static any EncodeState( const VFSHost& _host )
@@ -370,6 +380,25 @@ string PanelDataPersisency::MakeVerbosePathString( const Location &_loc )
     
     verbose += _loc.path;
     return verbose;
+}
+
+string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const string &_directory )
+{
+    array<const VFSHost*, 32> hosts;
+    int hosts_n = 0;
+
+    auto cur = &_host;
+    while( cur ) {
+        hosts[hosts_n++] = cur;
+        cur = cur->Parent().get();
+    }
+    
+    string s;
+    while(hosts_n > 0)
+        s += hosts[--hosts_n]->Configuration().VerboseJunction();
+    s += _directory;
+    if(s.back() != '/') s += '/';
+    return s;
 }
 
 optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )

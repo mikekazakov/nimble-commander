@@ -5,34 +5,9 @@
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "Favorites.h"
-
-//#include "Views/MainWndGoToButton.h"
-
-//static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
-//{
-//    string full;
-//    auto c = _at_vfs;
-//    while( c ) {
-//        // we need to incorporate options somehow here. or not?
-//        string part = string(c->Tag) + string(c->JunctionPath()) + "|";
-//        full.insert(0, part);
-//        c = c->Parent();
-//    }
-//    full += _path;
-//    return hash<string>()(full);
-//}
+#include "FavoriteComposing.h"
 
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
-
-static vector<string> GetFindersFavorites();
-static vector<string> GetDefaultFavorites();
-
-static string ensure_tr_slash( string _str )
-{
-    if( _str.empty() || _str.back() != '/' )
-        _str += '/';
-    return _str;
-}
 
 static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
 {
@@ -62,18 +37,6 @@ static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
 
     return hash<string_view>()(buf);
 }
-
-//    result.emplace_back(url());
-//    result.emplace_back(url(CommonPaths::Desktop()));
-//    result.emplace_back(url());
-//    result.emplace_back(url());
-//    result.emplace_back(url());
-//    result.emplace_back(url());
-//    result.emplace_back(url());
-
-
-// TODO: footprint from persistant presentation
-
 
 static string VerbosePath( const VFSHost &_host, const string &_directory )
 {
@@ -113,12 +76,11 @@ FavoriteLocationsStorage::FavoriteLocationsStorage( GenericConfig &_config, cons
     LoadData( _config, _path );
 
     if( m_Favorites.empty() ) {
-        for( auto &p: GetFindersFavorites() )
-            AddFavoriteLocation( *VFSNativeHost::SharedHost(), p );
-        
-        if( m_Favorites.empty() )
-            for( auto &p: GetDefaultFavorites() )
-                AddFavoriteLocation( *VFSNativeHost::SharedHost(), p );
+        auto ff = FavoriteComposing::FinderFavorites();
+        if( !ff.empty() )
+            m_Favorites = move(ff);
+        else
+            m_Favorites = FavoriteComposing::DefaultFavorites();
     }
 }
 
@@ -159,9 +121,9 @@ void FavoriteLocationsStorage::AddFavoriteLocation(VFSHost &_host,
 }
 
 optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorage::
-ComposeFavoriteLocation(VFSHost &_host,
-                        const string &_directory,
-                        const string &_title)
+    ComposeFavoriteLocation(VFSHost &_host,
+                            const string &_directory,
+                            const string &_title)
 {
     const auto location = Encode(_host, _directory);
     if( !location )
@@ -170,7 +132,16 @@ ComposeFavoriteLocation(VFSHost &_host,
     Favorite f;
     f.location = location;
     f.footprint = HashForPath( _host, _directory );
-    f.title = _title;
+    if( _title.empty() ) {
+        auto p = path( _directory );
+        if( p.filename() == "." )
+            f.title = p.parent_path().filename().native();
+        else
+            f.title = p.filename().native();
+    }
+    else {
+        f.title = _title;
+    }
     return move(f);
 }
 
@@ -435,68 +406,4 @@ void FavoriteLocationsStorage::SetFavorites( const vector<Favorite> &_new_favori
             MakeFootprintStringHash( new_favorite.location->hosts_stack );
         m_Favorites.emplace_back( move(new_favorite) );
     }
-}
-
-static string StringFromURL( CFURLRef _url )
-{
-    char path_buf[MAXPATHLEN];
-    if( CFURLGetFileSystemRepresentation(_url, true, (UInt8*)path_buf, MAXPATHLEN) )
-        return path_buf;
-    return {};
-}
-
-static vector<string> GetFindersFavorites()
-{
-    const auto flags = kLSSharedFileListNoUserInteraction|kLSSharedFileListDoNotMountVolumes;
-    vector<string> paths;
-    
-    UInt32 seed;
-    LSSharedFileListRef list = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
-    CFArrayRef snapshot = LSSharedFileListCopySnapshot(list, &seed);
-    if( snapshot ) {
-        for( int i = 0, e = (int)CFArrayGetCount(snapshot); i != e; ++i ) {
-            if( auto item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(snapshot, i) ) {
-                CFErrorRef err = nullptr;
-                auto url = LSSharedFileListItemCopyResolvedURL(item, flags, &err);
-                if( url ) {
-                    auto path = StringFromURL( url );
-                    if( !path.empty() &&
-                        !has_suffix(path, ".cannedSearch") &&
-                        !has_suffix(path, ".cannedSearch/") &&
-                        !has_suffix(path, ".savedSearch") &&
-                        VFSNativeHost::SharedHost()->IsDirectory(path.c_str(), 0) )
-                        paths.emplace_back( ensure_tr_slash( move(path) ) );
-                    CFRelease(url);
-                }
-                if( err ) {
-                    if( auto description = CFErrorCopyDescription(err) ) {
-                        CFShow(description);
-                        CFRelease(description);
-                    }
-                    if( auto reason = CFErrorCopyFailureReason(err) ) {
-                        CFShow(reason);
-                        CFRelease(reason);
-                    }
-                    CFRelease(err);
-                }
-            }
-        }
-        CFRelease(snapshot);
-    }
-    CFRelease(list);
-    
-    return paths;
-}
-
-static vector<string> GetDefaultFavorites()
-{
-    return {{
-        CommonPaths::Home(),
-        CommonPaths::Desktop(),
-        CommonPaths::Documents(),
-        CommonPaths::Downloads(),
-        CommonPaths::Movies(),
-        CommonPaths::Music(),
-        CommonPaths::Pictures()
-    }};
 }

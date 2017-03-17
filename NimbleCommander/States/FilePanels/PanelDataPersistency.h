@@ -3,6 +3,10 @@
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
 
+// these routines implicitly use the following components:
+// 1. NetworkConnectionsManager
+// 2. VFSInstanceManager
+
 class PanelDataPersisency
 {
 public:
@@ -35,9 +39,11 @@ public:
     
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
     
-
+    // always creates vfses from scratch
     static int CreateVFSFromState( const json &_state, VFSHostPtr &_host );
-    static int CreateVFSFromLocation( const Location _state, VFSHostPtr &_host );
+    
+    // uses current state to retrieve existing vfs if possible
+    static int CreateVFSFromLocation( const Location &_state, VFSHostPtr &_host );
     
     static string GetPathFromState( const json &_state );
     

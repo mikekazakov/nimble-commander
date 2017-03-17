@@ -9,6 +9,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "PanelDataPersistency.h"
 
 //type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
@@ -574,7 +575,54 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
     return VFSError::GenericError;
 }
 
-int PanelDataPersisency::CreateVFSFromLocation( const Location _state, VFSHostPtr &_host )
+static bool Fits( VFSHost& _alive, const any &_encoded )
+{
+    const auto tag = _alive.FSTag();
+    const auto encoded = &_encoded;
+
+    if( tag == VFSNativeHost::Tag ) {
+        if( any_cast<Native>(encoded) )
+            return true;
+    }
+    else if( tag == VFSPSHost::Tag ) {
+        if( any_cast<PSFS>(encoded) )
+            return true;
+    }
+    else if( tag == VFSXAttrHost::Tag ) {
+        if( auto xattr = any_cast<XAttr>(encoded) )
+            return xattr->junction == _alive.JunctionPath();
+    }
+    else if( tag == VFSNetFTPHost::Tag ||
+             tag == VFSNetSFTPHost::Tag ) {
+        if( auto network = any_cast<Network>(encoded) )
+            if( auto conn = NetworkConnectionsManager::Instance().ConnectionForVFS( _alive ) )
+                return network->connection == conn->Uuid();
+    }
+    else if( tag == VFSArchiveHost::Tag ) {
+        if( auto la = any_cast<ArcLA>(encoded) )
+            return la->junction == _alive.JunctionPath();
+    }
+    else if( tag == VFSArchiveUnRARHost::Tag ) {
+        if( auto unrar = any_cast<ArcUnRAR>(encoded) )
+            return unrar->junction == _alive.JunctionPath();
+    }
+    return false;
+}
+
+static VFSHostPtr FindFitting(
+    const vector<weak_ptr<VFSHost>> &_hosts,
+    const any &_encoded,
+    const VFSHost *_parent /* may be nullptr */ )
+{
+    for( auto &weak_host: _hosts )
+        if( auto host = weak_host.lock() )
+            if( Fits(*host, _encoded) )
+                if( host->Parent().get() == _parent ) // comparison of two nullptrs is ok here
+                    return host;
+    return nullptr;
+}
+
+int PanelDataPersisency::CreateVFSFromLocation( const Location &_state, VFSHostPtr &_host )
 {
     if( _state.hosts.empty() ) {
         // short path for most common case - native vfs
@@ -583,8 +631,17 @@ int PanelDataPersisency::CreateVFSFromLocation( const Location _state, VFSHostPt
     }
 
     vector<VFSHostPtr> vfs;
+    auto alive_hosts = VFSInstanceManager::Instance().AliveHosts(); // make it optional perhaps?
     try {
         for( auto &h: _state.hosts) {
+            const VFSHostPtr back = vfs.empty() ? nullptr : vfs.back();
+
+            if( auto exist = FindFitting(alive_hosts, h, back.get() ) ) { // we're lucky!
+                vfs.emplace_back( exist );
+                continue;
+            }
+            // no luck - have to build this layer from scratch
+            
             if( auto native = any_cast<Native>(&h) ) {
                 vfs.emplace_back( VFSNativeHost::SharedHost() );
             }

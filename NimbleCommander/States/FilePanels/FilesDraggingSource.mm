@@ -232,6 +232,7 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
         [item reset];
     
     m_Items.clear();
+    m_CommonHost = nullptr;
 }
 
 @end

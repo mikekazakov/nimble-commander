@@ -15,8 +15,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Favorites.h"
 
-static const auto g_IconSize = NSMakeSize(16, 16); //fuck dynamic layout!
-//static const auto g_IconSize = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
+static const auto g_IconSize = NSMakeSize(16, 16); //fuck the dynamic layout!
 
 static vector<pair<VFSInstanceManager::Promise, string>> ProduceLocationsForParentDirectories( const VFSListing &_listing  )
 {
@@ -156,27 +155,6 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 }
 @end
 
-@interface PanelControllerQuickListMenuItemFavoriteHolder : NSObject
-- (instancetype) initWithLocation:(shared_ptr<const FavoriteLocationsStorage::Favorite>)_favorite;
-@property (readonly, nonatomic) const shared_ptr<const FavoriteLocationsStorage::Favorite>& favorite;
-@end
-
-@implementation PanelControllerQuickListMenuItemFavoriteHolder
-{
-    shared_ptr<const FavoriteLocationsStorage::Favorite> m_Favorite;
-}
-@synthesize favorite = m_Favorite;
-- (instancetype) initWithLocation:(shared_ptr<const FavoriteLocationsStorage::Favorite>)_favorite
-{
-    self = [super init];
-    if( self ) {
-        m_Favorite = _favorite;
-    }
-    return self;
-}
-@end
-
-
 @implementation PanelController (NavigationMenu)
 
 - (void) popUpQuickListMenu:(NSMenu*)menu
@@ -184,6 +162,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     auto items = menu.itemArray;
     for(int ind = 1; ind < items.count; ++ind)
         if( auto i = objc_cast<NSMenuItem>([items objectAtIndex:ind]) ) {
+            if( i.separatorItem )
+                break;
             i.keyEquivalent = KeyEquivalent( ind - 1 );
             i.keyEquivalentModifierMask = 0;
         }
@@ -291,87 +271,56 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 
 - (void) popUpQuickListWithFavorites
 {
-//   auto favourites = MainWndGoToButton.finderFavorites;
-    
+    static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
     NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Favorites", "Favorites popup menu title in file panels") action:nullptr keyEquivalent:@""]];
-
-//    auto vfs_promise = VFSInstanceManager::Instance().TameVFS(VFSNativeHost::SharedHost());
-//    
-//    for( auto f: favourites ) {
-//
-//        NSString *title;
-//        [f getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
-//        
-//        NSMenuItem *it = [[NSMenuItem alloc] init];
-//        NSImage *img;
-//        [f getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
-//        if(img != nil) {
-//            img.size = g_IconSize;
-//            it.image = img;
-//        }
-//        it.title = title;
-//        it.target = self;
-//        it.action = @selector(doCalloutWithVFSPromiseHolder:);
-//        it.representedObject = [[PanelControllerQuickListMenuItemVFSPromiseHolder alloc] initWithPromise:vfs_promise
-//                                                                                            andPath:f.path.fileSystemRepresentationSafe];
-//        [menu addItem:it];
-//        
-//    }
-
-    {
-        auto favorites = AppDelegate.me.favoriteLocationsStorage.Favorites();
-        for( auto &f: favorites ) {
-        
-            NSMenuItem *it = [[NSMenuItem alloc] init];
-            
-            if( f.location->hosts_stack.is_native() ) {
-                
-            
-            
-//                NSString *title;
-                
-//                it.title = title;
-                
-//        [f getResourceValue:&title forKey:NSURLLocalizedNameKey error:nil];
-
-//            NSImage *img;
-//            [f getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
-//            if(img != nil) {
-//                img.size = g_IconSize;
-//                it.image = img;
-//            }
-            
-            }
-            
-            if( auto str = [NSString stringWithUTF8StdString:f.location->verbose_path] )
-                it.title = str;
-            
-            
-            it.target = self;
-            it.action = @selector(doCalloutWithFavoriteHolder:);
-            it.representedObject = [[PanelControllerQuickListMenuItemFavoriteHolder alloc]
-                                    initWithLocation:make_shared<FavoriteLocationsStorage::Favorite>(f)];
-            [menu addItem:it];
-        }
-    }
-
     
-    {
-    auto favorites = AppDelegate.me.favoriteLocationsStorage.FrecentlyUsed(10);
-    if( !favorites.empty() ) {
+    auto favorites_header = [[NSMenuItem alloc] init];
+    favorites_header.title = NSLocalizedString(@"Favorites",
+                                               "Favorites popup menu subtitle in file panels");
+    [menu addItem:favorites_header];
+
+    auto favorites = AppDelegate.me.favoriteLocationsStorage.Favorites();
+    for( auto &f: favorites ) {
+        NSMenuItem *it = [[NSMenuItem alloc] init];
+        if( !f.title.empty() ) {
+            if( auto title = [NSString stringWithUTF8StdString:f.title] )
+                it.title = title;
+        }
+        else if( auto title = [NSString stringWithUTF8StdString:f.location->verbose_path] )
+            it.title = StringByTruncatingToWidth(title, 600, kTruncateAtMiddle, attributes);
+        if( auto tt = [NSString stringWithUTF8StdString:f.location->verbose_path] )
+            it.toolTip = tt;
+        it.target = self;
+        it.action = @selector(doCalloutWithEncodedLocationHolder:);
+        it.representedObject = [[PanelControllerQuickListMenuItemEncodedLocationHolder alloc]
+                                initWithLocation:f.location];
+        it.image = [MainWndGoToButton imageForLocation:f.location->hosts_stack];
+        it.image.size = g_IconSize;
+        [menu addItem:it];
+    }
+    
+    auto frequent = AppDelegate.me.favoriteLocationsStorage.FrecentlyUsed(10);
+    if( !frequent.empty() ) {
         [menu addItem:NSMenuItem.separatorItem];
+        auto frequent_header = [[NSMenuItem alloc] init];
+        frequent_header.title = NSLocalizedString(@"Frequently Visisted",
+                                                  "Frequently Visisted popup menu subtitle in file panels");
+        [menu addItem:frequent_header];
         
-        for( auto &f: favorites ) {
+        for( auto &f:frequent ) {
             NSMenuItem *it = [[NSMenuItem alloc] init];
-            it.title = [NSString stringWithUTF8StdString:f->verbose_path];
+            if( auto title = [NSString stringWithUTF8StdString:f->verbose_path] ) {
+                it.title = StringByTruncatingToWidth(title, 600, kTruncateAtMiddle, attributes);
+                it.toolTip = title;
+            }
             it.target = self;
             it.action = @selector(doCalloutWithEncodedLocationHolder:);
             it.representedObject = [[PanelControllerQuickListMenuItemEncodedLocationHolder alloc]
                 initWithLocation:f];
+            it.image = [MainWndGoToButton imageForLocation:f->hosts_stack];
+            it.image.size = g_IconSize;
             [menu addItem:it];
         }
-    }
     }
    
     [self popUpQuickListMenu:menu];
@@ -379,47 +328,18 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 
 - (void)doCalloutWithEncodedLocationHolder:(id)sender
 {
-    if( auto item = objc_cast<NSMenuItem>(sender) )
-        if( auto holder = objc_cast<PanelControllerQuickListMenuItemEncodedLocationHolder>(item.representedObject) )
-            if( auto l = holder.location ) {
-                m_DirectoryLoadingQ.Run([=]{
-                    VFSHostPtr host;
-                    if( PanelDataPersisency::CreateVFSFromLocation(l->hosts_stack, host) == VFSError::Ok ) {
-                        string path = l->hosts_stack.path;
-                        dispatch_to_main_queue([=]{
-                            auto context = make_shared<PanelControllerGoToDirContext>();
-                            context->VFS = host;
-                            context->PerformAsynchronous = true;
-                            context->RequestedDirectory = path;
-                            [self GoToDirWithContext:context];
-                        });
-                    }
-                });
-            }
-}
+    auto menu_item = objc_cast<NSMenuItem>(sender);
+    if( !menu_item )
+        return;
 
-- (void)doCalloutWithFavoriteHolder:(id)sender
-{
-    if( auto item = objc_cast<NSMenuItem>(sender) )
-        if( auto holder = objc_cast<PanelControllerQuickListMenuItemFavoriteHolder>(item.representedObject) )
-            if( auto favorite = holder.favorite ) {
-                m_DirectoryLoadingQ.Run([=]{
-                    VFSHostPtr host;
-                    auto &location = favorite->location->hosts_stack;
-                    if( PanelDataPersisency::CreateVFSFromLocation(location, host) == VFSError::Ok ) {
-                        string path = favorite->location->hosts_stack.path;
-                        dispatch_to_main_queue([=]{
-                            auto context = make_shared<PanelControllerGoToDirContext>();
-                            context->VFS = host;
-                            context->PerformAsynchronous = true;
-                            context->RequestedDirectory = path;
-                            [self GoToDirWithContext:context];
-                        });
-                    }
-                });
-            }
-}
+    auto holder = objc_cast<PanelControllerQuickListMenuItemEncodedLocationHolder>
+        (menu_item.representedObject);
+    if( !holder )
+        return;
 
+    if( auto l = holder.location )
+        [self goToPersistentLocation:l->hosts_stack];
+}
 
 - (void) popUpQuickListWithNetworkConnections
 {

@@ -102,7 +102,8 @@ static const auto g_FavoritesWindowControllerDragDataType =
         tf.bordered = false;
         tf.editable = true;
         tf.drawsBackground = false;
-        
+        tf.usesSingleLineMode = true;
+        tf.lineBreakMode = NSLineBreakByTruncatingTail;
         tf.delegate = self;
         return tf;
     }

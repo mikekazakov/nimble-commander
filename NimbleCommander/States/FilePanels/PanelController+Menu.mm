@@ -35,6 +35,8 @@
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
+#include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
+#include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
 #include "Views/FTPConnectionSheetController.h"
@@ -660,6 +662,14 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 - (IBAction)OnGoToQuickListsConnections:(id)sender
 {
     [self popUpQuickListWithNetworkConnections];
+}
+
+- (IBAction)OnGoToFavoriteLocation:(id)sender
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
+            if( auto location = any_cast<PanelDataPersisency::Location>(&holder.any) )
+                [self goToPersistentLocation:*location];
 }
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender

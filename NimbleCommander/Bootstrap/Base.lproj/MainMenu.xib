@@ -627,13 +627,39 @@ DQ
                                     <action selector="OnGoToProcessesList:" target="-1" id="jfN-Xy-VDo"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="Sda-qY-Ec2"/>
-                            <menuItem title="Manage Favorites" id="AJr-TN-F1P">
+                            <menuItem isSeparatorItem="YES" id="d5h-F1-vdk"/>
+                            <menuItem title="Favorites" id="lo8-qp-RcL">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="onMainMenuPerformShowFavorites:" target="-1" id="k86-Gq-0fY"/>
-                                </connections>
+                                <menu key="submenu" title="Favorites" id="Mxc-IY-UlD">
+                                    <items>
+                                        <menuItem isSeparatorItem="YES" id="2zR-Ru-odl"/>
+                                        <menuItem title="Manage Favorites..." id="9fi-sk-vzL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="onMainMenuPerformShowFavorites:" target="-1" id="r9r-KX-5wF"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                    <connections>
+                                        <outlet property="delegate" destination="eIT-Fe-MQg" id="qvH-fc-st6"/>
+                                    </connections>
+                                </menu>
                             </menuItem>
+                            <menuItem title="Frequenty Visited" id="IqU-xO-cHh">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Frequenty Visited" id="qAf-7b-Sdi">
+                                    <items>
+                                        <menuItem isSeparatorItem="YES" id="Jlu-SB-jda"/>
+                                        <menuItem title="Clear Menu" id="loz-WF-lIp">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                    </items>
+                                    <connections>
+                                        <outlet property="delegate" destination="Hoe-7a-2Tp" id="pV4-fI-yIa"/>
+                                    </connections>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Sda-qY-Ec2"/>
                             <menuItem title="Quick Lists" id="ToO-KH-35P">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Quick Lists" id="N85-H8-Cbx">
@@ -990,5 +1016,15 @@ CQ
             </connections>
         </customObject>
         <customObject id="7FF-1A-0Ge" customClass="ToolsMenuDelegate"/>
+        <customObject id="eIT-Fe-MQg" customClass="FavoriteLocationsMenuDelegate">
+            <connections>
+                <outlet property="manageMenuItem" destination="9fi-sk-vzL" id="rL8-Ln-6K5"/>
+            </connections>
+        </customObject>
+        <customObject id="Hoe-7a-2Tp" customClass="FrequentlyVisitedLocationsMenuDelegate">
+            <connections>
+                <outlet property="clearMenuItem" destination="loz-WF-lIp" id="ae1-wC-nl1"/>
+            </connections>
+        </customObject>
     </objects>
 </document>

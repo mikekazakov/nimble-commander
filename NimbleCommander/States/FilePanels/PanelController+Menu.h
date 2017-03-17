@@ -16,6 +16,7 @@
 - (void) showGoToSFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current;
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection;
+- (IBAction)OnGoToFavoriteLocation:(id)sender;
 - (IBAction)OnDeleteSavedConnectionItem:(id)sender;
 - (IBAction)OnEditSavedConnectionItem:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;

@@ -1044,6 +1044,7 @@
 		CFD8CD411E78F22000E4DC53 /* FavoritesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD8CD3A1E78F22000E4DC53 /* FavoritesWindowController.xib */; };
 		CFD8CD421E78F22000E4DC53 /* FavoritesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD8CD3A1E78F22000E4DC53 /* FavoritesWindowController.xib */; };
 		CFD8CD511E7A31A100E4DC53 /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
+		CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1749,6 +1750,8 @@
 		CFD8CD3A1E78F22000E4DC53 /* FavoritesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FavoritesWindowController.xib; path = NimbleCommander/States/FilePanels/FavoritesWindowController.xib; sourceTree = SOURCE_ROOT; };
 		CFD8CD4F1E7A31A100E4DC53 /* FavoriteComposing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoriteComposing.h; path = NimbleCommander/States/FilePanels/FavoriteComposing.h; sourceTree = SOURCE_ROOT; };
 		CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoriteComposing.mm; path = NimbleCommander/States/FilePanels/FavoriteComposing.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CD591E7A80D600E4DC53 /* FavoritesMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesMenuDelegate.h; path = NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h; sourceTree = SOURCE_ROOT; };
+		CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoritesMenuDelegate.mm; path = NimbleCommander/States/FilePanels/FavoritesMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
@@ -2643,6 +2646,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD8CD591E7A80D600E4DC53 /* FavoritesMenuDelegate.h */,
+				CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */,
 				CFD8CD4F1E7A31A100E4DC53 /* FavoriteComposing.h */,
 				CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */,
 				CF8B24361E6FC68D008EB447 /* Favorites.cpp */,
@@ -4130,6 +4135,7 @@
 				CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */,
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
+				CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */,
 				CFDAC2951DFBF9260039A104 /* TermScrollView.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */,

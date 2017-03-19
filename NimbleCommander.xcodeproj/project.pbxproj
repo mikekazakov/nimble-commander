@@ -1045,6 +1045,7 @@
 		CFD8CD421E78F22000E4DC53 /* FavoritesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD8CD3A1E78F22000E4DC53 /* FavoritesWindowController.xib */; };
 		CFD8CD511E7A31A100E4DC53 /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
 		CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */; };
+		CFD8CD5E1E7E390500E4DC53 /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1752,6 +1753,8 @@
 		CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoriteComposing.mm; path = NimbleCommander/States/FilePanels/FavoriteComposing.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CD591E7A80D600E4DC53 /* FavoritesMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesMenuDelegate.h; path = NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoritesMenuDelegate.mm; path = NimbleCommander/States/FilePanels/FavoritesMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddToFavorites.h; path = NimbleCommander/States/FilePanels/Actions/AddToFavorites.h; sourceTree = SOURCE_ROOT; };
+		CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AddToFavorites.mm; path = NimbleCommander/States/FilePanels/Actions/AddToFavorites.mm; sourceTree = SOURCE_ROOT; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
@@ -2497,6 +2500,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
+				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF27408C1E594C46000D4365 /* TabSelection.h */,
 				CF27408D1E594C46000D4365 /* TabSelection.mm */,
 				CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */,
@@ -4226,6 +4231,7 @@
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
 				CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */,
 				CF7D135B1BF1B964001F53FD /* CreateDirectoryOperationJob.mm in Sources */,
+				CFD8CD5E1E7E390500E4DC53 /* AddToFavorites.mm in Sources */,
 				CF04DE061E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF876D501D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,

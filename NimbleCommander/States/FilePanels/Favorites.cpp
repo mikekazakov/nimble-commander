@@ -99,6 +99,26 @@ void FavoriteLocationsStorage::AddFavoriteLocation(VFSHost &_host,
     f.footprint = footprint;
     f.title = _title;
     m_Favorites.emplace_back( move(f) );
+    
+    FireObservers( FavoritesChanged );
+}
+
+void FavoriteLocationsStorage::AddFavoriteLocation( Favorite _favorite )
+{
+    dispatch_assert_main_queue();
+    
+    // refresh hash regardless to enforce consistency
+    _favorite.footprint = PanelDataPersisency::
+        MakeFootprintStringHash( _favorite.location->hosts_stack );
+    
+    const auto has_already = any_of( begin(m_Favorites), end(m_Favorites), [&](auto &i){
+        return i.footprint == _favorite.footprint;
+    });
+    if( has_already )
+        return;
+
+    m_Favorites.emplace_back( move(_favorite) );
+    FireObservers( FavoritesChanged );
 }
 
 optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorage::
@@ -318,6 +338,7 @@ JSONToFavorite( const rapidjson::StandaloneValue& _json )
 
 void FavoriteLocationsStorage::StoreData( GenericConfig &_config, const char *_path )
 {
+    dispatch_assert_main_queue();
     using namespace rapidjson;
     StandaloneValue json(kObjectType);
     const auto now = time(nullptr);
@@ -346,6 +367,7 @@ void FavoriteLocationsStorage::StoreData( GenericConfig &_config, const char *_p
 
 void FavoriteLocationsStorage::LoadData( GenericConfig &_config, const char *_path )
 {
+    dispatch_assert_main_queue();
     auto json = _config.Get(_path);
     if( !json.IsObject() )
         return;
@@ -377,6 +399,7 @@ void FavoriteLocationsStorage::LoadData( GenericConfig &_config, const char *_pa
 
 void FavoriteLocationsStorage::SetFavorites( const vector<Favorite> &_new_favorites )
 {
+    dispatch_assert_main_queue();
     m_Favorites.clear();
     for( auto &f: _new_favorites ) {
         if( !f.location )
@@ -387,4 +410,6 @@ void FavoriteLocationsStorage::SetFavorites( const vector<Favorite> &_new_favori
             MakeFootprintStringHash( new_favorite.location->hosts_stack );
         m_Favorites.emplace_back( move(new_favorite) );
     }
+    
+    FireObservers( FavoritesChanged );
 }

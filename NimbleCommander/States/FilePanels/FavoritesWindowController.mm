@@ -6,6 +6,8 @@
 //  Copyright © 2017 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Carbon/Carbon.h>
+#include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -55,6 +57,13 @@ static const auto g_FavoritesWindowControllerDragDataType =
     [self.table registerForDraggedTypes:@[FilesDraggingSource.fileURLsDragUTI,
                                           FilesDraggingSource.privateDragUTI,
                                           g_FavoritesWindowControllerDragDataType]];
+    
+    
+    auto sheet = objc_cast<SheetWithHotkeys>(self.window);
+    
+    sheet.onCtrlV = [sheet makeActionHotkey:@selector(showAvailableLocationsToAdd:)];
+    sheet.onCtrlX = [sheet makeActionHotkey:@selector(removeFavorite:)];
+    sheet.onCtrlO = [sheet makeActionHotkey:@selector(showOptionsMenu:)];
 }
 
 - (void) show
@@ -251,26 +260,41 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [self commit];
 }
 
+- (void) keyDown:(NSEvent *)event
+{
+    if( event.type == NSEventTypeKeyDown &&
+        event.keyCode == kVK_Delete &&
+        self.window.firstResponder == self.table &&
+        self.table.selectedRow >= 0) {
+        [self removeFavorite:self];
+        return;
+    }
+
+    return [super keyDown:event];
+}
+
 - (IBAction)onButtonClicked:(id)sender
 {
     const auto segment = self.buttons.selectedSegment;
-    if( segment == 0 ) {
-        [self showAvailableLocationsToAdd];
-    }
-    else if( segment == 1 ) {
+    if( segment == 0 )
+        [self showAvailableLocationsToAdd:sender];
+    else if( segment == 1 )
         [self removeFavorite:sender];
-    }
-    else if( segment == 2 ) {
-        const auto b = self.buttons.bounds;
-        const auto origin = NSMakePoint(b.size.width - [self.buttons widthForSegment:2] - 3,
-                                        b.size.height + 3);
-        [self.optionsMenu popUpMenuPositioningItem:nil
-                                        atLocation:origin
-                                            inView:self.buttons];
-    }
+    else if( segment == 2 )
+        [self showOptionsMenu:sender];
 }
 
-- (void)showAvailableLocationsToAdd
+- (void)showOptionsMenu:(id)sender
+{
+    const auto b = self.buttons.bounds;
+    const auto origin = NSMakePoint(b.size.width - [self.buttons widthForSegment:2] - 3,
+                                    b.size.height + 3);
+    [self.optionsMenu popUpMenuPositioningItem:nil
+                                    atLocation:origin
+                                        inView:self.buttons];
+}
+
+- (void)showAvailableLocationsToAdd:(id)sender
 {
     vector< tuple<string,VFSHostPtr> > panel_paths;
     

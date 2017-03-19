@@ -38,6 +38,14 @@ optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     return move(f);
 }
 
+static string TitleForItem( const VFSListingItem &_i )
+{
+    if( _i.IsDir() )
+        if( !_i.IsDotDot() )
+            return _i.Filename();
+    return boost::filesystem::path(_i.Directory()).parent_path().filename().native();
+}
+
 optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
     FromListingItem( const VFSListingItem &_i )
 {
@@ -49,9 +57,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
     if( !f )
         return nullopt;
 
-    f->title =  _i.IsDir() ?
-        _i.Filename() :
-        boost::filesystem::path(path).parent_path().filename().native();
+    f->title = TitleForItem(_i);
 
     return move(f);
 }

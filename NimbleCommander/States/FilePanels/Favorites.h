@@ -1,12 +1,13 @@
 #pragma once
 
+#include <Habanero/Observable.h>
 #include "PanelDataPersistency.h"
 
 class VFSHost;
 class GenericConfig;
 
 // STA API design at the moment, call it only from main thread!
-class FavoriteLocationsStorage
+class FavoriteLocationsStorage : ObservableBase
 {
 public:
     struct Location
@@ -31,6 +32,7 @@ public:
     void AddFavoriteLocation(VFSHost &_host,
                              const string &_directory,
                              const string &_title = "");
+    void AddFavoriteLocation( Favorite _favorite );
     static optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
                                                       const string &_directory,
                                                       const string &_title = "" );
@@ -46,6 +48,10 @@ public:
     vector<Favorite> Favorites( /*limit output later?*/ ) const;
 
 private:
+    enum ObservationEvents : uint64_t {
+        FavoritesChanged = 1
+    };
+
     struct Visit
     {
         shared_ptr<const Location>  location;

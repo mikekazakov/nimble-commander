@@ -211,6 +211,15 @@ DQ
                                     <action selector="OnCalculateChecksum:" target="-1" id="eOO-mt-7dI"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="eqE-pe-FZi">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Add to Favorites" tag="11140" id="6pn-dC-yNU">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnAddToFavorites:" target="-1" id="e3b-Ca-jZl"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -633,7 +642,7 @@ DQ
                                 <menu key="submenu" title="Favorites" id="Mxc-IY-UlD">
                                     <items>
                                         <menuItem isSeparatorItem="YES" id="2zR-Ru-odl"/>
-                                        <menuItem title="Manage Favorites..." id="9fi-sk-vzL">
+                                        <menuItem title="Manage Favorites..." tag="14210" id="9fi-sk-vzL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="onMainMenuPerformShowFavorites:" target="-1" id="r9r-KX-5wF"/>

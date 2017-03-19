@@ -36,6 +36,7 @@
 
 - (NSInteger)numberOfItemsInMenu:(NSMenu*)menu
 {
+//    cout << "!" << endl;
     m_Favorites = AppDelegate.me.favoriteLocationsStorage.Favorites();
     return m_Favorites.size() + 2;
 }
@@ -51,7 +52,7 @@ shouldCancel:(BOOL)shouldCancel
     }
     else if( index == m_Favorites.size() + 1 ) {
         [menu removeItemAtIndex:index];
-        [menu insertItem:[self.manageMenuItem copy] atIndex:index];
+        [menu insertItem:self.manageMenuItem atIndex:index];
     }
     else if( index >= 0 && index < m_Favorites.size() ) {
         static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
@@ -89,8 +90,17 @@ shouldCancel:(BOOL)shouldCancel
     vector<shared_ptr<const FavoriteLocationsStorage::Location>> m_Locations;
 }
 
+- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
+                    forEvent:(NSEvent*)event
+                      target:(__nullable id* __nullable)target
+                      action:(__nullable SEL* __nullable)action
+{
+    return false; // this menu has no hotkeys, so there's no reason to (re)build it upon a keydown.
+}
+
 - (NSInteger)numberOfItemsInMenu:(NSMenu*)menu
 {
+//    cout << "!!" << endl;
     m_Locations =  AppDelegate.me.favoriteLocationsStorage.FrecentlyUsed(10);
     return m_Locations.size() + 2;
 }

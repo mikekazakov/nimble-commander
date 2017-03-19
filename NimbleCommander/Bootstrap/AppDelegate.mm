@@ -147,6 +147,23 @@ static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
     return progress;
 }
 
+static void UpdateMenuItemsPlaceholders( int _tag )
+{
+    static const auto app_name = (NSString*)[NSBundle.mainBundle.infoDictionary
+        objectForKey:@"CFBundleName"];
+
+    if( auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_tag] ) {
+        auto title = menu_item.title;
+        title = [title stringByReplacingOccurrencesOfString:@"{AppName}" withString:app_name];
+        menu_item.title = title;
+    }
+}
+
+static void UpdateMenuItemsPlaceholders( const char *_action )
+{
+    UpdateMenuItemsPlaceholders( ActionsShortcutsManager::Instance().TagFromAction(_action) );
+}
+
 static AppDelegate *g_Me = nil;
 
 @implementation AppDelegate
@@ -262,15 +279,15 @@ static AppDelegate *g_Me = nil;
     static NSMenu *original_menu_state = [NSApp.mainMenu copy];
     
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit       = [ ](const string &s) { return ActionsShortcutsManager::Instance().TagFromAction(s);             };
-    auto current_menuitem   = [&](const string &s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];         };
-    auto initial_menuitem   = [&](const string &s) { return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];    };
-    auto hide               = [&](const string &s) {
+    auto tag_from_lit       = [ ](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s);             };
+    auto current_menuitem   = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];         };
+    auto initial_menuitem   = [&](const char *s) { return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];    };
+    auto hide               = [&](const char *s) {
         auto item = current_menuitem(s);
         item.alternate = false;
         item.hidden = true;
     };
-    auto enable             = [&](const string &_action, bool _enabled) {
+    auto enable             = [&](const char *_action, bool _enabled) {
         current_menuitem(_action).action = _enabled ? initial_menuitem(_action).action : nil;
     };
     auto &am = ActivationManager::Instance();
@@ -323,6 +340,13 @@ static AppDelegate *g_Me = nil;
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
                              returnTypes:@[]]; // pasteboard types provided by PanelController
     NSUpdateDynamicServices();
+    
+    // Since we have different app names (Nimble Commander and Nimble Commander Pro) and one
+    // fixed menu, we have to emplace the right title upon startup in some menu elements.
+    UpdateMenuItemsPlaceholders( "menu.nimble_commander.about" );
+    UpdateMenuItemsPlaceholders( "menu.nimble_commander.hide" );
+    UpdateMenuItemsPlaceholders( "menu.nimble_commander.quit" );
+    UpdateMenuItemsPlaceholders( 17000 ); // Menu->Help
     
     // init app dock progress bar
     m_DockTile = NSApplication.sharedApplication.dockTile;

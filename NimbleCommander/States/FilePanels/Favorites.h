@@ -24,11 +24,10 @@ public:
     };
 
     FavoriteLocationsStorage( GenericConfig &_config, const char *_path );
-    
-
     void StoreData( GenericConfig &_config, const char *_path );
     
     
+    // Favorites management
     void AddFavoriteLocation(VFSHost &_host,
                              const string &_directory,
                              const string &_title = "");
@@ -36,17 +35,15 @@ public:
     static optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
                                                       const string &_directory,
                                                       const string &_title = "" );
-    
-    
     void SetFavorites( const vector<Favorite> &_new_favorites );
-    
-    
-    void ReportLocationVisit( VFSHost &_host, const string &_directory );
-
-
-    vector< shared_ptr<const Location> > FrecentlyUsed( int _amount ) const;
     vector<Favorite> Favorites( /*limit output later?*/ ) const;
+    
+    // Recent locations management
+    void ReportLocationVisit( VFSHost &_host, const string &_directory );
+    vector< shared_ptr<const Location> > FrecentlyUsed( int _amount ) const;
+    void ClearVisitedLocations();
 
+    // Changes observation
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveFavoritesChanges( function<void()> _callback );
     

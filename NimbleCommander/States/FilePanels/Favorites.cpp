@@ -420,3 +420,9 @@ FavoriteLocationsStorage::ObservationTicket FavoriteLocationsStorage::
 {
     return AddObserver( move(_callback), FavoritesChanged );
 }
+
+void FavoriteLocationsStorage::ClearVisitedLocations()
+{
+    dispatch_assert_main_queue();
+    m_Visits.clear();
+}

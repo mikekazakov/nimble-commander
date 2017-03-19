@@ -22,7 +22,6 @@
 }
 @end
 
-
 @interface FavoriteLocationsMenuDelegate()
 
 @property (strong) IBOutlet NSMenuItem *manageMenuItem;
@@ -134,5 +133,9 @@ shouldCancel:(BOOL)shouldCancel
     return true;
 }
 
+- (IBAction)OnClearMenu:(id)sender
+{
+    AppDelegate.me.favoriteLocationsStorage.ClearVisitedLocations();
+}
 
 @end

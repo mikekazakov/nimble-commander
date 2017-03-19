@@ -661,6 +661,9 @@ DQ
                                         <menuItem isSeparatorItem="YES" id="Jlu-SB-jda"/>
                                         <menuItem title="Clear Menu" id="loz-WF-lIp">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnClearMenu:" target="Hoe-7a-2Tp" id="zYz-wx-k76"/>
+                                            </connections>
                                         </menuItem>
                                     </items>
                                     <connections>

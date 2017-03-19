@@ -7,6 +7,7 @@
 //
 
 #include <Carbon/Carbon.h>
+#include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -36,6 +37,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
     
     vector<FavoriteLocationsStorage::Favorite> m_Favorites;
     vector<FavoriteLocationsStorage::Favorite> m_PopupMenuFavorites;
+    
+    FavoriteLocationsStorage::ObservationTicket m_ObservationTicket;
+    bool m_IsCommitingFavorites;
 }
 
 - (id) initWithFavoritesStorage:(function<FavoriteLocationsStorage&()>)_favorites_storage
@@ -44,6 +48,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     if( self ) {
         m_Storage = _favorites_storage;
         m_Favorites = m_Storage().Favorites();
+        m_IsCommitingFavorites = false;
     }
     return self;
 }
@@ -64,6 +69,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
     sheet.onCtrlV = [sheet makeActionHotkey:@selector(showAvailableLocationsToAdd:)];
     sheet.onCtrlX = [sheet makeActionHotkey:@selector(removeFavorite:)];
     sheet.onCtrlO = [sheet makeActionHotkey:@selector(showOptionsMenu:)];
+
+    m_ObservationTicket = m_Storage().ObserveFavoritesChanges(
+        objc_callback(self, @selector(favoritesHadChangedOutside)) );
 }
 
 - (void) show
@@ -128,7 +136,18 @@ static const auto g_FavoritesWindowControllerDragDataType =
 
 - (void) commit
 {
+    m_IsCommitingFavorites = true;
+    auto clear = at_scope_end([&]{ m_IsCommitingFavorites = false; });
     m_Storage().SetFavorites( m_Favorites );
+}
+
+- (void) favoritesHadChangedOutside
+{
+    if( m_IsCommitingFavorites )
+        return;
+    
+    m_Favorites = m_Storage().Favorites();
+    [self loadData];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj

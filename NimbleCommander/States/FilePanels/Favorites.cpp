@@ -413,3 +413,9 @@ void FavoriteLocationsStorage::SetFavorites( const vector<Favorite> &_new_favori
     
     FireObservers( FavoritesChanged );
 }
+
+FavoriteLocationsStorage::ObservationTicket FavoriteLocationsStorage::
+    ObserveFavoritesChanges( function<void()> _callback )
+{
+    return AddObserver( move(_callback), FavoritesChanged );
+}

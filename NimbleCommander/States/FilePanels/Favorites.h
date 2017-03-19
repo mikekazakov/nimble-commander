@@ -47,6 +47,9 @@ public:
     vector< shared_ptr<const Location> > FrecentlyUsed( int _amount ) const;
     vector<Favorite> Favorites( /*limit output later?*/ ) const;
 
+    using ObservationTicket = ObservableBase::ObservationTicket;
+    ObservationTicket ObserveFavoritesChanges( function<void()> _callback );
+    
 private:
     enum ObservationEvents : uint64_t {
         FavoritesChanged = 1

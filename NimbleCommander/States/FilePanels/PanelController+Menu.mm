@@ -35,6 +35,8 @@
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
+#include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
+#include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
 #include "Views/FTPConnectionSheetController.h"
@@ -48,6 +50,7 @@
 #include "Views/SpotlightSearchPopupViewController.h"
 #include "PanelAux.h"
 #include "Actions/CopyFilePaths.h"
+#include "Actions/AddToFavorites.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -359,6 +362,8 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
                                          PanelData::PanelSortMode::SortByAddTimeRev );
 #undef IF
     
+    using namespace panels::actions;
+    
     IF_MENU_TAG("menu.edit.paste")                      return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
     IF_MENU_TAG("menu.edit.move_here")                  return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
@@ -373,10 +378,9 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
-    IF_MENU_TAG("menu.command.copy_file_name")
-        return panels::actions::CopyFileName::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.command.copy_file_path")
-        return panels::actions::CopyFilePath::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.copy_file_name")  return CopyFileName::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.copy_file_path")  return CopyFilePath::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.file.add_to_favorites")   return AddToFavorites::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
@@ -660,6 +664,14 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 - (IBAction)OnGoToQuickListsConnections:(id)sender
 {
     [self popUpQuickListWithNetworkConnections];
+}
+
+- (IBAction)OnGoToFavoriteLocation:(id)sender
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
+            if( auto location = any_cast<PanelDataPersisency::Location>(&holder.any) )
+                [self goToPersistentLocation:*location];
 }
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
@@ -1468,6 +1480,11 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 - (IBAction) OnRenameFileInPlace:(id)sender
 {
     [self.view startFieldEditorRenaming];
+}
+
+- (IBAction) OnAddToFavorites:(id)sender
+{
+    panels::actions::AddToFavorites::Perform(self, sender);
 }
 
 - (IBAction)copy:(id)sender

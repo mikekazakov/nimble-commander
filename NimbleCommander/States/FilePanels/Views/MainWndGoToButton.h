@@ -10,10 +10,15 @@
 
 #include <VFS/VFS.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <NimbleCommander/States/FilePanels/Favorites.h>
 
 @class MainWindowFilePanelState;
 
 @interface MainWndGoToButtonSelection : NSObject
+@end
+
+@interface MainWndGoToButtonSelectionFavorite : MainWndGoToButtonSelection
+@property (nonatomic, readonly) const FavoriteLocationsStorage::Favorite &favorite;
 @end
 
 @interface MainWndGoToButtonSelectionVFSPath : MainWndGoToButtonSelection
@@ -32,6 +37,6 @@
 
 - (void) popUp;
 
-+ (vector<NSURL*>) finderFavorites;
++ (NSImage*) imageForLocation:(const PanelDataPersisency::Location &)_location;
 
 @end

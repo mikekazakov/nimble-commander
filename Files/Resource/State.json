@@ -4,7 +4,8 @@
         "findFilesSheet": {},
         "findWithSpotlightPopup": {},
         "selectWithMaskPopup": {},
-        "batchRename": {}
+        "batchRename": {},
+        "favorites": {}
     },
     "viewer": {
     }

@@ -14,13 +14,13 @@
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
+#include <NimbleCommander/States/FilePanels/Favorites.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
 static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";
 
-// TODO: make this less stupid
 struct AdditionalPath
 {
     string path;
@@ -28,84 +28,11 @@ struct AdditionalPath
     
     string VerbosePath() const
     {
-        VFSHostPtr host = vfs.lock();
-        if(!host)
-            return path;
-        
-        array<VFSHost*, 32> hosts;
-        int hosts_n = 0;
-            
-        VFSHost *cur = host.get();
-        while(cur) {
-            hosts[hosts_n++] = cur;
-            cur = cur->Parent().get();
-        }
-        
-        string s;
-        while(hosts_n > 0)
-            s += hosts[--hosts_n]->Configuration().VerboseJunction();
-        s += path;
-        return s;
+        if( auto v = vfs.lock() )
+            return PanelDataPersisency::MakeVerbosePathString(*v, path);
+        return path;
     }
 };
-
-static vector<NSURL*> GetFindersFavorites()
-{
-    // thanks Adam Strzelecki nanoant.com
-    // https://gist.github.com/nanoant/1244807
-    
-    vector<NSURL*> result;
-    
-    UInt32 seed;
-    LSSharedFileListRef sflRef = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
-    NSArray *list = (NSArray *)CFBridgingRelease(LSSharedFileListCopySnapshot(sflRef, &seed));
-    
-	for(NSObject *object in list) {
-		LSSharedFileListItemRef sflItemRef = (__bridge LSSharedFileListItemRef)object;
-        CFURLRef urlRef = nullptr;
-        CFErrorRef err = nullptr;
-        urlRef = LSSharedFileListItemCopyResolvedURL(sflItemRef,
-                                                     kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes,
-                                                     &err);
-        if( urlRef ) {
-            NSURL* url = (__bridge NSURL*)urlRef;
-            
-            if( [url.scheme isEqualToString:@"file"] ) {
-                NSString *path = url.resourceSpecifier;
-                if( ![path hasSuffix:@".cannedSearch"] &&
-                    ![path hasSuffix:@".cannedSearch/"] &&
-                    ![path hasSuffix:@".savedSearch"] )
-                    result.emplace_back(url);
-            }
-            CFRelease(urlRef);
-        }
-        if( err ) {
-            NSLog(@"%@", (__bridge NSError*)err);
-            CFRelease(err);
-        }
-	}
-    
-	CFRelease(sflRef);
-    
-    return result;
-}
-
-static vector<NSURL*> GetHardcodedFavorites()
-{
-    auto url = [](const string& _p) {
-        return [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_p]
-                          isDirectory:true];
-    };
-    vector<NSURL*> result;
-    result.emplace_back(url(CommonPaths::Home()));
-    result.emplace_back(url(CommonPaths::Desktop()));
-    result.emplace_back(url(CommonPaths::Documents()));
-    result.emplace_back(url(CommonPaths::Downloads()));
-    result.emplace_back(url(CommonPaths::Movies()));
-    result.emplace_back(url(CommonPaths::Music()));
-    result.emplace_back(url(CommonPaths::Pictures()));
-    return result;
-}
 
 static NSString *KeyEquivalentForUserDir(int _dir_ind)
 {
@@ -171,15 +98,28 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
 }
 @end
 
+@implementation MainWndGoToButtonSelectionFavorite
+{
+    FavoriteLocationsStorage::Favorite m_Favorite;
+}
+
+- (id) initWithFavorite:(const FavoriteLocationsStorage::Favorite&)_favorite
+{
+    if( self = [super init] ) {
+        m_Favorite = _favorite;
+    }
+    return self;
+}
+
+- (const FavoriteLocationsStorage::Favorite &)favorite
+{
+    return m_Favorite;
+}
+
+@end
+
 @implementation MainWndGoToButton
 {
-    vector<NSURL*> m_FinderFavorites;
-    vector<shared_ptr<NativeFileSystemInfo>> m_Volumes;
-    vector<AdditionalPath> m_OtherPanelsPaths;
-    
-    string              m_CurrentPath;
-    weak_ptr<VFSHost>   m_CurrentVFS;
-    
     NSPoint   m_AnchorPoint;
     bool      m_IsRight;
 
@@ -202,6 +142,7 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
         self.pullsDown = true;
         self.refusesFirstResponder = true;
         [self.menu addItem:TitleItem()];
+        self.menu.delegate = self;
         [self synchronizeTitleAndSelectedItem];
     }
     
@@ -213,30 +154,9 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-+ (vector<NSURL*>) finderFavorites
+- (vector<AdditionalPath>) otherPanelPaths
 {
-    auto f = GetFindersFavorites();
-    if(f.empty()) // something bad happened, fallback to hardcoded version
-        f = GetHardcodedFavorites(); // (not sure if this will be ever called)
-    return f;
-}
-
-- (void) UpdateUrls
-{
-    m_Volumes.clear();
-    for(auto &i: NativeFSManager::Instance().Volumes())
-        if(i->mount_flags.dont_browse == false)
-            m_Volumes.emplace_back(i);
-
-    m_FinderFavorites = MainWndGoToButton.finderFavorites;
-}
-
-- (void) UpdateOtherPanelPaths
-{
-    m_OtherPanelsPaths.clear();
-    
-    if( !GlobalConfig().GetBool(g_ConfigShowOthersKey) )
-        return;
+    vector<AdditionalPath> result;
     
     MainWindowFilePanelState *owner = m_Owner;
     vector<tuple<string,VFSHostPtr>> current_panels_paths = owner.filePanelsCurrentPaths;
@@ -280,9 +200,10 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
             AdditionalPath ap;
             ap.path = get<0>(i);
             ap.vfs = get<1>(i);
-            m_OtherPanelsPaths.emplace_back(ap);
+            result.emplace_back(ap);
         }
     }
+    return result;
 }
 
 - (MainWndGoToButtonSelection *)selection
@@ -293,19 +214,36 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     return objc_cast<MainWndGoToButtonSelection>( sel.representedObject );
 }
 
-- (int) countCommonCharsWithPath:(const string&)_str inVFS:(const VFSHostPtr&)_vfs
++ (NSImage*) imageForLocation:(const PanelDataPersisency::Location &)_location
 {
-    if(m_CurrentVFS.lock() != _vfs)
-        return 0;
-    return m_CurrentPath.find(_str) == 0 ? (int)_str.length() : 0;
+    if( _location.is_native() ) {
+        auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()
+                                                              isDirectory:true
+                                                            relativeToURL:nil];
+        if( url ) {
+            NSImage *img;
+            [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
+            if( img != nil )
+                return img;
+        }
+    }
+    else if( _location.is_network() ) {
+        return [NSImage imageNamed:NSImageNameNetwork];
+    }
+    return [NSImage imageNamed:NSImageNameFolder];
+}
+
+static vector<shared_ptr<NativeFileSystemInfo>> VolumesToShow()
+{
+    vector<shared_ptr<NativeFileSystemInfo>> volumes;
+    for( auto &i: NativeFSManager::Instance().Volumes() )
+        if( i->mount_flags.dont_browse == false )
+            volumes.emplace_back(i);
+    return volumes;
 }
 
 - (void)willPopUp:(NSNotification *) notification
 {
-    [self updateCurrentPanelPath];
-    [self UpdateUrls];
-    [self UpdateOtherPanelPaths];
-    
     [self removeAllItems];
     NSMenu *menu = self.menu;
     [menu addItem:TitleItem()];
@@ -313,57 +251,33 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
     
     static const auto icon_size = NSMakeSize(NSFont.systemFontSize+3, NSFont.systemFontSize+3);
     
-    size_t common_path_max = 0;
-    NSMenuItem *common_item = nil;
-
     // Finder Favorites
+    const auto favorites = AppDelegate.me.favoriteLocationsStorage.Favorites();
+    
     int userdir_ind = 0;
-    for (NSURL *url: m_FinderFavorites) {
-        NSString *name;
-        [url getResourceValue:&name forKey:NSURLLocalizedNameKey error:nil];
+    for( auto &favorite: favorites ) {
         NSMenuItem *menuitem = [NSMenuItem new];
-        menuitem.title = name;
-        menuitem.representedObject = SelectionForNativeVFSPath(url);
-        [menu addItem:menuitem];
-
-        NSImage *img;
-        [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
-        if(img != nil) {
-            img.size = icon_size;
-            menuitem.image = img;
-        }
-  
-        int common_path = [self countCommonCharsWithPath:url.path.fileSystemRepresentationSafe
-                                                   inVFS:VFSNativeHost::SharedHost()];
-        if(common_path > common_path_max) {
-            common_path_max = common_path;
-            common_item = menuitem;
-        }
-
+        if( auto title = [NSString stringWithUTF8StdString:favorite.title] )
+            menuitem.title = title;
+        menuitem.representedObject =
+            [[MainWndGoToButtonSelectionFavorite alloc] initWithFavorite:favorite];
         menuitem.keyEquivalent = KeyEquivalentForUserDir(userdir_ind++);
         menuitem.keyEquivalentModifierMask = 0;
+        menuitem.image = [MainWndGoToButton imageForLocation:favorite.location->hosts_stack];
+        menuitem.image.size = icon_size;
+        [menu addItem:menuitem];
     }
 
     [menu addItem:NSMenuItem.separatorItem];
     
     // VOLUMES
-    for(auto &i: m_Volumes) {
+    for(auto &i: VolumesToShow()) {
         NSMenuItem *menuitem = [NSMenuItem new];
         menuitem.title = i->verbose.name;
         menuitem.representedObject = SelectionForNativeVFSPath(i->mounted_at_path);
-        if(i->verbose.icon != nil) {
-            NSImage *img = [i->verbose.icon copy];
-            img.size = icon_size;
-            menuitem.image = img;
-        }
+        menuitem.image = [i->verbose.icon copy];
+        menuitem.image.size = icon_size;
         [menu addItem:menuitem];
-
-        int common_path = [self countCommonCharsWithPath:i->mounted_at_path
-                                                   inVFS:VFSNativeHost::SharedHost()];
-        if(common_path > common_path_max) {
-            common_path_max = common_path;
-            common_item = menuitem;
-        }
     }
     
     // Recent Network Connections
@@ -397,53 +311,26 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
         }
     }
     
-    // OTHER PANELS
-    if(!m_OtherPanelsPaths.empty()) {
-        [menu addItem:NSMenuItem.separatorItem];
-        for(const auto &i: m_OtherPanelsPaths) {
-            NSMenuItem *menuitem = [NSMenuItem new];
-
-            static NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont menuFontOfSize:0] forKey:NSFontAttributeName];
-            menuitem.title = StringByTruncatingToWidth([NSString stringWithUTF8StdString:i.VerbosePath()],
-                                                       600,
-                                                       kTruncateAtMiddle,
-                                                       attributes);
-            MainWndGoToButtonSelectionVFSPath *p = [[MainWndGoToButtonSelectionVFSPath alloc] init];
-            p.path = i.path;
-            p.vfs = i.vfs;
-            menuitem.representedObject = p;
-            [menu addItem:menuitem];
-            
-            int common_path = [self countCommonCharsWithPath:i.path
-                                                       inVFS:i.vfs.lock()];
-            if(common_path > common_path_max) {
-                common_path_max = common_path;
-                common_item = menuitem;
+    if( GlobalConfig().GetBool(g_ConfigShowOthersKey) ) {
+        auto paths = self.otherPanelPaths;
+        if( !paths.empty() ) {
+            [menu addItem:NSMenuItem.separatorItem];
+            for( const auto &i: paths ) {
+                NSMenuItem *menuitem = [NSMenuItem new];
+                
+                static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
+                menuitem.title = StringByTruncatingToWidth([NSString stringWithUTF8StdString:i.VerbosePath()],
+                                                           600,
+                                                           kTruncateAtMiddle,
+                                                           attributes);
+                MainWndGoToButtonSelectionVFSPath *p = [[MainWndGoToButtonSelectionVFSPath alloc] init];
+                p.path = i.path;
+                p.vfs = i.vfs;
+                menuitem.representedObject = p;
+                [menu addItem:menuitem];
             }
         }
     }
-    
-    if(common_item != nil)
-        common_item.state = NSOnState;
-    
-    menu.delegate = self;
-}
-
-- (void)updateCurrentPanelPath
-{
-    m_CurrentPath.clear();
-    m_CurrentVFS.reset();
-    
-    auto *state = (MainWindowFilePanelState *) m_Owner;
-    if(!state)
-        return;
-    
-    auto *panel = m_IsRight ? state.rightPanelController : state.leftPanelController;
-    if( !panel || !panel.isUniform )
-        return;
-    
-    m_CurrentPath = panel.currentDirectoryPath;
-    m_CurrentVFS = panel.vfs;
 }
 
 - (void)menuDidClose:(NSMenu *)menu

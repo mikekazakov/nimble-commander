@@ -87,7 +87,7 @@ public:
      */
     virtual bool IsDirectory(const char *_path,
                              int _flags,
-                             VFSCancelChecker _cancel_checker);
+                             VFSCancelChecker _cancel_checker = nullptr);
     
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.

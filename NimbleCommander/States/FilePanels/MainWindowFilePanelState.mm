@@ -29,6 +29,7 @@
 #include "PanelController+DataAccess.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
+#include "Favorites.h"
 #include "Views/MainWndGoToButton.h"
 #include "Views/QuickPreview.h"
 #include "Views/FilePanelMainSplitView.h"
@@ -364,9 +365,10 @@ static bool GoToForcesPanelActivation()
         
         [self.leftPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
     }
-    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection)) {
+    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection))
         [self.leftPanelController GoToSavedConnection:info.connection];
-    }
+    else if( auto f = objc_cast<MainWndGoToButtonSelectionFavorite>(selection))
+        [self.leftPanelController goToPersistentLocation:f.favorite.location->hosts_stack];
 }
 
 - (IBAction)onRightPanelGoToButtonAction:(id)sender
@@ -392,9 +394,11 @@ static bool GoToForcesPanelActivation()
         
         [self.rightPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
     }
-    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection)) {
+    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection))
         [self.rightPanelController GoToSavedConnection:info.connection];
-    }
+    else if( auto f = objc_cast<MainWndGoToButtonSelectionFavorite>(selection))
+        [self.rightPanelController goToPersistentLocation:f.favorite.location->hosts_stack];
+    
 }
 
 - (IBAction)LeftPanelGoto:(id)sender {
@@ -692,7 +696,13 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [self synchronizeOverlappedTerminalWithPanel:_panel];
     }
     
-    [self updateTabNameForController:_panel];    
+    [self updateTabNameForController:_panel];
+    
+    
+    if( _panel.isUniform ) {
+        auto &locations = AppDelegate.me.favoriteLocationsStorage;
+        locations.ReportLocationVisit( *_panel.vfs, _panel.currentDirectoryPath );
+    }
 }
 
 //- (void) didBecomeKeyWindow

@@ -38,6 +38,8 @@
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
+#include <NimbleCommander/States/FilePanels/Favorites.h>
+#include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
@@ -233,6 +235,7 @@ static AppDelegate *g_Me = nil;
     NativeFSManager::Instance();
     FeedbackManager::Instance();
     [self themesManager];
+    [self favoriteLocationsStorage];
     
     [self updateMainMenuFeaturesByVersionAndState];
     
@@ -501,6 +504,9 @@ static AppDelegate *g_Me = nil;
         }
     }
     
+    // last cleanup before shutting down here:
+    self.favoriteLocationsStorage.StoreData( StateConfig(), "filePanel.favorites" );
+    
     return NSTerminateNow;
 }
 
@@ -744,6 +750,12 @@ static AppDelegate *g_Me = nil;
     return *i;
 }
 
+- (FavoriteLocationsStorage&) favoriteLocationsStorage
+{
+    static auto i = new FavoriteLocationsStorage( StateConfig(), "filePanel.favorites" );
+    return *i;
+}
+
 - (bool) askToResetDefaults
 {
     return AskUserToResetDefaults();
@@ -784,6 +796,22 @@ static AppDelegate *g_Me = nil;
         [w show];
     else {
         VFSListWindowController *window = [[VFSListWindowController alloc] init];
+        [window show];
+        existing_window = window;
+    }
+}
+
+- (IBAction)onMainMenuPerformShowFavorites:(id)sender
+{
+  static __weak FavoritesWindowController *existing_window = nil;
+    if( auto w = (FavoritesWindowController*)existing_window  )
+        [w show];
+    else {
+        auto storage = []()->FavoriteLocationsStorage& {
+            return AppDelegate.me.favoriteLocationsStorage;
+        };
+        FavoritesWindowController *window = [[FavoritesWindowController alloc]
+            initWithFavoritesStorage:storage];
         [window show];
         existing_window = window;
     }

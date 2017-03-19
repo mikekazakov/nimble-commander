@@ -11,8 +11,8 @@
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "6BDEAD39-1FC1-45A9-88D2-99A9CF7F2F8D",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
     "B28F34E93FF7C34A6E2F490D54CBCF67304F4394" : "source\/3rd_Party\/MMTabBarView\/",
-    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : "source\/habanero\/",
-    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : "source\/"
+    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : "source.new_favorites\/habanero\/",
+    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : "source.new_favorites\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "NimbleCommander",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,

@@ -172,7 +172,7 @@ vector< shared_ptr<const FavoriteLocationsStorage::Location> >
 FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
 {
     dispatch_assert_main_queue();
-    if( _amount <= 0 )
+    if( _amount <= 0 || m_Visits.empty() )
         return {};
 
     const auto now = time(nullptr);
@@ -184,25 +184,28 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
          }) != end(m_Favorites);
     };
     
-    // location, visits count, last visit, frecency score
-    vector< tuple<shared_ptr<const Location>, int, time_t, double> > recent_visits; // todo: switch shared_ptr to index: 16bytes vs 4 bytes
+    // visit #, visits count, last visit, frecency score
+    vector< tuple<size_t, int, time_t, float> > recent_visits;
     for( auto &v: m_Visits )
         if( v.second.last_visit > last_date && v.second.visits_count > 0 && !is_favorite(v.first) )
-            recent_visits.emplace_back(v.second.location,
+            recent_visits.emplace_back(v.first,
                                        v.second.visits_count,
                                        v.second.last_visit,
                                        0.);
-    
-    const auto total_visits = accumulate(
-        begin(recent_visits),
-        end(recent_visits),
-        int64_t(1), // a little offset to exclude possibility of division by zero
-        [](auto &l, auto &r) { return l + get<1>(r); }
-        );
+
+    if( recent_visits.empty() )
+        return {};
+
+    const auto max_visits_it = max_element(begin(recent_visits),
+                                         end(recent_visits),
+                                         [](auto &l, auto &r){ return max(get<1>(l), get<1>(r)); }
+                                         );
+    const auto max_visits = float(get<1>(*max_visits_it));
     
     for( auto &v: recent_visits ) {
-        const auto frequency = double(get<1>(v)) / double(total_visits); // [0..1]
-        const auto recency = 1. - double(now - get<2>(v)) / double(g_MaxTimeRange); // [0..1]
+        // this is actually not a real frequency, but a normalized value of a visits count.
+        const auto frequency = get<1>(v) / max_visits; // [0..1]
+        const auto recency = 1. - float(now - get<2>(v)) / float(g_MaxTimeRange); // [0..1]
         const auto score = frequency + recency; // [0..2]
         get<3>(v) = score;
     }
@@ -212,10 +215,8 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
     });
     
     vector< shared_ptr<const FavoriteLocationsStorage::Location> > result;
-    for( int i = 0, e = min(_amount, (int)recent_visits.size()); i != e; ++i ) {
-//        cout << get<0>(recent_visits[i])->verbose_path << ": " << get<3>(recent_visits[i]) << endl;
-        result.emplace_back( get<0>(recent_visits[i]) );
-    }
+    for( int i = 0, e = min(_amount, (int)recent_visits.size()); i != e; ++i )
+        result.emplace_back( m_Visits.at(get<0>(recent_visits[i])).location );
 
     return result;
 }

@@ -115,7 +115,7 @@ shouldCancel:(BOOL)shouldCancel
     }
     else if( index == m_Locations.size() + 1 ) {
         [menu removeItemAtIndex:index];
-        [menu insertItem:[self.clearMenuItem copy] atIndex:index];
+        [menu insertItem:self.clearMenuItem atIndex:index];
     }
     else if( index >= 0 && index < m_Locations.size() ) {
         static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};

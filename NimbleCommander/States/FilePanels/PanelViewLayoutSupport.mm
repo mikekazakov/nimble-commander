@@ -332,28 +332,40 @@ void PanelViewLayoutsStorage::CommitChanges()
 
 @implementation PanelViewLayoutsMenuDelegate
 {
-    const PanelViewLayoutsStorage *m_Storage;
+    bool m_IsDirty;
+    PanelViewLayoutsStorage *m_Storage;
+    PanelViewLayoutsStorage::ObservationTicket m_Ticket;
 }
 
-- (id) initWithStorage:(const PanelViewLayoutsStorage&)_storage;
+- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage;
 {
     self = [super init];
     if( self ) {
+        m_IsDirty = true;
         m_Storage = &_storage;
+        m_Ticket = m_Storage->ObserveChanges( objc_callback(self, @selector(layoutsHaveChanged)) );
     }
     return self;
 }
 
+- (void)layoutsHaveChanged
+{
+    m_IsDirty = true;
+}
+
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
-    int index = 0;
-    for( NSMenuItem *item in menu.itemArray ) {
-        if( auto l = m_Storage->GetLayout((int)index) ) {
-            item.title = l->name.empty() ?
-            [NSString stringWithFormat:@"Layout #%d", index+1] :
-            [NSString stringWithUTF8StdString:l->name];
+    if( m_IsDirty && (menu.propertiesToUpdate & NSMenuPropertyItemTitle) ) {
+        int index = 0;
+        for( NSMenuItem *item in menu.itemArray ) {
+            if( auto l = m_Storage->GetLayout((int)index) ) {
+                item.title = l->name.empty() ?
+                [NSString stringWithFormat:@"Layout #%d", index+1] :
+                [NSString stringWithUTF8StdString:l->name];
+            }
+            index++;
         }
-        index++;
+        m_IsDirty = false;
     }
 }
 

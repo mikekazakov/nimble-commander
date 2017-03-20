@@ -19,7 +19,7 @@ struct PanelViewLayout
         /*Thumbs = 2 */
     };
     
-    string name; // for the future
+    string name;
     any layout; // perhaps switch to variant?
     // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
     // PanelViewDisabledLayout at the moment.
@@ -84,6 +84,6 @@ private:
 
 @interface PanelViewLayoutsMenuDelegate : NSObject<NSMenuDelegate>
 
-- (id) initWithStorage:(const PanelViewLayoutsStorage&)_storage;
+- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage;
 
 @end

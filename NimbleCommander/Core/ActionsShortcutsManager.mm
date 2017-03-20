@@ -111,6 +111,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.go.root",                                    14'150},
     {"menu.go.processes_list",                          14'120},
     {"menu.go.favorites.manage",                        14'210},
+  /*{"menu.go.frequent.clear", NOT WIRED AT THE MOMENT  14'220},*/
     {"menu.go.to_folder",                               14'110},
     {"menu.go.connect.ftp",                             14'130},
     {"menu.go.connect.sftp",                            14'140},

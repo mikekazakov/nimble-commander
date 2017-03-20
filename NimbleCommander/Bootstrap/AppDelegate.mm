@@ -40,6 +40,7 @@
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include <NimbleCommander/States/FilePanels/Favorites.h>
 #include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
+#include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
@@ -242,13 +243,8 @@ static AppDelegate *g_Me = nil;
     // update menu with current shortcuts layout
     ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
     
-    // set up menu delegate for layouts list.
-    // doing this via DI so to reduce links to AppDelegate in whole codebase
-    static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc]
-                                    initWithStorage:self.panelLayouts];
-    [NSApp.mainMenu itemWithTagHierarchical:ActionsShortcutsManager::Instance().
-     TagFromAction("menu.view.toggle_layout_1")].menu.delegate = layouts_delegate;
-  
+    [self wireMenuDelegates];
+ 
     bool showed_modal_dialog = false;
     if( ActivationManager::Instance().Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
@@ -272,6 +268,30 @@ static AppDelegate *g_Me = nil;
     }
     
     GA().PostEvent( "Appearance", "Set", self.themesManager.SelectedThemeName().c_str() );
+}
+
+- (void) wireMenuDelegates
+{
+    // set up menu delegates. do this via DI to reduce links to AppDelegate in whole codebase
+    auto item_for_action = [](const char *_action){
+        auto tag = ActionsShortcutsManager::Instance().TagFromAction(_action);
+        return [NSApp.mainMenu itemWithTagHierarchical:tag];
+    };
+    
+    static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc]
+                                    initWithStorage:self.panelLayouts];
+    item_for_action("menu.view.toggle_layout_1").menu.delegate = layouts_delegate;
+
+    auto manage_fav_item = item_for_action("menu.go.favorites.manage");
+    static auto favorites_delegate = [[FavoriteLocationsMenuDelegate alloc]
+                                      initWithStorage:self.favoriteLocationsStorage
+                                      andManageMenuItem:manage_fav_item];
+    manage_fav_item.menu.delegate = favorites_delegate;
+  
+    auto clear_freq_item = [NSApp.mainMenu itemWithTagHierarchical:14220];
+    static auto frequent_delegate = [[FrequentlyVisitedLocationsMenuDelegate alloc]
+        initWithStorage:self.favoriteLocationsStorage andClearMenuItem:clear_freq_item];
+    clear_freq_item.menu.delegate = frequent_delegate;
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState

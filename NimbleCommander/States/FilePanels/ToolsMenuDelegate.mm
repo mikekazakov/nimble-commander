@@ -20,71 +20,67 @@
 
 @end
 
+static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int _ind )
+{
+    NSMenuItem *item = [[NSMenuItem alloc] init];
+    item.title = _tool->m_Title.empty() ?
+        [NSString stringWithFormat:@"Tool #%i", _ind] :
+        [NSString stringWithUTF8StdString:_tool->m_Title];
+    item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:_tool];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wselector"
+    if( !_tool->m_ExecutablePath.empty() )
+        item.action = @selector(onExternMenuActionCalled:);
+    else
+        item.action = nil;
+#pragma clang diagnostic pop
+    item.keyEquivalent = _tool->m_Shorcut.Key();
+    item.keyEquivalentModifierMask = _tool->m_Shorcut.modifiers;
+    return item;
+}
 
 @implementation ToolsMenuDelegate
 {
-    vector<shared_ptr<const ExternalTool>>              m_Tools;
-    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
-    __weak NSMenu                                      *m_MyMenu;
+    bool m_IsDirty;
+    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    __weak NSMenu                          *m_MyMenu;
 }
 
 - (id) init
 {
     self = [super init];
     if( self ) {
+        m_IsDirty = true;
     }
     return self;
 }
 
-- (NSInteger)numberOfItemsInMenu:(NSMenu*)menu
+- (void) toolsHaveChanged
 {
-    // deferred observer setup
-    if( !m_ToolsObserver )
-        m_ToolsObserver = AppDelegate.me.externalTools.ObserveChanges([=]{
-            [self menuNeedsUpdate:m_MyMenu];
-        });
-    if( m_MyMenu == nil )
-        m_MyMenu = menu;
-    
-    m_Tools = AppDelegate.me.externalTools.GetAllTools();
-    
-    return m_Tools.size();
-}
-
-- (BOOL)menu:(NSMenu*)menu updateItem:(NSMenuItem*)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel
-{
-    assert( index < m_Tools.size() );
-    auto et = m_Tools[index];
-    item.title = et->m_Title.empty() ?
-        [NSString stringWithFormat:@"Tool #%ld", index] :
-        [NSString stringWithUTF8StdString:et->m_Title];
-    item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:et];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
-    if( !et->m_ExecutablePath.empty() )
-        item.action = @selector(onExternMenuActionCalled:);
-    else
-        item.action = nil;
-#pragma clang diagnostic pop
-    item.keyEquivalent = et->m_Shorcut.Key();
-    item.keyEquivalentModifierMask = et->m_Shorcut.modifiers;
-    
-    return true;
+    m_IsDirty = true;
+    [self menuNeedsUpdate:m_MyMenu];
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
-    if( !m_MyMenu ) m_MyMenu = menu;
-    if( !menu )     menu = m_MyMenu;
-    if( !menu )     return;
+    // this delegate need to trigger update of the menu later, so will store the pointer
+    if( !m_MyMenu )
+        m_MyMenu = menu;
     
-    NSInteger count = [self numberOfItemsInMenu:menu];
-    while( menu.numberOfItems < count )
-        [menu insertItem:[NSMenuItem new] atIndex:0];
-    while( menu.numberOfItems > count )
-        [menu removeItemAtIndex:0];
-    for( NSInteger index = 0; index < count; index++ )
-        [self menu:menu updateItem:[menu itemAtIndex:index] atIndex:index shouldCancel:NO];
+    // deferred observer setup
+    if( !m_ToolsObserver )
+        m_ToolsObserver = AppDelegate.me.externalTools.ObserveChanges(
+            objc_callback(self, @selector(toolsHaveChanged)) );
+    
+    if( m_IsDirty ) {
+        const auto tools = AppDelegate.me.externalTools.GetAllTools();
+        
+        [menu removeAllItems];
+        for( int i = 0, e = (int)tools.size(); i != e; ++i )
+            [menu addItem:ItemForTool(tools[i], i)];
+    
+        m_IsDirty = false;
+    }
 }
 
 @end

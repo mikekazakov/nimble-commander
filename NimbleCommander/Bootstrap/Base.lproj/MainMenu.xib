@@ -722,7 +722,8 @@ DQ
                                                 <action selector="OnGoToSFTP:" target="-1" id="j70-jL-OKb"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Recent Connections" enabled="NO" id="PPi-Oe-OXM">
+                                        <menuItem isSeparatorItem="YES" id="v42-zc-E7z"/>
+                                        <menuItem title="Recent Connections" hidden="YES" enabled="NO" id="PPi-Oe-OXM">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                     </items>

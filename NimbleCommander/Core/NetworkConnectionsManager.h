@@ -95,6 +95,9 @@ public:
     const string&               Title() const noexcept { return m_Object->Title(); }
     const boost::uuids::uuid&   Uuid()  const noexcept { return m_Object->Uuid(); }
 
+    // shallow comparison only
+    inline bool operator==(const Connection&_rhs)const noexcept {return m_Object == _rhs.m_Object;}
+    inline bool operator!=(const Connection&_rhs)const noexcept {return m_Object != _rhs.m_Object;}
 private:
 
     struct Concept

@@ -619,15 +619,19 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
+    auto &ncm = NetworkConnectionsManager::Instance();
     string passwd;
     bool should_save_passwd = false;
-    if( !NetworkConnectionsManager::Instance().GetPassword(connection, passwd) ) {
-        if( !NetworkConnectionsManager::Instance().AskForPassword(connection, passwd) )
+    if( !ncm.GetPassword(connection, passwd) ) {
+        if( !ncm.AskForPassword(connection, passwd) )
             return;
         should_save_passwd = true;
     }
     
-    auto epilog = [=](bool _success) { if(_success && should_save_passwd ) NetworkConnectionsManager::Instance().SetPassword(connection, passwd); };
+    auto epilog = [=](bool _success) {
+        if(_success && should_save_passwd )
+            NetworkConnectionsManager::Instance().SetPassword(connection, passwd);
+    };
     
     if( connection.IsType<NetworkConnectionsManager::FTPConnection>() )
         m_DirectoryLoadingQ.Run([=]{
@@ -639,6 +643,38 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             bool success = [self GoToSFTPWithConnection:connection password:passwd];
             epilog(success);
         });
+    else if( connection.IsType<NetworkConnectionsManager::NetworkShare>() ) {
+        auto activity = make_shared<panel::ActivityTicket>();
+        __weak PanelController *weak_self = self;
+        auto cb = [weak_self, activity, connection, epilog]
+        (const string &_path, const string &_err){
+            if( PanelController *panel = weak_self ) {
+                if( !_path.empty() ) {
+                    [panel GoToDir:_path
+                              vfs:VFSNativeHost::SharedHost()
+                     select_entry:""
+                            async:true];
+                    
+                    // save successful connection to history
+                    NetworkConnectionsManager::Instance().ReportUsage(connection);
+                    epilog(true);
+                }
+                else {
+                    dispatch_to_main_queue([=]{
+                        Alert *alert = [[Alert alloc] init];
+                        alert.messageText = NSLocalizedString(@"Unable to connect to a network share",
+                                                              "Informing a user that NC can't connect to network share");
+                        alert.informativeText = [NSString stringWithUTF8StdString:_err];
+                        [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+                        [alert runModal];
+                    });
+                }
+            }
+        };
+
+        if( ncm.MountShareAsync(connection, passwd, cb) )
+            *activity = [self registerExtActivity];
+    }
 }
 
 - (IBAction)OnGoToQuickListsParents:(id)sender

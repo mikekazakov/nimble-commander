@@ -13,6 +13,7 @@ public:
     class BaseConnection;
     class FTPConnection;
     class SFTPConnection;
+    class NetworkShare;
     
     static NetworkConnectionsManager& Instance();
     
@@ -45,19 +46,37 @@ public:
 //    bool GetPassword(const Connection &_conn, string& _password, NSWindow *_window_for_passwd_sheet);
 //#endif
     
-    string TitleForConnection(const Connection &_conn) const;
+    static string TitleForConnection(const Connection &_conn);
     
     VFSHostPtr SpawnHostFromConnection(const Connection &_conn, bool _allow_password_ui = true);
+
+    using MountShareCallback = function<void(const string&_mounted_path, const string&_error)>;
+    /**
+     * MountShareAsync assumes that _conn is a Network share, exits immediately otherwise.
+     * _callback will be called in the future, either with a string containing a mount path, or
+     * with reason of failure.
+     */
+    bool MountShareAsync(const Connection &_conn,
+                         MountShareCallback _callback,
+                         bool _allow_password_ui = true);
+    bool MountShareAsync(const Connection &_conn,
+                         const string &_password,
+                         MountShareCallback _callback);
     
 private:
     void Save();
     void Load();
+    void NetFSCallback(int _status, void *_requestID, CFArrayRef _mountpoints);
     
     vector<Connection>                              m_Connections;
     vector<boost::uuids::uuid>                      m_MRU;
     mutable mutex                                   m_Lock;
     GenericConfig                                   m_Config;
     vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
+    bool                                            m_IsWritingConfig;
+    
+    mutable mutex                                   m_PendingMountRequestsLock;
+    vector< pair<void*, MountShareCallback> >       m_PendingMountRequests;
 };
 
 class NetworkConnectionsManager::Connection
@@ -143,4 +162,18 @@ public:
     string host;
     string keypath;
     long   port;
+};
+
+class NetworkConnectionsManager::NetworkShare : public NetworkConnectionsManager::BaseConnection
+{
+public:
+    enum Propocol {
+        SMB = 0,
+        AFP = 1
+    };
+    string host; // host adress in ip or network name form. should not have protocol specification.
+    string user; // empty user means 'guest'
+    string share; // must be not empty at the time, to eliminate a need for UI upon connection
+    string mountpoint; // empty mountpoint means that system will decide it itself
+    Propocol proto;
 };

@@ -1,6 +1,8 @@
+#include <NetFS/NetFS.h>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
@@ -106,12 +108,24 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
     return nullopt;
 }
 
+static const string& PrefixForShareProtocol( NetworkConnectionsManager::NetworkShare::Propocol p )
+{
+    static const auto smb = "smb"s, afp = "afp"s, unknown = ""s;
+    if( p == NetworkConnectionsManager::NetworkShare::SMB ) return smb;
+    if( p == NetworkConnectionsManager::NetworkShare::AFP ) return afp;
+    return unknown;
+}
+
 static string KeychainWhereFromConnection( const NetworkConnectionsManager::Connection& _c )
 {
     if( auto c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
         return "ftp://" + c->host;
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return "sftp://" + c->host;
+    if( auto c = _c.Cast<NetworkConnectionsManager::NetworkShare>() )
+        return PrefixForShareProtocol(c->proto) + "://" +
+            (c->user.empty() ? c->user + "@" : "") +
+            c->host + "/" + c->share;
     return "";
 }
 
@@ -121,26 +135,20 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return c->user;
-    return "";
-}
-
-static string ResourceNameForUIFromConnection( const NetworkConnectionsManager::Connection& _c )
-{
-    if( auto c = _c.Cast<NetworkConnectionsManager::FTPConnection>() )
-        return "ftp://" + (c->user.empty() ? ""s : c->user + "@") + c->host;
-    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
-        return "sftp://" + c->user + "@" + c->host;
+    if( auto c = _c.Cast<NetworkConnectionsManager::NetworkShare>() )
+        return c->user;
     return "";
 }
 
 NetworkConnectionsManager::NetworkConnectionsManager():
-    m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename)
+    m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename),
+    m_IsWritingConfig(false)
 {
     // Load current configuration
     Load();
     
     // Wire up on-the-fly loading of externally changed config
-    m_Config.ObserveMany(m_ConfigObservations, [=]{ Load(); },
+    m_Config.ObserveMany(m_ConfigObservations, [=]{ if(!m_IsWritingConfig) Load(); },
                          initializer_list<const char*>{g_ConnectionsKey, g_MRUKey}
                          );
 
@@ -151,6 +159,31 @@ NetworkConnectionsManager::NetworkConnectionsManager():
                                                 usingBlock:^(NSNotification * _Nonnull note) {
                                                     m_Config.Commit();
                                                 }];
+    
+//    NetworkShare share;
+//    share.title = "Motorhead";
+//    share.uuid = MakeUUID();
+//    share.proto = NetworkShare::SMB;
+//    share.host = "192.168.2.198";
+//    share.user = "music";
+//    share.share = "Users";
+//    share.mountpoint = "";
+//    
+//    InsertConnection( Connection{share} );
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
 NetworkConnectionsManager& NetworkConnectionsManager::Instance()
@@ -216,6 +249,10 @@ void NetworkConnectionsManager::Save()
         for( auto &u: m_MRU )
             mru.PushBack( GenericConfig::ConfigValue(to_string(u).c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
     }
+
+    m_IsWritingConfig = true;
+    auto clear = at_scope_end([&]{ m_IsWritingConfig = false; });
+    
     m_Config.Set(g_ConnectionsKey, connections);
     m_Config.Set(g_MRUKey, mru);
 }
@@ -242,7 +279,7 @@ void NetworkConnectionsManager::Load()
     }
 }
 
-string NetworkConnectionsManager::TitleForConnection(const Connection &_conn) const
+string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
 {
     string title_prefix = _conn.Title().empty() ? "" : _conn.Title() + " - ";
     
@@ -255,8 +292,15 @@ string NetworkConnectionsManager::TitleForConnection(const Connection &_conn) co
     if( auto sftp = _conn.Cast<SFTPConnection>() ) {
         return title_prefix + "sftp://" + sftp->user + "@" + sftp->host;
     }
-    
-    return "";
+    if( auto share = _conn.Cast<NetworkConnectionsManager::NetworkShare>() ) {
+        if( share->user.empty() )
+            return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
+                share->host + "/" + share->share;
+        else
+            return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
+                share->user + "@" + share->host + "/" + share->share;
+    }
+    return title_prefix;
 }
 
 void NetworkConnectionsManager::ReportUsage( const Connection &_connection )
@@ -321,7 +365,8 @@ bool NetworkConnectionsManager::GetPassword(const Connection &_conn, string& _pa
 
 bool NetworkConnectionsManager::AskForPassword(const Connection &_conn, string& _password)
 {
-    return RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password);
+//    return RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password);
+    return RunAskForPasswordModalWindow( TitleForConnection(_conn), _password);
 }
 
 optional<NetworkConnectionsManager::Connection> NetworkConnectionsManager::ConnectionForVFS(const VFSHost& _vfs) const
@@ -378,4 +423,213 @@ VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &
     catch (VFSErrorException &ee) {
     }
     return nullptr;
+}
+
+
+/*
+ * NetFSMountURLAsync is the same as NetFSMountURLSync except it does the
+ * mount asynchronously.  If the mount_report block is non-NULL, at
+ * the completion of the mount it is submitted to the dispatch queue
+ * with the result of the mount, the request ID and an array of POSIX mountpoint paths.
+ * The request ID can be used by NetFSMountURLCancel() to cancel
+ * a pending mount request. The NetFSMountURLBlock is not submitted if
+ * the request is cancelled.
+ *
+ * The return result is as described above for NetFSMountURLSync().
+ */
+//int
+//NetFSMountURLAsync(
+//	CFURLRef url,				// URL to mount, e.g. nfs://server/path
+//	CFURLRef mountpath,			// Path for the mountpoint
+//	CFStringRef user,			// Auth user name (overrides URL)
+//	CFStringRef passwd, 			// Auth password (overrides URL)
+//	CFMutableDictionaryRef open_options,	// Options for session open (see below)
+//	CFMutableDictionaryRef mount_options,	// Options for mounting (see below)
+//	AsyncRequestID *requestID,		// ID of this pending request (see cancel)
+//	dispatch_queue_t dispatchq,		// Dispatch queue for the block
+//	NetFSMountURLBlock mount_report)	// Called at mount completion
+
+
+/*
+ * This is the block called at completion of NetFSMountURLAsync
+ * The block receives the mount status (described above), the request ID
+ * that was used for the mount, and an array of mountpoint paths.
+ */
+//typedef	void (^NetFSMountURLBlock)(int status, AsyncRequestID requestID, CFArrayRef mountpoints);
+
+//typedef void * AsyncRequestID;
+
+ /**
+ * A positive non-zero return value represents an errno value
+ * (see /usr/include/sys/errno.h).  For instance, a missing mountpoint
+ * error will be returned as ENOENT (2).
+ *
+ * A negative non-zero return value represents an OSStatus error.
+ * For instance, error -128 is userCanceledErr, returned when a mount
+ * operation is canceled by the user. These OSStatus errors are
+ * extended to include:
+ *
+ *  from this header:
+ *	ENETFSPWDNEEDSCHANGE		-5045
+ *	ENETFSPWDPOLICY			-5046
+ *	ENETFSACCOUNTRESTRICTED		-5999
+ *	ENETFSNOSHARESAVAIL		-5998
+ *	ENETFSNOAUTHMECHSUPP		-5997
+ *	ENETFSNOPROTOVERSSUPP		-5996
+ *
+ *  from <NetAuth/NetAuthErrors.h>
+ *	kNetAuthErrorInternal		-6600
+ *	kNetAuthErrorMountFailed	-6602
+ *	kNetAuthErrorNoSharesAvailable	-6003
+ *	kNetAuthErrorGuestNotSupported	-6004
+ *	kNetAuthErrorAlreadyClosed	-6005
+ *
+ */
+
+//#include <NetAuth/NetAuthErrors.h>
+
+static string NetFSErrorString( int _code )
+{
+    if( _code > 0 ) {
+        NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
+        if( err && err.localizedFailureReason.UTF8String)
+            return err.localizedFailureReason.UTF8String;
+        else
+            return "Unknown error";
+    }
+    else if( _code < 0 ) {
+        NSError *err = [NSError errorWithDomain:NSOSStatusErrorDomain code:_code userInfo:nil];
+        if( err && err.localizedFailureReason.UTF8String)
+            return err.localizedFailureReason.UTF8String;
+        else
+            return "Unknown error";
+    }
+    return "Unknown error";
+}
+
+void NetworkConnectionsManager::NetFSCallback
+    (int _status, void *_requestID, CFArrayRef _mountpoints)
+{
+    function<void(const string&_mounted_path, const string&_error)> cb;
+    LOCK_GUARD(m_PendingMountRequestsLock) {
+        auto i = find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v){
+            return _v.first == _requestID;
+        });
+        if( i != end(m_PendingMountRequests) ) {
+            cb = move(i->second);
+            m_PendingMountRequests.erase(i);
+        }
+    }
+    
+    if( cb ) {
+        if( _status == 0 )
+            if( CFArrayGetCount(_mountpoints) != 0 )
+                if( auto str = objc_cast<NSString>(((__bridge NSArray*)_mountpoints).firstObject) ){
+                    string path = str.fileSystemRepresentationSafe;
+                    if( !path.empty() ) {
+                        cb(path, "");
+                        return;
+                    }
+                }
+        cb( "", NetFSErrorString(_status) );
+    }
+}
+
+bool NetworkConnectionsManager::MountShareAsync(
+    const Connection &_conn,
+    const string &_password,
+    function<void(const string&_mounted_path, const string&_error)> _callback)
+{
+    if( !_conn.IsType<NetworkShare>() )
+        return false;
+    
+    auto conn = _conn;
+    auto &share = conn.Get<NetworkShare>();
+
+    const string url_string = PrefixForShareProtocol(share.proto) +
+                            "://" +
+                            share.host + "/" +
+                            share.share;
+    auto share_point_url = CFURLCreateWithBytes(nullptr,
+                                                (const UInt8 *)url_string.data(),
+                                                url_string.length(),
+                                                kCFStringEncodingUTF8,
+                                                nullptr);
+    if( !share_point_url )
+        return false;
+    auto release_share_point_url = at_scope_end([=]{ CFRelease(share_point_url); });
+    
+    // + mount point
+    
+    auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
+        NetFSCallback(status, requestID, mountpoints);
+    };
+    
+    NSMutableDictionary *open_options = [@{@"UIOption": @"NoUI"} mutableCopy];
+    AsyncRequestID request_id;
+    int result = NetFSMountURLAsync(
+                       share_point_url,				// URL to mount, e.g. nfs://server/path
+                       nullptr,			// Path for the mountpoint
+                       (__bridge CFStringRef)[NSString stringWithUTF8StdString:share.user],			// Auth user name (overrides URL)
+                       (__bridge CFStringRef)[NSString stringWithUTF8StdString:_password], 			// Auth password (overrides URL)
+                       (__bridge CFMutableDictionaryRef)open_options,	// Options for session open (see below)
+                       nullptr,	// Options for mounting (see below)
+                       &request_id,		// ID of this pending request (see cancel)
+                       dispatch_get_main_queue(),		// Dispatch queue for the block
+                       callback);	// Called at mount completion
+    
+    if( result != 0 ) {
+        // process error code and call _callback async
+        return false;
+    }
+    
+    LOCK_GUARD(m_PendingMountRequestsLock) {
+        m_PendingMountRequests.emplace_back( request_id, move(_callback) );
+    }
+    
+    return true;
+    
+//    mutable mutex                                   m_PendingMountRequestsLock;
+//    vector< pair<void *, MountShareCallback> >      m_PendingMountRequests;
+
+    
+
+
+//   NetFSMountURLSync((__bridge CFURLRef)[NSURL URLWithString:@"smb://192.168.2.198/Users"], // URL to mount, e.g. nfs://server/path
+////    NetFSMountURLSync((__bridge CFURLRef)[NSURL URLWithString:@"smb://192.168.2.198/Users"], // URL to mount, e.g. nfs://server/path
+//                      (__bridge CFURLRef)[NSURL URLWithString:@"/Users/migun/2"], // Path for the mountpoint
+//                      CFSTR("music"),			// Auth user name (overrides URL)
+//                      CFSTR("music"), 			// Auth password (overrides URL)
+//                      (__bridge  CFMutableDictionaryRef)open_options,	// Options for session open (see below)
+//                      nullptr,	// Options for mounting (see below)
+//                      &mounts);		// Array of mountpoints
+
+
+    
+}
+
+bool NetworkConnectionsManager::MountShareAsync(
+    const Connection &_conn,
+    function<void(const string&_mounted_path, const string&_error)> _callback,
+    bool _allow_password_ui)
+{
+    if( !_conn.IsType<NetworkShare>() )
+        return false;
+    
+    auto conn = _conn;
+    auto &share = conn.Get<NetworkShare>();
+    
+    
+    string passwd;
+    bool shoud_save_passwd = false;
+    if( !GetPassword(conn, passwd) ) {
+        if( !_allow_password_ui || !AskForPassword(conn, passwd) )
+            return false;
+        shoud_save_passwd = true;
+    }
+    
+    /// ....
+    
+    return false;
+    
 }

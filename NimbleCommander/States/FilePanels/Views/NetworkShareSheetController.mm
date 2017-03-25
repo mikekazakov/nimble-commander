@@ -21,6 +21,7 @@
 @property (strong) IBOutlet NSPopUpButton *saved;
 
 @property bool valid;
+@property bool nfsSelected;
 @end
 
 @implementation NetworkShareSheetController
@@ -34,15 +35,15 @@
 {
     if(self = [super init]) {
         self.valid = true;
+        self.nfsSelected = false;
     }
     return self;
 }
 
 - (instancetype) initWithConnection:(NetworkConnectionsManager::Connection)_connection
 {
-    if(self = [super init]) {
+    if(self = [self init]) {
         m_Original = _connection;
-        self.valid = true;
     }
     return self;
 }
@@ -201,9 +202,16 @@
     [self validate];
 }
 
+- (IBAction)onProtocolChanged:(id)sender
+{
+    [self validate];
+}
+
 - (void) validate
 {
     self.valid = [self isValid];
+    self.nfsSelected = self.protocol.selectedTag ==
+        (int)NetworkConnectionsManager::LANShare::Protocol::NFS;
 }
 
 - (bool) isValid

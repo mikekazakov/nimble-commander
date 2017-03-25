@@ -41,6 +41,7 @@
 #include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
 #include "Views/FTPConnectionSheetController.h"
 #include "Views/SFTPConnectionSheetController.h"
+#include "Views/NetworkShareSheetController.h"
 #include <NimbleCommander/Core/FileMask.h>
 #include "Views/SelectionWithMaskPopupViewController.h"
 //#include "PanelViewPresentation.h"
@@ -617,6 +618,63 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     [self showGoToSFTPSheet:nullopt];
 }
 
+- (void) GoToLANShareWithConnection:(NetworkConnectionsManager::Connection)_connection
+                           password:(const string&)_passwd
+                       savePassword:(bool)_save_password_on_success
+{
+    auto activity = make_shared<panel::ActivityTicket>();
+    __weak PanelController *weak_self = self;
+    auto cb = [weak_self, activity, _connection, _passwd, _save_password_on_success]
+        (const string &_path, const string &_err) {
+        if( PanelController *panel = weak_self ) {
+            if( !_path.empty() ) {
+                [panel GoToDir:_path
+                           vfs:VFSNativeHost::SharedHost()
+                  select_entry:""
+                         async:true];
+                
+                // save successful connection to history
+                NetworkConnectionsManager::Instance().ReportUsage(_connection);
+                if( _save_password_on_success )
+                    NetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+            }
+            else {
+                dispatch_to_main_queue([=]{
+                    Alert *alert = [[Alert alloc] init];
+                    alert.messageText = NSLocalizedString(@"Unable to connect to a network share",
+                                                          "Informing a user that NC can't connect to network share");
+                    alert.informativeText = [NSString stringWithUTF8StdString:_err];
+                    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+                    [alert runModal];
+                });
+            }
+        }
+    };
+    
+    auto &ncm = NetworkConnectionsManager::Instance();
+    if( ncm.MountShareAsync(_connection, _passwd, cb) )
+        *activity = [self registerExtActivity];
+
+
+}
+
+- (IBAction) OnGoToNetworkShare:(id)sender
+{
+    NetworkShareSheetController *sheet = [NetworkShareSheetController new];
+//    if(_current)
+//        [sheet fillInfoFromStoredConnection:*_current];
+    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode != NSModalResponseOK)
+            return;
+        
+        auto connection = sheet.connection;
+        auto password = string(sheet.providedPassword.UTF8String);
+        NetworkConnectionsManager::Instance().InsertConnection(connection);
+        NetworkConnectionsManager::Instance().SetPassword(connection, password);
+        [self GoToLANShareWithConnection:connection password:password savePassword:false];
+    }];
+}
+
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
     auto &ncm = NetworkConnectionsManager::Instance();
@@ -643,7 +701,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             bool success = [self GoToSFTPWithConnection:connection password:passwd];
             epilog(success);
         });
-    else if( connection.IsType<NetworkConnectionsManager::NetworkShare>() ) {
+    else if( connection.IsType<NetworkConnectionsManager::LANShare>() ) {
         auto activity = make_shared<panel::ActivityTicket>();
         __weak PanelController *weak_self = self;
         auto cb = [weak_self, activity, connection, epilog]

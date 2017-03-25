@@ -13,7 +13,7 @@ public:
     class BaseConnection;
     class FTPConnection;
     class SFTPConnection;
-    class NetworkShare;
+    class LANShare;
     
     static NetworkConnectionsManager& Instance();
     
@@ -164,10 +164,10 @@ public:
     long   port;
 };
 
-class NetworkConnectionsManager::NetworkShare : public NetworkConnectionsManager::BaseConnection
+class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    enum Propocol {
+    enum class Protocol {
         SMB = 0,
         AFP = 1
     };
@@ -175,5 +175,5 @@ public:
     string user; // empty user means 'guest'
     string share; // must be not empty at the time, to eliminate a need for UI upon connection
     string mountpoint; // empty mountpoint means that system will decide it itself
-    Propocol proto;
+    Protocol proto;
 };

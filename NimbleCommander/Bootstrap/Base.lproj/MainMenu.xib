@@ -722,6 +722,12 @@ DQ
                                                 <action selector="OnGoToSFTP:" target="-1" id="j70-jL-OKb"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Network Share" id="AD2-1f-bf0">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToNetworkShare:" target="-1" id="BbY-bf-FXI"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="v42-zc-E7z"/>
                                         <menuItem title="Recent Connections" hidden="YES" enabled="NO" id="PPi-Oe-OXM">
                                             <modifierMask key="keyEquivalentModifierMask"/>

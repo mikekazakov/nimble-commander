@@ -51,7 +51,7 @@
     if( m_Connections != connections ) {
         m_Connections = move(connections);
     
-        while( menu.numberOfItems > 4 )
+        while( menu.numberOfItems > 5 ) // <- BAD MAGIC NUMBER!
             [menu removeItemAtIndex:menu.numberOfItems-1];
         
         self.recentConnectionsMenuItem.hidden = m_Connections.empty();

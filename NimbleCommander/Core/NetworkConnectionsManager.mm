@@ -108,11 +108,11 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
     return nullopt;
 }
 
-static const string& PrefixForShareProtocol( NetworkConnectionsManager::NetworkShare::Propocol p )
+static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
     static const auto smb = "smb"s, afp = "afp"s, unknown = ""s;
-    if( p == NetworkConnectionsManager::NetworkShare::SMB ) return smb;
-    if( p == NetworkConnectionsManager::NetworkShare::AFP ) return afp;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::AFP ) return afp;
     return unknown;
 }
 
@@ -122,7 +122,7 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
         return "ftp://" + c->host;
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return "sftp://" + c->host;
-    if( auto c = _c.Cast<NetworkConnectionsManager::NetworkShare>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return PrefixForShareProtocol(c->proto) + "://" +
             (c->user.empty() ? c->user + "@" : "") +
             c->host + "/" + c->share;
@@ -135,7 +135,7 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return c->user;
-    if( auto c = _c.Cast<NetworkConnectionsManager::NetworkShare>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return c->user;
     return "";
 }
@@ -159,31 +159,6 @@ NetworkConnectionsManager::NetworkConnectionsManager():
                                                 usingBlock:^(NSNotification * _Nonnull note) {
                                                     m_Config.Commit();
                                                 }];
-    
-//    NetworkShare share;
-//    share.title = "Motorhead";
-//    share.uuid = MakeUUID();
-//    share.proto = NetworkShare::SMB;
-//    share.host = "192.168.2.198";
-//    share.user = "music";
-//    share.share = "Users";
-//    share.mountpoint = "";
-//    
-//    InsertConnection( Connection{share} );
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 NetworkConnectionsManager& NetworkConnectionsManager::Instance()
@@ -292,7 +267,7 @@ string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
     if( auto sftp = _conn.Cast<SFTPConnection>() ) {
         return title_prefix + "sftp://" + sftp->user + "@" + sftp->host;
     }
-    if( auto share = _conn.Cast<NetworkConnectionsManager::NetworkShare>() ) {
+    if( auto share = _conn.Cast<NetworkConnectionsManager::LANShare>() ) {
         if( share->user.empty() )
             return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
                 share->host + "/" + share->share;
@@ -535,43 +510,60 @@ void NetworkConnectionsManager::NetFSCallback
     }
 }
 
+static NSURL* CookURLForLANShare( const NetworkConnectionsManager::LANShare &_share )
+{
+    const auto url_string = PrefixForShareProtocol(_share.proto) +
+                            "://" +
+                            _share.host + "/" +
+                            _share.share;
+    const auto cocoa_url_string = [NSString stringWithUTF8StdString:url_string];
+    if( !cocoa_url_string )
+        return nil;
+    
+    return [NSURL URLWithString:cocoa_url_string];
+}
+
+static NSURL* CookMountPointForLANShare( const NetworkConnectionsManager::LANShare &_share )
+{
+    if( _share.mountpoint.empty() )
+        return nil;
+    
+    const auto url_string = [NSString stringWithUTF8StdString:_share.mountpoint];
+    if( !url_string )
+        return nil;
+    
+    return [NSURL URLWithString:url_string];
+}
+
 bool NetworkConnectionsManager::MountShareAsync(
     const Connection &_conn,
     const string &_password,
     function<void(const string&_mounted_path, const string&_error)> _callback)
 {
-    if( !_conn.IsType<NetworkShare>() )
+    if( !_conn.IsType<LANShare>() )
         return false;
     
     auto conn = _conn;
-    auto &share = conn.Get<NetworkShare>();
+    auto &share = conn.Get<LANShare>();
 
-    const string url_string = PrefixForShareProtocol(share.proto) +
-                            "://" +
-                            share.host + "/" +
-                            share.share;
-    auto share_point_url = CFURLCreateWithBytes(nullptr,
-                                                (const UInt8 *)url_string.data(),
-                                                url_string.length(),
-                                                kCFStringEncodingUTF8,
-                                                nullptr);
-    if( !share_point_url )
-        return false;
-    auto release_share_point_url = at_scope_end([=]{ CFRelease(share_point_url); });
+    auto url = CookURLForLANShare(share);
+    auto mountpoint = CookMountPointForLANShare(share);
+    auto username = share.user.empty() ? nil : [NSString stringWithUTF8StdString:share.user];
+    auto passwd = _password.empty() ? nil : [NSString stringWithUTF8StdString:_password];
+    auto open_options = (NSMutableDictionary *)[@{@"UIOption": @"NoUI"} mutableCopy];
     
-    // + mount point
+//#define kNetFSUseGuestKey		CFSTR("Guest")    
     
     auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
         NetFSCallback(status, requestID, mountpoints);
     };
     
-    NSMutableDictionary *open_options = [@{@"UIOption": @"NoUI"} mutableCopy];
     AsyncRequestID request_id;
     int result = NetFSMountURLAsync(
-                       share_point_url,				// URL to mount, e.g. nfs://server/path
-                       nullptr,			// Path for the mountpoint
-                       (__bridge CFStringRef)[NSString stringWithUTF8StdString:share.user],			// Auth user name (overrides URL)
-                       (__bridge CFStringRef)[NSString stringWithUTF8StdString:_password], 			// Auth password (overrides URL)
+                       (__bridge CFURLRef)url,
+                       (__bridge CFURLRef)mountpoint,			// Path for the mountpoint
+                       (__bridge CFStringRef)username,
+                       (__bridge CFStringRef)passwd,
                        (__bridge CFMutableDictionaryRef)open_options,	// Options for session open (see below)
                        nullptr,	// Options for mounting (see below)
                        &request_id,		// ID of this pending request (see cancel)
@@ -613,11 +605,11 @@ bool NetworkConnectionsManager::MountShareAsync(
     function<void(const string&_mounted_path, const string&_error)> _callback,
     bool _allow_password_ui)
 {
-    if( !_conn.IsType<NetworkShare>() )
+    if( !_conn.IsType<LANShare>() )
         return false;
     
     auto conn = _conn;
-    auto &share = conn.Get<NetworkShare>();
+    auto &share = conn.Get<LANShare>();
     
     
     string passwd;

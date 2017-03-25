@@ -6,7 +6,8 @@
 //  Copyright © 2017 Michael G. Kazakov. All rights reserved.
 //
 
-#import "NetworkShareSheetController.h"
+#include <NimbleCommander/Core/Alert.h>
+#include "NetworkShareSheetController.h"
 
 @interface NetworkShareSheetController ()
 
@@ -17,17 +18,22 @@
 @property (strong) NSString *password;
 @property (strong) NSString *mountpath;
 @property (strong) IBOutlet NSPopUpButton *protocol;
+@property (strong) IBOutlet NSPopUpButton *saved;
+
+@property bool valid;
 @end
 
 @implementation NetworkShareSheetController
 {
+    vector<NetworkConnectionsManager::Connection> m_Connections;
     optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::LANShare m_Connection;
+    NetworkConnectionsManager::LANShare m_Connection;    
 }
 
 - (instancetype) init
 {
     if(self = [super init]) {
+        self.valid = true;
     }
     return self;
 }
@@ -36,15 +42,58 @@
 {
     if(self = [super init]) {
         m_Original = _connection;
+        self.valid = true;
     }
     return self;
 }
 
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
     
     if( m_Original )
         [self fillInfoFromConnection:*m_Original];
+    
+    [self validate];
+    
+    m_Connections = NetworkConnectionsManager::Instance().LANShareConnectionsByMRU();
+    
+    if(!m_Connections.empty()) {
+        self.saved.autoenablesItems = false;
+        
+        NSMenuItem *pref = [[NSMenuItem alloc] init];
+        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
+        pref.enabled = false;
+        [self.saved.menu addItem:pref];
+        
+        for(auto &i: m_Connections) {
+            NSMenuItem *it = [NSMenuItem new];
+            auto title = NetworkConnectionsManager::Instance().TitleForConnection(i);
+            it.title = [NSString stringWithUTF8StdString:title];
+            [self.saved.menu addItem:it];
+        }
+        
+        [self.saved.menu addItem:NSMenuItem.separatorItem];
+        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
+    }
+    
+}
+
+- (IBAction)OnSaved:(id)sender
+{
+    long ind = self.saved.indexOfSelectedItem;
+    if(ind == self.saved.numberOfItems - 1) {
+        [self ClearRecentServers];
+        return;
+    }
+    
+    ind = ind - 2;
+    if(ind < 0 || ind >= m_Connections.size())
+        return;
+    
+    m_Original = m_Connections[ind];
+    [self fillInfoFromConnection:*m_Original];
+    [self validate];
 }
 
 - (void)fillInfoFromConnection:(NetworkConnectionsManager::Connection)_conn
@@ -63,6 +112,23 @@
         self.password = [NSString stringWithUTF8StdString:password];
     else
         self.password = @"";
+}
+
+- (void) ClearRecentServers
+{
+    Alert *alert = [[Alert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
+    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    if(alert.runModal == NSAlertFirstButtonReturn) {
+        for( auto &i: m_Connections )
+            NetworkConnectionsManager::Instance().RemoveConnection(i);
+        m_Connections.clear();
+        [self.saved selectItemAtIndex:0];
+        while( self.saved.numberOfItems > 1 )
+            [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
+    }
 }
 
 - (IBAction)onClose:(id)sender
@@ -115,6 +181,47 @@
     }
 }
 
-// TODO: validation
+- (IBAction)onServerChanged:(id)sender
+{
+    [self validate];
+}
+
+- (IBAction)onShareChanged:(id)sender
+{
+    [self validate];
+}
+
+- (IBAction)onMountPathChanged:(id)sender
+{
+    [self validate];
+}
+
+- (void)controlTextDidChange:(NSNotification *)notification
+{
+    [self validate];
+}
+
+- (void) validate
+{
+    self.valid = [self isValid];
+}
+
+- (bool) isValid
+{
+    if( self.server == nil ||
+        self.server.length == 0 ||
+       [self.server containsString:@"/"] ||
+       [self.server containsString:@":"] )
+        return false;
+    
+    if( self.share == nil || self.share.length == 0 )
+        return false;
+
+    if( self.mountpath != nil && self.mountpath.length != 0 )
+        if( [self.mountpath characterAtIndex:0] != '/' )
+            return false;
+
+    return true;
+}
 
 @end

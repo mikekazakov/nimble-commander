@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="NetworkShareSheetController">
             <connections>
                 <outlet property="protocol" destination="LSj-m7-yjC" id="9BO-nH-Bvs"/>
+                <outlet property="saved" destination="nMu-u6-Kcx" id="zMi-ZN-yNA"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -44,7 +45,7 @@
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LSj-m7-yjC">
                         <rect key="frame" x="98" y="213" width="76" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="push" title="SMB" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OVk-M3-2t1" id="6SW-ce-RKz">
+                        <popUpButtonCell key="cell" type="push" title="SMB" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" continuous="YES" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OVk-M3-2t1" id="6SW-ce-RKz">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" id="Mux-No-RQs">
@@ -93,17 +94,19 @@
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lrk-xi-Zkc">
                         <rect key="frame" x="102" y="181" width="173" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6Ut-41-SR3">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6Ut-41-SR3">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
+                            <action selector="onServerChanged:" target="-2" id="bUW-cQ-Ymy"/>
                             <binding destination="-2" name="value" keyPath="self.server" id="zgY-qN-fdz">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="OoF-Bo-Mox"/>
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g1a-Yx-TJr">
@@ -118,17 +121,19 @@
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iS1-kG-QHW">
                         <rect key="frame" x="102" y="150" width="96" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="q1D-ze-8AW">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="q1D-ze-8AW">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
+                            <action selector="onShareChanged:" target="-2" id="FHy-vg-lOn"/>
                             <binding destination="-2" name="value" keyPath="self.share" id="UL2-tm-935">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="dco-Ff-z9t"/>
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHc-A7-dI3">
@@ -195,18 +200,20 @@
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2TU-NR-Vfl">
                         <rect key="frame" x="116" y="66" width="96" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="automatic" drawsBackground="YES" id="ZaE-9v-6VN">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="automatic" drawsBackground="YES" id="ZaE-9v-6VN">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
+                            <action selector="onMountPathChanged:" target="-2" id="0oi-5V-Xhm"/>
                             <binding destination="-2" name="value" keyPath="self.mountpath" id="sKw-Ij-oH9">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">automatic</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="hyd-Sc-ZoU"/>
                         </connections>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xAw-su-HTY">
@@ -235,6 +242,7 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="onConnect:" target="-2" id="bOY-OT-wca"/>
+                            <binding destination="-2" name="enabled" keyPath="self.valid" id="0Bk-zF-18o"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wXa-74-RGm">
@@ -248,6 +256,24 @@ DQ
                             <action selector="onChooseMountPath:" target="-2" id="AxN-si-GXi"/>
                         </connections>
                     </button>
+                    <popUpButton fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nMu-u6-Kcx">
+                        <rect key="frame" x="320" y="181" width="46" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="bevel" title="🕟" bezelStyle="regularSquare" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="dB5-Jz-Ldf" id="Cub-7G-kr4">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="ydw-Bw-tpd">
+                                <items>
+                                    <menuItem title="🕟" hidden="YES" id="dB5-Jz-Ldf">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                        <connections>
+                            <action selector="OnSaved:" target="-2" id="Ngm-5x-MmT"/>
+                        </connections>
+                    </popUpButton>
                 </subviews>
             </view>
             <connections>

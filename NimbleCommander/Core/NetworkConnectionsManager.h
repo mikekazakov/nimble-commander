@@ -30,6 +30,7 @@ public:
     vector<Connection> AllConnectionsByMRU() const;
     vector<Connection> FTPConnectionsByMRU() const;
     vector<Connection> SFTPConnectionsByMRU() const;
+    vector<Connection> LANShareConnectionsByMRU() const;
     
     bool SetPassword(const Connection &_conn, const string& _password);
     

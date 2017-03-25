@@ -354,6 +354,19 @@ vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::SFTPCon
     return c;
 }
 
+vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::
+    LANShareConnectionsByMRU() const
+{
+    vector<Connection> c;
+    LOCK_GUARD(m_Lock) {
+        for(auto &i: m_Connections)
+            if( i.IsType<LANShare>() )
+                c.emplace_back( i );
+        SortByMRU(c, m_MRU);
+    }
+    return c;
+}
+
 vector<NetworkConnectionsManager::Connection> NetworkConnectionsManager::AllConnectionsByMRU() const
 {
     vector<Connection> c;
@@ -631,6 +644,7 @@ static bool TearDownNFSMountName( const string &_name, string &_host, string &_s
 
 static vector<shared_ptr<const NativeFileSystemInfo>> GetMountedRemoteFilesystems()
 {
+    static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
     vector<shared_ptr<const NativeFileSystemInfo>> remotes;
     
     for( const auto &v: NativeFSManager::Instance().Volumes() ) {
@@ -641,9 +655,9 @@ static vector<shared_ptr<const NativeFileSystemInfo>> GetMountedRemoteFilesystem
             continue;
         
         // treat only these filesystems as remote
-        if( volume.fs_type_name == "smbfs" ||
-            volume.fs_type_name == "afpfs" ||
-            volume.fs_type_name == "nfs" ) {
+        if( volume.fs_type_name == smb ||
+            volume.fs_type_name == afp ||
+            volume.fs_type_name == nfs ) {
             remotes.emplace_back(v);
         }
     }
@@ -651,40 +665,40 @@ static vector<shared_ptr<const NativeFileSystemInfo>> GetMountedRemoteFilesystem
     return remotes;
 }
 
+static bool MatchVolumeWithShare
+    ( const NativeFileSystemInfo& _volume, const NetworkConnectionsManager::LANShare &_share )
+{
+    static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
+    using protocols = NetworkConnectionsManager::LANShare::Protocol;
+    if( (_share.proto == protocols::SMB && _volume.fs_type_name == smb) ||
+        (_share.proto == protocols::AFP && _volume.fs_type_name == afp) ) {
+        string user, host, share;
+        if( TearDownSMBOrAFPMountName(_volume.mounted_from_name, user, host, share) ) {
+            auto same_host =  strcasecmp( host.c_str(),  _share.host.c_str() ) == 0;
+            auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
+            auto same_user = (strcasecmp( user.c_str(),  _share.user.c_str() ) == 0) ||
+                             (_share.user.empty() && user == "GUEST") ||
+                             (_share.user.empty() && user == "guest") ;
+            return same_host && same_share && same_user;
+        }
+    }
+    else if( _share.proto == protocols::NFS && _volume.fs_type_name == nfs ) {
+        string host, share;
+        if( TearDownNFSMountName(_volume.mounted_from_name, host, share ) ) {
+            auto same_host =  strcasecmp( host.c_str(),  _share.host.c_str() ) == 0;
+            auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
+            return same_host && same_share;
+        }
+    }
+    return false;
+}
+
 static shared_ptr<const NativeFileSystemInfo> FindExistingMountedShare
     (const NetworkConnectionsManager::LANShare &_share)
 {
-    using protocols = NetworkConnectionsManager::LANShare::Protocol;
-    auto remote_volumes = GetMountedRemoteFilesystems();
-    
-    for( auto &v: remote_volumes ) {
-        const auto &volume = *v;
-
-        if( (_share.proto == protocols::SMB && volume.fs_type_name == "smbfs") ||
-            (_share.proto == protocols::AFP && volume.fs_type_name == "afpfs") ) {
-            string user, host, share;
-            if( TearDownSMBOrAFPMountName(volume.mounted_from_name, user, host, share) ) {
-                auto same_host =  strcasecmp( host.c_str(), _share.host.c_str()) == 0;
-                auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
-                auto same_user = (strcasecmp( user.c_str(), _share.user.c_str()) == 0) ||
-                                 (_share.user.empty() && user == "GUEST") ||
-                                 (_share.user.empty() && user == "guest") ;
-                if( same_host && same_share && same_user )
-                    return v;
-            }
-        }
-        else if( _share.proto == protocols::NFS && volume.fs_type_name == "nfs" ) {
-            /// ....
-            string host, share;
-            if( TearDownNFSMountName(volume.mounted_from_name, host, share ) ) {
-                auto same_host =  strcasecmp( host.c_str(), _share.host.c_str()) == 0;
-                auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
-                if( same_host && same_share )
-                    return v;
-            }
-        }
-    }
-    
+    for( auto &v: GetMountedRemoteFilesystems() )
+        if( MatchVolumeWithShare(*v, _share) )
+            return v;
     return nullptr;
 }
 

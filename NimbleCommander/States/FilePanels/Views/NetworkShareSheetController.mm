@@ -25,12 +25,45 @@
     NetworkConnectionsManager::LANShare m_Connection;
 }
 
+- (instancetype) init
+{
+    if(self = [super init]) {
+    }
+    return self;
+}
+
+- (instancetype) initWithConnection:(NetworkConnectionsManager::Connection)_connection
+{
+    if(self = [super init]) {
+        m_Original = _connection;
+    }
+    return self;
+}
+
 - (void)windowDidLoad {
     [super windowDidLoad];
     
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    if( m_Original )
+        [self fillInfoFromConnection:*m_Original];
 }
 
+- (void)fillInfoFromConnection:(NetworkConnectionsManager::Connection)_conn
+{
+    auto &c = _conn.Get<NetworkConnectionsManager::LANShare>();
+    
+    self.title = [NSString stringWithUTF8StdString:c.title];
+    self.server = [NSString stringWithUTF8StdString:c.host];
+    self.username = [NSString stringWithUTF8StdString:c.user];
+    self.share = [NSString stringWithUTF8StdString:c.share];
+    self.mountpath = [NSString stringWithUTF8StdString:c.mountpoint];
+    [self.protocol selectItemWithTag:(int)c.proto];
+    
+    string password;
+    if( NetworkConnectionsManager::Instance().GetPassword(_conn, password) )
+        self.password = [NSString stringWithUTF8StdString:password];
+    else
+        self.password = @"";
+}
 
 - (IBAction)onClose:(id)sender
 {
@@ -53,7 +86,6 @@
     m_Connection.mountpoint = extract_string(self.mountpath);
     m_Connection.proto = NetworkConnectionsManager::LANShare::Protocol(self.protocol.selectedTag);
     
-    
     [self endSheet:NSModalResponseOK];
 }
 
@@ -65,6 +97,22 @@
 - (NSString*) providedPassword
 {
     return self.password ? self.password : @"";
+}
+
+- (IBAction)onChooseMountPath:(id)sender
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.resolvesAliases = false;
+    panel.canChooseDirectories = true;
+    panel.canChooseFiles = false;
+    panel.allowsMultipleSelection = false;
+    panel.showsHiddenFiles = true;
+    panel.treatsFilePackagesAsDirectories = true;
+
+    if( [panel runModal] == NSFileHandlingPanelOKButton ) {
+        if( panel.URL )
+            self.mountpath = panel.URL.path;
+    }
 }
 
 @end

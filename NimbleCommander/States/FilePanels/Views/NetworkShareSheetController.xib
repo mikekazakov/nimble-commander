@@ -33,7 +33,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fJ9-ye-Cs9">
-                        <rect key="frame" x="20" y="250" width="69" height="17"/>
+                        <rect key="frame" x="18" y="218" width="69" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Protocol:" id="Dor-Ue-2ew">
                             <font key="font" metaFont="system"/>
@@ -42,7 +42,7 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LSj-m7-yjC">
-                        <rect key="frame" x="100" y="245" width="76" height="26"/>
+                        <rect key="frame" x="98" y="213" width="76" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="SMB" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OVk-M3-2t1" id="6SW-ce-RKz">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -56,7 +56,7 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bdz-9L-qnG">
-                        <rect key="frame" x="20" y="218" width="76" height="17"/>
+                        <rect key="frame" x="18" y="248" width="76" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Title:" id="EaY-Ze-frw">
                             <font key="font" metaFont="system"/>
@@ -65,7 +65,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yi2-w0-Hpg">
-                        <rect key="frame" x="102" y="215" width="173" height="22"/>
+                        <rect key="frame" x="100" y="245" width="173" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="eNX-4k-Qc0">
                             <font key="font" metaFont="system"/>
@@ -234,6 +234,17 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="onConnect:" target="-2" id="bOY-OT-wca"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wXa-74-RGm">
+                        <rect key="frame" x="234" y="64" width="18" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="smallSquare" title="..." bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cfK-lo-Nk3">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onChooseMountPath:" target="-2" id="AxN-si-GXi"/>
                         </connections>
                     </button>
                 </subviews>

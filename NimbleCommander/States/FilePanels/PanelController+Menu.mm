@@ -654,15 +654,14 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     auto &ncm = NetworkConnectionsManager::Instance();
     if( ncm.MountShareAsync(_connection, _passwd, cb) )
         *activity = [self registerExtActivity];
-
-
 }
 
-- (IBAction) OnGoToNetworkShare:(id)sender
+- (void) showGoToNetworkShareSheet:(optional<NetworkConnectionsManager::Connection>)_current
 {
-    NetworkShareSheetController *sheet = [NetworkShareSheetController new];
-//    if(_current)
-//        [sheet fillInfoFromStoredConnection:*_current];
+    NetworkShareSheetController *sheet = _current ?
+        [[NetworkShareSheetController alloc] initWithConnection:*_current] :
+        [[NetworkShareSheetController alloc] init];
+
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK)
             return;
@@ -673,6 +672,11 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
         NetworkConnectionsManager::Instance().SetPassword(connection, password);
         [self GoToLANShareWithConnection:connection password:password savePassword:false];
     }];
+}
+
+- (IBAction) OnGoToNetworkShare:(id)sender
+{
+    [self showGoToNetworkShareSheet:nullopt];
 }
 
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
@@ -702,6 +706,8 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
             epilog(success);
         });
     else if( connection.IsType<NetworkConnectionsManager::LANShare>() ) {
+        // TODO: route it into GoToLANShareWithConnection
+    
         auto activity = make_shared<panel::ActivityTicket>();
         __weak PanelController *weak_self = self;
         auto cb = [weak_self, activity, connection, epilog]
@@ -798,6 +804,8 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
                 [self showGoToFTPSheet:conn];
             else if( conn.IsType<NetworkConnectionsManager::SFTPConnection>() )
                 [self showGoToSFTPSheet:conn];
+            else if( conn.IsType<NetworkConnectionsManager::LANShare>() )
+                [self showGoToNetworkShareSheet:conn];
         }
 }
 

@@ -28,37 +28,55 @@ static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, co
         _values[i] = move( v[i].first );
 }
 
-static void FillBasicConnectionInfoInJSONObject( GenericConfig::ConfigValue &_cv, const char *_type, const NetworkConnectionsManager::BaseConnection &_bc)
+static GenericConfig::ConfigValue FillBasicConnectionInfoInJSONObject(
+    const char *_type,
+    const NetworkConnectionsManager::BaseConnection &_bc)
 {
-    _cv.AddMember("type", GenericConfig::ConfigValue(_type, GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-    _cv.AddMember("title", GenericConfig::ConfigValue(_bc.title.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-    _cv.AddMember("uuid", GenericConfig::ConfigValue(to_string(_bc.uuid).c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
+    auto &alloc = GenericConfig::g_CrtAllocator;
+    GenericConfig::ConfigValue cv(rapidjson::kObjectType);
+
+    cv.AddMember("type", GenericConfig::ConfigValue(_type, alloc), alloc);
+    cv.AddMember("title", GenericConfig::ConfigValue(_bc.title.c_str(), alloc), alloc);
+    cv.AddMember("uuid", GenericConfig::ConfigValue(to_string(_bc.uuid).c_str(), alloc), alloc);
+    return cv;
 }
 
 static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsManager::Connection _c )
 {
+    auto &alloc = GenericConfig::g_CrtAllocator;
+    using value = GenericConfig::ConfigValue;
+    
     if( _c.IsType<NetworkConnectionsManager::FTPConnection>() ) {
         auto &c = _c.Get<NetworkConnectionsManager::FTPConnection>();
        
-        GenericConfig::ConfigValue o(rapidjson::kObjectType);
-        FillBasicConnectionInfoInJSONObject(o, "ftp", c);
-        o.AddMember("user", GenericConfig::ConfigValue(c.user.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("host", GenericConfig::ConfigValue(c.host.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("path", GenericConfig::ConfigValue(c.path.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("port", GenericConfig::ConfigValue((int)c.port), GenericConfig::g_CrtAllocator);
+        auto o = FillBasicConnectionInfoInJSONObject("ftp", c);
+        o.AddMember("user", value(c.user.c_str(), alloc), alloc);
+        o.AddMember("host", value(c.host.c_str(), alloc), alloc);
+        o.AddMember("path", value(c.path.c_str(), alloc), alloc);
+        o.AddMember("port", value((int)c.port), alloc);
         return o;
     }
     if( _c.IsType<NetworkConnectionsManager::SFTPConnection>() ) {
         auto &c = _c.Get<NetworkConnectionsManager::SFTPConnection>();
 
-        GenericConfig::ConfigValue o(rapidjson::kObjectType);
-        FillBasicConnectionInfoInJSONObject(o, "sftp", c);
-        o.AddMember("user", GenericConfig::ConfigValue(c.user.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("host", GenericConfig::ConfigValue(c.host.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("keypath", GenericConfig::ConfigValue(c.keypath.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator);
-        o.AddMember("port", GenericConfig::ConfigValue((int)c.port), GenericConfig::g_CrtAllocator);
+        auto o = FillBasicConnectionInfoInJSONObject("sftp", c);
+        o.AddMember("user", value(c.user.c_str(), alloc), alloc);
+        o.AddMember("host", value(c.host.c_str(), alloc), alloc);
+        o.AddMember("keypath", value(c.keypath.c_str(), alloc), alloc);
+        o.AddMember("port", value((int)c.port), alloc);
         return o;
     }
+    if( _c.IsType<NetworkConnectionsManager::LANShare>() ) {
+        auto &c = _c.Get<NetworkConnectionsManager::LANShare>();
+        auto o = FillBasicConnectionInfoInJSONObject("lanshare", c);
+        o.AddMember("user", value(c.user.c_str(), alloc), alloc);
+        o.AddMember("host", value(c.host.c_str(), alloc), alloc);
+        o.AddMember("share", value(c.share.c_str(), alloc), alloc);
+        o.AddMember("mountpoint", value(c.mountpoint.c_str(), alloc), alloc);
+        o.AddMember("proto", value((int)c.proto), alloc);
+        return o;
+    }
+    
     return GenericConfig::ConfigValue(rapidjson::kNullType);
 }
 
@@ -66,8 +84,10 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 {
     static const boost::uuids::string_generator uuid_gen{};
     using namespace rapidjson;
-    auto has_string = [&](const char *_key){ return _object.HasMember(_key) && _object[_key].GetType() == kStringType; };
-    auto has_number = [&](const char *_key){ return _object.HasMember(_key) && _object[_key].GetType() == kNumberType; };
+    auto has_string = [&](const char *k){ return _object.HasMember(k) &&
+                                                 _object[k].GetType() == kStringType; };
+    auto has_number = [&](const char *k){ return _object.HasMember(k) &&
+                                                 _object[k].GetType() == kNumberType; };
     
 
     if( _object.GetType() != kObjectType )
@@ -78,7 +98,8 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 
     string type = _object["type"].GetString();
     if( type == "ftp" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("path") || !has_number("port") )
+        if( !has_string("user") || !has_string("host") ||
+            !has_string("path") || !has_number("port") )
             return nullopt;
 
         NetworkConnectionsManager::FTPConnection c;
@@ -92,7 +113,8 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
         return NetworkConnectionsManager::Connection( move(c) );
     }
     else if( type == "sftp" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("keypath") || !has_number("port") )
+        if( !has_string("user") || !has_string("host") ||
+            !has_string("keypath") || !has_number("port") )
             return nullopt;
         
         NetworkConnectionsManager::SFTPConnection c;
@@ -103,6 +125,22 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
         c.keypath = _object["keypath"].GetString();
         c.port = _object["port"].GetInt();
         
+        return NetworkConnectionsManager::Connection( move(c) );
+    }
+    else if( type == "lanshare" ) {
+        if( !has_string("user") || !has_string("host") ||
+            !has_string("share") || !has_string("mountpoint") || !has_number("proto") )
+            return nullopt;
+    
+        NetworkConnectionsManager::LANShare c;
+        c.uuid = uuid_gen( _object["uuid"].GetString() );
+        c.title = _object["title"].GetString();
+        c.user = _object["user"].GetString();
+        c.host = _object["host"].GetString();
+        c.share = _object["share"].GetString();
+        c.mountpoint = _object["mountpoint"].GetString();
+        c.proto = (NetworkConnectionsManager::LANShare::Protocol)_object["proto"].GetInt();
+
         return NetworkConnectionsManager::Connection( move(c) );
     }
     return nullopt;
@@ -535,6 +573,23 @@ static NSURL* CookMountPointForLANShare( const NetworkConnectionsManager::LANSha
     return [NSURL URLWithString:url_string];
 }
 
+/**
+ * Return true if _path is a directory and it is empty.
+ */
+static bool IsEmptyDirectory(const string &_path)
+{
+    if( DIR *dir = opendir( _path.c_str() ) ) {
+        int n = 0;
+        struct dirent *d;
+        while( (d = readdir(dir)) )
+            if( ++n > 2 )
+                break;
+        closedir(dir);
+        return n <= 2;
+    }
+    return false;
+}
+
 bool NetworkConnectionsManager::MountShareAsync(
     const Connection &_conn,
     const string &_password,
@@ -551,24 +606,23 @@ bool NetworkConnectionsManager::MountShareAsync(
     auto username = share.user.empty() ? nil : [NSString stringWithUTF8StdString:share.user];
     auto passwd = _password.empty() ? nil : [NSString stringWithUTF8StdString:_password];
     auto open_options = (NSMutableDictionary *)[@{@"UIOption": @"NoUI"} mutableCopy];
-    
-//#define kNetFSUseGuestKey		CFSTR("Guest")    
+    auto mount_options = (!mountpoint || !IsEmptyDirectory(share.mountpoint)) ? nil :
+        (NSMutableDictionary *)[@{@"MountAtMountDir": @true} mutableCopy];
     
     auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
         NetFSCallback(status, requestID, mountpoints);
     };
     
     AsyncRequestID request_id;
-    int result = NetFSMountURLAsync(
-                       (__bridge CFURLRef)url,
-                       (__bridge CFURLRef)mountpoint,			// Path for the mountpoint
-                       (__bridge CFStringRef)username,
-                       (__bridge CFStringRef)passwd,
-                       (__bridge CFMutableDictionaryRef)open_options,	// Options for session open (see below)
-                       nullptr,	// Options for mounting (see below)
-                       &request_id,		// ID of this pending request (see cancel)
-                       dispatch_get_main_queue(),		// Dispatch queue for the block
-                       callback);	// Called at mount completion
+    int result = NetFSMountURLAsync((__bridge CFURLRef)url,
+                                    (__bridge CFURLRef)mountpoint,
+                                    (__bridge CFStringRef)username,
+                                    (__bridge CFStringRef)passwd,
+                                    (__bridge CFMutableDictionaryRef)open_options,
+                                    (__bridge CFMutableDictionaryRef)mount_options,
+                                    &request_id,
+                                    dispatch_get_main_queue(),
+                                    callback);
     
     if( result != 0 ) {
         // process error code and call _callback async
@@ -580,24 +634,6 @@ bool NetworkConnectionsManager::MountShareAsync(
     }
     
     return true;
-    
-//    mutable mutex                                   m_PendingMountRequestsLock;
-//    vector< pair<void *, MountShareCallback> >      m_PendingMountRequests;
-
-    
-
-
-//   NetFSMountURLSync((__bridge CFURLRef)[NSURL URLWithString:@"smb://192.168.2.198/Users"], // URL to mount, e.g. nfs://server/path
-////    NetFSMountURLSync((__bridge CFURLRef)[NSURL URLWithString:@"smb://192.168.2.198/Users"], // URL to mount, e.g. nfs://server/path
-//                      (__bridge CFURLRef)[NSURL URLWithString:@"/Users/migun/2"], // Path for the mountpoint
-//                      CFSTR("music"),			// Auth user name (overrides URL)
-//                      CFSTR("music"), 			// Auth password (overrides URL)
-//                      (__bridge  CFMutableDictionaryRef)open_options,	// Options for session open (see below)
-//                      nullptr,	// Options for mounting (see below)
-//                      &mounts);		// Array of mountpoints
-
-
-    
 }
 
 bool NetworkConnectionsManager::MountShareAsync(

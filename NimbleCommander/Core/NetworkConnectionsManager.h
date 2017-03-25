@@ -167,7 +167,7 @@ public:
 class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    enum class Protocol {
+    enum class Protocol { /* persistent values, do not change */
         SMB = 0,
         AFP = 1
     };

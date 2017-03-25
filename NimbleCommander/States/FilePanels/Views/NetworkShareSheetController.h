@@ -13,8 +13,10 @@
 
 @interface NetworkShareSheetController : SheetController
 
-@property (readonly, nonatomic) NSString* providedPassword;
+- (instancetype) init;
+- (instancetype) initWithConnection:(NetworkConnectionsManager::Connection)_connection;
 
+@property (readonly, nonatomic) NSString* providedPassword;
 @property (readonly, nonatomic) NetworkConnectionsManager::Connection connection;
 
 @end

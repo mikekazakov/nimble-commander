@@ -51,6 +51,7 @@
                                 <items>
                                     <menuItem title="SMB" state="on" id="OVk-M3-2t1"/>
                                     <menuItem title="AFP" tag="1" id="zVp-bR-LYG"/>
+                                    <menuItem title="NFS" tag="2" id="dMq-w0-se6"/>
                                 </items>
                             </menu>
                         </popUpButtonCell>

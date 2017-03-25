@@ -286,15 +286,23 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
     
     if([url getResourceValue:&img forKey:NSURLEffectiveIconKey error:&error])
         _volume.verbose.icon = img;
+    else
+        _volume.verbose.icon = nil;
     
     if([url getResourceValue:&number forKey:NSURLVolumeIsEjectableKey error:&error])
         _volume.mount_flags.ejectable = number.boolValue;
+    else
+        _volume.mount_flags.ejectable = false;
     
     if([url getResourceValue:&number forKey:NSURLVolumeIsRemovableKey error:&error])
         _volume.mount_flags.removable = number.boolValue;
+    else
+        _volume.mount_flags.removable = false;
     
     if([url getResourceValue:&number forKey:NSURLVolumeIsInternalKey error:&error])
         _volume.mount_flags.internal = number.boolValue;
+    else
+        _volume.mount_flags.internal = false;
     
     return true;
 }

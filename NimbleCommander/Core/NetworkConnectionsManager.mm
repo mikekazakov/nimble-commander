@@ -4,6 +4,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
+#include <Utility/NativeFSManager.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -148,9 +149,10 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 
 static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
-    static const auto smb = "smb"s, afp = "afp"s, unknown = ""s;
+    static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
     if( p == NetworkConnectionsManager::LANShare::Protocol::AFP ) return afp;
+    if( p == NetworkConnectionsManager::LANShare::Protocol::NFS ) return nfs;
     return unknown;
 }
 
@@ -535,15 +537,15 @@ void NetworkConnectionsManager::NetFSCallback
     }
     
     if( cb ) {
-        if( _status == 0 )
-            if( CFArrayGetCount(_mountpoints) != 0 )
-                if( auto str = objc_cast<NSString>(((__bridge NSArray*)_mountpoints).firstObject) ){
-                    string path = str.fileSystemRepresentationSafe;
-                    if( !path.empty() ) {
-                        cb(path, "");
-                        return;
-                    }
+        // _mountpoints can contain a valid mounted path even if _status is not equal to zero
+        if( CFArrayGetCount(_mountpoints) != 0 )
+            if( auto str = objc_cast<NSString>(((__bridge NSArray*)_mountpoints).firstObject) ){
+                string path = str.fileSystemRepresentationSafe;
+                if( !path.empty() ) {
+                    cb(path, "");
+                    return;
                 }
+            }
         cb( "", NetFSErrorString(_status) );
     }
 }
@@ -590,6 +592,102 @@ static bool IsEmptyDirectory(const string &_path)
     return false;
 }
 
+static bool TearDownSMBOrAFPMountName
+    ( const string &_name, string &_user, string &_host, string &_share )
+{
+    auto url_string = [NSString stringWithUTF8StdString:_name];
+    if( !url_string )
+        return false;
+
+    NSURL *url = [NSURL URLWithString:url_string];
+    if( !url )
+        return false;
+
+    if( !url.host || !url.path )
+        return false;
+
+    _host = url.host.UTF8String; // 192.168.2.5
+    _share = url.path.UTF8String; // i.e. /iTunesMusic
+    if( !_share.empty() ) _share.erase( begin(_share) ); // i.e. iTunesMusic
+    
+    if( url.user )
+        _user = url.user.UTF8String;
+    else
+        _user = "";
+
+    return true;
+}
+
+static bool TearDownNFSMountName( const string &_name, string &_host, string &_share )
+{
+    static const auto delimiter = ":/"s;
+    auto pos = _name.find( delimiter );
+    if( pos == _name.npos )
+        return false;
+    _host = _name.substr( 0, pos );
+    _share = _name.substr( pos + delimiter.size() );
+    return true;
+}
+
+static vector<shared_ptr<const NativeFileSystemInfo>> GetMountedRemoteFilesystems()
+{
+    vector<shared_ptr<const NativeFileSystemInfo>> remotes;
+    
+    for( const auto &v: NativeFSManager::Instance().Volumes() ) {
+        const auto &volume = *v;
+
+        // basic discarding check on volume
+        if( volume.mount_flags.internal || volume.mount_flags.local )
+            continue;
+        
+        // treat only these filesystems as remote
+        if( volume.fs_type_name == "smbfs" ||
+            volume.fs_type_name == "afpfs" ||
+            volume.fs_type_name == "nfs" ) {
+            remotes.emplace_back(v);
+        }
+    }
+
+    return remotes;
+}
+
+static shared_ptr<const NativeFileSystemInfo> FindExistingMountedShare
+    (const NetworkConnectionsManager::LANShare &_share)
+{
+    using protocols = NetworkConnectionsManager::LANShare::Protocol;
+    auto remote_volumes = GetMountedRemoteFilesystems();
+    
+    for( auto &v: remote_volumes ) {
+        const auto &volume = *v;
+
+        if( (_share.proto == protocols::SMB && volume.fs_type_name == "smbfs") ||
+            (_share.proto == protocols::AFP && volume.fs_type_name == "afpfs") ) {
+            string user, host, share;
+            if( TearDownSMBOrAFPMountName(volume.mounted_from_name, user, host, share) ) {
+                auto same_host =  strcasecmp( host.c_str(), _share.host.c_str()) == 0;
+                auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
+                auto same_user = (strcasecmp( user.c_str(), _share.user.c_str()) == 0) ||
+                                 (_share.user.empty() && user == "GUEST") ||
+                                 (_share.user.empty() && user == "guest") ;
+                if( same_host && same_share && same_user )
+                    return v;
+            }
+        }
+        else if( _share.proto == protocols::NFS && volume.fs_type_name == "nfs" ) {
+            /// ....
+            string host, share;
+            if( TearDownNFSMountName(volume.mounted_from_name, host, share ) ) {
+                auto same_host =  strcasecmp( host.c_str(), _share.host.c_str()) == 0;
+                auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
+                if( same_host && same_share )
+                    return v;
+            }
+        }
+    }
+    
+    return nullptr;
+}
+
 bool NetworkConnectionsManager::MountShareAsync(
     const Connection &_conn,
     const string &_password,
@@ -598,8 +696,17 @@ bool NetworkConnectionsManager::MountShareAsync(
     if( !_conn.IsType<LANShare>() )
         return false;
     
-    auto conn = _conn;
-    auto &share = conn.Get<LANShare>();
+    const auto conn = _conn;
+    const auto &share = conn.Get<LANShare>();
+    
+    if( const auto v = FindExistingMountedShare(share) ) {
+        // we already have this share mounted - just return it.
+        // mount path may be different although
+        dispatch_to_main_queue([v, _callback]{
+            _callback( v->mounted_at_path, "" );
+        });
+        return true;
+    }
 
     auto url = CookURLForLANShare(share);
     auto mountpoint = CookMountPointForLANShare(share);

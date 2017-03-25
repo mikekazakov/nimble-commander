@@ -169,7 +169,8 @@ class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::Ba
 public:
     enum class Protocol { /* persistent values, do not change */
         SMB = 0,
-        AFP = 1
+        AFP = 1,
+        NFS = 2
     };
     string host; // host adress in ip or network name form. should not have protocol specification.
     string user; // empty user means 'guest'

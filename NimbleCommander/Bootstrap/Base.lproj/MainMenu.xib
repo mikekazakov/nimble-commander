@@ -722,7 +722,7 @@ DQ
                                                 <action selector="OnGoToSFTP:" target="-1" id="j70-jL-OKb"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Network Share" id="AD2-1f-bf0">
+                                        <menuItem title="Network Share" tag="14230" id="AD2-1f-bf0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToNetworkShare:" target="-1" id="BbY-bf-FXI"/>

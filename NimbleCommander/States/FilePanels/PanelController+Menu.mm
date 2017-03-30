@@ -11,7 +11,6 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
-#include <Utility/PathManip.h>
 #include <VFS/VFSListingInput.h>
 #include <VFS/Native.h>
 #include <VFS/PS.h>
@@ -42,7 +41,6 @@
 #include "Views/NetworkShareSheetController.h"
 #include <NimbleCommander/Core/FileMask.h>
 #include "Views/SelectionWithMaskPopupViewController.h"
-//#include "PanelViewPresentation.h"
 #include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -53,6 +51,7 @@
 #include "Actions/GoToFolder.h"
 #include "Actions/EjectVolume.h"
 #include "Actions/ShowVolumeInformation.h"
+#include "Actions/InsertFromPasteboard.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -189,53 +188,6 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     return items;
 }
 
-static unordered_map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
-{
-    if(!_input)
-        return {};
-    unordered_map<string, vector<string>> filenames; // root directory to containing filenames map
-    for( NSString *ns_filename in _input ) {
-        if( !objc_cast<NSString>(ns_filename) ) continue; // guard against malformed input
-        // filenames are without trailing slashes for dirs here
-        char dir[MAXPATHLEN], fn[MAXPATHLEN];
-        if(!GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir))
-            continue;
-        if(!GetFilenameFromPath([ns_filename fileSystemRepresentation], fn))
-            continue;
-        filenames[dir].push_back(fn);
-    }
-    return filenames;
-}
-
-static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories( const unordered_map<string, vector<string>>& _input, VFSHost& _host)
-{
-    vector<VFSListingItem> source_items;
-    for( auto &dir: _input ) {
-        vector<VFSListingItem> items_for_dir;
-        if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) == VFSError::Ok )
-            move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
-    }
-    return source_items;
-}
-
-static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
-{
-    // check what's inside pasteboard
-    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
-    if( [pasteboard availableTypeFromArray:@[NSFilenamesPboardType]] ) {
-        // input should be an array of filepaths as NSStrings
-        auto filepaths = objc_cast<NSArray>([pasteboard propertyListForType:NSFilenamesPboardType]);
-    
-        // currently fetching listings synchronously, which is BAAAD (but we're on native vfs)
-        auto items = FetchVFSListingsItemsFromDirectories(LayoutPathsByContainingDirectories(filepaths),
-                                                          *VFSNativeHost::SharedHost());
-        
-        return items;
-    }
-    // TODO: reading from URL pasteboard?
-    return {};
-}
-
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -366,8 +318,8 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     
     using namespace panel::actions;
     
-    IF_MENU_TAG("menu.edit.paste")                      return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
-    IF_MENU_TAG("menu.edit.move_here")                  return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
+    IF_MENU_TAG("menu.edit.paste")      return PasteFromPasteboard::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.edit.move_here")  return MoveFromPasteboard::ValidateMenuItem(self, item);    
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
@@ -1532,40 +1484,12 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)paste:(id)sender
 {
-    [self pasteOrMoveItems:true];
+    panel::actions::PasteFromPasteboard::Perform(self, sender);
 }
 
 - (IBAction)moveItemHere:(id)sender
 {
-    [self pasteOrMoveItems:false];
-}
-
-- (void)pasteOrMoveItems:(bool)_paste
-{
-    // check if we're on uniform panel with a writeable VFS
-    if( !self.isUniform || !self.vfs->IsWriteable() )
-        return;
-    
-    auto source_items = FetchVFSListingsItemsFromPasteboard();
-    
-    if( source_items.empty() )
-        return; // errors on fetching listings?
-    
-    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
-    opts.docopy = _paste;
-    auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                       destinationPath:self.currentDirectoryPath
-                                       destinationHost:self.vfs
-                                               options:opts];
-    
-    __weak PanelController *wpc = self;
-    [op AddOnFinishHandler:^{
-        dispatch_to_main_queue( [=]{
-            if(PanelController *pc = wpc) [pc refreshPanel];
-        });
-    }];
-    
-    [self.state AddOperation:op];
+    panel::actions::MoveFromPasteboard::Perform(self, sender);
 }
 
 @end

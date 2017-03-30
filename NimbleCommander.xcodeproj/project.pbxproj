@@ -1067,6 +1067,10 @@
 		CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
 		CFD8CDC01E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
 		CFD8CDC11E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
+		CFD8CDC41E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */; };
+		CFD8CDC51E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */; };
+		CFD8CDC61E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */; };
+		CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1786,6 +1790,8 @@
 		CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EjectVolume.mm; path = NimbleCommander/States/FilePanels/Actions/EjectVolume.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowVolumeInformation.h; path = NimbleCommander/States/FilePanels/Actions/ShowVolumeInformation.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowVolumeInformation.mm; path = NimbleCommander/States/FilePanels/Actions/ShowVolumeInformation.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InsertFromPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/InsertFromPasteboard.h; sourceTree = SOURCE_ROOT; };
+		CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InsertFromPasteboard.mm; path = NimbleCommander/States/FilePanels/Actions/InsertFromPasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
@@ -2535,6 +2541,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
+				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
 				CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */,
 				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
 				CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */,
@@ -3903,6 +3911,7 @@
 				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFD7270F1E42E30D00603077 /* BriefSystemOverview.mm in Sources */,
+				CFD8CDC61E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727121E42E31D00603077 /* ConnectionsMenuDelegate.mm in Sources */,
 				CFD7266F1E42E1F200603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
@@ -4038,6 +4047,7 @@
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFA539A81D433E2A00C562A7 /* MassCopySheetController.mm in Sources */,
 				CFA539A91D433E2A00C562A7 /* FileLinkOperationJob.mm in Sources */,
+				CFD8CDC51E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727311E42E34B00603077 /* TermSingleTask.mm in Sources */,
 				CFD726841E42E21100603077 /* PanelController+DragAndDrop.mm in Sources */,
 				CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */,
@@ -4170,6 +4180,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD6F90D1BEBA96600A1B046 /* FileDeletionOperation.mm in Sources */,
+				CFD8CDC41E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CF9069731BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
 				CFDAC2E41DFD142C0039A104 /* SearchInFile.cpp in Sources */,
 				CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */,
@@ -4424,6 +4435,7 @@
 				CF50C4241C0ADE7C009DF611 /* OperationsController.mm in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */,
+				CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF50C40A1C0ADE2A009DF611 /* FileDeletionOperation.mm in Sources */,
 				CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */,

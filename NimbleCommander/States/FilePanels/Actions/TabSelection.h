@@ -2,7 +2,7 @@
 
 @class MainWindowFilePanelState;
 
-namespace panels::actions {
+namespace panel::actions {
 
 struct ShowNextTab
 {

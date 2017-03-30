@@ -1,7 +1,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "TabSelection.h"
 
-namespace panels::actions {
+namespace panel::actions {
 
 bool ShowNextTab::Predicate( MainWindowFilePanelState *_target )
 {

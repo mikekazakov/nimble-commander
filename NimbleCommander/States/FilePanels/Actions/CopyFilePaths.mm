@@ -3,7 +3,7 @@
 #include "../PanelView.h"
 #include "CopyFilePaths.h"
 
-namespace panels::actions {
+namespace panel::actions {
 
 static const char* Separator()
 {

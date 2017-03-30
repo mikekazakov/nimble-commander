@@ -2,7 +2,7 @@
 
 @class PanelController;
 
-namespace panels::actions {
+namespace panel::actions {
 
 struct CopyFileName
 {

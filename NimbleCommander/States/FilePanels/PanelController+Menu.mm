@@ -31,7 +31,6 @@
 #include "ExternalEditorInfo.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
-#include "Views/GoToFolderSheetController.h"
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
@@ -52,6 +51,7 @@
 #include "PanelAux.h"
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
+#include "Actions/GoToFolder.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -363,7 +363,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
                                          PanelData::PanelSortMode::SortByAddTimeRev );
 #undef IF
     
-    using namespace panels::actions;
+    using namespace panel::actions;
     
     IF_MENU_TAG("menu.edit.paste")                      return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
     IF_MENU_TAG("menu.edit.move_here")                  return self.isUniform && self.vfs->IsWriteable() && [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
@@ -471,32 +471,18 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     [self GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
 }
 
-- (IBAction)OnGoToFolder:(id)sender {
-    GoToFolderSheetController *sheet = [GoToFolderSheetController new];
-    sheet.panel = self;
-    [sheet showSheetWithParentWindow:self.window handler:[=]{
-        
-        auto c = make_shared<PanelControllerGoToDirContext>();
-        c->RequestedDirectory = [self expandPath:sheet.requestedPath];
-        c->VFS = self.vfs;
-        c->PerformAsynchronous = true;
-        c->LoadingResultCallback = [=](int _code) {
-            dispatch_to_main_queue( [=]{
-                [sheet tellLoadingResult:_code];
-            });
-        };
-
-        // TODO: check reachability from sandbox        
-        
-        [self GoToDirWithContext:c];        
-    }];
+- (IBAction)OnGoToFolder:(id)sender
+{
+    panel::actions::GoToFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToUpperDirectory:(id)sender { // cmd+up
+- (IBAction)OnGoToUpperDirectory:(id)sender
+{ // cmd+up
     [self HandleGoToUpperDirectory];
 }
 
-- (IBAction)OnGoIntoDirectory:(id)sender { // cmd+down
+- (IBAction)OnGoIntoDirectory:(id)sender
+{ // cmd+down
     auto item = m_View.item;
     if( item && !item.IsDotDot() )
         [self handleGoIntoDirOrArchiveSync:false];
@@ -953,12 +939,12 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnCopyCurrentFileName:(id)sender
 {
-    panels::actions::CopyFileName::Perform(self, sender);
+    panel::actions::CopyFileName::Perform(self, sender);
 }
 
 - (IBAction)OnCopyCurrentFilePath:(id)sender
 {
-    panels::actions::CopyFilePath::Perform(self, sender);
+    panel::actions::CopyFilePath::Perform(self, sender);
 }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
@@ -1554,7 +1540,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction) OnAddToFavorites:(id)sender
 {
-    panels::actions::AddToFavorites::Perform(self, sender);
+    panel::actions::AddToFavorites::Perform(self, sender);
 }
 
 - (IBAction)copy:(id)sender

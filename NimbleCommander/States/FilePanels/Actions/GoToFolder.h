@@ -4,8 +4,7 @@
 
 namespace panel::actions {
 
-// has en external dependency: AppDelegate.me.favoriteLocationsStorage
-struct AddToFavorites
+struct GoToFolder
 {
     static bool Predicate( PanelController *_target );
     static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );

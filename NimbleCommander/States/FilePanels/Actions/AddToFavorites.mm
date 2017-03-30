@@ -5,7 +5,7 @@
 #include "../PanelView.h"
 #include "AddToFavorites.h"
 
-namespace panels::actions {
+namespace panel::actions {
 
 bool AddToFavorites::Predicate( PanelController *_target )
 {

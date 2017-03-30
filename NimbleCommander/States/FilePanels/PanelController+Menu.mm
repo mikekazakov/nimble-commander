@@ -1,11 +1,3 @@
-//
-//  PanelController+Menu.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 24.05.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <Habanero/CommonPaths.h>
@@ -16,7 +8,6 @@
 #include <VFS/PS.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
-#include <VFS/XAttr.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/BatchRename/BatchRename.h>
@@ -41,7 +32,6 @@
 #include "Views/NetworkShareSheetController.h"
 #include <NimbleCommander/Core/FileMask.h>
 #include "Views/SelectionWithMaskPopupViewController.h"
-#include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Views/SpotlightSearchPopupViewController.h"
@@ -52,6 +42,8 @@
 #include "Actions/EjectVolume.h"
 #include "Actions/ShowVolumeInformation.h"
 #include "Actions/InsertFromPasteboard.h"
+#include "Actions/OpenXAttr.h"
+#include "Actions/CalculateChecksum.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -319,7 +311,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     using namespace panel::actions;
     
     IF_MENU_TAG("menu.edit.paste")      return PasteFromPasteboard::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.edit.move_here")  return MoveFromPasteboard::ValidateMenuItem(self, item);    
+    IF_MENU_TAG("menu.edit.move_here")  return MoveFromPasteboard::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
@@ -340,11 +332,12 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.calculate_checksum")         return m_View.item && (!m_View.item.IsDir() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.calculate_checksum") return CalculateChecksum::
+                                                            ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.open_xattr")              return m_View.item && m_View.item.Host()->IsNativeFS();
+    IF_MENU_TAG("menu.command.open_xattr")      return OpenXAttr::ValidateMenuItem(self, item);
     
     return true;
 }
@@ -999,83 +992,17 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     [self MakeSortWith:PanelData::PanelSortMode::SortByAddTime Rev:PanelData::PanelSortMode::SortByAddTimeRev];
 }
 
-- (IBAction)ToggleShortViewMode:(id)sender
-{
-//    m_View.type = PanelViewType::Short;
-//    [self markRestorableStateAsInvalid];
-    [self setLayoutIndex:0];
-}
-
-- (IBAction)ToggleMediumViewMode:(id)sender
-{
-//    m_View.type = PanelViewType::Medium;
-//    [self markRestorableStateAsInvalid];
-    [self setLayoutIndex:1];
-}
-
-- (IBAction)ToggleFullViewMode:(id)sender
-{
-//    m_View.type = PanelViewType::Full;
-//    [self markRestorableStateAsInvalid];
-    [self setLayoutIndex:2];
-}
-
-- (IBAction)ToggleWideViewMode:(id)sender
-{
-//    m_View.type = PanelViewType::Wide;
-//    [self markRestorableStateAsInvalid];
-    [self setLayoutIndex:3];
-}
-
-- (IBAction)onToggleViewLayout1:(id)sender
-{
-    [self setLayoutIndex:0];
-}
-
-- (IBAction)onToggleViewLayout2:(id)sender
-{
-    [self setLayoutIndex:1];
-}
-
-- (IBAction)onToggleViewLayout3:(id)sender
-{
-    [self setLayoutIndex:2];
-}
-
-- (IBAction)onToggleViewLayout4:(id)sender
-{
-    [self setLayoutIndex:3];
-}
-
-- (IBAction)onToggleViewLayout5:(id)sender
-{
-    [self setLayoutIndex:4];
-}
-
-- (IBAction)onToggleViewLayout6:(id)sender
-{
-    [self setLayoutIndex:5];
-}
-
-- (IBAction)onToggleViewLayout7:(id)sender
-{
-    [self setLayoutIndex:6];
-}
-
-- (IBAction)onToggleViewLayout8:(id)sender
-{
-    [self setLayoutIndex:7];
-}
-
-- (IBAction)onToggleViewLayout9:(id)sender
-{
-    [self setLayoutIndex:8];
-}
-
-- (IBAction)onToggleViewLayout10:(id)sender
-{
-    [self setLayoutIndex:9];
-}
+// deliberately chosen the most dumb way to introduce ten different options:
+- (IBAction)onToggleViewLayout1:(id)sender { [self setLayoutIndex:0]; }
+- (IBAction)onToggleViewLayout2:(id)sender { [self setLayoutIndex:1]; }
+- (IBAction)onToggleViewLayout3:(id)sender { [self setLayoutIndex:2]; }
+- (IBAction)onToggleViewLayout4:(id)sender { [self setLayoutIndex:3]; }
+- (IBAction)onToggleViewLayout5:(id)sender { [self setLayoutIndex:4]; }
+- (IBAction)onToggleViewLayout6:(id)sender { [self setLayoutIndex:5]; }
+- (IBAction)onToggleViewLayout7:(id)sender { [self setLayoutIndex:6]; }
+- (IBAction)onToggleViewLayout8:(id)sender { [self setLayoutIndex:7]; }
+- (IBAction)onToggleViewLayout9:(id)sender { [self setLayoutIndex:8]; }
+- (IBAction)onToggleViewLayout10:(id)sender{ [self setLayoutIndex:9]; }
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender
 {
@@ -1217,42 +1144,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnCalculateChecksum:(id)sender
 {
-    vector<string> filenames;
-    vector<uint64_t> sizes;
-    
-    // grab selected regular files if any
-    for(int i = 0, e = (int)m_Data.SortedDirectoryEntries().size(); i < e; ++i) {
-        auto item = m_Data.EntryAtSortPosition(i);
-        auto item_vd = m_Data.VolatileDataAtSortPosition(i);
-        if( item_vd.is_selected() && item.IsReg() && !item.IsSymlink() ) {
-            filenames.emplace_back(item.Name());
-            sizes.emplace_back(item.Size());
-        }
-    }
-    
-    // if have no - try focused item
-    if( filenames.empty() )
-        if( auto item = m_View.item )
-            if( !item.IsDir() && !item.IsSymlink() ) {
-                filenames.emplace_back(item.Name());
-                sizes.emplace_back(item.Size());
-            }
-
-    if( filenames.empty() )
-        return;
-    
-    CalculateChecksumSheetController *sheet = [[CalculateChecksumSheetController alloc] initWithFiles:move(filenames)
-                                                                                            withSizes:move(sizes)
-                                                                                               atHost:self.vfs
-                                                                                               atPath:self.currentDirectoryPath];
-    [sheet beginSheetForWindow:self.window
-             completionHandler:^(NSModalResponse returnCode) {
-                 if(sheet.didSaved) {
-                     PanelControllerDelayedSelection req;
-                     req.filename = sheet.savedFilename;
-                     [self ScheduleDelayedSelectionChangeFor:req];
-                 }
-             }];
+    return panel::actions::CalculateChecksum::Perform(self, sender);
 }
 
 - (IBAction)OnQuickNewFolder:(id)sender
@@ -1450,21 +1342,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction) OnOpenExtendedAttributes:(id)sender
 {
-    if( !self.view.item || !self.view.item.Host()->IsNativeFS() )
-        return;
-    
-    try {
-        auto host = make_shared<VFSXAttrHost>(self.view.item.Path(), self.view.item.Host() );
-        auto context = make_shared<PanelControllerGoToDirContext>();
-        context->VFS = host;
-        context->RequestedDirectory = "/";
-        [self GoToDirWithContext:context];
-    } catch (const VFSErrorException &e) {
-        Alert *alert = [[Alert alloc] init];
-        alert.messageText = NSLocalizedString(@"Failed to open extended attributes", "Alert message text when failed to open xattr vfs");
-        alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
-        [alert runModal];
-    }
+    panel::actions::OpenXAttr::Perform(self, sender);
 }
 
 - (IBAction) OnRenameFileInPlace:(id)sender

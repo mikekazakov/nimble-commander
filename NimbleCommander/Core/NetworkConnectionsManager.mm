@@ -453,69 +453,6 @@ VFSHostPtr NetworkConnectionsManager::SpawnHostFromConnection(const Connection &
     return nullptr;
 }
 
-
-/*
- * NetFSMountURLAsync is the same as NetFSMountURLSync except it does the
- * mount asynchronously.  If the mount_report block is non-NULL, at
- * the completion of the mount it is submitted to the dispatch queue
- * with the result of the mount, the request ID and an array of POSIX mountpoint paths.
- * The request ID can be used by NetFSMountURLCancel() to cancel
- * a pending mount request. The NetFSMountURLBlock is not submitted if
- * the request is cancelled.
- *
- * The return result is as described above for NetFSMountURLSync().
- */
-//int
-//NetFSMountURLAsync(
-//	CFURLRef url,				// URL to mount, e.g. nfs://server/path
-//	CFURLRef mountpath,			// Path for the mountpoint
-//	CFStringRef user,			// Auth user name (overrides URL)
-//	CFStringRef passwd, 			// Auth password (overrides URL)
-//	CFMutableDictionaryRef open_options,	// Options for session open (see below)
-//	CFMutableDictionaryRef mount_options,	// Options for mounting (see below)
-//	AsyncRequestID *requestID,		// ID of this pending request (see cancel)
-//	dispatch_queue_t dispatchq,		// Dispatch queue for the block
-//	NetFSMountURLBlock mount_report)	// Called at mount completion
-
-
-/*
- * This is the block called at completion of NetFSMountURLAsync
- * The block receives the mount status (described above), the request ID
- * that was used for the mount, and an array of mountpoint paths.
- */
-//typedef	void (^NetFSMountURLBlock)(int status, AsyncRequestID requestID, CFArrayRef mountpoints);
-
-//typedef void * AsyncRequestID;
-
- /**
- * A positive non-zero return value represents an errno value
- * (see /usr/include/sys/errno.h).  For instance, a missing mountpoint
- * error will be returned as ENOENT (2).
- *
- * A negative non-zero return value represents an OSStatus error.
- * For instance, error -128 is userCanceledErr, returned when a mount
- * operation is canceled by the user. These OSStatus errors are
- * extended to include:
- *
- *  from this header:
- *	ENETFSPWDNEEDSCHANGE		-5045
- *	ENETFSPWDPOLICY			-5046
- *	ENETFSACCOUNTRESTRICTED		-5999
- *	ENETFSNOSHARESAVAIL		-5998
- *	ENETFSNOAUTHMECHSUPP		-5997
- *	ENETFSNOPROTOVERSSUPP		-5996
- *
- *  from <NetAuth/NetAuthErrors.h>
- *	kNetAuthErrorInternal		-6600
- *	kNetAuthErrorMountFailed	-6602
- *	kNetAuthErrorNoSharesAvailable	-6003
- *	kNetAuthErrorGuestNotSupported	-6004
- *	kNetAuthErrorAlreadyClosed	-6005
- *
- */
-
-//#include <NetAuth/NetAuthErrors.h>
-
 static string NetFSErrorString( int _code )
 {
     if( _code > 0 ) {
@@ -551,7 +488,7 @@ void NetworkConnectionsManager::NetFSCallback
     
     if( cb ) {
         // _mountpoints can contain a valid mounted path even if _status is not equal to zero
-        if( CFArrayGetCount(_mountpoints) != 0 )
+        if( _mountpoints != nullptr && CFArrayGetCount(_mountpoints) != 0 )
             if( auto str = objc_cast<NSString>(((__bridge NSArray*)_mountpoints).firstObject) ){
                 string path = str.fileSystemRepresentationSafe;
                 if( !path.empty() ) {

@@ -595,8 +595,7 @@ static bool IsEmptyDirectory(const string &_path)
 {
     if( DIR *dir = opendir( _path.c_str() ) ) {
         int n = 0;
-        struct dirent *d;
-        while( (d = readdir(dir)) )
+        while( readdir(dir) != nullptr )
             if( ++n > 2 )
                 break;
         closedir(dir);
@@ -746,7 +745,10 @@ bool NetworkConnectionsManager::MountShareAsync(
                                     callback);
     
     if( result != 0 ) {
-        // process error code and call _callback async
+        auto error = NetFSErrorString(result);
+         dispatch_to_main_queue([error, _callback]{
+            _callback( "", error );
+        });
         return false;
     }
     
@@ -757,28 +759,28 @@ bool NetworkConnectionsManager::MountShareAsync(
     return true;
 }
 
-bool NetworkConnectionsManager::MountShareAsync(
-    const Connection &_conn,
-    function<void(const string&_mounted_path, const string&_error)> _callback,
-    bool _allow_password_ui)
-{
-    if( !_conn.IsType<LANShare>() )
-        return false;
-    
-    auto conn = _conn;
-    auto &share = conn.Get<LANShare>();
-    
-    
-    string passwd;
-    bool shoud_save_passwd = false;
-    if( !GetPassword(conn, passwd) ) {
-        if( !_allow_password_ui || !AskForPassword(conn, passwd) )
-            return false;
-        shoud_save_passwd = true;
-    }
-    
-    /// ....
-    
-    return false;
-    
-}
+//bool NetworkConnectionsManager::MountShareAsync(
+//    const Connection &_conn,
+//    function<void(const string&_mounted_path, const string&_error)> _callback,
+//    bool _allow_password_ui)
+//{
+//    if( !_conn.IsType<LANShare>() )
+//        return false;
+//    
+//    auto conn = _conn;
+//    auto &share = conn.Get<LANShare>();
+//    
+//    
+//    string passwd;
+//    bool shoud_save_passwd = false;
+//    if( !GetPassword(conn, passwd) ) {
+//        if( !_allow_password_ui || !AskForPassword(conn, passwd) )
+//            return false;
+//        shoud_save_passwd = true;
+//    }
+//    
+//    /// ....
+//    
+//    return false;
+//    
+//}

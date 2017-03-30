@@ -57,9 +57,9 @@ public:
      * _callback will be called in the future, either with a string containing a mount path, or
      * with reason of failure.
      */
-    bool MountShareAsync(const Connection &_conn,
-                         MountShareCallback _callback,
-                         bool _allow_password_ui = true);
+//    bool MountShareAsync(const Connection &_conn,
+//                         MountShareCallback _callback,
+//                         bool _allow_password_ui = true);
     bool MountShareAsync(const Connection &_conn,
                          const string &_password,
                          MountShareCallback _callback);

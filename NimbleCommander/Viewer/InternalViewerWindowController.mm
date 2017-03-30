@@ -64,6 +64,7 @@
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     self.window.toolbar = self.internalViewerToolbar;
+    self.window.toolbar.visible = true;
     m_Controller.view = self.viewerView;
     m_Controller.searchField = self.internalViewerToolbarSearchField;
     m_Controller.searchProgressIndicator = self.internalViewerToolbarSearchProgressIndicator;

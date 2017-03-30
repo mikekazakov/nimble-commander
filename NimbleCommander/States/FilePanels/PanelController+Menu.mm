@@ -32,7 +32,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
-#include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
@@ -52,6 +51,8 @@
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
+#include "Actions/EjectVolume.h"
+#include "Actions/ShowVolumeInformation.h"
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";
@@ -372,10 +373,11 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
-    IF_MENU_TAG("menu.command.volume_information")      return !self.isUniform || self.vfs->IsNativeFS();
+    IF_MENU_TAG("menu.command.volume_information") return ShowVolumeInformation::
+                                                            ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
     IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")            return self.isUniform && self.vfs->IsNativeFS() && NativeFSManager::Instance().IsVolumeContainingPathEjectable(self.currentDirectoryPath);
+    IF_MENU_TAG("menu.command.eject_volume")    return EjectVolume::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
@@ -801,27 +803,9 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     }];
 }
 
-// currently support volume info only on native fs
 - (IBAction)OnDetailedVolumeInformation:(id)sender
 {
-    string path;
-    if( auto i = self.view.item ) {
-        if( !i.Host()->IsNativeFS() )
-            return;
-        if( !i.IsDotDot() )
-            path = i.Path();
-        else
-            path = i.Directory();
-    }
-    else if( self.isUniform ) {
-        if( !m_Data.Host()->IsNativeFS() )
-            return;
-        path = self.currentDirectoryPath;
-    }
-    else
-        return;
-    
-    [[DetailedVolumeInformationSheetController new] showSheetForWindow:self.window withPath:path];
+    panel::actions::ShowVolumeInformation::Perform(self, sender);
 }
 
 - (IBAction)onMainMenuPerformFindAction:(id)sender {
@@ -932,9 +916,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnEjectVolume:(id)sender
 {
-    auto &nfsm = NativeFSManager::Instance();
-    if(self.vfs->IsNativeFS() && nfsm.IsVolumeContainingPathEjectable(self.currentDirectoryPath))
-        nfsm.EjectVolumeContainingPath(self.currentDirectoryPath);
+    panel::actions::EjectVolume::Perform(self, sender);
 }
 
 - (IBAction)OnCopyCurrentFileName:(id)sender

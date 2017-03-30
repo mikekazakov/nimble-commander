@@ -94,5 +94,5 @@ private:
 
 #define IF_MENU_TAG_TOKENPASTE(x, y) x ## y
 #define IF_MENU_TAG_TOKENPASTE2(x, y) IF_MENU_TAG_TOKENPASTE(x, y)
-#define IF_MENU_TAG(str) static const long IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) = ActionsShortcutsManager::Instance().TagFromAction(str); \
+#define IF_MENU_TAG(str) static const int IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) = ActionsShortcutsManager::Instance().TagFromAction(str); \
     if( tag == IF_MENU_TAG_TOKENPASTE2(__tag_no_, __LINE__) )

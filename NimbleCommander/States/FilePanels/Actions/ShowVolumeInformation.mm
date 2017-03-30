@@ -1,0 +1,40 @@
+#include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
+#include "../PanelController.h"
+#include "ShowVolumeInformation.h"
+
+namespace panel::actions {
+
+bool ShowVolumeInformation::Predicate( PanelController *_target )
+{
+    return _target.isUniform && _target.vfs->IsNativeFS();
+}
+
+bool ShowVolumeInformation::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+{
+    return Predicate( _target );
+}
+
+void ShowVolumeInformation::Perform( PanelController *_target, id _sender )
+{
+    string path;
+    if( auto i = _target.view.item ) {
+        if( !i.Host()->IsNativeFS() )
+            return;
+        if( !i.IsDotDot() )
+            path = i.Path();
+        else
+            path = i.Directory();
+    }
+    else if( _target.isUniform ) {
+        if( !_target.vfs->IsNativeFS() )
+            return;
+        path = _target.currentDirectoryPath;
+    }
+    else
+        return;
+    
+    auto sheet = [DetailedVolumeInformationSheetController new];
+    [sheet showSheetForWindow:_target.window withPath:path];
+}
+
+};

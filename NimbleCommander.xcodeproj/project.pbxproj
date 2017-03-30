@@ -1059,6 +1059,14 @@
 		CFD8CDB31E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */; };
 		CFD8CDB41E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */; };
 		CFD8CDB51E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */; };
+		CFD8CDB81E8CD37D00E4DC53 /* EjectVolume.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */; };
+		CFD8CDB91E8CD37D00E4DC53 /* EjectVolume.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */; };
+		CFD8CDBA1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */; };
+		CFD8CDBB1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */; };
+		CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
+		CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
+		CFD8CDC01E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
+		CFD8CDC11E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1774,6 +1782,10 @@
 		CFD8CDA71E84CC3B00E4DC53 /* NetworkShareSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NetworkShareSheetController.xib; path = NimbleCommander/States/FilePanels/Views/NetworkShareSheetController.xib; sourceTree = SOURCE_ROOT; };
 		CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolder.h; path = NimbleCommander/States/FilePanels/Actions/GoToFolder.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GoToFolder.mm; path = NimbleCommander/States/FilePanels/Actions/GoToFolder.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EjectVolume.h; path = NimbleCommander/States/FilePanels/Actions/EjectVolume.h; sourceTree = SOURCE_ROOT; };
+		CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EjectVolume.mm; path = NimbleCommander/States/FilePanels/Actions/EjectVolume.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowVolumeInformation.h; path = NimbleCommander/States/FilePanels/Actions/ShowVolumeInformation.h; sourceTree = SOURCE_ROOT; };
+		CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowVolumeInformation.mm; path = NimbleCommander/States/FilePanels/Actions/ShowVolumeInformation.mm; sourceTree = SOURCE_ROOT; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
@@ -2523,6 +2535,10 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */,
+				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
+				CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */,
+				CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
 				CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
@@ -3751,10 +3767,12 @@
 				CF50C4231C0ADE79009DF611 /* OperationJob.cpp in Sources */,
 				CFD726021E42E06300603077 /* AppDelegate+Migration.mm in Sources */,
 				CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
+				CFD8CDC01E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFD726EE1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
 				CFD726951E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
 				CFD7262B1E42E0BF00603077 /* QLThumbnailsCache.mm in Sources */,
+				CFD8CDBA1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFD726AB1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFD726C61E42E29B00603077 /* Layout.mm in Sources */,
 				CFD7261A1E42E09400603077 /* Theme.mm in Sources */,
@@ -3949,6 +3967,7 @@
 				CFD726E21E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */,
 				CFD727061E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
+				CFD8CDB91E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */,
 				CFD727371E42E35500603077 /* TermView.mm in Sources */,
 				CFD727211E42E33300603077 /* TermParser.mm in Sources */,
@@ -4118,6 +4137,7 @@
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA53A0C1D433E2A00C562A7 /* DisclosureViewController.m in Sources */,
 				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
+				CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFD726811E42E20C00603077 /* PanelController+DelayedSelection.mm in Sources */,
 				CFD726991E42E23100603077 /* PanelDataPersistency.cpp in Sources */,
 				CFD7266E1E42E1F100603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
@@ -4162,6 +4182,7 @@
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
 				CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */,
+				CFD8CDB81E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
 				CFDAC28F1DFBF9260039A104 /* MainWindowTerminalState.mm in Sources */,
@@ -4246,6 +4267,7 @@
 				CFDAC26F1DFBF20F0039A104 /* MainWindowFilePanelState+ContextMenu.mm in Sources */,
 				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
 				CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */,
+				CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
 				CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
@@ -4385,6 +4407,7 @@
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */,
 				CFD7267F1E42E20B00603077 /* PanelController+DelayedSelection.mm in Sources */,
+				CFD8CDC11E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD727171E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF50C4281C0ADE84009DF611 /* GenericOperationView.mm in Sources */,
@@ -4414,6 +4437,7 @@
 				CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */,
 				CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */,
 				CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */,
+				CFD8CDBB1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CF50C45D1C0ADF52009DF611 /* JobTrash.mm in Sources */,
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,

@@ -47,6 +47,7 @@
 		CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF1100D2191378BD00E170FC /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
+		CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
 		CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
 		CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
 		CF1E3D131D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
@@ -1375,6 +1376,8 @@
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
 		CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeDelete_Tests.mm; sourceTree = "<group>"; };
+		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
+		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
 		CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_eytzinger_map.h; path = NimbleCommander/Bootstrap/fixed_eytzinger_map.h; sourceTree = SOURCE_ROOT; };
 		CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProFeaturesWindowController.h; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.h; sourceTree = SOURCE_ROOT; };
@@ -2559,26 +2562,28 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */,
-				CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */,
+				CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */,
+				CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */,
+				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
+				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
 				CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */,
-				CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */,
-				CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */,
-				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
-				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
-				CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */,
-				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
+				CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */,
+				CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */,
 				CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */,
 				CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
 				CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */,
-				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
-				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
+				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
+				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
+				CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */,
+				CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */,
+				CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */,
+				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
+				CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */,
+				CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */,
 				CF27408C1E594C46000D4365 /* TabSelection.h */,
 				CF27408D1E594C46000D4365 /* TabSelection.mm */,
-				CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */,
-				CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -4266,6 +4271,7 @@
 				CF56C2B91DC1934D00F0DF0F /* PanelListViewRowView.mm in Sources */,
 				CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */,
+				CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */,
 				CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */,
 				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,

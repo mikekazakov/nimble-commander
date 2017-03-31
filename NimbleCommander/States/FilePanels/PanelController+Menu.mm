@@ -1,5 +1,3 @@
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
@@ -18,7 +16,6 @@
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h>
 #include <NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h>
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h>
-#include "ExternalEditorInfo.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
@@ -44,6 +41,7 @@
 #include "Actions/OpenXAttr.h"
 #include "Actions/CalculateChecksum.h"
 #include "Actions/SpotlightSearch.h"
+#include "Actions/OpenWithExternalEditor.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<VFSPath, vector<string>> &_dir_to_filenames, int _fetch_flags, VFSCancelChecker _cancel_checker)
 {
@@ -235,35 +233,34 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 #undef IF
     
     using namespace panel::actions;
-    
-    IF_MENU_TAG("menu.edit.paste")      return PasteFromPasteboard::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.edit.move_here")  return MoveFromPasteboard::ValidateMenuItem(self, item);
+#define VALIDATE(type) type::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
+    IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
-    IF_MENU_TAG("menu.command.volume_information") return ShowVolumeInformation::
-                                                            ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.volume_information")      return VALIDATE(ShowVolumeInformation);
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.eject_volume")    return EjectVolume::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.external_editor")         return VALIDATE(OpenWithExternalEditor);
+    IF_MENU_TAG("menu.command.eject_volume")            return VALIDATE(EjectVolume);
     IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
-    IF_MENU_TAG("menu.command.copy_file_name")  return CopyFileName::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.command.copy_file_path")  return CopyFilePath::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.file.add_to_favorites")   return AddToFavorites::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.copy_file_name")          return VALIDATE(CopyFileName);
+    IF_MENU_TAG("menu.command.copy_file_path")          return VALIDATE(CopyFilePath);
+    IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.calculate_checksum") return CalculateChecksum::
-                                                            ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.open_xattr")      return OpenXAttr::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
+#undef VALIDATE
     
     return true;
 }
@@ -901,27 +898,7 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender
 {
-    auto item = m_View.item;
-    if( !item || item.IsDotDot() )
-        return;
-    
-    auto ed = AppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
-    if( !ed ) {
-        NSBeep();
-        return;
-    }
-    
-    if( ed->OpenInTerminal() == false )
-        PanelVFSFileWorkspaceOpener::Open(item.Path(),
-                                          item.Host(),
-                                          ed->Path(),
-                                          self);
-    else
-        PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(item.Path(),
-                                                                  item.Host(),
-                                                                  ed,
-                                                                  item.Filename(),
-                                                                  self);
+    panel::actions::OpenWithExternalEditor::Perform(self, sender);
 }
 
 - (void)DeleteFiles:(bool)_delete_permanently

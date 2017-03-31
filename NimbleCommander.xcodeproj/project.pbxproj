@@ -1079,6 +1079,10 @@
 		CFD8CDD11E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */; };
 		CFD8CDD21E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */; };
 		CFD8CDD31E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */; };
+		CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */; };
+		CFD8CDD71E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */; };
+		CFD8CDD81E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */; };
+		CFD8CDD91E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */; };
 		CFD9F9491A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94A1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
 		CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFD9F94D1A623E4E001B3F33 /* Operations.strings */; };
@@ -1804,6 +1808,8 @@
 		CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenXAttr.mm; path = NimbleCommander/States/FilePanels/Actions/OpenXAttr.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalculateChecksum.h; path = NimbleCommander/States/FilePanels/Actions/CalculateChecksum.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateChecksum.mm; path = NimbleCommander/States/FilePanels/Actions/CalculateChecksum.mm; sourceTree = SOURCE_ROOT; };
+		CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearch.h; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.h; sourceTree = SOURCE_ROOT; };
+		CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearch.mm; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.mm; sourceTree = SOURCE_ROOT; };
 		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
@@ -2553,6 +2559,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */,
+				CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */,
 				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
 				CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */,
 				CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */,
@@ -3925,6 +3933,7 @@
 				CFD726A71E42E24900603077 /* PanelViewPresentationSettings.mm in Sources */,
 				CF50C40D1C0ADE2E009DF611 /* Job.cpp in Sources */,
 				CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */,
+				CFD8CDD81E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CF50C4071C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFD7270F1E42E30D00603077 /* BriefSystemOverview.mm in Sources */,
 				CFD8CDC61E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
@@ -4023,6 +4032,7 @@
 				CFD8CD3C1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD727281E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
+				CFD8CDD71E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
 				CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFA539871D433E2A00C562A7 /* JobTrash.mm in Sources */,
@@ -4305,6 +4315,7 @@
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF876D251D51E04A009C0CCE /* BigFileView.mm in Sources */,
 				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
+				CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
@@ -4520,6 +4531,7 @@
 				CFD726FC1E42E2F300603077 /* TabBarStyle.mm in Sources */,
 				CFD726CE1E42E2A800603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CFD726381E42E0D800603077 /* LSUrls.mm in Sources */,
+				CFD8CDD91E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFD7272F1E42E34A00603077 /* TermSingleTask.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
 				CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,

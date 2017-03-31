@@ -18,6 +18,7 @@
 #include <termios.h>
 #include <string.h>
 #include <libproc.h>
+#include <dirent.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>

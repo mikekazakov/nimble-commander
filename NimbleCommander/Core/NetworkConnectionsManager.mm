@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <NetFS/NetFS.h>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>

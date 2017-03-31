@@ -6,6 +6,7 @@
 //  Copyright © 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include "Job.h"

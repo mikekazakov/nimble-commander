@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <fstream>
 #include <Habanero/algo.h>
 #include <Utility/FSEventsDirUpdate.h>
@@ -653,6 +654,8 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
     rapidjson::Document new_staging_doc;
     new_staging_doc.CopyFrom(m_Defaults, m_Defaults.GetAllocator());
     MergeDocument(new_staging_doc, _new_overwrites_diff);
+    // BUG!!! this crashes with v1.2.1 running and opening/closing v1.1.5!!!!!
+    // .AddMember may rearrange underlying memory, so existing references are no longer valid
     
     vector<string> changes;
     {

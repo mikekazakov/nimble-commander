@@ -1147,4 +1147,21 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     return [self.controller performDragOperation:_dragging forPanelItem:_sorted_index];
 }
 
+- (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view
+                                  andDelegate:(id<NSPopoverDelegate>)_delegate
+{
+    const auto bounds = self.bounds;
+    NSPopover *popover = [NSPopover new];
+    popover.contentViewController = _view;
+    popover.behavior = NSPopoverBehaviorTransient;
+    popover.delegate = _delegate;
+    [popover showRelativeToRect:NSMakeRect(0,
+                                           bounds.size.height - self.headerBarHeight,
+                                           bounds.size.width,
+                                           bounds.size.height)
+                         ofView:self
+                  preferredEdge:NSMinYEdge];
+    return popover;
+}
+
 @end

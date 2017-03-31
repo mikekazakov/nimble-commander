@@ -162,6 +162,7 @@ namespace panel
 @property (nonatomic, readonly) const string& lastNativeDirectoryPath;
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
+@property (nonatomic, readonly) int vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
@@ -173,6 +174,10 @@ namespace panel
 - (void) forceRefreshPanel; // user pressed cmd+r by default
 //- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
+
+
+- (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task;
+
 
 /**
  * Will copy view options and sorting options.

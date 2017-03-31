@@ -10,7 +10,9 @@
 #include <sys/dirent.h>
 #include <sys/stat.h>
 #include <sys/xattr.h>
+#include <sys/param.h>
 #include <dirent.h>
+#include <ftw.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>

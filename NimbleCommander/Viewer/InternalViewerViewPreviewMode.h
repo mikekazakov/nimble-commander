@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Quartz/Quartz.h>
 #include "BigFileViewProtocol.h"
 
 class InternalViewerViewPreviewMode : public BigFileViewImpl

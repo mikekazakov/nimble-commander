@@ -76,6 +76,13 @@ struct PanelViewLayout;
  */
 - (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count;
 
+
+/**
+ * Configure and bring the popover to the screen.
+ */
+- (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view
+                                  andDelegate:(id<NSPopoverDelegate>)_delegate;
+
 /**
  * return a number of item at specified point.
  * options currently unsupported.

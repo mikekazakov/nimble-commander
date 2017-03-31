@@ -6,6 +6,11 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/xattr.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #include "FileSysAttrChangeOperation.h"
 #include "FileSysAttrChangeOperationJob.h"
 

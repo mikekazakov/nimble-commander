@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sys/stat.h>
 #include <VFS/VFSHost.h>
 
 class VFSXAttrFile;

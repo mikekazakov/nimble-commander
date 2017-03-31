@@ -6,6 +6,10 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <RoutedIO/RoutedIO.h>

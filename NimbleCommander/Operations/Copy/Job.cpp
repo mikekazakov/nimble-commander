@@ -7,6 +7,10 @@
 //
 
 #include <sys/xattr.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
 #include <Utility/PathManip.h>

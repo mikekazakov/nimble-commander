@@ -157,6 +157,7 @@ static void HeatUpConfigValues()
 @synthesize lastNativeDirectoryPath = m_LastNativeDirectory;
 @synthesize history = m_History;
 @synthesize layoutIndex = m_ViewLayoutIndex;
+@synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
 - (id) init
 {
@@ -1081,6 +1082,15 @@ static bool RouteKeyboardInputIntoTerminal()
             [m_View setLayout:*m_AssignedViewLayout]; // ???
         }
     }
+}
+
+- (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task
+{
+    auto sq = &m_DirectoryLoadingQ;
+//    function<bool()> ccb = ;
+    m_DirectoryLoadingQ.Run([=]{
+        _task( [sq]{ return sq->IsStopped(); } );
+    });
 }
 
 @end

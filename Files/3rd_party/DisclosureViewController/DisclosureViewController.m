@@ -45,6 +45,7 @@
  
  */
 
+#import <Quartz/Quartz.h>
 #import "DisclosureViewController.h"
 //@import QuartzCore;   // for kCAMediaTimingFunctionEaseInEaseOut
 

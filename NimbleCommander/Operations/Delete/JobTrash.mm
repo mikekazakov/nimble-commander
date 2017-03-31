@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include "Job.h"
 
 int FileDeletionOperationJobNew::TrashItem(const string& _path, uint16_t _mode)

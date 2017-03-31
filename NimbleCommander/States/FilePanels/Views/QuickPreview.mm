@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <Quartz/Quartz.h>
 #include "QuickPreview.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 

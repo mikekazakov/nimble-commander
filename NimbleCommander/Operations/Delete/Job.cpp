@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>

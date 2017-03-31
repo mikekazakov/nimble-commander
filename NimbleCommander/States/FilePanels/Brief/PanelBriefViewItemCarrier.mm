@@ -131,9 +131,11 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     }
     
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
+    /* using additional 0.5 width to eliminame situations, when drawWithRect trims string due to,
+    rounding/rendering side effects */
     const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
                                       m_LayoutConstants.font_baseline,
-                                      text_segment_rect.size.width,
+                                      text_segment_rect.size.width + 0.5,
                                       0);
     [m_AttrString drawWithRect:text_rect
                        options:0];

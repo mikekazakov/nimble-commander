@@ -97,10 +97,16 @@ public:
                            int _flags,
                            VFSCancelChecker _cancel_checker);
     
+    // TODO: rename it to FetchDirectoryListing
     virtual int FetchFlexibleListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
                                       int _flags,
                                       VFSCancelChecker _cancel_checker);
+    
+    virtual int FetchSingleItemListing(const char *_path_to_item,
+                                       shared_ptr<VFSListing> &_target,
+                                       int _flags,
+                                       const VFSCancelChecker &_cancel_checker = nullptr);
     
     int FetchFlexibleListingItems(const string& _directory_path,
                                   const vector<string> &_filenames,

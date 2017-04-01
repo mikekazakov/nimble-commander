@@ -12,36 +12,22 @@ namespace panel::actions {
 // perhaps it would be good to add support of URLS at least.
 // or even with custom NC's structures used in drag&drop system
 
-static vector<VFSListingItem> FetchVFSListingsItemsFromDirectories(
-    const unordered_map<string, vector<string>>& _input, VFSHost& _host )
+static vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input )
 {
-    vector<VFSListingItem> source_items;
-    for( auto &dir: _input ) {
-        vector<VFSListingItem> items_for_dir;
-        if( _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr) ==
-            VFSError::Ok )
-            move( begin(items_for_dir), end(items_for_dir), back_inserter(source_items) );
-    }
-    return source_items;
-}
-
-static unordered_map<string, vector<string>> LayoutPathsByContainingDirectories( NSArray *_input ) // array of NSStrings
-{
-    if(!_input)
-        return {};
-    unordered_map<string, vector<string>> filenames; // root directory to containing filenames map
-    for( NSString *ns_filename in _input ) {
-        if( !objc_cast<NSString>(ns_filename) )
+    vector<VFSListingItem> result;
+    auto &host = VFSNativeHost::SharedHost();
+    for( NSString *ns_filepath in _input ) {
+        if( !objc_cast<NSString>(ns_filepath) )
             continue; // guard against malformed input
-        // filenames are without trailing slashes for dirs here
-        char dir[MAXPATHLEN], fn[MAXPATHLEN];
-        if( !GetDirectoryContainingItemFromPath([ns_filename fileSystemRepresentation], dir) )
-            continue;
-        if( !GetFilenameFromPath([ns_filename fileSystemRepresentation], fn) )
-            continue;
-        filenames[dir].push_back(fn);
+        
+        if( const char *filepath = ns_filepath.fileSystemRepresentation ) {
+            VFSListingPtr listing;
+            int rc = host->FetchSingleItemListing( filepath, listing, 0, nullptr );
+            if( rc == 0 )
+                result.emplace_back( listing->Item(0) );
+        }
     }
-    return filenames;
+    return result;
 }
 
 static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
@@ -54,12 +40,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     
         // currently fetching listings synchronously, which is BAAAD
         // (but we're on native vfs, at least for now)
-        auto items = FetchVFSListingsItemsFromDirectories(
-            LayoutPathsByContainingDirectories(filepaths),
-            *VFSNativeHost::SharedHost()
-            );
-        
-        return items;
+        return FetchVFSListingsItemsFromPaths(filepaths);
     }
     // TODO: reading from URL pasteboard?
     return {};

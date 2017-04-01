@@ -26,7 +26,7 @@ struct FindFilesSheetControllerFoundItem
 
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
-@property function<void(const map<VFSPath, vector<string>>&_dir_to_filenames)> onPanelize;
+@property function<void(const vector<VFSPath> &_filepaths)> onPanelize;
 - (FindFilesSheetControllerFoundItem*) selectedItem; // may be nullptr
 
 @end

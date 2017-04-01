@@ -24,6 +24,8 @@ static bool BasicDirectoryCheck(const string& _str)
 
 static void Validate(const VFSListingInput& _source)
 {
+    int items_no = (int)_source.filenames.size();
+
     if( _source.hosts.mode() == variable_container<>::type::sparse )
         throw logic_error("VFSListingInput validation failed: hosts can't be sparse");
     
@@ -42,19 +44,18 @@ static void Validate(const VFSListingInput& _source)
         if( s.empty() )
             throw logic_error("VFSListingInput validation failed: filename can't be empty");
     
-    if( _source.display_filenames.mode() == variable_container<>::type::common )
+    if( _source.display_filenames.mode() == variable_container<>::type::common && items_no > 1 )
         throw logic_error("VFSListingInput validation failed: dispay_filenames can't be common");
 
-    if( _source.sizes.mode() == variable_container<>::type::common )
+    if( _source.sizes.mode() == variable_container<>::type::common && items_no > 1 )
         throw logic_error("VFSListingInput validation failed: sizes can't be common");
 
-    if( _source.inodes.mode() == variable_container<>::type::common )
+    if( _source.inodes.mode() == variable_container<>::type::common && items_no > 1 )
         throw logic_error("VFSListingInput validation failed: inodes can't be common");
 
-    if( _source.symlinks.mode() == variable_container<>::type::common )
+    if( _source.symlinks.mode() == variable_container<>::type::common && items_no > 1 )
         throw logic_error("VFSListingInput validation failed: symlinks can't be common");
     
-    unsigned items_no = (unsigned)_source.filenames.size();
     if(_source.hosts.mode() == variable_container<>::type::dense &&
        _source.hosts.size() != items_no )
         throw logic_error("VFSListingInput validation failed: hosts amount is inconsistent");
@@ -117,6 +118,62 @@ shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
     l->m_CreationTime = time(0);
     
     return l;
+}
+
+VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings)
+{
+    VFSListingInput result;
+    result.hosts.reset( variable_container<>::type::dense );
+    result.directories.reset( variable_container<>::type::dense );
+    result.display_filenames.reset( variable_container<>::type::sparse );
+    result.sizes.reset( variable_container<>::type::sparse );
+    result.inodes.reset( variable_container<>::type::sparse );
+    result.atimes.reset( variable_container<>::type::sparse );
+    result.mtimes.reset( variable_container<>::type::sparse );
+    result.ctimes.reset( variable_container<>::type::sparse );
+    result.btimes.reset( variable_container<>::type::sparse );
+    result.uids.reset( variable_container<>::type::sparse );
+    result.gids.reset( variable_container<>::type::sparse );
+    result.unix_flags.reset( variable_container<>::type::sparse );
+    result.symlinks.reset( variable_container<>::type::sparse );
+ 
+    unsigned count = 0;
+    for( auto &listing_ptr: _listings ) {
+        auto &listing = *listing_ptr;
+        for( int i = 0, e = (int)listing.Count(); i != e; ++i ) {
+            result.filenames.emplace_back ( listing.Filename(i) );
+            result.unix_modes.emplace_back( listing.UnixMode(i) );
+            result.unix_types.emplace_back( listing.UnixType(i) );
+            result.hosts.insert      ( count, listing.Host(i) );
+            result.directories.insert( count, listing.Directory(i) );
+            if( listing.HasDisplayFilename(i) )
+                result.display_filenames.insert( count, listing.DisplayFilename(i) );
+            if( listing.HasSize(i) )
+                result.sizes.insert( count, listing.Size(i) );
+            if( listing.HasInode(i) )
+                result.inodes.insert( count, listing.Inode(i) );
+            if( listing.HasATime(i) )
+                result.atimes.insert( count, listing.ATime(i) );
+            if( listing.HasBTime(i) )
+                result.btimes.insert( count, listing.BTime(i) );
+            if( listing.HasCTime(i) )
+                result.ctimes.insert( count, listing.CTime(i) );
+            if( listing.HasMTime(i) )
+                result.mtimes.insert( count, listing.MTime(i) );
+            if( listing.HasUID(i) )
+                result.uids.insert( count, listing.UID(i) );
+            if( listing.HasGID(i) )
+                result.gids.insert( count, listing.GID(i) );
+            if( listing.HasUnixFlags(i) )
+                result.unix_flags.insert( count, listing.UnixFlags(i) );
+            if( listing.HasSymlink(i) )
+                result.symlinks.insert( count, listing.Symlink(i) );
+            
+            count++;
+        }
+    }
+    
+    return result;
 }
 
 VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)

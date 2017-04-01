@@ -43,56 +43,24 @@
 #include "Actions/SpotlightSearch.h"
 #include "Actions/OpenWithExternalEditor.h"
 
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const map<VFSPath, vector<string>> &_dir_to_filenames, int _fetch_flags, VFSCancelChecker _cancel_checker)
+static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
+                                                          int _fetch_flags,
+                                                          const VFSCancelChecker &_cancel_checker)
 {
-    vector<shared_ptr<VFSListing>> listings;
-    vector<vector<unsigned>> indeces;
+    vector<VFSListingPtr> listings;
     
-    for(auto &i: _dir_to_filenames) {
-        shared_ptr<VFSListing> listing;
-        
-        if( _cancel_checker && _cancel_checker() )
-            return nullptr;
-        
-        auto &vfs_path = i.first;
-        
-        if( vfs_path.Host()->FetchFlexibleListing(vfs_path.Path().c_str(), listing, _fetch_flags, _cancel_checker) == 0) {
-            listings.emplace_back(listing);
-            indeces.emplace_back();
-            auto &ind = indeces.back();
-            
-            unordered_map<string, unsigned> listing_fn_ind;
-            for(unsigned listing_ind = 0, e = listing->Count(); listing_ind != e; ++listing_ind)
-                listing_fn_ind[ listing->Filename(listing_ind) ] = listing_ind;
-                
-                for( auto &filename: i.second ) {
-                    auto it = listing_fn_ind.find(filename);
-                    if( it != end(listing_fn_ind) )
-                        ind.emplace_back( it->second );
-                }
-        }
+    for( auto &p: _filepaths ) {
+        VFSListingPtr listing;
+        int ret = p.Host()->FetchSingleItemListing(p.Path().c_str(),
+                                                   listing,
+                                                   _fetch_flags,
+                                                   _cancel_checker);
+        if( ret == 0 )
+            listings.emplace_back( listing );
     }
     
-    if( _cancel_checker && _cancel_checker() )
-        return nullptr;
-        
-    return VFSListing::Build( VFSListing::Compose(listings, indeces) );
+    return VFSListing::Build( VFSListing::Compose(listings) );
 }
-
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths, VFSHostPtr _vfs, int _fetch_flags, VFSCancelChecker _cancel_checker)
-{
-    map<VFSPath, vector<string>> dir_to_filenames;
-    
-    for( auto &i: _file_paths ) {
-        path p(i);
-        auto dir = p.parent_path();
-        auto filename = p.filename();
-        dir_to_filenames[ VFSPath{_vfs, dir.native()} ].emplace_back( filename.native() );
-    }
-    
-    return FetchSearchResultsAsListing(dir_to_filenames, _fetch_flags, _cancel_checker);
-}
-
 
 static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
 {
@@ -680,10 +648,9 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = self.vfs;
     sheet.path = self.currentDirectoryPath;
-    sheet.onPanelize = [=](const map<VFSPath, vector<string>> &_dir_to_filenames) {
-        auto host = sheet.host;
+    sheet.onPanelize = [=](const vector<VFSPath> &_paths) {
         m_DirectoryLoadingQ.Run([=]{
-            auto l = FetchSearchResultsAsListing(_dir_to_filenames,
+            auto l = FetchSearchResultsAsListing(_paths,
                                                  m_VFSFetchingFlags,
                                                  [=]{ return m_DirectoryLoadingQ.IsStopped(); }
                                                  );

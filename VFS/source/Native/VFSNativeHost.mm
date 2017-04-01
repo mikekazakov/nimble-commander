@@ -20,10 +20,6 @@
 #include <VFS/VFSError.h>
 #include "../VFSListingInput.h"
 
-// TODO:
-// do some research about this new function:
-// int getattrlistbulk(int, void *, void *, size_t, uint64_t) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
-
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -454,16 +450,17 @@ static int ReadDirAttributesBulk(
     }
 }
 
-int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
+int VFSNativeHost::FetchFlexibleListing(const char *_path,
                                     shared_ptr<VFSListing> &_target,
                                     int _flags,
                                     VFSCancelChecker _cancel_checker)
 {
-//    MachTimeBenchmark mtb;
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
     
     const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) &&
                                      strcmp(_path, "/") != 0;
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // don't need it
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     const bool is_native_io = !io.isrouted();
     const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
@@ -610,12 +607,81 @@ int VFSNativeHost::FetchFlexibleListingBulk(const char *_path,
     return 0;
 }
 
-int VFSNativeHost::FetchFlexibleListing(const char *_path,
-                                        shared_ptr<VFSListing> &_target,
-                                        int _flags,
-                                        VFSCancelChecker _cancel_checker)
+int VFSNativeHost::FetchSingleItemListing(const char *_path,
+                                          shared_ptr<VFSListing> &_target,
+                                          int _flags,
+                                          const VFSCancelChecker &_cancel_checker)
 {
-    return FetchFlexibleListingBulk(_path, _target, _flags, _cancel_checker);
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    if( _cancel_checker && _cancel_checker() )
+        return VFSError::Cancelled;
+    
+    char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
+    strcpy(path, _path);
+    
+    if( !EliminateTrailingSlashInPath(path) ||
+        !GetDirectoryContainingItemFromPath(path, directory) ||
+        !GetFilenameFromPath(path, filename) )
+        return VFSError::InvalidCall;
+    
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+
+    VFSListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = directory;
+    listing_source.inodes.reset( variable_container<>::type::common );
+    listing_source.atimes.reset( variable_container<>::type::common );
+    listing_source.mtimes.reset( variable_container<>::type::common );
+    listing_source.ctimes.reset( variable_container<>::type::common );
+    listing_source.btimes.reset( variable_container<>::type::common );
+    listing_source.add_times.reset( variable_container<>::type::common );
+    listing_source.unix_flags.reset( variable_container<>::type::common );
+    listing_source.uids.reset( variable_container<>::type::common );
+    listing_source.gids.reset( variable_container<>::type::common );
+    listing_source.sizes.reset( variable_container<>::type::common );
+    listing_source.symlinks.reset( variable_container<>::type::sparse );
+    listing_source.display_filenames.reset( variable_container<>::type::sparse );
+
+    listing_source.unix_modes.resize(1);
+    listing_source.unix_types.resize(1);
+    listing_source.filenames.emplace_back( filename );
+
+    auto cb_param = [&](const EntryAttributesCallbackParams &_params){
+        listing_source.inodes[0]        = _params.inode;
+        listing_source.unix_types[0]    = IFTODT(_params.mode);
+        listing_source.atimes[0]        = _params.acc_time;
+        listing_source.mtimes[0]        = _params.mod_time;
+        listing_source.ctimes[0]        = _params.chg_time;
+        listing_source.btimes[0]        = _params.crt_time;
+        listing_source.unix_modes[0]    = _params.mode;
+        listing_source.unix_flags[0]    = _params.flags;
+        listing_source.uids[0]          = _params.uid;
+        listing_source.gids[0]          = _params.gid;
+        listing_source.sizes[0]         = _params.size;
+        if( _params.add_time >= 0 )
+            listing_source.add_times.insert(0, _params.add_time );
+        
+        if( _flags & VFSFlags::F_LoadDisplayNames )
+            if( S_ISDIR(listing_source.unix_modes[0]) &&
+               !listing_source.filenames[0].empty() &&
+               !strisdotdot(listing_source.filenames[0]) ) {
+                static auto &dnc = DisplayNamesCache::Instance();
+                if( auto display_name = dnc.DisplayName( _params.inode,
+                                                        _params.dev,
+                                                        path) )
+                    listing_source.display_filenames.insert(0, display_name);
+            }
+    };
+    
+    int ret = ReadSingleEntryAttributesByPath( io, _path, cb_param );
+    if( ret != 0 )
+        return VFSError::FromErrno(ret);
+    
+    _target = VFSListing::Build( move(listing_source) );
+    
+    return 0;
 }
 
 int VFSNativeHost::CreateFile(const char* _path,

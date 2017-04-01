@@ -27,6 +27,7 @@ public:
      * it will contain only sparse-based variable containers.
      * will throw on errors
      */
+    static VFSListingInput Compose(const vector<shared_ptr<VFSListing>> &_listings);
     static VFSListingInput Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces);
     
     

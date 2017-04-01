@@ -10,7 +10,7 @@
 
 #include <VFS/VFSHost.h>
 
-class VFSNativeHost : public VFSHost
+class VFSNativeHost final : public VFSHost
 {
 public:
     VFSNativeHost();
@@ -30,6 +30,11 @@ public:
                                      shared_ptr<VFSListing> &_target,
                                      int _flags,
                                      VFSCancelChecker _cancel_checker) override;
+    
+    virtual int FetchSingleItemListing(const char *_path_to_item,
+                                       shared_ptr<VFSListing> &_target,
+                                       int _flags,
+                                       const VFSCancelChecker &_cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
 
@@ -79,6 +84,5 @@ public:
     static const shared_ptr<VFSNativeHost> &SharedHost();
     virtual bool IsNativeFS() const noexcept override;
 private:
-    int FetchFlexibleListingBulk(const char *_path, shared_ptr<VFSListing> &_target, int _flags, VFSCancelChecker _cancel_checker);
     
 };

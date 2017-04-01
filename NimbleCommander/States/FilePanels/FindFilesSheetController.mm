@@ -231,7 +231,7 @@ private:
     NSTimer                    *m_LookingInPathUpdateTimer;
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
-    function<void(const map<VFSPath, vector<string>>&_dir_to_filenames)> m_OnPanelize;
+    function<void(const vector<VFSPath> &_filepaths)> m_OnPanelize;
 }
 
 @synthesize FoundItems = m_FoundItems;
@@ -692,17 +692,16 @@ private:
 
 - (IBAction)OnPanelize:(id)sender
 {
-    map<VFSPath, vector<string>> results; // vfs dir path->filenames
-    for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
-        auto d = item.data;
-        results[VFSPath{d->host,d->dir_path}].emplace_back( d->filename );
-    }
+    if( m_OnPanelize ) {
+        vector<VFSPath> results;
+        for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
+            auto d = item.data;
+            results.emplace_back( d->host, d->full_filename );
+        }
 
-    if( results.empty() )
-        return;
-    
-    if( m_OnPanelize )
-        m_OnPanelize( results );
+        if( !results.empty() )
+            m_OnPanelize( results );
+    }
     
     [self OnClose:self];
 }

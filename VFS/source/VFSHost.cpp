@@ -439,6 +439,15 @@ int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_ta
     return VFSError::NotSupported;
 }
 
+int VFSHost::FetchSingleItemListing(const char *_path_to_item,
+                                    shared_ptr<VFSListing> &_target,
+                                    int _flags,
+                                    const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
+}
+
+
 int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                                        const vector<string> &_filenames,
                                        int _flags,

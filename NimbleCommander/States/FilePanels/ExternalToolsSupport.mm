@@ -85,7 +85,9 @@ static pair<any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_
         if( r.location == _range.location ) {
             // we're right at % symbol, let's parse a placeholder
             bool minus_sign = false;
-            auto produce_location = [&]{
+            // the following lambda was changed to std::funciton due to bug in clang-802.0.38,
+            // which crashes on this lambda lookup.
+            function<ExternalToolsParameters::Location()> produce_location = [=]{
                 if( !_invert_flag ) {
                     if( !minus_sign )
                         return ExternalToolsParameters::Location::Source;

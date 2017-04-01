@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include <VFS/VFS.h>
 #import "MainWindowFilePanelState.h"
-#import "vfs/VFS.h"
 
 @interface MainWindowFilePanelState (ContextMenu)
 

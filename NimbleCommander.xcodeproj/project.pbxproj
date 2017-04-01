@@ -65,6 +65,19 @@
 		CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
 		CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
 		CF1E3D2D1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
+		CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD8CD9C1E823CAC00E4DC53 /* NetFS.framework */; };
+		CF1FBF221E8F57CC00D3569C /* FavoritesMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */; };
+		CF1FBF231E8F57CC00D3569C /* FavoritesMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */; };
+		CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */; };
+		CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
+		CF1FBF261E8F57D000D3569C /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
+		CF1FBF271E8F57D000D3569C /* FavoriteComposing.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD501E7A31A100E4DC53 /* FavoriteComposing.mm */; };
+		CF1FBF281E8F57E400D3569C /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
+		CF1FBF291E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
+		CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
+		CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
+		CF1FBF2C1E8F57E900D3569C /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
+		CF1FBF2D1E8F57EA00D3569C /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
@@ -2002,6 +2015,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */,
 				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
 				CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */,
@@ -3810,6 +3824,7 @@
 				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
 				CFD7262B1E42E0BF00603077 /* QLThumbnailsCache.mm in Sources */,
 				CFD8CDBA1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
+				CF1FBF231E8F57CC00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CFD726AB1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFD726C61E42E29B00603077 /* Layout.mm in Sources */,
 				CFD7261A1E42E09400603077 /* Theme.mm in Sources */,
@@ -3847,6 +3862,7 @@
 				CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */,
 				CF50C4051C0ADE1A009DF611 /* CreateDirectoryOperationJob.mm in Sources */,
+				CF1FBF291E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CFD6DD191D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFD726591E42E1B300603077 /* MainWindow.mm in Sources */,
@@ -3923,6 +3939,7 @@
 				CFD726EB1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
 				CFD727181E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
+				CF1FBF261E8F57D000D3569C /* FavoriteComposing.mm in Sources */,
 				CF50C3FD1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */,
 				CFD8CDB41E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CFD726331E42E0CC00603077 /* Common.mm in Sources */,
@@ -3947,6 +3964,7 @@
 				CF6D9C53196678010077B146 /* GoToFolderSheetController.mm in Sources */,
 				CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF04DDF71E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CF1FBF2C1E8F57E900D3569C /* AddToFavorites.mm in Sources */,
 				CFD726DC1E42E2BF00603077 /* Layout.mm in Sources */,
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CFD726C31E42E29200603077 /* PanelViewFooter.mm in Sources */,
@@ -4094,6 +4112,7 @@
 				CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD7271C1E42E32D00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFD7261B1E42E09500603077 /* Theme.mm in Sources */,
+				CF1FBF271E8F57D000D3569C /* FavoriteComposing.mm in Sources */,
 				CFD726FE1E42E2F400603077 /* TabBarStyle.mm in Sources */,
 				CFD726A51E42E24500603077 /* PanelView.mm in Sources */,
 				CFD726CA1E42E2A200603077 /* PanelBriefView.mm in Sources */,
@@ -4122,6 +4141,7 @@
 				CFD726CD1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CFD727131E42E31E00603077 /* ConnectionsMenuDelegate.mm in Sources */,
 				CFD726781E42E1FF00603077 /* PanelAux.mm in Sources */,
+				CF1FBF2D1E8F57EA00D3569C /* AddToFavorites.mm in Sources */,
 				CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFA539D61D433E2A00C562A7 /* OperationsSummaryViewController.mm in Sources */,
 				CFA539D81D433E2A00C562A7 /* Operation.mm in Sources */,
@@ -4192,6 +4212,7 @@
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726421E42E10300603077 /* OrthodoxMonospace.mm in Sources */,
+				CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CFD7267A1E42E20300603077 /* PanelController.mm in Sources */,
 				CF04DDF61E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CFD7271F1E42E33000603077 /* MainWindowTerminalState.mm in Sources */,
@@ -4204,6 +4225,7 @@
 				CFD727341E42E35000603077 /* TermTask.cpp in Sources */,
 				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
 				CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */,
+				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CFD727011E42E2F900603077 /* MainWndGoToButton.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
@@ -4450,6 +4472,7 @@
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */,
+				CF1FBF281E8F57E400D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CF9069781BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CFD7271D1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */,
@@ -4495,6 +4518,7 @@
 				CFD726A61E42E24800603077 /* PanelViewPresentationSettings.mm in Sources */,
 				CFD726581E42E1B300603077 /* MainWindow.mm in Sources */,
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
+				CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */,
 				CFD8CD3E1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
@@ -4537,6 +4561,7 @@
 				CFD726FC1E42E2F300603077 /* TabBarStyle.mm in Sources */,
 				CFD726CE1E42E2A800603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CFD726381E42E0D800603077 /* LSUrls.mm in Sources */,
+				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFD8CDD91E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFD7272F1E42E34A00603077 /* TermSingleTask.mm in Sources */,
 				CFE9DDFD1BE1C47C007BBCD3 /* DisclosureViewController.m in Sources */,
@@ -4616,6 +4641,7 @@
 				CFD7272C1E42E34600603077 /* TermShellTask.cpp in Sources */,
 				CFD726B61E42E28100603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CF876D3D1D51E0AF009C0CCE /* BigFileViewText.mm in Sources */,
+				CF1FBF221E8F57CC00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,

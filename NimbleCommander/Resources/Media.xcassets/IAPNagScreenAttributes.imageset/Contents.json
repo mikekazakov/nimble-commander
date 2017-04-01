@@ -1,17 +1,14 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "filename" : "IAPNagScreenAttributes.png",
+      "idiom" : "mac",
+      "filename" : "Attributes_editor_52x52.png",
       "scale" : "1x"
     },
     {
-      "idiom" : "universal",
+      "idiom" : "mac",
+      "filename" : "Attributes_editor_52x52_x2.png",
       "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
     }
   ],
   "info" : {

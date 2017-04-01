@@ -2703,23 +2703,23 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
-				CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */,
-				CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */,
-				CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */,
+				CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */,
+				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
+				CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */,
+				CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */,
 				CFDAC2391DFBDEBA0039A104 /* AppDelegateCPP.h */,
 				CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */,
 				CFDAC2341DFBDE560039A104 /* Application.h */,
 				CFDAC2351DFBDE560039A104 /* Application.mm */,
-				CFDAC2321DFBDE2B0039A104 /* main.cpp */,
 				CFDAC22D1DFBDBCB0039A104 /* Config.cpp */,
 				CFDAC22E1DFBDBCB0039A104 /* Config.h */,
 				CFDAC22F1DFBDBCB0039A104 /* Config.mm */,
-				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
-				CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */,
-				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
+				CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */,
+				CFDAC2321DFBDE2B0039A104 /* main.cpp */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
+				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 			);
 			name = Bootstrap;
 			sourceTree = "<group>";

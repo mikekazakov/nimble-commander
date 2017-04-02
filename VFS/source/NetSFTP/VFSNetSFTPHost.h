@@ -85,7 +85,9 @@ public:
     int GetConnection(unique_ptr<Connection> &_t);
     void ReturnConnection(unique_ptr<Connection> _t);
     
-    VFS_DECLARE_SHARED_PTR(VFSNetSFTPHost);
+    shared_ptr<const VFSNetSFTPHost> SharedPtr() const {return static_pointer_cast<const VFSNetSFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<VFSNetSFTPHost> SharedPtr() {return static_pointer_cast<VFSNetSFTPHost>(VFSHost::SharedPtr());}
+    
 private:
     struct AutoConnectionReturn;
     

@@ -86,7 +86,9 @@ public:
     unique_ptr<VFSArchiveUnRARSeekCache> SeekCache(uint32_t _requested_item);
     
     
-    VFS_DECLARE_SHARED_PTR(VFSArchiveUnRARHost);
+    shared_ptr<const VFSArchiveUnRARHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
+    shared_ptr<VFSArchiveUnRARHost> SharedPtr() {return static_pointer_cast<VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
+    
 private:
     int DoInit(); // flags will be added later
     

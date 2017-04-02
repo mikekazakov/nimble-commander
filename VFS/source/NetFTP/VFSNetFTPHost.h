@@ -79,7 +79,9 @@ public:
     
     inline VFSNetFTP::Cache &Cache() const { return *m_Cache.get(); };
     
-    VFS_DECLARE_SHARED_PTR(VFSNetFTPHost);
+    shared_ptr<const VFSNetFTPHost> SharedPtr() const {return static_pointer_cast<const VFSNetFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<VFSNetFTPHost> SharedPtr() {return static_pointer_cast<VFSNetFTPHost>(VFSHost::SharedPtr());}
+    
 private:
     int DoInit();
     int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,

@@ -21,6 +21,8 @@
 		CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847261E41CC49008B7C9F /* libssl.a */; };
 		CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */; };
 		CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472F1E41CFB7008B7C9F /* libarchive.a */; };
+		CF1FBF3A1E909AC400D3569C /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
+		CF1FBF3B1E909AC400D3569C /* Fetching.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1FBF391E909AC400D3569C /* Fetching.h */; };
 		CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* ArcLA.h */; };
 		CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* ArcUnRAR.h */; };
 		CF69CFF61DA227E400992B84 /* Native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* Native.h */; };
@@ -139,6 +141,8 @@
 		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
 		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
+		CF1FBF381E909AC400D3569C /* Fetching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fetching.cpp; path = source/Native/Fetching.cpp; sourceTree = "<group>"; };
+		CF1FBF391E909AC400D3569C /* Fetching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fetching.h; path = source/Native/Fetching.h; sourceTree = "<group>"; };
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
@@ -388,6 +392,8 @@
 		CF69D0221DA2304B00992B84 /* Native */ = {
 			isa = PBXGroup;
 			children = (
+				CF1FBF381E909AC400D3569C /* Fetching.cpp */,
+				CF1FBF391E909AC400D3569C /* Fetching.h */,
 				CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */,
 				CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */,
 				CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */,
@@ -514,6 +520,7 @@
 				CF69CFFE1DA227E400992B84 /* VFSDeclarations.h in Headers */,
 				CF69D02C1DA2305A00992B84 /* VFSNativeFile.h in Headers */,
 				CF69D0331DA231EA00992B84 /* xattr.h in Headers */,
+				CF1FBF3B1E909AC400D3569C /* Fetching.h in Headers */,
 				CF69D00B1DA228C800992B84 /* VFS-prefix.pch in Headers */,
 				CF69D02D1DA2305A00992B84 /* VFSNativeHost.h in Headers */,
 				CF69D04D1DA232EF00992B84 /* VFSNetSFTPFile.h in Headers */,
@@ -652,6 +659,7 @@
 				CF69D03F1DA2324100992B84 /* VFSNetFTPCache.mm in Sources */,
 				CF69D06A1DA2344A00992B84 /* VFSArchiveUnRARHost.cpp in Sources */,
 				CF69D0771DA2353000992B84 /* VFSPSHost.mm in Sources */,
+				CF1FBF3A1E909AC400D3569C /* Fetching.cpp in Sources */,
 				CF69D0741DA2353000992B84 /* VFSPSFile.cpp in Sources */,
 				CF69D01A1DA22BE800992B84 /* VFSError.mm in Sources */,
 				CF69D01D1DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp in Sources */,

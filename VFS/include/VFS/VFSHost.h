@@ -103,6 +103,11 @@ public:
                                       int _flags,
                                       VFSCancelChecker _cancel_checker);
     
+    /**
+     * Produce a regular listing, consisting of a single element.
+     * If there's no overriden implementaition in derived class, VFSHost will try to produce
+     * this listing with Stat().
+     */
     virtual int FetchSingleItemListing(const char *_path_to_item,
                                        shared_ptr<VFSListing> &_target,
                                        int _flags,

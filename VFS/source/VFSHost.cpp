@@ -8,6 +8,7 @@
 
 #include <sys/stat.h>
 #include <Utility/PathManip.h>
+#include "VFSListingInput.h"
 #include "../include/VFS/VFSHost.h"
 
 static_assert(sizeof(VFSStat) == 128, "");
@@ -439,12 +440,73 @@ int VFSHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_ta
     return VFSError::NotSupported;
 }
 
-int VFSHost::FetchSingleItemListing(const char *_path_to_item,
+int VFSHost::FetchSingleItemListing(const char *_path,
                                     shared_ptr<VFSListing> &_target,
                                     int _flags,
                                     const VFSCancelChecker &_cancel_checker)
 {
-    return VFSError::NotSupported;
+    // as we came here - there's no special implementation in derived class,
+    // so need to try to emulate it with available methods.
+    
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    if( _cancel_checker && _cancel_checker() )
+        return VFSError::Cancelled;
+    
+    char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
+    strcpy(path, _path);
+    
+    if( !EliminateTrailingSlashInPath(path) ||
+        !GetDirectoryContainingItemFromPath(path, directory) ||
+        !GetFilenameFromPath(path, filename) )
+        return VFSError::InvalidCall;
+    
+    VFSStat lstat;
+
+    int ret = Stat(_path, lstat, VFSFlags::F_NoFollow);
+    if( ret != 0 )
+        return ret;
+    
+    VFSListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = directory;
+    listing_source.inodes.reset( variable_container<>::type::common );
+    listing_source.atimes.reset( variable_container<>::type::common );
+    listing_source.mtimes.reset( variable_container<>::type::common );
+    listing_source.ctimes.reset( variable_container<>::type::common );
+    listing_source.btimes.reset( variable_container<>::type::common );
+    listing_source.add_times.reset( variable_container<>::type::common );
+    listing_source.unix_flags.reset( variable_container<>::type::common );
+    listing_source.uids.reset( variable_container<>::type::common );
+    listing_source.gids.reset( variable_container<>::type::common );
+    listing_source.sizes.reset( variable_container<>::type::common );
+    listing_source.symlinks.reset( variable_container<>::type::sparse );
+    listing_source.display_filenames.reset( variable_container<>::type::sparse );
+    
+    listing_source.unix_modes.resize(1);
+    listing_source.unix_types.resize(1);
+    listing_source.filenames.emplace_back( filename );
+        
+    listing_source.inodes[0]        = lstat.inode;
+    listing_source.unix_types[0]    = IFTODT(lstat.mode);
+    listing_source.atimes[0]        = lstat.atime.tv_sec;
+    listing_source.mtimes[0]        = lstat.mtime.tv_sec;
+    listing_source.ctimes[0]        = lstat.ctime.tv_sec;
+    listing_source.btimes[0]        = lstat.btime.tv_sec;
+    listing_source.unix_modes[0]    = lstat.mode;
+    listing_source.unix_flags[0]    = lstat.flags;
+    listing_source.uids[0]          = lstat.uid;
+    listing_source.gids[0]          = lstat.gid;
+    listing_source.sizes[0]         = lstat.size;
+
+    
+    // SYMLINKS!!!
+    
+    
+    _target = VFSListing::Build( move(listing_source) );
+    
+    return 0;
 }
 
 

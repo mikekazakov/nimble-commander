@@ -16,6 +16,18 @@ struct VFSListingInput;
 class VFSListingItem;
 class VFSWeakListingItem;
 
+/**
+ * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
+ * UnixType() must stay unfollowed, i.e. specifying that an entry is a symlink.
+ * The following fields are expected to be resolved, i.e. followed by symlink:
+ * UnixMode()
+ * UnixFlags
+ * UID()
+ * GID()
+ * Size()
+ * Symlink()
+ */
+ 
 class VFSListing : public enable_shared_from_this<VFSListing>
 {
 public:

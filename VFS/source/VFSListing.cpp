@@ -132,6 +132,7 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
     result.mtimes.reset( variable_container<>::type::sparse );
     result.ctimes.reset( variable_container<>::type::sparse );
     result.btimes.reset( variable_container<>::type::sparse );
+    result.add_times.reset( variable_container<>::type::sparse );
     result.uids.reset( variable_container<>::type::sparse );
     result.gids.reset( variable_container<>::type::sparse );
     result.unix_flags.reset( variable_container<>::type::sparse );
@@ -160,6 +161,8 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
                 result.ctimes.insert( count, listing.CTime(i) );
             if( listing.HasMTime(i) )
                 result.mtimes.insert( count, listing.MTime(i) );
+            if( listing.HasAddTime(i) )
+                result.add_times.insert( count, listing.AddTime(i) );
             if( listing.HasUID(i) )
                 result.uids.insert( count, listing.UID(i) );
             if( listing.HasGID(i) )
@@ -191,6 +194,7 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
     result.mtimes.reset( variable_container<>::type::sparse );
     result.ctimes.reset( variable_container<>::type::sparse );
     result.btimes.reset( variable_container<>::type::sparse );
+    result.add_times.reset( variable_container<>::type::sparse );
     result.uids.reset( variable_container<>::type::sparse );
     result.gids.reset( variable_container<>::type::sparse );
     result.unix_flags.reset( variable_container<>::type::sparse );
@@ -223,6 +227,8 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
                 result.ctimes.insert( count, listing.CTime(i) );
             if( listing.HasMTime(i) )
                 result.mtimes.insert( count, listing.MTime(i) );
+            if( listing.HasAddTime(i) )
+                result.add_times.insert( count, listing.AddTime(i) );                
             if( listing.HasUID(i) )
                 result.uids.insert( count, listing.UID(i) );
             if( listing.HasGID(i) )

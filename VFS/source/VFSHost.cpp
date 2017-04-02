@@ -500,15 +500,27 @@ int VFSHost::FetchSingleItemListing(const char *_path,
     listing_source.gids[0]          = lstat.gid;
     listing_source.sizes[0]         = lstat.size;
 
-    
-    // SYMLINKS!!!
-    
-    
+     if( listing_source.unix_types[0] == DT_LNK ) {
+        // read an actual link path
+        char linkpath[MAXPATHLEN];
+        if( ReadSymlink(path, linkpath, MAXPATHLEN) == 0 )
+            listing_source.symlinks.insert(0, linkpath);
+        
+        // stat the target file
+        VFSStat stat;
+        if( Stat(_path, stat, 0) == 0 ) {
+            listing_source.unix_modes[0]    = stat.mode;
+            listing_source.unix_flags[0]    = stat.flags;
+            listing_source.uids[0]          = stat.uid;;
+            listing_source.gids[0]          = stat.gid;
+            listing_source.sizes[0]         = stat.size;
+        }
+    }
+
     _target = VFSListing::Build( move(listing_source) );
     
     return 0;
 }
-
 
 int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                                        const vector<string> &_filenames,

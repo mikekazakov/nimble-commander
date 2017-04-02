@@ -247,7 +247,7 @@ int VFSNativeHost::FetchSingleItemListing(const char *_path,
     listing_source.mtimes.reset( variable_container<>::type::common );
     listing_source.ctimes.reset( variable_container<>::type::common );
     listing_source.btimes.reset( variable_container<>::type::common );
-    listing_source.add_times.reset( variable_container<>::type::common );
+    listing_source.add_times.reset( variable_container<>::type::sparse );
     listing_source.unix_flags.reset( variable_container<>::type::common );
     listing_source.uids.reset( variable_container<>::type::common );
     listing_source.gids.reset( variable_container<>::type::common );

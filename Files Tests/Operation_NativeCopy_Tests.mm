@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/stat.h>
 #include "tests_common.h"
 #include <VFS/Native.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>

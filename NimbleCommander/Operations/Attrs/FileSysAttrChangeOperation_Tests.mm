@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <XCTest/XCTest.h>
 #include <Habanero/algo.h>
 #include <VFS/Native.h>

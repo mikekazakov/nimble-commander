@@ -1,6 +1,5 @@
 #import <XCTest/XCTest.h>
-
-
+#include <sys/stat.h>
 #include <VFS/VFS.h>
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>

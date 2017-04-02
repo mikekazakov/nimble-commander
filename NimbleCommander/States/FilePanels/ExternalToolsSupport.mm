@@ -87,7 +87,7 @@ static pair<any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_
             bool minus_sign = false;
             // the following lambda was changed to std::funciton due to bug in clang-802.0.38,
             // which crashes on this lambda lookup.
-            function<ExternalToolsParameters::Location()> produce_location = [=]{
+            function<ExternalToolsParameters::Location()> produce_location = [&]{
                 if( !_invert_flag ) {
                     if( !minus_sign )
                         return ExternalToolsParameters::Location::Source;

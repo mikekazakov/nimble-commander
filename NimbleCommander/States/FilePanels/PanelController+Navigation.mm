@@ -108,12 +108,12 @@ loadPreviousState:(bool)_load_state
         }
         
         shared_ptr<VFSListing> listing;
-        c->LoadingResultCode = c->VFS->FetchFlexibleListing(c->RequestedDirectory.c_str(),
-                                                                    listing,
-                                                                    m_VFSFetchingFlags,
-                                                                    [&] {
-                                                                        return m_DirectoryLoadingQ.IsStopped();
-                                                                    });
+        c->LoadingResultCode = c->VFS->FetchDirectoryListing(c->RequestedDirectory.c_str(),
+                                                             listing,
+                                                             m_VFSFetchingFlags,
+                                                             [&] {
+                                                                 return m_DirectoryLoadingQ.IsStopped();
+                                                             });
         if( c->LoadingResultCallback )
             c->LoadingResultCallback( c->LoadingResultCode );
             

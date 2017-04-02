@@ -359,7 +359,10 @@ in_addr_t VFSNetSFTPHost::InetAddr() const
     return m_HostAddr;
 }
 
-int VFSNetSFTPHost::FetchFlexibleListing(const char *_path, shared_ptr<VFSListing> &_target, int _flags, VFSCancelChecker _cancel_checker)
+int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
+                                          shared_ptr<VFSListing> &_target,
+                                          int _flags,
+                                          const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);

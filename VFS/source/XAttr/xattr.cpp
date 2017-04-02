@@ -224,10 +224,10 @@ int VFSXAttrHost::Fetch()
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::FetchFlexibleListing(const char *_path,
-                                       shared_ptr<VFSListing> &_target,
-                                       int _flags,
-                                       VFSCancelChecker _cancel_checker)
+int VFSXAttrHost::FetchDirectoryListing(const char *_path,
+                                        shared_ptr<VFSListing> &_target,
+                                        int _flags,
+                                        const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path != string_view("/") )
         return VFSError::InvalidCall;

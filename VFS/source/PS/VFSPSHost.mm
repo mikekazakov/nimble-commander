@@ -470,10 +470,10 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     return result;
 }
 
-int VFSPSHost::FetchFlexibleListing(const char *_path,
-                                 shared_ptr<VFSListing> &_target,
-                                 int _flags,
-                                 VFSCancelChecker _cancel_checker)
+int VFSPSHost::FetchDirectoryListing(const char *_path,
+                                     shared_ptr<VFSListing> &_target,
+                                     int _flags,
+                                     const VFSCancelChecker &_cancel_checker)
 {
     EnsureUpdateRunning();
     

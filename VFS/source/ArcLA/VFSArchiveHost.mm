@@ -423,10 +423,10 @@ int VFSArchiveHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int VFSArchiveHost::FetchFlexibleListing(const char *_path,
-                                         shared_ptr<VFSListing> &_target,
-                                         int _flags,
-                                         VFSCancelChecker _cancel_checker)
+int VFSArchiveHost::FetchDirectoryListing(const char *_path,
+                                          shared_ptr<VFSListing> &_target,
+                                          int _flags,
+                                          const VFSCancelChecker &_cancel_checker)
 {
     char path[MAXPATHLEN*2];
     int res = ResolvePathIfNeeded(_path, path, _flags);

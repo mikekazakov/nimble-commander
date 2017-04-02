@@ -470,11 +470,11 @@ static void HeatUpConfigValues()
         
         m_DirectoryReLoadingQ.Run([=]{
             VFSListingPtr listing;
-            int ret = vfs->FetchFlexibleListing(dirpath.c_str(),
-                                                listing,
-                                                fetch_flags,
-                                                [&]{ return m_DirectoryReLoadingQ.IsStopped(); }
-                                                );
+            int ret = vfs->FetchDirectoryListing(dirpath.c_str(),
+                                                 listing,
+                                                 fetch_flags,
+                                                 [&]{ return m_DirectoryReLoadingQ.IsStopped(); }
+                                                 );
             if(ret >= 0)
                 dispatch_to_main_queue( [=]{
                     [self ReLoadRefreshedListing:listing];

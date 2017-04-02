@@ -257,10 +257,10 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
     auto vfs = self.panel.vfs;
     
     shared_ptr<VFSListing> listing;
-    int ret = vfs->FetchFlexibleListing(path.c_str(),
-                                        listing,
-                                        VFSFlags::F_NoDotDot,
-                                        nullptr);
+    int ret = vfs->FetchDirectoryListing(path.c_str(),
+                                         listing,
+                                         VFSFlags::F_NoDotDot,
+                                         nullptr);
     if( ret == 0 ) {
         m_LastListing = listing;
         return m_LastListing.get();

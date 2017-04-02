@@ -283,10 +283,10 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
     return &dir.first->second;
 }
 
-int VFSArchiveUnRARHost::FetchFlexibleListing(const char *_path,
-                                              shared_ptr<VFSListing> &_target,
-                                              int _flags,
-                                              VFSCancelChecker _cancel_checker)
+int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
+                                               shared_ptr<VFSListing> &_target,
+                                               int _flags,
+                                               const VFSCancelChecker &_cancel_checker)
 {
     auto dir = FindDirectory(_path);
     if(!dir)

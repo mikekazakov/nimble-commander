@@ -51,10 +51,10 @@ public:
                        VFSStatFS &_stat,
                        VFSCancelChecker _cancel_checker) override;
     
-    virtual int FetchFlexibleListing(const char *_path,
+    virtual int FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
                                      int _flags,
-                                     VFSCancelChecker _cancel_checker) override;
+                                     const VFSCancelChecker &_cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path,
                                         function<bool(const VFSDirEnt &_dirent)> _handler) override;

@@ -281,10 +281,10 @@ int VFSNetFTPHost::Stat(const char *_path,
     return VFSError::NotFound;
 }
 
-int VFSNetFTPHost::FetchFlexibleListing(const char *_path,
-                                        shared_ptr<VFSListing> &_target,
-                                        int _flags,
-                                        VFSCancelChecker _cancel_checker)
+int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
+                                         shared_ptr<VFSListing> &_target,
+                                         int _flags,
+                                         const VFSCancelChecker &_cancel_checker)
 {
     if( _flags & VFSFlags::F_ForceRefresh )
         m_Cache->MarkDirectoryDirty( _path );

@@ -12,7 +12,7 @@
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 
-class VFSNetFTPHost : public VFSHost
+class VFSNetFTPHost final : public VFSHost
 {
 public:
     VFSNetFTPHost(const string &_serv_url,
@@ -37,7 +37,7 @@ public:
                                      int _flags,
                                      const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
+    virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,
@@ -46,20 +46,19 @@ public:
     
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,
-                       VFSCancelChecker _cancel_checker) override;
+                       const VFSCancelChecker &_cancel_checker) override;
 
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker) override;
+                           const VFSCancelChecker &_cancel_checker) override;
     
     virtual int CreateDirectory(const char* _path,
                                 int _mode,
-                                VFSCancelChecker _cancel_checker
-                                ) override;
+                                const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
-    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
-    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
+    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
     virtual bool IsWriteable() const override;

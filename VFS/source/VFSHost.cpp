@@ -164,7 +164,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 VFSHost::VFSHost(const char *_junction_path,
-                 shared_ptr<VFSHost> _parent,
+                 const shared_ptr<VFSHost> &_parent,
                  const char *_fs_tag):
     m_JunctionPath(_junction_path ? _junction_path : ""),
     m_Parent(_parent),
@@ -215,14 +215,14 @@ bool VFSHost::IsWriteableAtPath(const char *_dir) const
 
 int VFSHost::CreateFile(const char* _path,
                        shared_ptr<VFSFile> &_target,
-                       VFSCancelChecker _cancel_checker)
+                       const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
 bool VFSHost::IsDirectory(const char *_path,
                           int _flags,
-                          VFSCancelChecker _cancel_checker)
+                          const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
@@ -233,7 +233,7 @@ bool VFSHost::IsDirectory(const char *_path,
 
 bool VFSHost::IsSymlink(const char *_path,
                         int _flags,
-                        VFSCancelChecker _cancel_checker)
+                        const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
@@ -245,7 +245,7 @@ bool VFSHost::IsSymlink(const char *_path,
 bool VFSHost::FindLastValidItem(const char *_orig_path,
                                char *_valid_path,
                                int _flags,
-                               VFSCancelChecker _cancel_checker)
+                               const VFSCancelChecker &_cancel_checker)
 {
     // TODO: maybe it's better to go left-to-right than right-to-left
     if(_orig_path[0] != '/') return false;
@@ -279,7 +279,7 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
 }
 
 ssize_t VFSHost::CalculateDirectorySize(const char *_path,
-                                        VFSCancelChecker _cancel_checker
+                                        const VFSCancelChecker &_cancel_checker
                                         )
 {
     if(_path == 0 || _path[0] != '/')
@@ -329,34 +329,34 @@ int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker 
     return VFSError::NotSupported;
 }
 
-int VFSHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
+int VFSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
     return VFSError::NotSupported;
 }
 
-int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
+int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
+int VFSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker)
+int VFSHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker)
+int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, VFSCancelChecker _cancel_checker)
+int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -367,7 +367,7 @@ int VFSHost::SetTimes(const char *_path,
                       struct timespec *_mod_time,
                       struct timespec *_chg_time,
                       struct timespec *_acc_time,
-                      VFSCancelChecker _cancel_checker
+                      const VFSCancelChecker &_cancel_checker
                      )
 {
     return VFSError::NotSupported;
@@ -378,12 +378,12 @@ bool VFSHost::ShouldProduceThumbnails() const
     return true;
 }
 
-int VFSHost::RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker)
+int VFSHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
+int VFSHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -405,7 +405,7 @@ VFSConfiguration VFSHost::Configuration() const
     return config;
 }
 
-bool VFSHost::Exists(const char *_path, VFSCancelChecker _cancel_checker)
+bool VFSHost::Exists(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     return Stat(_path, st, 0, _cancel_checker) == 0;
@@ -529,7 +529,7 @@ int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
                                        const vector<string> &_filenames,
                                        int _flags,
                                        vector<VFSListingItem> &_result,
-                                       VFSCancelChecker _cancel_checker)
+                                       const VFSCancelChecker &_cancel_checker)
 {
     shared_ptr<VFSListing> listing;
     int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);

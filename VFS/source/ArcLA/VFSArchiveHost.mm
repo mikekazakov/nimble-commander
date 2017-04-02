@@ -413,8 +413,8 @@ void VFSArchiveHost::InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir
 }
 
 int VFSArchiveHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> &_target,
-                       VFSCancelChecker _cancel_checker)
+                               shared_ptr<VFSFile> &_target,
+                               const VFSCancelChecker &_cancel_checker)
 {
     auto file = make_shared<VFSArchiveFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -499,7 +499,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
 
 bool VFSArchiveHost::IsDirectory(const char *_path,
                                  int _flags,
-                                 VFSCancelChecker _cancel_checker)
+                                 const VFSCancelChecker &_cancel_checker)
 {
     if(!_path) return false;
     if(_path[0] != '/') return false;
@@ -549,7 +549,7 @@ int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path,
     return VFSError::Ok;
 }
 
-int VFSArchiveHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
+int VFSArchiveHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if(_path[0] != '/')
@@ -692,7 +692,7 @@ int VFSArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
     return result_uid;
 }
 
-int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
+int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))
@@ -931,7 +931,7 @@ const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)
     return &iter->second;
 }
 
-int VFSArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker)
+int VFSArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
 {
     auto entry = FindEntry(_symlink_path);
     if(!entry)

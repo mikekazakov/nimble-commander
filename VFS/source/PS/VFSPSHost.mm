@@ -508,8 +508,8 @@ int VFSPSHost::FetchDirectoryListing(const char *_path,
 }
 
 bool VFSPSHost::IsDirectory(const char *_path,
-                         int _flags,
-                         VFSCancelChecker _cancel_checker)
+                            int _flags,
+                            const VFSCancelChecker &_cancel_checker)
 {
     if(_path == 0 ||
        strcmp(_path, "/") != 0)
@@ -518,8 +518,8 @@ bool VFSPSHost::IsDirectory(const char *_path,
 }
 
 int VFSPSHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> &_target,
-                       VFSCancelChecker _cancel_checker)
+                          shared_ptr<VFSFile> &_target,
+                          const VFSCancelChecker &_cancel_checker)
 {
     lock_guard<mutex> lock(m_Lock);
     
@@ -615,7 +615,7 @@ void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int VFSPSHost::IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler)
+int VFSPSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if(_path[0] != '/' || _path[1] != 0)
@@ -642,7 +642,7 @@ int VFSPSHost::IterateDirectoryListing(const char *_path, function<bool(const VF
     return VFSError::Ok;
 }
 
-int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
+int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     _stat.volume_name = "Processes List";
     _stat.avail_bytes = _stat.free_bytes = 0;
@@ -688,7 +688,7 @@ optional<bool> WaitForProcessToDie( int pid )
     return false;
 }
 
-int VFSPSHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
+int VFSPSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if(_path == nullptr)
         return VFSError::InvalidCall;

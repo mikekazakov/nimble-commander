@@ -39,9 +39,10 @@ class VFSHost : public enable_shared_from_this<VFSHost>
 public:
     static const char *Tag;    
     
-    VFSHost(const char *_junction_path,         // junction path and parent can be nil
-            shared_ptr<VFSHost> _parent,
-            const char *_fs_tag);
+    /**
+     * junction path and parent can be nil
+     */
+    VFSHost(const char *_junction_path, const shared_ptr<VFSHost> &_parent, const char *_fs_tag);
     virtual ~VFSHost();
     
     virtual bool IsWriteable() const;
@@ -79,7 +80,7 @@ public:
     
     virtual int StatFS(const char *_path, // path may be a file path, or directory path
                        VFSStatFS &_stat,
-                       VFSCancelChecker _cancel_checker);
+                       const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFDIR.
@@ -87,7 +88,7 @@ public:
      */
     virtual bool IsDirectory(const char *_path,
                              int _flags,
-                             VFSCancelChecker _cancel_checker = nullptr);
+                             const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Default implementation calls Stat() and then returns (st.mode & S_IFMT) == S_IFLNK.
@@ -95,7 +96,7 @@ public:
      */
     virtual bool IsSymlink(const char *_path,
                            int _flags,
-                           VFSCancelChecker _cancel_checker);
+                           const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Produce a regular directory listing.
@@ -119,29 +120,26 @@ public:
                                   const vector<string> &_filenames,
                                   int _flags,
                                   vector<VFSListingItem> &_result,
-                                  VFSCancelChecker _cancel_checker);
+                                  const VFSCancelChecker &_cancel_checker);
     
     /**
      * IterateDirectoryListing will skip "." and ".." entries if they are present.
      * Do not rely on it to build a directory listing, it's for contents iteration.
+     * _handler: return true to allow further iteration, false to stop it.
      */
-    virtual int IterateDirectoryListing(
-                                    const char *_path,
-                                    function<bool(const VFSDirEnt &_dirent)> _handler // return true for allowing iteration, false to stop it
-                                    );
+    virtual int IterateDirectoryListing(const char *_path,
+                                        const function<bool(const VFSDirEnt &_dirent)> &_handler);
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker = nullptr);
+                           const VFSCancelChecker &_cancel_checker = nullptr);
     
     virtual int CreateDirectory(const char* _path,
                                 int _mode,
-                                VFSCancelChecker _cancel_checker
-                                );
+                                const VFSCancelChecker &_cancel_checker = nullptr);
     
     virtual ssize_t CalculateDirectorySize(const char *_path,
-                                           VFSCancelChecker _cancel_checker
-                                           );
+                                           const VFSCancelChecker &_cancel_checker = nullptr);
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,
@@ -150,35 +148,34 @@ public:
     
     /** Actually calls Stat and returns true if return was Ok. */
     virtual bool Exists(const char *_path,
-                        VFSCancelChecker _cancel_checker = nullptr
-                        );
+                        const VFSCancelChecker &_cancel_checker = nullptr);
     
     /** Return zero upon succes, negative value on error. */
     virtual int ReadSymlink(const char *_symlink_path,
                             char *_buffer,
                             size_t _buffer_size,
-                            VFSCancelChecker _cancel_checker = nullptr);
+                            const VFSCancelChecker &_cancel_checker = nullptr);
 
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,
                               const char *_symlink_value,
-                              VFSCancelChecker _cancel_checker);
+                              const VFSCancelChecker &_cancel_checker);
     
     /**
      * Unlinks(deletes) a file. Dont follow last symlink, in case of.
      * Don't delete directories, similar to POSIX.
      */
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
+    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
      * Deletes an empty directory. Will fail on non-empty ones.
      */
-    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker = nullptr);
+    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Change the name of a file.
      */
-    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker = nullptr);
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
@@ -190,8 +187,7 @@ public:
                          struct timespec *_mod_time,
                          struct timespec *_chg_time,
                          struct timespec *_acc_time,
-                         VFSCancelChecker _cancel_checker
-                         );
+                         const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * DO NOT USE IT. Currently for experimental purposes only.
@@ -225,7 +221,7 @@ public:
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,
                                    int _flags,
-                                   VFSCancelChecker _cancel_checker);
+                                   const VFSCancelChecker &_cancel_checker = nullptr);
 
     static const shared_ptr<VFSHost> &DummyHost();
     

@@ -330,7 +330,7 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
 }
 
 int VFSArchiveUnRARHost::IterateDirectoryListing(const char *_path,
-                                                 function<bool(const VFSDirEnt &_dirent)> _handler)
+                                                 const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     auto dir = FindDirectory(_path);
     if(!dir)
@@ -507,7 +507,7 @@ void VFSArchiveUnRARHost::CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _
 
 int VFSArchiveUnRARHost::CreateFile(const char* _path,
                                     shared_ptr<VFSFile> &_target,
-                                    VFSCancelChecker _cancel_checker)
+                                    const VFSCancelChecker &_cancel_checker)
 {
     auto file = make_shared<VFSArchiveUnRARFile>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
@@ -529,7 +529,7 @@ uint32_t VFSArchiveUnRARHost::LastItemUUID() const
     return m_LastItemUID;
 };
 
-int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker)
+int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))

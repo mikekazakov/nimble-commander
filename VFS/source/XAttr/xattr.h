@@ -20,7 +20,7 @@ public:
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker) override;
+                           const VFSCancelChecker &_cancel_checker) override;
 
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
@@ -29,8 +29,8 @@ public:
     
     virtual int Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker) override;
     
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
-    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
+    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
 

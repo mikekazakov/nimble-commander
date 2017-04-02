@@ -16,7 +16,7 @@ struct VFSArchiveDir;
 struct VFSArchiveDirEntry;
 struct VFSArchiveState;
 
-class VFSArchiveHost : public VFSHost
+class VFSArchiveHost final : public VFSHost
 {
 public:
     VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
@@ -32,23 +32,23 @@ public:
     
     virtual bool IsDirectory(const char *_path,
                              int _flags,
-                             VFSCancelChecker _cancel_checker) override;
+                             const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker) override;
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
     virtual int Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker) override;
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker) override;
+                           const VFSCancelChecker &_cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
                                       int _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
+    virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
-    virtual int ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, VFSCancelChecker _cancel_checker) override;
+    virtual int ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
 

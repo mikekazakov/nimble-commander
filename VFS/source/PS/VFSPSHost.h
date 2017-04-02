@@ -13,7 +13,7 @@
 #include <VFS/VFSFile.h>
 
 
-class VFSPSHost : public VFSHost
+class VFSPSHost final : public VFSHost
 {
 public:
     VFSPSHost();
@@ -25,24 +25,24 @@ public:
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker) override;
+                           const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool IsDirectory(const char *_path,
                              int _flags,
-                             VFSCancelChecker _cancel_checker) override;
+                             const VFSCancelChecker &_cancel_checker) override;
     
     virtual int Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker) override;
     
-    virtual int StatFS(const char *_path, VFSStatFS &_stat, VFSCancelChecker _cancel_checker) override;
+    virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker = nullptr) override;
+    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker = nullptr) override;
     
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
                                       int _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int IterateDirectoryListing(const char *_path, function<bool(const VFSDirEnt &_dirent)> _handler) override;
+    virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;

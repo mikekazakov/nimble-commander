@@ -15,7 +15,7 @@ typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
-class VFSNetSFTPHost : public VFSHost
+class VFSNetSFTPHost final : public VFSHost
 {
 public:
     // vfs identity
@@ -49,7 +49,7 @@ public:
     
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,
-                       VFSCancelChecker _cancel_checker) override;
+                       const VFSCancelChecker &_cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
@@ -57,17 +57,17 @@ public:
                                      const VFSCancelChecker &_cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path,
-                                        function<bool(const VFSDirEnt &_dirent)> _handler) override;
+                                        const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
-                           VFSCancelChecker _cancel_checker) override;
+                           const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int Unlink(const char *_path, VFSCancelChecker _cancel_checker) override;
-    virtual int Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker) override;
-    virtual int CreateDirectory(const char* _path, int _mode, VFSCancelChecker _cancel_checker) override;
-    virtual int RemoveDirectory(const char *_path, VFSCancelChecker _cancel_checker) override;
+    virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
+    virtual int CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker) override;
+    virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
     

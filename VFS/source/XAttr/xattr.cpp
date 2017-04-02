@@ -306,7 +306,7 @@ int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChe
 
 int VFSXAttrHost::CreateFile(const char* _path,
                              shared_ptr<VFSFile> &_target,
-                             VFSCancelChecker _cancel_checker)
+                             const VFSCancelChecker &_cancel_checker)
 {
     auto file = make_shared<VFSXAttrFile>(_path, static_pointer_cast<VFSXAttrHost>(shared_from_this()), m_FD);
     if(_cancel_checker && _cancel_checker())
@@ -315,7 +315,7 @@ int VFSXAttrHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
+int VFSXAttrHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::FromErrno(ENOENT);
@@ -328,7 +328,7 @@ int VFSXAttrHost::Unlink(const char *_path, VFSCancelChecker _cancel_checker)
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, VFSCancelChecker _cancel_checker)
+int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_old_path || _old_path[0] != '/' ||
         !_new_path || _new_path[0] != '/' )

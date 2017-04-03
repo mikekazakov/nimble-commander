@@ -508,7 +508,7 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
     return VFSHost::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
+int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path )
         return VFSError::InvalidCall;

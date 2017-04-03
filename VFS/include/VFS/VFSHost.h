@@ -112,11 +112,12 @@ public:
     
     /**
      * VFS version of stat().
+     * Default implementation does nothing, subclass MUST implement it.
      */
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      int _flags,
-                     VFSCancelChecker _cancel_checker = nullptr);
+                     const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * VFS version of statfs().

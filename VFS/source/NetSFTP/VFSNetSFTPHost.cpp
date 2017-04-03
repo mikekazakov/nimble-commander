@@ -456,7 +456,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
 int VFSNetSFTPHost::Stat(const char *_path,
                          VFSStat &_st,
                          int _flags,
-                         VFSCancelChecker _cancel_checker)
+                         const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);

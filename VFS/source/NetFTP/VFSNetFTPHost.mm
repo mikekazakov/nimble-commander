@@ -216,7 +216,7 @@ unique_ptr<CURLInstance> VFSNetFTPHost::SpawnCURL()
 int VFSNetFTPHost::Stat(const char *_path,
                         VFSStat &_st,
                         int _flags,
-                        VFSCancelChecker _cancel_checker)
+                        const VFSCancelChecker &_cancel_checker)
 {
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;

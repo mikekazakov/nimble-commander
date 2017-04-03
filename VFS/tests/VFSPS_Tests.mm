@@ -18,7 +18,7 @@
 {
     auto host = make_shared<VFSPSHost>();
     VFSListingPtr list;
-    host->FetchFlexibleListing("/", list, 0, 0);
+    host->FetchDirectoryListing("/", list, 0, 0);
 
     bool has_launchd = false;
     bool has_kernel_task = false;

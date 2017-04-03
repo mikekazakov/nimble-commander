@@ -268,7 +268,7 @@ int VFSXAttrHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
+int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !is_absolute_path(_path) )
         return VFSError::NotFound;

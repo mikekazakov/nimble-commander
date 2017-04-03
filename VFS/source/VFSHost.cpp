@@ -324,7 +324,7 @@ void VFSHost::StopDirChangeObserving(unsigned long _ticket)
 {
 }
 
-int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
+int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }

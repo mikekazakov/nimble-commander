@@ -35,7 +35,7 @@ public:
                              const VFSCancelChecker &_cancel_checker) override;
     
     virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
-    virtual int Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker) override;
+    virtual int Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,

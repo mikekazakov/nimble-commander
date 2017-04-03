@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF11687B1E91FA9200CC515A /* NetDropbox.h in Headers */ = {isa = PBXBuildFile; fileRef = CF11687A1E91FA9200CC515A /* NetDropbox.h */; };
+		CF11687F1E91FAAA00CC515A /* VFSNetDropboxHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */; };
+		CF1168801E91FAAA00CC515A /* VFSNetDropboxHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */; };
+		CF1168831E91FB4A00CC515A /* Aux.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1168811E91FB4A00CC515A /* Aux.h */; };
+		CF1168841E91FB4A00CC515A /* Aux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168821E91FB4A00CC515A /* Aux.mm */; };
+		CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */; };
 		CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFCF1DA224E200992B84 /* libVFS.a */; };
 		CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */; };
 		CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847131E41C9C0008B7C9F /* libHabanero.a */; };
@@ -122,6 +128,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF11687A1E91FA9200CC515A /* NetDropbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetDropbox.h; path = include/VFS/NetDropbox.h; sourceTree = "<group>"; };
+		CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxHost.h; path = source/NetDropbox/VFSNetDropboxHost.h; sourceTree = "<group>"; };
+		CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxHost.mm; path = source/NetDropbox/VFSNetDropboxHost.mm; sourceTree = "<group>"; };
+		CF1168811E91FB4A00CC515A /* Aux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Aux.h; path = source/NetDropbox/Aux.h; sourceTree = "<group>"; };
+		CF1168821E91FB4A00CC515A /* Aux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Aux.mm; path = source/NetDropbox/Aux.mm; sourceTree = "<group>"; };
+		CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_Tests.mm; path = tests/VFSDropbox_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
@@ -270,9 +282,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF11687C1E91FA9D00CC515A /* NetDropbox */ = {
+			isa = PBXGroup;
+			children = (
+				CF1168811E91FB4A00CC515A /* Aux.h */,
+				CF1168821E91FB4A00CC515A /* Aux.mm */,
+				CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */,
+				CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */,
+			);
+			name = NetDropbox;
+			sourceTree = "<group>";
+		};
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
@@ -335,6 +359,7 @@
 		CF69CFDD1DA227B100992B84 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF11687A1E91FA9200CC515A /* NetDropbox.h */,
 				CF69D0791DA238D400992B84 /* VFSListingInput.h */,
 				CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */,
 				CF69CFE01DA227E400992B84 /* ArcLA.h */,
@@ -364,6 +389,7 @@
 		CF69CFDF1DA227C100992B84 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF11687C1E91FA9D00CC515A /* NetDropbox */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF69D0611DA2343700992B84 /* ArcUnRAR */,
 				CF69D0221DA2304B00992B84 /* Native */,
@@ -488,11 +514,13 @@
 				CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */,
 				CF69D0401DA2324100992B84 /* VFSNetFTPFile.h in Headers */,
 				CF69CFF71DA227E400992B84 /* NetFTP.h in Headers */,
+				CF11687B1E91FA9200CC515A /* NetDropbox.h in Headers */,
 				CF69CFFB1DA227E400992B84 /* VFS.h in Headers */,
 				CF69D0751DA2353000992B84 /* VFSPSFile.h in Headers */,
 				CF69D06B1DA2344A00992B84 /* VFSArchiveUnRARHost.h in Headers */,
 				CF69D0591DA2336500992B84 /* VFSArchiveHost.h in Headers */,
 				CF69D0061DA227E400992B84 /* VFSPath.h in Headers */,
+				CF1168831E91FB4A00CC515A /* Aux.h in Headers */,
 				CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */,
 				CF69D0581DA2336500992B84 /* VFSArchiveFile.h in Headers */,
 				CF69D0761DA2353000992B84 /* VFSPSHost.h in Headers */,
@@ -512,6 +540,7 @@
 				CF69CFF81DA227E400992B84 /* NetSFTP.h in Headers */,
 				CF69D0031DA227E400992B84 /* VFSGenericMemReadOnlyFile.h in Headers */,
 				CF69CFFA1DA227E400992B84 /* XAttr.h in Headers */,
+				CF11687F1E91FAAA00CC515A /* VFSNetDropboxHost.h in Headers */,
 				CF69D05E1DA233EC00992B84 /* AppleDoubleEA.h in Headers */,
 				CF69CFFD1DA227E400992B84 /* VFSConfiguration.h in Headers */,
 				CF69D06D1DA2344A00992B84 /* VFSArchiveUnRARInternals.h in Headers */,
@@ -624,6 +653,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */,
+				CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
 				CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */,
@@ -648,6 +678,7 @@
 				CF69D02B1DA2305A00992B84 /* VFSNativeFile.cpp in Sources */,
 				CF69D05C1DA2336500992B84 /* VFSArchiveInternal.mm in Sources */,
 				CF69D0181DA22BE800992B84 /* VFSConfiguration.cpp in Sources */,
+				CF1168801E91FAAA00CC515A /* VFSNetDropboxHost.mm in Sources */,
 				CF69D0171DA22BE800992B84 /* VFSArchiveProxy.mm in Sources */,
 				CF69D01E1DA22BE800992B84 /* VFSListing.cpp in Sources */,
 				CF69D0321DA231EA00992B84 /* xattr.cpp in Sources */,
@@ -658,6 +689,7 @@
 				CF69D0681DA2344A00992B84 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF69D03F1DA2324100992B84 /* VFSNetFTPCache.mm in Sources */,
 				CF69D06A1DA2344A00992B84 /* VFSArchiveUnRARHost.cpp in Sources */,
+				CF1168841E91FB4A00CC515A /* Aux.mm in Sources */,
 				CF69D0771DA2353000992B84 /* VFSPSHost.mm in Sources */,
 				CF1FBF3A1E909AC400D3569C /* Fetching.cpp in Sources */,
 				CF69D0741DA2353000992B84 /* VFSPSFile.cpp in Sources */,
@@ -755,6 +787,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
+					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -820,6 +853,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
+					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (

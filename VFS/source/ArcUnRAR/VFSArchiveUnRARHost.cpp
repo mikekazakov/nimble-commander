@@ -363,7 +363,7 @@ const VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindDirectory(const string&
     return &i->second;
 }
 
-int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, VFSCancelChecker _cancel_checker)
+int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static once_flag once;

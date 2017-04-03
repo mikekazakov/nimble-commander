@@ -59,7 +59,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (void)testBasicWithHost:(VFSHostPtr)host
 {
     VFSListingPtr listing;
-    XCTAssert( host->FetchFlexibleListing("/", listing, 0, 0) == 0);
+    XCTAssert( host->FetchDirectoryListing("/", listing, 0, 0) == 0);
     
     if(!listing)
         return;
@@ -211,7 +211,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         auto host = self.hostForVBoxDebian8x86;
         
         VFSListingPtr listing;
-        XCTAssert( host->FetchFlexibleListing("/", listing, 0, 0) == 0);
+        XCTAssert( host->FetchDirectoryListing("/", listing, 0, 0) == 0);
         
         if(!listing)
             return;

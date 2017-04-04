@@ -90,7 +90,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( rc == VFSError::Ok );
 }
 
-- (void)testFileRead
+- (void)testBasicFileRead
 {
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
@@ -105,6 +105,25 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     auto data = file->ReadFile();
     XCTAssert( data );
     XCTAssert( data->size() == 190892 );
+    XCTAssert( data->back() == 0xD9 );
+}
+
+- (void)testReadingOfFileWithNonASCIISymbols
+{
+    auto filepath = @"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    int rc = host->CreateFile(filepath.UTF8String, file);
+    XCTAssert( rc == VFSError::Ok );
+
+    rc = file->Open( VFSFlags::OF_Read );
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( file->Size() == 253899 );
+    
+    auto data = file->ReadFile();
+    XCTAssert( data );
+    XCTAssert( data->size() == 253899 );
+    XCTAssert( data->front() == 0xFF );
     XCTAssert( data->back() == 0xD9 );
 }
 

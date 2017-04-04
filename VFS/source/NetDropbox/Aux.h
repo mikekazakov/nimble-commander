@@ -53,6 +53,12 @@ namespace VFSNetDropbox
     optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );
     
     string EscapeString(const string &_original);
+    string EscapeStringForJSONInHTTPHeader(const string &_original);
+    
+    
     bool IsNormalJSONResponse( NSURLResponse *_response );
+    
+    void WarnAboutUsingInMainThread();
+    
 };
 

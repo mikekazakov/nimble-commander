@@ -9,6 +9,7 @@ public:
     ~VFSNetDropboxFile();
 
     virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
+    virtual int Close() override;
     virtual int PreferredIOSize() const override;
     virtual bool    IsOpened() const override;
     virtual ReadParadigm GetReadParadigm() const override;
@@ -43,6 +44,6 @@ private:
     mutex           m_DataLock;
     deque<uint8_t>  m_DownloadFIFO;
     long            m_DownloadFIFOOffset = 0; // is it always equal to m_FilePos???
-
+    NSURLSessionDataTask *m_DownloadTask;
 
 };

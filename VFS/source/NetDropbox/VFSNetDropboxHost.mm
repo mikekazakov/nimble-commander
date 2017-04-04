@@ -42,12 +42,14 @@ int VFSNetDropboxHost::StatFS(const char *_path,
                               VFSStatFS &_stat,
                               const VFSCancelChecker &_cancel_checker)
 {
+    WarnAboutUsingInMainThread();
+    
     _stat.total_bytes = 0;
     _stat.free_bytes = 0;
     _stat.avail_bytes = 0;
-    _stat.volume_name = "";
+    _stat.volume_name = "Dropbox";
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetSpaceUsage];
     req.HTTPMethod = @"POST";
@@ -110,6 +112,8 @@ int VFSNetDropboxHost::Stat(const char *_path,
                             int _flags,
                             const VFSCancelChecker &_cancel_checker)
 {
+    WarnAboutUsingInMainThread();
+
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -129,7 +133,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
 
 //    static const auto file_type = "file"s, folder_type = "folder"s;
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetMetadata];
     req.HTTPMethod = @"POST";
@@ -190,6 +194,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
 int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
                                                const function<bool(const VFSDirEnt &_dirent)> &_handler)
 { // TODO: process ListFolderResult.has_more
+    WarnAboutUsingInMainThread();
 
   if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -198,7 +203,7 @@ int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
     req.HTTPMethod = @"POST";
@@ -256,6 +261,8 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
                                              int _flags,
                                              const VFSCancelChecker &_cancel_checker)
 { // TODO: process ListFolderResult.has_more
+    WarnAboutUsingInMainThread();
+
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -263,7 +270,7 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
     req.HTTPMethod = @"POST";

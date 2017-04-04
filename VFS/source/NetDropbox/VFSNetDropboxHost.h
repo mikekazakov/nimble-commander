@@ -3,6 +3,10 @@
 #include <VFS/VFSHost.h>
 #include <VFS/VFSFile.h>
 
+/**
+ * This every API call may take seconds to complete, VFSNetDropboxHost assumes primarily background
+ * usage. When called from the main thread, this VFS will bug caller's console with warning. 
+ */
 class VFSNetDropboxHost final : public VFSHost
 {
 public:

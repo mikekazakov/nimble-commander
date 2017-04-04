@@ -135,6 +135,30 @@ string EscapeString(const string &_original)
     return after;
 }
 
+string EscapeStringForJSONInHTTPHeader(const string &_original)
+{
+    NSString *str = [NSString stringWithUTF8String:_original.c_str()];
+    if( !str )
+        return {};
+    
+    string after;
+    after.reserve(str.length + 4);
+    char hex[16];
+    for( int i = 0, e = (int)str.length; i != e; ++i ) {
+        auto c = [str characterAtIndex:i];
+        if( c >= 127 ) {
+            sprintf(hex, "\\u%04X", c);
+            after += hex;
+        }
+        else {
+            if( c == '"' || c == '\\' )
+                after += '\\';
+            after += c;
+        }
+    }
+    return after;
+}
+
 bool IsNormalJSONResponse( NSURLResponse *_response )
 {
     if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) ) {
@@ -156,6 +180,14 @@ bool IsNormalJSONResponse( NSURLResponse *_response )
 //                                
 //}
 
+void WarnAboutUsingInMainThread()
+{
+    auto msg = "usage of the net_dropbox vfs in the main thread may reduce responsiveness "
+               "and should be avoided!";
+    if( dispatch_is_main_queue() )
+        cout << msg << endl;
+}
 
 }
+
 

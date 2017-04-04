@@ -39,7 +39,7 @@ static const auto g_Download = [NSURL URLWithString:@"https://content.dropboxapi
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
                                      didReceiveData:(NSData *)data
 {
-    cout << "didReceiveData" << endl;
+//    cout << "didReceiveData" << endl;
     if( auto file = m_File.lock() )
         file->AppendDownloadedData(data);
 }
@@ -69,6 +69,23 @@ VFSNetDropboxFile::VFSNetDropboxFile(const char* _relative_path, const shared_pt
 
 VFSNetDropboxFile::~VFSNetDropboxFile()
 {
+    Close();
+}
+
+int VFSNetDropboxFile::Close()
+{
+    m_FilePos = 0;
+    m_FileSize = -1;
+
+    m_State = Cold;
+
+    LOCK_GUARD(m_DataLock) {
+        m_DownloadFIFO.clear();
+        m_DownloadFIFOOffset = 0; // is it always equal to m_FilePos???
+        [m_DownloadTask cancel];
+    }
+
+    return 0;
 }
 
 int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
@@ -77,45 +94,31 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return VFSError::InvalidCall;
     auto &host = *((VFSNetDropboxHost*)Host().get());
 
-//    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
     auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] initWithFile:
         static_pointer_cast<VFSNetDropboxFile>(shared_from_this())];
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
                                                  delegate:delegate
                                             delegateQueue:nil];
-
-//    + (NSURLSession *)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration
-//delegate:(nullable id <NSURLSessionDelegate>)delegate
-//delegateQueue:(nullable NSOperationQueue *)queue;
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Download];
     req.HTTPMethod = @"POST";
     [req setValue:[NSString stringWithFormat:@"Bearer %s", host.Token().c_str()]
         forHTTPHeaderField:@"Authorization"];
     
-    const string path_spec = "{ \"path\": \"" + EscapeString(RelativePath()) + "\"}";
+    const string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\" }";
     [req setValue:[NSString stringWithUTF8String:path_spec.c_str()]
         forHTTPHeaderField:@"Dropbox-API-Arg"];
-    
-
-    
-//    [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
-    
     
     
     m_State = Initiated;
     
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:req];
-    [task resume];
-    
+    m_DownloadTask = [session dataTaskWithRequest:req];
+    [m_DownloadTask resume];
+
+    // wait for initial responce from dropbox
     unique_lock<mutex> lk(m_SignalLock);
     m_Signal.wait(lk, [=]{ return m_State != Initiated; } );
     
-// cv.wait(lk, []{return ready;});
-
-    //this_thread::sleep_for(5s);
-
-
     return m_State == Downloading ? VFSError::Ok : VFSError::GenericError;
 }
 
@@ -126,13 +129,15 @@ VFSNetDropboxFile::ReadParadigm VFSNetDropboxFile::GetReadParadigm() const
 
 void VFSNetDropboxFile::AppendDownloadedData( NSData *_data )
 {
-    assert( m_FileSize >= 0 );
-    if( !_data || _data.length == 0 )
+    if(!_data ||
+        _data.length == 0 ||
+        m_State != Downloading ||
+        m_FileSize < 0)
         return;
     
     LOCK_GUARD(m_DataLock) {
         [_data enumerateByteRangesUsingBlock:[=](const void *bytes, NSRange byteRange, BOOL *stop){
-            cout << "accepted bytes: " << byteRange.length << endl;
+//            cout << "accepted bytes: " << byteRange.length << endl;
             m_DownloadFIFO.insert(end(m_DownloadFIFO),
                                   (const uint8_t*)bytes,
                                   ((const uint8_t*)bytes) + byteRange.length);
@@ -152,7 +157,7 @@ bool VFSNetDropboxFile::ProcessDownloadResponse( NSURLResponse *_response )
     assert( m_State == Initiated );
 
     if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) ) {
-        if( http_resp.statusCode == 200 )
+        if( http_resp.statusCode == 200 ) {
             if( auto cl =  objc_cast<NSString>(http_resp.allHeaderFields[@"Content-Length"]) ) {
                 auto file_size = atol( cl.UTF8String );
                 m_FileSize = file_size;
@@ -163,6 +168,10 @@ bool VFSNetDropboxFile::ProcessDownloadResponse( NSURLResponse *_response )
                 }
                 return true;
             }
+        }
+        else {
+            NSLog(@"%@", _response);
+        }
     }
     
     m_State = Canceled;
@@ -196,7 +205,7 @@ ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
         return 0;
     
     if( Eof() )
-        return VFSError::InvalidCall;
+        return 0;
     
     do {
         LOCK_GUARD(m_DataLock) {

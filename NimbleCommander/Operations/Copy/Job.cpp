@@ -1179,7 +1179,9 @@ FileCopyOperationJob::StepResult FileCopyOperationJob::CopyVFSFileToNativeFile(V
     
     auto read_buffer = m_Buffers[0].get(), write_buffer = m_Buffers[1].get();
     const uint32_t dst_preffered_io_size = dst_fs_info.basic.io_size < m_BufferSize ? dst_fs_info.basic.io_size : m_BufferSize;
-    const uint32_t src_preffered_io_size = dst_preffered_io_size; // not sure if this is a good idea, but seems to be ok
+    const uint32_t src_preffered_io_size = src_file->PreferredIOSize() > 0 ?
+        src_file->PreferredIOSize() : // use custom IO size for this vfs
+        dst_preffered_io_size; // not sure if this is a good idea, but seems to be ok
     constexpr int max_io_loops = 5; // looked in Apple's copyfile() - treat 5 zero-resulting reads/writes as an error
     uint32_t bytes_to_write = 0;
     uint64_t source_bytes_read = 0;

@@ -28,6 +28,8 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
 
+#include <VFS/NetDropbox.h>
+
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
@@ -532,21 +534,23 @@ static bool RouteKeyboardInputIntoTerminal()
         unichar const unicode        = [character characterAtIndex:0];
         unsigned short const keycode = event.keyCode;
         
-//        if(keycode == 3 ) { // 'F' button
-//            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-//                [self.state runExtTool];
-////                [self testNonUniformListing];
-//                
-////                auto host = make_shared<VFSXAttrHost>( self.view.item.Path(), self.view.item.Host() );
-////
-////                auto context = make_shared<PanelControllerGoToDirContext>();
-////                context->VFS = host;
-////                context->RequestedDirectory = "/";
-////                
-////                [self GoToDirWithContext:context];
-//                return true;
-//            }
-//        }
+        if(keycode == 3 ) { // 'F' button
+            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+                
+                
+                static const auto g_Token = "4LRIcv92dSgAAAAAAAAMENZLSUeRl53EU1iwuuw4FecM1Y27FEjEXch4HDd3oK3N";
+//                static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
+                shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+                
+                [self GoToDir:"/"
+                          vfs:host
+                 select_entry:""
+                        async:true];
+                
+                
+                return true;
+            }
+        }
         
         if( unicode == NSTabCharacter ) { // Tab button
             [self.state changeFocusedSide];

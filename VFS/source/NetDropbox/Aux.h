@@ -34,6 +34,25 @@ namespace VFSNetDropbox
 
 
 
+    struct Metadata
+    {
+        string name = ""; // will be empty on errors
+        bool is_directory = false;
+        int64_t size = -1;
+        int64_t chg_time = -1;
+    };
+    Metadata ParseMetadata( const rapidjson::Value &_value );
+    vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value );
+    
+//    vector<Metadata> ListFolder(const string& _token,
+//                                const string &_folder,
+//                                const function<bool()> _cancellation );
+//    
 
+    const char *GetString( const rapidjson::Value &_doc, const char *_key );
+    optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );
+    
+    string EscapeString(const string &_original);
+    bool IsNormalJSONResponse( NSURLResponse *_response );
 };
 

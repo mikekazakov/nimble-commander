@@ -29,6 +29,8 @@
 		CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472F1E41CFB7008B7C9F /* libarchive.a */; };
 		CF1FBF3A1E909AC400D3569C /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
 		CF1FBF3B1E909AC400D3569C /* Fetching.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1FBF391E909AC400D3569C /* Fetching.h */; };
+		CF22A10E1E9290FB00149C44 /* VFSNetDropboxFile.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */; };
+		CF22A10F1E9290FB00149C44 /* VFSNetDropboxFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */; };
 		CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* ArcLA.h */; };
 		CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* ArcUnRAR.h */; };
 		CF69CFF61DA227E400992B84 /* Native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* Native.h */; };
@@ -155,6 +157,8 @@
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
 		CF1FBF381E909AC400D3569C /* Fetching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fetching.cpp; path = source/Native/Fetching.cpp; sourceTree = "<group>"; };
 		CF1FBF391E909AC400D3569C /* Fetching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fetching.h; path = source/Native/Fetching.h; sourceTree = "<group>"; };
+		CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFile.h; path = source/NetDropbox/VFSNetDropboxFile.h; sourceTree = "<group>"; };
+		CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFile.mm; path = source/NetDropbox/VFSNetDropboxFile.mm; sourceTree = "<group>"; };
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
@@ -287,6 +291,8 @@
 			children = (
 				CF1168811E91FB4A00CC515A /* Aux.h */,
 				CF1168821E91FB4A00CC515A /* Aux.mm */,
+				CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */,
+				CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */,
 				CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */,
 				CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */,
 			);
@@ -535,6 +541,7 @@
 				CF69D01F1DA22BE800992B84 /* VFSListingInput.h in Headers */,
 				CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */,
 				CF69CFF91DA227E400992B84 /* PS.h in Headers */,
+				CF22A10E1E9290FB00149C44 /* VFSNetDropboxFile.h in Headers */,
 				CF69CFFF1DA227E400992B84 /* VFSEasyOps.h in Headers */,
 				CF69D0001DA227E400992B84 /* VFSError.h in Headers */,
 				CF69CFF81DA227E400992B84 /* NetSFTP.h in Headers */,
@@ -672,6 +679,7 @@
 				CF69D0201DA22BE800992B84 /* VFSPath.cpp in Sources */,
 				CF69D0601DA233F700992B84 /* AppleDoubleEA.cpp in Sources */,
 				CF69D05A1DA2336500992B84 /* VFSArchiveHost.mm in Sources */,
+				CF22A10F1E9290FB00149C44 /* VFSNetDropboxFile.mm in Sources */,
 				CF69D0451DA2324100992B84 /* VFSNetFTPInternals.mm in Sources */,
 				CF69D0431DA2324100992B84 /* VFSNetFTPHost.mm in Sources */,
 				CF69D01B1DA22BE800992B84 /* VFSFactory.cpp in Sources */,

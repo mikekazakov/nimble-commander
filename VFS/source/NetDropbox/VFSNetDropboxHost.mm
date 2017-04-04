@@ -1,6 +1,8 @@
-
+#include <Utility/PathManip.h>
+#include "../VFSListingInput.h"
 #include "Aux.h"
 #include "VFSNetDropboxHost.h"
+#include "VFSNetDropboxFile.h"
 
 using namespace VFSNetDropbox;
 
@@ -8,50 +10,16 @@ const char *VFSNetDropboxHost::Tag = "net_dropbox";
 
 static const auto g_GetSpaceUsage = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
 static const auto g_GetMetadata = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
+static const auto g_ListFolder = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
 
-static string EscapeString(const char *_original)
+static optional<rapidjson::Document> ParseJSON( NSData *_data )
 {
-    static const auto acs = NSCharacterSet.URLQueryAllowedCharacterSet;
-    return [[NSString stringWithUTF8String:_original]
-        stringByAddingPercentEncodingWithAllowedCharacters:acs].UTF8String;
-}
-
-static string EscapeString(const string &_original)
-{
-    return EscapeString( _original.c_str() );
-}
-
-static bool IsNormalJSONResponse( NSURLResponse *_response )
-{
-    if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) ) {
-        if( http_resp.statusCode != 200 )
-            return false;
-        
-        if( id ct = http_resp.allHeaderFields[@"Content-Type"] )
-            if( auto t = objc_cast<NSString>(ct) )
-                return [t isEqualToString:@"application/json"];
-    }
-    return false;
-}
-
-static const char *GetString( const rapidjson::Document &_doc, const char *_key )
-{
-    auto i = _doc.FindMember(_key);
-    if( i == _doc.MemberEnd() )
-        return nullptr;
-    if( !i->value.IsString() )
-        return nullptr;
-    return i->value.GetString();
-}
-
-static optional<long> GetLong( const rapidjson::Document &_doc, const char *_key )
-{
-    auto i = _doc.FindMember(_key);
-    if( i == _doc.MemberEnd() )
+    using namespace rapidjson;
+    Document json;
+    ParseResult ok = json.Parse<kParseNoFlags>( (const char *)_data.bytes, _data.length );
+    if( !ok )
         return nullopt;
-    if( !i->value.IsInt() )
-        return nullopt;
-    return i->value.GetInt64();
+    return move(json);
 }
 
 //Document
@@ -63,6 +31,11 @@ VFSNetDropboxHost::VFSNetDropboxHost( const string &_access_token ):
 {
     if( m_Token.empty() )
         throw invalid_argument("bad token");
+}
+
+bool VFSNetDropboxHost::ShouldProduceThumbnails() const
+{
+    return false;
 }
 
 int VFSNetDropboxHost::StatFS(const char *_path,
@@ -140,12 +113,22 @@ int VFSNetDropboxHost::Stat(const char *_path,
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
+        memset( &_st, 0, sizeof(_st) );
+    
+    if( strcmp( _path, "/") == 0 ) {
+        // special treatment for root dir
+        _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
+        _st.meaning.mode = true;
+        return 0;
+    }
+    
+    
     string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    static const auto file_type = "file"s, folder_type = "folder"s;
-    memset( &_st, 0, sizeof(_st) );
+//    static const auto file_type = "file"s, folder_type = "folder"s;
+
     auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetMetadata];
@@ -154,7 +137,6 @@ int VFSNetDropboxHost::Stat(const char *_path,
         forHTTPHeaderField:@"Authorization"];
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
-//@property (nullable, copy) NSData *HTTPBody;
     string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
     [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
     
@@ -166,94 +148,201 @@ int VFSNetDropboxHost::Stat(const char *_path,
         /// ....
 //        NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 
-        using namespace rapidjson;
-        Document json;
-        ParseResult ok = json.Parse<kParseNoFlags>( (const char *)data.bytes, data.length );
-        if( !ok ) {
+        auto json_opt = ParseJSON(data);
+        if( !json_opt )
             return VFSError::GenericError;
-        }
+        auto &json = *json_opt;
 
-        const auto type = GetString(json, ".tag");
-        if( !type )
+        
+        auto md = ParseMetadata(json);
+        if( md.name.empty() )
             return VFSError::GenericError;
         
-        if( file_type == type ) {
-            _st.mode = S_IRUSR | S_IWUSR | S_IFREG;
-            _st.meaning.mode = true;
-
-            if( auto size = GetLong(json, "size") ) {
-                _st.size = *size;
-                _st.meaning.size = true;
-            }
-  
-            NSDateFormatter * df = [[NSDateFormatter alloc] init];
-            df.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
-            if( auto mod_date = GetString(json, "server_modified") ) {
-                if( auto date = [df dateFromString:[NSString stringWithUTF8String:mod_date]] ) {
-                    _st.ctime.tv_sec = date.timeIntervalSince1970;
-                    _st.atime = _st.btime = _st.mtime = _st.ctime;
-                }
-            }
-
-            return 0;
-        }
-        else if( folder_type == type ) {
+        if( md.is_directory  ) {
             _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
             _st.meaning.mode = true;
-
-        
-            return 0;
         }
+        else {
+            _st.mode = S_IRUSR | S_IWUSR | S_IFREG;
+            _st.meaning.mode = true;
+        }
+
+        if( md.size >= 0 ) {
+            _st.size = md.size;
+            _st.meaning.size = true;
+        }
+        
+        if( md.chg_time >= 0 ) {
+            _st.ctime.tv_sec = md.chg_time;
+            _st.btime = _st.mtime = _st.ctime;
+            _st.meaning.ctime = _st.meaning.btime = _st.meaning.mtime = true;
+        }
+        
+        return 0;
+    }
+    else if( data ) {
+        NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    
+    }
+    return VFSError::GenericError;
+}
+
+int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
+                                               const function<bool(const VFSDirEnt &_dirent)> &_handler)
+{ // TODO: process ListFolderResult.has_more
+
+  if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    string path = _path;
+    if( path.back() == '/' ) // dropbox doesn't like trailing slashes
+        path.pop_back();
+
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
+    req.HTTPMethod = @"POST";
+    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
+        forHTTPHeaderField:@"Authorization"];
+    [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
+    [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
+    
+    NSURLResponse *response;
+    auto data = SendSynchonousRequest(session, req, &response, nullptr);
+    
+    if( IsNormalJSONResponse(response) && data ) {
+        /// ....
+//        NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+     
+        auto json_opt = ParseJSON(data);
+        if( !json_opt )
+            return VFSError::GenericError;
+        auto &json = *json_opt;
+        
+        auto entries = json.FindMember("entries");
+        if( entries != json.MemberEnd() ) {
+            for( int i = 0, e = entries->value.Size(); i != e; ++i ) {
+                auto &entry = entries->value[i];
+
+                auto metadata = ParseMetadata(entry);
+                if( !metadata.name.empty() ) {
+                    VFSDirEnt dirent;
+                    dirent.type = metadata.is_directory ? VFSDirEnt::Dir : VFSDirEnt::Reg;
+                    strcpy( dirent.name, metadata.name.c_str() );
+                    dirent.name_len = metadata.name.length();
+                    bool goon = _handler(dirent);
+                    if( !goon )
+                        return VFSError::Ok;
+                }
+            }
+        }
+        
+        
+        
+        return VFSError::Ok;
     }
     else if( data ) {
         NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     
     }
     
+    return VFSError::GenericError;
+}
+
+int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
+                                             shared_ptr<VFSListing> &_target,
+                                             int _flags,
+                                             const VFSCancelChecker &_cancel_checker)
+{ // TODO: process ListFolderResult.has_more
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
     
-//{
-//    ".tag": "file",
-//    "name": "Prime_Numbers.txt",
-//    "id": "id:a4ayc_80_OEAAAAAAAAAXw",
-//    "client_modified": "2015-05-12T15:50:38Z",
-//    "server_modified": "2015-05-12T15:50:38Z",
-//    "rev": "a1c10ce0dd78",
-//    "size": 7212,
-//    "path_lower": "/homework/math/prime_numbers.txt",
-//    "path_display": "/Homework/math/Prime_Numbers.txt",
-//    "sharing_info": {
-//        "read_only": true,
-//        "parent_shared_folder_id": "84528192421",
-//        "modified_by": "dbid:AAH4f99T0taONIb-OurWxbNQ6ywGRopQngc"
-//    },
-//    "property_groups": [
-//        {
-//            "template_id": "ptid:1a5n2i6d3OYEAAAAAAAAAYa",
-//            "fields": [
-//                {
-//                    "name": "Security Policy",
-//                    "value": "Confidential"
-//                }
-//            ]
-//        }
-//    ],
-//    "has_explicit_shared_members": false,
-//    "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-//}
+    string path = _path;
+    if( path.back() == '/' ) // dropbox doesn't like trailing slashes
+        path.pop_back();
+
+    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.ephemeralSessionConfiguration];
+
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
+    req.HTTPMethod = @"POST";
+    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
+        forHTTPHeaderField:@"Authorization"];
+    [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
-//curl -X POST https://api.dropboxapi.com/2/files/get_metadata \
-//    --header "Authorization: Bearer " \
-//    --header "Content-Type: application/json" \
-//    --data "{\"path\": \"/Homework/math\",\"include_media_info\": false,\"include_deleted\": false,\"include_has_explicit_shared_members\": false}"
+    string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
+    [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
     
+    NSURLResponse *response;
+    auto data = SendSynchonousRequest(session, req, &response, nullptr);
     
-//{
-//    "path": "/Homework/math",
-//    "include_media_info": false,
-//    "include_deleted": false,
-//    "include_has_explicit_shared_members": false
-//}
+    if( IsNormalJSONResponse(response) && data ) {
+        /// ....
+//        NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+     
+        auto json_opt = ParseJSON(data);
+        if( !json_opt )
+            return VFSError::GenericError;
+        auto &json = *json_opt;
+        
+        auto entries = ExtractMetadataEntries(json);
+        
+        
+        // set up our listing structure
+        VFSListingInput listing_source;
+        listing_source.hosts[0] = shared_from_this();
+        
+        
+        
+        listing_source.directories[0] =  EnsureTrailingSlash(_path);
+        listing_source.sizes.reset( variable_container<>::type::sparse );
+        listing_source.atimes.reset( variable_container<>::type::sparse );
+        listing_source.btimes.reset( variable_container<>::type::sparse );
+        listing_source.ctimes.reset( variable_container<>::type::sparse );
+        listing_source.mtimes.reset( variable_container<>::type::sparse );
+    
+        for( int index = 0, index_e = (int)entries.size(); index != index_e; ++index ) {
+            auto &e = entries[index];
+            listing_source.filenames.emplace_back( e.name );
+            listing_source.unix_modes.emplace_back( e.is_directory ?
+                (S_IRUSR | S_IWUSR | S_IFDIR) :
+                (S_IRUSR | S_IWUSR | S_IFREG) );
+            listing_source.unix_types.emplace_back( e.is_directory ? DT_DIR : DT_REG );
+            if( e.size >= 0  )
+                listing_source.sizes.insert( index, e.size );
+            if( e.chg_time >= 0 ) {
+                listing_source.btimes.insert( index, e.chg_time );
+                listing_source.ctimes.insert( index, e.chg_time );
+                listing_source.mtimes.insert( index, e.chg_time );
+            }
+        }
+    
+        _target = VFSListing::Build(move(listing_source));
+        
+        return 0;
+    }
+    else if( data ) {
+        NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
     
 
+
     return VFSError::GenericError;
+}
+
+int VFSNetDropboxHost::CreateFile(const char* _path,
+                                  shared_ptr<VFSFile> &_target,
+                                  const VFSCancelChecker &_cancel_checker)
+{
+    auto file = make_shared<VFSNetDropboxFile>(_path, SharedPtr());
+    if(_cancel_checker && _cancel_checker())
+        return VFSError::Cancelled;
+    _target = file;
+    return VFSError::Ok;
+}
+
+const string &VFSNetDropboxHost::Token() const
+{
+    return m_Token;
 }

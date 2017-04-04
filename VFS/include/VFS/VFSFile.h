@@ -54,6 +54,11 @@ public:
     virtual int     Close();
 
     /**
+     * Negative value means that vfs doesn't provide such information.
+     */
+    virtual int PreferredIOSize() const;
+
+    /**
      * Return available read paradigm. Should return some considerable value even on non-opened files.
      */
     virtual ReadParadigm  GetReadParadigm() const;

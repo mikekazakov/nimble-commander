@@ -190,3 +190,8 @@ int VFSFile::LastError() const
 {
     return m_LastError;
 }
+
+int VFSFile::PreferredIOSize() const
+{
+    return VFSError::NotSupported;
+}

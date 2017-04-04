@@ -49,6 +49,65 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( stat.mode_bits.reg == false );
 }
 
+- (void)testDirectoryIterating
+{
+    auto filepath = "/TestSet01/";
+    auto must_be = set<string>{ {"1ee0209db65d40d68277687017871bda.gif", "5465bdfd6afa44288520f2c84d2bb011.jpg",
+    "11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg", "11779310-R3L8T8D-650-funny-jumping-cats-91__880.jpg",
+    "BsQMH1kCUAALgMC.jpg", "f447bd6f4f6a47e6a355b7b44f2a326f.jpg", "kvxnws0o3i3g.jpg", "vw1yzox23csh.jpg"
+    }  };
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    
+    set<string> filenames;
+    int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e){
+        filenames.emplace( _e.name );
+        return true;
+    });
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( filenames == must_be );
+}
+
+- (void)testLargeDirectoryIterating
+{
+    auto filepath = "/TestSet02/";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    set<string> filenames;
+    int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e){
+        filenames.emplace( _e.name );
+        return true;
+    });
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( filenames.count("ActionShortcut.h") );
+    XCTAssert( filenames.count("xattr.h") );
+    XCTAssert( filenames.size() == 501 );
+}
+
+- (void)testDirectoryListing
+{
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    VFSListingPtr listing;
+    int rc = host->FetchDirectoryListing("/", listing, 0);
+    XCTAssert( rc == VFSError::Ok );
+}
+
+- (void)testFileRead
+{
+    auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    int rc = host->CreateFile(filepath, file);
+    XCTAssert( rc == VFSError::Ok );
+
+    rc = file->Open( VFSFlags::OF_Read );
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( file->Size() == 190892 );
+    
+    auto data = file->ReadFile();
+    XCTAssert( data );
+    XCTAssert( data->size() == 190892 );
+    XCTAssert( data->back() == 0xD9 );
+}
+
 
 
 @end

@@ -102,13 +102,8 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Download];
     req.HTTPMethod = @"POST";
-    [req setValue:[NSString stringWithFormat:@"Bearer %s", host.Token().c_str()]
-        forHTTPHeaderField:@"Authorization"];
-    
-    const string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\" }";
-    [req setValue:[NSString stringWithUTF8String:path_spec.c_str()]
-        forHTTPHeaderField:@"Dropbox-API-Arg"];
-    
+    host.FillAuth(req);
+    InsetHTTPHeaderPathspec(req, RelativePath());
     
     m_State = Initiated;
     

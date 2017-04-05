@@ -1,4 +1,5 @@
 #include <Cocoa/Cocoa.h>
+#include <VFS/VFSError.h>
 #include "Aux.h"
 
 namespace VFSNetDropbox {
@@ -23,30 +24,21 @@ optional<long> GetLong( const rapidjson::Value &_doc, const char *_key )
     return i->value.GetInt64();
 }
 
-NSData *SendSynchonousRequest(NSURLSession *_session,
-                              NSURLRequest *_request,
-                              __autoreleasing NSURLResponse **_response_ptr,
-                              __autoreleasing NSError **_error_ptr)
+static pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_session,
+                                                           NSURLRequest *_request)
 {
-    dispatch_semaphore_t    sem;
-    __block NSData *        result;
-    
-    result = nil;
-    
-    sem = dispatch_semaphore_create(0);
+    dispatch_semaphore_t    sem = dispatch_semaphore_create(0);
+    __block NSData *        data = nil;
+    __block NSURLResponse * response = nil;
+    __block NSError *       error = nil;
     
     NSURLSessionDataTask *task =
     [_session dataTaskWithRequest:_request
-                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                    if( _error_ptr != nullptr ) {
-                        *_error_ptr = error;
-                    }
-                    if( _response_ptr != nullptr ) {
-                        *_response_ptr = response;
-                    }
-                    if( error == nil ) {
-                        result = data;
-                    }
+                completionHandler:^(NSData *_data, NSURLResponse *_response, NSError *_error) {
+                    error = _error;
+                    response = _response;
+                    if( _error == nil )
+                        data = _data;
                     dispatch_semaphore_signal(sem);
                 }];
     
@@ -54,12 +46,53 @@ NSData *SendSynchonousRequest(NSURLSession *_session,
     
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     
-    return result;
+    if( error == nil && data != nil && response != nil )
+        if( auto http_resp = objc_cast<NSHTTPURLResponse>(response) )
+            if( http_resp.statusCode == 200 )
+                return { VFSError::Ok, data };
+
+    // TODO: proper errors handling
+    return { VFSError::FromErrno(EIO), nil };
 }
 
-//- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-//                                     didReceiveData:(NSData *)data;
+pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
+                                           NSURLRequest *_request,
+                                           const VFSCancelChecker &_cancel_checker)
+{
+    if( !_cancel_checker )
+        return SendInifiniteSynchronousRequest(_session, _request);
 
+    const auto              timeout = 100*NSEC_PER_MSEC; // wake up every 100ms
+    dispatch_semaphore_t    sem = dispatch_semaphore_create(0);
+    __block NSData *        data = nil;
+    __block NSURLResponse * response = nil;
+    __block NSError *       error = nil;
+    
+    auto completion_handler = ^(NSData *_data, NSURLResponse *_response, NSError *_error) {
+        error = _error;
+        response = _response;
+        if( _error == nil )
+            data = _data;
+        dispatch_semaphore_signal(sem);
+    };
+    
+    auto task = [_session dataTaskWithRequest:_request completionHandler:completion_handler];
+    [task resume];
+    
+    while( dispatch_semaphore_wait(sem, timeout) )
+        if( _cancel_checker() ) {
+            [task cancel];
+            return { VFSError::Cancelled, nil };
+        }
+    
+    if( error == nil && data != nil && response != nil )
+        if( auto http_resp = objc_cast<NSHTTPURLResponse>(response) )
+            if( http_resp.statusCode == 200 )
+                return { VFSError::Ok, data };
+
+    // TODO: proper errors handling
+    return { VFSError::FromErrno(EIO), nil };
+}
 
 Metadata ParseMetadata( const rapidjson::Value &_value )
 {
@@ -208,6 +241,32 @@ AccountInfo ParseAccountInfo( const rapidjson::Value &_value )
     return ai;
 }
 
+optional<rapidjson::Document> ParseJSON( NSData *_data )
+{
+    if( !_data )
+        return nullopt;
+    
+    using namespace rapidjson;
+    Document json;
+    ParseResult ok = json.Parse<kParseNoFlags>( (const char *)_data.bytes, _data.length );
+    if( !ok )
+        return nullopt;
+    return move(json);
 }
 
+void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path)
+{
+    [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    const string path_spec = "{ \"path\": \"" + EscapeString(_path) + "\" }";
+    [_request setHTTPBody:[NSData dataWithBytes:data(path_spec)
+        length:size(path_spec)]];
+}
 
+void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path)
+{
+    const string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
+    [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()]
+        forHTTPHeaderField:@"Dropbox-API-Arg"];
+}
+
+}

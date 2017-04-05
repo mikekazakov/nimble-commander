@@ -13,6 +13,7 @@
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
+#include <VFS/VFSDeclarations.h>
 
 @class NSData;
 @class NSURLSession;
@@ -22,17 +23,13 @@
 
 namespace VFSNetDropbox
 {
-
-
+    void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);
+    void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path);
     
-    NSData *SendSynchonousRequest(NSURLSession *_session,
-                                  NSURLRequest *_request,
-                                  __autoreleasing NSURLResponse **_response_ptr,
-                                  __autoreleasing NSError **_error_ptr);
-    
-    // + variant with cancellation
-
-
+    // returns VFSError and NSData, if VFSError is Ok
+    pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
+                                               NSURLRequest *_request,
+                                               const VFSCancelChecker &_cancel_checker = nullptr);
 
     struct Metadata
     {
@@ -66,6 +63,8 @@ namespace VFSNetDropbox
     string EscapeString(const string &_original);
     string EscapeStringForJSONInHTTPHeader(const string &_original);
     
+    
+    optional<rapidjson::Document> ParseJSON( NSData *_data );
     
     bool IsNormalJSONResponse( NSURLResponse *_response );
     

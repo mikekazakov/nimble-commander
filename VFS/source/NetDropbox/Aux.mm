@@ -188,6 +188,26 @@ void WarnAboutUsingInMainThread()
         cout << msg << endl;
 }
 
+AccountInfo ParseAccountInfo( const rapidjson::Value &_value )
+{
+    if( !_value.IsObject() )
+        return {};
+
+    const auto account_id = GetString(_value, "account_id");
+    if( !account_id )
+        return {};
+    
+    const auto email = GetString(_value, "email");
+    if( !email )
+        return {};
+
+    AccountInfo ai;
+    ai.accountid = account_id;
+    ai.email = email;
+    
+    return ai;
+}
+
 }
 
 

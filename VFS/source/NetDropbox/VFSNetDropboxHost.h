@@ -13,6 +13,7 @@ public:
     static const char *Tag;
 
     VFSNetDropboxHost( const string &_access_token );
+    ~VFSNetDropboxHost();
 
     bool ShouldProduceThumbnails() const override;
     
@@ -43,7 +44,14 @@ public:
 
     const string &Token() const;
 
+#ifdef __OBJC__
+    void FillAuth( NSMutableURLRequest *_request );
+    NSURLSession *GenericSession();
+#endif
+
 private:
-    const string m_Token;
-    
+    void InitialAccountLookup(); // will throw on invalid account / connectivity issues
+
+    struct State;
+    unique_ptr<State> I;
 };

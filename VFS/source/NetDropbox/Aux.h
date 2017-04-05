@@ -44,6 +44,17 @@ namespace VFSNetDropbox
     Metadata ParseMetadata( const rapidjson::Value &_value );
     vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value );
     
+    
+    struct AccountInfo
+    {
+        string accountid;
+        string email;
+        /* others later */
+    };
+    AccountInfo ParseAccountInfo( const rapidjson::Value &_value );
+    
+    
+    
 //    vector<Metadata> ListFolder(const string& _token,
 //                                const string &_folder,
 //                                const function<bool()> _cancellation );

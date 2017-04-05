@@ -16,8 +16,19 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( host->StatFS( "/", statfs ) == 0 );
     XCTAssert( statfs.total_bytes == 2147483648 );
     XCTAssert( statfs.free_bytes > 0 && statfs.free_bytes < statfs.total_bytes );
+    XCTAssert( statfs.volume_name == "mike.kazakov+ncdropboxtest@gmail.com" );
 }
 
+- (void)testInvalidCredentials
+{
+    try {
+        shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>("invalid access token");
+        XCTAssert( false );
+    }
+    catch(...) {
+        XCTAssert( true );
+    }
+}
 
 - (void)testStatOnExistingFile
 {
@@ -108,7 +119,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( data->back() == 0xD9 );
 }
 
-- (void)testReadingOfFileWithNonASCIISymbols
+- (void)testReadingFileWithNonASCIISymbols
 {
     auto filepath = @"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
@@ -127,6 +138,18 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( data->back() == 0xD9 );
 }
 
+- (void)testReadingNonExistingFile
+{
+    auto filepath = "/TestSet01/jggweofgewufygweufguwefg.jpg";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    int rc = host->CreateFile(filepath, file);
+    XCTAssert( rc == VFSError::Ok );
+
+    rc = file->Open( VFSFlags::OF_Read );
+    XCTAssert( rc != VFSError::Ok );
+    XCTAssert( !file->IsOpened() );
+}
 
 
 @end

@@ -8,6 +8,7 @@ using namespace VFSNetDropbox;
 
 const char *VFSNetDropboxHost::Tag = "net_dropbox";
 
+static const auto g_GetCurrentAccount = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];
 static const auto g_GetSpaceUsage = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
 static const auto g_GetMetadata = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
 static const auto g_ListFolder = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
@@ -22,20 +23,89 @@ static optional<rapidjson::Document> ParseJSON( NSData *_data )
     return move(json);
 }
 
-//Document
-//GenericDocument<UTF8<> >
+
+struct VFSNetDropboxHost::State
+{
+    string          m_Token;
+    NSString       *m_AuthString;
+    NSURLSession   *m_GenericSession;
+    AccountInfo     m_AccountInfo;
+};
 
 VFSNetDropboxHost::VFSNetDropboxHost( const string &_access_token ):
     VFSHost("", nullptr, VFSNetDropboxHost::Tag),
-    m_Token(_access_token)
+    I(make_unique<State>())
 {
-    if( m_Token.empty() )
+    I->m_Token = _access_token;
+    if( I->m_Token.empty() )
         throw invalid_argument("bad token");
+    
+    
+    I->m_GenericSession = [NSURLSession sessionWithConfiguration:
+        NSURLSessionConfiguration.defaultSessionConfiguration];
+    I->m_AuthString = [NSString stringWithFormat:@"Bearer %s", I->m_Token.c_str()];
+    
+    InitialAccountLookup();
+}
+
+VFSNetDropboxHost::~VFSNetDropboxHost()
+{
+}
+
+void VFSNetDropboxHost::InitialAccountLookup()
+{
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetCurrentAccount];
+    req.HTTPMethod = @"POST";
+    FillAuth(req);
+    
+    NSURLResponse *response;
+    auto data = SendSynchonousRequest(GenericSession(), req, &response, nullptr);
+    if( IsNormalJSONResponse(response) && data ) {
+        auto json_opt = ParseJSON(data);
+        if( !json_opt )
+            throw VFSErrorException( VFSError::FromErrno(EIO) );
+    
+    
+        I->m_AccountInfo = ParseAccountInfo(*json_opt);
+
+        int a = 10;
+        return;
+    
+//        using namespace rapidjson;
+//        Document json;
+//        ParseResult ok = json.Parse<kParseNoFlags>( (const char *)data.bytes, data.length );
+//        if( !ok ) {
+//            return -1;
+//        }
+
+//        auto used = json["used"].GetInt64();
+//        auto allocated = json["allocation"]["allocated"].GetInt64();
+//        
+//        _stat.total_bytes = allocated;
+//        _stat.free_bytes = allocated - used;
+//        _stat.avail_bytes = _stat.free_bytes;
+//
+//        return 0;
+    }
+
+    // TODO: process response
+    throw VFSErrorException( VFSError::FromErrno(EIO) );
+//    return VFSError::GenericError
 }
 
 bool VFSNetDropboxHost::ShouldProduceThumbnails() const
 {
     return false;
+}
+
+NSURLSession *VFSNetDropboxHost::GenericSession()
+{
+    return I->m_GenericSession;
+}
+
+void VFSNetDropboxHost::FillAuth( NSMutableURLRequest *_request )
+{
+    [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
 int VFSNetDropboxHost::StatFS(const char *_path,
@@ -47,14 +117,11 @@ int VFSNetDropboxHost::StatFS(const char *_path,
     _stat.total_bytes = 0;
     _stat.free_bytes = 0;
     _stat.avail_bytes = 0;
-    _stat.volume_name = "Dropbox";
-
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
+    _stat.volume_name = I->m_AccountInfo.email;
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetSpaceUsage];
     req.HTTPMethod = @"POST";
-    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
-        forHTTPHeaderField:@"Authorization"];
+    FillAuth(req);
 
 // bad:
 //code: 400, headers {
@@ -85,14 +152,13 @@ int VFSNetDropboxHost::StatFS(const char *_path,
 //    "X-Server-Response-Time" = 69;
 
     NSURLResponse *response;
-    auto data = SendSynchonousRequest(session, req, &response, nullptr);
+    auto data = SendSynchonousRequest(GenericSession(), req, &response, nullptr);
     if( data ) {
-        using namespace rapidjson;
-        Document json;
-        ParseResult ok = json.Parse<kParseNoFlags>( (const char *)data.bytes, data.length );
-        if( !ok ) {
-            return -1;
-        }
+        auto json_opt = ParseJSON(data);
+        if( !json_opt )
+            return VFSError::GenericError;
+        auto &json = *json_opt;
+        
 
         auto used = json["used"].GetInt64();
         auto allocated = json["allocation"]["allocated"].GetInt64();
@@ -131,14 +197,9 @@ int VFSNetDropboxHost::Stat(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-//    static const auto file_type = "file"s, folder_type = "folder"s;
-
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
-
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetMetadata];
     req.HTTPMethod = @"POST";
-    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
-        forHTTPHeaderField:@"Authorization"];
+    FillAuth(req);
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
@@ -146,7 +207,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
     
     
     NSURLResponse *response;
-    auto data = SendSynchonousRequest(session, req, &response, nullptr);
+    auto data = SendSynchonousRequest(GenericSession(), req, &response, nullptr);
     
     if( IsNormalJSONResponse(response) && data ) {
         /// ....
@@ -203,19 +264,16 @@ int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
-
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
     req.HTTPMethod = @"POST";
-    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
-        forHTTPHeaderField:@"Authorization"];
+    FillAuth(req);
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
     [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
     
     NSURLResponse *response;
-    auto data = SendSynchonousRequest(session, req, &response, nullptr);
+    auto data = SendSynchonousRequest(GenericSession(), req, &response, nullptr);
     
     if( IsNormalJSONResponse(response) && data ) {
         /// ....
@@ -270,19 +328,16 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration];
-
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
     req.HTTPMethod = @"POST";
-    [req setValue:[NSString stringWithFormat:@"Bearer %s", m_Token.c_str()]
-        forHTTPHeaderField:@"Authorization"];
+    FillAuth(req);
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     string body = "{ \"path\": \"" + EscapeString(path) + "\"}";
     [req setHTTPBody:[NSData dataWithBytes:data(body) length:size(body)]];
     
     NSURLResponse *response;
-    auto data = SendSynchonousRequest(session, req, &response, nullptr);
+    auto data = SendSynchonousRequest(GenericSession(), req, &response, nullptr);
     
     if( IsNormalJSONResponse(response) && data ) {
         /// ....
@@ -351,5 +406,5 @@ int VFSNetDropboxHost::CreateFile(const char* _path,
 
 const string &VFSNetDropboxHost::Token() const
 {
-    return m_Token;
+    return I->m_Token;
 }

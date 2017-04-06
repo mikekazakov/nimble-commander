@@ -241,7 +241,7 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
         auto &json = *json_opt;
         
         auto entries = ExtractMetadataEntries(json);
-    
+        
         VFSListingInput listing_source;
         listing_source.hosts[0] = shared_from_this();
         listing_source.directories[0] =  EnsureTrailingSlash(_path);
@@ -251,8 +251,15 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
         listing_source.ctimes.reset( variable_container<>::type::sparse );
         listing_source.mtimes.reset( variable_container<>::type::sparse );
     
-        for( int index = 0, index_e = (int)entries.size(); index != index_e; ++index ) {
-            auto &e = entries[index];
+        int index = 0;
+        if( !(_flags & VFSFlags::F_NoDotDot) && path != "" ) {
+            listing_source.filenames.emplace_back( ".." );
+            listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
+            listing_source.unix_types.emplace_back( DT_DIR );
+            index++;
+        }
+    
+        for( auto &e: entries ) {
             listing_source.filenames.emplace_back( e.name );
             listing_source.unix_modes.emplace_back( e.is_directory ?
                 (S_IRUSR | S_IWUSR | S_IFDIR) :
@@ -265,6 +272,7 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
                 listing_source.ctimes.insert( index, e.chg_time );
                 listing_source.mtimes.insert( index, e.chg_time );
             }
+            index++;
         }
     
         _target = VFSListing::Build(move(listing_source));

@@ -151,5 +151,22 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( !file->IsOpened() );
 }
 
+- (void)testSimplyUpload
+{
+    auto filepath = "/FolderToModify/test.txt";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    long rc = host->CreateFile(filepath, file);
+    XCTAssert( rc == VFSError::Ok );
+
+    rc = file->Open( VFSFlags::OF_Write );
+    XCTAssert( rc == VFSError::Ok );
+    string str = "Hello, world!";
+    file->SetUploadSize( str.size() );
+    rc = file->Write( data(str), (int)size(str) );
+    
+    this_thread::sleep_for(5s);
+}
+
 
 @end

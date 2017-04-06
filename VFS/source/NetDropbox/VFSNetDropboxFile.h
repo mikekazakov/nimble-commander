@@ -29,8 +29,14 @@ public:
     void AppendDownloadedData( NSData *_data );
 
     ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz );
+    bool ProcessUploadResponse( NSURLResponse *_response );
     bool HasDataToFeedUploadTask();
 
+
+    /**
+     * Download flow: Cold -> Initiated -> Downloading -> (Canceled|Completed)
+     * Upload flow:   Cold -> Initiated -> Uploading ->   (Canceled|Completed)
+     */
     enum State {
         Cold        = 0,
         Initiated   = 1,
@@ -46,23 +52,29 @@ private:
 
     long                m_FilePos = 0;
     long                m_FileSize = -1;
-    long                m_UploadSize = -1;
 
     atomic<State>       m_State { Cold };
 
     mutex               m_SignalLock;
     condition_variable  m_Signal;
     
-    mutex           m_DataLock;
-    deque<uint8_t>  m_DownloadFIFO;
-    long            m_DownloadFIFOOffset = 0; // is it always equal to m_FilePos???
+    mutex               m_DataLock; // any access to m_Download/m_Upload must be guarded
+    
+    struct Download {
+        deque<uint8_t>          fifo;
+        long                    fifo_offset = 0; // is it always equal to m_FilePos???
+        NSURLSessionDataTask   *task;
+    };
+    unique_ptr<Download>        m_Download; // exists only on reading
+    
+    struct Upload {
+        deque<uint8_t>                  fifo;
+        long                            fifo_offset = 0;
+        long                            upload_size = -1;
+        NSURLSessionUploadTask         *task;
+        VFSNetDropboxFileUploadDelegate*stream;
+    };
+    unique_ptr<Upload>          m_Upload;
     
     
-    deque<uint8_t>  m_UploadFIFO;
-    long            m_UploadFIFOOffset = 0;
-    
-    NSURLSessionDataTask    *m_DownloadTask;
-    NSURLSessionUploadTask  *m_UploadTask;
-    VFSNetDropboxFileUploadDelegate *m_UploadTaskDelegate;
-
 };

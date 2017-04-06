@@ -164,8 +164,6 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     string str = "Hello, world!";
     file->SetUploadSize( str.size() );
     rc = file->Write( data(str), (int)size(str) );
-    
-    this_thread::sleep_for(5s);
 }
 
 

@@ -50,6 +50,20 @@ public:
 
 private:
 
+    struct Download {
+        deque<uint8_t>          fifo;
+        long                    fifo_offset = 0; // is it always equal to m_FilePos???
+        NSURLSessionDataTask   *task;
+    };
+    struct Upload {
+        deque<uint8_t>                  fifo;
+        long                            fifo_offset = 0;
+        long                            upload_size = -1;
+        NSURLSessionUploadTask         *task;
+        VFSNetDropboxFileUploadDelegate*stream;
+    };
+
+
     long                m_FilePos = 0;
     long                m_FileSize = -1;
 
@@ -59,22 +73,6 @@ private:
     condition_variable  m_Signal;
     
     mutex               m_DataLock; // any access to m_Download/m_Upload must be guarded
-    
-    struct Download {
-        deque<uint8_t>          fifo;
-        long                    fifo_offset = 0; // is it always equal to m_FilePos???
-        NSURLSessionDataTask   *task;
-    };
-    unique_ptr<Download>        m_Download; // exists only on reading
-    
-    struct Upload {
-        deque<uint8_t>                  fifo;
-        long                            fifo_offset = 0;
-        long                            upload_size = -1;
-        NSURLSessionUploadTask         *task;
-        VFSNetDropboxFileUploadDelegate*stream;
-    };
-    unique_ptr<Upload>          m_Upload;
-    
-    
+    unique_ptr<Download>m_Download; // exists only on reading
+    unique_ptr<Upload>  m_Upload;   // exists only on writing    
 };

@@ -153,18 +153,49 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 
 - (void)testSimplyUpload
 {
+    const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
     shared_ptr<VFSFile> file;
-    long rc = host->CreateFile(filepath, file);
-    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
-    rc = file->Open( VFSFlags::OF_Write );
-    XCTAssert( rc == VFSError::Ok );
-    string str = "Hello, world!";
-    file->SetUploadSize( str.size() );
-    rc = file->Write( data(str), (int)size(str) );
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == VFSError::Ok );
+    auto uploaded = file->ReadFile();
+    XCTAssert( uploaded );
+    XCTAssert( uploaded->size() == size(to_upload) );
+    XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
+    XCTAssert( file->Close() == VFSError::Ok );
 }
 
+- (void)testDecentSizedUpload
+{
+    const auto length = 50*1024*1024; // 50Mb upload / download
+    auto filepath = "/FolderToModify/SomeRubbish.bin";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+
+    vector<uint8_t> to_upload(length);
+    srand((int)time(0));
+    for( int i = 0; i < length; ++i )
+        to_upload[i] = rand() % 256; // yes, I know that rand() is harmful!
+
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == VFSError::Ok );
+    auto uploaded = file->ReadFile();
+    XCTAssert( uploaded );
+    XCTAssert( uploaded->size() == size(to_upload) );
+    XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
+    XCTAssert( file->Close() == VFSError::Ok );
+}
 
 @end

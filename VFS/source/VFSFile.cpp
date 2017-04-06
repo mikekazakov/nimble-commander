@@ -150,7 +150,7 @@ int VFSFile::WriteFile(const void *_d, size_t _sz)
         else
             return (int)r;
     }
-    return 0;
+    return VFSError::Ok;
 }
 
 ssize_t VFSFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const

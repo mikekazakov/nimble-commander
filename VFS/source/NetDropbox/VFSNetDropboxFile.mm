@@ -396,7 +396,7 @@ void VFSNetDropboxFile::AppendDownloadedData( NSData *_data )
 
 bool VFSNetDropboxFile::ProcessDownloadResponse( NSURLResponse *_response )
 {
-    if( m_State == Initiated )
+    if( m_State != Initiated )
         return false;
 
     if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) ) {
@@ -472,7 +472,10 @@ ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
 
 bool VFSNetDropboxFile::IsOpened() const
 {
-    return m_State == Downloading || m_State == Completed;
+    return m_State == Initiated ||
+            m_State == Downloading ||
+            m_State == Uploading ||
+            m_State == Completed;
 }
 
 int VFSNetDropboxFile::PreferredIOSize() const
@@ -514,8 +517,10 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
     
     ssize_t eaten = _size - m_Upload->fifo.size();
     while( eaten < _size && m_State != Canceled ) {
-        unique_lock<mutex> lk(m_SignalLock);
-        m_Signal.wait(lk);
+        {
+            unique_lock<mutex> lk(m_SignalLock);
+            m_Signal.wait(lk);
+        }
 
     
         lock_guard<mutex> lock{m_DataLock};
@@ -541,19 +546,19 @@ ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
     if( _sz == 0 )
         return 0;
     
+    ssize_t sz = 0;
+    
     LOCK_GUARD(m_DataLock) {
-        ssize_t sz = min( _sz, m_Upload->fifo.size() );
+        sz = min( _sz, m_Upload->fifo.size() );
         copy_n( begin(m_Upload->fifo), sz, _buffer );
         m_Upload->fifo.erase( begin(m_Upload->fifo), begin(m_Upload->fifo) + sz );
         m_Upload->fifo_offset += sz;
         cout << "fed " << sz << " bytes into stream" << endl;
-        
-        LOCK_GUARD(m_SignalLock) {
-            m_Signal.notify_all();
-        }
-        return sz;
     }
-    return 0;
+    LOCK_GUARD(m_SignalLock) {
+        m_Signal.notify_all();
+    }
+    return sz;
 }
 
 bool VFSNetDropboxFile::HasDataToFeedUploadTask()

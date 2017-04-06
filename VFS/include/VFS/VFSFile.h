@@ -162,7 +162,8 @@ public:
     optional<vector<uint8_t>> ReadFile();
     
     /**
-     * Will call Write until data ends or an error occurs;
+     * Will call Write until data ends or an error occurs.
+     * Returns VFSError::Ok on success or error code on failure.
      */
     int WriteFile(const void *_d, size_t _sz);
     

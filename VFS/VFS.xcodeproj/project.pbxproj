@@ -31,6 +31,8 @@
 		CF1FBF3B1E909AC400D3569C /* Fetching.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1FBF391E909AC400D3569C /* Fetching.h */; };
 		CF22A10E1E9290FB00149C44 /* VFSNetDropboxFile.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */; };
 		CF22A10F1E9290FB00149C44 /* VFSNetDropboxFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */; };
+		CF22A1121E9751A800149C44 /* VFSNetDropboxFileUploadStream.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */; };
+		CF22A1131E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */; };
 		CF69CFF41DA227E400992B84 /* ArcLA.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE01DA227E400992B84 /* ArcLA.h */; };
 		CF69CFF51DA227E400992B84 /* ArcUnRAR.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE11DA227E400992B84 /* ArcUnRAR.h */; };
 		CF69CFF61DA227E400992B84 /* Native.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69CFE21DA227E400992B84 /* Native.h */; };
@@ -159,6 +161,8 @@
 		CF1FBF391E909AC400D3569C /* Fetching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fetching.h; path = source/Native/Fetching.h; sourceTree = "<group>"; };
 		CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFile.h; path = source/NetDropbox/VFSNetDropboxFile.h; sourceTree = "<group>"; };
 		CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFile.mm; path = source/NetDropbox/VFSNetDropboxFile.mm; sourceTree = "<group>"; };
+		CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileUploadStream.h; path = source/NetDropbox/VFSNetDropboxFileUploadStream.h; sourceTree = "<group>"; };
+		CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadStream.mm; path = source/NetDropbox/VFSNetDropboxFileUploadStream.mm; sourceTree = "<group>"; };
 		CF69CFCF1DA224E200992B84 /* libVFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
@@ -293,6 +297,8 @@
 				CF1168821E91FB4A00CC515A /* Aux.mm */,
 				CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */,
 				CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */,
+				CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */,
+				CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */,
 				CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */,
 				CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */,
 			);
@@ -564,6 +570,7 @@
 				CF69D0041DA227E400992B84 /* VFSHost.h in Headers */,
 				CF69D03E1DA2324100992B84 /* VFSNetFTPCache.h in Headers */,
 				CF69D0071DA227E400992B84 /* VFSSeqToRandomWrapper.h in Headers */,
+				CF22A1121E9751A800149C44 /* VFSNetDropboxFileUploadStream.h in Headers */,
 				CF69D0421DA2324100992B84 /* VFSNetFTPHost.h in Headers */,
 				CF69CFFC1DA227E400992B84 /* VFSArchiveProxy.h in Headers */,
 			);
@@ -703,6 +710,7 @@
 				CF69D0741DA2353000992B84 /* VFSPSFile.cpp in Sources */,
 				CF69D01A1DA22BE800992B84 /* VFSError.mm in Sources */,
 				CF69D01D1DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CF22A1131E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm in Sources */,
 				CF69D06C1DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF69D0411DA2324100992B84 /* VFSNetFTPFile.mm in Sources */,
 			);

@@ -97,8 +97,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
     VFSListingPtr listing;
-    int rc = host->FetchDirectoryListing("/", listing, 0);
-    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( host->FetchDirectoryListing("/", listing, 0) == VFSError::Ok );
 }
 
 - (void)testBasicFileRead
@@ -151,7 +150,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( !file->IsOpened() );
 }
 
-- (void)testSimplyUpload
+- (void)testSimpleUpload
 {
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
@@ -172,9 +171,41 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( file->Close() == VFSError::Ok );
 }
 
+- (void)testUnfinishedUpload
+{
+    const auto to_upload = "Hello, world!"s;
+    auto filepath = "/FolderToModify/test.txt";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload)-1 ) == VFSError::Ok );
+    XCTAssert( file->Close() != VFSError::Ok );
+
+    XCTAssert( host->Exists(filepath) == false );
+}
+
+- (void)testZeroSizedUpload
+{
+    auto filepath = "/FolderToModify/zero.txt";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( 0 ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+
+    VFSStat stat;
+    XCTAssert( host->Stat(filepath, stat, 0) == VFSError::Ok );
+    XCTAssert( stat.size == 0 );
+}
+
 - (void)testDecentSizedUpload
 {
-    const auto length = 50*1024*1024; // 50Mb upload / download
+    const auto length = 5*1024*1024; // 5Mb upload / download
     auto filepath = "/FolderToModify/SomeRubbish.bin";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
     shared_ptr<VFSFile> file;

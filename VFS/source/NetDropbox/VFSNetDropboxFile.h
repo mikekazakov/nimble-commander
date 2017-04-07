@@ -2,6 +2,7 @@
 
 #include "VFSNetDropboxHost.h"
 
+@class VFSNetDropboxFileUploadStream;
 @class VFSNetDropboxFileUploadDelegate;
 
 class VFSNetDropboxFile : public VFSFile
@@ -24,14 +25,17 @@ public:
     virtual int SetUploadSize(size_t _size) override;
 
 
-
+    // download hooks
     bool ProcessDownloadResponse( NSURLResponse *_response );
     void AppendDownloadedData( NSData *_data );
 
-    ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz );
+    // upload hooks
     bool ProcessUploadResponse( NSURLResponse *_response );
-    bool HasDataToFeedUploadTask();
 
+    
+private:
+    ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
+    bool HasDataToFeedUploadTask(); // called from a background thread
 
     /**
      * Download flow: Cold -> Initiated -> Downloading -> (Canceled|Completed)
@@ -41,14 +45,11 @@ public:
         Cold        = 0,
         Initiated   = 1,
         Downloading = 2,
-        Uploading   = 3,
+        Uploading   = 3, // Initiated upload switches to Uploading in SetUploadSize()
         Canceled    = 4,
         Completed   = 5
     };
 
-    State StreamState() const { return m_State; }
-
-private:
 
     struct Download {
         deque<uint8_t>          fifo;
@@ -59,8 +60,10 @@ private:
         deque<uint8_t>                  fifo;
         long                            fifo_offset = 0;
         long                            upload_size = -1;
+        NSMutableURLRequest            *request;
         NSURLSessionUploadTask         *task;
-        VFSNetDropboxFileUploadDelegate*stream;
+        VFSNetDropboxFileUploadDelegate*delegate;
+        VFSNetDropboxFileUploadStream  *stream;
     };
 
 

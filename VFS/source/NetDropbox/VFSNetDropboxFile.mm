@@ -1,11 +1,11 @@
 #include "VFSNetDropboxFile.h"
 #include "Aux.h"
+#include "VFSNetDropboxFileUploadStream.h"
 
 using namespace VFSNetDropbox;
 
 static const auto g_Download = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
 static const auto g_Upload = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
-static const NSInteger kOperationFailedReturnCode = -1;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -69,30 +69,27 @@ static const NSInteger kOperationFailedReturnCode = -1;
 //                  ****** VFSNetDropboxFileUploadDelegate ******
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-@interface VFSNetDropboxFileUploadDelegate : NSInputStream<NSURLSessionDelegate>
+//@interface VFSNetDropboxFileUploadDelegate : NSInputStream<NSURLSessionDelegate>
+@interface VFSNetDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
 
-- (instancetype)initWithFile:(VFSNetDropboxFile *)_file;
+- (instancetype)initWithFile:(VFSNetDropboxFile *)_file
+                   andStream:(VFSNetDropboxFileUploadStream*)_stream;
 - (void)closeFilePtr;
-
-- (void)notifyAboutNewData;
-- (void)notifyAboutDataEnd;
 
 @end
 
 @implementation VFSNetDropboxFileUploadDelegate
 {
-    VFSNetDropboxFile *m_File;
-    NSStreamStatus m_Status;
-    __weak id<NSStreamDelegate> m_Delegate;
-    NSMutableDictionary *m_Properties;
+    VFSNetDropboxFile *m_File; // <--- this pointer must be synchonized with mutex!
+    VFSNetDropboxFileUploadStream *m_Stream;
 }
 
 - (instancetype)initWithFile:(VFSNetDropboxFile *)_file
+                   andStream:(VFSNetDropboxFileUploadStream*)_stream
 {
     if( self = [super init] ) {
         m_File = _file;
-        m_Status = NSStreamStatusNotOpen;
-        m_Properties = [[NSMutableDictionary alloc] init];
+        m_Stream = _stream;
     }
     return self;
 }
@@ -100,89 +97,22 @@ static const NSInteger kOperationFailedReturnCode = -1;
 - (void)closeFilePtr
 {
     m_File = nullptr;
-
-}
-
-//typedef NS_ENUM(NSUInteger, NSStreamStatus) {
-//    NSStreamStatusNotOpen = 0,
-//    NSStreamStatusOpening = 1,
-//    NSStreamStatusOpen = 2,
-//    NSStreamStatusReading = 3,
-//    NSStreamStatusWriting = 4,
-//    NSStreamStatusAtEnd = 5,
-//    NSStreamStatusClosed = 6,
-//    NSStreamStatusError = 7
-//};
-
-- (nullable id)propertyForKey:(NSStreamPropertyKey)key
-{
-    NSLog(@"property for key %@", key);
-    return [m_Properties objectForKey:key];
-}
-
-- (BOOL)setProperty:(nullable id)property forKey:(NSStreamPropertyKey)key
-{
-    NSLog(@"set property %@=%@", key, property);
-    [m_Properties setObject:property forKey:key];
-    return true;
-}
-
-
-- (NSStreamStatus) streamStatus
-{
-    cout << "told stream status" << endl;
-    return m_Status;
-}
-
-- (void)open
-{
-    m_Status = NSStreamStatusOpen;
-}
-
-- (void)close
-{
-    m_Status = NSStreamStatusClosed;
-}
-
-
-//@property (nullable, assign) id <NSStreamDelegate> delegate;
-
-- (void) setDelegate:(id<NSStreamDelegate>)delegate
-{
-    m_Delegate = delegate;
-}
-
-- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSRunLoopMode)mode {}
-- (void)removeFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSRunLoopMode)mode {}
-
-//[VFSNetDropboxFileUploadDelegate streamStatus]
-// reads up to length bytes into the supplied buffer, which must be at least of size len. Returns the actual number of bytes read.
-- (NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)len
-{
-    if( m_File ) {
-        auto rc = m_File->FeedUploadTask(buffer, len);
-        if( rc >= 0)
-            return rc;
-        return kOperationFailedReturnCode;
-    }
-    
-    return kOperationFailedReturnCode;
-}
-
-- (BOOL)getBuffer:(uint8_t * _Nullable * _Nonnull)buffer length:(NSUInteger *)len { return false; }
-
-//@property (readonly) BOOL hasBytesAvailable;
-- (BOOL) hasBytesAvailable
-{
-    if( m_File )
-        return m_File->HasDataToFeedUploadTask();
-    return false;
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
                               needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
 {
-    completionHandler(self);
+    completionHandler(m_Stream);
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+                                didSendBodyData:(int64_t)bytesSent
+                                 totalBytesSent:(int64_t)totalBytesSent
+                       totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+    cout << "didSendBodyData: " << bytesSent
+         << ", totalBytesSent: " << totalBytesSent
+         << ", totalBytesExpectedToSend: " << totalBytesExpectedToSend << endl;
 }
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
@@ -221,26 +151,18 @@ static const NSInteger kOperationFailedReturnCode = -1;
         permit = m_File->ProcessUploadResponse(response);
 
     completionHandler( permit ? NSURLSessionResponseAllow : NSURLSessionResponseCancel );
-}
-
-- (void)notifyAboutNewData
-{
-//- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode;
-    if( [m_Delegate respondsToSelector:@selector(stream:handleEvent:)] )
-        [m_Delegate stream:self handleEvent:NSStreamEventHasBytesAvailable];
-}
-
-- (void)notifyAboutDataEnd
-{
-    m_Status =  NSStreamStatusAtEnd;
-    if( [m_Delegate respondsToSelector:@selector(stream:handleEvent:)] )
-        [m_Delegate stream:self handleEvent:NSStreamEventEndEncountered];
+//    completionHandler( NSURLSessionResponseAllow );
 }
 
 @end
 
-
-VFSNetDropboxFile::VFSNetDropboxFile(const char* _relative_path, const shared_ptr<VFSNetDropboxHost> &_host):
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//                  ****** VFSNetDropboxFile ******
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+VFSNetDropboxFile::VFSNetDropboxFile(const char* _relative_path,
+                                     const shared_ptr<VFSNetDropboxHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }
@@ -252,13 +174,24 @@ VFSNetDropboxFile::~VFSNetDropboxFile()
 
 int VFSNetDropboxFile::Close()
 {
-    if( m_Upload )
+    int rc = VFSError::Ok;
+    if( m_Upload ) {
         if( m_State == Uploading ) {
+            if( m_Upload->upload_size == m_Upload->fifo_offset )
+                [m_Upload->stream notifyAboutDataEnd];
+            else {
+                // client hasn't provided enough data and is closing a file.
+                // this is an invalid behaviour, need to cancel a transfer task
+                [m_Upload->task cancel];
+                m_State = Canceled;
+                rc = VFSError::FromErrno(EIO);
+            }
+            
             // need to wait for response from server before returning from Close();
             unique_lock<mutex> lk(m_SignalLock);
             m_Signal.wait(lk, [&]{ return m_State == Completed || m_State == Canceled; } );
-            m_Upload.reset();
         }
+    }
 
     LOCK_GUARD(m_DataLock) {
         if( m_Download ) {
@@ -267,7 +200,10 @@ int VFSNetDropboxFile::Close()
         }
         
         if( m_Upload ) {
-            [m_Upload->stream closeFilePtr];
+            m_Upload->stream.feedData = nullptr;
+            m_Upload->stream.hasDataToFeed = nullptr;
+            [m_Upload->delegate closeFilePtr];
+            [m_Upload->task cancel];
             m_Upload.reset();
         }       
     }
@@ -276,7 +212,7 @@ int VFSNetDropboxFile::Close()
     m_FileSize  = -1;
     m_State     = Cold;
 
-    return 0;
+    return rc;
 }
 
 int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
@@ -312,15 +248,23 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
-        auto &host = *((VFSNetDropboxHost*)Host().get());
-        auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithFile:this];
+    
+        auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+        stream.hasDataToFeed = [this]() -> bool {
+            return HasDataToFeedUploadTask();
+        };
+        stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
+            return FeedUploadTask(_buffer, _sz);
+        };
+    
+
+        auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithFile:this
+                                                                    andStream:stream];
         
-        auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
-                                                     delegate:delegate
-                                                delegateQueue:nil];
 
         NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Upload];
         req.HTTPMethod = @"POST";
+        auto &host = *((VFSNetDropboxHost*)Host().get());
         host.FillAuth(req);
         [req setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
         InsetHTTPHeaderPathspec(req, RelativePath());
@@ -344,11 +288,12 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 //}
         m_State = Initiated;
         m_Upload = make_unique<Upload>();
-
-
-        m_Upload->task = [session uploadTaskWithStreamedRequest:req];
-        m_Upload->stream = delegate;
-        [m_Upload->task resume];
+        m_Upload->request = req;
+        m_Upload->delegate = delegate;
+        m_Upload->stream = stream;
+        
+        // at this point we need to wait for SetUploadSize() call to finish building of request
+        // and to actually start it
     
 //        this_thread::sleep_for(5s);
 
@@ -487,9 +432,30 @@ int VFSNetDropboxFile::SetUploadSize(size_t _size)
 {
     if( !m_Upload )
         return VFSError::InvalidCall;
+    if( m_State != Initiated )
+        return VFSError::InvalidCall;
     if( m_Upload->upload_size >= 0 )
-        return VFSError::FromErrno( EINVAL ); // already reported before
+        return VFSError::InvalidCall;
+    
+    assert( m_Upload->request != nil );
+    assert( m_Upload->delegate != nil );
+    assert( m_Upload->stream != nil );
+    assert( m_Upload->task == nil );
+    
+    
     m_Upload->upload_size = _size;
+    [m_Upload->request setValue:[NSString stringWithUTF8String:to_string(_size).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
+    auto session = [NSURLSession sessionWithConfiguration:configuration
+                                                 delegate:m_Upload->delegate
+                                            delegateQueue:nil];
+    
+    m_Upload->task = [session uploadTaskWithStreamedRequest:m_Upload->request];
+    [m_Upload->task resume];
+    
+    m_State = Uploading;
+    
     return VFSError::Ok;
 }
 
@@ -497,13 +463,13 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
 {
     if( !m_Upload )
         return VFSError::InvalidCall;
-
+    if( m_State != Uploading )
+        return VFSError::InvalidCall;
+    if( m_Upload->upload_size < 0 )
+        return VFSError::InvalidCall;
     if( m_Upload->fifo_offset + _size > m_Upload->upload_size )
         return VFSError::InvalidCall;
     
-    if( m_State == Initiated )
-        m_State = Uploading;
-
     LOCK_GUARD(m_DataLock) {
         m_Upload->fifo.insert(end(m_Upload->fifo),
                             (const uint8_t*)_buf,
@@ -527,6 +493,7 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
         eaten = _size - m_Upload->fifo.size();
     }
 
+// process an error
     
     if( m_Upload->fifo_offset == m_Upload->upload_size ) {
         [m_Upload->stream notifyAboutDataEnd];
@@ -555,8 +522,11 @@ ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
         m_Upload->fifo_offset += sz;
         cout << "fed " << sz << " bytes into stream" << endl;
     }
-    LOCK_GUARD(m_SignalLock) {
-        m_Signal.notify_all();
+    
+    if( sz != 0 ) {    
+        LOCK_GUARD(m_SignalLock) {
+            m_Signal.notify_all();
+        }
     }
     return sz;
 }
@@ -593,19 +563,5 @@ bool VFSNetDropboxFile::ProcessUploadResponse( NSURLResponse *_response )
         m_Signal.notify_all();
     }
     
-    return true;
+    return m_State == Completed;
 }
-
-//    if (context == &POSBlobInputStreamObservingContext) {
-//        id newValue = [change objectForKey:NSKeyValueChangeNewKey];
-//        if ([keyPath isEqualToString:POSBlobInputStreamDataSourceOpenCompletedKeyPath] && [newValue boolValue]) {
-//            [self setStatus:NSStreamStatusOpen];
-//            [self enqueueEvent:NSStreamEventOpenCompleted];
-//        } else if ([keyPath isEqualToString:POSBlobInputStreamDataSourceHasBytesAvailableKeyPath] && [newValue boolValue]) {
-//            [self enqueueEvent:NSStreamEventHasBytesAvailable];
-//        } else if ([keyPath isEqualToString:POSBlobInputStreamDataSourceAtEndKeyPath] && [newValue boolValue]) {
-//            [self setStatus:NSStreamStatusAtEnd];
-//            [self enqueueEvent:NSStreamEventEndEncountered];
-//        } else if ([keyPath isEqualToString:POSBlobInputStreamDataSourceErrorKeyPath] && newValue != nil) {
-//            [self setError:newValue];
-//        }

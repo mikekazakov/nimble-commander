@@ -29,10 +29,6 @@ public:
     bool ProcessDownloadResponse( NSURLResponse *_response );
     void AppendDownloadedData( NSData *_data );
 
-    // upload hooks
-    bool ProcessUploadResponse( NSURLResponse *_response );
-
-    
 private:
     ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
     bool HasDataToFeedUploadTask(); // called from a background thread
@@ -65,7 +61,6 @@ private:
         VFSNetDropboxFileUploadDelegate*delegate;
         VFSNetDropboxFileUploadStream  *stream;
     };
-
 
     long                m_FilePos = 0;
     long                m_FileSize = -1;

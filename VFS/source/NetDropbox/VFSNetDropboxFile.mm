@@ -1,6 +1,7 @@
 #include "VFSNetDropboxFile.h"
 #include "Aux.h"
 #include "VFSNetDropboxFileUploadStream.h"
+#include "VFSNetDropboxFileUploadDelegate.h"
 
 using namespace VFSNetDropbox;
 
@@ -66,98 +67,6 @@ static const auto g_Upload = [NSURL URLWithString:@"https://content.dropboxapi.c
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//                  ****** VFSNetDropboxFileUploadDelegate ******
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//@interface VFSNetDropboxFileUploadDelegate : NSInputStream<NSURLSessionDelegate>
-@interface VFSNetDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
-
-- (instancetype)initWithFile:(VFSNetDropboxFile *)_file
-                   andStream:(VFSNetDropboxFileUploadStream*)_stream;
-- (void)closeFilePtr;
-
-@end
-
-@implementation VFSNetDropboxFileUploadDelegate
-{
-    VFSNetDropboxFile *m_File; // <--- this pointer must be synchonized with mutex!
-    VFSNetDropboxFileUploadStream *m_Stream;
-}
-
-- (instancetype)initWithFile:(VFSNetDropboxFile *)_file
-                   andStream:(VFSNetDropboxFileUploadStream*)_stream
-{
-    if( self = [super init] ) {
-        m_File = _file;
-        m_Stream = _stream;
-    }
-    return self;
-}
-
-- (void)closeFilePtr
-{
-    m_File = nullptr;
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                              needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))completionHandler
-{
-    completionHandler(m_Stream);
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                                didSendBodyData:(int64_t)bytesSent
-                                 totalBytesSent:(int64_t)totalBytesSent
-                       totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
-{
-    cout << "didSendBodyData: " << bytesSent
-         << ", totalBytesSent: " << totalBytesSent
-         << ", totalBytesExpectedToSend: " << totalBytesExpectedToSend << endl;
-}
-
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
-{
-    cout << "didBecomeInvalidWithError" << endl;
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                           didCompleteWithError:(nullable NSError *)error
-{
-    cout << "didCompleteWithError" << endl;
-    if( error )
-        NSLog(@"%@", error);
-    auto r = task.response;
-    NSLog(@"%@", r);
-//    int a = 10;
-
-}
-
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-                                     didReceiveData:(NSData *)data
-{
-    if( auto s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] )
-        NSLog(@"%@", s);
-//    cout << "didReceiveData" << endl;
-//    if( auto file = m_File.lock() )
-//        file->AppendDownloadedData(data);
-}
-
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-                                 didReceiveResponse:(NSURLResponse *)response
-                                  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
-{
-    bool permit = false;
-    if( m_File )
-        permit = m_File->ProcessUploadResponse(response);
-
-    completionHandler( permit ? NSURLSessionResponseAllow : NSURLSessionResponseCancel );
-//    completionHandler( NSURLSessionResponseAllow );
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 //                  ****** VFSNetDropboxFile ******
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,8 +111,7 @@ int VFSNetDropboxFile::Close()
         if( m_Upload ) {
             m_Upload->stream.feedData = nullptr;
             m_Upload->stream.hasDataToFeed = nullptr;
-            [m_Upload->delegate closeFilePtr];
-            [m_Upload->task cancel];
+            m_Upload->delegate.handleFinished = nullptr;
             m_Upload.reset();
         }       
     }
@@ -248,7 +156,6 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
-    
         auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
         stream.hasDataToFeed = [this]() -> bool {
             return HasDataToFeedUploadTask();
@@ -257,11 +164,18 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
             return FeedUploadTask(_buffer, _sz);
         };
     
-
-        auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithFile:this
-                                                                    andStream:stream];
+        auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+        delegate.handleFinished = [this](int _vfs_error){
+            if( m_State == Initiated || m_State == Uploading ) {
+                m_State = _vfs_error == VFSError::Ok ?
+                    Completed :
+                    Canceled;
+                LOCK_GUARD(m_SignalLock) {
+                    m_Signal.notify_all();
+                }
+            }
+        };
         
-
         NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Upload];
         req.HTTPMethod = @"POST";
         auto &host = *((VFSNetDropboxHost*)Host().get());
@@ -294,9 +208,6 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
         // at this point we need to wait for SetUploadSize() call to finish building of request
         // and to actually start it
-    
-//        this_thread::sleep_for(5s);
-
         return VFSError::Ok;
     }
     
@@ -539,29 +450,4 @@ bool VFSNetDropboxFile::HasDataToFeedUploadTask()
     }
     cout << "has data for stream: " << has_data << endl;
     return has_data;
-}
-
-bool VFSNetDropboxFile::ProcessUploadResponse( NSURLResponse *_response )
-{
-    if( m_State != Initiated && m_State != Uploading )
-        return false;
-    
-    LOCK_GUARD(m_DataLock) {
-        if( !m_Upload )
-            return false;
-    }
-    
-    const auto new_state = [&]{
-        if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) )
-            if( http_resp.statusCode == 200 )
-                return Completed;
-        return Canceled;
-    }();
-        
-    m_State = new_state;
-    LOCK_GUARD(m_SignalLock) {
-        m_Signal.notify_all();
-    }
-    
-    return m_State == Completed;
 }

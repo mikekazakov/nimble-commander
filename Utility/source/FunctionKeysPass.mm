@@ -53,41 +53,6 @@ static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags 
     return press;
 }
 
-// To consider:
-//I think I fixed this. I had been using +[NSEvent
-//                                         keyEventWithType:location:modifierFlags:timestamp:windowNumber:context:characters:charactersIgnoringModifiers:isARepeat:keyCode:]
-//to create an NSEvent, then returning that event's -CGEvent. I switched to CGEventCreateKeyboardEvent,
-//using the an event source create from the original event (with CGEventCreateSourceFromEvent), and
-// returning the event from the callback. All my tests pass now.
-
-static CFStringRef createStringForKey(CGKeyCode keyCode)
-{
-    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
-    CFDataRef layoutData = (CFDataRef)
-    TISGetInputSourceProperty(currentKeyboard,
-                              kTISPropertyUnicodeKeyLayoutData);
-    const UCKeyboardLayout *keyboardLayout =
-    (const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
-    
-    UInt32 keysDown = 0;
-    UniChar chars[4];
-    UniCharCount realLength;
-    
-    UCKeyTranslate(keyboardLayout,
-                   keyCode,
-                   kUCKeyActionDisplay,
-                   0,
-                   LMGetKbdType(),
-                   kUCKeyTranslateNoDeadKeysBit,
-                   &keysDown,
-                   sizeof(chars) / sizeof(chars[0]),
-                   &realLength,
-                   chars);
-    CFRelease(currentKeyboard);
-    
-    return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
-}
-
 CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _type, CGEventRef _event)
 {
     if( _type == kCGEventTapDisabledByTimeout ) {
@@ -118,7 +83,7 @@ CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy, CGEventType _typ
             case 80:  return NewFnButtonPress( kVK_F19, key_down, CGEventGetFlags(_event) );
         };
     }
-    else if( _type == NSSystemDefined ) {
+    else if( (NSEventType)_type == NSSystemDefined ) {
         NSEvent *ev = [NSEvent eventWithCGEvent:_event]; // have to create a NSEvent object for every NSSystemDefined event, which is awful
         if( ev.subtype == NX_SUBTYPE_AUX_CONTROL_BUTTONS ) {
             const NSInteger data1 = ev.data1;

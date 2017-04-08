@@ -1,5 +1,8 @@
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/string_generator.hpp>
+#pragma clang diagnostic pop
 #include <boost/container/static_vector.hpp>
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>

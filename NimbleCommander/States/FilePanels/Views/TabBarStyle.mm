@@ -337,7 +337,6 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
 {
     NSRect rect = [cell titleRectForBounds:frame];
 
-    const MMAttachedTabBarButton *button = (MMAttachedTabBarButton *)controlView;
     const MMTabBarView *tabBarView = [controlView enclosingTabBarView];
     const bool wnd_active = [tabBarView isWindowActive];
 

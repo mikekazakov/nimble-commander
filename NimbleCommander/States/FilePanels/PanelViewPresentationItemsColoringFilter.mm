@@ -10,15 +10,6 @@
 #include "Utility/HexadecimalColor.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
 
-static tribool to_tribool(NSNumber *_n)
-{
-    if(_n.intValue == 0)
-        return false;
-    if(_n.intValue == 1)
-        return true;
-    return indeterminate;
-}
-
 static tribool to_tribool(const GenericConfig::ConfigValue &_val)
 {
     switch( _val.GetType() ) {

@@ -135,7 +135,6 @@
 {
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
         if( auto lv = rv.listView ) {
-            const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
             const auto context = NSGraphicsContext.currentContext.CGContext;
             
@@ -143,13 +142,6 @@
             NSRectFill(self.bounds);
             DrawTableVerticalSeparatorForView(self);            
             
-            const auto text_rect = NSMakeRect(geometry.LeftInset(),
-                                              geometry.TextBaseLine(),
-                                              bounds.size.width -
-                                                geometry.LeftInset() -
-                                                geometry.RightInset(),
-                                              0);
-
             if( m_Line ) {
                 CGContextSetFillColorWithColor( context, rv.rowTextColor.CGColor );
                 CGContextSetTextPosition( context, geometry.LeftInset(), geometry.TextBaseLine() );

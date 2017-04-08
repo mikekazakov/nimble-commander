@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
     @method     initWithTabBarView:
     @abstract   Creates a new MMTabBarController instance.
     @discussion Creates a new MMTabBarController for controlling a MMTabBarView. Should only be called by MMTabBarView.
-    @param      A MMTabBarView.
+    @param      aTabBarView MMTabBarView.
     @returns    A newly created MMTabBarController instance.
  */
 - (instancetype)initWithTabBarView:(MMTabBarView *)aTabBarView {
@@ -84,8 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @discussion The array is summed using, for each item, the minimum between the current value and the passed minimum value.
  *             This is useful for getting a sum if the array has size-to-fit widths which will be allowed to be less than the
  *             specified minimum.
- * @param      An array of widths
- * @param      The minimum
+ * @param      array An array of widths
+ * @param      minimum The minimum
  * @returns    The smallest possible sum for the array
  */
 static NSInteger potentialMinimumForArray(NSArray *array, NSInteger minimum){
@@ -126,7 +126,7 @@ static NSInteger potentialMinimumForArray(NSArray *array, NSInteger minimum){
     @method     _generateWidthsFromAttachedButtons:
     @abstract   Calculates the width of attached buttons that would be visible.
     @discussion Calculates the width of attached buttons in the tab bar and returns an array of widths for the buttons that would be visible. Uses large blocks of code that were previously in MMTabBarView's update method.
-    @param      An array of MMAttachedTabBarButton.
+    @param      buttons array of MMAttachedTabBarButton.
     @returns    An array of numbers representing the widths of attached buttons that would be visible.
 */
 - (NSArray *)_generateWidthsFromAttachedButtons:(NSArray *)buttons {
@@ -573,9 +573,9 @@ static NSInteger potentialMinimumForArray(NSArray *array, NSInteger minimum){
 /*!
  *  @method _shrinkWidths:towardMinimum:withAvailableWidth:
  *  @abstract Decreases widths in an array toward a minimum until they fit within availableWidth, if possible
- *  @param An array of NSNumbers
- *  @param The target minimum
- *  @param The maximum available width
+ *  @param newWidths An array of NSNumbers
+ *  @param minimum The target minimum
+ *  @param availableWidth The maximum available width
  *  @returns The amount by which the total array width was shrunk
  */
 - (NSInteger)_shrinkWidths:(NSMutableArray *)newWidths towardMinimum:(NSInteger)minimum withAvailableWidth:(CGFloat)availableWidth {

@@ -583,7 +583,6 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 - (void) keyDown:(NSEvent *)event
 {
-    int a = 10;
     if( event.type == NSEventTypeKeyDown &&
         event.keyCode == kVK_Delete &&
         self.window.firstResponder == self.FilenamesTable &&

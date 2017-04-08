@@ -143,28 +143,6 @@ struct OtherAttrs
     };
 };
 
-// not used currently
-static vector<user_info> LoadUsersWithPasswd()
-{
-    vector<user_info> result;
-    
-    setpwent();
-    struct passwd *p;
-    while( (p = getpwent ()) != NULL ) {
-        user_info curr;
-        curr.pw_uid = p->pw_uid;
-        curr.pw_name = [NSString stringWithUTF8String:p->pw_name];
-        curr.pw_gecos = [NSString stringWithUTF8String:p->pw_gecos];
-        result.emplace_back(curr);
-    }
-    endpwent();
-
-    sort(begin(result), end(result), [](auto&_1, auto&_2){ return (signed)_1.pw_uid < (signed)_2.pw_uid; } );
-    result.erase(unique(begin(result), end(result), [](auto&_1, auto&_2){ return _1.pw_uid == _2.pw_uid; } ), end(result));
-    
-    return result;
-}
-
 static vector<user_info> LoadUsersWithOD()
 {
     vector<user_info> result;

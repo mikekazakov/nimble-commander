@@ -71,13 +71,6 @@ static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(const string
     return p;
 }
 
-static MainWndGoToButtonSelectionVFSPath *SelectionForNativeVFSPath(NSURL *_url)
-{
-    if(!_url || !_url.path)
-        return nil;
-    return SelectionForNativeVFSPath(_url.path.fileSystemRepresentationSafe);
-}
-
 @implementation MainWndGoToButtonSelection
 @end
 @implementation MainWndGoToButtonSelectionVFSPath

@@ -349,8 +349,6 @@ static NSPoint  g_LastMouseDownPos = {};
     tv.font = CurrentTheme().FilePanelsBriefFont();
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
-    auto aa = tv.textContainerOrigin;
-    
     
     [self addSubview:_editor];
 }

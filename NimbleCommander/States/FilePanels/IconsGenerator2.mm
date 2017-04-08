@@ -34,25 +34,6 @@ static bool CheckFileIsOK(const char* _s)
             st.st_size > 0;
 }
 
-static bool IsImageRepEqual(NSBitmapImageRep *_img1, NSBitmapImageRep *_img2)
-{
-    if(_img1.bitmapFormat != _img2.bitmapFormat) return false;
-    if(_img1.bitsPerPixel != _img2.bitsPerPixel) return false;
-    if(_img1.bytesPerPlane != _img2.bytesPerPlane) return false;
-    if(_img1.bytesPerRow != _img2.bytesPerRow) return false;
-    if(_img1.isPlanar != _img2.isPlanar) return false;
-    if(_img1.numberOfPlanes != _img2.numberOfPlanes) return false;
-    if(_img1.samplesPerPixel != _img2.samplesPerPixel) return false;
-    
-    return memcmp(_img1.bitmapData, _img2.bitmapData, _img1.bytesPerPlane) == 0;
-}
-
-static bool IsImageRepEqual(NSImageRep *_img1, NSBitmapImageRep *_img2)
-{
-    NSBitmapImageRep *img1 = [[NSBitmapImageRep alloc] initWithCGImage:[_img1 CGImageForProposedRect:0 context:0 hints:0]];
-    return IsImageRepEqual(img1, _img2);
-}
-
 static NSImage *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
                                    const VFSHostPtr &_host,

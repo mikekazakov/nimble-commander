@@ -1,8 +1,11 @@
 #include <dirent.h>
 #include <NetFS/NetFS.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#pragma clang diagnostic pop
 #include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
 #include <Utility/NativeFSManager.h>

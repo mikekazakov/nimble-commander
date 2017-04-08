@@ -149,8 +149,11 @@ static string ensure_tr_slash( string _str )
         _str += '/';
     return _str;
 }
+
 static vector<pair<string, string>> GetFindersFavorites() // title, path
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const auto flags = kLSSharedFileListNoUserInteraction|kLSSharedFileListDoNotMountVolumes;
     vector<pair<string, string>> paths;
     
@@ -193,6 +196,7 @@ static vector<pair<string, string>> GetFindersFavorites() // title, path
     CFRelease(list);
     
     return paths;
+#pragma clang diagnostic pop
 }
 
 static vector<pair<string, string>> GetDefaultFavorites()

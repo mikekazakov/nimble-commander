@@ -14,9 +14,6 @@
 #include "../Bootstrap/Config.h"
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
-static const auto g_ConfigModernFont      = "viewer.modern.font";
-static const auto g_ConfigClassicFont     = "viewer.classic.font";
-
 
 @interface PreferencesBoolToNumberValueTransformer : NSValueTransformer
 @end

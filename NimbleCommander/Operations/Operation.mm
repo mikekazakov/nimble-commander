@@ -11,9 +11,9 @@
 #include "Operation.h"
 #include "OperationJob.h"
 
-NSError* ErrnoToNSError(int _error)
+NSError* ErrnoToNSError(int _error_code)
 {
-    return [NSError errorWithDomain:NSPOSIXErrorDomain code:_error userInfo:nil];
+    return [NSError errorWithDomain:NSPOSIXErrorDomain code:_error_code userInfo:nil];
 }
 
 NSError* ErrnoToNSError()

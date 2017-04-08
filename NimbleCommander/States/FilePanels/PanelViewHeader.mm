@@ -287,7 +287,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 
 - (void) onSearchFieldDiscardButton:(id)sender
 {
-    int a = 10;
     self.searchPrompt = nil;
     [self.window makeFirstResponder:m_PanelView];
     [((PanelController*)m_PanelView.delegate) QuickSearchClearFiltering];

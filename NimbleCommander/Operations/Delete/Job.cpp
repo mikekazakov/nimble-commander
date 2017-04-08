@@ -5,27 +5,6 @@
 #include <RoutedIO/RoutedIO.h>
 #include "Job.h"
 
-static bool CanBeExternalEA(const char *_short_filename)
-{
-    return  _short_filename[0] == '.' &&
-            _short_filename[1] == '_' &&
-            _short_filename[2] != 0;
-}
-
-static bool EAHasMainFile(const char *_full_ea_path)
-{
-    char tmp[MAXPATHLEN];
-    strcpy(tmp, _full_ea_path);
-    
-    char *last_dst = strrchr(tmp, '/');
-    const char *last_src = strrchr(_full_ea_path, '/'); // suboptimal
-    
-    strcpy(last_dst + 1, last_src + 3);
-    
-    struct stat st;
-    return lstat(tmp, &st) == 0;
-}
-
 void FileDeletionOperationJobNew::Init(vector<VFSListingItem> _files, FileDeletionOperationType _type)
 {
     if( (_type == FileDeletionOperationType::MoveToTrash) &&

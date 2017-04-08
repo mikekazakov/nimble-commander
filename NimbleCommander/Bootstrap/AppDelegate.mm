@@ -60,7 +60,6 @@ static auto g_StateDirPostfix = @"/State/";
 static GenericConfig *g_Config = nullptr;
 static GenericConfig *g_State = nullptr;
 
-static const auto g_ConfigGeneralSkin = "general.skin";
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
@@ -201,8 +200,11 @@ static AppDelegate *g_Me = nil;
 
         if( ActivationManager::ForAppStore() &&
            ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
             NSLog(@"no receipt - exit the app with code 173");
             exit(173);
+#pragma clang diagnostic pop
         }
         
         const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;

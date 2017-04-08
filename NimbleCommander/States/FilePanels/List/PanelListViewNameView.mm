@@ -224,9 +224,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     NSTextView *tv = _editor.documentView;
     tv.font = font;
     tv.textContainerInset = NSMakeSize(0, 0);
-    tv.textContainer.lineFragmentPadding = line_padding;
-    auto aa = tv.textContainerOrigin;
-    
+    tv.textContainer.lineFragmentPadding = line_padding;    
     
     [self addSubview:_editor];
 }

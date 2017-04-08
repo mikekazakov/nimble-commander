@@ -1,5 +1,6 @@
 //#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PanelDataPersistency.h"
+#include "PanelController+Menu.h"
 #include "Favorites.h"
 #include "FavoritesMenuDelegate.h"
 
@@ -43,7 +44,6 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_fav
 
 static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_location )
 {
-    static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
     NSMenuItem *it = [[NSMenuItem alloc] init];
     if( auto title = [NSString stringWithUTF8StdString:_location.verbose_path] )
         it.title = title;

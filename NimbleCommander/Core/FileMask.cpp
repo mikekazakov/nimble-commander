@@ -1,11 +1,3 @@
-//
-//  FileMask.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 30.07.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -14,18 +6,6 @@
 #include <regex>
 #include <Habanero/CFStackAllocator.h>
 #include "FileMask.h"
-
-static inline bool
-stricmp2(const char *s1, const char *s2)
-{
-    do {
-        if (*s1 != tolower(*s2++))
-            return false;
-        if (*s1++ == '\0')
-            break;
-    } while (true);
-    return true;
-}
 
 static inline bool
 strincmp2(const char *s1, const char *s2, size_t _n)

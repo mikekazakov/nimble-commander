@@ -317,7 +317,7 @@ vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _
         ++eas_last;
     }
     
-    return move(eas);
+    return eas;
 }
 
 void *BuildAppleDoubleFromEA(VFSFile &_file,

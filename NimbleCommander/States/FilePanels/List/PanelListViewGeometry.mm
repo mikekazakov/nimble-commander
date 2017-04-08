@@ -4,7 +4,7 @@
 constexpr short insets[4] = {7, 1, 5, 1};
 
 // font_size, double_icon, icon_size, line_height, text_baseline
-static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {
+static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
     make_tuple(10, 0,  0, 17, 5),
     make_tuple(10, 1, 16, 17, 5),
     make_tuple(10, 2, 32, 35, 14),
@@ -26,7 +26,7 @@ static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLa
     make_tuple(16, 0,  0, 22, 6),
     make_tuple(16, 1, 16, 22, 6),
     make_tuple(16, 2, 32, 35, 12)
-};
+}};
 
 // line height, text baseline, icon size
 static tuple<short, short, short> GrabGeometryFromSystemFont( NSFont *_font, int _icon_scale )

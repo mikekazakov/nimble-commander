@@ -58,7 +58,6 @@
         const int index = (int)i.indexPath.item;
         const int row = index % items_per_column;
         const int col = index / items_per_column;
-        const NSRect orig_frame = i.frame;
         
         NSRect new_frame = NSMakeRect(columns[col].origin,
                                       row * item_height,

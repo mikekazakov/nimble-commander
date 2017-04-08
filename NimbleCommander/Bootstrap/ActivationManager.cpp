@@ -141,7 +141,7 @@ static void SetupTrialPeriod()
     CFDefaultsSetDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
 }
 
-static void DeleteTrialPeriodInfo()
+[[maybe_unused]] static void DeleteTrialPeriodInfo()
 {
     CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
 }

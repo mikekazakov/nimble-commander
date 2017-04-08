@@ -178,11 +178,7 @@
         [super addSubview: view];
     }
     else {
-        int a = 10;
-        
-        
-    }
-    
+    }    
 }
 
 - (void)addSubview:(NSView *)view positioned:(NSWindowOrderingMode)place relativeTo:(nullable NSView *)otherView

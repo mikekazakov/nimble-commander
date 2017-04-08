@@ -196,8 +196,9 @@ void FeedbackManager::EmailFeedback()
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please write your feedback here.";
     NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
-    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEncodingWithAllowedCharacters:
+        NSCharacterSet.URLQueryAllowedCharacterSet];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 
@@ -211,8 +212,8 @@ void FeedbackManager::EmailSupport()
                          [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please describle your issues with Nimble Commander here.";
     NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
-    NSString *urlstring = [mailtoAddress stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
+    NSString *urlstring = [mailtoAddress stringByAddingPercentEncodingWithAllowedCharacters:
+        NSCharacterSet.URLQueryAllowedCharacterSet];    
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 

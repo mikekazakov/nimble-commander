@@ -171,7 +171,7 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     
     NSPoint p;
     p.x = (self.view.bounds.size.width - menu.size.width) / 2.;
-    p.y = self.view.bounds.size.height - (self.view.bounds.size.height - menu.size.height) / 2.;
+    p.y = self.view.bounds.size.height - self.view.headerBarHeight - 5;
     
     [menu popUpMenuPositioningItem:nil
                         atLocation:p
@@ -182,7 +182,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 {
     auto hist_items = m_History.All();
     
-    NSMenu *menu = [[NSMenu alloc] init];
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:
+                             NSLocalizedString(@"History", "History popup menu title in file panels")];
     
     int indx = 0;
     for( auto i = rbegin(hist_items), e = rend(hist_items); i != e; ++i, ++indx ) {
@@ -201,11 +202,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
             [menu addItem:it];
         }
     }
-    if( menu.itemArray.count > 1 && m_History.IsRecording() )
-        [menu removeItemAtIndex:0];
-    
-    [menu insertItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"History", "History popup menu title in file panels") action:nullptr keyEquivalent:@""]
-                                               atIndex:0];
+    if( menu.itemArray.count > 2 && m_History.IsRecording() )
+        [menu removeItemAtIndex:1];
     
     [self popUpQuickListMenu:menu];
 }
@@ -217,8 +215,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     
     auto stack = ProduceLocationsForParentDirectories( self.data.Listing() );
     
-    NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:
+        NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels")];
     
     for( auto &i: stack) {
         NSString *title = [NSString stringWithUTF8StdString:i.first.verbose_title() + i.second];
@@ -244,8 +242,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 
 - (void) popUpQuickListWithVolumes
 {
-    NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:
+        NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels")];
     
     auto vfs_promise = VFSInstanceManager::Instance().TameVFS(VFSNativeHost::SharedHost());
     
@@ -347,8 +345,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
         return m;
     }();
     
-    NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItem:[[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Connections", "Connections popup menu title in file panels") action:nullptr keyEquivalent:@""]];
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:
+        NSLocalizedString(@"Connections", "Connections popup menu title in file panels")];
 
     auto connections = NetworkConnectionsManager::Instance().AllConnectionsByMRU();
     

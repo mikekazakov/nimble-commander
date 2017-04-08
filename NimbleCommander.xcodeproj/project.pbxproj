@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
+		CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1362,6 +1363,8 @@
 		B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassicPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
+		CF0139A31E98BA6700E44F2D /* FilterPopUpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterPopUpMenu.h; path = NimbleCommander/GeneralUI/FilterPopUpMenu.h; sourceTree = SOURCE_ROOT; };
+		CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilterPopUpMenu.mm; path = NimbleCommander/GeneralUI/FilterPopUpMenu.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -3171,6 +3174,8 @@
 		CFDAC3011DFD20810039A104 /* GeneralUI */ = {
 			isa = PBXGroup;
 			children = (
+				CF0139A31E98BA6700E44F2D /* FilterPopUpMenu.h */,
+				CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */,
 				CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */,
 				CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */,
 				CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */,
@@ -4310,6 +4315,7 @@
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */,
 				CF9069851BB54035000C3CBB /* Job.cpp in Sources */,
 				CFDAC2921DFBF9260039A104 /* TermScreenBuffer.cpp in Sources */,
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,

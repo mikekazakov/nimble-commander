@@ -12,6 +12,7 @@
 #include "PanelDataPersistency.h"
 #include "Views/MainWndGoToButton.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Favorites.h"
 
@@ -272,12 +273,9 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
 - (void) popUpQuickListWithFavorites
 {
     static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};
-    NSMenu *menu = [[NSMenu alloc] init];
-    
-    auto favorites_header = [[NSMenuItem alloc] init];
-    favorites_header.title = NSLocalizedString(@"Favorites",
-                                               "Favorites popup menu subtitle in file panels");
-    [menu addItem:favorites_header];
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:
+        NSLocalizedString(@"Favorites",
+                          "Favorites popup menu subtitle in file panels")];
 
     auto favorites = AppDelegate.me.favoriteLocationsStorage.Favorites();
     for( auto &f: favorites ) {

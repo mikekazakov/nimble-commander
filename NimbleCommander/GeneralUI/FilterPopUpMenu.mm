@@ -49,18 +49,12 @@ When a menu item is copied via NSCopying, any attached view is copied via archiv
 - (void) updateFilter:(NSString*)_filter
 {
     m_Filter = _filter;
-
-    [NSRunLoop.currentRunLoop performSelector:@selector(updateVisibility)
-                                       target:self
-                                     argument:nil
-                                        order:0
-                                        modes:@[NSEventTrackingRunLoopMode]];
-//    [NSRunLoop.currentRunLoop performSelector:@selector(update)
+    [self updateVisibility];
+//    [NSRunLoop.currentRunLoop performSelector:@selector(updateVisibility)
 //                                       target:self
 //                                     argument:nil
 //                                        order:0
 //                                        modes:@[NSEventTrackingRunLoopMode]];
-
 }
 
 - (bool) validateItem:(NSMenuItem*)_item
@@ -124,11 +118,13 @@ When a menu item is copied via NSCopying, any attached view is copied via archiv
         m_Query.editable = true;
         m_Query.enabled = true;
         m_Query.usesSingleLineMode = true;
+        m_Query.lineBreakMode = NSLineBreakByTruncatingHead;
         m_Query.placeholderString = @"Type to filter";
         m_Query.delegate = self;
         m_Query.bordered = true;
         m_Query.bezeled = true;
         m_Query.bezelStyle = NSTextFieldRoundedBezel;
+        m_Query.font = [NSFont menuFontOfSize:0];
 //        m_Query.controlSize = NSControlSizeMini;
         
 //        m_Query.drawsBackground = false;
@@ -155,23 +151,13 @@ When a menu item is copied via NSCopying, any attached view is copied via archiv
     return self;
 }
 
-//extern EventTargetRef 
-//GetEventDispatcherTarget(void)
-
-//extern EventTargetRef 
-//GetEventMonitorTarget(void)                                   AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER;
 static OSStatus CarbonCallback(EventHandlerCallRef inHandlerCallRef,
                                EventRef inEvent,
                                void *inUserData)
 {
-    cout << "***" << endl;
-//int a = 10;
-
-//(__bridge void*)self
+//    cout << "***" << endl;
     bool processed = [((__bridge FilterPopUpMenuItem*)inUserData) processInterceptedEvent:inEvent];
     
-
-
     if( !processed )
         return CallNextEventHandler( inHandlerCallRef, inEvent );
     else
@@ -188,84 +174,115 @@ static OSStatus CarbonCallback(EventHandlerCallRef inHandlerCallRef,
 //                if (hitView != parentTextField && (fieldEditor && hitView != fieldEditor) ) {
     
 
-    NSEvent *ev = [NSEvent eventWithEventRef:_event];
+    const auto ev = [NSEvent eventWithEventRef:_event];
     if( !ev )
         return false;
     
-    if( ev.type == NSEventTypeKeyDown ) {
-        if( ev.keyCode == 125 ) // down
-            return false;
-        if( ev.keyCode == 126 ) // up
-            return false;
-        if( ev.keyCode == 49 ) // space
-            return false;
-        if( ev.keyCode == 36 ) // return
-            return false;
+    if( ev.type != NSEventTypeKeyDown )
+        return false;
+
+    const auto kc = ev.keyCode;
+    if(
+       kc == 115 || // home
+       kc == 117 || // delete
+       kc == 116 || // pgup
+       kc == 119 || // end
+       kc == 121 || // pgdn
+       kc == 123 || // left
+       kc == 124 || // right
+       kc == 125 || // down
+       kc == 126 || // up
+       kc == 49  || // space
+       kc == 36  || // return
+       kc == 48     // tab
+       
+       )
+        return false;
+    
+    const auto query = m_Query.stringValue;
+    
+    if( kc == 51 ) { // backspace
+        if( query.length > 0 )
+            [self setQuery:[query substringToIndex:query.length-1]];
+        return true;
     }
+    
+//    if( kc == 48 ) { // tab
+//        [self.window makeFirstResponder:self.window];
+//        return true;
+//    }
+    
     
     NSString *chars = ev.charactersIgnoringModifiers;
     if( !chars || chars.length != 1 )
         return false;
     
+
+    [self setQuery:[query stringByAppendingString:chars]];
     
-    m_Query.stringValue = [m_Query.stringValue stringByAppendingString:chars];
-//    [self fireNotification];
-    
-    [NSRunLoop.currentRunLoop performSelector:@selector(fireNotification)
-                                       target:self
-                                     argument:nil
-                                        order:0
-                                        modes:@[NSEventTrackingRunLoopMode]];
-    
+//    m_Query.stringValue = [m_Query.stringValue stringByAppendingString:chars];
+//
+//    
+//    [NSRunLoop.currentRunLoop performSelector:@selector(fireNotification)
+//                                       target:self
+//                                     argument:nil
+//                                        order:0
+//                                        modes:@[NSEventTrackingRunLoopMode]];
+//    
     NSLog(@"%@", ev);
 
     return true;
 }
 
+- (void) setQuery:(NSString*)_query
+{
+    if( [_query isEqualToString:m_Query.stringValue] )
+        return;
+ 
+    m_Query.stringValue = _query;
+    [NSRunLoop.currentRunLoop performSelector:@selector(fireNotification)
+                                       target:self
+                                     argument:nil
+                                        order:0
+                                        modes:@[NSEventTrackingRunLoopMode]];
+}
+
 - (void) viewDidMoveToWindow
 {
-    if( self.window  ) {
-//        auto w = self.window;
-// check that w is a NSCarbonMenuWindow
-
-//        m_InitialFirstResponder = self.window.firstResponder;
-
+    const auto window = self.window;
+    if( window ) {
+        if( ![window.className isEqualToString:@"NSCarbonMenuWindow"] ) {
+            NSLog(@"Sorry, but FilterPopUpMenu was designed to work with NSCarbonMenuWindow.");
+            return;
+        }
+        
         EventTypeSpec evts[2];
         evts[0].eventClass = kEventClassKeyboard;
         evts[0].eventKind = kEventRawKeyDown;
         evts[1].eventClass = kEventClassKeyboard;
         evts[1].eventKind = kEventRawKeyRepeat;
 
-
-        auto aa = GetEventDispatcherTarget(); // valid
-        EventHandlerRef outref;
-        auto asas = InstallEventHandler(aa,
-                                        CarbonCallback,
-                                        2,
-                                        &evts[0],
-                                        (__bridge void*)self,
-                                        &m_EventHandler);
+        const auto dispatcher = GetEventDispatcherTarget();
+        if( !dispatcher )
+            return;
         
-
-        int a = 10;
-
-//+ (nullable id)addGlobalMonitorForEventsMatchingMask:(NSEventMask)mask handler:(void (^)(NSEvent*))block NS_AVAILABLE_MAC(10_6);
+        const auto result = InstallEventHandler(dispatcher,
+                                                CarbonCallback,
+                                                2,
+                                                &evts[0],
+                                                (__bridge void*)self,
+                                                &m_EventHandler);
+        if( result != noErr ) {
+            NSLog(@"InstallEventHandler failed");
+        }
     }
     else {
         if( m_EventHandler != nullptr ) {
             RemoveEventHandler(m_EventHandler);
             m_EventHandler = nullptr;
         }
-//        if(m_Monitor) {
-//            [NSEvent removeMonitor:m_Monitor];
-//            m_Monitor = nil;
-//        }
-    
     }
-    
 }
-
-//+ (nullable id)addLocalMonitorForEventsMatchingMask:(NSEventMask)mask handler:(NSEvent* __nullable (^)(NSEvent*))block NS_AVAILABLE_MAC(10_6);
 
 - (void)fireNotification
 {
@@ -300,9 +317,13 @@ static OSStatus CarbonCallback(EventHandlerCallRef inHandlerCallRef,
 //    [self.window makeFirstResponder:m_TextField];
 //}
 
-//- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
-//{
-//    if( commandSelector == @selector(moveDown:) ) {
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    int a = 10;
+    if( commandSelector == @selector(insertTab:) ) {
+        [self.window makeFirstResponder:self.window];
+        return true;
+    }
 //        cout << "!!" << endl;
 ////        [m_InitialFirstResponder moveDown:nil];
 //
@@ -323,7 +344,7 @@ static OSStatus CarbonCallback(EventHandlerCallRef inHandlerCallRef,
 //    }
 //    
 //    
-//    return false;
-//}
+    return false;
+}
 
 @end

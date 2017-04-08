@@ -24,8 +24,11 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 {
     __weak id weak_obj = _obj;
     return [weak_obj, _sel]{
-        if( __strong T *strong_obj = weak_obj )
-            [T instanceMethodForSelector:_sel](strong_obj, _sel);
+        if( __strong T *strong_obj = weak_obj ) {
+            typedef void (*func_type)(id, SEL);
+            func_type func = (func_type)[T instanceMethodForSelector:_sel];
+            func(strong_obj, _sel);
+        }
     };
 }
 

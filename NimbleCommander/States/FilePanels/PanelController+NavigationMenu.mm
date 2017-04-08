@@ -299,8 +299,8 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     if( !frequent.empty() ) {
         [menu addItem:NSMenuItem.separatorItem];
         auto frequent_header = [[NSMenuItem alloc] init];
-        frequent_header.title = NSLocalizedString(@"Frequently Visisted",
-                                                  "Frequently Visisted popup menu subtitle in file panels");
+        frequent_header.title = NSLocalizedString(@"Frequently Visited",
+                                                  "Frequently Visited popup menu subtitle in file panels");
         [menu addItem:frequent_header];
         
         for( auto &f:frequent ) {

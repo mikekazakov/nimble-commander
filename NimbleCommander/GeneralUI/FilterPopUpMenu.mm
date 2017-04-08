@@ -2,7 +2,9 @@
 #include "FilterPopUpMenu.h"
 
 @interface FilterPopUpMenu()
+
 - (void) updateFilter:(NSString*)_filter;
+
 @end
 
 @interface FilterPopUpMenuItem : NSView<NSTextFieldDelegate>
@@ -16,15 +18,15 @@
     NSString *m_Filter;
 }
 
-- (instancetype)initWithTitle:(NSString *)title
+- (instancetype)initWithTitle:(NSString *)_title
 {
-    self = [super initWithTitle:title];
+    self = [super initWithTitle:_title];
     if( self ) {
         auto header_view = [[FilterPopUpMenuItem alloc] initWithFrame:NSMakeRect(0, 0, 220, 20)];
-        header_view.title = title;
+        header_view.title = _title;
         
         auto header_item = [[NSMenuItem alloc] init];
-        header_item.title = title;
+        header_item.title = _title;
         header_item.view = header_view;
         [self addItem:header_item];
     }
@@ -39,16 +41,43 @@
         auto item = [items objectAtIndex:i];
         item.hidden = ![self validateItem:item];
     }
+    
+    if( self.highlightedItem == nil || self.highlightedItem.hidden ) {
+        
+        NSMenuItem *item_to_highlight = nil;
+        for( int i = 1, e = (int)items.count; i < e; ++i ) {
+            auto item = [items objectAtIndex:i];
+            if( !item.hidden && item.enabled ) {
+                item_to_highlight = item;
+                break;
+            }
+        }
+        
+        if( item_to_highlight )
+            [self higlightCustomItem:item_to_highlight];
+    }
 }
 
 - (bool) validateItem:(NSMenuItem*)_item
 {
     if( !m_Filter || m_Filter.length == 0)
         return true;
-    if( _item.isSeparatorItem )
+    if( _item.isSeparatorItem || !_item.enabled )
         return false;
+    
     return [_item.title rangeOfString:m_Filter
                               options:NSCaseInsensitiveSearch].length > 0;
+}
+
+- (void)higlightCustomItem:(NSMenuItem*)_item
+{
+    static const auto selHighlightItem = NSSelectorFromString(@"highlightItem:");
+    if( [self respondsToSelector:selHighlightItem] ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [self performSelector:selHighlightItem withObject:_item];
+#pragma clang diagnostic pop
+    }
 }
 
 @end
@@ -95,18 +124,21 @@
         [self addSubview:m_Query];
 
         auto views = NSDictionaryOfVariableBindings(m_Title, m_Query);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==21)-[m_Title]-[m_Query]-(==10)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[m_Query]|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[m_Title]|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint
+            constraintsWithVisualFormat:@"|-(==21)-[m_Title]-[m_Query]-(==10)-|"
+                              options:0
+                              metrics:nil
+                              views:views]];
+        [self addConstraints:[NSLayoutConstraint
+            constraintsWithVisualFormat:@"V:|[m_Query]|"
+                              options:0
+                              metrics:nil
+                              views:views]];
+        [self addConstraints:[NSLayoutConstraint
+            constraintsWithVisualFormat:@"V:|[m_Title]|"
+                              options:0
+                              metrics:nil
+                              views:views]];
     }
     return self;
 }
@@ -254,6 +286,12 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
         if( result != noErr ) {
             NSLog(@"InstallEventHandler() failed");
         }
+
+        [NSRunLoop.currentRunLoop performSelector:@selector(fireNotification)
+                                           target:self
+                                         argument:nil
+                                            order:0
+                                            modes:@[NSEventTrackingRunLoopMode]];
     }
     else {
         if( m_EventHandler != nullptr ) {
@@ -276,7 +314,9 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
     [self fireNotification];
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)control:(NSControl *)control
+       textView:(NSTextView *)textView
+doCommandBySelector:(SEL)commandSelector
 {
     if( commandSelector == @selector(insertTab:) ) {
         [self.window makeFirstResponder:self.window];

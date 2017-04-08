@@ -20,7 +20,7 @@
 {
     self = [super initWithTitle:title];
     if( self ) {
-        auto header_view = [[FilterPopUpMenuItem alloc] initWithFrame:NSMakeRect(0, 0, 200, 20)];
+        auto header_view = [[FilterPopUpMenuItem alloc] initWithFrame:NSMakeRect(0, 0, 220, 20)];
         header_view.title = title;
         
         auto header_item = [[NSMenuItem alloc] init];
@@ -186,6 +186,12 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
         kc == 79  || // F18
         kc == 80     // F19
        )
+        return false;
+    
+    const auto mod_flags = ev.modifierFlags;
+    if( (mod_flags & NSEventModifierFlagCommand) != 0 ||
+        (mod_flags & NSEventModifierFlagControl) != 0 ||
+        (mod_flags & NSEventModifierFlagOption)  != 0  )
         return false;
     
     const auto query = m_Query.stringValue;

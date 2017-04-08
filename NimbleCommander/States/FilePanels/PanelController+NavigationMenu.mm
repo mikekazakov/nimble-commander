@@ -171,7 +171,7 @@ static NSImage *ImageForPromiseAndPath( const VFSInstanceManager::Promise &_prom
     
     NSPoint p;
     p.x = (self.view.bounds.size.width - menu.size.width) / 2.;
-    p.y = self.view.bounds.size.height - self.view.headerBarHeight - 5;
+    p.y = self.view.bounds.size.height - self.view.headerBarHeight - 4;
     
     [menu popUpMenuPositioningItem:nil
                         atLocation:p

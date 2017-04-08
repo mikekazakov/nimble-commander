@@ -121,6 +121,7 @@ static NSString *TextForCode(int _code)
         case NetSFTPNotADir:            return @"Not a directory";
         case NetSFTPInvalidFilename:    return @"Invalid filename";
         case NetSFTPLinkLoop:           return @"Link loop";
+        case NetSFTPCouldntReadKey:     return @"Coundn't open the private key";
     }
     return [NSString stringWithFormat:@"Error code %d", _code];
 }

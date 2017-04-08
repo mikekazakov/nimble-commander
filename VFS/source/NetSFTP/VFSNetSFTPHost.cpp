@@ -276,13 +276,18 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
         return VFSError::NetSFTPCouldntEstablishSSH;
     
     if(!Config().keypath.empty()) {
-        if(libssh2_userauth_publickey_fromfile_ex(connection->ssh,
-                                                  Config().user.c_str(),
-                                                  (unsigned)Config().user.length(),
-                                                  nullptr,
-                                                  Config().keypath.c_str(),
-                                                  Config().passwd.c_str()))
-            return VFSError::NetSFTPCouldntAuthenticateKey;
+        rc = libssh2_userauth_publickey_fromfile_ex(connection->ssh,
+                                                    Config().user.c_str(),
+                                                    (unsigned)Config().user.length(),
+                                                    nullptr,
+                                                    Config().keypath.c_str(),
+                                                    Config().passwd.c_str());
+        if( rc ) {
+            if( rc == LIBSSH2_ERROR_FILE )
+                return VFSError::NetSFTPCouldntReadKey;
+            else
+                return VFSError::NetSFTPCouldntAuthenticateKey;
+        }
     }
     else {
         char *authlist = libssh2_userauth_list(connection->ssh, Config().user.c_str(), (unsigned)Config().user.length());

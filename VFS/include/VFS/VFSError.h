@@ -86,6 +86,7 @@ namespace VFSError
         NetSFTPNotADir              = -4025,
         NetSFTPInvalidFilename      = -4026,
         NetSFTPLinkLoop             = -4027,
+        NetSFTPCouldntReadKey       = -4028,
     };
     
     int FromErrno(int _errno);

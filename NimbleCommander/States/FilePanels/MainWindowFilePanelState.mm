@@ -1,11 +1,3 @@
-//
-//  MainWindowFilePanelState.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 04.06.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -105,10 +97,10 @@ static void SetupRatingOverlay(NSView *_background_view)
 static bool GoToForcesPanelActivation()
 {
     static const auto fetch = []{
-        return GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
+        return GlobalConfig().GetBool(g_ConfigGoToActivation);
     };
     static bool force = []{
-        static auto ticket = GlobalConfig().Observe(g_ConfigGeneralShowTabs, []{
+        static auto ticket = GlobalConfig().Observe(g_ConfigGoToActivation, []{
             force = fetch();
         });
         return fetch();

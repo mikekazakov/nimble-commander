@@ -126,8 +126,7 @@ void SpotlightSearch::Perform( PanelController *_target, id _sender )
                 });
         };
       
-        [_target commitCancelableLoadingTask:task];
-        
+        [_target commitCancelableLoadingTask:move(task)];
     };
     
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];

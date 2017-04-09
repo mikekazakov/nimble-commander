@@ -1,7 +1,6 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
-#include <VFS/VFSListingInput.h>
 #include <VFS/Native.h>
 #include <VFS/PS.h>
 #include <VFS/NetFTP.h>
@@ -19,7 +18,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
-#include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -43,25 +41,7 @@
 #include "Actions/SpotlightSearch.h"
 #include "Actions/OpenWithExternalEditor.h"
 #include "Actions/ToggleSort.h"
-
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
-                                                          int _fetch_flags,
-                                                          const VFSCancelChecker &_cancel_checker)
-{
-    vector<VFSListingPtr> listings;
-    
-    for( auto &p: _filepaths ) {
-        VFSListingPtr listing;
-        int ret = p.Host()->FetchSingleItemListing(p.Path().c_str(),
-                                                   listing,
-                                                   _fetch_flags,
-                                                   _cancel_checker);
-        if( ret == 0 )
-            listings.emplace_back( listing );
-    }
-    
-    return VFSListing::Build( VFSListing::Compose(listings) );
-}
+#include "Actions/FindFiles.h"
 
 static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
 {
@@ -132,6 +112,7 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     
     using namespace panel::actions;
 #define VALIDATE(type) type::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
     IF_MENU_TAG("menu.view.sorting_by_extension")       return VALIDATE(ToggleSortingByExtension);
     IF_MENU_TAG("menu.view.sorting_by_size")            return VALIDATE(ToggleSortingBySize);
@@ -584,27 +565,9 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     panel::actions::ShowVolumeInformation::Perform(self, sender);
 }
 
-- (IBAction)onMainMenuPerformFindAction:(id)sender {
-    FindFilesSheetController *sheet = [FindFilesSheetController new];
-    sheet.host = self.vfs;
-    sheet.path = self.currentDirectoryPath;
-    sheet.onPanelize = [=](const vector<VFSPath> &_paths) {
-        m_DirectoryLoadingQ.Run([=]{
-            auto l = FetchSearchResultsAsListing(_paths,
-                                                 m_VFSFetchingFlags,
-                                                 [=]{ return m_DirectoryLoadingQ.IsStopped(); }
-                                                 );
-            if( l )
-                dispatch_to_main_queue([=]{
-                    [self loadNonUniformListing:l];
-                });
-        });
-    };
-    
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(auto item = sheet.selectedItem)
-            [self GoToDir:item->dir_path vfs:item->host select_entry:item->filename async:true];
-    }];
+- (IBAction)onMainMenuPerformFindAction:(id)sender
+{
+    panel::actions::FindFiles::Perform(self, sender);
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {

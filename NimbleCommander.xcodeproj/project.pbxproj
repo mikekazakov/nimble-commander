@@ -11,6 +11,7 @@
 		CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */; };
 		CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */; };
+		CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B41E99F7C200E44F2D /* FindFiles.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1371,6 +1372,8 @@
 		CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSort.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.mm; sourceTree = SOURCE_ROOT; };
 		CF0139B01E99EC4A00E44F2D /* DefaultAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultAction.h; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.h; sourceTree = SOURCE_ROOT; };
 		CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DefaultAction.mm; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.mm; sourceTree = SOURCE_ROOT; };
+		CF0139B31E99F7C200E44F2D /* FindFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindFiles.h; path = NimbleCommander/States/FilePanels/Actions/FindFiles.h; sourceTree = SOURCE_ROOT; };
+		CF0139B41E99F7C200E44F2D /* FindFiles.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindFiles.mm; path = NimbleCommander/States/FilePanels/Actions/FindFiles.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2587,6 +2590,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
+				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
@@ -4437,6 +4442,7 @@
 				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFDAC2411DFBE18C0039A104 /* ActionShortcut.mm in Sources */,
 				CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */,
+				CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */,
 				CF7D13411BF1B091001F53FD /* BatchRenameSheetController.mm in Sources */,
 				CFDAC21B1DFBC6CB0039A104 /* PanelHistory.mm in Sources */,
 				CF31F66D1DFE6268005A1A40 /* PanelViewLayoutSupport.mm in Sources */,

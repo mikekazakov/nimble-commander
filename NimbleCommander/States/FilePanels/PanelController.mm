@@ -179,7 +179,7 @@ static void HeatUpConfigValues()
         __weak PanelController* weakself = self;
         auto on_change = [=]{
             dispatch_to_main_queue([=]{
-                [(PanelController*)weakself UpdateSpinningIndicator];
+                [(PanelController*)weakself updateSpinningIndicator];
             });
         };
         m_DirectorySizeCountingQ.SetOnChange(on_change);
@@ -657,15 +657,6 @@ static bool RouteKeyboardInputIntoTerminal()
         [self QuickSearchClearFiltering];
 }*/
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator
-{
-    m_SpinningIndicator = _indicator;
-    
-    m_IsAnythingWorksInBackground = false;
-    [m_SpinningIndicator stopAnimation:nil];
-    [self UpdateSpinningIndicator];
-}
-
 - (void) CancelBackgroundOperations
 {
     m_DirectorySizeCountingQ.Stop();
@@ -673,37 +664,30 @@ static bool RouteKeyboardInputIntoTerminal()
     m_DirectoryReLoadingQ.Stop();
 }
 
-- (void) UpdateSpinningIndicator
+- (void) updateSpinningIndicator
 {
     dispatch_assert_main_queue();
     
-    size_t ext_activities_no = call_locked(m_ActivitiesTicketsLock, [&]{ return m_ActivitiesTickets.size(); });
+    size_t ext_activities_no = call_locked(m_ActivitiesTicketsLock,
+                                           [&]{ return m_ActivitiesTickets.size(); });
     bool is_anything_working = !m_DirectorySizeCountingQ.Empty() ||
                                !m_DirectoryLoadingQ.Empty() ||
                                !m_DirectoryReLoadingQ.Empty() ||
                                 ext_activities_no > 0;
     
-    if(is_anything_working == m_IsAnythingWorksInBackground)
+    if( is_anything_working == m_IsAnythingWorksInBackground )
         return; // nothing to update;
         
-    if(is_anything_working)
-    {
-        dispatch_to_main_queue_after(100ms, [=]{ // in 100 ms of workload should be before user will get spinning indicator
-                           if(m_IsAnythingWorksInBackground) // need to check if task was already done
-                           {
-                               [m_SpinningIndicator startAnimation:nil];
-                               if(m_SpinningIndicator.isHidden)
-                                   m_SpinningIndicator.hidden = false;
-                           }
+    if( is_anything_working ) {
+        // there should be 100ms of workload before the user gets the spinning indicator
+        dispatch_to_main_queue_after(100ms, [=]{
+                            // need to check if task was already done
+                           if( m_IsAnythingWorksInBackground )
+                               [m_View.busyIndicator startAnimation:nil];
                        });
     }
     else
-    {
-        [m_SpinningIndicator stopAnimation:nil];
-        if(!m_SpinningIndicator.isHidden)
-            m_SpinningIndicator.hidden = true;
-        
-    }
+        [m_View.busyIndicator stopAnimation:nil];
     
     m_IsAnythingWorksInBackground = is_anything_working;
 }
@@ -711,14 +695,12 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) SelectAllEntries:(bool) _select
 {
     m_Data.CustomFlagsSelectAllSorted(_select);
-//    [m_View setNeedsDisplay];
     [m_View volatileDataChanged];
 }
 
 - (void) invertSelection
 {
     m_Data.CustomFlagsSelectInvert();
-//    [m_View setNeedsDisplay];
     [m_View volatileDataChanged];
 }
 
@@ -1017,7 +999,7 @@ static bool RouteKeyboardInputIntoTerminal()
         return panel::ActivityTicket(self, m_NextActivityTicket++);
     });
     dispatch_to_main_queue([=]{
-        [self UpdateSpinningIndicator];
+        [self updateSpinningIndicator];
     });
     return ticket;
 }
@@ -1031,7 +1013,7 @@ static bool RouteKeyboardInputIntoTerminal()
         m_ActivitiesTickets.erase(i);
     }
     dispatch_to_main_queue([=]{
-        [self UpdateSpinningIndicator];
+        [self updateSpinningIndicator];
     });
 }
 

@@ -6,6 +6,7 @@
 
 - (void) setPath:(NSString*)_path;
 
+@property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 @property (nonatomic) NSString *searchPrompt;
 @property (nonatomic) int       searchMatches;
 @property (nonatomic) PanelDataSortMode sortMode;

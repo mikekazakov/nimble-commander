@@ -40,6 +40,7 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     NSColor             *m_Background;
     NSString            *m_SearchPrompt;
     NSButton            *m_SortButton;
+    NSProgressIndicator *m_BusyIndicator;
     __weak PanelView    *m_PanelView;
     PanelDataSortMode    m_SortMode;
     function<void(PanelDataSortMode)> m_SortModeChangeCallback;
@@ -97,12 +98,12 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         [self addSubview:m_SearchMatchesField];
         
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-        m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
+        m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
         m_SeparatorLine.boxType = NSBoxSeparator;
         [self addSubview:m_SeparatorLine];
    
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];
-        m_SortButton.translatesAutoresizingMaskIntoConstraints = NO;
+        m_SortButton.translatesAutoresizingMaskIntoConstraints = false;
         m_SortButton.title = @"N";
         m_SortButton.bordered = false;
         m_SortButton.buttonType = NSMomentaryLightButton;
@@ -110,6 +111,14 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_SortButton.target = self;
         m_SortButton.enabled = true;
         [self addSubview:m_SortButton];
+        
+        m_BusyIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
+        m_BusyIndicator.translatesAutoresizingMaskIntoConstraints = false;
+        m_BusyIndicator.indeterminate = true;
+        m_BusyIndicator.style = NSProgressIndicatorSpinningStyle;
+        m_BusyIndicator.controlSize = NSSmallControlSize;
+        m_BusyIndicator.displayedWhenStopped = false;
+        [self addSubview:m_BusyIndicator];
         
         [self setupAppearance];
         [self setupLayout];
@@ -137,10 +146,22 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 
 - (void) setupLayout
 {
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField, m_SearchTextField, m_SeparatorLine, m_SearchMatchesField, m_SortButton);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(0)-|" options:0 metrics:nil views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_PathTextField,
+                                                         m_SearchTextField,
+                                                         m_SeparatorLine,
+                                                         m_SearchMatchesField,
+                                                         m_SortButton,
+                                                         m_BusyIndicator);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+        @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|"
+        options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+        @"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+        @"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-[m_BusyIndicator]-(==2)-|"
+        options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+        @"V:[m_BusyIndicator]-(==2)-|" options:0 metrics:nil views:views]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchTextField
                                                      attribute:NSLayoutAttributeLeft
                                                      relatedBy:NSLayoutRelationEqual
@@ -356,6 +377,11 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         if( proposed != m_SortMode && m_SortModeChangeCallback )
             m_SortModeChangeCallback(proposed);
     }
+}
+
+- (NSProgressIndicator *)busyIndicator
+{
+    return m_BusyIndicator;
 }
 
 @end

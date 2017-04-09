@@ -1164,4 +1164,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     return popover;
 }
 
+- (NSProgressIndicator *)busyIndicator
+{
+    return m_HeaderView.busyIndicator;
+}
+
 @end

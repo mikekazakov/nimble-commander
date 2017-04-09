@@ -13,15 +13,11 @@
 #include "PanelViewTypes.h"
 //#include "PanelViewLayoutSupport.h"
 
-//@class FPSLimitedDrawer;
 @class PanelView;
 struct PanelViewLayout;
-//class PanelViewPresentation;
-//struct PanelVolatileData;
 
 @protocol PanelViewDelegate<NSObject>
 @optional
-//- (void) PanelViewDidBecomeFirstResponder:(PanelView*)_view;
 - (void) PanelViewCursorChanged:(PanelView*)_view;
 - (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
@@ -39,10 +35,10 @@ struct PanelViewLayout;
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
 @property (nonatomic, readonly) const PanelData::VolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
-//@property (nonatomic) PanelViewType type;
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;
+@property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 
 - (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout;
 

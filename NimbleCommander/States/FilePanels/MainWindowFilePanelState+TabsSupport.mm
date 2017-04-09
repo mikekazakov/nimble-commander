@@ -34,13 +34,6 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     // just set current PanelView to first responder
     assert( [tabViewItem.view isKindOfClass:PanelView.class] );
     [self.window makeFirstResponder:tabViewItem.view];
-  
-    PanelController *pc = (PanelController *)((PanelView*)tabViewItem.view).delegate;
-    if(tabView == m_MainSplitView.leftTabbedHolder.tabView)
-        [pc AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator];
-    if(tabView == m_MainSplitView.rightTabbedHolder.tabView)
-        [pc AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator];
-    
     m_MainSplitView.leftOverlay = nil;
     m_MainSplitView.rightOverlay = nil;
 }

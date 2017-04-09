@@ -121,7 +121,7 @@ static bool GoToForcesPanelActivation()
         
         m_OperationsController = [[OperationsController alloc] init];
         m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController];
-        // setup background view if any show be shown
+        // setup background view if any to be shown
         if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
             SetupRatingOverlay( m_OpSummaryController.backgroundView );
         else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
@@ -132,11 +132,8 @@ static bool GoToForcesPanelActivation()
         
         [self CreateControls];
         
-        // panel creation and preparation
         m_LeftPanelControllers.front().state = self;
-        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator];
         m_RightPanelControllers.front().state = self;
-        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator];
         
         [self updateTabBarsVisibility];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];

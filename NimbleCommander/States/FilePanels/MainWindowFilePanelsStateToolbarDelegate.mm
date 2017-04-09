@@ -18,23 +18,15 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 {
     __weak MainWindowFilePanelState *m_State;
     NSToolbar                       *m_Toolbar;
-    
     MainWndGoToButton               *m_LeftPanelGoToButton;
-    NSProgressIndicator             *m_LeftPanelSpinningIndicator;
-    
     MainWndGoToButton               *m_RightPanelGoToButton;
-    NSProgressIndicator             *m_RightPanelSpinningIndicator;
-    
     NSArray                         *m_AllowedToolbarItemsIdentifiers;
-    
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
 }
 
 @synthesize toolbar = m_Toolbar;
 @synthesize leftPanelGoToButton = m_LeftPanelGoToButton;
-@synthesize leftPanelSpinningIndicator = m_LeftPanelSpinningIndicator;
 @synthesize rightPanelGoToButton = m_RightPanelGoToButton;
-@synthesize rightPanelSpinningIndicator = m_RightPanelSpinningIndicator;
 
 - (instancetype) initWithFilePanelsState:(MainWindowFilePanelState*)_state
 {
@@ -82,18 +74,6 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 #pragma clang diagnostic pop    
     m_RightPanelGoToButton.owner = state;
     m_RightPanelGoToButton.isRight = true;
-
-    m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    m_LeftPanelSpinningIndicator.indeterminate = YES;
-    m_LeftPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
-    m_LeftPanelSpinningIndicator.controlSize = NSSmallControlSize;
-    m_LeftPanelSpinningIndicator.displayedWhenStopped = NO;
-    
-    m_RightPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
-    m_RightPanelSpinningIndicator.indeterminate = YES;
-    m_RightPanelSpinningIndicator.style = NSProgressIndicatorSpinningStyle;
-    m_RightPanelSpinningIndicator.controlSize = NSSmallControlSize;
-    m_RightPanelSpinningIndicator.displayedWhenStopped = NO;
 }
 
 - (void) buildToolbar
@@ -150,18 +130,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.right_panel_change_folder").PrettyString();
         return item;
     }
-    if( [itemIdentifier isEqualToString:@"filepanels_left_spinning_indicator"] ) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_LeftPanelSpinningIndicator;
-        item.paletteLabel = item.label = @"Left Activity";
-        return item;
-    }
-    if( [itemIdentifier isEqualToString:@"filepanels_right_spinning_indicator"] ) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_RightPanelSpinningIndicator;
-        item.paletteLabel = item.label = @"Right Activity";
-        return item;
-    }
     if( [itemIdentifier isEqualToString:@"filepanels_operations_box"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = self.state.operationsSummaryView.view;
@@ -191,11 +159,9 @@ static NSImage *ImageForTool( const ExternalTool &_et)
 {
     static NSArray *allowed_items =
     @[ @"filepanels_left_goto_button",
-       @"filepanels_left_spinning_indicator",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"filepanels_operations_box",
        NSToolbarFlexibleSpaceItemIdentifier,
-       @"filepanels_right_spinning_indicator",
        @"filepanels_right_goto_button"];
     
     return allowed_items;
@@ -212,8 +178,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     NSMutableArray *a = [[NSMutableArray alloc] init];
     [a addObject:@"filepanels_left_goto_button"];
     [a addObject:@"filepanels_right_goto_button"];
-    [a addObject:@"filepanels_left_spinning_indicator"];
-    [a addObject:@"filepanels_right_spinning_indicator"];
     [a addObject:@"filepanels_operations_box"];
     
     auto tools = m_State.externalToolsStorage.GetAllTools();

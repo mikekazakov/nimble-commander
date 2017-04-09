@@ -106,7 +106,6 @@ namespace panel
     
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
-    NSProgressIndicator *m_SpinningIndicator;
     
     // Tickets to show some external activities on this panel
     uint64_t            m_NextActivityTicket;
@@ -166,7 +165,6 @@ namespace panel
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator;
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default
 //- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed

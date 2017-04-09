@@ -320,13 +320,17 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter
+- (void) changeHardFilteringTo:(PanelData::HardFilter)_filter
 {
-    panel::GenericCursorPersistance pers(m_View, m_Data);
-    
-    m_Data.SetHardFiltering(_filter);
-    
-    pers.Restore();
+    if( _filter != m_Data.HardFiltering() ) {
+        panel::GenericCursorPersistance pers(m_View, m_Data);
+        
+        m_Data.SetHardFiltering(_filter);
+        
+        pers.Restore();
+        [m_View dataUpdated];
+        [self markRestorableStateAsInvalid];
+    }
 }
 
 - (bool) HandleGoToUpperDirectory

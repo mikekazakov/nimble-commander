@@ -113,10 +113,6 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     TAG(tag_layout_8,           "menu.view.toggle_layout_8");
     TAG(tag_layout_9,           "menu.view.toggle_layout_9");
     TAG(tag_layout_10,          "menu.view.toggle_layout_10");
-    TAG(tag_sort_viewhidden,    "menu.view.sorting_view_hidden");
-    TAG(tag_sort_sepfolders,    "menu.view.sorting_separate_folders");
-    TAG(tag_sort_casesens,      "menu.view.sorting_case_sensitive");
-    TAG(tag_sort_numeric,       "menu.view.sorting_numeric_comparison");
 #undef TAG
     
     auto tag = item.tag;
@@ -132,10 +128,6 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF(tag_layout_8)        return update_layout_item(7);
     IF(tag_layout_9)        return update_layout_item(8);
     IF(tag_layout_10)       return update_layout_item(9);
-    IF(tag_sort_viewhidden) item.state = m_Data.HardFiltering().show_hidden;
-    IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
-    IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
-    IF(tag_sort_numeric)    item.state = m_Data.SortMode().numeric_sort;
 #undef IF
     
     using namespace panel::actions;
@@ -146,6 +138,10 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.view.sorting_by_modify_time")     return VALIDATE(ToggleSortingByModifiedTime);
     IF_MENU_TAG("menu.view.sorting_by_creation_time")   return VALIDATE(ToggleSortingByCreatedTime);
     IF_MENU_TAG("menu.view.sorting_by_added_time")      return VALIDATE(ToggleSortingByAddedTime);
+    IF_MENU_TAG("menu.view.sorting_case_sensitive")     return VALIDATE(ToggleSortingCaseSensitivity);
+    IF_MENU_TAG("menu.view.sorting_separate_folders")   return VALIDATE(ToggleSortingFoldersSeparation);
+    IF_MENU_TAG("menu.view.sorting_numeric_comparison") return VALIDATE(ToggleSortingNumerical);
+    IF_MENU_TAG("menu.view.sorting_view_hidden")        return VALIDATE(ToggleSortingShowHidden);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
@@ -737,32 +733,22 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender
 {
-    auto filtering = m_Data.HardFiltering();
-    filtering.show_hidden = !filtering.show_hidden;
-    [self ChangeHardFilteringTo:filtering];
-    [self markRestorableStateAsInvalid];
-    [m_View dataUpdated];
+    panel::actions::ToggleSortingShowHidden::Perform(self, sender);
 }
 
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender
 {
-    auto mode = m_Data.SortMode();
-    mode.sep_dirs = !mode.sep_dirs;
-    [self changeSortingModeTo:mode];
+    panel::actions::ToggleSortingFoldersSeparation::Perform(self, sender);
 }
 
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender
 {
-    auto mode = m_Data.SortMode();
-    mode.case_sens = !mode.case_sens;
-    [self changeSortingModeTo:mode];
+    panel::actions::ToggleSortingCaseSensitivity::Perform(self, sender);
 }
 
 - (IBAction)ToggleNumericComparison:(id)sender
 {
-    auto mode = m_Data.SortMode();
-    mode.numeric_sort = !mode.numeric_sort;
-    [self changeSortingModeTo:mode];
+    panel::actions::ToggleSortingNumerical::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortByName:(id)sender

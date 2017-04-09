@@ -42,6 +42,28 @@ struct ToggleSortingByAddedTime : DefaultAction
     static void Perform( PanelController *_target, id _sender );
 };
 
+struct ToggleSortingCaseSensitivity : DefaultAction
+{
+    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    static void Perform( PanelController *_target, id _sender );
+};
 
+struct ToggleSortingFoldersSeparation : DefaultAction
+{
+    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct ToggleSortingNumerical : DefaultAction
+{
+    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct ToggleSortingShowHidden : DefaultAction
+{
+    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    static void Perform( PanelController *_target, id _sender );
+};
 
 };

@@ -184,6 +184,7 @@ namespace panel
 - (panel::ActivityTicket) registerExtActivity;
 
 - (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode;
+- (void) changeHardFilteringTo:(PanelData::HardFilter)_filter;
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;
@@ -207,7 +208,6 @@ namespace panel
 - (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
 - (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
-- (void) ChangeHardFilteringTo:(PanelData::HardFilter)_filter;
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;

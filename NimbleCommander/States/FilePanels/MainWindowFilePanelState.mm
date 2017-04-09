@@ -407,7 +407,7 @@ static bool GoToForcesPanelActivation()
     return pc ? pc.view : nil;
 }
 
-- (PanelData*) activePanelData
+- (const PanelData*) activePanelData
 {
     PanelController *pc = self.activePanelController;
     return pc ? &pc.data : nullptr;
@@ -432,7 +432,7 @@ static bool GoToForcesPanelActivation()
     return self.leftPanelController;
 }
 
-- (PanelData*) oppositePanelData
+- (const PanelData*) oppositePanelData
 {
     PanelController* pc = self.oppositePanelController;
     return pc ? &pc.data : nullptr;
@@ -749,10 +749,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         }
         
         if( _filenames.size() > 1 )
-            for(auto &i: _filenames)
-                data->CustomFlagsSelectSorted( data->SortedIndexForName(i.c_str()), true );
-        
-        [self.activePanelView setNeedsDisplay];
+            [panel selectEntriesWithFilenames:_filenames];
     }
 }
 

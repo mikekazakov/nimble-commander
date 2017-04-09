@@ -93,7 +93,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * Return currently active file panel if any.
  */
 @property (nonatomic, readonly) PanelController *activePanelController;
-@property (nonatomic, readonly) PanelData       *activePanelData; // based on .ActivePanelController
+@property (nonatomic, readonly) const PanelData *activePanelData; // based on .ActivePanelController
 @property (nonatomic, readonly) PanelView       *activePanelView; // based on .ActivePanelController
 
 /**
@@ -103,7 +103,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * (regardless if this panel is collapsed or overlayed)
  */
 @property (nonatomic, readonly) PanelController *oppositePanelController;
-@property (nonatomic, readonly) PanelData       *oppositePanelData; // based on oppositePanelController
+@property (nonatomic, readonly) const PanelData *oppositePanelData; // based on oppositePanelController
 @property (nonatomic, readonly) PanelView       *oppositePanelView; // based on oppositePanelController
 
 /**

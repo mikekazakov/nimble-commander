@@ -284,7 +284,7 @@ static void HeatUpConfigValues()
     if( !_pc )
         return;
     
-    self.data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
+    m_Data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
     [self.view dataUpdated];
     [self.view dataSortingHasChanged];
     self.layoutIndex = _pc.layoutIndex;
@@ -692,6 +692,13 @@ static bool RouteKeyboardInputIntoTerminal()
     m_IsAnythingWorksInBackground = is_anything_working;
 }
 
+- (void) selectEntriesWithFilenames:(const vector<string>&)_filenames
+{
+    for( auto &i: _filenames )
+        m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
+    [m_View volatileDataChanged];
+}
+
 - (void) SelectAllEntries:(bool) _select
 {
     m_Data.CustomFlagsSelectAllSorted(_select);
@@ -783,6 +790,12 @@ static bool RouteKeyboardInputIntoTerminal()
     }
     
     return menu;
+}
+
+- (void) contextMenuDidClose:(NSMenu*)_menu
+{
+    m_Data.CustomFlagsClearHighlights();
+    [m_View volatileDataChanged];
 }
 
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos

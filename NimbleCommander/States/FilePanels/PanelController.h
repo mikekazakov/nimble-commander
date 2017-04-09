@@ -151,7 +151,7 @@ namespace panel
 @property (nonatomic) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
-@property (nonatomic, readonly) PanelData& data;
+@property (nonatomic, readonly) const PanelData& data;
 @property (nonatomic, readonly) const PanelHistory& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
@@ -167,9 +167,7 @@ namespace panel
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default
-//- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
-
 
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task;
 
@@ -189,6 +187,8 @@ namespace panel
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;
+
+- (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;
 
 @end
 
@@ -213,6 +213,7 @@ namespace panel
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;
 - (bool) writeURLSPBoard:(NSPasteboard *)pboard;
+- (void) contextMenuDidClose:(NSMenu*)_menu;
 @end
 
 #import "PanelController+DataAccess.h"

@@ -196,12 +196,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
     [self addConstraint:LayoutConstraintForCenteringViewVertically(m_SearchMatchesField, self)];
 }
 
--(void) dealloc
-{
-    [m_PanelView removeObserver:self forKeyPath:@"active"];
-//    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
 - (BOOL) isOpaque
 {
     return true;
@@ -214,7 +208,6 @@ static NSString *SortLetter(PanelDataSortMode _mode)
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-//    const auto bounds = self.bounds;
     if( m_Background && m_Background != NSColor.clearColor ) {
         CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
@@ -241,12 +234,15 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
         [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
         [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
+        [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
     }
     else {
+        [m_PanelView removeObserver:self forKeyPath:@"active"];
         [m_SearchTextField unbind:@"hidden"];
         [m_SearchMatchesField unbind:@"hidden"];
         [m_PathTextField unbind:@"hidden"];
         [m_SortButton unbind:@"hidden"];
+        [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
     }
 }
 

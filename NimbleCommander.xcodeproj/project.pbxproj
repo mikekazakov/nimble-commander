@@ -2303,14 +2303,14 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */,
-				CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
-				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
+				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
 				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
 				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
+				CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */,
+				CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */,
 				CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */,
 				CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */,
 				CFDAC2621DFBF20F0039A104 /* MainWindowFilePanelState.h */,
@@ -2357,11 +2357,11 @@
 				CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */,
 				CFDAC2121DFBBD110039A104 /* PanelView.h */,
 				CFDAC2131DFBBD110039A104 /* PanelView.mm */,
+				CF31F66B1DFE6268005A1A40 /* PanelViewLayoutSupport.h */,
+				CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */,
 				CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */,
 				CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */,
-				CF31F66B1DFE6268005A1A40 /* PanelViewLayoutSupport.h */,
 				CFDAC2151DFBBD3D0039A104 /* PanelViewTypes.h */,
-				CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */,
 				CFDAC2C11DFD0DE40039A104 /* SharingService.h */,
 				CFDAC2C21DFD0DE40039A104 /* SharingService.mm */,
 			);

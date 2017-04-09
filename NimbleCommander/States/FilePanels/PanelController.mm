@@ -657,17 +657,13 @@ static bool RouteKeyboardInputIntoTerminal()
         [self QuickSearchClearFiltering];
 }*/
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator share:(NSButton*)_share
+- (void) AttachToControls:(NSProgressIndicator*)_indicator
 {
     m_SpinningIndicator = _indicator;
-    m_ShareButton = _share;
     
     m_IsAnythingWorksInBackground = false;
     [m_SpinningIndicator stopAnimation:nil];
     [self UpdateSpinningIndicator];
-    
-    m_ShareButton.target = self;
-    m_ShareButton.action = @selector(OnShareButton:);
 }
 
 - (void) CancelBackgroundOperations
@@ -761,31 +757,9 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) OnCursorChanged
 {
-    // need to update some UI here  
-    // update share button regaring current state
-    m_ShareButton.enabled = m_Data.Stats().selected_entries_amount > 0 ||
-                            [SharingService SharingEnabledForItem:m_View.item];
-    
     // update QuickLook if any
     if( auto i = self.view.item )
         [(QuickLookView *)m_QuickLook PreviewItem:i.Path() vfs:i.Host()];
-}
-
-- (void)OnShareButton:(id)sender
-{
-    if(SharingService.IsCurrentlySharing)
-        return;
-    
-    auto files = self.selectedEntriesOrFocusedEntryFilenames;
-    if(files.empty())
-        return;
-    
-    [[SharingService new] ShowItems:files
-                              InDir:self.currentDirectoryPath
-                              InVFS:self.vfs
-                     RelativeToRect:[sender bounds]
-                             OfView:sender
-                      PreferredEdge:NSMinYEdge];
 }
 
 - (void) UpdateBriefSystemOverview

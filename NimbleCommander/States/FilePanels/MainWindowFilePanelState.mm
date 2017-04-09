@@ -134,11 +134,9 @@ static bool GoToForcesPanelActivation()
         
         // panel creation and preparation
         m_LeftPanelControllers.front().state = self;
-        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
-                                                   share:m_ToolbarDelegate.leftPanelShareButton];
+        [m_LeftPanelControllers.front() AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator];
         m_RightPanelControllers.front().state = self;
-        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
-                                                    share:m_ToolbarDelegate.rightPanelShareButton];
+        [m_RightPanelControllers.front() AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator];
         
         [self updateTabBarsVisibility];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];

@@ -119,8 +119,6 @@ namespace panel
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
-    NSButton            *m_ShareButton;
-    
     string              m_LastNativeDirectory;
     
     // delayed entry selection support
@@ -168,8 +166,7 @@ namespace panel
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
-- (void) AttachToControls:(NSProgressIndicator*)_indicator
-                    share:(NSButton*)_share;
+- (void) AttachToControls:(NSProgressIndicator*)_indicator;
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default
 //- (void) ModifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed

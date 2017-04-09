@@ -37,11 +37,9 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
   
     PanelController *pc = (PanelController *)((PanelView*)tabViewItem.view).delegate;
     if(tabView == m_MainSplitView.leftTabbedHolder.tabView)
-        [pc AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
-                       share:m_ToolbarDelegate.leftPanelShareButton];
+        [pc AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator];
     if(tabView == m_MainSplitView.rightTabbedHolder.tabView)
-        [pc AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
-                       share:m_ToolbarDelegate.rightPanelShareButton];
+        [pc AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator];
     
     m_MainSplitView.leftOverlay = nil;
     m_MainSplitView.rightOverlay = nil;

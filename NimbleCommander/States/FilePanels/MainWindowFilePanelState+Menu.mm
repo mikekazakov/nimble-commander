@@ -128,10 +128,8 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     swap(m_LeftPanelControllers, m_RightPanelControllers);
     [m_MainSplitView swapViews];
     
-    [self.leftPanelController AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator
-                                         share:m_ToolbarDelegate.leftPanelShareButton];
-    [self.rightPanelController AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator
-                                          share:m_ToolbarDelegate.rightPanelShareButton];
+    [self.leftPanelController AttachToControls:m_ToolbarDelegate.leftPanelSpinningIndicator];
+    [self.rightPanelController AttachToControls:m_ToolbarDelegate.rightPanelSpinningIndicator];
     
     [self markRestorableStateAsInvalid];
 }

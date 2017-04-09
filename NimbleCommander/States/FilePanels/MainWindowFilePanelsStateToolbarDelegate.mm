@@ -20,11 +20,9 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     NSToolbar                       *m_Toolbar;
     
     MainWndGoToButton               *m_LeftPanelGoToButton;
-    NSButton                        *m_LeftPanelShareButton;
     NSProgressIndicator             *m_LeftPanelSpinningIndicator;
     
     MainWndGoToButton               *m_RightPanelGoToButton;
-    NSButton                        *m_RightPanelShareButton;
     NSProgressIndicator             *m_RightPanelSpinningIndicator;
     
     NSArray                         *m_AllowedToolbarItemsIdentifiers;
@@ -34,10 +32,8 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 
 @synthesize toolbar = m_Toolbar;
 @synthesize leftPanelGoToButton = m_LeftPanelGoToButton;
-@synthesize leftPanelShareButton = m_LeftPanelShareButton;
 @synthesize leftPanelSpinningIndicator = m_LeftPanelSpinningIndicator;
 @synthesize rightPanelGoToButton = m_RightPanelGoToButton;
-@synthesize rightPanelShareButton = m_RightPanelShareButton;
 @synthesize rightPanelSpinningIndicator = m_RightPanelSpinningIndicator;
 
 - (instancetype) initWithFilePanelsState:(MainWindowFilePanelState*)_state
@@ -86,18 +82,6 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 #pragma clang diagnostic pop    
     m_RightPanelGoToButton.owner = state;
     m_RightPanelGoToButton.isRight = true;
-
-    m_LeftPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
-    m_LeftPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-    m_LeftPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-    [m_LeftPanelShareButton sendActionOn:NSLeftMouseDownMask];
-    m_LeftPanelShareButton.refusesFirstResponder = true;
-    
-    m_RightPanelShareButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
-    m_RightPanelShareButton.bezelStyle = NSTexturedRoundedBezelStyle;
-    m_RightPanelShareButton.image = [NSImage imageNamed:NSImageNameShareTemplate];
-    [m_RightPanelShareButton sendActionOn:NSLeftMouseDownMask];
-    m_RightPanelShareButton.refusesFirstResponder = true;
 
     m_LeftPanelSpinningIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 0, 16, 16)];
     m_LeftPanelSpinningIndicator.indeterminate = YES;
@@ -166,18 +150,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.right_panel_change_folder").PrettyString();
         return item;
     }
-    if( [itemIdentifier isEqualToString:@"filepanels_left_share_button"] ) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_LeftPanelShareButton;
-        item.paletteLabel = item.label = @"Left Share";
-        return item;
-    }
-    if( [itemIdentifier isEqualToString:@"filepanels_right_share_button"] ) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = m_RightPanelShareButton;
-        item.paletteLabel = item.label = @"Right Share";
-        return item;
-    }
     if( [itemIdentifier isEqualToString:@"filepanels_left_spinning_indicator"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelSpinningIndicator;
@@ -219,13 +191,11 @@ static NSImage *ImageForTool( const ExternalTool &_et)
 {
     static NSArray *allowed_items =
     @[ @"filepanels_left_goto_button",
-       @"filepanels_left_share_button",
        @"filepanels_left_spinning_indicator",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"filepanels_operations_box",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"filepanels_right_spinning_indicator",
-       @"filepanels_right_share_button",
        @"filepanels_right_goto_button"];
     
     return allowed_items;
@@ -242,8 +212,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     NSMutableArray *a = [[NSMutableArray alloc] init];
     [a addObject:@"filepanels_left_goto_button"];
     [a addObject:@"filepanels_right_goto_button"];
-    [a addObject:@"filepanels_left_share_button"];
-    [a addObject:@"filepanels_right_share_button"];
     [a addObject:@"filepanels_left_spinning_indicator"];
     [a addObject:@"filepanels_right_spinning_indicator"];
     [a addObject:@"filepanels_operations_box"];

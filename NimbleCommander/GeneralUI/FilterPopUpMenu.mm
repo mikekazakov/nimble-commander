@@ -22,7 +22,7 @@
 {
     self = [super initWithTitle:_title];
     if( self ) {
-        auto header_view = [[FilterPopUpMenuItem alloc] initWithFrame:NSMakeRect(0, 0, 220, 20)];
+        auto header_view = [[FilterPopUpMenuItem alloc] initWithFrame:NSMakeRect(0, 0, 220, 21)];
         header_view.title = _title;
         
         auto header_item = [[NSMenuItem alloc] init];
@@ -130,12 +130,12 @@
                               metrics:nil
                               views:views]];
         [self addConstraints:[NSLayoutConstraint
-            constraintsWithVisualFormat:@"V:|[m_Query]|"
+            constraintsWithVisualFormat:@"V:|[m_Query]-(==1)-|"
                               options:0
                               metrics:nil
                               views:views]];
         [self addConstraints:[NSLayoutConstraint
-            constraintsWithVisualFormat:@"V:|[m_Title]|"
+            constraintsWithVisualFormat:@"V:|[m_Title]-(==1)-|"
                               options:0
                               metrics:nil
                               views:views]];

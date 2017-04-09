@@ -329,13 +329,6 @@ static void HeatUpConfigValues()
     pers.Restore();
 }
 
-- (void) MakeSortWith:(PanelData::PanelSortMode::Mode)_direct Rev:(PanelData::PanelSortMode::Mode)_rev
-{
-    PanelData::PanelSortMode mode = m_Data.SortMode(); // we don't want to change anything in sort params except the mode itself
-    mode.sort = mode.sort != _direct ? _direct : _rev;
-    [self changeSortingModeTo:mode];
-}
-
 - (bool) HandleGoToUpperDirectory
 {
     if( self.isUniform  ) {

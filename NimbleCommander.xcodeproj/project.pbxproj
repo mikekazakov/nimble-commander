@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B50976A51729BA1F0080412E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
 		CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
+		CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */; };
+		CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1365,6 +1367,10 @@
 		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
 		CF0139A31E98BA6700E44F2D /* FilterPopUpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterPopUpMenu.h; path = NimbleCommander/GeneralUI/FilterPopUpMenu.h; sourceTree = SOURCE_ROOT; };
 		CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilterPopUpMenu.mm; path = NimbleCommander/GeneralUI/FilterPopUpMenu.mm; sourceTree = SOURCE_ROOT; };
+		CF0139AD1E99DAC100E44F2D /* ToggleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSort.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.h; sourceTree = SOURCE_ROOT; };
+		CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSort.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.mm; sourceTree = SOURCE_ROOT; };
+		CF0139B01E99EC4A00E44F2D /* DefaultAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultAction.h; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.h; sourceTree = SOURCE_ROOT; };
+		CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DefaultAction.mm; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2581,6 +2587,10 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF0139B01E99EC4A00E44F2D /* DefaultAction.h */,
+				CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */,
+				CF0139AD1E99DAC100E44F2D /* ToggleSort.h */,
+				CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */,
 				CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */,
 				CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
@@ -4358,6 +4368,7 @@
 				CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
+				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFDAC2911DFBF9260039A104 /* TermScreen.cpp in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
@@ -4396,6 +4407,7 @@
 				CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */,
 				CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */,
+				CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */,
 				CF04DDFB1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFDAC2A91DFD093E0039A104 /* ToolsMenuDelegate.mm in Sources */,
 				CFDAC2AF1DFD096E0039A104 /* NetworkConnectionsManager.mm in Sources */,

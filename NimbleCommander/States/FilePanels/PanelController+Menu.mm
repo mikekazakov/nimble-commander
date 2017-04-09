@@ -42,6 +42,7 @@
 #include "Actions/CalculateChecksum.h"
 #include "Actions/SpotlightSearch.h"
 #include "Actions/OpenWithExternalEditor.h"
+#include "Actions/ToggleSort.h"
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
                                                           int _fetch_flags,
@@ -91,41 +92,8 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     return false;
 }
 
-static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
-static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
-static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
-{
-    switch( _mode ) {
-        case PanelDataSortMode::SortByName:         return g_SortAscImage;
-        case PanelDataSortMode::SortByNameRev:      return g_SortDescImage;
-        case PanelDataSortMode::SortBySize:         return g_SortDescImage;
-        case PanelDataSortMode::SortBySizeRev:      return g_SortAscImage;
-        case PanelDataSortMode::SortByBirthTime:    return g_SortDescImage;
-        case PanelDataSortMode::SortByBirthTimeRev: return g_SortAscImage;
-        case PanelDataSortMode::SortByModTime:      return g_SortDescImage;
-        case PanelDataSortMode::SortByModTimeRev:   return g_SortAscImage;
-        case PanelDataSortMode::SortByAddTime:      return g_SortDescImage;
-        case PanelDataSortMode::SortByAddTimeRev:   return g_SortAscImage;
-        default: return nil;
-    }
-}
-
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
-    auto upd_for_sort = [](NSMenuItem * _item,
-                           PanelData::PanelSortMode _mode,
-                           PanelData::PanelSortMode::Mode _dir,
-                           PanelData::PanelSortMode::Mode _rev ){
-        if(_mode.sort == _dir || _mode.sort == _rev) {
-            _item.image = ImageFromSortMode( _rev );
-            _item.state = NSOnState;
-        }
-        else {
-            _item.image = nil;
-            _item.state = NSOffState;
-        }
-    };
-    
     auto update_layout_item = [&](int _index)->bool{
         static auto &storage = AppDelegate.me.panelLayouts;
         item.state = self.layoutIndex == _index;
@@ -145,12 +113,6 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     TAG(tag_layout_8,           "menu.view.toggle_layout_8");
     TAG(tag_layout_9,           "menu.view.toggle_layout_9");
     TAG(tag_layout_10,          "menu.view.toggle_layout_10");
-    TAG(tag_sort_name,          "menu.view.sorting_by_name");
-    TAG(tag_sort_ext,           "menu.view.sorting_by_extension");
-    TAG(tag_sort_mod,           "menu.view.sorting_by_modify_time");
-    TAG(tag_sort_size,          "menu.view.sorting_by_size");
-    TAG(tag_sort_creat,         "menu.view.sorting_by_creation_time");
-    TAG(tag_sort_add,           "menu.view.sorting_by_added_time");
     TAG(tag_sort_viewhidden,    "menu.view.sorting_view_hidden");
     TAG(tag_sort_sepfolders,    "menu.view.sorting_separate_folders");
     TAG(tag_sort_casesens,      "menu.view.sorting_case_sensitive");
@@ -174,34 +136,16 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
     IF(tag_sort_sepfolders) item.state = m_Data.SortMode().sep_dirs;
     IF(tag_sort_casesens)   item.state = m_Data.SortMode().case_sens;
     IF(tag_sort_numeric)    item.state = m_Data.SortMode().numeric_sort;
-    IF(tag_sort_name)       upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortByName,
-                                         PanelData::PanelSortMode::SortByNameRev );
-    IF(tag_sort_ext)        upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortByExt,
-                                         PanelData::PanelSortMode::SortByExtRev );
-    IF(tag_sort_mod)        upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortByModTime,
-                                         PanelData::PanelSortMode::SortByModTimeRev );
-    IF(tag_sort_size)       upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortBySize,
-                                         PanelData::PanelSortMode::SortBySizeRev );
-    IF(tag_sort_creat)      upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortByBirthTime,
-                                         PanelData::PanelSortMode::SortByBirthTimeRev );
-    IF(tag_sort_add)        upd_for_sort(item,
-                                         m_Data.SortMode(),
-                                         PanelData::PanelSortMode::SortByAddTime,
-                                         PanelData::PanelSortMode::SortByAddTimeRev );
 #undef IF
     
     using namespace panel::actions;
 #define VALIDATE(type) type::ValidateMenuItem(self, item);
+    IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
+    IF_MENU_TAG("menu.view.sorting_by_extension")       return VALIDATE(ToggleSortingByExtension);
+    IF_MENU_TAG("menu.view.sorting_by_size")            return VALIDATE(ToggleSortingBySize);
+    IF_MENU_TAG("menu.view.sorting_by_modify_time")     return VALIDATE(ToggleSortingByModifiedTime);
+    IF_MENU_TAG("menu.view.sorting_by_creation_time")   return VALIDATE(ToggleSortingByCreatedTime);
+    IF_MENU_TAG("menu.view.sorting_by_added_time")      return VALIDATE(ToggleSortingByAddedTime);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
@@ -823,32 +767,32 @@ static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
 
 - (IBAction)ToggleSortByName:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortByName Rev:PanelData::PanelSortMode::SortByNameRev];
+    panel::actions::ToggleSortingByName::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortByExt:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortByExt Rev:PanelData::PanelSortMode::SortByExtRev];
+    panel::actions::ToggleSortingByExtension::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortByMTime:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortByModTime Rev:PanelData::PanelSortMode::SortByModTimeRev];
+    panel::actions::ToggleSortingByModifiedTime::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortBySize:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortBySize Rev:PanelData::PanelSortMode::SortBySizeRev];
+    panel::actions::ToggleSortingBySize::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortByBTime:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortByBirthTime Rev:PanelData::PanelSortMode::SortByBirthTimeRev];
+    panel::actions::ToggleSortingByCreatedTime::Perform(self, sender);
 }
 
 - (IBAction)ToggleSortByATime:(id)sender
 {
-    [self MakeSortWith:PanelData::PanelSortMode::SortByAddTime Rev:PanelData::PanelSortMode::SortByAddTimeRev];
+    panel::actions::ToggleSortingByAddedTime::Perform(self, sender);
 }
 
 // deliberately chosen the most dumb way to introduce ten different options:

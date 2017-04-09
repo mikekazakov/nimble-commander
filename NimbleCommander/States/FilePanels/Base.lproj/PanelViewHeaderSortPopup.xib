@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PanelViewHeader">
@@ -77,13 +77,13 @@
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="r3i-WK-rRv"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Added Time ↑" tag="11" indentationLevel="1" id="UsI-k2-dKl">
+                <menuItem title="Added Time ↓" tag="11" indentationLevel="1" id="UsI-k2-dKl">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="RCh-33-csw"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Added Time ↓" tag="12" indentationLevel="1" id="9QW-2S-sOs">
+                <menuItem title="Added Time ↑" tag="12" indentationLevel="1" id="9QW-2S-sOs">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="l4g-rc-ufv"/>

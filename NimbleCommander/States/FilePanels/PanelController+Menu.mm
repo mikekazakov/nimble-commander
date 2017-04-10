@@ -43,6 +43,7 @@
 #include "Actions/OpenWithExternalEditor.h"
 #include "Actions/ToggleSort.h"
 #include "Actions/FindFiles.h"
+#include "Actions/ShowGoToPopup.h"
 
 static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
 {
@@ -457,27 +458,27 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (IBAction)OnGoToQuickListsParents:(id)sender
 {
-    [self popUpQuickListWithParentFolders];
+    panel::actions::ShowParentFoldersQuickList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToQuickListsHistory:(id)sender
 {
-    [self popUpQuickListWithHistory];
+    panel::actions::ShowHistoryQuickList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToQuickListsVolumes:(id)sender
 {
-    [self popUpQuickListWithVolumes];
+    panel::actions::ShowVolumesQuickList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToQuickListsFavorites:(id)sender
 {
-    [self popUpQuickListWithFavorites];
+    panel::actions::ShowFavoritesQuickList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToQuickListsConnections:(id)sender
 {
-    [self popUpQuickListWithNetworkConnections];
+    panel::actions::ShowConnectionsQuickList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToFavoriteLocation:(id)sender

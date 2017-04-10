@@ -20,6 +20,30 @@ struct ShowRightGoToPopup : DefaultStateAction
     static void Perform( MainWindowFilePanelState *_target, id _sender );
 };
 
+struct ShowConnectionsQuickList : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
 
+struct ShowFavoritesQuickList : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct ShowVolumesQuickList : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct ShowParentFoldersQuickList : DefaultPanelAction
+{
+    // TODO: predicate!
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct ShowHistoryQuickList : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
 
 }

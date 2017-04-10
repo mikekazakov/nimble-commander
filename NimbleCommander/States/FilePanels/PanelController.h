@@ -221,4 +221,3 @@ namespace panel
 #import "PanelController+QuickSearch.h"
 #import "PanelController+DragAndDrop.h"
 #import "PanelController+Menu.h"
-#import "PanelController+NavigationMenu.h"

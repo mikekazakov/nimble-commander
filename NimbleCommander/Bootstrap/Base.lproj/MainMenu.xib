@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -321,7 +321,7 @@ DQ
                                         <menuItem title="Change Folder..." tag="13000" keyEquivalent="" id="753">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="LeftPanelGoto:" target="-1" id="776"/>
+                                                <action selector="onLeftPanelGoToButtonAction:" target="-1" id="STe-XP-pJT"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -334,7 +334,7 @@ DQ
                                         <menuItem title="Change Folder..." tag="13010" keyEquivalent="" id="775">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="RightPanelGoto:" target="-1" id="777"/>
+                                                <action selector="onRightPanelGoToButtonAction:" target="-1" id="EmN-pU-lto"/>
                                             </connections>
                                         </menuItem>
                                     </items>

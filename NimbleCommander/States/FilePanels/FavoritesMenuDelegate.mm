@@ -1,27 +1,8 @@
-//#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelDataPersistency.h"
 #include "PanelController+Menu.h"
 #include "Favorites.h"
 #include "FavoritesMenuDelegate.h"
-
-@implementation AnyHolder
-{
-    any m_Object;
-}
-
-- (instancetype)initWithAny:(any)_any
-{
-    if( self = [super init] ) {
-        m_Object = move(_any);
-    }
-    return self;
-}
-
-- (const any&) any
-{
-    return m_Object;
-}
-@end
 
 static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_favorite )
 {

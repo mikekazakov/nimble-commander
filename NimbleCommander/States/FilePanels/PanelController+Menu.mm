@@ -16,6 +16,7 @@
 #include <NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h>
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
@@ -113,6 +114,13 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     using namespace panel::actions;
 #define VALIDATE(type) type::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
+    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
+    IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
+    IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
+    IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
     IF_MENU_TAG("menu.view.sorting_by_extension")       return VALIDATE(ToggleSortingByExtension);
     IF_MENU_TAG("menu.view.sorting_by_size")            return VALIDATE(ToggleSortingBySize);
@@ -123,8 +131,6 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.view.sorting_separate_folders")   return VALIDATE(ToggleSortingFoldersSeparation);
     IF_MENU_TAG("menu.view.sorting_numeric_comparison") return VALIDATE(ToggleSortingNumerical);
     IF_MENU_TAG("menu.view.sorting_view_hidden")        return VALIDATE(ToggleSortingShowHidden);
-    IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
-    IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
@@ -136,17 +142,12 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.command.eject_volume")            return VALIDATE(EjectVolume);
     IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
-    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.command.copy_file_name")          return VALIDATE(CopyFileName);
     IF_MENU_TAG("menu.command.copy_file_path")          return VALIDATE(CopyFilePath);
-    IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
 #undef VALIDATE

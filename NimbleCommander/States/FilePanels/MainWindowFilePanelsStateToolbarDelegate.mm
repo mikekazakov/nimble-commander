@@ -1,6 +1,5 @@
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/Operations/OperationsSummaryViewController.h>
-#include "Views/MainWndGoToButton.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 
@@ -18,8 +17,8 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 {
     __weak MainWindowFilePanelState *m_State;
     NSToolbar                       *m_Toolbar;
-    MainWndGoToButton               *m_LeftPanelGoToButton;
-    MainWndGoToButton               *m_RightPanelGoToButton;
+    NSButton                        *m_LeftPanelGoToButton;
+    NSButton                        *m_RightPanelGoToButton;
     NSArray                         *m_AllowedToolbarItemsIdentifiers;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
 }
@@ -57,23 +56,21 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 - (void) buildBasicControls
 {
     MainWindowFilePanelState* state = m_State;
-    m_LeftPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
+    m_LeftPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
+    m_LeftPanelGoToButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_LeftPanelGoToButton.refusesFirstResponder = true;
+    m_LeftPanelGoToButton.title = @"";
+    m_LeftPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];
     m_LeftPanelGoToButton.target = state;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
     m_LeftPanelGoToButton.action = @selector(onLeftPanelGoToButtonAction:);
-#pragma clang diagnostic pop
-    m_LeftPanelGoToButton.owner = state;
-    m_LeftPanelGoToButton.isRight = false;
-
-    m_RightPanelGoToButton = [[MainWndGoToButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
+    
+    m_RightPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
+    m_RightPanelGoToButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_RightPanelGoToButton.refusesFirstResponder = true;
+    m_RightPanelGoToButton.title = @"";
+    m_RightPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];    
     m_RightPanelGoToButton.target = state;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
     m_RightPanelGoToButton.action = @selector(onRightPanelGoToButtonAction:);
-#pragma clang diagnostic pop    
-    m_RightPanelGoToButton.owner = state;
-    m_RightPanelGoToButton.isRight = true;
 }
 
 - (void) buildToolbar

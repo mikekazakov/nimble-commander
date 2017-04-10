@@ -22,11 +22,11 @@
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
 #include "Favorites.h"
-#include "Views/MainWndGoToButton.h"
 #include "Views/QuickPreview.h"
 #include "Views/FilePanelMainSplitView.h"
 #include "Views/BriefSystemOverview.h"
 #include "Views/FilePanelOverlappedTerminal.h"
+#include "Actions/ShowGoToPopup.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -331,69 +331,22 @@ static bool GoToForcesPanelActivation()
 
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender
 {
-    auto *selection = m_ToolbarDelegate.leftPanelGoToButton.selection;
-    if(!selection)
-        return;
-    if( m_MainSplitView.isLeftCollapsed )
-        [m_MainSplitView expandLeftView];
-    
-    m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    
-    if( !self.leftPanelController.isActive && GoToForcesPanelActivation() )
-        [self ActivatePanelByController:self.leftPanelController];
-    
-    if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
-        VFSHostPtr host = vfspath.vfs.lock();
-        if(!host)
-            return;
-        
-        if(host->IsNativeFS() && ![PanelController ensureCanGoToNativeFolderSync:vfspath.path])
-            return;
-        
-        [self.leftPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
-    }
-    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection))
-        [self.leftPanelController GoToSavedConnection:info.connection];
-    else if( auto f = objc_cast<MainWndGoToButtonSelectionFavorite>(selection))
-        [self.leftPanelController goToPersistentLocation:f.favorite.location->hosts_stack];
+    if(!objc_cast<NSButton>(sender) &&
+       m_ToolbarDelegate.leftPanelGoToButton &&
+       m_ToolbarDelegate.leftPanelGoToButton.window )
+        [m_ToolbarDelegate.leftPanelGoToButton performClick:self];
+    else
+        panel::actions::ShowLeftGoToPopup::Perform(self, sender);
 }
 
 - (IBAction)onRightPanelGoToButtonAction:(id)sender
 {
-    auto *selection = m_ToolbarDelegate.rightPanelGoToButton.selection;
-    if(!selection)
-        return;
-    if( m_MainSplitView.isRightCollapsed )
-        [m_MainSplitView expandRightView];
-    
-    m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
-    
-    if( !self.rightPanelController.isActive && GoToForcesPanelActivation() )
-        [self ActivatePanelByController:self.rightPanelController];
-    
-    if(auto vfspath = objc_cast<MainWndGoToButtonSelectionVFSPath>(selection)) {
-        VFSHostPtr host = vfspath.vfs.lock();
-        if(!host)
-            return;
-        
-        if(host->IsNativeFS() && ![PanelController ensureCanGoToNativeFolderSync:vfspath.path])
-            return;
-        
-        [self.rightPanelController GoToDir:vfspath.path vfs:host select_entry:"" async:true];
-    }
-    else if(auto info = objc_cast<MainWndGoToButtonSelectionSavedNetworkConnection>(selection))
-        [self.rightPanelController GoToSavedConnection:info.connection];
-    else if( auto f = objc_cast<MainWndGoToButtonSelectionFavorite>(selection))
-        [self.rightPanelController goToPersistentLocation:f.favorite.location->hosts_stack];
-    
-}
-
-- (IBAction)LeftPanelGoto:(id)sender {
-    [m_ToolbarDelegate.leftPanelGoToButton popUp];
-}
-
-- (IBAction)RightPanelGoto:(id)sender {
-    [m_ToolbarDelegate.rightPanelGoToButton popUp];
+    if(!objc_cast<NSButton>(sender) &&
+       m_ToolbarDelegate.rightPanelGoToButton &&
+       m_ToolbarDelegate.rightPanelGoToButton.window )
+        [m_ToolbarDelegate.rightPanelGoToButton performClick:self];
+    else
+        panel::actions::ShowRightGoToPopup::Perform(self, sender);
 }
 
 - (bool) isPanelActive
@@ -862,6 +815,27 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (ExternalToolsStorage&)externalToolsStorage
 {
     return AppDelegate.me.externalTools;
+}
+
+- (void)revealPanel:(PanelController *)panel
+{
+    if( [self isRightController:panel] ) {
+        if( m_MainSplitView.isRightCollapsed )
+            [m_MainSplitView expandRightView];
+        m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+    }
+    else if( [self isLeftController:panel] ) {
+    
+      if( m_MainSplitView.isLeftCollapsed )
+        [m_MainSplitView expandLeftView];
+    
+        m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+    }
+}
+
+- (bool)goToForcesPanelActivation
+{
+    return GoToForcesPanelActivation();
 }
 
 @end

@@ -12,7 +12,6 @@
 #import <MMTabBarView/MMTabBarView.h>
 #include "../MainWindowStateProtocol.h"
 #include "../../Bootstrap/Config.h"
-//#include "rapidjson.h"
 
 class PanelData;
 class ExternalToolsStorage;
@@ -23,7 +22,6 @@ class ExternalToolsStorage;
 @class QuickLookView;
 @class BriefSystemOverview;
 @class FilePanelMainSplitView;
-@class MainWndGoToButton;
 @class OperationsSummaryViewController;
 @class FilePanelOverlappedTerminal;
 @class MainWindowFilePanelsStateToolbarDelegate;
@@ -58,6 +56,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) OperationsController *OperationsController;
 @property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
+@property (nonatomic, readonly) bool goToForcesPanelActivation;
 
 - (instancetype) initWithFrame:(NSRect)frameRect;
 - (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect;
@@ -67,6 +66,12 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 - (void)ActivatePanelByController:(PanelController *)controller;
 - (void)activePanelChangedTo:(PanelController *)controller;
+
+
+/**
+ * Ensures that this panel is not collapsed and is not overlaid.
+ */
+- (void)revealPanel:(PanelController *)panel;
 
 /**
  * Called by panel controller when it sucessfuly changes it's current path

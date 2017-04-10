@@ -83,6 +83,12 @@ private:
 class NetworkConnectionsManager::Connection
 {
 public:
+    Connection() :
+        m_Object{nullptr}
+    {
+        throw domain_error("invalid connection construction");
+    }
+    
     template <class T>
     explicit Connection(T _t):
         m_Object( make_shared<Model<T>>( move(_t) ) )

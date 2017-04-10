@@ -24,6 +24,9 @@ public:
     operator          bool() const noexcept;
     void              Reset();
     
+    VFSPath &operator=(const VFSPath &_rhs) = default;
+    VFSPath &operator=(VFSPath &&_rhs) = default;
+    
 private:
     VFSHostPtr m_Host;
     string     m_Path;

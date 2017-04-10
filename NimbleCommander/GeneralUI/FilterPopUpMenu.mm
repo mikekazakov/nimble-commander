@@ -104,7 +104,7 @@
         m_Title.enabled = false;
         m_Title.usesSingleLineMode = true;
         m_Title.drawsBackground = false;
-        m_Title.font = [NSFont menuFontOfSize:14];
+        m_Title.font = [NSFont menuFontOfSize:13];
         m_Title.textColor = NSColor.tertiaryLabelColor;
         [self addSubview:m_Title];
 
@@ -120,7 +120,7 @@
         m_Query.bordered = true;
         m_Query.bezeled = true;
         m_Query.bezelStyle = NSTextFieldRoundedBezel;
-        m_Query.font = [NSFont menuFontOfSize:0];
+        m_Query.font = [NSFont menuFontOfSize:13];
         [self addSubview:m_Query];
 
         auto views = NSDictionaryOfVariableBindings(m_Title, m_Query);

@@ -12,6 +12,8 @@
 		CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */; };
 		CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */; };
 		CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B41E99F7C200E44F2D /* FindFiles.mm */; };
+		CF0139B81E9B156500E44F2D /* ShowGoToPopup.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */; };
+		CF0139BB1E9B1B8E00E44F2D /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1374,6 +1376,10 @@
 		CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DefaultAction.mm; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.mm; sourceTree = SOURCE_ROOT; };
 		CF0139B31E99F7C200E44F2D /* FindFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindFiles.h; path = NimbleCommander/States/FilePanels/Actions/FindFiles.h; sourceTree = SOURCE_ROOT; };
 		CF0139B41E99F7C200E44F2D /* FindFiles.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindFiles.mm; path = NimbleCommander/States/FilePanels/Actions/FindFiles.mm; sourceTree = SOURCE_ROOT; };
+		CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowGoToPopup.h; path = NimbleCommander/States/FilePanels/Actions/ShowGoToPopup.h; sourceTree = SOURCE_ROOT; };
+		CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowGoToPopup.mm; path = NimbleCommander/States/FilePanels/Actions/ShowGoToPopup.mm; sourceTree = SOURCE_ROOT; };
+		CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnyHolder.h; path = NimbleCommander/Core/AnyHolder.h; sourceTree = SOURCE_ROOT; };
+		CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AnyHolder.mm; path = NimbleCommander/Core/AnyHolder.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2590,6 +2596,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
+				CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */,
 				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
 				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
@@ -2851,6 +2859,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */,
+				CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */,
 				CF2740821E57F5DD000D4365 /* Alert.h */,
 				CF2740831E57F5DD000D4365 /* Alert.mm */,
 				CF5FE7FE1E149FF700CD83B4 /* Theming */,
@@ -4307,6 +4317,7 @@
 				CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFDAC25C1DFBF0B30039A104 /* PanelController+DelayedSelection.mm in Sources */,
+				CF0139B81E9B156500E44F2D /* ShowGoToPopup.mm in Sources */,
 				CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */,
 				CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
@@ -4455,6 +4466,7 @@
 				CFE9DDFA1BE1C2CE007BBCD3 /* DisclosureViewController.m in Sources */,
 				CFDAC2331DFBDE2B0039A104 /* main.cpp in Sources */,
 				CFDAC2111DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
+				CF0139BB1E9B1B8E00E44F2D /* AnyHolder.mm in Sources */,
 				CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */,
 				CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */,
 				CF1E3D2A1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,

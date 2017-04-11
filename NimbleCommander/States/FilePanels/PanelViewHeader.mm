@@ -1,3 +1,4 @@
+#include <QuartzCore/QuartzCore.h>
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
@@ -26,6 +27,23 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         default:                                    return @"?";
     }
 }
+
+static float Brightness( NSColor *_color )
+{
+    return [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace].brightnessComponent;
+}
+
+static bool IsDark( NSColor *_color )
+{
+    return Brightness(_color) < 0.60;
+}
+
+static const auto g_LightenFilter = []{
+    CIFilter *lighten = [CIFilter filterWithName:@"CIColorControls"];
+    [lighten setDefaults];
+    [lighten setValue:@1 forKey:@"inputBrightness"];
+    return lighten;
+}();
 
 @interface PanelViewHeader()
 @property (strong) IBOutlet NSMenu *sortMenuPopup;
@@ -118,6 +136,9 @@ static NSString *SortLetter(PanelDataSortMode _mode)
         m_BusyIndicator.style = NSProgressIndicatorSpinningStyle;
         m_BusyIndicator.controlSize = NSSmallControlSize;
         m_BusyIndicator.displayedWhenStopped = false;
+        if( CurrentTheme().AppearanceType() == ThemeAppearance::Light &&
+            IsDark(CurrentTheme().FilePanelsHeaderActiveBackgroundColor()) )
+            m_BusyIndicator.contentFilters = @[g_LightenFilter];
         [self addSubview:m_BusyIndicator];
         
         [self setupAppearance];

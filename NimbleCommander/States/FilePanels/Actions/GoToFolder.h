@@ -1,13 +1,60 @@
 #pragma once
 
+#include "DefaultAction.h"
+
 @class PanelController;
 
 namespace panel::actions {
 
-struct GoToFolder
+// external dependency - SanboxManager
+
+struct GoToFolder : DefaultPanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToHomeFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToDocumentsFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToDesktopFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToDownloadsFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToApplicationsFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToUtilitiesFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToLibraryFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToRootFolder : DefaultPanelAction
+{
+    static void Perform( PanelController *_target, id _sender );
+};
+
+struct GoToProcessesList : DefaultPanelAction
+{
     static void Perform( PanelController *_target, id _sender );
 };
 

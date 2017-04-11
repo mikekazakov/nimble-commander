@@ -529,10 +529,19 @@ void ShowVolumesQuickList::Perform( PanelController *_target, id _sender )
     PopupQuickList( BuildVolumesQuickList(_target), _target );
 }
 
+bool ShowParentFoldersQuickList::Predicate( PanelController *_target )
+{
+   return _target.isUniform;
+}
+
+bool ShowParentFoldersQuickList::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+{
+    return Predicate(_target);
+}
+
 void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender )
 {
-    if( _target.isUniform )
-        PopupQuickList( BuildParentFoldersQuickList(_target), _target );
+    PopupQuickList( BuildParentFoldersQuickList(_target), _target );
 }
 
 void ShowHistoryQuickList::Perform( PanelController *_target, id _sender )

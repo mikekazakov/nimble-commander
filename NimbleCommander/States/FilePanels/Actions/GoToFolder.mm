@@ -1,19 +1,12 @@
+#include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
+#include <VFS/PS.h>
+#include <NimbleCommander/Core/SandboxManager.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
 #include "GoToFolder.h"
 
 namespace panel::actions {
-
-bool GoToFolder::Predicate( PanelController *_target )
-{
-    return true;
-}
-
-bool GoToFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
 
 void GoToFolder::Perform( PanelController *_target, id _sender )
 {
@@ -33,10 +26,62 @@ void GoToFolder::Perform( PanelController *_target, id _sender )
             });
         };
 
-        // TODO: check reachability from sandbox        
-        
-        [_target GoToDirWithContext:c];
+        bool access_allowed = !c->VFS->IsNativeFS() ||
+                                SandboxManager::EnsurePathAccess(c->RequestedDirectory);
+        if( access_allowed )
+            [_target GoToDirWithContext:c];
     }];
+}
+
+static void GoToNativeDir( const string& _path, PanelController *_target )
+{
+    if( SandboxManager::EnsurePathAccess(_path) )
+        [_target GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+}
+
+void GoToHomeFolder::Perform( PanelController *_target, id _sender )
+{
+    GoToNativeDir( CommonPaths::Home(), _target );
+}
+
+void GoToDocumentsFolder::Perform( PanelController *_target, id _sender )
+{
+    GoToNativeDir( CommonPaths::Documents(), _target );
+}
+
+void GoToDesktopFolder::Perform( PanelController *_target, id _sender )
+{
+    GoToNativeDir( CommonPaths::Desktop(), _target );
+}
+
+void GoToDownloadsFolder::Perform( PanelController *_target, id _sender )
+{
+    GoToNativeDir( CommonPaths::Downloads(), _target );
+}
+
+void GoToApplicationsFolder::Perform( PanelController *_target, id _sender )
+{
+   GoToNativeDir( CommonPaths::Applications(), _target );
+}
+
+void GoToUtilitiesFolder::Perform( PanelController *_target, id _sender )
+{
+   GoToNativeDir( CommonPaths::Utilities(), _target );
+}
+
+void GoToLibraryFolder::Perform( PanelController *_target, id _sender )
+{
+   GoToNativeDir( CommonPaths::Library(), _target );
+}
+
+void GoToRootFolder::Perform( PanelController *_target, id _sender )
+{
+   GoToNativeDir( CommonPaths::Root(), _target );
+}
+
+void GoToProcessesList::Perform( PanelController *_target, id _sender )
+{
+    [_target GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
 }
 
 };

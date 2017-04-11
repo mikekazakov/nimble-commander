@@ -872,11 +872,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path
 {
-    if( ActivationManager::Instance().Sandboxed() &&
-        !SandboxManager::Instance().CanAccessFolder(_path) &&
-        !SandboxManager::Instance().AskAccessForPathSync(_path) )
-        return false;
-    return true;
+    return SandboxManager::EnsurePathAccess(_path);
 }
 
 - (bool)ensureCanGoToNativeFolderSync:(const string&)_path

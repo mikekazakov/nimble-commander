@@ -1,8 +1,6 @@
-#include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include <VFS/PS.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -136,6 +134,11 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
+    IF_MENU_TAG("menu.go.quick_lists.parent_folders")   return VALIDATE(ShowParentFoldersQuickList);
+    IF_MENU_TAG("menu.go.quick_lists.history")          return VALIDATE(ShowHistoryQuickList);
+    IF_MENU_TAG("menu.go.quick_lists.favorites")        return VALIDATE(ShowFavoritesQuickList);
+    IF_MENU_TAG("menu.go.quick_lists.volumes")          return VALIDATE(ShowVolumesQuickList);
+    IF_MENU_TAG("menu.go.quick_lists.connections")      return VALIDATE(ShowConnectionsQuickList);
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
     IF_MENU_TAG("menu.command.volume_information")      return VALIDATE(ShowVolumeInformation);
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
@@ -180,56 +183,49 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
                   onPath:m_History.Current()->path];
 }
 
-- (IBAction)OnGoToHome:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Home()])
-        return;
-    [self GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToHome:(id)sender
+{
+    panel::actions::GoToHomeFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToDocuments:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Documents()])
-        return;
-    [self GoToDir:CommonPaths::Documents() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToDocuments:(id)sender
+{
+    panel::actions::GoToDocumentsFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToDesktop:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Desktop()])
-        return;
-    [self GoToDir:CommonPaths::Desktop() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToDesktop:(id)sender
+{
+    panel::actions::GoToDesktopFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToDownloads:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Downloads()])
-        return;
-    [self GoToDir:CommonPaths::Downloads() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToDownloads:(id)sender
+{
+    panel::actions::GoToDownloadsFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToApplications:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Applications()])
-        return;
-    [self GoToDir:CommonPaths::Applications() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToApplications:(id)sender
+{
+    panel::actions::GoToApplicationsFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToUtilities:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Utilities()])
-        return;
-    [self GoToDir:CommonPaths::Utilities() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToUtilities:(id)sender
+{
+    panel::actions::GoToUtilitiesFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToLibrary:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Library()])
-        return;
-    [self GoToDir:CommonPaths::Library() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToLibrary:(id)sender
+{
+    panel::actions::GoToLibraryFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToRoot:(id)sender {
-    if(![self ensureCanGoToNativeFolderSync:CommonPaths::Root()])
-        return;
-    [self GoToDir:CommonPaths::Root() vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+- (IBAction)OnGoToRoot:(id)sender
+{
+    panel::actions::GoToRootFolder::Perform(self, sender);
 }
 
-- (IBAction)OnGoToProcessesList:(id)sender {
-    [self GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
+- (IBAction)OnGoToProcessesList:(id)sender
+{
+    panel::actions::GoToProcessesList::Perform(self, sender);
 }
 
 - (IBAction)OnGoToFolder:(id)sender

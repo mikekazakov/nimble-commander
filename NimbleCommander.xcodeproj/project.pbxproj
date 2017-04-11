@@ -2588,10 +2588,6 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
-				CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */,
-				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
-				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
@@ -2602,6 +2598,8 @@
 				CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */,
 				CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */,
 				CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */,
+				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
+				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
 				CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */,
 				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
@@ -2610,6 +2608,8 @@
 				CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */,
 				CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */,
 				CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */,
+				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
+				CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */,
 				CFD8CDBC1E8CD6A700E4DC53 /* ShowVolumeInformation.h */,
 				CFD8CDBD1E8CD6A700E4DC53 /* ShowVolumeInformation.mm */,
 				CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */,

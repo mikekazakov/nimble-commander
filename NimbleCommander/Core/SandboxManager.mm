@@ -10,8 +10,9 @@
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include "SandboxManager.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
-static NSString *g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
+static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
 @interface SandboxManagerPanelDelegate : NSObject<NSOpenSavePanelDelegate>
 
@@ -283,4 +284,13 @@ void SandboxManager::StopUsingBookmarks()
         for(auto &i: m_Bookmarks)
             [i.url stopAccessingSecurityScopedResource];
     }
+}
+
+bool SandboxManager::EnsurePathAccess(const string& _path)
+{
+    if( ActivationManager::Instance().Sandboxed() &&
+        !SandboxManager::Instance().CanAccessFolder(_path) &&
+        !SandboxManager::Instance().AskAccessForPathSync(_path) )
+        return false;
+    return true;
 }

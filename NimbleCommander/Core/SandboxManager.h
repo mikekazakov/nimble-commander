@@ -42,6 +42,12 @@ public:
      * Removes any filesystem access granted by user.
      */
     void ResetBookmarks();
+    
+    /**
+     * Will immediately return true for non-sandboxed build.
+     * Otherwise, will chack access with CanAccessFolder and call AskAccessForPathSync if needed.
+     */
+    static bool EnsurePathAccess(const string& _path);
 
 private:
     SandboxManager();

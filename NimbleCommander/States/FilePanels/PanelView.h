@@ -1,17 +1,9 @@
-//
-//  PanelView.h
-//  Directories
-//
-//  Created by Michael G. Kazakov on 08.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
 #pragma once
 
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
 #include "PanelData.h"
 #include "PanelViewTypes.h"
-//#include "PanelViewLayoutSupport.h"
 
 @class PanelView;
 struct PanelViewLayout;
@@ -23,8 +15,6 @@ struct PanelViewLayout;
 - (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos;
 - (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)_event;
-
-- (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view;
 - (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename;
 
 @end

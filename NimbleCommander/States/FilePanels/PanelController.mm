@@ -800,15 +800,6 @@ static bool RouteKeyboardInputIntoTerminal()
     [self handleGoIntoDirOrOpenInSystemSync];
 }
 
-- (bool) PanelViewWantsRenameFieldEditor:(PanelView*)_view
-{
-    if( !_view.item ||
-       _view.item.IsDotDot() ||
-       !_view.item.Host()->IsWriteable())
-        return false;
-    return true;
-}
-
 - (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename
 {
     if(_filename == nil ||

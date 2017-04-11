@@ -1,11 +1,3 @@
-//
-//  PanelView.m
-//  Directories
-//
-//  Created by Michael G. Kazakov on 08.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -867,12 +859,12 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         return;
     }
     
-    int cursor_pos = m_CursorPos;
-//    if( !m_Presentation->IsItemVisible(cursor_pos) )
+    const int cursor_pos = m_CursorPos;
     if( ![m_ItemsView isItemVisible:cursor_pos] )
         return;
 
-    if(![self.delegate PanelViewWantsRenameFieldEditor:self])
+    const auto item = self.item;
+    if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
         return;
     
     m_RenamingEditor = [NSScrollView new];
@@ -886,7 +878,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     tv.delegate = self;
     tv.fieldEditor = true;
-    tv.string = self.item.NSName();
+    tv.string = item.NSName();
     tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
     tv.verticallyResizable = tv.horizontallyResizable = true;
@@ -898,8 +890,15 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     tv.automaticLinkDetectionEnabled = false;
     tv.continuousSpellCheckingEnabled = false;
     tv.grammarCheckingEnabled = false;
-    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
-    ps.lineBreakMode = NSLineBreakByClipping;
+    tv.insertionPointColor = NSColor.blackColor;
+    tv.backgroundColor = NSColor.whiteColor;
+    tv.textColor = NSColor.blackColor;
+    
+    static const auto ps = []()-> NSParagraphStyle* {
+        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+        style.lineBreakMode = NSLineBreakByClipping;
+        return style;
+    }();
     tv.defaultParagraphStyle = ps;
     tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
     tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
@@ -909,7 +908,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     
     [self.window makeFirstResponder:m_RenamingEditor];
     
-    m_RenamingOriginalName = self.item.Name();
+    m_RenamingOriginalName = item.Name();
 }
 
 - (void)commitFieldEditor

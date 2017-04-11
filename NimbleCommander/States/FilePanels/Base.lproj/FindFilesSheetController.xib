@@ -302,7 +302,7 @@ DQ
                                     <rect key="frame" x="76" y="163" width="171" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for files using mask:" id="R8e-FO-aEj">
                                         <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
@@ -344,9 +344,10 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
-                                        <binding destination="-2" name="value" keyPath="self.MaskComboBoxValue" id="jS7-wG-KFf">
+                                        <binding destination="-2" name="value" keyPath="self.MaskComboBoxValue" id="zlY-kZ-zvU">
                                             <dictionary key="options">
                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                <string key="NSNullPlaceholder">Mask like *, or *.txt, or *.txt, *.jpg</string>
                                             </dictionary>
                                         </binding>
                                         <outlet property="dataSource" destination="-2" id="BBQ-Qd-bAM"/>
@@ -358,7 +359,7 @@ DQ
                                     <rect key="frame" x="147" y="87" width="100" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
                                         <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
@@ -462,7 +463,7 @@ DQ
                                     <rect key="frame" x="183" y="6" width="64" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="With size:" id="YVt-Nt-3dl">
                                         <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
@@ -499,9 +500,10 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
-                                        <binding destination="-2" name="value" keyPath="self.TextComboBoxValue" id="mTx-gO-1mg">
+                                        <binding destination="-2" name="value" keyPath="self.TextComboBoxValue" id="uaK-ba-QWq">
                                             <dictionary key="options">
                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                <string key="NSNullPlaceholder">Enter a text to search</string>
                                             </dictionary>
                                         </binding>
                                         <outlet property="dataSource" destination="-2" id="KFh-7g-crI"/>
@@ -523,6 +525,12 @@ DQ
                                         <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="jJ8-0T-lpC">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                            </dictionary>
+                                        </binding>
+                                        <binding destination="-2" name="value" keyPath="self.SizeTextFieldValue" id="ERT-n5-ZFK">
+                                            <dictionary key="options">
+                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                <string key="NSNullPlaceholder">0</string>
                                             </dictionary>
                                         </binding>
                                         <outlet property="delegate" destination="-2" id="UOB-M8-x8c"/>

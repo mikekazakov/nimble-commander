@@ -190,6 +190,7 @@ private:
 @property (strong) IBOutlet NSArrayController   *ArrayController;
 @property (strong) IBOutlet NSPopUpButton       *SizeRelationPopUp;
 @property (strong) IBOutlet NSTextField         *SizeTextField;
+@property (strong)          NSString            *SizeTextFieldValue;
 @property (strong) IBOutlet NSPopUpButton       *SizeMetricPopUp;
 @property (strong) IBOutlet NSButton            *SearchForDirsButton;
 @property (strong) IBOutlet NSButton            *SearchInSubDirsButton;
@@ -397,7 +398,7 @@ private:
 
 - (SearchForFiles::FilterSize) searchFilterSizeFromUI
 {
-    uint64_t value = self.SizeTextField.integerValue;
+    uint64_t value = self.SizeTextFieldValue.integerValue;
     switch( self.SizeMetricPopUp.selectedTag ) {
         case 1: value *= 1024; break;
         case 2: value *= 1024*1024; break;

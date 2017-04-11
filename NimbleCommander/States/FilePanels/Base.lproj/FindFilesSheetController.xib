@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11542" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -37,7 +37,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="622" height="525"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="622" height="525"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -188,7 +188,7 @@ DQ
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-6C-oal">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WmK-6C-oal">
                         <rect key="frame" x="18" y="23" width="70" height="14"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Items found:" id="z2i-rD-QXz">
                             <font key="font" metaFont="smallSystem"/>
@@ -203,7 +203,7 @@ DQ
                             </binding>
                         </connections>
                     </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="rT5-dE-JF7">
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rT5-dE-JF7">
                         <rect key="frame" x="88" y="23" width="24" height="14"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="ebZ-84-wma"/>
@@ -241,7 +241,7 @@ DQ
                             <outlet property="nextKeyView" destination="NVP-CR-YO4" id="g5I-2t-rGY"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VVb-jD-bRB">
                         <rect key="frame" x="18" y="41" width="586" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingHead" enabled="NO" allowsUndo="NO" sendsActionOnEndEditing="YES" id="vQs-jd-jZW">
                             <font key="font" metaFont="smallSystem"/>
@@ -298,7 +298,7 @@ DQ
                             <rect key="frame" x="0.0" y="0.0" width="628" height="203"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
                                     <rect key="frame" x="76" y="163" width="171" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for files using mask:" id="R8e-FO-aEj">
                                         <font key="font" metaFont="system"/>
@@ -328,12 +328,12 @@ DQ
                                         <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
                                     </connections>
                                 </progressIndicator>
-                                <comboBox toolTip="^M" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4kJ-ln-DDa">
+                                <comboBox toolTip="^M" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4kJ-ln-DDa">
                                     <rect key="frame" x="253" y="159" width="245" height="26"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
                                     </constraints>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="10" id="QoT-rJ-7t8">
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="10" id="QoT-rJ-7t8">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -344,12 +344,17 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
+                                        <binding destination="-2" name="value" keyPath="self.MaskComboBoxValue" id="jS7-wG-KFf">
+                                            <dictionary key="options">
+                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                            </dictionary>
+                                        </binding>
                                         <outlet property="dataSource" destination="-2" id="BBQ-Qd-bAM"/>
                                         <outlet property="delegate" destination="-2" id="QzV-2F-h63"/>
                                         <outlet property="nextKeyView" destination="JW2-j0-Voo" id="tzM-ap-eJd"/>
                                     </connections>
                                 </comboBox>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
                                     <rect key="frame" x="147" y="87" width="100" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
                                         <font key="font" metaFont="system"/>
@@ -453,7 +458,7 @@ DQ
                                         <outlet property="nextKeyView" destination="03U-A8-eOk" id="qvG-yh-XA5"/>
                                     </connections>
                                 </popUpButton>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-0P-f1V">
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NWO-0P-f1V">
                                     <rect key="frame" x="183" y="6" width="64" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="With size:" id="YVt-Nt-3dl">
                                         <font key="font" metaFont="system"/>
@@ -481,9 +486,9 @@ DQ
                                         <outlet property="nextKeyView" destination="fhx-Hf-f7j" id="NcF-gC-5uM"/>
                                     </connections>
                                 </popUpButton>
-                                <comboBox toolTip="^T" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CJi-sh-esy">
+                                <comboBox toolTip="^T" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CJi-sh-esy">
                                     <rect key="frame" x="253" y="83" width="245" height="26"/>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="17I-3a-9vx">
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="17I-3a-9vx">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -494,17 +499,22 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
+                                        <binding destination="-2" name="value" keyPath="self.TextComboBoxValue" id="mTx-gO-1mg">
+                                            <dictionary key="options">
+                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                            </dictionary>
+                                        </binding>
                                         <outlet property="dataSource" destination="-2" id="KFh-7g-crI"/>
                                         <outlet property="delegate" destination="-2" id="y4Y-2j-gAu"/>
                                         <outlet property="nextKeyView" destination="ddq-vO-Myl" id="20L-b2-cnb"/>
                                     </connections>
                                 </comboBox>
-                                <textField toolTip="^S" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a2f-4v-JJC">
+                                <textField toolTip="^S" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a2f-4v-JJC">
                                     <rect key="frame" x="301" y="4" width="60" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="60" id="eMz-Z8-F2u"/>
                                     </constraints>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="2dl-Rj-gsT">
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="2dl-Rj-gsT">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

@@ -1,11 +1,3 @@
-//
-//  FindFileSheetController.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 12.02.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -182,15 +174,15 @@ private:
 @property (nonatomic) bool didAnySearchStarted;
 @property (nonatomic) bool searchingNow;
 
-// bottom buttons
 @property (strong) IBOutlet NSButton            *CloseButton;
 @property (strong) IBOutlet NSButton            *SearchButton;
 @property (strong) IBOutlet NSButton            *GoToButton;
 @property (strong) IBOutlet NSButton            *ViewButton;
 @property (strong) IBOutlet NSButton            *PanelButton;
-
 @property (strong) IBOutlet NSComboBox          *MaskComboBox;
+@property (strong)          NSString            *MaskComboBoxValue;
 @property (strong) IBOutlet NSComboBox          *TextComboBox;
+@property (strong)          NSString            *TextComboBoxValue;
 @property (strong) IBOutlet NSTextField         *LookingIn;
 @property (strong) IBOutlet NSTableView         *TableView;
 @property (strong) IBOutlet NSButton            *CaseSensitiveButton;
@@ -433,8 +425,8 @@ private:
     [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
     
     m_FileSearch->ClearFilters();
-    
-    NSString *mask = self.MaskComboBox.stringValue;
+
+    const auto mask = self.MaskComboBoxValue;
     if(mask != nil &&
        [mask isEqualToString:@""] == false &&
        [mask isEqualToString:@"*"] == false) {
@@ -446,16 +438,16 @@ private:
     else
         m_MaskHistory->insert_unique("*");
     
-    NSString *cont_text = self.TextComboBox.stringValue;
-    if([cont_text isEqualToString:@""] == false) {
+    const auto text_query = self.TextComboBoxValue;
+    if( text_query.length ) {
         SearchForFiles::FilterContent filter_content;
-        filter_content.text = cont_text.UTF8String;
+        filter_content.text = text_query.UTF8String;
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
         m_FileSearch->SetFilterContent(filter_content);
     }
-    m_TextHistory->insert_unique( cont_text ? cont_text.UTF8String : "" );
+    m_TextHistory->insert_unique( text_query ? text_query.UTF8String : "" );
     
     m_FileSearch->SetFilterSize( self.searchFilterSizeFromUI );
     

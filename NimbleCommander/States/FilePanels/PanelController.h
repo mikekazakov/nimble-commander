@@ -191,6 +191,9 @@ namespace panel
 
 - (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;
 
+
+- (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
+
 @end
 
 // internal stuff, move it somewehere else
@@ -207,7 +210,7 @@ namespace panel
 - (void) SelectAllEntries:(bool) _select;
 - (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
-- (void) CalculateSizes:(const vector<VFSListingItem>&) _items;
+
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;

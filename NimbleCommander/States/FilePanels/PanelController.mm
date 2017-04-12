@@ -621,12 +621,17 @@ static bool RouteKeyboardInputIntoTerminal()
     return false;
 }
 
-- (void) CalculateSizes:(const vector<VFSListingItem>&) _items
+- (void) calculateSizesOfItems:(const vector<VFSListingItem>&) _items
 {
+    if( _items.empty() )
+        return;
     m_DirectorySizeCountingQ.Run([=]{
         for(auto &i:_items) {
+            if( !i.IsDir() )
+                continue;
             if( m_DirectorySizeCountingQ.IsStopped() )
                 return;
+            
             auto result = i.Host()->CalculateDirectorySize(
                 !i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
                 [=]{ return m_DirectorySizeCountingQ.IsStopped(); }
@@ -636,7 +641,6 @@ static bool RouteKeyboardInputIntoTerminal()
                     panel::GenericCursorPersistance pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size
                     if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
-//                        [m_View setNeedsDisplay];
                         [m_View dataUpdated];
                         [m_View volatileDataChanged];
                         pers.Restore();

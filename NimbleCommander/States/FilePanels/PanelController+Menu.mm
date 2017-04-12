@@ -43,16 +43,7 @@
 #include "Actions/FindFiles.h"
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/MakeNew.h"
-
-static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
-{
-    vector<VFSListingItem> items;
-    for( auto ind: _data.SortedDirectoryEntries() )
-        if( auto e = _data.EntryAtRawPosition(ind) )
-            if( e.IsDir() && !e.IsDotDot() )
-                items.emplace_back( move(e) );
-    return items;
-}
+#include "Actions/CalculateSizes.h"
 
 @implementation PanelController (Menu)
 
@@ -113,12 +104,13 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     
 #define VALIDATE(type) panel::actions::type::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
-    IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
+    IF_MENU_TAG("menu.file.calculate_sizes")            return VALIDATE(CalculateSizes);
+    IF_MENU_TAG("menu.file.calculate_all_sizes")        return VALIDATE(CalculateAllSizes);
     IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
     IF_MENU_TAG("menu.file.new_file")                   return VALIDATE(MakeNewFile);
     IF_MENU_TAG("menu.file.new_folder")                 return VALIDATE(MakeNewFolder);
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return VALIDATE(MakeNewFolderWithSelection);    
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return VALIDATE(MakeNewFolderWithSelection);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
@@ -684,13 +676,12 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (IBAction)OnCalculateSizes:(id)sender
 {
-    // suboptimal - may have regular files inside (not dirs)
-    [self CalculateSizes:self.selectedEntriesOrFocusedEntryWithDotDot];
+    panel::actions::CalculateSizes::Perform(self, sender);
 }
 
 - (IBAction)OnCalculateAllSizes:(id)sender
 {
-    [self CalculateSizes:DirectoriesWithoutDodDotInSortedOrder(self.data)];
+    panel::actions::CalculateAllSizes::Perform(self, sender);
 }
 
 - (IBAction)ToggleViewHiddenFiles:(id)sender

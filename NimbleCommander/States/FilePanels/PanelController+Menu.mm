@@ -5,9 +5,6 @@
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/BatchRename/BatchRename.h>
-#include <NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h>
-#include <NimbleCommander/Operations/BatchRename/BatchRenameOperation.h>
 #include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
 #include <NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h>
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h>
@@ -44,6 +41,7 @@
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/MakeNew.h"
 #include "Actions/CalculateSizes.h"
+#include "Actions/BatchRename.h"
 
 @implementation PanelController (Menu)
 
@@ -145,7 +143,7 @@
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWritable();
-    IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWritable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.batch_rename")            return VALIDATE(BatchRename);
     IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
 #undef VALIDATE
     
@@ -886,27 +884,7 @@
 
 - (IBAction)OnBatchRename:(id)sender
 {
-    auto items = self.selectedEntriesOrFocusedEntry;
-    if( items.empty() )
-        return;
-    
-    auto host = items.front().Host();
-    if( !all_of(begin(items), end(items), [=](auto &i){ return i.Host() == host;}) )
-        return; // currently BatchRenameOperation supports only single host for items    
-    
-    BatchRenameSheetController *sheet = [[BatchRenameSheetController alloc] initWithItems:move(items)];
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode == NSModalResponseOK) {
-            auto src_paths = sheet.filenamesSource;
-            auto dst_paths = sheet.filenamesDestination;
-            BatchRenameOperation *op = [[BatchRenameOperation alloc] initWithOriginalFilepaths:move(src_paths)
-                                                                              renamedFilepaths:move(dst_paths)
-                                                                                           vfs:host];
-            if( !self.receivesUpdateNotifications )
-                [op AddOnFinishHandler:self.refreshCurrentControllerLambda];            
-            [self.state AddOperation:op];
-        }
-    }];    
+    panel::actions::BatchRename::Perform(self, sender);
 }
 
 - (IBAction) OnOpenExtendedAttributes:(id)sender

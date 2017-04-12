@@ -14,9 +14,9 @@
 
 @interface BatchRenameOperation : Operation
 
-- (id)initWithOriginalFilepaths:(vector<string>&&)_src_paths
-               renamedFilepaths:(vector<string>&&)_dst_paths
-                            vfs:(VFSHostPtr)_src_vfs;
+- (instancetype)initWithOriginalFilepaths:(vector<string>&&)_src_paths
+                         renamedFilepaths:(vector<string>&&)_dst_paths
+                                      vfs:(VFSHostPtr)_src_vfs;
 
 - (OperationDialogAlert *)DialogOnRenameError:(NSError*)_error source:(const string&)_source destination:(const string&)_destination;
 

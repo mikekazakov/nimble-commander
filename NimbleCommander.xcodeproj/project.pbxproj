@@ -16,6 +16,7 @@
 		CF0139BB1E9B1B8E00E44F2D /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
 		CF0260BD1E9DC9000025B50F /* MakeNew.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260BC1E9DC9000025B50F /* MakeNew.mm */; };
 		CF0260C71E9DEC380025B50F /* CalculateSizes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C61E9DEC380025B50F /* CalculateSizes.mm */; };
+		CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C91E9DF45D0025B50F /* BatchRename.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1382,6 +1383,8 @@
 		CF0260BC1E9DC9000025B50F /* MakeNew.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MakeNew.mm; path = NimbleCommander/States/FilePanels/Actions/MakeNew.mm; sourceTree = SOURCE_ROOT; };
 		CF0260C51E9DEC380025B50F /* CalculateSizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalculateSizes.h; path = NimbleCommander/States/FilePanels/Actions/CalculateSizes.h; sourceTree = SOURCE_ROOT; };
 		CF0260C61E9DEC380025B50F /* CalculateSizes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateSizes.mm; path = NimbleCommander/States/FilePanels/Actions/CalculateSizes.mm; sourceTree = SOURCE_ROOT; };
+		CF0260C81E9DF45D0025B50F /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = NimbleCommander/States/FilePanels/Actions/BatchRename.h; sourceTree = SOURCE_ROOT; };
+		CF0260C91E9DF45D0025B50F /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = NimbleCommander/States/FilePanels/Actions/BatchRename.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2594,6 +2597,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
+				CF0260C91E9DF45D0025B50F /* BatchRename.mm */,
 				CF0260C51E9DEC380025B50F /* CalculateSizes.h */,
 				CF0260C61E9DEC380025B50F /* CalculateSizes.mm */,
 				CF0260BB1E9DC9000025B50F /* MakeNew.h */,
@@ -4348,6 +4353,7 @@
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
 				CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFDAC2181DFBC2430039A104 /* rapidjson.cpp in Sources */,
+				CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */,
 				CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */,
 				CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,

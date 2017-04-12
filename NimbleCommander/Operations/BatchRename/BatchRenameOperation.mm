@@ -14,9 +14,9 @@
     BatchRenameOperationJob m_Job;
 }
 
-- (id)initWithOriginalFilepaths:(vector<string>&&)_src_paths
-               renamedFilepaths:(vector<string>&&)_dst_paths
-                            vfs:(VFSHostPtr)_src_vfs
+- (instancetype)initWithOriginalFilepaths:(vector<string>&&)_src_paths
+                         renamedFilepaths:(vector<string>&&)_dst_paths
+                                      vfs:(VFSHostPtr)_src_vfs
 {
     self = [super initWithJob:&m_Job];
     if (self) {

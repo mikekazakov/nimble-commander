@@ -1,10 +1,14 @@
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
+#include <NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h>
+#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
+#include "../MainWindowFilePanelState.h"
+#include "../PanelAux.h"
 
 namespace panel::actions {
 
-static const auto g_InitialName = []() -> string {
+static const auto g_InitialFileName = []() -> string {
     NSString *stub = NSLocalizedString(@"untitled.txt",
                                        "Name for freshly created file by hotkey");
     if( stub && stub.length  )
@@ -13,9 +17,27 @@ static const auto g_InitialName = []() -> string {
     return "untitled.txt";
 }();
 
-static string NextName( int _index )
+static const auto g_InitialFolderName = []() -> string {
+    NSString *stub = NSLocalizedString(@"untitled folder",
+                                       "Name for freshly create folder by hotkey");
+    if( stub && stub.length  )
+        return stub.fileSystemRepresentationSafe;
+    
+    return "untitled folder";
+}();
+
+static const auto g_InitialFolderWithItemsName = []() -> string {
+    NSString *stub = NSLocalizedString(@"New Folder with Items",
+                                       "Name for freshly created folder by hotkey with items");
+    if( stub && stub.length  )
+        return stub.fileSystemRepresentationSafe;
+    
+    return "New Folder with Items";
+}();
+
+static string NextName( const string& _initial, int _index )
 {
-    path p = g_InitialName;
+    path p = _initial;
     if( p.has_extension() ) {
         auto ext = p.extension();
         p.replace_extension();
@@ -25,20 +47,43 @@ static string NextName( int _index )
         return p.native() + " " + to_string(_index);
 }
 
-static string FindSuitableName( const path &_directory, VFSHost &_host )
+static bool HasEntry( const string &_name, const VFSListing &_listing )
 {
-    auto name = g_InitialName;
-    if( !_host.Exists((_directory/name).c_str()) )
+    // naive O(n) implementation, may cause troubles on huge listings
+    for( int i = 0, e = _listing.Count(); i != e; ++i )
+        if( _listing.Filename(i) == _name )
+            return true;
+    return false;
+}
+
+static string FindSuitableName( const string& _initial, const VFSListing &_listing )
+{
+    auto name = _initial;
+    if( !HasEntry(name, _listing) )
         return name;
     
     for( int i = 2; ; ++i ) {
-        name = NextName(i);
-        if( !_host.Exists( (_directory/name).c_str() ) )
+        name = NextName(_initial, i);
+        if( !HasEntry(name, _listing) )
             break;
         if( i >= 100 )
             return ""; // we're full of such filenames, no reason to go on
     }
     return name;
+}
+
+static void ScheduleRenaming( const string& _filename, PanelController *_panel )
+{
+    __weak PanelController *weak_panel = _panel;
+    PanelControllerDelayedSelection req;
+    req.filename = _filename;
+    req.timeout = 2s;
+    req.done = [=]{
+        dispatch_to_main_queue([weak_panel]{
+            [((PanelController*)weak_panel).view startFieldEditorRenaming];
+        });
+    };
+    [_panel ScheduleDelayedSelectionChangeFor:req];
 }
 
 bool MakeNewFile::Predicate( PanelController *_target )
@@ -55,11 +100,12 @@ void MakeNewFile::Perform( PanelController *_target, id _sender )
 {
     const path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
+    const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *weak_panel = _target;
     
     dispatch_to_background([=]{
-        auto name = FindSuitableName(dir, *vfs);
+        auto name = FindSuitableName(g_InitialFileName, *listing);
         if( name.empty() )
             return;
         
@@ -78,19 +124,105 @@ void MakeNewFile::Perform( PanelController *_target, id _sender )
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
                     [panel refreshPanel];
-                
-                PanelControllerDelayedSelection req;
-                req.filename = name;
-                req.timeout = 2s;
-                req.done = [=]{
-                    dispatch_to_main_queue([=]{
-                        [((PanelController*)weak_panel).view startFieldEditorRenaming];
-                    });
-                };
-                [panel ScheduleDelayedSelectionChangeFor:req];
+
+                ScheduleRenaming(name, panel);
             }
         });
     });
+}
+
+
+bool MakeNewFolder::Predicate( PanelController *_target )
+{
+    return _target.isUniform && _target.vfs->IsWritable();
+}
+
+bool MakeNewFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+{
+    return Predicate(_target);
+}
+
+void MakeNewFolder::Perform( PanelController *_target, id _sender )
+{
+    const path dir = _target.currentDirectoryPath;
+    const VFSHostPtr vfs = _target.vfs;
+    const VFSListingPtr listing = _target.data.ListingPtr();
+    const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    __weak PanelController *weak_panel = _target;
+
+    auto name = FindSuitableName(g_InitialFolderName, *listing);
+    if( name.empty() )
+        return;
+
+    CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
+    if( vfs->IsNativeFS() )
+        op = [op initWithPath:name.c_str() rootpath:dir.c_str()];
+    else
+        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:vfs];
+    
+    [op AddOnFinishHandler:^{
+        dispatch_to_main_queue([=]{
+            if( PanelController *panel = weak_panel ) {
+                if( force_reload )
+                    [panel refreshPanel];
+                
+                ScheduleRenaming(name, panel);
+            }
+        });
+    }];
+    [_target.state AddOperation:op];
+}
+
+bool MakeNewFolderWithSelection::Predicate( PanelController *_target )
+{
+    auto item = _target.view.item;
+    return _target.isUniform &&
+            _target.vfs->IsWritable() &&
+            item &&
+            (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
+}
+
+bool MakeNewFolderWithSelection::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+{
+    return Predicate(_target);
+}
+
+void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
+{
+    const path dir = _target.currentDirectoryPath;
+    const VFSHostPtr vfs = _target.vfs;
+    const VFSListingPtr listing = _target.data.ListingPtr();
+    const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    __weak PanelController *weak_panel = _target;
+    const auto files = _target.selectedEntriesOrFocusedEntry;
+    
+    if( files.empty() )
+        return;
+    
+    const auto name = FindSuitableName(g_InitialFolderWithItemsName, *listing);
+    if( name.empty() )
+        return;
+    
+    const path destination = dir / name / "/";
+    
+    const auto options = panel::MakeDefaultFileMoveOptions();
+    auto op = [[FileCopyOperation alloc] initWithItems:files
+                                       destinationPath:destination.native()
+                                       destinationHost:vfs
+                                               options:options];
+    
+    [op AddOnFinishHandler:^{
+        dispatch_to_main_queue([=]{
+            if( PanelController *panel = weak_panel ) {
+                if( force_reload )
+                    [panel refreshPanel];
+                
+                ScheduleRenaming(name, panel);
+            }
+        });
+    }];
+    
+    [_target.state AddOperation:op];
 }
 
 }

@@ -111,15 +111,14 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF(tag_layout_10)       return update_layout_item(9);
 #undef IF
     
-    using namespace panel::actions;
-#define VALIDATE(type) type::ValidateMenuItem(self, item);
+#define VALIDATE(type) panel::actions::type::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
     IF_MENU_TAG("menu.file.new_file")                   return VALIDATE(MakeNewFile);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWritable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWritable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return VALIDATE(MakeNewFolder);
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return VALIDATE(MakeNewFolderWithSelection);    
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
@@ -881,108 +880,12 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (IBAction)OnQuickNewFolder:(id)sender
 {
-    NSString *stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
-    path dir = self.currentDirectoryPath;
-    string name = stub.fileSystemRepresentationSafe;
-    
-    // currently doing existance checking in main thread, which is bad for a slow remote vfs
-    // better implement it asynchronously.
-    if( self.vfs->Exists((dir/name).c_str()) )
-        // this file already exists, will try another ones
-        for( int i = 2; ; ++i ) {
-            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
-            if( !self.vfs->Exists((dir/name).c_str()) )
-                break;
-            if( i >= 100 )
-                return; // we're full of such filenames, no reason to go on
-        }
-
-    CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-    if(self.vfs->IsNativeFS())
-        op = [op initWithPath:name.c_str() rootpath:dir.c_str()];
-    else
-        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:self.vfs];
-    
-    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-    __weak PanelController *ws = self;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-    [op AddOnFinishHandler:^{
-        dispatch_to_main_queue([=]{
-            PanelController *ss = ws;
-            
-            if(force_reload)
-                [ss refreshPanel];
-            
-            PanelControllerDelayedSelection req;
-            req.filename = name;
-            req.timeout = 2s;
-            req.done = [=]{
-                [((PanelController*)ws).view startFieldEditorRenaming];
-            };
-            [ss ScheduleDelayedSelectionChangeFor:req];
-        });
-    }];
-#pragma clang diagnostic pop
-    
-    [self.state AddOperation:op];
+    panel::actions::MakeNewFolder::Perform(self, sender);
 }
 
 - (IBAction)OnQuickNewFolderWithSelection:(id)sender
 {
-    if( !self.isUniform )
-        return;
-    
-    auto files = self.selectedEntriesOrFocusedEntry;
-    if(files.empty())
-        return;
-    NSString *stub = NSLocalizedString(@"New Folder with Items", "Name for freshly created folder by hotkey with items");
-    string name = stub.fileSystemRepresentationSafe;
-    path dir = self.currentDirectoryPath;
-    
-    // currently doing existance checking in main thread, which is bad for a slow remote vfs
-    // better implement it asynchronously.
-    if( self.vfs->Exists((dir/name).c_str()) )
-        // this file already exists, will try another ones
-        for( int i = 2; ; ++i ) {
-            name = [NSString stringWithFormat:@"%@ %i", stub, i].fileSystemRepresentationSafe;
-            if( !self.vfs->Exists((dir/name).c_str()) )
-                break;
-            if( i >= 100 )
-                return; // we're full of such filenames, no reason to go on
-        }
-    
-    path src = self.currentDirectoryPath;
-    path dst = src / name / "/";
-    
-    FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
-    auto op = [[FileCopyOperation alloc] initWithItems:files destinationPath:dst.native() destinationHost:self.vfs options:opts];
-
-    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-    __weak PanelController *ws = self;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-    [op AddOnFinishHandler:^{
-        dispatch_to_main_queue([=]{
-            PanelController *ss = ws;
-            
-            if(force_reload)
-                [ss refreshPanel];
-            
-            PanelControllerDelayedSelection req;
-            req.filename = name;
-            req.timeout = 2s;            
-            req.done = [=]{
-                dispatch_to_main_queue([=]{
-                    [((PanelController*)ws).view startFieldEditorRenaming];
-                });
-            };
-            [ss ScheduleDelayedSelectionChangeFor:req];
-        });
-    }];
-#pragma clang diagnostic pop
-    
-    [self.state AddOperation:op];
+    panel::actions::MakeNewFolderWithSelection::Perform(self, sender);
 }
 
 - (IBAction)OnQuickNewFile:(id)sender

@@ -4,6 +4,23 @@
 
 namespace VFSNetDropbox {
 
+NSURL* const api::GetCurrentAccount =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];
+NSURL* const api::GetSpaceUsage =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
+NSURL* const api::GetMetadata =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
+NSURL* const api::ListFolder =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
+NSURL* const api::Delete =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/delete"];
+NSURL* const api::CreateFolder =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/create_folder"];
+NSURL* const api::Download =
+    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
+NSURL* const api::Upload =
+    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
+
 const char *GetString( const rapidjson::Value &_doc, const char *_key )
 {
     auto i = _doc.FindMember(_key);
@@ -204,14 +221,6 @@ bool IsNormalJSONResponse( NSURLResponse *_response )
     }
     return false;
 }
-
-//vector<Metadata> ListFolder(const string& _token,
-//                            const string &_folder,
-//                            const function<bool()> _cancellation )
-//{
-//                                
-//                                
-//}
 
 void WarnAboutUsingInMainThread()
 {

@@ -5,9 +5,6 @@
 
 using namespace VFSNetDropbox;
 
-static const auto g_Download = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
-static const auto g_Upload = [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //                  ****** VFSNetDropboxFileDownloadDelegate ******
@@ -136,7 +133,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
                                                      delegate:delegate
                                                 delegateQueue:nil];
         
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Download];
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Download];
         req.HTTPMethod = @"POST";
         host.FillAuth(req);
         InsetHTTPHeaderPathspec(req, RelativePath());
@@ -176,7 +173,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
             }
         };
         
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_Upload];
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
         req.HTTPMethod = @"POST";
         auto &host = *((VFSNetDropboxHost*)Host().get());
         host.FillAuth(req);

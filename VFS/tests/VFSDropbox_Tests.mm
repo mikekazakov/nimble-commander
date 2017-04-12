@@ -155,6 +155,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
@@ -169,6 +171,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( uploaded->size() == size(to_upload) );
     XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
     XCTAssert( file->Close() == VFSError::Ok );
+    
+    host->Unlink(filepath);
 }
 
 - (void)testUnfinishedUpload
@@ -176,6 +180,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
@@ -191,6 +197,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     auto filepath = "/FolderToModify/zero.txt";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
@@ -201,6 +209,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     VFSStat stat;
     XCTAssert( host->Stat(filepath, stat, 0) == VFSError::Ok );
     XCTAssert( stat.size == 0 );
+    host->Unlink(filepath);
 }
 
 - (void)testDecentSizedUpload
@@ -208,6 +217,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     const auto length = 5*1024*1024; // 5Mb upload / download
     auto filepath = "/FolderToModify/SomeRubbish.bin";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
@@ -227,6 +238,21 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( uploaded->size() == size(to_upload) );
     XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
     XCTAssert( file->Close() == VFSError::Ok );
+
+    host->Unlink(filepath);    
+}
+
+- (void)testFolderCreationAndRemoval
+{
+    auto filepath = "/FolderToModify/NewDirectory/";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->RemoveDirectory(filepath);
+
+    XCTAssert( host->CreateDirectory(filepath, 0) == VFSError::Ok );
+    XCTAssert( host->Exists(filepath) == true );
+    XCTAssert( host->IsDirectory(filepath, 0) == true );
+    XCTAssert( host->RemoveDirectory(filepath) == VFSError::Ok );
+    XCTAssert( host->Exists(filepath) == false );
 }
 
 @end

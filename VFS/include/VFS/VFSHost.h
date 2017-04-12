@@ -102,6 +102,7 @@ public:
     
     /**
      * Check if filesystem can be written to in theory, on any location.
+     * By default any VFS is not writeable, i.e. read-only.
      */
     virtual bool IsWriteable() const;
     
@@ -269,7 +270,10 @@ public:
     /***********************************************************************************************
      * Changes observation
      **********************************************************************************************/
-    
+
+    /**
+     * Default implementation doesn't provide any observation functionality.
+     */
     virtual bool IsDirChangeObservingAvailable(const char *_path);
     
     /**
@@ -278,11 +282,10 @@ public:
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path,
                                                          function<void()> _handler);
     
-    virtual void StopDirChangeObserving(unsigned long _ticket);
     
-
-
 private:
+    virtual void StopDirChangeObserving(unsigned long _ticket);
+
     const string                    m_JunctionPath; // path in Parent VFS, relative to it's root
     const shared_ptr<VFSHost>       m_Parent;
     const char*                     m_Tag;
@@ -291,4 +294,5 @@ private:
     // forbid copying
     VFSHost(const VFSHost& _r) = delete;
     void operator=(const VFSHost& _r) = delete;
+    friend class VFSHostDirObservationTicket;
 };

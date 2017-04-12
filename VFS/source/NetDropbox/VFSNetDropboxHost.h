@@ -17,6 +17,8 @@ public:
 
     bool ShouldProduceThumbnails() const override;
     
+    virtual bool IsWriteable() const override;
+    
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,
                        const VFSCancelChecker &_cancel_checker) override;
@@ -25,6 +27,12 @@ public:
                      VFSStat &_st,
                      int _flags,
                      const VFSCancelChecker &_cancel_checker) override;
+    
+    virtual int Unlink(const char *_path,
+                       const VFSCancelChecker &_cancel_checker ) override;
+
+    virtual int RemoveDirectory(const char *_path,
+                                const VFSCancelChecker &_cancel_checker ) override;
 
     virtual int IterateDirectoryListing(const char *_path,
                                         const function<bool(const VFSDirEnt &_dirent)> &_handler)
@@ -38,6 +46,10 @@ public:
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker) override;
+    
+    virtual int CreateDirectory(const char* _path,
+                                int _mode,
+                                const VFSCancelChecker &_cancel_checker ) override;
 
     shared_ptr<const VFSNetDropboxHost> SharedPtr() const {return static_pointer_cast<const VFSNetDropboxHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNetDropboxHost> SharedPtr() {return static_pointer_cast<VFSNetDropboxHost>(VFSHost::SharedPtr());}

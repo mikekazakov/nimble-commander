@@ -16,6 +16,7 @@
 #include <VFS/VFSDeclarations.h>
 
 @class NSData;
+@class NSURL;
 @class NSURLSession;
 @class NSURLRequest;
 @class NSURLResponse;
@@ -23,6 +24,18 @@
 
 namespace VFSNetDropbox
 {
+    struct api
+    {
+        static NSURL* const GetCurrentAccount;
+        static NSURL* const GetSpaceUsage;
+        static NSURL* const GetMetadata;
+        static NSURL* const ListFolder;
+        static NSURL* const Delete;
+        static NSURL* const CreateFolder;
+        static NSURL* const Download;
+        static NSURL* const Upload;
+    };
+
     void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);
     void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path);
     
@@ -50,13 +63,6 @@ namespace VFSNetDropbox
     };
     AccountInfo ParseAccountInfo( const rapidjson::Value &_value );
     
-    
-    
-//    vector<Metadata> ListFolder(const string& _token,
-//                                const string &_folder,
-//                                const function<bool()> _cancellation );
-//    
-
     const char *GetString( const rapidjson::Value &_doc, const char *_key );
     optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );
     

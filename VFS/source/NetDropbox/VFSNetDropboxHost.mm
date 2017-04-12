@@ -8,10 +8,6 @@ using namespace VFSNetDropbox;
 
 const char *VFSNetDropboxHost::Tag = "net_dropbox";
 
-static const auto g_GetCurrentAccount = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];
-static const auto g_GetSpaceUsage = [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_space_usage"];
-static const auto g_GetMetadata = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
-static const auto g_ListFolder = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
 
 struct VFSNetDropboxHost::State
 {
@@ -43,7 +39,7 @@ VFSNetDropboxHost::~VFSNetDropboxHost()
 
 void VFSNetDropboxHost::InitialAccountLookup()
 {
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetCurrentAccount];
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
     req.HTTPMethod = @"POST";
     FillAuth(req);
     
@@ -81,7 +77,7 @@ int VFSNetDropboxHost::StatFS(const char *_path,
     
     _stat = VFSStatFS{};
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetSpaceUsage];
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
     req.HTTPMethod = @"POST";
     FillAuth(req);
 
@@ -127,7 +123,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_GetMetadata];
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetMetadata];
     req.HTTPMethod = @"POST";
     FillAuth(req);
     InsetHTTPBodyPathspec(req, path);
@@ -179,7 +175,7 @@ int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::ListFolder];
     req.HTTPMethod = @"POST";
     FillAuth(req);
     InsetHTTPBodyPathspec(req, path);
@@ -228,7 +224,7 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:g_ListFolder];
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::ListFolder];
     req.HTTPMethod = @"POST";
     FillAuth(req);
     InsetHTTPBodyPathspec(req, path);
@@ -294,4 +290,67 @@ int VFSNetDropboxHost::CreateFile(const char* _path,
 const string &VFSNetDropboxHost::Token() const
 {
     return I->m_Token;
+}
+
+int VFSNetDropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker )
+{
+   WarnAboutUsingInMainThread();
+
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
+    req.HTTPMethod = @"POST";
+    FillAuth(req);
+    InsetHTTPBodyPathspec(req, _path);
+    
+    auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
+    return rc;
+}
+
+int VFSNetDropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker )
+{
+    WarnAboutUsingInMainThread();
+
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    string path = _path;
+    if( path.back() == '/' ) // dropbox doesn't like trailing slashes
+        path.pop_back();
+    
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
+    req.HTTPMethod = @"POST";
+    FillAuth(req);
+    InsetHTTPBodyPathspec(req, path);
+    
+    auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
+    return rc;
+}
+
+int VFSNetDropboxHost::CreateDirectory(const char* _path,
+                                       int _mode,
+                                       const VFSCancelChecker &_cancel_checker )
+{
+    WarnAboutUsingInMainThread();
+    
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    string path = _path;
+    if( path.back() == '/' ) // dropbox doesn't like trailing slashes
+        path.pop_back();
+    
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::CreateFolder];
+    req.HTTPMethod = @"POST";
+    FillAuth(req);
+    InsetHTTPBodyPathspec(req, path);
+    
+    auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
+    return rc;
+}
+
+bool VFSNetDropboxHost::IsWriteable() const
+{
+    return true;
 }

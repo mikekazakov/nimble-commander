@@ -203,14 +203,14 @@ const char* VFSHost::JunctionPath() const noexcept
     return m_JunctionPath.c_str();
 }
 
-bool VFSHost::IsWriteable() const
+bool VFSHost::IsWritable() const
 {
     return false;
 }
 
-bool VFSHost::IsWriteableAtPath(const char *_dir) const
+bool VFSHost::IsWritableAtPath(const char *_dir) const
 {
-    return IsWriteable();
+    return IsWritable();
 }
 
 int VFSHost::CreateFile(const char* _path,

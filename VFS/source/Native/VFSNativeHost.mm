@@ -527,12 +527,12 @@ int VFSNativeHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_che
     return VFSError::FromErrno();
 }
 
-bool VFSNativeHost::IsWriteable() const
+bool VFSNativeHost::IsWritable() const
 {
     return true; // dummy now
 }
 
-bool VFSNativeHost::IsWriteableAtPath(const char *_dir) const
+bool VFSNativeHost::IsWritableAtPath(const char *_dir) const
 {
     return true; // dummy now
 }

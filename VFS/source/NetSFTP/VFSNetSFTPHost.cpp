@@ -595,12 +595,12 @@ bool VFSNetSFTPHost::ShouldProduceThumbnails() const
     return false;
 }
 
-bool VFSNetSFTPHost::IsWriteable() const
+bool VFSNetSFTPHost::IsWritable() const
 {
     return true; // dummy now
 }
 
-bool VFSNetSFTPHost::IsWriteableAtPath(const char *_dir) const
+bool VFSNetSFTPHost::IsWritableAtPath(const char *_dir) const
 {
     return true; // dummy now
 }

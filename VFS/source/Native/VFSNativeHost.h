@@ -19,8 +19,8 @@ public:
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     
-    virtual bool IsWriteable() const override;
-    virtual bool IsWriteableAtPath(const char *_dir) const override;
+    virtual bool IsWritable() const override;
+    virtual bool IsWritableAtPath(const char *_dir) const override;
     
     virtual int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
     

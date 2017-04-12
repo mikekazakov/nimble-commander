@@ -116,8 +116,8 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
-    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWriteable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWritable();
+    IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWritable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
@@ -151,8 +151,8 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWriteable();
-    IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWriteable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+    IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWritable();
+    IF_MENU_TAG("menu.command.batch_rename")            return (!self.isUniform || self.vfs->IsWritable()) && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
 #undef VALIDATE
     

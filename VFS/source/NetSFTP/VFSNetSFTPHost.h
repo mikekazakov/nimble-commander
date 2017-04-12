@@ -39,8 +39,8 @@ public:
     long          Port() const noexcept;
 
     // core VFSHost methods
-    virtual bool IsWriteable() const override;
-    virtual bool IsWriteableAtPath(const char *_dir) const override;
+    virtual bool IsWritable() const override;
+    virtual bool IsWritableAtPath(const char *_dir) const override;
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,

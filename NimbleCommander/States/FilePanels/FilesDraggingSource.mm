@@ -77,14 +77,14 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
     if( m_Items.empty() ) {
         m_CommonHost = _item.item.Host();
         m_AreAllHostsNative = m_CommonHost->IsNativeFS();
-        m_AreAllHostsWriteable = m_CommonHost->IsWriteable();
+        m_AreAllHostsWriteable = m_CommonHost->IsWritable();
     }
     else {
         if( m_CommonHost && _item.item.Host() != m_CommonHost )
             m_CommonHost = nullptr;
         if( m_AreAllHostsNative && !_item.item.Host()->IsNativeFS() )
             m_AreAllHostsNative = false;
-        if( m_AreAllHostsWriteable && !_item.item.Host()->IsWriteable() )
+        if( m_AreAllHostsWriteable && !_item.item.Host()->IsWritable() )
             m_AreAllHostsWriteable = false;
     }
     

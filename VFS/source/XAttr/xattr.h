@@ -16,7 +16,7 @@ public:
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     
-    virtual bool IsWriteable() const override;
+    virtual bool IsWritable() const override;
     
     virtual int CreateFile(const char* _path,
                            shared_ptr<VFSFile> &_target,

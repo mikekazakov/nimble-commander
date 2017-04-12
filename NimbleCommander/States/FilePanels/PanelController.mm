@@ -809,7 +809,7 @@ static bool RouteKeyboardInputIntoTerminal()
        [_filename isEqualToString:@".."] ||
        !m_View.item ||
        m_View.item.IsDotDot() ||
-       !m_View.item.Host()->IsWriteable() ||
+       !m_View.item.Host()->IsWritable() ||
        [_filename isEqualToString:m_View.item.NSName()])
         return;
     

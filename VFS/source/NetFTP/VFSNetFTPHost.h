@@ -61,8 +61,8 @@ public:
     virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
-    virtual bool IsWriteable() const override;
-    virtual bool IsWriteableAtPath(const char *_dir) const override;
+    virtual bool IsWritable() const override;
+    virtual bool IsWritableAtPath(const char *_dir) const override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;

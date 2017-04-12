@@ -49,7 +49,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 static void PasteOrMove( PanelController *_target, bool _paste)
 {
     // check if we're on uniform panel with a writeable VFS
-    if( !_target.isUniform || !_target.vfs->IsWriteable() )
+    if( !_target.isUniform || !_target.vfs->IsWritable() )
         return;
     
     auto source_items = FetchVFSListingsItemsFromPasteboard();
@@ -77,7 +77,7 @@ static void PasteOrMove( PanelController *_target, bool _paste)
 bool PasteFromPasteboard::Predicate( PanelController *_target )
 {
     return _target.isUniform &&
-        _target.vfs->IsWriteable() &&
+        _target.vfs->IsWritable() &&
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 

@@ -66,7 +66,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.move_as")              return self.isPanelActive;
-    IF_MENU_TAG("menu.command.rename_in_place")      return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.activePanelView.item.Host()->IsWriteable();
+    IF_MENU_TAG("menu.command.rename_in_place")      return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.activePanelView.item.Host()->IsWritable();
     IF_MENU_TAG("menu.file.close") {
         unsigned tabs = self.currentSideTabsCount;
         if( tabs == 0 ) {
@@ -380,7 +380,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if( !self.activePanelController || !self.oppositePanelController )
         return;
     
-    if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWriteable() )
+    if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWritable() )
         return;
     
     auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
@@ -417,7 +417,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     // process only current cursor item
     auto item = self.activePanelView.item;
-    if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
+    if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
         return;
     
     auto entries = vector<VFSListingItem>({item});

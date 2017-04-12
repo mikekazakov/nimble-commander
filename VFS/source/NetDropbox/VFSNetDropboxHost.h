@@ -17,7 +17,7 @@ public:
 
     bool ShouldProduceThumbnails() const override;
     
-    virtual bool IsWriteable() const override;
+    virtual bool IsWritable() const override;
     
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,

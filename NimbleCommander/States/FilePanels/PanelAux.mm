@@ -65,7 +65,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
     if( _original_vfs->IsNativeFS() )
        return; // no reason to watch files from native fs
        
-    if( !_original_vfs->IsWriteable() )
+    if( !_original_vfs->IsWritable() )
         return; // no reason to watch file we can't upload then
 
     __weak MainWindowController* origin_window = _origin.mainWindowController;

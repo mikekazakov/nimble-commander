@@ -102,14 +102,14 @@ public:
     
     /**
      * Check if filesystem can be written to in theory, on any location.
-     * By default any VFS is not writeable, i.e. read-only.
+     * By default any VFS is not writable, i.e. read-only.
      */
-    virtual bool IsWriteable() const;
+    virtual bool IsWritable() const;
     
     /**
-     * Default implementation returns IsWriteable();
+     * Default implementation returns IsWritable();
      */
-    virtual bool IsWriteableAtPath(const char *_dir) const;
+    virtual bool IsWritableAtPath(const char *_dir) const;
     
     /**
      * VFS version of stat().

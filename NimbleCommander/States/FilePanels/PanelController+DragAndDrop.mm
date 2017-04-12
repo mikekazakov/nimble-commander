@@ -363,7 +363,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
     int valid_items = 0;
     NSDragOperation result = NSDragOperationNone;
         
-    if( destination && destination.Host()->IsWriteable()) {
+    if( destination && destination.Host()->IsWritable()) {
         if( auto source = objc_cast<FilesDraggingSource>(_dragging.draggingSource) ) {
             // drag is from some other panel
             valid_items = (int)source.items.size();
@@ -439,7 +439,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         return false;
 
     const auto pasteboard = _dragging.draggingPasteboard;
-    const auto dest_writeable = destination.Host()->IsWriteable();
+    const auto dest_writeable = destination.Host()->IsWritable();
     const auto dest_native = destination.Host()->IsNativeFS();
     
     if( auto source = objc_cast<FilesDraggingSource>(_dragging.draggingSource) ) {

@@ -350,7 +350,7 @@ int VFSNetDropboxHost::CreateDirectory(const char* _path,
     return rc;
 }
 
-bool VFSNetDropboxHost::IsWriteable() const
+bool VFSNetDropboxHost::IsWritable() const
 {
     return true;
 }

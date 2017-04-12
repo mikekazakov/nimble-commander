@@ -599,12 +599,12 @@ void VFSNetFTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
             i.handler();
 }
 
-bool VFSNetFTPHost::IsWriteable() const
+bool VFSNetFTPHost::IsWritable() const
 {
     return true;
 }
 
-bool VFSNetFTPHost::IsWriteableAtPath(const char *_dir) const
+bool VFSNetFTPHost::IsWritableAtPath(const char *_dir) const
 {
     return true;
 }

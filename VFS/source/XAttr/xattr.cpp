@@ -207,7 +207,7 @@ VFSMeta VFSXAttrHost::Meta()
     return m;
 }
 
-bool VFSXAttrHost::IsWriteable() const
+bool VFSXAttrHost::IsWritable() const
 {
     return true;
 }

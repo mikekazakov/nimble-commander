@@ -864,7 +864,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         return;
 
     const auto item = self.item;
-    if( !item || item.IsDotDot() || !item.Host()->IsWriteable() )
+    if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
         return;
     
     m_RenamingEditor = [NSScrollView new];

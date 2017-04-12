@@ -198,10 +198,10 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     bool cur_pnl_native = m_CommonHost && m_CommonHost->IsNativeFS();
     bool cur_pnl_writable = true;
     if( m_CurrentController.isUniform  )
-        cur_pnl_writable = m_CurrentController.vfs->IsWriteableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
+        cur_pnl_writable = m_CurrentController.vfs->IsWritableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
     bool opp_pnl_writable = true;
     if( m_OppositeController.isUniform )
-        opp_pnl_writable = m_OppositeController.vfs->IsWriteableAtPath( m_OppositeController.currentDirectoryPath.c_str() );
+        opp_pnl_writable = m_OppositeController.vfs->IsWritableAtPath( m_OppositeController.currentDirectoryPath.c_str() );
     
     //////////////////////////////////////////////////////////////////////
     // regular Open item
@@ -623,7 +623,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     // currently duplicating only first file in a selected set
     auto &item = m_Items.front();
-    if( !item.Host()->IsWriteable() )
+    if( !item.Host()->IsWritable() )
         return;
     
     auto target = FindFreeFilenameToDuplicateIn(item);

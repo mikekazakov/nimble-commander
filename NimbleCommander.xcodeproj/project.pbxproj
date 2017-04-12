@@ -14,6 +14,7 @@
 		CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B41E99F7C200E44F2D /* FindFiles.mm */; };
 		CF0139B81E9B156500E44F2D /* ShowGoToPopup.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */; };
 		CF0139BB1E9B1B8E00E44F2D /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
+		CF0260BD1E9DC9000025B50F /* MakeNew.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260BC1E9DC9000025B50F /* MakeNew.mm */; };
 		CF029BFB17E878A400415033 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
 		CF029BFD17E87C2700415033 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
@@ -1376,6 +1377,8 @@
 		CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowGoToPopup.mm; path = NimbleCommander/States/FilePanels/Actions/ShowGoToPopup.mm; sourceTree = SOURCE_ROOT; };
 		CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnyHolder.h; path = NimbleCommander/Core/AnyHolder.h; sourceTree = SOURCE_ROOT; };
 		CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AnyHolder.mm; path = NimbleCommander/Core/AnyHolder.mm; sourceTree = SOURCE_ROOT; };
+		CF0260BB1E9DC9000025B50F /* MakeNew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MakeNew.h; path = NimbleCommander/States/FilePanels/Actions/MakeNew.h; sourceTree = SOURCE_ROOT; };
+		CF0260BC1E9DC9000025B50F /* MakeNew.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MakeNew.mm; path = NimbleCommander/States/FilePanels/Actions/MakeNew.mm; sourceTree = SOURCE_ROOT; };
 		CF029BFA17E878A400415033 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CF029BFC17E87C2700415033 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2588,6 +2591,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF0260BB1E9DC9000025B50F /* MakeNew.h */,
+				CF0260BC1E9DC9000025B50F /* MakeNew.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CFD8CDCE1E8CF07F00E4DC53 /* CalculateChecksum.h */,
@@ -4414,6 +4419,7 @@
 				CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */,
 				CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */,
 				CF04DDFB1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
+				CF0260BD1E9DC9000025B50F /* MakeNew.mm in Sources */,
 				CFDAC2A91DFD093E0039A104 /* ToolsMenuDelegate.mm in Sources */,
 				CFDAC2AF1DFD096E0039A104 /* NetworkConnectionsManager.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,

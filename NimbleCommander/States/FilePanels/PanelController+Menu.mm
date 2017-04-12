@@ -42,6 +42,7 @@
 #include "Actions/ToggleSort.h"
 #include "Actions/FindFiles.h"
 #include "Actions/ShowGoToPopup.h"
+#include "Actions/MakeNew.h"
 
 static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const PanelData &_data )
 {
@@ -116,6 +117,7 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
     IF_MENU_TAG("menu.file.calculate_sizes")            return m_View.item;
     IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
+    IF_MENU_TAG("menu.file.new_file")                   return VALIDATE(MakeNewFile);
     IF_MENU_TAG("menu.file.new_folder")                 return self.isUniform && self.vfs->IsWritable();
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return self.isUniform && self.vfs->IsWritable() && m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
@@ -985,64 +987,7 @@ static vector<VFSListingItem> DirectoriesWithoutDodDotInSortedOrder( const Panel
 
 - (IBAction)OnQuickNewFile:(id)sender
 {
-    path dir = self.currentDirectoryPath;
-    VFSHostPtr vfs = self.vfs;
-    bool force_reload = self.vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-    __weak PanelController *ws = self;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-    
-    dispatch_to_background([=]{
-        NSString *stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
-        string name = stub.fileSystemRepresentationSafe;
-        
-        if( self.vfs->Exists((dir/name).c_str()) )
-            // this file already exists, will try another ones
-            for( int i = 2; ; ++i ) {
-                path p = stub.fileSystemRepresentationSafe;
-                if( p.has_extension() ) {
-                    auto ext = p.extension();
-                    p.replace_extension();
-                    name = p.native() + " " + to_string(i) + ext.native();
-                }
-                else
-                    name = p.native() + " " + to_string(i);
-                
-                if( !self.vfs->Exists( (dir/name).c_str() ) )
-                    break;
-                if( i >= 100 )
-                    return; // we're full of such filenames, no reason to go on
-            }
-        
-        auto path = dir / name;
-        int ret = VFSEasyCreateEmptyFile(path.c_str(), vfs);
-        if( ret != 0)
-            return dispatch_to_main_queue([=]{
-                Alert *alert = [[Alert alloc] init];
-                alert.messageText = NSLocalizedString(@"Failed to create an empty file:", "Showing error when trying to create an empty file");
-                alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
-                [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-                [alert runModal];
-            });
-        
-        dispatch_to_main_queue([=]{
-            PanelController *ss = ws;
-            
-            if(force_reload)
-                [ss refreshPanel];
-            
-            PanelControllerDelayedSelection req;
-            req.filename = name;
-            req.timeout = 2s;
-            req.done = [=]{
-                dispatch_to_main_queue([=]{
-                    [((PanelController*)ws).view startFieldEditorRenaming];
-                });
-            };
-            [ss ScheduleDelayedSelectionChangeFor:req];
-        });
-    });
-#pragma clang diagnostic pop
+    panel::actions::MakeNewFile::Perform(self, sender);
 }
 
 - (IBAction)OnBatchRename:(id)sender

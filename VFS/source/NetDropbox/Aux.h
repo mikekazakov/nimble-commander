@@ -32,6 +32,7 @@ namespace VFSNetDropbox
         static NSURL* const ListFolder;
         static NSURL* const Delete;
         static NSURL* const CreateFolder;
+        static NSURL* const Move;
         static NSURL* const Download;
         static NSURL* const Upload;
     };

@@ -20,6 +20,8 @@ NSURL* const api::Download =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
 NSURL* const api::Upload =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
+NSURL* const api::Move =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/move"];
 
 const char *GetString( const rapidjson::Value &_doc, const char *_key )
 {

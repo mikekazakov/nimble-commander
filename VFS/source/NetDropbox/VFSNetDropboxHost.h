@@ -50,6 +50,10 @@ public:
     virtual int CreateDirectory(const char* _path,
                                 int _mode,
                                 const VFSCancelChecker &_cancel_checker ) override;
+    
+    virtual int Rename(const char *_old_path,
+                       const char *_new_path,
+                       const VFSCancelChecker &_cancel_checker ) override;
 
     shared_ptr<const VFSNetDropboxHost> SharedPtr() const {return static_pointer_cast<const VFSNetDropboxHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNetDropboxHost> SharedPtr() {return static_pointer_cast<VFSNetDropboxHost>(VFSHost::SharedPtr());}

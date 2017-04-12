@@ -354,3 +354,29 @@ bool VFSNetDropboxHost::IsWritable() const
 {
     return true;
 }
+
+int VFSNetDropboxHost::Rename(const char *_old_path,
+                              const char *_new_path,
+                              const VFSCancelChecker &_cancel_checker)
+{
+    WarnAboutUsingInMainThread();
+
+    if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
+        return VFSError::InvalidCall;
+    
+    const string old_path = EnsureNoTrailingSlash(_old_path);
+    const string new_path = EnsureNoTrailingSlash(_new_path);
+
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
+    req.HTTPMethod = @"POST";
+    FillAuth(req);
+    [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    const string path_spec = "{ "s +
+        "\"from_path\": \"" + EscapeString(old_path) + "\", " +
+        "\"to_path\": \"" + EscapeString(new_path) + "\"" +
+         " }";
+    [req setHTTPBody:[NSData dataWithBytes:data(path_spec) length:size(path_spec)]];
+    
+    auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
+    return rc;
+}

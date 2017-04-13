@@ -8,54 +8,54 @@ namespace panel::actions {
 
 // external dependency - SanboxManager
 
-struct GoToFolder : DefaultPanelAction
+struct GoToFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToHomeFolder : DefaultPanelAction
+struct GoToHomeFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToDocumentsFolder : DefaultPanelAction
+struct GoToDocumentsFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToDesktopFolder : DefaultPanelAction
+struct GoToDesktopFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToDownloadsFolder : DefaultPanelAction
+struct GoToDownloadsFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToApplicationsFolder : DefaultPanelAction
+struct GoToApplicationsFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToUtilitiesFolder : DefaultPanelAction
+struct GoToUtilitiesFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToLibraryFolder : DefaultPanelAction
+struct GoToLibraryFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToRootFolder : DefaultPanelAction
+struct GoToRootFolder : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct GoToProcessesList : DefaultPanelAction
+struct GoToProcessesList : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
 };

@@ -12,11 +12,6 @@ bool AddToFavorites::Predicate( PanelController *_target )
     return _target.isUniform || _target.view.item;
 }
 
-bool AddToFavorites::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void AddToFavorites::Perform( PanelController *_target, id _sender )
 {
     auto &favorites = AppDelegate.me.favoriteLocationsStorage;

@@ -13,11 +13,6 @@ bool OpenWithExternalEditor::Predicate( PanelController *_target )
     return i && !i.IsDotDot();
 }
 
-bool OpenWithExternalEditor::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void OpenWithExternalEditor::Perform( PanelController *_target, id _sender )
 {
     auto item = _target.view.item;

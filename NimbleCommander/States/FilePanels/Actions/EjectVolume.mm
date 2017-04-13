@@ -11,11 +11,6 @@ bool EjectVolume::Predicate( PanelController *_target )
         NativeFSManager::Instance().IsVolumeContainingPathEjectable( _target.currentDirectoryPath );
 }
 
-bool EjectVolume::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void EjectVolume::Perform( PanelController *_target, id _sender )
 {
     auto &nfsm = NativeFSManager::Instance();

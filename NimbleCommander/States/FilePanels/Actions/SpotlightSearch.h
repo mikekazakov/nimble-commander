@@ -1,6 +1,6 @@
 #pragma once
 
-@class PanelController;
+#include "DefaultAction.h"
 
 namespace panel::actions {
 
@@ -8,11 +8,9 @@ namespace panel::actions {
 // config: filePanel.spotlight.format;
 // config: filePanel.spotlight.maxCount;
 
-struct SpotlightSearch
+struct SpotlightSearch : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
 };

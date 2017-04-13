@@ -2,17 +2,17 @@
 
 namespace panel::actions {
 
-bool DefaultPanelAction::Predicate( PanelController *_target )
+bool PanelAction::Predicate( PanelController *_target )
 {
     return true;
 }
 
-bool DefaultPanelAction::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+bool PanelAction::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
 {
-    return Predicate( _target );
+    return Predicate(_target);
 }
 
-void DefaultPanelAction::Perform( PanelController *_target, id _sender )
+void PanelAction::Perform( PanelController *_target, id _sender )
 {
 }
 

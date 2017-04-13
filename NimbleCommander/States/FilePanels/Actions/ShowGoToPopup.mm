@@ -534,11 +534,6 @@ bool ShowParentFoldersQuickList::Predicate( PanelController *_target )
    return _target.isUniform;
 }
 
-bool ShowParentFoldersQuickList::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
-}
-
 void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender )
 {
     PopupQuickList( BuildParentFoldersQuickList(_target), _target );

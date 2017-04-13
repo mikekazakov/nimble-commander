@@ -9,11 +9,6 @@ bool ShowVolumeInformation::Predicate( PanelController *_target )
     return _target.isUniform && _target.vfs->IsNativeFS();
 }
 
-bool ShowVolumeInformation::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void ShowVolumeInformation::Perform( PanelController *_target, id _sender )
 {
     string path;

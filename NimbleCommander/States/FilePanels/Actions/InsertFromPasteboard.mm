@@ -81,11 +81,6 @@ bool PasteFromPasteboard::Predicate( PanelController *_target )
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
-bool PasteFromPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void PasteFromPasteboard::Perform( PanelController *_target, id _sender )
 {
     PasteOrMove(_target, true);
@@ -93,12 +88,9 @@ void PasteFromPasteboard::Perform( PanelController *_target, id _sender )
 
 bool MoveFromPasteboard::Predicate( PanelController *_target )
 {
-    return PasteFromPasteboard::Predicate(_target);
-}
-
-bool MoveFromPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
+    return _target.isUniform &&
+        _target.vfs->IsWritable() &&
+        [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
 void MoveFromPasteboard::Perform( PanelController *_target, id _sender )

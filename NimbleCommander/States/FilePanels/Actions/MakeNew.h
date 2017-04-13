@@ -6,32 +6,28 @@
 
 namespace panel::actions {
 
-struct MakeNewFile : DefaultPanelAction
+struct MakeNewFile : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct MakeNewFolder : DefaultPanelAction
+struct MakeNewFolder : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct MakeNewNamedFolder : DefaultPanelAction
+struct MakeNewNamedFolder : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct MakeNewFolderWithSelection : DefaultPanelAction
+struct MakeNewFolderWithSelection : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target );
+    void Perform( PanelController *_target, id _sender );
 };
 
 };

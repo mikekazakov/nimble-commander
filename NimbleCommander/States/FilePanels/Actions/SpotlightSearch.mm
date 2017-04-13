@@ -101,16 +101,6 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &
     return VFSListing::Build( VFSListing::Compose(listings) );
 }
 
-bool SpotlightSearch::Predicate( PanelController *_target )
-{
-    return true;
-}
-
-bool SpotlightSearch::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void SpotlightSearch::Perform( PanelController *_target, id _sender )
 {
     SpotlightSearchPopupViewController *view = [[SpotlightSearchPopupViewController alloc] init];

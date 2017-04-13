@@ -92,11 +92,6 @@ bool MakeNewFile::Predicate( PanelController *_target )
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-bool MakeNewFile::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
-}
-
 void MakeNewFile::Perform( PanelController *_target, id _sender )
 {
     const path dir = _target.currentDirectoryPath;
@@ -138,11 +133,6 @@ bool MakeNewFolder::Predicate( PanelController *_target )
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-bool MakeNewFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
-}
-
 void MakeNewFolder::Perform( PanelController *_target, id _sender )
 {
     const path dir = _target.currentDirectoryPath;
@@ -181,11 +171,6 @@ bool MakeNewFolderWithSelection::Predicate( PanelController *_target )
             _target.vfs->IsWritable() &&
             item &&
             (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
-}
-
-bool MakeNewFolderWithSelection::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
 }
 
 void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
@@ -229,11 +214,6 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
 bool MakeNewNamedFolder::Predicate( PanelController *_target )
 {
     return _target.isUniform && _target.vfs->IsWritable();
-}
-
-bool MakeNewNamedFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
 }
 
 void MakeNewNamedFolder::Perform( PanelController *_target, id _sender )

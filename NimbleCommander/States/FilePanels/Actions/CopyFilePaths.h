@@ -1,19 +1,19 @@
 #pragma once
 
-@class PanelController;
+#include "DefaultAction.h"
 
 namespace panel::actions {
 
-struct CopyFileName
+struct CopyFileName : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_source, NSMenuItem *_item );
-    static void Perform( PanelController *_source, id _sender );
+    bool Predicate( PanelController *_source );
+    void Perform( PanelController *_source, id _sender );
 };
 
-struct CopyFilePath
+struct CopyFilePath : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_source, NSMenuItem *_item );
-    static void Perform( PanelController *_source, id _sender );
+    bool Predicate( PanelController *_source );
+    void Perform( PanelController *_source, id _sender );
 };
     
 }

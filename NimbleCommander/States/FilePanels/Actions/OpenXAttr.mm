@@ -11,11 +11,6 @@ bool OpenXAttr::Predicate( PanelController *_target )
     return i && i.Host()->IsNativeFS();
 }
 
-bool OpenXAttr::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void OpenXAttr::Perform( PanelController *_target, id _sender )
 {
     if( !Predicate(_target) )

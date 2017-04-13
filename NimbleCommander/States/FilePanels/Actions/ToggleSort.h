@@ -6,64 +6,64 @@
 
 namespace panel::actions {
 
-struct ToggleSortingByName : DefaultPanelAction
+struct ToggleSortingByName : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingByExtension : DefaultPanelAction
+struct ToggleSortingByExtension : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingBySize : DefaultPanelAction
+struct ToggleSortingBySize : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingByModifiedTime : DefaultPanelAction
+struct ToggleSortingByModifiedTime : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingByCreatedTime : DefaultPanelAction
+struct ToggleSortingByCreatedTime : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingByAddedTime : DefaultPanelAction
+struct ToggleSortingByAddedTime : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingCaseSensitivity : DefaultPanelAction
+struct ToggleSortingCaseSensitivity : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingFoldersSeparation : DefaultPanelAction
+struct ToggleSortingFoldersSeparation : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingNumerical : DefaultPanelAction
+struct ToggleSortingNumerical : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct ToggleSortingShowHidden : DefaultPanelAction
+struct ToggleSortingShowHidden : PanelAction
 {
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
+    void Perform( PanelController *_target, id _sender );
 };
 
 };

@@ -6,16 +6,15 @@
 
 namespace panel::actions {
 
-struct CalculateSizes : DefaultPanelAction
+struct CalculateSizes : PanelAction
 {
-    static bool Predicate( PanelController *_target );
-    static bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    static void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target );
+    void Perform( PanelController *_target, id _sender );
 };
 
-struct CalculateAllSizes : DefaultPanelAction
+struct CalculateAllSizes : PanelAction
 {
-    static void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender );
 };
 
 }

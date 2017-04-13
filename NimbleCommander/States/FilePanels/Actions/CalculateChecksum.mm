@@ -13,11 +13,6 @@ bool CalculateChecksum::Predicate( PanelController *_target )
     return i && (!i.IsDir() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-bool CalculateChecksum::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 void CalculateChecksum::Perform( PanelController *_target, id _sender )
 {
     vector<string> filenames;

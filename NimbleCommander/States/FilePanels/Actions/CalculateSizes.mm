@@ -9,11 +9,6 @@ bool CalculateSizes::Predicate( PanelController *_target )
     return i && (i.IsDir() || _target.data.Stats().selected_dirs_amount > 0 );
 }
 
-bool CalculateSizes::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
-}
-
 void CalculateSizes::Perform( PanelController *_target, id _sender )
 {
     auto selected = _target.selectedEntriesOrFocusedEntryWithDotDot;

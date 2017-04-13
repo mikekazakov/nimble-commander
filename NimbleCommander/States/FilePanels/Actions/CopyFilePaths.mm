@@ -21,14 +21,14 @@ static void WriteSingleStringToClipboard(const string &_s)
           forType:NSStringPboardType];
 }
 
-bool CopyFileName::ValidateMenuItem( PanelController *_source, NSMenuItem *_item )
+bool CopyFileName::Predicate( PanelController *_source )
 {
     return _source.view.item;
 }
 
-bool CopyFilePath::ValidateMenuItem( PanelController *_source, NSMenuItem *_item )
+bool CopyFilePath::Predicate( PanelController *_source )
 {
-    return CopyFileName::ValidateMenuItem( _source, _item );
+    return _source.view.item;
 }
 
 void CopyFileName::Perform( PanelController *_source, id _sender )

@@ -10,11 +10,6 @@ bool FindFiles::Predicate( PanelController *_target )
     return _target.isUniform || _target.view.item;
 }
 
-bool FindFiles::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate( _target );
-}
-
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
                                                           int _fetch_flags,
                                                           const VFSCancelChecker &_cancel_checker)

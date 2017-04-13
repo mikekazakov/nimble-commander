@@ -42,6 +42,9 @@
 #include "Actions/BatchRename.h"
 #include "Actions/ToggleLayout.h"
 
+static panel::actions::PanelAction *ActionByTag(int _tag);
+static void Perform(SEL _sel, PanelController *_target, id _sender);
+
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
@@ -62,67 +65,22 @@
 }
 
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
-{    
+{
+    if( auto a = ActionByTag((int)item.tag) )
+        return a->ValidateMenuItem(self, item);
+
     const auto tag = item.tag;
-#define VALIDATE(type) panel::actions::type::ValidateMenuItem(self, item)
-#define VALIDATESF(object) panel::actions::object.ValidateMenuItem(self, item)
-    IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
-    IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
-    IF_MENU_TAG("menu.file.calculate_sizes")            return VALIDATE(CalculateSizes);
-    IF_MENU_TAG("menu.file.calculate_all_sizes")        return VALIDATE(CalculateAllSizes);
-    IF_MENU_TAG("menu.file.calculate_checksum")         return VALIDATE(CalculateChecksum);
-    IF_MENU_TAG("menu.file.new_file")                   return VALIDATE(MakeNewFile);
-    IF_MENU_TAG("menu.file.new_folder")                 return VALIDATE(MakeNewFolder);
-    IF_MENU_TAG("menu.file.new_folder_with_selection")  return VALIDATE(MakeNewFolderWithSelection);
-    IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
-    IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
-    IF_MENU_TAG("menu.view.toggle_layout_1")            return VALIDATESF(ToggleLayout{0});
-    IF_MENU_TAG("menu.view.toggle_layout_2")            return VALIDATESF(ToggleLayout{1});
-    IF_MENU_TAG("menu.view.toggle_layout_3")            return VALIDATESF(ToggleLayout{2});
-    IF_MENU_TAG("menu.view.toggle_layout_4")            return VALIDATESF(ToggleLayout{3});
-    IF_MENU_TAG("menu.view.toggle_layout_5")            return VALIDATESF(ToggleLayout{4});
-    IF_MENU_TAG("menu.view.toggle_layout_6")            return VALIDATESF(ToggleLayout{5});
-    IF_MENU_TAG("menu.view.toggle_layout_7")            return VALIDATESF(ToggleLayout{6});
-    IF_MENU_TAG("menu.view.toggle_layout_8")            return VALIDATESF(ToggleLayout{7});
-    IF_MENU_TAG("menu.view.toggle_layout_9")            return VALIDATESF(ToggleLayout{8});
-    IF_MENU_TAG("menu.view.toggle_layout_10")           return VALIDATESF(ToggleLayout{9});
-    IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
-    IF_MENU_TAG("menu.view.sorting_by_extension")       return VALIDATE(ToggleSortingByExtension);
-    IF_MENU_TAG("menu.view.sorting_by_size")            return VALIDATE(ToggleSortingBySize);
-    IF_MENU_TAG("menu.view.sorting_by_modify_time")     return VALIDATE(ToggleSortingByModifiedTime);
-    IF_MENU_TAG("menu.view.sorting_by_creation_time")   return VALIDATE(ToggleSortingByCreatedTime);
-    IF_MENU_TAG("menu.view.sorting_by_added_time")      return VALIDATE(ToggleSortingByAddedTime);
-    IF_MENU_TAG("menu.view.sorting_case_sensitive")     return VALIDATE(ToggleSortingCaseSensitivity);
-    IF_MENU_TAG("menu.view.sorting_separate_folders")   return VALIDATE(ToggleSortingFoldersSeparation);
-    IF_MENU_TAG("menu.view.sorting_numeric_comparison") return VALIDATE(ToggleSortingNumerical);
-    IF_MENU_TAG("menu.view.sorting_view_hidden")        return VALIDATE(ToggleSortingShowHidden);
     IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
     IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
     IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
     IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.go.quick_lists.parent_folders")   return VALIDATE(ShowParentFoldersQuickList);
-    IF_MENU_TAG("menu.go.quick_lists.history")          return VALIDATE(ShowHistoryQuickList);
-    IF_MENU_TAG("menu.go.quick_lists.favorites")        return VALIDATE(ShowFavoritesQuickList);
-    IF_MENU_TAG("menu.go.quick_lists.volumes")          return VALIDATE(ShowVolumesQuickList);
-    IF_MENU_TAG("menu.go.quick_lists.connections")      return VALIDATE(ShowConnectionsQuickList);
     IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
-    IF_MENU_TAG("menu.command.volume_information")      return VALIDATE(ShowVolumeInformation);
     IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.external_editor")         return VALIDATE(OpenWithExternalEditor);
-    IF_MENU_TAG("menu.command.eject_volume")            return VALIDATE(EjectVolume);
     IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
     IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
-    IF_MENU_TAG("menu.command.copy_file_name")          return VALIDATE(CopyFileName);
-    IF_MENU_TAG("menu.command.copy_file_path")          return VALIDATE(CopyFilePath);
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.create_directory")        return VALIDATE(MakeNewNamedFolder);
-    IF_MENU_TAG("menu.command.batch_rename")            return VALIDATE(BatchRename);
-    IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
-#undef VALIDATE
-#undef VALIDATESF
-    
     return true;
 }
 
@@ -150,55 +108,16 @@
                   onPath:m_History.Current()->path];
 }
 
-- (IBAction)OnGoToHome:(id)sender
-{
-    panel::actions::GoToHomeFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToDocuments:(id)sender
-{
-    panel::actions::GoToDocumentsFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToDesktop:(id)sender
-{
-    panel::actions::GoToDesktopFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToDownloads:(id)sender
-{
-    panel::actions::GoToDownloadsFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToApplications:(id)sender
-{
-    panel::actions::GoToApplicationsFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToUtilities:(id)sender
-{
-    panel::actions::GoToUtilitiesFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToLibrary:(id)sender
-{
-    panel::actions::GoToLibraryFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToRoot:(id)sender
-{
-    panel::actions::GoToRootFolder::Perform(self, sender);
-}
-
-- (IBAction)OnGoToProcessesList:(id)sender
-{
-    panel::actions::GoToProcessesList::Perform(self, sender);
-}
-
-- (IBAction)OnGoToFolder:(id)sender
-{
-    panel::actions::GoToFolder::Perform(self, sender);
-}
+- (IBAction)OnGoToHome:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDocuments:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDesktop:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDownloads:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToApplications:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToUtilities:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToLibrary:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToRoot:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToProcessesList:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToFolder:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnGoToUpperDirectory:(id)sender
 { // cmd+up
@@ -419,30 +338,11 @@
     }
 }
 
-- (IBAction)OnGoToQuickListsParents:(id)sender
-{
-    panel::actions::ShowParentFoldersQuickList::Perform(self, sender);
-}
-
-- (IBAction)OnGoToQuickListsHistory:(id)sender
-{
-    panel::actions::ShowHistoryQuickList::Perform(self, sender);
-}
-
-- (IBAction)OnGoToQuickListsVolumes:(id)sender
-{
-    panel::actions::ShowVolumesQuickList::Perform(self, sender);
-}
-
-- (IBAction)OnGoToQuickListsFavorites:(id)sender
-{
-    panel::actions::ShowFavoritesQuickList::Perform(self, sender);
-}
-
-- (IBAction)OnGoToQuickListsConnections:(id)sender
-{
-    panel::actions::ShowConnectionsQuickList::Perform(self, sender);
-}
+- (IBAction)OnGoToQuickListsParents:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsHistory:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsVolumes:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsFavorites:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsConnections:(id)sender{ Perform(_cmd, self, sender); }
 
 - (IBAction)OnGoToFavoriteLocation:(id)sender
 {
@@ -525,15 +425,9 @@
     }];
 }
 
-- (IBAction)OnDetailedVolumeInformation:(id)sender
-{
-    panel::actions::ShowVolumeInformation::Perform(self, sender);
-}
+- (IBAction)OnDetailedVolumeInformation:(id)sender{ Perform(_cmd, self, sender); }
 
-- (IBAction)onMainMenuPerformFindAction:(id)sender
-{
-    panel::actions::FindFiles::Perform(self, sender);
-}
+- (IBAction)onMainMenuPerformFindAction:(id)sender{ Perform(_cmd, self, sender); }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
     if( auto i = self.view.item ) {
@@ -581,25 +475,13 @@
     [self DoQuickSelectByExtension:false];
 }
 
-- (IBAction)OnSpotlightSearch:(id)sender
-{
-    panel::actions::SpotlightSearch::Perform(self, sender);
-}
+- (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, self, sender); }
 
-- (IBAction)OnEjectVolume:(id)sender
-{
-    panel::actions::EjectVolume::Perform(self, sender);
-}
+- (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, self, sender); }
 
-- (IBAction)OnCopyCurrentFileName:(id)sender
-{
-    panel::actions::CopyFileName::Perform(self, sender);
-}
+- (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, self, sender); }
 
-- (IBAction)OnCopyCurrentFilePath:(id)sender
-{
-    panel::actions::CopyFilePath::Perform(self, sender);
-}
+- (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
@@ -648,120 +530,29 @@
     [self forceRefreshPanel];
 }
 
-- (IBAction)OnCalculateSizes:(id)sender
-{
-    panel::actions::CalculateSizes::Perform(self, sender);
-}
-
-- (IBAction)OnCalculateAllSizes:(id)sender
-{
-    panel::actions::CalculateAllSizes::Perform(self, sender);
-}
-
-- (IBAction)ToggleViewHiddenFiles:(id)sender
-{
-    panel::actions::ToggleSortingShowHidden::Perform(self, sender);
-}
-
-- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender
-{
-    panel::actions::ToggleSortingFoldersSeparation::Perform(self, sender);
-}
-
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender
-{
-    panel::actions::ToggleSortingCaseSensitivity::Perform(self, sender);
-}
-
-- (IBAction)ToggleNumericComparison:(id)sender
-{
-    panel::actions::ToggleSortingNumerical::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortByName:(id)sender
-{
-    panel::actions::ToggleSortingByName::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortByExt:(id)sender
-{
-    panel::actions::ToggleSortingByExtension::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortByMTime:(id)sender
-{
-    panel::actions::ToggleSortingByModifiedTime::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortBySize:(id)sender
-{
-    panel::actions::ToggleSortingBySize::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortByBTime:(id)sender
-{
-    panel::actions::ToggleSortingByCreatedTime::Perform(self, sender);
-}
-
-- (IBAction)ToggleSortByATime:(id)sender
-{
-    panel::actions::ToggleSortingByAddedTime::Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout1:(id)sender
-{
-    panel::actions::ToggleLayout{0}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout2:(id)sender
-{
-    panel::actions::ToggleLayout{1}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout3:(id)sender
-{
-    panel::actions::ToggleLayout{2}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout4:(id)sender
-{
-    panel::actions::ToggleLayout{3}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout5:(id)sender
-{
-    panel::actions::ToggleLayout{4}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout6:(id)sender
-{
-    panel::actions::ToggleLayout{5}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout7:(id)sender
-{
-    panel::actions::ToggleLayout{6}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout8:(id)sender
-{
-    panel::actions::ToggleLayout{7}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout9:(id)sender
-{
-    panel::actions::ToggleLayout{8}.Perform(self, sender);
-}
-
-- (IBAction)onToggleViewLayout10:(id)sender
-{
-    panel::actions::ToggleLayout{9}.Perform(self, sender);
-}
-
-- (IBAction)OnOpenWithExternalEditor:(id)sender
-{
-    panel::actions::OpenWithExternalEditor::Perform(self, sender);
-}
+- (IBAction)OnCalculateSizes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCalculateAllSizes:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleViewHiddenFiles:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleNumericComparison:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByName:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByExt:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByMTime:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortBySize:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByBTime:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByATime:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout1:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout2:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout3:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout4:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout5:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout6:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout7:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout8:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout9:(id)sender  { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout10:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnOpenWithExternalEditor:(id)sender { Perform(_cmd, self, sender); }
 
 - (void)DeleteFiles:(bool)_delete_permanently
 {
@@ -858,64 +649,115 @@
     [self.state AddOperation:op];
 }
 
-- (IBAction)OnCreateDirectoryCommand:(id)sender
-{
-    panel::actions::MakeNewNamedFolder::Perform(self, sender);
-}
-
-- (IBAction)OnCalculateChecksum:(id)sender
-{
-    return panel::actions::CalculateChecksum::Perform(self, sender);
-}
-
-- (IBAction)OnQuickNewFolder:(id)sender
-{
-    panel::actions::MakeNewFolder::Perform(self, sender);
-}
-
-- (IBAction)OnQuickNewFolderWithSelection:(id)sender
-{
-    panel::actions::MakeNewFolderWithSelection::Perform(self, sender);
-}
-
-- (IBAction)OnQuickNewFile:(id)sender
-{
-    panel::actions::MakeNewFile::Perform(self, sender);
-}
-
-- (IBAction)OnBatchRename:(id)sender
-{
-    panel::actions::BatchRename::Perform(self, sender);
-}
-
-- (IBAction) OnOpenExtendedAttributes:(id)sender
-{
-    panel::actions::OpenXAttr::Perform(self, sender);
-}
-
-- (IBAction) OnRenameFileInPlace:(id)sender
+- (IBAction)OnCreateDirectoryCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCalculateChecksum:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickNewFolder:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickNewFolderWithSelection:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickNewFile:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnBatchRename:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnOpenExtendedAttributes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnRenameFileInPlace:(id)sender
 {
     [self.view startFieldEditorRenaming];
 }
 
-- (IBAction) OnAddToFavorites:(id)sender
-{
-    panel::actions::AddToFavorites::Perform(self, sender);
-}
+- (IBAction)OnAddToFavorites:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)copy:(id)sender
 {
     [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
 }
 
-- (IBAction)paste:(id)sender
-{
-    panel::actions::PasteFromPasteboard::Perform(self, sender);
-}
-
-- (IBAction)moveItemHere:(id)sender
-{
-    panel::actions::MoveFromPasteboard::Perform(self, sender);
-}
+- (IBAction)paste:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)moveItemHere:(id)sender { Perform(_cmd, self, sender); }
 
 @end
+
+using namespace panel::actions;
+static const tuple<const char*, SEL, PanelAction *> g_Wiring[] = {
+{"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},
+{"menu.file.find_with_spotlight",       @selector(OnSpotlightSearch:),              new SpotlightSearch},
+{"menu.file.add_to_favorites",          @selector(OnAddToFavorites:),               new AddToFavorites},
+{"menu.file.calculate_sizes",           @selector(OnCalculateSizes:),               new CalculateSizes},
+{"menu.file.calculate_all_sizes",       @selector(OnCalculateAllSizes:),            new CalculateAllSizes},
+{"menu.file.calculate_checksum",        @selector(OnCalculateChecksum:),            new CalculateChecksum},
+{"menu.file.new_file",                  @selector(OnQuickNewFile:),                 new MakeNewFile},
+{"menu.file.new_folder",                @selector(OnQuickNewFolder:),               new MakeNewFolder},
+{"menu.file.new_folder_with_selection", @selector(OnQuickNewFolderWithSelection:),  new MakeNewFolderWithSelection},
+{"menu.edit.paste",                     @selector(paste:),                          new PasteFromPasteboard},
+{"menu.edit.move_here",                 @selector(moveItemHere:),                   new MoveFromPasteboard},
+{"menu.view.sorting_by_name",           @selector(ToggleSortByName:),               new ToggleSortingByName},
+{"menu.view.sorting_by_extension",      @selector(ToggleSortByExt:),                new ToggleSortingByExtension},
+{"menu.view.sorting_by_size",           @selector(ToggleSortBySize:),               new ToggleSortingBySize},
+{"menu.view.sorting_by_modify_time",    @selector(ToggleSortByMTime:),              new ToggleSortingByModifiedTime},
+{"menu.view.sorting_by_creation_time",  @selector(ToggleSortByBTime:),              new ToggleSortingByCreatedTime},
+{"menu.view.sorting_by_added_time",     @selector(ToggleSortByATime:),              new ToggleSortingByAddedTime},
+{"menu.view.sorting_case_sensitive",    @selector(ToggleCaseSensitiveComparison:),  new ToggleSortingCaseSensitivity},
+{"menu.view.sorting_separate_folders",  @selector(ToggleSeparateFoldersFromFiles:), new ToggleSortingFoldersSeparation},
+{"menu.view.sorting_numeric_comparison",@selector(ToggleNumericComparison:),        new ToggleSortingNumerical},
+{"menu.view.sorting_view_hidden",       @selector(ToggleViewHiddenFiles:),          new ToggleSortingShowHidden},
+{"menu.view.toggle_layout_1",  @selector(onToggleViewLayout1:),  new ToggleLayout{0}},
+{"menu.view.toggle_layout_2",  @selector(onToggleViewLayout2:),  new ToggleLayout{1}},
+{"menu.view.toggle_layout_3",  @selector(onToggleViewLayout3:),  new ToggleLayout{2}},
+{"menu.view.toggle_layout_4",  @selector(onToggleViewLayout4:),  new ToggleLayout{3}},
+{"menu.view.toggle_layout_5",  @selector(onToggleViewLayout5:),  new ToggleLayout{4}},
+{"menu.view.toggle_layout_6",  @selector(onToggleViewLayout6:),  new ToggleLayout{5}},
+{"menu.view.toggle_layout_7",  @selector(onToggleViewLayout7:),  new ToggleLayout{6}},
+{"menu.view.toggle_layout_8",  @selector(onToggleViewLayout8:),  new ToggleLayout{7}},
+{"menu.view.toggle_layout_9",  @selector(onToggleViewLayout9:),  new ToggleLayout{8}},
+{"menu.view.toggle_layout_10", @selector(onToggleViewLayout10:), new ToggleLayout{9}},
+{"menu.go.home",            @selector(OnGoToHome:),         new GoToHomeFolder},
+{"menu.go.documents",       @selector(OnGoToDocuments:),    new GoToDocumentsFolder},
+{"menu.go.desktop",         @selector(OnGoToDesktop:),      new GoToDesktopFolder},
+{"menu.go.downloads",       @selector(OnGoToDownloads:),    new GoToDownloadsFolder},
+{"menu.go.applications",    @selector(OnGoToApplications:), new GoToApplicationsFolder},
+{"menu.go.utilities",       @selector(OnGoToUtilities:),    new GoToUtilitiesFolder},
+{"menu.go.library",         @selector(OnGoToLibrary:),      new GoToLibraryFolder},
+{"menu.go.root",            @selector(OnGoToRoot:),         new GoToRootFolder},
+{"menu.go.processes_list",  @selector(OnGoToProcessesList:),new GoToProcessesList},
+{"menu.go.to_folder",       @selector(OnGoToFolder:),       new GoToFolder},
+{"menu.go.quick_lists.parent_folders",  @selector(OnGoToQuickListsParents:),    new ShowParentFoldersQuickList},
+{"menu.go.quick_lists.history",         @selector(OnGoToQuickListsHistory:),    new ShowHistoryQuickList},
+{"menu.go.quick_lists.favorites",       @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList},
+{"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
+{"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
+{"menu.command.volume_information", @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation},
+{"menu.command.external_editor",    @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor},
+{"menu.command.eject_volume",       @selector(OnEjectVolume:),              new EjectVolume},
+{"menu.command.copy_file_name",     @selector(OnCopyCurrentFileName:),      new CopyFileName},
+{"menu.command.copy_file_path",     @selector(OnCopyCurrentFilePath:),      new CopyFilePath},
+{"menu.command.create_directory",   @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder},
+{"menu.command.batch_rename",       @selector(OnBatchRename:),              new BatchRename},
+{"menu.command.open_xattr",         @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
+};
+
+static PanelAction *ActionByTag(int _tag)
+{
+    static const unordered_map<int, PanelAction*> actions = []{
+        unordered_map<int, PanelAction*> m;
+        auto &am = ActionsShortcutsManager::Instance();
+        for( auto &a: g_Wiring )
+            if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
+                m.emplace( tag, get<2>(a) );
+            else
+                cout << "warning - unrecognized action: " << get<0>(a) << endl;
+        return m;
+    }();
+    const auto v = actions.find(_tag);
+    return v == end(actions) ? nullptr : v->second;
+}
+
+static void Perform(SEL _sel, PanelController *_target, id _sender)
+{
+    static const unordered_map<SEL, PanelAction*> actions = []{
+        unordered_map<SEL, PanelAction*> m;
+        for( auto &a: g_Wiring )
+            m.emplace( get<1>(a), get<2>(a) );
+        return m;
+    }();
+    if( const auto v = actions.find(_sel); v != end(actions) )
+        v->second->Perform(_target, _sender);
+    else
+        cout << "warning - unrecognized selector: " <<
+            NSStringFromSelector(_sel).UTF8String << endl;
+}

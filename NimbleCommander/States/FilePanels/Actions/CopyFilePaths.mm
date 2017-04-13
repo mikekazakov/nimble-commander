@@ -21,17 +21,17 @@ static void WriteSingleStringToClipboard(const string &_s)
           forType:NSStringPboardType];
 }
 
-bool CopyFileName::Predicate( PanelController *_source )
+bool CopyFileName::Predicate( PanelController *_source ) const
 {
     return _source.view.item;
 }
 
-bool CopyFilePath::Predicate( PanelController *_source )
+bool CopyFilePath::Predicate( PanelController *_source ) const
 {
     return _source.view.item;
 }
 
-void CopyFileName::Perform( PanelController *_source, id _sender )
+void CopyFileName::Perform( PanelController *_source, id _sender ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
     const auto result = accumulate( begin(entries), end(entries), string{}, [](auto &a, auto &b){
@@ -40,7 +40,7 @@ void CopyFileName::Perform( PanelController *_source, id _sender )
     WriteSingleStringToClipboard( result );
 }
 
-void CopyFilePath::Perform( PanelController *_source, id _sender )
+void CopyFilePath::Perform( PanelController *_source, id _sender ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
     const auto result = accumulate( begin(entries), end(entries), string{}, [](auto &a, auto &b){

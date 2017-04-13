@@ -5,7 +5,7 @@
 
 namespace panel::actions {
 
-bool FindFiles::Predicate( PanelController *_target )
+bool FindFiles::Predicate( PanelController *_target ) const
 {
     return _target.isUniform || _target.view.item;
 }
@@ -32,7 +32,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> 
     return VFSListing::Build( VFSListing::Compose(listings) );
 }
 
-void FindFiles::Perform( PanelController *_target, id _sender )
+void FindFiles::Perform( PanelController *_target, id _sender ) const
 {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.host = _target.isUniform ?

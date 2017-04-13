@@ -4,7 +4,7 @@
 
 namespace panel::actions {
 
-bool CalculateChecksum::Predicate( PanelController *_target )
+bool CalculateChecksum::Predicate( PanelController *_target ) const
 {
     if( !_target.isUniform )
         return false;
@@ -13,7 +13,7 @@ bool CalculateChecksum::Predicate( PanelController *_target )
     return i && (!i.IsDir() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-void CalculateChecksum::Perform( PanelController *_target, id _sender )
+void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
 {
     vector<string> filenames;
     vector<uint64_t> sizes;

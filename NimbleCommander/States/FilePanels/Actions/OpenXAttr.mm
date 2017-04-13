@@ -5,13 +5,13 @@
 
 namespace panel::actions {
 
-bool OpenXAttr::Predicate( PanelController *_target )
+bool OpenXAttr::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
     return i && i.Host()->IsNativeFS();
 }
 
-void OpenXAttr::Perform( PanelController *_target, id _sender )
+void OpenXAttr::Perform( PanelController *_target, id _sender ) const
 {
     if( !Predicate(_target) )
         return;

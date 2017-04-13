@@ -6,8 +6,8 @@ namespace panel::actions {
 
 struct EjectVolume : PanelAction
 {
-    bool Predicate( PanelController *_target );
-    void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
 };
 
 };

@@ -7,7 +7,7 @@
 
 namespace panel::actions {
 
-bool BatchRename::Predicate( PanelController *_target )
+bool BatchRename::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
     return ( !_target.isUniform || _target.vfs->IsWritable() ) &&
@@ -16,12 +16,7 @@ bool BatchRename::Predicate( PanelController *_target )
     return true;
 }
 
-bool BatchRename::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
-{
-    return Predicate(_target);
-}
-
-void BatchRename::Perform( PanelController *_target, id _sender )
+void BatchRename::Perform( PanelController *_target, id _sender ) const
 {
     const auto items = _target.selectedEntriesOrFocusedEntry;
     if( items.empty() )

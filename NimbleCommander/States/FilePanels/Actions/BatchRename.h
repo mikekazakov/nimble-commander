@@ -8,9 +8,8 @@ namespace panel::actions {
 
 struct BatchRename : PanelAction
 {
-    bool Predicate( PanelController *_target );
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item );
-    void Perform( PanelController *_target, id _sender );
+    bool Predicate( PanelController *_target ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
 };
 
 

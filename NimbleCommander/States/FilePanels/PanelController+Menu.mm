@@ -42,7 +42,7 @@
 #include "Actions/BatchRename.h"
 #include "Actions/ToggleLayout.h"
 
-static panel::actions::PanelAction *ActionByTag(int _tag);
+static const panel::actions::PanelAction *ActionByTag(int _tag);
 static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 @implementation PanelController (Menu)
@@ -426,7 +426,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 }
 
 - (IBAction)OnDetailedVolumeInformation:(id)sender{ Perform(_cmd, self, sender); }
-
 - (IBAction)onMainMenuPerformFindAction:(id)sender{ Perform(_cmd, self, sender); }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
@@ -476,11 +475,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 }
 
 - (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, self, sender); }
-
 - (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, self, sender); }
-
 - (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, self, sender); }
-
 - (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
@@ -674,7 +670,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 @end
 
 using namespace panel::actions;
-static const tuple<const char*, SEL, PanelAction *> g_Wiring[] = {
+static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},
 {"menu.file.find_with_spotlight",       @selector(OnSpotlightSearch:),              new SpotlightSearch},
 {"menu.file.add_to_favorites",          @selector(OnAddToFavorites:),               new AddToFavorites},
@@ -731,10 +727,10 @@ static const tuple<const char*, SEL, PanelAction *> g_Wiring[] = {
 {"menu.command.open_xattr",         @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
 };
 
-static PanelAction *ActionByTag(int _tag)
+static const PanelAction *ActionByTag(int _tag)
 {
-    static const unordered_map<int, PanelAction*> actions = []{
-        unordered_map<int, PanelAction*> m;
+    static const auto actions = []{
+        unordered_map<int, const PanelAction*> m;
         auto &am = ActionsShortcutsManager::Instance();
         for( auto &a: g_Wiring )
             if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
@@ -749,8 +745,8 @@ static PanelAction *ActionByTag(int _tag)
 
 static void Perform(SEL _sel, PanelController *_target, id _sender)
 {
-    static const unordered_map<SEL, PanelAction*> actions = []{
-        unordered_map<SEL, PanelAction*> m;
+    static const auto actions = []{
+        unordered_map<SEL, const PanelAction*> m;
         for( auto &a: g_Wiring )
             m.emplace( get<1>(a), get<2>(a) );
         return m;

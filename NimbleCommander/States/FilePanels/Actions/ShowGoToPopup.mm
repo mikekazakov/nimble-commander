@@ -514,32 +514,32 @@ static void PopupQuickList( NSMenu *_menu, PanelController *_target )
                              inView:_target.view];
 }
 
-void ShowConnectionsQuickList::Perform( PanelController *_target, id _sender )
+void ShowConnectionsQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildConnectionsQuickList(_target), _target );
 }
 
-void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender )
+void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildFavoritesQuickList(_target), _target );
 }
 
-void ShowVolumesQuickList::Perform( PanelController *_target, id _sender )
+void ShowVolumesQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildVolumesQuickList(_target), _target );
 }
 
-bool ShowParentFoldersQuickList::Predicate( PanelController *_target )
+bool ShowParentFoldersQuickList::Predicate( PanelController *_target ) const
 {
    return _target.isUniform;
 }
 
-void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender )
+void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildParentFoldersQuickList(_target), _target );
 }
 
-void ShowHistoryQuickList::Perform( PanelController *_target, id _sender )
+void ShowHistoryQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildHistoryQuickList(_target), _target );
 };

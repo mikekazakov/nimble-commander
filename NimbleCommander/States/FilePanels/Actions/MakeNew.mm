@@ -87,12 +87,12 @@ static void ScheduleRenaming( const string& _filename, PanelController *_panel )
     [_panel ScheduleDelayedSelectionChangeFor:req];
 }
 
-bool MakeNewFile::Predicate( PanelController *_target )
+bool MakeNewFile::Predicate( PanelController *_target ) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFile::Perform( PanelController *_target, id _sender )
+void MakeNewFile::Perform( PanelController *_target, id _sender ) const
 {
     const path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -128,12 +128,12 @@ void MakeNewFile::Perform( PanelController *_target, id _sender )
 }
 
 
-bool MakeNewFolder::Predicate( PanelController *_target )
+bool MakeNewFolder::Predicate( PanelController *_target ) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFolder::Perform( PanelController *_target, id _sender )
+void MakeNewFolder::Perform( PanelController *_target, id _sender ) const
 {
     const path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -164,7 +164,7 @@ void MakeNewFolder::Perform( PanelController *_target, id _sender )
     [_target.state AddOperation:op];
 }
 
-bool MakeNewFolderWithSelection::Predicate( PanelController *_target )
+bool MakeNewFolderWithSelection::Predicate( PanelController *_target ) const
 {
     auto item = _target.view.item;
     return _target.isUniform &&
@@ -173,7 +173,7 @@ bool MakeNewFolderWithSelection::Predicate( PanelController *_target )
             (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
+void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender ) const
 {
     const path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -211,12 +211,12 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     [_target.state AddOperation:op];
 }
 
-bool MakeNewNamedFolder::Predicate( PanelController *_target )
+bool MakeNewNamedFolder::Predicate( PanelController *_target ) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewNamedFolder::Perform( PanelController *_target, id _sender )
+void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
 {
     CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
     [cd beginSheetForWindow:_target.window completionHandler:^(NSModalResponse returnCode) {

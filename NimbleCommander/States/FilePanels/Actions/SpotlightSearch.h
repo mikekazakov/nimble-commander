@@ -10,7 +10,7 @@ namespace panel::actions {
 
 struct SpotlightSearch : PanelAction
 {
-    void Perform( PanelController *_target, id _sender );
+    void Perform( PanelController *_target, id _sender ) const override;
 };
 
 };

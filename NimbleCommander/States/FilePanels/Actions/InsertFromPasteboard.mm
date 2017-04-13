@@ -74,26 +74,26 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     [_target.state AddOperation:op];
 }
 
-bool PasteFromPasteboard::Predicate( PanelController *_target )
+bool PasteFromPasteboard::Predicate( PanelController *_target ) const
 {
     return _target.isUniform &&
         _target.vfs->IsWritable() &&
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
-void PasteFromPasteboard::Perform( PanelController *_target, id _sender )
+void PasteFromPasteboard::Perform( PanelController *_target, id _sender ) const
 {
     PasteOrMove(_target, true);
 }
 
-bool MoveFromPasteboard::Predicate( PanelController *_target )
+bool MoveFromPasteboard::Predicate( PanelController *_target ) const
 {
     return _target.isUniform &&
         _target.vfs->IsWritable() &&
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
-void MoveFromPasteboard::Perform( PanelController *_target, id _sender )
+void MoveFromPasteboard::Perform( PanelController *_target, id _sender ) const
 {
     PasteOrMove(_target, false);
 }

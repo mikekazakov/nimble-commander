@@ -12,9 +12,9 @@ struct ToggleLayout : PanelAction
 {
     ToggleLayout( int _layout_index );
     
-    bool Predicate( PanelController *_target ) override;
-    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) override;
-    void Perform( PanelController *_target, id _sender ) override;
+    bool Predicate( PanelController *_target ) const override;
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
     
 private:
     int m_Index;

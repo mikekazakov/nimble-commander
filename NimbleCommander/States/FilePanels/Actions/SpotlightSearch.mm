@@ -101,7 +101,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &
     return VFSListing::Build( VFSListing::Compose(listings) );
 }
 
-void SpotlightSearch::Perform( PanelController *_target, id _sender )
+void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
 {
     SpotlightSearchPopupViewController *view = [[SpotlightSearchPopupViewController alloc] init];
     view.handler = [=](const string& _query){

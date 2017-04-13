@@ -4,12 +4,12 @@
 
 namespace panel::actions {
 
-bool ShowVolumeInformation::Predicate( PanelController *_target )
+bool ShowVolumeInformation::Predicate( PanelController *_target ) const
 {
     return _target.isUniform && _target.vfs->IsNativeFS();
 }
 
-void ShowVolumeInformation::Perform( PanelController *_target, id _sender )
+void ShowVolumeInformation::Perform( PanelController *_target, id _sender ) const
 {
     string path;
     if( auto i = _target.view.item ) {

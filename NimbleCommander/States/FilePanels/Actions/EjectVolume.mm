@@ -4,14 +4,14 @@
 
 namespace panel::actions {
 
-bool EjectVolume::Predicate( PanelController *_target )
+bool EjectVolume::Predicate( PanelController *_target ) const
 {
     return _target.isUniform &&
         _target.vfs->IsNativeFS() &&
         NativeFSManager::Instance().IsVolumeContainingPathEjectable( _target.currentDirectoryPath );
 }
 
-void EjectVolume::Perform( PanelController *_target, id _sender )
+void EjectVolume::Perform( PanelController *_target, id _sender ) const
 {
     auto &nfsm = NativeFSManager::Instance();
     if( _target.vfs->IsNativeFS() )

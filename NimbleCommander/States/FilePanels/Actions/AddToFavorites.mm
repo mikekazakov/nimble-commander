@@ -7,12 +7,12 @@
 
 namespace panel::actions {
 
-bool AddToFavorites::Predicate( PanelController *_target )
+bool AddToFavorites::Predicate( PanelController *_target ) const
 {
     return _target.isUniform || _target.view.item;
 }
 
-void AddToFavorites::Perform( PanelController *_target, id _sender )
+void AddToFavorites::Perform( PanelController *_target, id _sender ) const
 {
     auto &favorites = AppDelegate.me.favoriteLocationsStorage;
     if( auto item = _target.view.item ) {

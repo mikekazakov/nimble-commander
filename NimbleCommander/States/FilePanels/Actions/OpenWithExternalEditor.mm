@@ -7,13 +7,13 @@
 
 namespace panel::actions {
 
-bool OpenWithExternalEditor::Predicate( PanelController *_target )
+bool OpenWithExternalEditor::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
     return i && !i.IsDotDot();
 }
 
-void OpenWithExternalEditor::Perform( PanelController *_target, id _sender )
+void OpenWithExternalEditor::Perform( PanelController *_target, id _sender ) const
 {
     auto item = _target.view.item;
     if( !item || item.IsDotDot() )

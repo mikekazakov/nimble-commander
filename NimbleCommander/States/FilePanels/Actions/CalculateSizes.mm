@@ -3,13 +3,13 @@
 
 namespace panel::actions {
 
-bool CalculateSizes::Predicate( PanelController *_target )
+bool CalculateSizes::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
     return i && (i.IsDir() || _target.data.Stats().selected_dirs_amount > 0 );
 }
 
-void CalculateSizes::Perform( PanelController *_target, id _sender )
+void CalculateSizes::Perform( PanelController *_target, id _sender ) const
 {
     auto selected = _target.selectedEntriesOrFocusedEntryWithDotDot;
     selected.erase(remove_if(begin(selected),
@@ -19,7 +19,7 @@ void CalculateSizes::Perform( PanelController *_target, id _sender )
     [_target calculateSizesOfItems:selected];
 }
 
-void CalculateAllSizes::Perform( PanelController *_target, id _sender )
+void CalculateAllSizes::Perform( PanelController *_target, id _sender ) const
 {
     vector<VFSListingItem> items;
     auto &data = _target.data;

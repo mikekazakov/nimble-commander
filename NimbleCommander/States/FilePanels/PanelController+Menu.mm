@@ -40,6 +40,7 @@
 #include "Actions/MakeNew.h"
 #include "Actions/CalculateSizes.h"
 #include "Actions/BatchRename.h"
+#include "Actions/ToggleLayout.h"
 
 @implementation PanelController (Menu)
 
@@ -61,44 +62,10 @@
 }
 
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
-{
-    auto update_layout_item = [&](int _index)->bool{
-        static auto &storage = AppDelegate.me.panelLayouts;
-        item.state = self.layoutIndex == _index;
-        if( auto l = storage.GetLayout(_index) )
-            return !l->is_disabled();
-        return false;
-    };
-    
-#define TAG(name, str) static const int name = ActionsShortcutsManager::Instance().TagFromAction(str)
-    TAG(tag_layout_1,           "menu.view.toggle_layout_1");
-    TAG(tag_layout_2,           "menu.view.toggle_layout_2");
-    TAG(tag_layout_3,           "menu.view.toggle_layout_3");
-    TAG(tag_layout_4,           "menu.view.toggle_layout_4");
-    TAG(tag_layout_5,           "menu.view.toggle_layout_5");
-    TAG(tag_layout_6,           "menu.view.toggle_layout_6");
-    TAG(tag_layout_7,           "menu.view.toggle_layout_7");
-    TAG(tag_layout_8,           "menu.view.toggle_layout_8");
-    TAG(tag_layout_9,           "menu.view.toggle_layout_9");
-    TAG(tag_layout_10,          "menu.view.toggle_layout_10");
-#undef TAG
-    
-    auto tag = item.tag;
-#define IF(a) else if(tag == a)
-    if(false);
-    IF(tag_layout_1)        return update_layout_item(0);
-    IF(tag_layout_2)        return update_layout_item(1);
-    IF(tag_layout_3)        return update_layout_item(2);
-    IF(tag_layout_4)        return update_layout_item(3);
-    IF(tag_layout_5)        return update_layout_item(4);
-    IF(tag_layout_6)        return update_layout_item(5);
-    IF(tag_layout_7)        return update_layout_item(6);
-    IF(tag_layout_8)        return update_layout_item(7);
-    IF(tag_layout_9)        return update_layout_item(8);
-    IF(tag_layout_10)       return update_layout_item(9);
-#undef IF
-    
-#define VALIDATE(type) panel::actions::type::ValidateMenuItem(self, item);
+{    
+    const auto tag = item.tag;
+#define VALIDATE(type) panel::actions::type::ValidateMenuItem(self, item)
+#define VALIDATESF(object) panel::actions::object.ValidateMenuItem(self, item)
     IF_MENU_TAG("menu.file.find")                       return VALIDATE(FindFiles);
     IF_MENU_TAG("menu.file.add_to_favorites")           return VALIDATE(AddToFavorites);
     IF_MENU_TAG("menu.file.calculate_sizes")            return VALIDATE(CalculateSizes);
@@ -109,6 +76,16 @@
     IF_MENU_TAG("menu.file.new_folder_with_selection")  return VALIDATE(MakeNewFolderWithSelection);
     IF_MENU_TAG("menu.edit.paste")                      return VALIDATE(PasteFromPasteboard);
     IF_MENU_TAG("menu.edit.move_here")                  return VALIDATE(MoveFromPasteboard);
+    IF_MENU_TAG("menu.view.toggle_layout_1")            return VALIDATESF(ToggleLayout{0});
+    IF_MENU_TAG("menu.view.toggle_layout_2")            return VALIDATESF(ToggleLayout{1});
+    IF_MENU_TAG("menu.view.toggle_layout_3")            return VALIDATESF(ToggleLayout{2});
+    IF_MENU_TAG("menu.view.toggle_layout_4")            return VALIDATESF(ToggleLayout{3});
+    IF_MENU_TAG("menu.view.toggle_layout_5")            return VALIDATESF(ToggleLayout{4});
+    IF_MENU_TAG("menu.view.toggle_layout_6")            return VALIDATESF(ToggleLayout{5});
+    IF_MENU_TAG("menu.view.toggle_layout_7")            return VALIDATESF(ToggleLayout{6});
+    IF_MENU_TAG("menu.view.toggle_layout_8")            return VALIDATESF(ToggleLayout{7});
+    IF_MENU_TAG("menu.view.toggle_layout_9")            return VALIDATESF(ToggleLayout{8});
+    IF_MENU_TAG("menu.view.toggle_layout_10")           return VALIDATESF(ToggleLayout{9});
     IF_MENU_TAG("menu.view.sorting_by_name")            return VALIDATE(ToggleSortingByName);
     IF_MENU_TAG("menu.view.sorting_by_extension")       return VALIDATE(ToggleSortingByExtension);
     IF_MENU_TAG("menu.view.sorting_by_size")            return VALIDATE(ToggleSortingBySize);
@@ -144,6 +121,7 @@
     IF_MENU_TAG("menu.command.batch_rename")            return VALIDATE(BatchRename);
     IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
 #undef VALIDATE
+#undef VALIDATESF
     
     return true;
 }
@@ -730,17 +708,55 @@
     panel::actions::ToggleSortingByAddedTime::Perform(self, sender);
 }
 
-// deliberately chosen the most dumb way to introduce ten different options:
-- (IBAction)onToggleViewLayout1:(id)sender { [self setLayoutIndex:0]; }
-- (IBAction)onToggleViewLayout2:(id)sender { [self setLayoutIndex:1]; }
-- (IBAction)onToggleViewLayout3:(id)sender { [self setLayoutIndex:2]; }
-- (IBAction)onToggleViewLayout4:(id)sender { [self setLayoutIndex:3]; }
-- (IBAction)onToggleViewLayout5:(id)sender { [self setLayoutIndex:4]; }
-- (IBAction)onToggleViewLayout6:(id)sender { [self setLayoutIndex:5]; }
-- (IBAction)onToggleViewLayout7:(id)sender { [self setLayoutIndex:6]; }
-- (IBAction)onToggleViewLayout8:(id)sender { [self setLayoutIndex:7]; }
-- (IBAction)onToggleViewLayout9:(id)sender { [self setLayoutIndex:8]; }
-- (IBAction)onToggleViewLayout10:(id)sender{ [self setLayoutIndex:9]; }
+- (IBAction)onToggleViewLayout1:(id)sender
+{
+    panel::actions::ToggleLayout{0}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout2:(id)sender
+{
+    panel::actions::ToggleLayout{1}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout3:(id)sender
+{
+    panel::actions::ToggleLayout{2}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout4:(id)sender
+{
+    panel::actions::ToggleLayout{3}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout5:(id)sender
+{
+    panel::actions::ToggleLayout{4}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout6:(id)sender
+{
+    panel::actions::ToggleLayout{5}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout7:(id)sender
+{
+    panel::actions::ToggleLayout{6}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout8:(id)sender
+{
+    panel::actions::ToggleLayout{7}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout9:(id)sender
+{
+    panel::actions::ToggleLayout{8}.Perform(self, sender);
+}
+
+- (IBAction)onToggleViewLayout10:(id)sender
+{
+    panel::actions::ToggleLayout{9}.Perform(self, sender);
+}
 
 - (IBAction)OnOpenWithExternalEditor:(id)sender
 {

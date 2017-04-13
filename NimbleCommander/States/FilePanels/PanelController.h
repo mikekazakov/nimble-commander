@@ -1,11 +1,3 @@
-//
-//  PanelController.h
-//  Directories
-//
-//  Created by Michael G. Kazakov on 22.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 #include <Habanero/SerialQueue.h>

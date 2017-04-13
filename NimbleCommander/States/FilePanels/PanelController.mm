@@ -1,11 +1,3 @@
-//
-//  PanelController.m
-//  Directories
-//
-//  Created by Michael G. Kazakov on 22.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
@@ -649,14 +641,6 @@ static bool RouteKeyboardInputIntoTerminal()
         }
     });
 }
-
-/*- (void) ModifierFlagsChanged:(unsigned long)_flags // to know if shift or something else is pressed
-{
-    [m_View modifierFlagsChanged:_flags];
-
-    if(m_QuickSearchIsSoftFiltering)
-        [self QuickSearchClearFiltering];
-}*/
 
 - (void) CancelBackgroundOperations
 {

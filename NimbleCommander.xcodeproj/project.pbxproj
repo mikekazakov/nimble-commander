@@ -346,6 +346,8 @@
 		CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CF6E44841CCE35FC009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
+		CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
+		CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */; };
 		CF6FAA211B82E1DD006E0742 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; };
 		CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF73A6211816B36C00F59016 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
@@ -1583,6 +1585,10 @@
 		CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-MAS-Free-Info.plist"; path = "Resource/NimbleCommander-MAS-Free-Info.plist"; sourceTree = "<group>"; };
 		CF6D9D301966A5E10077B146 /* Files-Lite.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "Files-Lite.entitlements"; path = "Resource/Files-Lite.entitlements"; sourceTree = "<group>"; };
 		CF6E44871CCE390A009F45B0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangeAttributes.h; path = NimbleCommander/States/FilePanels/Actions/ChangeAttributes.h; sourceTree = SOURCE_ROOT; };
+		CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChangeAttributes.mm; path = NimbleCommander/States/FilePanels/Actions/ChangeAttributes.mm; sourceTree = SOURCE_ROOT; };
+		CF6ECDB11E9F4AF3008FA79E /* RenameInPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenameInPlace.h; path = NimbleCommander/States/FilePanels/Actions/RenameInPlace.h; sourceTree = SOURCE_ROOT; };
+		CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RenameInPlace.mm; path = NimbleCommander/States/FilePanels/Actions/RenameInPlace.mm; sourceTree = SOURCE_ROOT; };
 		CF6FAA201B82E1DD006E0742 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_party/Sparkle.framework; sourceTree = "<group>"; };
 		CF73A6201816B36C00F59016 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		CF73A6221816B3C200F59016 /* libquarantine.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libquarantine.dylib; path = usr/lib/system/libquarantine.dylib; sourceTree = SDKROOT; };
@@ -2600,6 +2606,10 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF6ECDB11E9F4AF3008FA79E /* RenameInPlace.h */,
+				CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */,
+				CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */,
+				CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */,
 				CF0260D01E9F10060025B50F /* ToggleLayout.h */,
 				CF0260D11E9F10060025B50F /* ToggleLayout.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
@@ -4394,6 +4404,7 @@
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */,
 				CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
@@ -4492,6 +4503,7 @@
 				CF6A42891CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
 				CFDAC2211DFBCA290039A104 /* PanelDataPersistency.cpp in Sources */,
+				CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */,
 				CFDAC2F61DFD16DF0039A104 /* MainWndGoToButton.mm in Sources */,
 				CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */,
 				CFDAC2A31DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp in Sources */,

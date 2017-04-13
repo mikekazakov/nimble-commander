@@ -5,9 +5,6 @@
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h>
-#include <NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h>
-#include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelController+Menu.h"
@@ -41,47 +38,39 @@
 #include "Actions/CalculateSizes.h"
 #include "Actions/BatchRename.h"
 #include "Actions/ToggleLayout.h"
+#include "Actions/ChangeAttributes.h"
+#include "Actions/RenameInPlace.h"
 
-static const panel::actions::PanelAction *ActionByTag(int _tag);
+static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 @implementation PanelController (Menu)
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
-    try
-    {
-        return [self validateMenuItemImpl:item];
+    try {
+        const auto tag = (int)item.tag;
+        if( auto a = ActionByTag(tag) )
+            return a->ValidateMenuItem(self, item);
+        IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
+        IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
+        IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
+        IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
+        IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
+        IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
+        IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
+        IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+        IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+        IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
+        return true;
     }
-    catch(exception &e)
-    {
-        cout << "Exception caught: " << e.what() << endl;
+    catch(exception &e) {
+        cout << "validateMenuItem has caught an exception: " << e.what() << endl;
     }
-    catch(...)
-    {
-        cout << "Caught an unhandled exception!" << endl;
+    catch(...) {
+        cout << "validateMenuItem has caught an unknown exception!" << endl;
     }
     return false;
-}
-
-- (BOOL) validateMenuItemImpl:(NSMenuItem *)item
-{
-    if( auto a = ActionByTag((int)item.tag) )
-        return a->ValidateMenuItem(self, item);
-
-    const auto tag = item.tag;
-    IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
-    IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
-    IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
-    IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-    IF_MENU_TAG("menu.command.file_attributes")         return m_View.item && ( (!m_View.item.IsDotDot() && m_View.item.Host()->IsNativeFS()) || m_Data.Stats().selected_entries_amount > 0 );
-    IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-    IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
-    IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
-    IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    return true;
 }
 
 - (IBAction)OnGoBack:(id)sender {
@@ -107,17 +96,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self GoToVFSPromise:m_History.Current()->vfs
                   onPath:m_History.Current()->path];
 }
-
-- (IBAction)OnGoToHome:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDocuments:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDesktop:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDownloads:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToApplications:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToUtilities:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToLibrary:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToRoot:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToProcessesList:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToFolder:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnGoToUpperDirectory:(id)sender
 { // cmd+up
@@ -338,12 +316,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     }
 }
 
-- (IBAction)OnGoToQuickListsParents:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsHistory:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsVolumes:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsFavorites:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsConnections:(id)sender{ Perform(_cmd, self, sender); }
-
 - (IBAction)OnGoToFavoriteLocation:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
@@ -407,27 +379,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return update_this_panel;
 }
 
-- (IBAction)OnFileAttributes:(id)sender {
-    auto entries = to_shared_ptr(self.selectedEntriesOrFocusedEntry);
-    if( entries->empty() )
-        return;
-    if( !all_of(begin(*entries), end(*entries), [](auto &i){ return i.Host()->IsNativeFS(); }) )
-        return;
-    
-    FileSysEntryAttrSheetController *sheet = [[FileSysEntryAttrSheetController alloc] initWithItems:entries];
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode == NSModalResponseOK ) {
-            auto op = [[FileSysAttrChangeOperation alloc] initWithCommand:*sheet.result];
-            if( !self.receivesUpdateNotifications )
-                [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
-            [self.state AddOperation:op];
-        }
-    }];
-}
-
-- (IBAction)OnDetailedVolumeInformation:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)onMainMenuPerformFindAction:(id)sender{ Perform(_cmd, self, sender); }
-
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
     if( auto i = self.view.item ) {
         if( i.IsDir() )
@@ -473,11 +424,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 {
     [self DoQuickSelectByExtension:false];
 }
-
-- (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
@@ -525,30 +471,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 {
     [self forceRefreshPanel];
 }
-
-- (IBAction)OnCalculateSizes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCalculateAllSizes:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleViewHiddenFiles:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleNumericComparison:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByName:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByExt:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByMTime:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortBySize:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByBTime:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByATime:(id)sender{ Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout1:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout2:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout3:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout4:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout5:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout6:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout7:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout8:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout9:(id)sender  { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout10:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnOpenWithExternalEditor:(id)sender { Perform(_cmd, self, sender); }
 
 - (void)DeleteFiles:(bool)_delete_permanently
 {
@@ -645,6 +567,24 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self.state AddOperation:op];
 }
 
+- (IBAction)copy:(id)sender
+{
+    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
+}
+
+- (IBAction)OnRenameFileInPlace:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)paste:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)moveItemHere:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToHome:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDocuments:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDesktop:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToDownloads:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToApplications:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToUtilities:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToLibrary:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToRoot:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToProcessesList:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToFolder:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnCreateDirectoryCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnCalculateChecksum:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnQuickNewFolder:(id)sender { Perform(_cmd, self, sender); }
@@ -652,20 +592,42 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnQuickNewFile:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnBatchRename:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpenExtendedAttributes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnRenameFileInPlace:(id)sender
-{
-    [self.view startFieldEditorRenaming];
-}
-
 - (IBAction)OnAddToFavorites:(id)sender { Perform(_cmd, self, sender); }
-
-- (IBAction)copy:(id)sender
-{
-    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
-}
-
-- (IBAction)paste:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)moveItemHere:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCalculateSizes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCalculateAllSizes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleViewHiddenFiles:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleNumericComparison:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByName:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByExt:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByMTime:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortBySize:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByBTime:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleSortByATime:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout1:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout2:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout3:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout4:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout5:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout6:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout7:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout8:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout9:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onToggleViewLayout10:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnOpenWithExternalEditor:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileAttributes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnDetailedVolumeInformation:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onMainMenuPerformFindAction:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsParents:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsHistory:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsVolumes:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
 
 @end
 
@@ -718,16 +680,18 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
 {"menu.command.volume_information", @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation},
+{"menu.command.file_attributes",    @selector(OnFileAttributes:),           new ChangeAttributes},
 {"menu.command.external_editor",    @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor},
 {"menu.command.eject_volume",       @selector(OnEjectVolume:),              new EjectVolume},
 {"menu.command.copy_file_name",     @selector(OnCopyCurrentFileName:),      new CopyFileName},
 {"menu.command.copy_file_path",     @selector(OnCopyCurrentFilePath:),      new CopyFilePath},
 {"menu.command.create_directory",   @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder},
 {"menu.command.batch_rename",       @selector(OnBatchRename:),              new BatchRename},
+{"menu.command.rename_in_place",    @selector(OnRenameFileInPlace:),        new RenameInPlace},
 {"menu.command.open_xattr",         @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
 };
 
-static const PanelAction *ActionByTag(int _tag)
+static const PanelAction *ActionByTag(int _tag) noexcept
 {
     static const auto actions = []{
         unordered_map<int, const PanelAction*> m;

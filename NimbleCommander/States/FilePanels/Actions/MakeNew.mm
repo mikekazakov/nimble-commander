@@ -1,6 +1,7 @@
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h>
+#include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -223,6 +224,34 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     }];
     
     [_target.state AddOperation:op];
+}
+
+bool MakeNewNamedFolder::Predicate( PanelController *_target )
+{
+    return _target.isUniform && _target.vfs->IsWritable();
+}
+
+bool MakeNewNamedFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )
+{
+    return Predicate(_target);
+}
+
+void MakeNewNamedFolder::Perform( PanelController *_target, id _sender )
+{
+    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
+    [cd beginSheetForWindow:_target.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
+            string pdir = _target.data.DirectoryPathWithoutTrailingSlash();
+            
+            CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
+            if( _target.vfs->IsNativeFS() )
+                op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str()];
+            else
+                op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str() at:_target.vfs];
+            op.TargetPanel = _target;
+            [_target.state AddOperation:op];
+        }
+    }];
 }
 
 }

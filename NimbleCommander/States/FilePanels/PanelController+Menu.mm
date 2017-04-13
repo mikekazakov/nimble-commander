@@ -5,8 +5,6 @@
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
-#include <NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h>
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h>
 #include <NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h>
 #include <NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h>
@@ -142,7 +140,7 @@
     IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
     IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-    IF_MENU_TAG("menu.command.create_directory")        return self.isUniform && self.vfs->IsWritable();
+    IF_MENU_TAG("menu.command.create_directory")        return VALIDATE(MakeNewNamedFolder);
     IF_MENU_TAG("menu.command.batch_rename")            return VALIDATE(BatchRename);
     IF_MENU_TAG("menu.command.open_xattr")              return VALIDATE(OpenXAttr);
 #undef VALIDATE
@@ -846,20 +844,7 @@
 
 - (IBAction)OnCreateDirectoryCommand:(id)sender
 {
-    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
-    [cd beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-         if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-             string pdir = m_Data.DirectoryPathWithoutTrailingSlash();
-             
-             CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-             if(self.vfs->IsNativeFS())
-                 op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str()];
-             else
-                 op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str() at:self.vfs];
-             op.TargetPanel = self;
-             [self.state AddOperation:op];
-         }
-     }];
+    panel::actions::MakeNewNamedFolder::Perform(self, sender);
 }
 
 - (IBAction)OnCalculateChecksum:(id)sender
